@@ -56,8 +56,5 @@ public class FlatFileLine
 
     public string this[int i] => Cells[i];
 
-    public string GetLineDescription()
-    {
-        return $"line {LineNumber}";
-    }
+    public string GetLineDescription() => $"line {LineNumber}";
 }

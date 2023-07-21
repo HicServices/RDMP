@@ -63,20 +63,20 @@ public class ShareLoadMetadataTests : UnitTests
     {
         //create an object
         LoadMetadata lmd1;
-        var lmd2 = ShareToNewRepository(lmd1=WhenIHaveA<ProcessTaskArgument>().ProcessTask.LoadMetadata);
+        var lmd2 = ShareToNewRepository(lmd1 = WhenIHaveA<ProcessTaskArgument>().ProcessTask.LoadMetadata);
 
         var pt1 = lmd1.ProcessTasks.Single();
         var pt2 = lmd2.ProcessTasks.Single();
 
         //different repos so not identical
-        Assert.IsFalse(ReferenceEquals(lmd1,lmd2));
-        AssertAreEqual(lmd1,lmd2);
+        Assert.IsFalse(ReferenceEquals(lmd1, lmd2));
+        AssertAreEqual(lmd1, lmd2);
 
-        Assert.IsFalse(ReferenceEquals(pt1,pt2));
-        AssertAreEqual(pt1,pt2);
+        Assert.IsFalse(ReferenceEquals(pt1, pt2));
+        AssertAreEqual(pt1, pt2);
 
-        Assert.IsFalse(ReferenceEquals(pt1.ProcessTaskArguments.Single(),pt2.ProcessTaskArguments.Single()));
-        AssertAreEqual(pt1.ProcessTaskArguments.Single(),pt2.ProcessTaskArguments.Single());
+        Assert.IsFalse(ReferenceEquals(pt1.ProcessTaskArguments.Single(), pt2.ProcessTaskArguments.Single()));
+        AssertAreEqual(pt1.ProcessTaskArguments.Single(), pt2.ProcessTaskArguments.Single());
     }
 
     /// <summary>
@@ -117,8 +117,7 @@ public class ShareLoadMetadataTests : UnitTests
 
         var f = new RuntimeTaskFactory(Repository);
 
-        var stg = Substitute.For<IStageArgs>();
-        stg.LoadStage.Returns(LoadStage.Mounting);
+        var stg = Mock.Of<IStageArgs>(x => x.LoadStage == LoadStage.Mounting);
 
         RuntimeTaskFactory.Create(pt1, stg);
     }
@@ -135,9 +134,9 @@ public class ShareLoadMetadataTests : UnitTests
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
         var f = new RuntimeTaskFactory(Repository);
-        var stg = Substitute.For<IStageArgs>();
-        stg.LoadStage.Returns(LoadStage.Mounting);
-        stg.DbInfo.Returns(new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
+        var stg = Mock.Of<IStageArgs>(x =>
+            x.LoadStage == LoadStage.Mounting &&
+            x.DbInfo == new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
 
         //create a single process task for the load
         var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
@@ -155,7 +154,7 @@ public class ShareLoadMetadataTests : UnitTests
         pta.SaveToDatabase();
 
         //check that reflection can assemble the master ProcessTask
-        var t = (MutilateDataTablesRuntimeTask) RuntimeTaskFactory.Create(pt1, stg);
+        var t = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(pt1, stg);
         Assert.IsNotNull(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn);
 
         //share to the second repository (which won't have that ColumnInfo)
@@ -165,11 +164,7 @@ public class ShareLoadMetadataTests : UnitTests
         var f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
 
         //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
-        var t2 = (MutilateDataTablesRuntimeTask) RuntimeTaskFactory.Create(lmd2.ProcessTasks.Single(), stg);
-        Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
-
-        //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
-        var t2 = (MutilateDataTablesRuntimeTask)f2.Create(lmd2.ProcessTasks.Single(), stg);
+        var t2 = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(lmd2.ProcessTasks.Single(), stg);
         Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
     }
 

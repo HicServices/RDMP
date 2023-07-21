@@ -147,9 +147,9 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         UpdateValidityAssesment();
     }
 
-    public void SetLookupTableInfo(TableInfo t,bool setComboBox = true)
+    public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
     {
-        if(t is { IsTableValuedFunction: true })
+        if (t is { IsTableValuedFunction: true })
         {
             WideMessageBox.Show("Lookup table not valid",
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
@@ -224,7 +224,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
 
         for (var i = 0; i < lines.Length; i++)
-            e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
+            e.Graphics.DrawString(lines[i], Font, Brushes.Black,
+                new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight * i));
 
         var bulletLineIndex = _currentStage switch
         {
@@ -245,9 +246,10 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             //0,1
             //offset by the drawing start location + the appropriate line number
 
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight ),
-            new PointF(drawTaskListAt.X + lineHeight/2 , drawTaskListAt.Y + bulletLineIndex * lineHeight  + lineHeight/2),
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex *lineHeight)
+            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight),
+            new PointF(drawTaskListAt.X + lineHeight / 2,
+                drawTaskListAt.Y + bulletLineIndex * lineHeight + lineHeight / 2),
+            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex * lineHeight)
         };
 
         e.Graphics.FillPolygon(Brushes.Black, triangleBasePoints);
@@ -282,7 +284,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             case LookupCreationStage.DragAForeignKey:
 
                 DrawCurveWithLabel(
-                    new PointF(olvExtractionInformations.Right + 10, olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
+                    new PointF(olvExtractionInformations.Right + 10,
+                        olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
                     new PointF(olvSelectedDescriptionColumns.Right + 100, olvSelectedDescriptionColumns.Bottom + 200),
                     new PointF(fk1.Right + 500, fk1.Top + 100),
                     new PointF(fk1.Right + 15, fk1.Bottom - 10),
@@ -305,7 +308,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var w = end.X - start.X;
         var h = end.Y - start.Y;
 
-        DrawCurveWithLabel(start, start with { X = start.X + w },start with { Y = start.Y + h },end,label,g,p);
+        DrawCurveWithLabel(start, start with { X = start.X + w }, start with { Y = start.Y + h }, end, label, g, p);
     }
 
     private bool debugPoints = false;
@@ -344,7 +347,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
     private void olvLookupColumns_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        if(e.Model is not ColumnInfo c)
+        if (e.Model is not ColumnInfo c)
             return;
 
         e.MenuStrip = new ColumnInfoMenu(new RDMPContextMenuStripArgs(Activator), c);
@@ -403,7 +406,10 @@ Only define secondary columns if you really need them! if any of the key fields 
                 throw new Exception("No Foreign key column selected");
 
             var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-            var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ?? throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
+            var foreignKeyExtractionInformation =
+                allExtractionInformations.SingleOrDefault(e =>
+                    e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ??
+                throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
             if (pk2.SelectedColumn == null != (fk2.SelectedColumn == null))
                 throw new Exception("If you want to have secondary joins you must have them in pairs");
 
@@ -444,11 +450,8 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
 
-                if(p2 != null)
-                    keyPairs.Add(Tuple.Create(f2,p2));
-
-                if(p3 != null)
-                    keyPairs.Add(Tuple.Create(f3,p3));
+                if (p2 != null)
+                    keyPairs.Add(Tuple.Create(f2, p2));
 
                 if (p3 != null)
                     keyPairs.Add(Tuple.Create(f3, p3));
@@ -473,7 +476,6 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 olvSelectedDescriptionColumns.ClearObjects();
                 SetStage(LookupCreationStage.DragAPrimaryKey);
-
             }
 
             btnCreateLookup.Enabled = true;
@@ -499,9 +501,8 @@ Only define secondary columns if you really need them! if any of the key fields 
     {
         var olv = (ObjectListView)sender;
 
-        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
-
+        if (olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
     }
 
     private void cbxLookup_SelectedItemChanged(object sender, EventArgs e)

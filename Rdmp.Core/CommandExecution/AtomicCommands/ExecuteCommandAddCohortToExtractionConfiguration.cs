@@ -58,10 +58,11 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
 
         if (_targetExtractionConfiguration.Cohort_ID != null)
         {
-            if(_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID)
+            if (_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID)
                 SetImpossible("ExtractionConfiguration already uses this cohort");
             else
-                SetImpossible("ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
+                SetImpossible(
+                    "ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
 
             return;
         }

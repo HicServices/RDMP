@@ -54,7 +54,6 @@ public class TestDatabasesSettings
     }
 
 
-
     public string GetLowPrivilegePassword(DatabaseType databaseType)
     {
         return databaseType switch

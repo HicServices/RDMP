@@ -35,7 +35,6 @@ namespace Rdmp.Core.Curation.Data;
 public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable,
     IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
 {
-
     #region Database Properties
 
     private int _tableInfoID;
@@ -353,14 +352,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
                 StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
-            
     }
 
     ///<inheritdoc/>
-    public string GetRuntimeName()
-    {
-        return Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
-    }
+    public string GetRuntimeName() => Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
 
     ///<inheritdoc/>
     public string GetFullyQualifiedName() => Name;
@@ -383,7 +378,6 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             //see if it has an ANO Transform on it
             if (ANOTable_ID != null && finalName.StartsWith("ANO"))
                 return finalName["ANO".Length..];
-        }
 
         //any other stage will be the regular final name
         return finalName;
@@ -402,7 +396,9 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //if it has an ANO transform
             if (ANOTable_ID != null)
-                return ANOTable.GetRuntimeDataType(loadStage);    //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
+                return
+                    ANOTable.GetRuntimeDataType(
+                        loadStage); //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
 
             //it doesn't have an ANOtransform but it might be the subject of dilution
             var discard = TableInfo.PreLoadDiscardedColumns.SingleOrDefault(c =>
@@ -503,11 +499,11 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         if (type == LookupType.Description)
             return Repository.GetAllObjectsWhere<Lookup>("Description_ID", ID);
         if (type == LookupType.AnyKey)
-            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID,ExpressionType.OrElse,"PrimaryKey_ID",ID);
+            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID, ExpressionType.OrElse, "PrimaryKey_ID",
+                ID);
         return type == LookupType.ForeignKey
             ? Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID)
-            :
-        throw new NotImplementedException($"Unrecognised LookupType {type}");
+            : throw new NotImplementedException($"Unrecognised LookupType {type}");
     }
 
     ///<inheritdoc/>
@@ -534,7 +530,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //is it numerical?
             var cSharpType = GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(Data_type);
-            return cSharpType == typeof (decimal) || cSharpType == typeof (int);
+            return cSharpType == typeof(decimal) || cSharpType == typeof(int);
         }
         catch (Exception)
         {

@@ -24,7 +24,7 @@ internal class ExecuteCommandClearFavouritesTests : UITests
 
         var myFavCatalogue = WhenIHaveA<Catalogue>();
 
-        ItemActivator.FavouritesProvider.AddFavourite(this,myFavCatalogue);
+        ItemActivator.FavouritesProvider.AddFavourite(this, myFavCatalogue);
 
         cmd = new ExecuteCommandClearFavourites(ItemActivator);
         Assert.IsFalse(cmd.IsImpossible);

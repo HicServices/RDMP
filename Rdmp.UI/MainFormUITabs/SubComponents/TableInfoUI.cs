@@ -167,5 +167,4 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<TableInfoUI_Design, UserControl>))]
 public abstract class TableInfoUI_Design : RDMPSingleDatabaseObjectControl<TableInfo>
 {
-
 }

@@ -28,7 +28,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_PopulatesCacheCorrectly()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+            { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -53,7 +54,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // run the cic
         var source = new CohortIdentificationConfigurationSource();
         source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
-        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,new GracefulCancellationToken());
+        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // 5 random chi numbers
         Assert.AreEqual(5, dt.Rows.Count);
@@ -88,7 +89,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_TestCloneCic()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+            { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -123,7 +125,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_APIsCantHavePatientIndexTables()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+            { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -166,7 +169,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_AsPatientIndexTable()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+            { DisallowInput = true };
 
         // Create a regular normal boring old table that will join into the results of the API call
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
@@ -195,7 +199,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         cic.CreateRootContainerIfNotExists();
 
         // Add the regular table
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
+            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
         cmd.Execute();
         var regularAggregate = cmd.AggregateCreatedIfAny;

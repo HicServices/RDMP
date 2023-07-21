@@ -81,10 +81,8 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     #endregion
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { "ViewType", ViewType.ToString() } });
 
     public override void LoadExtraText(string s)
     {
@@ -105,10 +103,9 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     public IDataAccessPoint GetDataAccessPoint() => GetTableInfo();
 
-    private ITableInfo GetTableInfo()
-    {
-        return ExtractionInformation != null ? ExtractionInformation.ColumnInfo?.TableInfo : (ITableInfo)ColumnInfo?.TableInfo;
-    }
+    private ITableInfo GetTableInfo() => ExtractionInformation != null
+        ? ExtractionInformation.ColumnInfo?.TableInfo
+        : (ITableInfo)ColumnInfo?.TableInfo;
 
     public string GetSql()
     {
@@ -149,10 +146,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     private IColumn GetIColumn()
     {
-        if(ExtractionInformation != null)
-        {
-            return ExtractionInformation;
-        }
+        if (ExtractionInformation != null) return ExtractionInformation;
         return ColumnInfo != null ? new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo) : (IColumn)null;
     }
 

@@ -57,21 +57,20 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
     }
 
     /// <inheritdoc/>
-    public string GetRuntimeName()
-    {
-        return _syntaxHelper == null
+    public string GetRuntimeName() =>
+        _syntaxHelper == null
             ? throw new System.Exception("SyntaxHelper is null, call SetQuerySyntaxHelper first")
-            : string.IsNullOrWhiteSpace(Alias)?_syntaxHelper.GetRuntimeName(SelectSQL):Alias;
-    }
+            : string.IsNullOrWhiteSpace(Alias)
+                ? _syntaxHelper.GetRuntimeName(SelectSQL)
+                : Alias;
 
     /// <summary>
     /// Combines the <see cref="SelectSQL"/> with the <see cref="Alias"/> for use in SELECT Sql
     /// </summary>
     /// <returns></returns>
-    public string GetFullSelectLineStringForSavingIntoAnAggregate()
-    {
-        return string.IsNullOrWhiteSpace(Alias) ? SelectSQL : SelectSQL + _syntaxHelper.AliasPrefix + Alias;
-    }
+    public string GetFullSelectLineStringForSavingIntoAnAggregate() => string.IsNullOrWhiteSpace(Alias)
+        ? SelectSQL
+        : SelectSQL + _syntaxHelper.AliasPrefix + Alias;
 
     /// <inheritdoc/>
     public ColumnInfo ColumnInfo => null;

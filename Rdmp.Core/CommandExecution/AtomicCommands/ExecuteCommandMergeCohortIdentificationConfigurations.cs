@@ -30,7 +30,7 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
                 BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),
                 out toMerge)) return;
 
-        if(toMerge is not { Length: > 1 })
+        if (toMerge is not { Length: > 1 })
         {
             BasicActivator.Show("You must select at least 2 configurations to merge");
             return;

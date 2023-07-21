@@ -18,7 +18,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataExport.Cohort;
 
-internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
+internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
@@ -36,7 +36,7 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTest
         var defTable = ect.DiscoverDefinitionTable();
         var cohortTable = ect.DiscoverCohortTable();
 
-        var p = new Project(DataExportRepository,"MyProject")
+        var p = new Project(DataExportRepository, "MyProject")
         {
             ProjectNumber = 10
         };

@@ -130,9 +130,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     {
         //bool
         if (type.Equals(typeof(bool).ToString()))
-        {
             return string.IsNullOrWhiteSpace(value) ? false : (object)Convert.ToBoolean(value);
-        }
 
         if (type.Equals(typeof(Type).ToString()))
             return string.IsNullOrWhiteSpace(value) ? null : (object)MEF.GetType(value);
@@ -242,8 +240,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             {
                 var t = MEF.GetType(concreteType.FullName);
 
-                result = (ICustomUIDrivenClass) ObjectConstructor.Construct(t, (ICatalogueRepository) Repository);
-
+                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository)Repository);
             }
             catch (Exception e)
             {
@@ -291,7 +288,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
             var elementType = MEF.GetType(elementTypeAsString) ?? throw new Exception(
-                    $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
+                $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
             return Array.CreateInstance(elementType, 0).GetType();
         }
 
@@ -303,7 +300,8 @@ public abstract class Argument : DatabaseEntity, IArgument
         }
 
         //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-        var anyType = MEF.GetType(type) ?? throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
+        var anyType = MEF.GetType(type) ??
+                      throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
         return anyType;
     }
 
@@ -361,14 +359,12 @@ public abstract class Argument : DatabaseEntity, IArgument
         var type = GetSystemType(asType);
 
         if (o is string)
-        {
             return typeof(IEncryptedString).IsAssignableFrom(type)
                 ? new EncryptedString(CatalogueRepository)
                 {
                     Value = o.ToString()
                 }.Value
                 : o.ToString();
-        }
 
         //if it's a nullable type find the underlying Type
         if (type is { IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -380,9 +376,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             var arr = (Array)o;
             return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType())
                 ? string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID))
-                :
-            throw new NotSupportedException(
-                $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
+                : throw new NotSupportedException(
+                    $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
         }
 
         if (type != null && typeof(IDictionary).IsAssignableFrom(type))
@@ -390,17 +385,16 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         //if we already have a known type set on us
         if (!string.IsNullOrWhiteSpace(asType))
-        {
             //if we are not being passed an Enum
             if (!typeof(Enum).IsAssignableFrom(type))
             {
                 //if we have been given an illegal typed object
                 if (!PermissableTypes.Contains(o.GetType()))
                     throw new NotSupportedException(
-                        $"Type {o.GetType()} is not one of the permissible types for ProcessTaskArgument, argument must be one of: {string.Join(',',PermissableTypes.Select(t=>t.ToString()))}");
+                        $"Type {o.GetType()} is not one of the permissible types for ProcessTaskArgument, argument must be one of: {string.Join(',', PermissableTypes.Select(t => t.ToString()))}");
 
                 //if we are passed something o of differing type to the known requested type then someone is lying to someone!
-                if (type?.IsInstanceOfType(o)==false)
+                if (type?.IsInstanceOfType(o) == false)
                     try
                     {
                         return Convert.ChangeType(o, type).ToString();
@@ -410,7 +404,6 @@ public abstract class Argument : DatabaseEntity, IArgument
                         throw new Exception(
                             $"Cannot set value {o} (of Type {o.GetType().FullName}) to on ProcessTaskArgument because it has an incompatible Type specified ({type.FullName})");
                     }
-
             }
 
         return o is IMapsDirectlyToDatabaseTable mapped ? mapped.ID.ToString() : o.ToString();
@@ -439,7 +432,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             var valueInstance = Deserialize(vValue, vType);
 
-            instance.Add(keyInstance,valueInstance);
+            instance.Add(keyInstance, valueInstance);
         }
 
         return instance;
@@ -461,13 +454,14 @@ public abstract class Argument : DatabaseEntity, IArgument
                 var keyObjectType = keyObject.GetType().ToString();
 
                 var valueObject = entry.Value;
-                var valueObjectType = valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
+                var valueObjectType =
+                    valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
 
                 xmlWriter.WriteStartElement("entry");
 
                 xmlWriter.WriteStartElement("key");
                 xmlWriter.WriteAttributeString("type", keyObjectType);
-                xmlWriter.WriteAttributeString("o", Serialize(keyObject,keyObjectType));
+                xmlWriter.WriteAttributeString("o", Serialize(keyObject, keyObjectType));
                 xmlWriter.WriteEndElement();
 
                 xmlWriter.WriteStartElement("value");
@@ -480,15 +474,16 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
-
         }
+
         return sw.ToString();
     }
 
     //regex to match the two types referenced in the Dictionary
-    private static readonly Regex DictionaryType = new (
+    private static readonly Regex DictionaryType = new(
         @"System\.Collections\.Generic\.Dictionary`2\[(.*),(.*)]"
     );
+
     private bool IsDictionary(string type, out Type kType, out Type vType)
     {
         kType = null;

@@ -19,9 +19,12 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// </summary>
 public static class UserSettings
 {
-    private static readonly Lazy<RDMPApplicationSettings> Implementation = new(static ()=>new RDMPApplicationSettings(),System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
+    private static readonly Lazy<RDMPApplicationSettings> Implementation =
+        new(static () => new RDMPApplicationSettings(), System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static RDMPApplicationSettings AppSettings => Implementation.Value ?? throw new NotImplementedException("Isolated Storage does not work in this environment...");
+    private static RDMPApplicationSettings AppSettings => Implementation.Value ??
+                                                          throw new NotImplementedException(
+                                                              "Isolated Storage does not work in this environment...");
 
 
     /// <summary>
@@ -269,7 +272,8 @@ public static class UserSettings
     /// <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
     /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
     /// </summary>
-    public static bool DebugPerformance {
+    public static bool DebugPerformance
+    {
         get => AppSettings.GetValueOrDefault("DebugPerformance", false);
         set => AppSettings.AddOrUpdateValue("DebugPerformance", value);
     }
@@ -288,7 +292,8 @@ public static class UserSettings
     /// <summary>
     /// Show a popup confirmation dialog at the end of a pipeline completing execution
     /// </summary>
-    public static bool ShowPipelineCompletedPopup {
+    public static bool ShowPipelineCompletedPopup
+    {
         get => AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true);
         set => AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value);
     }
@@ -444,12 +449,10 @@ public static class UserSettings
         AppSettings.AddOrUpdateValue($"EC_{errorCode.Code}", value.ToString());
     }
 
-    public static bool GetTutorialDone(Guid tutorialGuid)
-    {
-        return tutorialGuid != Guid.Empty && AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
-    }
+    public static bool GetTutorialDone(Guid tutorialGuid) =>
+        tutorialGuid != Guid.Empty && AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
 
-    public static void SetTutorialDone(Guid tutorialGuid,bool value)
+    public static void SetTutorialDone(Guid tutorialGuid, bool value)
     {
         if (tutorialGuid == Guid.Empty)
             return;
@@ -474,7 +477,7 @@ public static class UserSettings
         if (columnGuid == Guid.Empty)
             return;
 
-        SetColumnVisible(columnGuid.ToString("N"),visible);
+        SetColumnVisible(columnGuid.ToString("N"), visible);
     }
 
     public static void SetColumnVisible(string colIdentifier, bool visible)
@@ -482,18 +485,14 @@ public static class UserSettings
         AppSettings.AddOrUpdateValue($"ColV_{colIdentifier}", visible);
     }
 
-    public static int GetColumnWidth(Guid columnGuid)
-    {
-        return columnGuid == Guid.Empty ? 100 : GetColumnWidth(columnGuid.ToString("N"));
-    }
+    public static int GetColumnWidth(Guid columnGuid) =>
+        columnGuid == Guid.Empty ? 100 : GetColumnWidth(columnGuid.ToString("N"));
 
     public static int GetColumnWidth(string colIdentifier) =>
         AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
 
-    public static bool GetColumnVisible(Guid columnGuid)
-    {
-        return columnGuid == Guid.Empty || GetColumnVisible(columnGuid.ToString("N"));
-    }
+    public static bool GetColumnVisible(Guid columnGuid) =>
+        columnGuid == Guid.Empty || GetColumnVisible(columnGuid.ToString("N"));
 
     public static bool GetColumnVisible(string colIdentifier) =>
         AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
@@ -503,7 +502,7 @@ public static class UserSettings
         return AppSettings.GetValueOrDefault($"A_{controlGuid:N}", "").Split(new[] { "#!#" }, StringSplitOptions.None);
     }
 
-    public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
+    public static void SetHistoryForControl(Guid controlGuid, IEnumerable<string> history)
     {
         AppSettings.AddOrUpdateValue($"A_{controlGuid:N}", string.Join("#!#", history));
     }
@@ -551,6 +550,7 @@ public static class UserSettings
     }
 
     private static object _oLockUserSettings = new();
+
     public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
     {
         lock (_oLockUserSettings)

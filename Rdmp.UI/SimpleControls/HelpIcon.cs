@@ -26,7 +26,7 @@ public partial class HelpIcon : UserControl
     private HelpWorkflow _workFlow;
     private string _originalHoverText;
     private ToolTip _tt;
-    public bool SuppressClick{get;set;}
+    public bool SuppressClick { get; set; }
 
     public HelpIcon()
     {
@@ -64,7 +64,7 @@ public partial class HelpIcon : UserControl
 
     private string GetShortText(string hoverText)
     {
-        if(string.IsNullOrWhiteSpace(HoverText))
+        if (string.IsNullOrWhiteSpace(HoverText))
             return null;
 
         if (hoverText.Length <= MaxHoverTextLength)

@@ -31,8 +31,10 @@ internal class SearchablesMatchScorerTests : UnitTests
 
         var scorer = new SearchablesMatchScorer();
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "FF", new List<Type>(), CancellationToken.None);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "FF", new List<Type>(),
+            CancellationToken.None);
 
         var cataScore = scores.Single(d => Equals(d.Key.Key, cata));
         var projScore = scores.Single(d => Equals(d.Key.Key, proj));
@@ -62,9 +64,11 @@ internal class SearchablesMatchScorerTests : UnitTests
         var scorer = new SearchablesMatchScorer();
         scorer.TypeNames.Add("CohortAggregateContainer");
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(),"", new List<Type> { typeof(CohortAggregateContainer)}, CancellationToken.None);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "",
+            new List<Type> { typeof(CohortAggregateContainer) }, CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, container));
         Assert.Greater(score.Value, 0);
@@ -87,10 +91,12 @@ internal class SearchablesMatchScorerTests : UnitTests
         var scorer = new SearchablesMatchScorer();
         scorer.TypeNames.Add("CohortAggregateContainer");
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         // user is searching for the text 'troll'
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "troll", new List<Type>(), CancellationToken.None);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "troll", new List<Type>(),
+            CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, container));
 
@@ -204,10 +210,12 @@ internal class SearchablesMatchScorerTests : UnitTests
             RespectUserSettings = true
         };
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         // user is searching for the text 'troll'
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "Bunny", new List<Type>(), CancellationToken.None);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "Bunny", new List<Type>(),
+            CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, c));
 

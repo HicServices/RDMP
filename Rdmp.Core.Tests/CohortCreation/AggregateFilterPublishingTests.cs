@@ -149,10 +149,7 @@ public class AggregateFilterPublishingTests : CohortIdentificationTests
         Assert.IsTrue(shortcutAggregate.GetQueryBuilder().SQL.Contains("folk=2"));
 
         //shouldn't work because of the dependency of the child - should give a foreign key error
-        if(CatalogueRepository is TableRepository)
-        {
-            Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
-        }
+        if (CatalogueRepository is TableRepository) Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
 
         //delete the child
         shortcutAggregate.DeleteInDatabase();

@@ -90,7 +90,7 @@ public interface IExtractionConfiguration : INamed, IHasDependencies, IMightBeRe
 
 
     /// <inheritdoc cref="Cohort_ID"/>
-    IExtractableCohort Cohort { get;}
+    IExtractableCohort Cohort { get; }
 
     /// <summary>
     /// The <see cref="IPipeline"/> which should be used to extract the linked datasets unless the user specifies a specific alternative.

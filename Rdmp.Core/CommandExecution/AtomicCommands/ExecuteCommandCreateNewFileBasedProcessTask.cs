@@ -40,8 +40,8 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             SetImpossible("Could not construct LoadDirectory");
         }
-            
-        if(taskType is not (ProcessTaskType.SQLFile or ProcessTaskType.Executable))
+
+        if (taskType is not (ProcessTaskType.SQLFile or ProcessTaskType.Executable))
             SetImpossible("Only SQLFile and Executable task types are supported by this command");
 
         if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
@@ -95,10 +95,10 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         }
 
         var task = new ProcessTask((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata, _loadStage)
-            {
-                ProcessTaskType = _taskType,
-                Path = _file.FullName
-            };
+        {
+            ProcessTaskType = _taskType,
+            Path = _file.FullName
+        };
         SaveAndShow(task);
     }
 

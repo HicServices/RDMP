@@ -34,7 +34,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     {
         InitializeComponent();
 
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
 
         inclusionCriteria1.SetupFor(Activator);
@@ -101,7 +101,10 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
             return;
         }
 
-        if(cbUseWizard.Checked && !Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
+        if (cbUseWizard.Checked &&
+            !Activator.YesNo(
+                "Are you sure you are happy with your configuration, this wizard will close after creating?",
+                "Confirm"))
             return;
 
         var cic = CreateCohortIdentificationConfiguration();
@@ -165,10 +168,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
     private void tbName_KeyDown(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Enter)
-        {
-            btnGo_Click(this, EventArgs.Empty);
-        }
+        if (e.KeyCode == Keys.Enter) btnGo_Click(this, EventArgs.Empty);
     }
 
     private void cbUseWizard_CheckedChanged(object sender, EventArgs e)

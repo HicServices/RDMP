@@ -33,8 +33,5 @@ public class CatalogueLookupsNode : Node
         return obj.GetType() == typeof(CatalogueLookupsNode) && Equals((CatalogueLookupsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Catalogue);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue);
 }

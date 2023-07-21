@@ -77,9 +77,9 @@ internal class NightmareDatasets : DataGenerator
         for (var i = 0; i < 500 * Factor; i++)
         {
             var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}")
- {
-     Description = GetRandomSentence(r)
- };
+            {
+                Description = GetRandomSentence(r)
+            };
             cata.SaveToDatabase();
             Catalogues.Add(1, cata);
 
@@ -99,9 +99,9 @@ internal class NightmareDatasets : DataGenerator
                 if (r.Next(10) < 6)
                 {
                     var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name)
-                        {
-                            ExtractionCategory = extractionCategories.GetRandom(r)
-                        };
+                    {
+                        ExtractionCategory = extractionCategories.GetRandom(r)
+                    };
 
                     if (first)
                     {
@@ -142,7 +142,7 @@ internal class NightmareDatasets : DataGenerator
             // each project
             var p = new Project(_repos.DataExportRepository, $"Project {i}")
             {
-                ProjectNumber = r.Next(50) == 0 ? 5:i, // it's ok for some projects to have the same number
+                ProjectNumber = r.Next(50) == 0 ? 5 : i, // it's ok for some projects to have the same number
                 ExtractionDirectory = extractionDir
             };
             p.SaveToDatabase();
@@ -220,7 +220,6 @@ internal class NightmareDatasets : DataGenerator
                     new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository,
                         Projects.GetRandom(r), cic);
             }
-
         }
     }
 

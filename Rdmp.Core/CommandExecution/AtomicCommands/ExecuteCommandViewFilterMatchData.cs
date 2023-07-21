@@ -116,7 +116,6 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
 
     protected override IViewSQLAndResultsCollection GetCollection()
     {
-
         _columnInfo ??= SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
 
         if (_columnInfo == null)
@@ -129,7 +128,9 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
         if (_container != null)
             collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _container);
 
-        return collection == null ? throw new Exception("ViewFilterMatchData Command had no filter or container") : (IViewSQLAndResultsCollection)collection;
+        return collection == null
+            ? throw new Exception("ViewFilterMatchData Command had no filter or container")
+            : (IViewSQLAndResultsCollection)collection;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

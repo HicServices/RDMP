@@ -42,7 +42,9 @@ public class Dilution : IPluginMutilateDataTables
         typeof(IDilutionOperation), Mandatory = true)]
     public Type Operation { get; set; }
 
-    [DemandsInitialization("The number of seconds to wait before timing out when executing the Operation.  This will be running an UPDATE on every record in STAGING so should be quite high depending on how many records your load loads at once (e.g. 5000)", DemandType.Unspecified,5000)]
+    [DemandsInitialization(
+        "The number of seconds to wait before timing out when executing the Operation.  This will be running an UPDATE on every record in STAGING so should be quite high depending on how many records your load loads at once (e.g. 5000)",
+        DemandType.Unspecified, 5000)]
     public int Timeout { get; set; }
 
     public void Check(ICheckNotifier notifier)

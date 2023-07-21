@@ -40,16 +40,12 @@ public class ArchiveFilesTests : DatabaseTests
 
         var archiveComponent = new ArchiveFiles(new HICLoadConfigurationFlags());
 
-        var dataLoadInfo = Substitute.For<IDataLoadInfo>();
-        dataLoadInfo.ID.Returns(1);
+        var dataLoadInfo = Mock.Of<IDataLoadInfo>(info => info.ID == 1);
 
-        var LoadDirectory = Substitute.For<ILoadDirectory>();
-        LoadDirectory.ForArchiving.Returns(forArchiving);
-        LoadDirectory.ForLoading.Returns(forLoading);
+        var LoadDirectory = Mock.Of<ILoadDirectory>(d => d.ForArchiving == forArchiving && d.ForLoading == forLoading);
 
-        var job = Substitute.For<IDataLoadJob>();
-        job.DataLoadInfo.Returns(dataLoadInfo);
-        job.LoadDirectory.Returns(LoadDirectory);
+        var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo == dataLoadInfo);
+        job.LoadDirectory = LoadDirectory;
 
         try
         {
@@ -61,7 +57,8 @@ public class ArchiveFilesTests : DatabaseTests
 
             // there should be two entries
             using var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read);
-            Assert.AreEqual(2, archive.Entries.Count, "There should be two entries in this archive: one from the root and one from the subdirectory");
+            Assert.AreEqual(2, archive.Entries.Count,
+                "There should be two entries in this archive: one from the root and one from the subdirectory");
             Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"subdir/subdir.txt")));
             Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"test.txt")));
         }
@@ -82,9 +79,8 @@ public class ArchiveFilesTests : DatabaseTests
         var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
 
-        var job = Substitute.For<IDataLoadJob>();
-        job.DataLoadInfo.Returns(Substitute.For<IDataLoadInfo>());
-        job.LoadDirectory.Returns(loadDirectory);
+        var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo == Mock.Of<IDataLoadInfo>());
+        job.LoadDirectory = loadDirectory;
 
         try
         {
@@ -101,5 +97,4 @@ public class ArchiveFilesTests : DatabaseTests
             directoryHelper.TearDown();
         }
     }
-
 }

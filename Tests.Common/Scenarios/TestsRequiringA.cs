@@ -24,10 +24,9 @@ public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequ
     public void AdjustColumns(List<DatabaseColumnRequest> columns)
     {
         //create string columns as varchar(500) to avoid load errors  when creating new csv files you want to load into the database
-        foreach (var c in columns.Where(c => c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue))
-        {
-            c.TypeRequested.Width = Math.Max(500,c.TypeRequested.Width.Value);
-        }
+        foreach (var c in columns.Where(c =>
+                     c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue))
+            c.TypeRequested.Width = Math.Max(500, c.TypeRequested.Width.Value);
     }
 
     protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows, Random r,

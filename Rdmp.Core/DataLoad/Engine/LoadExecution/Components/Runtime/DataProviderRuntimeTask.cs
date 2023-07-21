@@ -59,10 +59,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
         return Provider.Fetch(job, cancellationToken);
     }
 
-    public override bool Exists()
-    {
-        return true;
-    }
+    public override bool Exists() => true;
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {

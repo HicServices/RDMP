@@ -30,21 +30,17 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         olvProjectNumber.IsEditable = false;
     }
 
-    private object AspectGetter_Version(object rowObject)
-    {
-        return rowObject is ExtractableCohort c ? c.ExternalVersion : null;
-    }
+    private object AspectGetter_Version(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalVersion : null;
 
-    private object AspectGetter_ProjectNumber(object rowObject)
-    {
-        return rowObject is ExtractableCohort c ? c.ExternalProjectNumber : null;
-    }
+    private object AspectGetter_ProjectNumber(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalProjectNumber : null;
 
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
 
-        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,Activator,olvName,olvName);
+        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts, Activator, olvName, olvName);
 
         tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 

@@ -46,13 +46,15 @@ public class FTPDownloader : IPluginDataProvider
         "Determines the behaviour of the system when no files are found on the server.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
     public bool SendLoadNotRequiredIfFileNotFound { get; set; }
 
-    [DemandsInitialization("The Regex expression to validate files on the FTP server against, only files matching the expression will be downloaded")]
+    [DemandsInitialization(
+        "The Regex expression to validate files on the FTP server against, only files matching the expression will be downloaded")]
     public Regex FilePattern { get; set; }
 
     [DemandsInitialization("The timeout to use when connecting to the FTP server in SECONDS")]
     public int TimeoutInSeconds { get; set; }
 
-    [DemandsInitialization("Tick to delete files from the FTP server when the load is successful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
+    [DemandsInitialization(
+        "Tick to delete files from the FTP server when the load is successful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
     public bool DeleteFilesOffFTPServerAfterSuccesfulDataLoad { get; set; }
 
     [DemandsInitialization(
@@ -166,7 +168,6 @@ public class FTPDownloader : IPluginDataProvider
         SslPolicyErrors sslpolicyerrors) => true; //any cert will do! yay
 
 
-
     protected virtual string[] GetFileList()
     {
         var result = new StringBuilder();
@@ -265,9 +266,11 @@ public class FTPDownloader : IPluginDataProvider
         if (exitCode == ExitCodeType.Success && DeleteFilesOffFTPServerAfterSuccesfulDataLoad)
             foreach (var file in _filesRetrieved)
             {
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
+#pragma warning disable SYSLIB0014
+                // Type or member is obsolete
                 var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
+#pragma warning restore SYSLIB0014
+                // Type or member is obsolete
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.KeepAlive = false;
                 reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;

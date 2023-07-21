@@ -39,7 +39,6 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 
     public IEncryptStrings GetEncrypter() => new SimpleStringValueEncryption(OpenKeyFile());
 
-
     private Lazy<string> _knownKeyFileLocation;
 
     /// <summary>

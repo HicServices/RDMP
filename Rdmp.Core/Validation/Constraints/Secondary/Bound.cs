@@ -50,7 +50,6 @@ public abstract class Bound : SecondaryConstraint
     }
 
 
-
     public override void RenameColumn(string originalName, string newName)
     {
         if (LowerFieldName != null)

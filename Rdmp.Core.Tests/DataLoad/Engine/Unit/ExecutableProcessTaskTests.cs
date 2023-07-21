@@ -23,7 +23,10 @@ internal class ExecutableProcessTaskTests
     {
         const string db = "my-db";
 
-        var customArgs = new List<SpontaneouslyInventedArgument> { new(new MemoryRepository(), "DatabaseName", db) };
+        var customArgs = new List<SpontaneouslyInventedArgument>
+        {
+            new(new MemoryRepository(), "DatabaseName", db)
+        };
 
         var processTask = Substitute.For<IProcessTask>();
         var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
@@ -37,8 +40,7 @@ internal class ExecutableProcessTaskTests
     [Test]
     public void TestConstructionFromProcessTask()
     {
-        var processTask = Substitute.For<IProcessTask>();
-        processTask.Path.Returns("path");
+        var processTask = Mock.Of<IProcessTask>(pt => pt.Path == "path");
 
         var runtimeTask = new ExecutableRuntimeTask(processTask, null);
         Assert.AreEqual("path", runtimeTask.ExeFilepath);

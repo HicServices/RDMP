@@ -40,7 +40,7 @@ public partial class TaskDescriptionLabel : UserControl
         tbEntryLabel.Text = entryLabel;
 
         Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) +
-                      (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
+                 (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
 
         //Switch style based on args.DesciptionSeverity
         switch (args.DesciptionSeverity)
@@ -69,6 +69,7 @@ public partial class TaskDescriptionLabel : UserControl
     /// Returns the width this control would ideally like to take up
     /// </summary>
     public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
+
     public int PreferredHeight => Height;
 
     private void textBox1_Resize(object sender, EventArgs e)

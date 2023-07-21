@@ -18,7 +18,7 @@ internal class NewObjectPoolTests : UnitTests
     [Test]
     public void TwoCataloguesWithSameName_NoSession()
     {
-        var cata1 = new Catalogue(Repository,"Hey");
+        var cata1 = new Catalogue(Repository, "Hey");
 
         // When there is only one object we can pick it by name
         var picker = new CommandLineObjectPicker(new string[] { "Catalogue:Hey" }, GetActivator());
@@ -34,7 +34,7 @@ internal class NewObjectPoolTests : UnitTests
     [Test]
     public void TwoCataloguesWithSameName_WithSession()
     {
-        using(NewObjectPool.StartSession())
+        using (NewObjectPool.StartSession())
         {
             var cata1 = new Catalogue(Repository, "Hey");
 

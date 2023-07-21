@@ -78,7 +78,9 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
         var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
 
         //populate the UI with the args
-        _runtimeTask = (ExecutableRuntimeTask)RuntimeTaskFactory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
+        _runtimeTask =
+            (ExecutableRuntimeTask)RuntimeTaskFactory.Create(_processTask,
+                argsDictionary.LoadArgs[_processTask.LoadStage]);
         tbExeCommand.Text = $"{_runtimeTask.ExeFilepath} {_runtimeTask.CreateArgString()}";
 
         return _runtimeTask;

@@ -21,7 +21,7 @@ public class SimpleCohortIdentificationTests : DatabaseTests
         try
         {
             Assert.IsTrue(config.Exists());
-            Assert.AreEqual("franky",config.Name);
+            Assert.AreEqual("franky", config.Name);
 
             config.Description = "Hi there";
             config.SaveToDatabase();

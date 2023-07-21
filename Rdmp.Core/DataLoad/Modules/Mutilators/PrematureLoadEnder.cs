@@ -29,7 +29,8 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
         "An exit code that reflects the nature off the stop.  Do not set Success because loads do not stop halfway through Successfully.  If you do not want an error use LoadNotRequired")]
     public ExitCodeType ExitCodeToReturnIfConditionMet { get; set; }
 
-    [DemandsInitialization("Condition under which to return the exit code.  Use cases for Always are few and far between I guess if you have a big configuration but you want to stop it running ever you could put an Always abort step in")]
+    [DemandsInitialization(
+        "Condition under which to return the exit code.  Use cases for Always are few and far between I guess if you have a big configuration but you want to stop it running ever you could put an Always abort step in")]
     public PrematureLoadEndCondition ConditionsToTerminateUnder { get; set; }
 
     public void Check(ICheckNotifier notifier)
@@ -66,17 +67,17 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
 
             case PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase:
             {
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"About to inspect what tables have rows in them in database {_databaseInfo.GetRuntimeName()}"));
 
                 foreach (var t in _databaseInfo.DiscoverTables(false))
                 {
                     var rowCount = t.GetRowCount();
 
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                         $"Found table {t.GetRuntimeName()} with row count {rowCount}"));
 
-                    if(rowCount > 0)
+                    if (rowCount > 0)
                     {
                         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                             $"Found at least 1 record in 1 table so condition {ConditionsToTerminateUnder} is not met.  Therefore returning Success so the load can continue normally."));
@@ -84,14 +85,16 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
                     }
                 }
 
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"No tables had any rows in them so returning {ExitCodeToReturnIfConditionMet} which should terminate the load here"));
                 return ExitCodeToReturnIfConditionMet;
             }
 
             case PrematureLoadEndCondition.NoFilesInForLoading:
             {
-                var dataLoadJob = job as IDataLoadJob ?? throw new Exception($"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
+                var dataLoadJob = job as IDataLoadJob ??
+                                  throw new Exception(
+                                      $"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"About to check ForLoading directory for files, the directory is:{dataLoadJob.LoadDirectory.ForLoading.FullName}"));
 

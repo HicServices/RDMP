@@ -35,10 +35,9 @@ public class JoinableTask : CacheableTask
 
     public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
     {
-
         Joinable = joinable;
         _aggregate = Joinable.AggregateConfiguration;
-        _cohortIdentificationConfiguration =_aggregate.GetCohortIdentificationConfigurationIfAny();
+        _cohortIdentificationConfiguration = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
         _catalogueName = Joinable.AggregateConfiguration.Catalogue.Name;
         RefreshIsUsedState();
@@ -62,8 +61,6 @@ public class JoinableTask : CacheableTask
 
     public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
 
-    public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
-
     public override CacheCommitArguments
         GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes) =>
         new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes, Timeout);
@@ -73,7 +70,8 @@ public class JoinableTask : CacheableTask
         manager.DeleteCacheEntryIfAny(Joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery);
     }
 
-    public override int Order {
+    public override int Order
+    {
         get => Joinable.ID;
         set => throw new NotSupportedException();
     }
@@ -85,5 +83,6 @@ public class JoinableTask : CacheableTask
         IsUnused = !Joinable.Users.Any();
     }
 
-    public string GetUnusedWarningText() => $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
+    public string GetUnusedWarningText() =>
+        $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
 }

@@ -148,8 +148,10 @@ public partial class ServerDatabaseTableSelector : UserControl
         }
         else if (!e.Cancelled)
         {
-            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => t is not DiscoveredTableValuedFunction).ToArray());
-            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).ToArray());
+            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction)
+                .ToArray());
+            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult
+                .Where(static t => t is DiscoveredTableValuedFunction).ToArray());
         }
 
 
@@ -157,8 +159,6 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         cbxTable.Focus();
     }
-
-
 
 
     //do work
@@ -294,6 +294,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     }
 
     private bool _clearingTable;
+
     private void cbxTable_SelectedIndexChanged(object sender, EventArgs e)
     {
         //don't clear both!
@@ -424,7 +425,9 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (string.IsNullOrWhiteSpace(cbxServer.Text))
             return null;
 
-        return string.IsNullOrWhiteSpace(cbxDatabase.Text) ? null : new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
+        return string.IsNullOrWhiteSpace(cbxDatabase.Text)
+            ? null
+            : new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
     }
 
     public DiscoveredTable GetDiscoveredTable()
@@ -444,7 +447,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             return null;
 
         //They made up a table that may or may not exist
-        if(!string.IsNullOrWhiteSpace(Table))
+        if (!string.IsNullOrWhiteSpace(Table))
             return db.ExpectTable(Table);
 
         //They made up a table valued function which may or may not exist
@@ -455,10 +458,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         return null;
     }
 
-    public DbConnectionStringBuilder GetBuilder()
-    {
-        return _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
-    }
+    public DbConnectionStringBuilder GetBuilder() =>
+        _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
 
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
@@ -468,13 +469,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         }
         else
         {
-            if(_exception != null)
-            {
-                ExceptionViewer.Show(_exception);
-            }
-
+            if (_exception != null) ExceptionViewer.Show(_exception);
         }
-
     }
 
     private void btnRefreshDatabases_Click(object sender, EventArgs e)

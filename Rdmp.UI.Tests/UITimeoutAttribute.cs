@@ -32,10 +32,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
     }
 
     /// <inheritdoc/>
-    public TestCommand Wrap(TestCommand command)
-    {
-        return new TimeoutCommand(command, _timeout);
-    }
+    public TestCommand Wrap(TestCommand command) => new TimeoutCommand(command, _timeout);
 
     private partial class TimeoutCommand : DelegatingTestCommand
     {
@@ -98,7 +95,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     //if it still has a window handle then presumably needs further treatment
                     IntPtr handle;
 
-                    while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
+                    while ((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
                     {
                         if (closeAttempts-- <= 0)
                             throw new Exception("Failed to close all windows even after multiple attempts");

@@ -31,7 +31,7 @@ public partial class ServerDefaultsUI : RDMPForm
 {
     private IServerDefaults defaults;
 
-    public ServerDefaultsUI(IActivateItems activator):base(activator)
+    public ServerDefaultsUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
     }
@@ -52,7 +52,8 @@ public partial class ServerDefaultsUI : RDMPForm
         {
             defaults = Activator.RepositoryLocator.CatalogueRepository;
 
-            var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
+            var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+                .ToArray();
 
             InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
             InitializeServerDropdown(ddDQEServer, PermissableDefaults.DQE, allServers);
@@ -70,9 +71,10 @@ public partial class ServerDefaultsUI : RDMPForm
             btnCreateNewWebServiceQueryCache.Enabled = ddWebServiceQueryCacheServer.SelectedItem == null;
             btnClearWebServiceQueryCache.Enabled = ddWebServiceQueryCacheServer.SelectedItem != null;
 
-            btnCreateNewCohortIdentificationQueryCache.Enabled = ddCohortIdentificationQueryCacheServer.SelectedItem == null;
-            btnClearCohortIdentificationQueryCache.Enabled = ddCohortIdentificationQueryCacheServer.SelectedItem !=null;
-
+            btnCreateNewCohortIdentificationQueryCache.Enabled =
+                ddCohortIdentificationQueryCacheServer.SelectedItem == null;
+            btnClearCohortIdentificationQueryCache.Enabled =
+                ddCohortIdentificationQueryCacheServer.SelectedItem != null;
         }
         catch (Exception ex)
         {
@@ -89,14 +91,8 @@ public partial class ServerDefaultsUI : RDMPForm
         var patcher = permissableDefault.ToTier2DatabaseType();
             
         var toAdd = allServers;
-            
-        if(patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database
-        {
-            var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(patcher)).ToArray();
 
-        var toAdd = allServers;
-
-        if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
+        if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database
         {
             var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
                 .Where(s => s.WasCreatedBy(patcher)).ToArray();
@@ -138,7 +134,7 @@ public partial class ServerDefaultsUI : RDMPForm
             throw new Exception($"Did not recognise sender:{sender}");
 
         //user selected nothing
-        if(((ComboBox) sender).SelectedItem is not ExternalDatabaseServer selectedItem)
+        if (((ComboBox)sender).SelectedItem is not ExternalDatabaseServer selectedItem)
             return;
 
         defaults.SetDefault(toChange, selectedItem);

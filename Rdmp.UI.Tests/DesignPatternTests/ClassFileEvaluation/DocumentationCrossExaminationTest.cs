@@ -17,15 +17,20 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 internal class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
-    private static readonly Regex MatchComments = new(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+
+    private static readonly Regex MatchComments =
+        new(@"///[^;\r\n]*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private string[] _mdFiles;
-    private static readonly Regex MatchMdReferences = new(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+
+    private static readonly Regex MatchMdReferences =
+        new(@"`(.*)`", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private const bool ReWriteMarkdownToReferenceGlossary = true;
 
     //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
     //since the very fact that you add something to Ignorelist means that it is in the codebase after all!
+
     #region IgnoreList Terms
 
     private static readonly HashSet<string> IgnoreList = new()
@@ -303,7 +308,7 @@ internal class DocumentationCrossExaminationTest
         {
             var isDesignerFile = file.Contains(".Designer.cs");
 
-            if(file.Contains("CodeTutorials"))
+            if (file.Contains("CodeTutorials"))
                 continue;
 
             //don't look in the packages dir!
@@ -311,7 +316,6 @@ internal class DocumentationCrossExaminationTest
                 continue;
 
             foreach (var line in File.ReadLines(file))
-            {
                 //if it is a comment
                 if (MatchComments.IsMatch(line))
                 {
@@ -364,8 +368,9 @@ internal class DocumentationCrossExaminationTest
 
         if (problems.Any())
         {
-            Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest.Ignorelist):");
-            foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
+            Console.WriteLine(
+                "Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest.Ignorelist):");
+            foreach (var pLine in problems.Where(l => l.Contains('\n')).Select(p => p.Split('\n')))
                 Console.WriteLine($"\"{pLine[1]}\",");
             foreach (var problem in problems)
                 Console.WriteLine(problem);
@@ -488,9 +493,9 @@ internal class DocumentationCrossExaminationTest
                     if (glossaryHeaders.Contains(match.Value))
                     {
                         //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
-                        if(match.Index - 1 > 0
-                           &&
-                           (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
+                        if (match.Index - 1 > 0
+                            &&
+                            (line[match.Index - 1] == '[' || line[match.Index - 1] == '"'))
                             continue;
 
 

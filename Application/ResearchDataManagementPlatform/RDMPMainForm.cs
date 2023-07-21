@@ -122,7 +122,6 @@ public partial class RDMPMainForm : RDMPForm
             if (connectionStringsFileLoaded != null)
                 instanceDescription =
                     $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
-            }
             if (database != null)
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
         }
@@ -142,9 +141,7 @@ public partial class RDMPMainForm : RDMPForm
         //if there is no persist file or user wants to show the home screen always on startup
         if (!_persistenceFile.Exists || UserSettings.ShowHomeOnStartup)
             _windowManager.PopHome();
-        }
         else if (_persistenceFile.Exists)
-        {
             try
             {
                 //load the state using the method
@@ -166,7 +163,8 @@ public partial class RDMPMainForm : RDMPForm
         Loading = false;
     }
 
-    public override string Text {
+    public override string Text
+    {
         get => base.Text;
         set => base.Text = $"{value} v{_version} {_connectedTo}".Trim();
     }
@@ -210,7 +208,7 @@ public partial class RDMPMainForm : RDMPForm
         using var ms = new MemoryStream();
         using var sw = new StreamWriter(ms, uniEncoding);
         sw.Write(target.LayoutData);
-        sw.Flush();//otherwise you are risking empty stream
+        sw.Flush(); //otherwise you are risking empty stream
         ms.Seek(0, SeekOrigin.Begin);
         LoadFromXml(ms);
     }
@@ -243,7 +241,7 @@ public partial class RDMPMainForm : RDMPForm
         try
         {
             if (_persistenceFile == null) return;
-            if (_persistenceFile.Directory?.Exists==false)
+            if (_persistenceFile.Directory?.Exists == false)
                 _persistenceFile.Directory.Create();
             dockPanel1.SaveAsXml(_persistenceFile.FullName); //save when Form closes
         }

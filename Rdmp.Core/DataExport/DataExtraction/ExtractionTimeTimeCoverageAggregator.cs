@@ -95,10 +95,9 @@ public partial class ExtractionTimeTimeCoverageAggregator
         {
             //could not find the identifier in the output buffer, could be that there are multiple CHI columns e.g. CHI_Baby1, CHI_Baby2 or something
             //only swallow this exception (and abandon counting of distinct release identifiers) if it is the first output row.
-            if(firstRow)
-            {
-                _expectedExtractionIdentifierInOutputBuffer = null;//give up trying to work out the extraction identifier
-            }
+            if (firstRow)
+                _expectedExtractionIdentifierInOutputBuffer =
+                    null; //give up trying to work out the extraction identifier
             else
                 throw;
         }
@@ -109,7 +108,6 @@ public partial class ExtractionTimeTimeCoverageAggregator
         {
             if (value is string s)
             {
-
                 if (string.IsNullOrWhiteSpace(s))
                 {
                     countOfNullsSeen++;
@@ -124,8 +122,10 @@ public partial class ExtractionTimeTimeCoverageAggregator
 
                 key = DateTime.ParseExact(valueAsString, "dd/MM/yyyy", null);
             }
-            else if (value is DateTime dateTime)
-                key = dateTime;
+            else if (value is DateTime time)
+            {
+                key = time;
+            }
             else
             {
                 key = Convert.ToDateTime(value);

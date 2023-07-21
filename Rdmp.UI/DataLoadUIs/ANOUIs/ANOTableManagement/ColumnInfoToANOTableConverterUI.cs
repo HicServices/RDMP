@@ -199,7 +199,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
             lblPreviewDataIsFictional.Visible = false;
 
-            var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
+            var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
             qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
             qb.TopX = 10;
 
@@ -211,24 +211,23 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                 using var r = cmd.ExecuteReader();
                 while (r.Read())
                 {
-                    preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)],DBNull.Value);
+                    preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)], DBNull.Value);
                     rowsRead = true;
                 }
             }
 
-            if(!rowsRead)
+            if (!rowsRead)
             {
                 lblPreviewDataIsFictional.Visible = true;
-                if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
+                if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
                 {
                     preview.Rows.Add("?", DBNull.Value);
                     preview.Rows.Add("?", DBNull.Value);
                     preview.Rows.Add("?", DBNull.Value);
                     preview.Rows.Add("?", DBNull.Value);
                 }
-                else if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
+                else if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
                 {
-
                     preview.Rows.Add("1977-08-16", DBNull.Value);
                     preview.Rows.Add("1977-08-16", DBNull.Value);
                     preview.Rows.Add("1977-08-16", DBNull.Value);
@@ -241,7 +240,6 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                     preview.Rows.Add("-1", DBNull.Value);
                     preview.Rows.Add("-1", DBNull.Value);
                 }
-
             }
 
             con.Close();
@@ -262,11 +260,8 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
             }
-        }
 
         preview.EndLoadData();
-        dgPreview.DataSource = preview;
-
         dgPreview.DataSource = preview;
     }
 
@@ -303,7 +298,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void ddExternalDatabaseServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
+        if (ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
         ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad),

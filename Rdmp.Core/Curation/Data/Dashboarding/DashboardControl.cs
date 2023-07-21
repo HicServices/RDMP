@@ -145,7 +145,7 @@ public class DashboardControl : DatabaseEntity
     {
         Repository = repository;
 
-        Repository.InsertAndHydrate(this,new Dictionary<string, object>
+        Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "DashboardLayout_ID", parent.ID },
             { "X", x },

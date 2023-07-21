@@ -16,9 +16,9 @@ namespace Rdmp.Core.Providers.Nodes.UsedByNodes;
 /// </summary>
 /// <typeparam name="T">The Type of the parent <see cref="User"/></typeparam>
 /// <typeparam name="T2">The type of <see cref="ObjectBeingUsed"/> by the parent</typeparam>
-public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObjectNode<T,T2>
-    where T:class
-    where T2:class
+public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObjectNode<T, T2>
+    where T : class
+    where T2 : class
 {
     /// <summary>
     /// The string representation of the <see cref="ObjectUsedByOtherObjectNode{T,T2}"/> when it <see cref="IsEmptyNode"/>
@@ -61,10 +61,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     /// Returns the string representation of <see cref="ObjectBeingUsed"/> or <see cref="EmptyRepresentation"/> if <see cref="IsEmptyNode"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return IsEmptyNode ? EmptyRepresentation : ObjectBeingUsed.ToString();
-    }
+    public override string ToString() => IsEmptyNode ? EmptyRepresentation : ObjectBeingUsed.ToString();
 
     #region Equality
 
@@ -82,14 +79,12 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((ObjectUsedByOtherObjectNode<T, T2>) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ObjectUsedByOtherObjectNode<T, T2>)obj);
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(User, ObjectBeingUsed);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(User, ObjectBeingUsed);
 
     #endregion
 }

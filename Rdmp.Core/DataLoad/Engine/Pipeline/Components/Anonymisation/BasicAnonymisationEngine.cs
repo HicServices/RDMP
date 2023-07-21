@@ -64,7 +64,8 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
     private Stopwatch stopwatch_TimeSpentTransforming = new();
     private Stopwatch stopwatch_TimeSpentDumping = new();
 
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         var didAno = false;
 
@@ -84,7 +85,8 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
 
         //Dump Identifiers
         stopwatch_TimeSpentDumping.Start();
-        _dumper.DumpAllIdentifiersInTable(toProcess); //do the dumping of all the rest of the columns (those that must disappear from pipeline as opposed to those above which were substituted for ANO versions)
+        _dumper.DumpAllIdentifiersInTable(
+            toProcess); //do the dumping of all the rest of the columns (those that must disappear from pipeline as opposed to those above which were substituted for ANO versions)
         stopwatch_TimeSpentDumping.Stop();
 
         if (_dumper.HaveDumpedRecords)

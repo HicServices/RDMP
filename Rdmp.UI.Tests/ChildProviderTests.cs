@@ -26,12 +26,13 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, ThrowImmediatelyCheckNotifier.Quiet,null);
+        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
+            ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoServerNode) desc.Parents[^2];
+        var parent = (TableInfoServerNode)desc.Parents[^2];
         Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
     }
 
@@ -43,7 +44,8 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
+            ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.IsNotNull(desc);
 
@@ -62,8 +64,8 @@ internal class ChildProviderTests : UITests
         };
 
         // We have 2 providers and want to suck all the data out of one into the other
-        var cp1 = new DataExportChildProvider(RepositoryLocator,null,ThrowImmediatelyCheckNotifier.Quiet,null);
-        var cp2 = new DataExportChildProvider(RepositoryLocator,null,ThrowImmediatelyCheckNotifier.Quiet,null);
+        var cp1 = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var cp2 = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         //to start with let's make sure all fields and properties are different on the two classes except where we expect them to be the same
         var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -74,12 +76,11 @@ internal class ChildProviderTests : UITests
             var val2 = prop.GetValue(cp2);
 
             // these are exempt, I guess 2 separate empty arrays are now considered 'same'
-            if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
+            if (val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
             Assert.AreNotSame(val1, val2, $"Prop {prop} was unexpectedly the same between child providers");
         }
-
 
 
         foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
@@ -88,7 +89,7 @@ internal class ChildProviderTests : UITests
             var val2 = field.GetValue(cp2);
 
             // these are exempt, I guess 2 separate empty arrays are now considered 'same'
-            if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
+            if (val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
             Assert.AreNotSame(val1, val2, $"Field {field} was unexpectedly the same between child providers");
@@ -115,7 +116,7 @@ internal class ChildProviderTests : UITests
 
         var badFields = new List<string>();
 
-        foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
+        foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
             try
             {
                 Assert.AreSame(field.GetValue(cp1), field.GetValue(cp2),
@@ -125,8 +126,6 @@ internal class ChildProviderTests : UITests
             {
                 badFields.Add(field.Name);
             }
-
-        Assert.IsEmpty(badFields);
 
         Assert.IsEmpty(badFields);
     }

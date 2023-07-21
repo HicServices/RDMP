@@ -13,8 +13,6 @@ public abstract class CatalogueCreationCommandExecution : BasicCommandExecution,
 {
     protected IProject ProjectSpecific;
 
-    public string TargetFolder {get;set; }
-
     public string TargetFolder { get; set; }
 
     protected const string Desc_ProjectSpecificParameter =

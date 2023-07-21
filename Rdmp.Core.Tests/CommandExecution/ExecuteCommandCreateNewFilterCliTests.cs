@@ -27,7 +27,7 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Assert.IsNull(ac.RootFilterContainer_ID);
         Run("CreateNewFilter", $"{nameof(AggregateConfiguration)}:{ac.ID}");
 
-        Assert.IsNotNull(ac.RootFilterContainer_ID,"Should now have a container");
+        Assert.IsNotNull(ac.RootFilterContainer_ID, "Should now have a container");
         Assert.AreEqual(1, ac.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
     }
 

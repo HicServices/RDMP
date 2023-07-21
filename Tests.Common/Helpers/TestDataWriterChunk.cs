@@ -19,6 +19,4 @@ public class TestDataWriterChunk : ICacheChunk
         Request = request;
         Files = files;
     }
-
-
 }

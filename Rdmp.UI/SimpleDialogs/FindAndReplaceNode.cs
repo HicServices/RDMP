@@ -58,13 +58,11 @@ internal class FindAndReplaceNode : IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((FindAndReplaceNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((FindAndReplaceNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Instance, Property);
-    }
+    public override int GetHashCode() => HashCode.Combine(Instance, Property);
 
     #endregion
 }

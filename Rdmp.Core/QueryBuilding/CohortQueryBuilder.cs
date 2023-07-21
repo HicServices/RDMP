@@ -141,7 +141,9 @@ public class CohortQueryBuilder
 
         //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
         var selectList =
-            string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
+            string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable()
+                ? "*"
+                : null;
 
         RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX), CancellationToken.None);
 
@@ -152,14 +154,10 @@ public class CohortQueryBuilder
         //get resolved parameters for the select * query
         var finalParams = ParameterManager.GetFinalResolvedParametersList().ToArray();
 
-        if(finalParams.Any())
-        {
-            var parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
+        if (!finalParams.Any()) return sampleSQL;
 
-            return $"{parameterSql}{Environment.NewLine}{sampleSQL}";
-        }
-            
-        return sampleSQL;
+        var parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
+        return $"{parameterSql}{Environment.NewLine}{sampleSQL}";
     }
 
     public void RegenerateSQL()

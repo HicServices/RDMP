@@ -27,7 +27,7 @@ public class PickObjectByQuery : PickObjectBase
 Property: must be a property of the Type class.
 NamePattern: must be a value that could appear for the given Property.  Comparison will be via ToString on property value.";
 
-    public override IEnumerable<string> Examples => new []
+    public override IEnumerable<string> Examples => new[]
     {
         "CatalogueItem?Catalogue_ID:55",
         "Catalogue?Folder:*edris*"
@@ -60,9 +60,11 @@ NamePattern: must be a value that could appear for the given Property.  Comparis
 
         var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
 
-        var property = dbObjectType.GetProperty(propertyName) ?? throw new Exception($"Unknown property '{propertyName}'.  Did not exist on Type '{dbObjectType.Name}'");
-        var objs = GetObjectByToString(dbObjectType,property,objectToString);
-        return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+        var property = dbObjectType.GetProperty(propertyName) ??
+                       throw new Exception(
+                           $"Unknown property '{propertyName}'.  Did not exist on Type '{dbObjectType.Name}'");
+        var objs = GetObjectByToString(dbObjectType, property, objectToString);
+        return new CommandLineObjectPickerArgumentValue(arg, idx, objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }
 
     private IEnumerable<object> GetObjectByToString(Type dbObjectType, PropertyInfo property, string str)

@@ -33,7 +33,8 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
     /// this array to get the image out
     /// </summary>
     public Image<Rgba32>[] Images;
-    public Dictionary<string,int> ItemsWithImages { get; set; } = new();
+
+    public Dictionary<string, int> ItemsWithImages { get; set; } = new();
 
     private const int TABLE_INFO_IDX = 0;
     private const int COLUMN_INFO_IDX = 1;

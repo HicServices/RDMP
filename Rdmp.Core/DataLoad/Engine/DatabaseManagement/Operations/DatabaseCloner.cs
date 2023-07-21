@@ -45,7 +45,8 @@ public class DatabaseCloner : IDisposeAfterDataLoad
         return dbInfo;
     }
 
-    public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo, LoadBubble copyToStage)
+    public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo,
+        LoadBubble copyToStage)
     {
         if (copyToStage == LoadBubble.Live)
             throw new Exception("Please don't try to create tables in the live database");
@@ -132,6 +133,4 @@ public class DatabaseCloner : IDisposeAfterDataLoad
         foreach (var dbInfo in _databasesCreated)
             dbInfo.Drop();
     }
-
-
 }

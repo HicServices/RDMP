@@ -21,7 +21,8 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
 {
     private readonly CatalogueItem _toPopulate;
 
-    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate):base(activator)
+    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate) :
+        base(activator)
     {
         _toPopulate = toPopulate;
     }

@@ -23,6 +23,8 @@ public class CohortCombineToCreateCommandHelper
 
         var selected = activator.SelectOne("Pick Extraction Identifier", candidates);
 
-        return selected != null ? (ExtractionInformation)selected : throw new Exception("User refused to choose an extraction identifier");
+        return selected != null
+            ? (ExtractionInformation)selected
+            : throw new Exception("User refused to choose an extraction identifier");
     }
 }

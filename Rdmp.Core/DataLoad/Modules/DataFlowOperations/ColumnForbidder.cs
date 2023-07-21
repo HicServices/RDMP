@@ -31,19 +31,21 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
     public Regex CrashIfAnyColumnMatches
     {
         get => _crashIfAnyColumnMatches;
-        set => _crashIfAnyColumnMatches = new Regex(value.ToString(),value.Options|RegexOptions.IgnoreCase);
+        set => _crashIfAnyColumnMatches = new Regex(value.ToString(), value.Options | RegexOptions.IgnoreCase);
     }
 
     [DemandsInitialization(
         "Alternative to specifying a Regex pattern in CrashIfAnyColumnMatches.  Select an existing StandardRegex.  This has the advantage of centralising the concept.  See StandardRegexUI for configuring StandardRegexes")]
     public StandardRegex StandardRegex { get; set; }
 
-    [DemandsInitialization("Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
+    [DemandsInitialization(
+        "Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
     public string Rationale { get; set; }
 
     private Regex _reCache;
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         var checkPattern = _reCache ??= _crashIfAnyColumnMatches ?? new Regex(GetPattern(), RegexOptions.IgnoreCase);
 
@@ -71,7 +73,7 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
         try
         {
             var p = GetPattern();
-            _=new Regex(p);
+            _ = new Regex(p);
         }
         catch (Exception e)
         {
@@ -91,7 +93,8 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 
 
         return string.IsNullOrWhiteSpace(pattern)
-            ? throw new Exception("You must specify either a pattern in CrashIfAnyColumnMatches or pick an existing StandardRegex with a pattern to match on")
+            ? throw new Exception(
+                "You must specify either a pattern in CrashIfAnyColumnMatches or pick an existing StandardRegex with a pattern to match on")
             : pattern;
     }
 }

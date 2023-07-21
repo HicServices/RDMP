@@ -19,7 +19,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
     public void TestSetArgument_WrongArgCount()
     {
         var picker = new CommandLineObjectPicker(new[] { "yyy" }, GetActivator());
-        var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
+        var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object, picker);
 
         Assert.IsTrue(cmd.IsImpossible);
         Assert.AreEqual("Wrong number of parameters supplied to command, expected 3 but got 1",
@@ -32,7 +32,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var c = WhenIHaveA<Catalogue>();
 
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:{c.ID}", "fff", "yyy" }, GetActivator());
-        var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
+        var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object, picker);
 
         Assert.IsTrue(cmd.IsImpossible);
         Assert.AreEqual("First parameter must be an IArgumentHost", cmd.ReasonCommandImpossible);
@@ -45,7 +45,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
 
 
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "yyy" }, GetActivator());
-        var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
+        var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object, picker);
 
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.StartsWith("Could not find argument called 'fff' on ", cmd.ReasonCommandImpossible);
@@ -63,7 +63,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         pta.SetType(typeof(int));
 
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "yyy" }, GetActivator());
-        var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
+        var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object, picker);
 
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.StartsWith("Provided value 'yyy' does not match expected Type 'Int32' of ",

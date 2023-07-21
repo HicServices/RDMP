@@ -16,11 +16,8 @@ internal class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseT
     public NotNullRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,
         string propertyToCheckName) : base(activator, databaseObject, getter, control, propertyToCheckName)
     {
-
     }
 
-    protected override string IsValid(object currentValue, Type typeToTest)
-    {
-        return currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()) ? "Value cannot be null" : null;
-    }
+    protected override string IsValid(object currentValue, Type typeToTest) =>
+        currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()) ? "Value cannot be null" : null;
 }

@@ -33,7 +33,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
     private DashboardControlFactory _controlFactory;
     private readonly DashboardEditModeFunctionality _editModeFunctionality;
 
-    public Dictionary<DashboardControl,DashboardableControlHostPanel> ControlDictionary = new();
+    public Dictionary<DashboardControl, DashboardableControlHostPanel> ControlDictionary = new();
 
     public DashboardLayoutUI()
     {
@@ -98,7 +98,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
                 instance = _controlFactory.Create(c);
             }
 
-            ControlDictionary.Add(c,instance);
+            ControlDictionary.Add(c, instance);
             Controls.Add(instance);
 
             //let people know what the edit state is
@@ -128,12 +128,12 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 
     private void btnAddDashboardControl_Click(object sender, EventArgs e)
     {
-        if(cbxAvailableControls.SelectedItem is not Type type)
+        if (cbxAvailableControls.SelectedItem is not Type type)
             return;
 
         var db = _controlFactory.Create(_layout, type, out var control);
         Controls.Add(control);
-        ControlDictionary.Add(db,control);
+        ControlDictionary.Add(db, control);
         Controls.Add(control);
         control.BringToFront();
 
@@ -145,5 +145,4 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DashboardLayoutUI_Design, UserControl>))]
 public abstract class DashboardLayoutUI_Design : RDMPSingleDatabaseObjectControl<DashboardLayout>
 {
-
 }

@@ -25,8 +25,8 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = "../../troll"
         };
 
-        var ex = Assert.Throws<Exception>(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots",ex.Message);
+        var ex = Assert.Throws<Exception>(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots", ex.Message);
     }
 
     [TestCase("bad")]
@@ -41,8 +41,8 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = badString
         };
 
-        var ex = Assert.Throws<Exception>(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element",ex.Message);
+        var ex = Assert.Throws<Exception>(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element", ex.Message);
     }
 
     [TestCase("$c/fff")]
@@ -54,8 +54,8 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
             ExtractionSubdirectoryPattern = badString
         };
 
-        var ex = Assert.Throws<Exception>(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element",ex.Message);
+        var ex = Assert.Throws<Exception>(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element", ex.Message);
     }
 
     /*
@@ -82,15 +82,16 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
         sds.ExtractionConfiguration.Name = "AAA";
         sds.ExtractableDataSet.Catalogue.Name = "BBB";
         sds.ExtractableDataSet.Catalogue.Acronym = "C";
-            
-            
-        var cmd = new ExtractDatasetCommand(sds.ExtractionConfiguration, new ExtractableDatasetBundle(sds.ExtractableDataSet));
+
+
+        var cmd = new ExtractDatasetCommand(sds.ExtractionConfiguration,
+            new ExtractableDatasetBundle(sds.ExtractableDataSet));
         var dest = new ExecuteDatasetExtractionFlatFileDestination
         {
             ExtractionSubdirectoryPattern = goodString
         };
 
-        Assert.DoesNotThrow(()=>dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.DoesNotThrow(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         var answer = dest.GetDirectoryFor(cmd);
         StringAssert.IsMatch(pattern, answer.FullName.Replace('\\', '/'));

@@ -36,7 +36,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 {
     private FileOutputFormat _output;
 
-    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
+    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified,
+        ExecuteExtractionToFlatFileType.CSV)]
     public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
     [DemandsInitialization(
@@ -76,7 +77,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
     }
 
-    protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+    protected override void Open(DataTable toProcess, IDataLoadEventListener job,
+        GracefulCancellationToken cancellationToken)
     {
         if (_request.IsBatchResume)
         {
@@ -186,7 +188,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
             // also close off the cumulative extraction result
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
-            result?.CompleteAudit(GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
+            result?.CompleteAudit(GetType(), GetDestinationDescription(), LinesWritten, _request.IsBatchResume, failed);
         }
         catch (Exception e)
         {
@@ -196,23 +198,13 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     }
 
 
-    public override string GetDestinationDescription()
-    {
-        return OutputFile;
-    }
+    public override string GetDestinationDescription() => OutputFile;
 
-    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
-    {
-        return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
-    }
-
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
-    {
-        return new FlatFileReleaseSource();
-    }
+    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSet) => new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new FlatFileReleaseSource<ReleaseAudit>();
+        new FlatFileReleaseSource();
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
@@ -242,8 +234,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         }
 
         if (UseAcronymForFileNaming && _request is ExtractDatasetCommand dsRequest)
-        {
-            if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+            if (string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but UseAcronymForFileNaming is true",
                     CheckResult.Fail));

@@ -167,7 +167,7 @@ public abstract class ReleasePotential : ICheckable
         foreach (var column in _columnsToExtract)
         {
             var extractableColumn = (ExtractableColumn)column;
-            if(extractableColumn.HasOriginalExtractionInformationVanished())
+            if (extractableColumn.HasOriginalExtractionInformationVanished())
             {
                 ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn, null);
                 continue;
@@ -227,11 +227,11 @@ public abstract class ReleasePotential : ICheckable
         return DatasetExtractionResult?.DestinationDescription == null
             ? "Never extracted..."
             : Assessments[DatasetExtractionResult] switch
-        {
-            Releaseability.ExceptionOccurredWhileEvaluatingReleaseability => Exception.ToString(),
-            _ =>
-                $"Dataset: {DataSet} DateOfExtraction: {DateOfExtraction} Status: {Assessments[DatasetExtractionResult]}"
-        };
+            {
+                Releaseability.ExceptionOccurredWhileEvaluatingReleaseability => Exception.ToString(),
+                _ =>
+                    $"Dataset: {DataSet} DateOfExtraction: {DateOfExtraction} Status: {Assessments[DatasetExtractionResult]}"
+            };
     }
 
     public virtual void Check(ICheckNotifier notifier)
@@ -249,7 +249,6 @@ public abstract class ReleasePotential : ICheckable
 
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
-        {
             if (notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
                     CheckResult.Warning,

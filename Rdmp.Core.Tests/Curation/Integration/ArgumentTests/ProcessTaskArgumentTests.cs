@@ -28,7 +28,8 @@ public class ProcessTaskArgumentTests : DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+            .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
 
@@ -78,7 +79,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             .SingleOrDefault(t => t.Name.Equals(tableInfoName));
         var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
-            
+
         //must delete pre load discarded first
         toCleanupCol?.DeleteInDatabase();
 
@@ -198,7 +199,6 @@ public class ProcessTaskArgumentTests : DatabaseTests
         }
         finally
         {
-
             lmd.DeleteInDatabase();
         }
     }
@@ -375,7 +375,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             {
                 Name = "MyNames"
             };
-            arg.SetType(typeof(Dictionary<TableInfo,string>));
+            arg.SetType(typeof(Dictionary<TableInfo, string>));
             arg.SaveToDatabase();
 
             Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());

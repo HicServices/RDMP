@@ -13,7 +13,7 @@ namespace Rdmp.UI.ProjectUI;
 
 internal class ExtractCommandStateMonitor
 {
-    private Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new();
+    private Dictionary<IExtractCommand, ExtractCommandState> CommandStates = new();
     private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new();
 
     private Dictionary<object, ExtractCommandState> GlobalsStates = new();
@@ -47,26 +47,22 @@ internal class ExtractCommandStateMonitor
 
     public void SaveState(GlobalsBundle globals)
     {
-        foreach (var (key, value) in globals.States)
-        {
-            GlobalsStates[key] = value;
-        }
+        foreach (var (key, value) in globals.States) GlobalsStates[key] = value;
     }
 
     public IEnumerable<object> GetAllChangedObjects(GlobalsBundle globals)
     {
         foreach (var (key, value) in globals.States)
-        {
             if (!GlobalsStates.ContainsKey(key))
             {
                 GlobalsStates.Add(key, value);
-                yield return key;//new objects also are returned as changed
+                yield return key; //new objects also are returned as changed
             }
             else
                 //State has changed since last save
             if (GlobalsStates[key] != value)
+            {
                 yield return key;
-        }
-
+            }
     }
 }

@@ -24,10 +24,8 @@ internal class TableInfoMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo), Keys.None, "New");
         Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo), Keys.None, "New");
 
-        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
-        Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
-
-        Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution.ImageToBitmap(), delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
+        Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution.ImageToBitmap(),
+            delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
         Items.Add(new ToolStripSeparator());
         Items.Add(new SetDumpServerMenuItem(_activator, tableInfo));
@@ -35,7 +33,9 @@ internal class TableInfoMenu : RDMPContextMenuStrip
         Items.Add(new ToolStripSeparator());
 
         if (tableInfo is { IsTableValuedFunction: true })
-            Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap(), delegate { ConfigureTableInfoParameters(tableInfo); });
+            Items.Add("Configure Parameters...",
+                _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap(),
+                delegate { ConfigureTableInfoParameters(tableInfo); });
     }
 
     private void ConfigurePrimaryKeyCollisionResolution_Click(TableInfo tableInfo)
@@ -43,7 +43,6 @@ internal class TableInfoMenu : RDMPContextMenuStrip
         var dialog = new ConfigurePrimaryKeyCollisionResolverUI(tableInfo, _activator);
         dialog.ShowDialog(this);
     }
-
 
 
     private void ConfigureTableInfoParameters(TableInfo tableInfo)

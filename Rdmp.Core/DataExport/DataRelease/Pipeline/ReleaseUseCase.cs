@@ -44,12 +44,14 @@ public sealed class ReleaseUseCase : PipelineUseCase
             releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult != null);
 
         if (releasePotentialWithKnownDestination == null)
+        {
             ExplicitSource = new NullReleaseSource();
+        }
         else
         {
             var destinationType = MEF.GetType(
-                    releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
-                    typeof (IExecuteDatasetExtractionDestination));
+                releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
+                typeof(IExecuteDatasetExtractionDestination));
             var destinationUsedAtExtraction =
                 (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
 

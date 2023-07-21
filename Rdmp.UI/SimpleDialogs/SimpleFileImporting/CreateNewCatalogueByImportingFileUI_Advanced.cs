@@ -68,14 +68,13 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
         configureAndExecutePipeline1.TabIndex = 14;
         Controls.Add(configureAndExecutePipeline1);
 
-        configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
-
         configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully +=
             ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
     }
 
 
-    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
+    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender,
+        PipelineEngineEventArgs args)
     {
         //pipeline executed successfully
         if (_alsoForwardEngineerCatalogue)
@@ -104,7 +103,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
             catch (Exception e)
             {
                 ExceptionViewer.Show(
-                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details", e);
+                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details",
+                    e);
             }
         }
     }

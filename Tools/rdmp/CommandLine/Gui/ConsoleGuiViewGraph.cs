@@ -131,8 +131,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         for (var i = 1; i < dt.Columns.Count; i++)
         {
-
-            var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
+            var series = new PathAnnotation { LineColor = colors[i - 1], BeforeSeries = true };
             var row = 0;
 
             foreach (DataRow dr in dt.Rows)
@@ -153,7 +152,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-        graphView.AxisY.LabelGetter = v => FormatValue(v.Value,minY);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, minY);
         graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY).Length, FormatValue(minY, minY).Length) + 1;
 
         var legend = GetLegend(dt, boundsWidth, boundsHeight);
@@ -317,8 +316,8 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.Series.Add(barSeries);
         graphView.MarginBottom = 2;
-        graphView.MarginLeft = (uint)Math.Max(FormatValue(max,min).Length, FormatValue(min, min).Length)+1;
-            
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(max, min).Length, FormatValue(min, min).Length) + 1;
+
         // work out how to space x axis without scrolling
         graphView.AxisY.Increment = yIncrement * 5;
         graphView.AxisY.ShowLabelsEvery = 1;
@@ -330,17 +329,18 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.AxisX.Increment = 0;
         graphView.AxisX.Text = dt.Columns[0].ColumnName;
     }
+
     private static string FormatValue(float val, float min)
     {
         return val < min
             ? ""
             : val switch
-        {
-            > 1 => val.ToString("N0"),
-            >= 0.01f => val.ToString("N2"),
-            > 0.0001f => val.ToString("N4"),
-            > 0.000001f => val.ToString("N6"),
-            _ => val.ToString(CultureInfo.InvariantCulture)
-        };
+            {
+                > 1 => val.ToString("N0"),
+                >= 0.01f => val.ToString("N2"),
+                > 0.0001f => val.ToString("N4"),
+                > 0.000001f => val.ToString("N6"),
+                _ => val.ToString(CultureInfo.InvariantCulture)
+            };
     }
 }

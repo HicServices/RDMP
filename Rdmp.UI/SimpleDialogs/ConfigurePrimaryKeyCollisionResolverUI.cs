@@ -49,7 +49,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private ScintillaNET.Scintilla QueryEditor;
 
-    public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator):base(activator)
+    public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator) : base(activator)
     {
         _table = table;
         InitializeComponent();
@@ -104,7 +104,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
 
         foreach (var resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
-        {
             //if it starts with hic_
             if (SpecialFieldNames.IsHicPrefixed(resolver))
             {
@@ -306,11 +305,8 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
 
-            if(sender == btnCopyPreview)
+            if (sender == btnCopyPreview)
                 Clipboard.SetText(resolver.GeneratePreviewSQL());
-
-            if(sender == btnCopyDetection)
-                Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
 
             if (sender == btnCopyDetection)
                 Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());

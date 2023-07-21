@@ -28,16 +28,18 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
         CreateFunction();
 
         //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
-        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1")
-            {
-                CountSQL = null
-            };
+        var config1 = new AggregateConfiguration(CatalogueRepository, _function.Cata,
+            "CohortGenerationDifferingTableValuedParametersTest_1")
+        {
+            CountSQL = null
+        };
         config1.SaveToDatabase();
 
-        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2")
-            {
-                CountSQL = null
-            };
+        var config2 = new AggregateConfiguration(CatalogueRepository, _function.Cata,
+            "CohortGenerationDifferingTableValuedParametersTest_2")
+        {
+            CountSQL = null
+        };
         config2.SaveToDatabase();
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository,
@@ -99,20 +101,20 @@ SET @name='fish';
 	[" + TestDatabaseNames.Prefix +
                         @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-",cic.ID)),
+", cic.ID)),
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name
-            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);")
- {
-     Value = "'lobster'"
- };
+            var param1 = new AnyTableSqlParameter(CatalogueRepository, config1, "DECLARE @name AS varchar(50);")
+            {
+                Value = "'lobster'"
+            };
             param1.SaveToDatabase();
 
-            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);")
- {
-     Value = "'monkey'"
- };
+            var param2 = new AnyTableSqlParameter(CatalogueRepository, config2, "DECLARE @name AS varchar(50);")
+            {
+                Value = "'monkey'"
+            };
             param2.SaveToDatabase();
 
             var builder2 = new CohortQueryBuilder(cic, null);
@@ -156,7 +158,6 @@ SET @name_2='monkey';
             cic.DeleteInDatabase();
             config1.DeleteInDatabase();
             config2.DeleteInDatabase();
-
         }
     }
 }

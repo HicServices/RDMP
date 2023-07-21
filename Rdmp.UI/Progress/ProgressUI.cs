@@ -159,12 +159,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     private object oNotifyQueLock = new();
     private List<ProgressUIEntry> NotificationQueue = new();
 
-    public void Progress(object sender,ProgressEventArgs args)
+    public void Progress(object sender, ProgressEventArgs args)
     {
         lock (_oProgressQueueLock)
         {
             //we have received an update to this message
-            if (ProgressQueue.TryGetValue(args.TaskDescription,out var entry))
+            if (_progressQueue.TryGetValue(args.TaskDescription, out var message))
             {
                 entry.DateTime = DateTime.Now;
                 entry.ProgressEventArgs = args;
@@ -230,9 +230,10 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                     _ => throw new ArgumentOutOfRangeException("type")
                 };
 
-                var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
+                var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription,
+                    args.Progress.Value, label);
 
-                if(!handledByFlood)
+                if (!handledByFlood)
                     if (!progress.Rows.Contains(args.TaskDescription))
                     {
                         progress.Rows.Add(new object[] { args.TaskDescription, args.Progress.Value, label });
@@ -301,8 +302,8 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             if (progress.Rows.Contains(jobsAlreadySeen))
             {
                 startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
-                progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table
-
+                progress.Rows.Remove(
+                    progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table
             }
 
         var i = 1;
@@ -321,14 +322,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             i = 1; //one of them is a dodgy length or empty length or otherwise they are sending us some dodgy messages
         }
 
-        string floodJob;
-            
-        //no shared prefix
-        if(i ==1)
-            floodJob = $"{sender} FloodOfMessages";
-        else
-            floodJob = $"{JobsreceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
-            
+        var floodJob =
+            //no shared prefix
+            i == 1
+                ? $"{sender} FloodOfMessages"
+                : $"{_jobsReceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
+
         //add a new row (or edit existing) for the flood of messages from sender
         if (progress.Rows.Contains(floodJob))
             //update with progress
@@ -390,7 +389,6 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     }
 
 
-
     private void ddGroupBy_SelectedIndexChanged(object sender, EventArgs e)
     {
         var dd = ddGroupBy.SelectedItem as string;
@@ -439,10 +437,13 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     /// <returns></returns>
     public NotifyEventArgs GetWorst()
     {
-            
-        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).MaxBy(e=>e.ProgressEventType);
-            
-        return worstEntry == null ? null : new NotifyEventArgs(worstEntry.ProgressEventType,worstEntry.Message,worstEntry.Exception);
+        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>()
+            .Union(_notificationQueue).OrderByDescending(e => e.ProgressEventType).FirstOrDefault();
+
+        if (worstEntry == null)
+            return null;
+
+        return new NotifyEventArgs(worstEntry.ProgressEventType, worstEntry.Message, worstEntry.Exception);
     }
 }
 
@@ -458,5 +459,4 @@ internal class QueuedProgressMessage
     public DateTime DateTime { get; set; }
     public ProgressEventArgs ProgressEventArgs { get; set; }
     public object Sender { get; set; }
-
 }

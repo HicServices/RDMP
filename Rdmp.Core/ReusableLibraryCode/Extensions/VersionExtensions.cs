@@ -29,14 +29,8 @@ public static class VersionExtensions
     /// <returns></returns>
     public static int CompareTo(this Version version, Version otherVersion, int significantParts)
     {
-        if (version == null)
-        {
-            throw new ArgumentNullException(nameof(version));
-        }
-        if (otherVersion == null)
-        {
-            return 1;
-        }
+        if (version == null) throw new ArgumentNullException(nameof(version));
+        if (otherVersion == null) return 1;
 
         if (version.Major != otherVersion.Major && significantParts >= 1)
             return version.Major > otherVersion.Major ? 1 : -1;

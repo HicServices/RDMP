@@ -16,7 +16,8 @@ namespace Rdmp.UI.Menus;
 
 internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
 {
-    public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container): base( args, container)
+    public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container) : base(args,
+        container)
     {
         // Don't add the 'Edit' button but do allow double clicking
         args.SkipCommand<ExecuteCommandActivate>();

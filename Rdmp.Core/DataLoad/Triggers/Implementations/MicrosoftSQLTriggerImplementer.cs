@@ -48,11 +48,12 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
     {
         using var con = _server.GetConnection();
         con.Open();
-                
+
         problemsDroppingTrigger = "";
         thingsThatWorkedDroppingTrigger = "";
 
-        using(var cmdDropTrigger = _server.GetCommand($"DROP TRIGGER {_triggerName}", con))
+        using (var cmdDropTrigger = _server.GetCommand($"DROP TRIGGER {_triggerName}", con))
+        {
             try
             {
                 cmdDropTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -64,9 +65,11 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
                 //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
                 problemsDroppingTrigger += $"Failed to drop Trigger:{exception.Message}{Environment.NewLine}";
             }
+        }
 
-        using(var cmdDropArchiveIndex = _server.GetCommand(
-                  $"DROP INDEX PKsIndex ON {_archiveTable.GetRuntimeName()}", con))
+        using (var cmdDropArchiveIndex = _server.GetCommand(
+                   $"DROP INDEX PKsIndex ON {_archiveTable.GetRuntimeName()}", con))
+        {
             try
             {
                 cmdDropArchiveIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -79,6 +82,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
             {
                 problemsDroppingTrigger += $"Failed to drop Archive Index:{exception.Message}{Environment.NewLine}";
             }
+        }
 
         using var cmdDropArchiveLegacyView = _server.GetCommand($"DROP FUNCTION {_table.GetRuntimeName()}_Legacy", con);
         try
@@ -102,14 +106,14 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
         con.Open();
 
         var trigger = GetCreateTriggerSQL();
-                
+
         using (var cmdAddTrigger = _server.GetCommand(trigger, con))
         {
             cmdAddTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
             cmdAddTrigger.ExecuteNonQuery();
         }
-                    
-                    
+
+
         //Add key so that we can more easily do comparisons on primary key between main table and archive
         var idxCompositeKeyBody = "";
 
@@ -121,7 +125,8 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
 
         var createIndexSQL =
             $@"CREATE NONCLUSTERED INDEX [PKsIndex] ON {_archiveTable.GetFullyQualifiedName()} ({idxCompositeKeyBody})";
-        using(var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
+        using (var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
+        {
             try
             {
                 cmdCreateIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -135,8 +140,9 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
 
                 return null;
             }
+        }
 
-        CreateViewOldVersionsTableValuedFunction( createArchiveTableSQL,con);
+        CreateViewOldVersionsTableValuedFunction(createArchiveTableSQL, con);
 
         return createArchiveTableSQL;
     }
@@ -218,7 +224,7 @@ END
 
         //trim off last AND
         toReturn = toReturn[..^"AND ".Length];
-            
+
         return toReturn;
     }
 
@@ -264,7 +270,8 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[] {
+        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
+        {
             $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
         }).ToArray();
 
@@ -319,7 +326,7 @@ END
             conn.Open();
             using var cmd = _server.GetCommand(queryTriggerIsItDisabledOrMissing, conn);
             cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-            cmd.Parameters.Add(new SqlParameter("@triggerName",SqlDbType.VarChar));
+            cmd.Parameters.Add(new SqlParameter("@triggerName", SqlDbType.VarChar));
             cmd.Parameters["@triggerName"].Value = updateTriggerName;
 
             var result = Convert.ToInt32(cmd.ExecuteScalar());
@@ -358,7 +365,7 @@ END
             string result;
 
             con.Open();
-            using(var cmd = _server.GetCommand(query, con))
+            using (var cmd = _server.GetCommand(query, con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 result = cmd.ExecuteScalar() as string;
@@ -394,6 +401,4 @@ END
 
         return true;
     }
-
-
 }

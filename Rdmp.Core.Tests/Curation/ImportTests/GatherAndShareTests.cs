@@ -136,11 +136,11 @@ public class GatherAndShareTests : DatabaseTests
     {
         var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
-        File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
-            
-        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo(
-            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"),new Version(1,1,1),new Version(1,1,1));
-        var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
+        File.WriteAllBytes(f1.FullName, new byte[] { 0x1, 0x2 });
+
+        var plugin = new Plugin(CatalogueRepository, new FileInfo(
+            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"), new Version(1, 1, 1), new Version(1, 1, 1));
+        var lma1 = new LoadModuleAssembly(CatalogueRepository, f1, plugin);
 
         Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
 
@@ -293,10 +293,10 @@ public class GatherAndShareTests : DatabaseTests
 
         //Also create a 'known good value' set i.e. recommended value for the parameter to achive some goal (you can have multiple of these - this will not be shared)
         var set = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Fife");
-        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter) param)
-            {
-                Value = "'FISH'"
-            };
+        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter)param)
+        {
+            Value = "'FISH'"
+        };
 
         //Gather the dependencies (this is what we are testing)
         var gatherer = new Gatherer(RepositoryLocator);

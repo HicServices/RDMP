@@ -17,7 +17,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
 
-internal class UnitTestsAllObjectsSupported:UnitTests
+internal class UnitTestsAllObjectsSupported : UnitTests
 {
     /// <summary>
     /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except
@@ -28,7 +28,7 @@ internal class UnitTestsAllObjectsSupported:UnitTests
     {
         //load all DatabaseEntity types
         var types = MEF.GetAllTypes()
-            .Where(static t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            .Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
 
         var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
         var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
@@ -38,7 +38,8 @@ internal class UnitTestsAllObjectsSupported:UnitTests
         foreach (var t in types)
         {
             //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous", StringComparison.Ordinal) || typeof(SpontaneousObject).IsAssignableFrom(t))
+            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous", StringComparison.Ordinal) ||
+                typeof(SpontaneousObject).IsAssignableFrom(t))
                 continue;
 
             DatabaseEntity instance = null;

@@ -126,7 +126,6 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
     private Scintilla auditLogEditor;
 
 
-
     public override void SetDatabaseObject(IActivateItems activator, ExtractableCohort databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -145,7 +144,6 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
 
 
         if (!_commonFunctionality1.IsSetup)
-        {
             _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage, activator, olvUsedIn, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
@@ -169,10 +167,11 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
                 }
             );
 
-        if(Activator.CoreChildProvider is DataExportChildProvider dx)
+        if (Activator.CoreChildProvider is DataExportChildProvider dx)
         {
             tlvCohortUsage.ClearObjects();
-            tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e=>e.Cohort_ID == _extractableCohort.ID).ToArray());
+            tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
+                .ToArray());
 
             tlvPreviousVersions.ClearObjects();
             tlvPreviousVersions.AddObjects(
@@ -236,10 +235,7 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
                     $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
             }, projects);
 
-            if(show != null)
-            {
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
-            }
+            if (show != null) Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
         }
     }
 

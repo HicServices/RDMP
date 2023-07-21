@@ -51,7 +51,7 @@ internal class IdentifierDumperSynchronizer
             throw new ANOConfigurationException("Anonymisation database is not accessible", e);
         }
 
-        var identifiersTable = _parent.GetRuntimeName();//gets the dump table runtime name
+        var identifiersTable = _parent.GetRuntimeName(); //gets the dump table runtime name
 
         //find primary keys
         var primaryKeyColumnInfos = _parent.TableInfo.ColumnInfos.Where(col => col.IsPrimaryKey).ToArray();
@@ -66,15 +66,14 @@ internal class IdentifierDumperSynchronizer
             if (notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Table {identifiersTable} was not found in IdentifierDump {_dump}", CheckResult.Fail, null,
                     $"Create new identifier dump called {identifiersTable} using the current primary key ColumnInfos ({string.Join(",", primaryKeyColumnInfos.Select(c => c.GetRuntimeName()))}) and currently configured dump columns")))
-            {
                 _parent.CreateIdentifierDumpTable(primaryKeyColumnInfos);
-            }
             else
                 throw new ANOConfigurationException(
                     $"User rejected change to fix Identifier dump {identifiersTable} not being found on server");
 
 
-        var columnsInTheIdentifiersDumpTable = server.ExpectDatabase(_dump.Database).ExpectTable(identifiersTable).DiscoverColumns();
+        var columnsInTheIdentifiersDumpTable =
+            server.ExpectDatabase(_dump.Database).ExpectTable(identifiersTable).DiscoverColumns();
 
         #region Pk Mismatches between dump and live
 
@@ -83,7 +82,9 @@ internal class IdentifierDumperSynchronizer
         {
             var expectedColName = originPk.GetRuntimeName(LoadStage.AdjustRaw);
 
-            var match = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName)) ?? throw new ANOConfigurationException(
+            var match =
+                columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName)) ??
+                throw new ANOConfigurationException(
                     $"Column {originPk} is a primary key column but is not in Identifier dump table {identifiersTable}");
             if (!match.IsPrimaryKey)
                 throw new ANOConfigurationException(
@@ -98,16 +99,19 @@ internal class IdentifierDumperSynchronizer
         #endregion
 
         #region missing columns
+
         //fetch all the columns in the _Identifiers table - so we can make sure the correct columns exist for all PreLoadDiscardedColumns
         var missingColumns = new List<string>();
 
         //extra columns
         foreach (var columnNameInDump in columnsInTheIdentifiersDumpTable.Select(c => c.GetRuntimeName()))
         {
-            if (primaryKeyColumnInfos.Any(pk => pk.GetRuntimeName(LoadStage.AdjustRaw).Equals(columnNameInDump)))//its a primary key so expected
+            if (primaryKeyColumnInfos.Any(pk =>
+                    pk.GetRuntimeName(LoadStage.AdjustRaw).Equals(columnNameInDump))) //its a primary key so expected
                 continue;
 
-            if (_parent.ColumnsToRouteToSomewhereElse.Any(d => d.GetRuntimeName().Equals(columnNameInDump)))//it's something we were expecting to dump
+            if (_parent.ColumnsToRouteToSomewhereElse.Any(d =>
+                    d.GetRuntimeName().Equals(columnNameInDump))) //it's something we were expecting to dump
                 continue;
 
             //these are also expected don't warn user about them
@@ -116,13 +120,16 @@ internal class IdentifierDumperSynchronizer
 
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Column {columnNameInDump} was found in the IdentifierDump table {identifiersTable} but was not one of the primary keys or a PreLoadDiscardedColumn", CheckResult.Warning));
+                    $"Column {columnNameInDump} was found in the IdentifierDump table {identifiersTable} but was not one of the primary keys or a PreLoadDiscardedColumn",
+                    CheckResult.Warning));
         }
 
         //for each column that we are supposed to dump, make sure it is actually in the dump table
         foreach (var column in _parent.ColumnsToRouteToSomewhereElse.Where(static c => c.GoesIntoIdentifierDump()))
         {
-            var colInIdentifierDumpDatabase = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(column.RuntimeColumnName));
+            var colInIdentifierDumpDatabase =
+                columnsInTheIdentifiersDumpTable.SingleOrDefault(c =>
+                    c.GetRuntimeName().Equals(column.RuntimeColumnName));
 
             //if there are not any columns in the dump that have the same runtime name as the current preloaddiscarded column
             if (colInIdentifierDumpDatabase == null)
@@ -141,12 +148,13 @@ internal class IdentifierDumperSynchronizer
                 if (string.IsNullOrWhiteSpace(column.Data_type))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            $"PreLoadDiscardedColumn {column} does not have a data type recorded in the Catalogue!", CheckResult.Fail));
+                            $"PreLoadDiscardedColumn {column} does not have a data type recorded in the Catalogue!",
+                            CheckResult.Fail));
                 else if (!column.Data_type.Equals(colInIdentifierDumpDatabase.DataType.SQLType))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            $"PreLoadDiscardedColumn{column} has data type {column.Data_type} in the Catalogue but appears as {colInIdentifierDumpDatabase.DataType.SQLType} in the actual IdentifierDump", CheckResult.Fail));
-
+                            $"PreLoadDiscardedColumn{column} has data type {column.Data_type} in the Catalogue but appears as {colInIdentifierDumpDatabase.DataType.SQLType} in the actual IdentifierDump",
+                            CheckResult.Fail));
             }
         }
 
@@ -194,9 +202,7 @@ internal class IdentifierDumperSynchronizer
                 $"Fields have unexpected types in table {identifiersTable} :{typeMismatchesMessages.Aggregate(Environment.NewLine, (s, v) => s + Environment.NewLine + v)}");
 
         #endregion
-
     }
-
 
 
     private void AddColumnToDump(PreLoadDiscardedColumn column, DbConnection con)

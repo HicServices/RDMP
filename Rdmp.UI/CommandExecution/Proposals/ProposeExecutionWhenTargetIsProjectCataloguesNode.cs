@@ -27,12 +27,9 @@ internal class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandEx
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
+        InsertOption insertOption = InsertOption.Default) =>
         //use the same drop options as Project except for this one
-
-        return cmd is CohortIdentificationConfigurationCommand
+        cmd is CohortIdentificationConfigurationCommand
             ? null
             : _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
-    }
 }

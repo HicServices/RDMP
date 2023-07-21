@@ -52,9 +52,9 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         bulk.ImportAsCatalogue();
 
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
- {
-     TargetDatabase = db
- };
+        {
+            TargetDatabase = db
+        };
 
         //no operations are as yet configured
         Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
@@ -84,7 +84,6 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             {
                 planManager.GetPlanForColumnInfo(chi).Plan = Plan.Drop;
                 planManager.GetPlanForColumnInfo(chi).Check(ThrowImmediatelyCheckNotifier.Quiet);
-
             }
             , "Should not be able to drop primary key column");
 
@@ -105,10 +104,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         bulk.SetupTestData();
         bulk.ImportAsCatalogue();
 
-        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue)
- {
-     TargetDatabase = db
- };
+        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
+        {
+            TargetDatabase = db
+        };
 
         //setup test rules for migrator
         CreateMigrationRules(planManager, bulk);
@@ -184,7 +183,6 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
     }
 
 
-
     [Test]
     [TestCase(false, false)]
     [TestCase(false, true)]
@@ -246,12 +244,12 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         //setup ANOTable on head
         var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C")
-            {
-                NumberOfCharactersToUseInAnonymousRepresentation = 10
-            };
+        {
+            NumberOfCharactersToUseInAnonymousRepresentation = 10
+        };
         anoTable.SaveToDatabase();
-        anoTable.PushToANOServerAsNewTable("varchar(10)",ThrowImmediatelyCheckNotifier.Quiet);
-         
+        anoTable.PushToANOServerAsNewTable("varchar(10)", ThrowImmediatelyCheckNotifier.Quiet);
+
         //////////////////The actual test!/////////////////
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata);
 
@@ -397,12 +395,13 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         }
 
         var ciDescription = new CatalogueItem(CatalogueRepository, bulk.catalogue, "Sex_Desc");
-        var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],lookupColumnInfos[2].Name)
-            {
-                Alias = "Sex_Desc",
-                Order = orderToInsertDescriptionFieldAt +1,
-                ExtractionCategory = ExtractionCategory.Supplemental
-            };
+        var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],
+            lookupColumnInfos[2].Name)
+        {
+            Alias = "Sex_Desc",
+            Order = orderToInsertDescriptionFieldAt + 1,
+            ExtractionCategory = ExtractionCategory.Supplemental
+        };
         eiDescription.SaveToDatabase();
 
         bulk.catalogue.ClearAllInjections();
@@ -421,10 +420,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Assert.AreEqual(lookup, qb.GetDistinctRequiredLookups().Single());
 
         //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
-        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue)
- {
-     TargetDatabase = db
- };
+        var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
+        {
+            TargetDatabase = db
+        };
 
         //setup test rules for migrator
         CreateMigrationRules(planManager, bulk);
@@ -450,10 +449,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         for (var i = 0; i < eiSource.Length; i++)
         {
-            Assert.AreEqual(eiSource[i].Order , eiDestination[i].Order,"ExtractionInformations in the source and destination Catalogue should have the same order");
-
-            Assert.AreEqual(eiSource[i].GetRuntimeName(),
-                eiDestination[i].GetRuntimeName().Replace("ANO",""), "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
+            Assert.AreEqual(eiSource[i].Order, eiDestination[i].Order,
+                "ExtractionInformations in the source and destination Catalogue should have the same order");
 
             Assert.AreEqual(eiSource[i].GetRuntimeName(),
                 eiDestination[i].GetRuntimeName().Replace("ANO", ""),
@@ -476,16 +473,20 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //The query builder should be able to succesfully create SQL
         Console.WriteLine(qbdestination.SQL);
 
-        var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
-            
-        //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",anoEiPostcode.SelectSQL);
+        var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
 
-        var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
+        //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
+        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",
+            anoEiPostcode.SelectSQL);
+
+        var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
 
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
         Assert.AreEqual(
-            $"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]", anoEiComboCol.SelectSQL);
+            $"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]",
+            anoEiComboCol.SelectSQL);
 
         //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
         Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);
@@ -516,12 +517,12 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var chi = bulk.GetColumnInfo("chi");
             
         var anoChi = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCHI", "C")
-            {
-                NumberOfIntegersToUseInAnonymousRepresentation = 9,
-                NumberOfCharactersToUseInAnonymousRepresentation = 1
-            };
+        {
+            NumberOfIntegersToUseInAnonymousRepresentation = 9,
+            NumberOfCharactersToUseInAnonymousRepresentation = 1
+        };
         anoChi.SaveToDatabase();
-        anoChi.PushToANOServerAsNewTable(chi.Data_type,ThrowImmediatelyCheckNotifier.Quiet);
+        anoChi.PushToANOServerAsNewTable(chi.Data_type, ThrowImmediatelyCheckNotifier.Quiet);
 
         planManager.GetPlanForColumnInfo(chi).Plan = Plan.ANO;
         planManager.GetPlanForColumnInfo(chi).ANOTable = anoChi;

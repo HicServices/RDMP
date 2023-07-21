@@ -68,8 +68,5 @@ public class PatcherManager
     /// Returns all Tier 2 and 3 patchers (that could be constructed)
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IPatcher> GetAllPatchers()
-    {
-        return Tier2Patchers.Union(GetTier3Patchers(null));
-    }
+    public IEnumerable<IPatcher> GetAllPatchers() => Tier2Patchers.Union(GetTier3Patchers(null));
 }

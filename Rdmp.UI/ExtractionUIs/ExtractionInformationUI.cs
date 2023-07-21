@@ -180,7 +180,6 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
                 // there was a problem working out the runtime name.  Maybe it is missing an alias or whatever
                 // so we can't do this rename - no big deal
             }
-
         }
 
         return true;

@@ -127,10 +127,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         RemoveInvalidCharactersInSchema(toProcess);
 
         IDatabaseColumnRequestAdjuster adjuster = null;
-        if (Adjuster != null)
-        {
-            adjuster = (IDatabaseColumnRequestAdjuster) ObjectConstructor.Construct(Adjuster);
-        }
+        if (Adjuster != null) adjuster = (IDatabaseColumnRequestAdjuster)ObjectConstructor.Construct(Adjuster);
 
         //work out the table name for the table we are going to create
         if (TargetTableName == null)
@@ -147,9 +144,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     "Chunk did not have a TableName, did not know what to call the newly created table");
             }
             else
-            if (string.IsNullOrWhiteSpace(toProcess.TableName))
-                throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
-            else
+            {
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
         }
@@ -179,7 +174,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 tableAlreadyExistsButEmpty = true;
 
-                if(!AllowLoadingPopulatedTables)
+                if (!AllowLoadingPopulatedTables)
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Found table {TargetTableName} already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
@@ -195,6 +190,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Determined that the table name {TargetTableName} is unique at destination {_database}"));
+            }
 
             //create connection to destination
             if (!tableAlreadyExistsButEmpty)
@@ -212,7 +208,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
 
             _managedConnection = _server.BeginNewTransactedConnection();
-            _bulkcopy = _discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
+            _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
 
             _firstTime = false;
         }
@@ -252,8 +248,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (!string.IsNullOrWhiteSpace(toProcess.TableName) && invalidSymbols.Any(c => toProcess.TableName.Contains(c)))
             foreach (var symbol in invalidSymbols)
                 toProcess.TableName = toProcess.TableName.Replace(symbol.ToString(), "");
-            }
-        }
 
         foreach (DataColumn col in toProcess.Columns)
             if (!string.IsNullOrWhiteSpace(col.ColumnName) && invalidSymbols.Any(c => col.ColumnName.Contains(c)))
@@ -311,7 +305,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             //if it appears in the toProcess DataTable
             if (toProcess.Columns.Contains(col))
                 sharedColumns.Add(col); //it is a shared column
-
 
 
         //adjust the computer to
@@ -375,7 +368,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// <returns>True if the proposed alter is a bad idea and shouldn't be attempted</returns>
     protected virtual bool AbandonAlter(string oldSqlType, string newSqlType, out string reason)
     {
-        var basicallyDecimalAlready = new List<string> { "real","double","float","single"};
+        var basicallyDecimalAlready = new List<string> { "real", "double", "float", "single" };
 
         var first = basicallyDecimalAlready.FirstOrDefault(c =>
             oldSqlType.Contains(c, StringComparison.InvariantCultureIgnoreCase));
@@ -406,7 +399,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 {
                     _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
 
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
+                    listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
 
                     _bulkcopy?.Dispose();
                 }
@@ -416,7 +410,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
                     _bulkcopy?.Dispose();
 
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed successfully"));
+                    listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information, "Transaction committed successfully"));
                 }
             }
         }
@@ -428,7 +423,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
 
         //if we have a primary key to create
-        if (pipelineFailureExceptionIfAny == null && _primaryKey?.Any()==true && _discoveredTable?.Exists()==true)
+        if (pipelineFailureExceptionIfAny == null && _primaryKey?.Any() == true && _discoveredTable?.Exists() == true)
         {
             //Find the columns in the destination
             var allColumns = _discoveredTable.DiscoverColumns();
@@ -512,7 +507,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             return columnRequest;
         }
 
-        columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
+        columnRequest = new DatabaseColumnRequest(columnName, explicitType,
+            !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
         {
             IsPrimaryKey = columnFlags.IsPrimaryKey,
             IsAutoIncrement = columnFlags.IsAutoIncrement,

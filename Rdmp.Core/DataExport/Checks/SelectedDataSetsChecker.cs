@@ -185,7 +185,8 @@ public class SelectedDataSetsChecker : ICheckable
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
             .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>().All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
+            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>()
+                .All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
             .ToArray();
 
         if (nonSelectedCore.Any())
@@ -206,8 +207,8 @@ public class SelectedDataSetsChecker : ICheckable
             try
             {
                 using var con = server.BeginNewTransactedConnection();
-                //incase user somehow manages to write a filter/transform that nukes data or something
 
+                //in case user somehow manages to write a filter/transform that nukes data or something
                 DbCommand cmd;
 
                 try
@@ -241,11 +242,9 @@ public class SelectedDataSetsChecker : ICheckable
                 catch (Exception e)
                 {
                     if (server.GetQuerySyntaxHelper().IsTimeout(e))
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
-                    }
+                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking, e, timeout));
                     else
-                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e,ds));
+                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e, ds));
                 }
 
                 con.ManagedTransaction.AbandonAndCloseConnection();
@@ -282,10 +281,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         // it's the first batch, thats good - user reset the progress after they changed the cohort
         // so extraction should begin at the start date correctly and cleanup any remnants
-        if(progress?.ProgressDate == null)
-        {
-            return;
-        }
+        if (progress?.ProgressDate == null) return;
 
         ReleasePotential rp;
 

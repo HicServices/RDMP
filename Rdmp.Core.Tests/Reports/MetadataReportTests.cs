@@ -17,7 +17,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports;
 
-internal class MetadataReportTests:UnitTests
+internal class MetadataReportTests : UnitTests
 {
     [Test]
     public void Test_MetadataReport_Basic()
@@ -28,12 +28,15 @@ internal class MetadataReportTests:UnitTests
 
         //setup delegate for returning images
         var bmp = new Image<Rgba32>(200, 200);
-        bmp.Mutate(x=>x.Fill(Color.Black,new RectangleF(10.0f,10.0f,50.0f,50.0f)));
-            
-        reporter.RequestCatalogueImages += s => { return new BitmapWithDescription[] {new(bmp,"MyPicture","Something interesting about it") }; };
+        bmp.Mutate(x => x.Fill(Color.Black, new RectangleF(10.0f, 10.0f, 50.0f, 50.0f)));
+
+        reporter.RequestCatalogueImages += s =>
+        {
+            return new BitmapWithDescription[] { new(bmp, "MyPicture", "Something interesting about it") };
+        };
 
         var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
-            
+
         Assert.IsNotNull(file);
         Assert.IsTrue(File.Exists(file.FullName));
 
@@ -54,7 +57,7 @@ internal class MetadataReportTests:UnitTests
         ei.ClearAllInjections();
 
         var reporter = new MetadataReport(Repository,
-            new MetadataReportArgs(new[] {ei.CatalogueItem.Catalogue})
+            new MetadataReportArgs(new[] { ei.CatalogueItem.Catalogue })
         );
         var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
 

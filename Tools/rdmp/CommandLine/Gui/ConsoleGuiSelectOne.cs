@@ -27,8 +27,9 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     /// </summary>
     public const int MaxMatches = 100;
 
-    public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
-        true,null)
+    public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available) :
+        base("Open", "Ok",
+            true, null)
     {
         _activator = activator;
 
@@ -54,7 +55,8 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
 
         _scorer = new SearchablesMatchScorer
         {
-            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),
+                StringComparer.CurrentCultureIgnoreCase)
         };
 
     }
@@ -92,9 +94,11 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
         else
             _scorer.ID = null;
 
-        var dict = _scorer.ScoreMatches(_masterCollection, searchText,null, token);
+        var dict = _scorer.ScoreMatches(_masterCollection, searchText, null, token);
 
         //can occur if user punches many keys at once
-        return dict == null ? new List<IMapsDirectlyToDatabaseTable>() : (IList<IMapsDirectlyToDatabaseTable>)SearchablesMatchScorer.ShortList(dict, MaxMatches,_activator);
+        return dict == null
+            ? new List<IMapsDirectlyToDatabaseTable>()
+            : (IList<IMapsDirectlyToDatabaseTable>)SearchablesMatchScorer.ShortList(dict, MaxMatches, _activator);
     }
 }

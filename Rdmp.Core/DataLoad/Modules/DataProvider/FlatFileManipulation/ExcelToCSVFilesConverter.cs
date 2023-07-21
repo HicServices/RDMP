@@ -111,7 +111,7 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
                     var savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
                     var dt = source.GetAllData(sheet, job);
                     dt.EndLoadData();
-                    using var saveStream = new StreamWriter(savePath,false,Encoding.UTF8, 1<<20);
+                    using var saveStream = new StreamWriter(savePath, false, Encoding.UTF8, 1 << 20);
                     dt.SaveAsCsv(saveStream);
 
                     job.OnNotify(this,

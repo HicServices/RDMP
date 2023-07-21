@@ -35,7 +35,8 @@ public class Coalescer : MatchingTablesMutilator
     {
         var server = table.Database.Server;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Coalesce on table {table}"));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Coalesce on table {table}"));
 
         var allCols = table.DiscoverColumns();
 
@@ -88,11 +89,14 @@ public class Coalescer : MatchingTablesMutilator
     {
         var sqlLines = new List<CustomLine>
         {
-            new($"(t1.{nonPk.GetRuntimeName()} is null AND t2.{nonPk.GetRuntimeName()} is not null)", QueryComponent.WHERE),
+            new($"(t1.{nonPk.GetRuntimeName()} is null AND t2.{nonPk.GetRuntimeName()} is not null)",
+                QueryComponent.WHERE),
             new(
-                $"t1.{nonPk.GetRuntimeName()} = COALESCE(t1.{nonPk.GetRuntimeName()},t2.{nonPk.GetRuntimeName()})", QueryComponent.SET)
+                $"t1.{nonPk.GetRuntimeName()} = COALESCE(t1.{nonPk.GetRuntimeName()},t2.{nonPk.GetRuntimeName()})",
+                QueryComponent.SET)
         };
-        sqlLines.AddRange(pks.Select(p=>new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()),QueryComponent.JoinInfoJoin)));
+        sqlLines.AddRange(pks.Select(p =>
+            new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()), QueryComponent.JoinInfoJoin)));
 
         var updateHelper = table.Database.Server.GetQuerySyntaxHelper().UpdateHelper;
 

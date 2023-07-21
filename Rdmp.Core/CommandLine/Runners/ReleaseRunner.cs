@@ -68,9 +68,6 @@ public class ReleaseRunner : ManyRunner
                 if (!configurationIds.Contains(s.ExtractionConfiguration_ID))
                     //add the config since it's not included in _options.Configurations
                     _configurations = _configurations.ToList().Union(new[] { s.ExtractionConfiguration }).ToArray();
-                }
-            }
-
         }
         else
         {
@@ -189,11 +186,16 @@ public class ReleaseRunner : ManyRunner
 
             //if it has never been extracted
             if (extractionResults?.DestinationDescription == null)
-                toReturn.Add(new NoReleasePotential(RepositoryLocator, selectedDataSet)); //the potential is ZERO to release this dataset
+            {
+                toReturn.Add(new NoReleasePotential(RepositoryLocator,
+                    selectedDataSet)); //the potential is ZERO to release this dataset
+            }
             else
             {
                 //it's been extracted!, who extracted it?
-                var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(extractionResults.GetDestinationType());
+                var destinationThatExtractedIt =
+                    (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(extractionResults
+                        .GetDestinationType());
 
                 //destination tell us how releasable it is
                 var releasePotential =
@@ -268,7 +270,7 @@ public class ReleaseRunner : ManyRunner
     {
         var matches = GetCheckerResults<ReleaseEnvironmentPotential>(rp => rp.Configuration.Equals(configuration));
 
-        return matches.Length == 0 ? null : ((ReleaseEnvironmentPotential) matches.Single().Key).Assesment;
+        return matches.Length == 0 ? null : ((ReleaseEnvironmentPotential)matches.Single().Key).Assesment;
     }
 
     public object GetState(ISelectedDataSets selectedDataSets)
@@ -306,7 +308,7 @@ public class ReleaseRunner : ManyRunner
     {
         var matches = GetCheckerResults<GlobalReleasePotential>(rp => rp.RelatedGlobal.Equals(global));
 
-        return matches.Length == 0 ? null : ((GlobalReleasePotential) matches.Single().Key).Releasability;
+        return matches.Length == 0 ? null : ((GlobalReleasePotential)matches.Single().Key).Releasability;
     }
 
     public CheckResult? GetGlobalReleaseState()

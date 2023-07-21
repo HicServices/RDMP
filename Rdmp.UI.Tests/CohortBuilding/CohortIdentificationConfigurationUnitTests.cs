@@ -14,7 +14,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.Tests.CohortBuilding;
 
-internal class CohortIdentificationConfigurationUnitTests:UITests
+internal class CohortIdentificationConfigurationUnitTests : UITests
 {
     private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
     {
@@ -51,7 +51,7 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
         cmd.Execute();
 
         var ac1 = (AggregateConfiguration)cic.RootCohortAggregateContainer.GetOrderedContents().First();
-        Assert.AreEqual(0,ac1.Order);
+        Assert.AreEqual(0, ac1.Order);
 
         //add another one
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
@@ -89,7 +89,8 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
         cic.RootCohortAggregateContainer.AddChild(subcontainer);
 
         //add the second ac to the subcontainer
-        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),subcontainer);
+        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+            new CatalogueCombineable(cata), subcontainer);
         cmd2.Execute();
 
         //should now look like this:

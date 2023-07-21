@@ -35,10 +35,7 @@ public class ProgressUIEntry
         Args = args;
     }
 
-    private string FormatSender(object sender)
-    {
-        return sender == null ? "Unknown" : sender as string ?? sender.GetType().Name;
-    }
+    private static string FormatSender(object sender) => sender as string ?? sender?.GetType().Name ?? "Unknown";
 
     public WideMessageBoxTheme GetTheme()
     {

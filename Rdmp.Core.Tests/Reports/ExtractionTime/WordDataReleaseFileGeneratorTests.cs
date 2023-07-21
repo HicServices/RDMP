@@ -11,7 +11,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Reports.ExtractionTime;
 
-internal class WordDataReleaseFileGeneratorTests:TestsRequiringAnExtractionConfiguration
+internal class WordDataReleaseFileGeneratorTests : TestsRequiringAnExtractionConfiguration
 {
     [Test]
     public void Test_WordDataReleaseFileGenerator_Normal()

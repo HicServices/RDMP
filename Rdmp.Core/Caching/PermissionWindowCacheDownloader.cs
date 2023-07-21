@@ -82,9 +82,9 @@ public class PermissionWindowCacheDownloader
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Retrying download: {(_permissionWindow == null ? "No permission window" : _permissionWindow.Name)}"));
 
-        return IsDownloadRequired(listener) ?
-            RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine) :
-            _retrievalResult;
+        return IsDownloadRequired(listener)
+            ? RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine)
+            : _retrievalResult;
     }
 
     private bool IsDownloadRequired(IDataLoadEventListener listener)
@@ -131,8 +131,9 @@ public class PermissionWindowCacheDownloader
 
         // We want to be able to stop the engine if we pass outside the permission window, however the execution strategy objects should not know about PermissionWindows
         var executionTask = new Task(() =>
-            _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
-            
+            _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token,
+                _listener));
+
         // Block waiting on task completion or signalling of the cancellation token
         while (!executionTask.IsCompleted)
         {
@@ -156,7 +157,6 @@ public class PermissionWindowCacheDownloader
                 }
                 catch (AggregateException)
                 {
-
                 }
 
                 return RetrievalResult.Aborted;
@@ -229,8 +229,7 @@ public class PermissionWindowCacheDownloader
             }
     }
 
-    public override string ToString()
-    {
-        return _permissionWindow == null ? "Downloader (Any Time)" : $"Downloader for {_permissionWindow.Name}";
-    }
+    public override string ToString() => _permissionWindow == null
+        ? "Downloader (Any Time)"
+        : $"Downloader for {_permissionWindow.Name}";
 }

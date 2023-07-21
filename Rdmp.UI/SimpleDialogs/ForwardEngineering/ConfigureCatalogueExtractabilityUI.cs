@@ -85,8 +85,6 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private const string None = "<<None>>";
 
-    private const string None = "<<None>>";
-
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfo tableInfo, string initialDescription,
         IProject projectSpecificIfAny) : this(activator)
     {
@@ -317,7 +315,8 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             if (!shouldBeExtractable) //it's already not extractable job done
                 return;
             //make it extractable
-            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) n.ColumnInfo.Repository, n.CatalogueItem, n.ColumnInfo,n.ColumnInfo.Name);
+            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository)n.ColumnInfo.Repository,
+                n.CatalogueItem, n.ColumnInfo, n.ColumnInfo.Name);
 
             if (category.HasValue)
             {
@@ -385,7 +384,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text)
         {
-            Columns = new[] {olvColumnInfoName}
+            Columns = new[] { olvColumnInfoName }
         };
         olvColumnExtractability.ModelFilter = textFilter;
     }
@@ -410,17 +409,19 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private void FinaliseExtractability()
     {
-        _=new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
+        _ = new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
         if(_projectSpecific != null)
         {
             IAtomicCommandWithTarget cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
 
-            if (!cmd.IsImpossible)
-                cmd.Execute();
-            else
-                MessageBox.Show($"Could not make Catalogue ProjectSpecific:{cmd.ReasonCommandImpossible}");
-        }
+        IAtomicCommandWithTarget cmd =
+            new ExecuteCommandMakeCatalogueProjectSpecific(Activator, _catalogue, _projectSpecific);
+
+        if (cmd.IsImpossible)
+            MessageBox.Show($"Could not make Catalogue ProjectSpecific:{cmd.ReasonCommandImpossible}");
+        else
+            cmd.Execute();
     }
 
     private void btnAddToExisting_Click(object sender, EventArgs e)
@@ -697,7 +698,6 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
-        {
             if (node.ExtractionInformation is { IsExtractionIdentifier: true })
             {
                 node.ExtractionInformation.IsExtractionIdentifier = false;

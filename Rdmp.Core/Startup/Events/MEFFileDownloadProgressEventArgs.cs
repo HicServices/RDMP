@@ -37,6 +37,6 @@ public class MEFFileDownloadProgressEventArgs
     public MEFFileDownloadEventStatus Status { get; set; }
 
     public string FileBeingProcessed { get; set; }
-    public bool IncludesPdbFile{get; set;}
+    public bool IncludesPdbFile { get; set; }
     public Exception Exception { get; set; }
 }

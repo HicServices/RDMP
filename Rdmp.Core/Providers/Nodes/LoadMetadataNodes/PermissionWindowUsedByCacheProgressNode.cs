@@ -52,13 +52,13 @@ public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCusto
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PermissionWindowUsedByCacheProgressNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PermissionWindowUsedByCacheProgressNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
-    }
+    public override int GetHashCode() =>
+        System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
+
     #endregion
 
     public object GetImageObject() => DirectionIsCacheToPermissionWindow ? PermissionWindow : (object)CacheProgress;

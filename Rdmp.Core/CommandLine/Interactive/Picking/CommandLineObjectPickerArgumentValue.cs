@@ -177,7 +177,7 @@ public class CommandLineObjectPickerArgumentValue
         if (basicType.IsValueType && !typeof(Enum).IsAssignableFrom(basicType))
             return UsefulStuff.ChangeType(RawValue, basicType);
 
-        return basicType.IsEnum ? Enum.Parse(basicType, RawValue,true) : null;
+        return basicType.IsEnum ? Enum.Parse(basicType, RawValue, true) : null;
     }
 
     private object GetOneDatabaseEntity<T>()
@@ -191,9 +191,8 @@ public class CommandLineObjectPickerArgumentValue
             var latest = NewObjectPool.Latest(DatabaseEntities.Where(d => d is T));
 
             if (latest == null)
-            {
-                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
-            }
+                _logger.Warn(
+                    $"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
 
             return latest;
         }
@@ -253,10 +252,8 @@ public class CommandLineObjectPickerArgumentValue
                 //do we have any? yet
                 if (DatabaseEntities == null || !DatabaseEntities.Any()) //no
                     DatabaseEntities = other.DatabaseEntities; //use theirs
-                else
-                if(other.DatabaseEntities.Any())
+                else if (other.DatabaseEntities.Any())
                     throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntities");
-
         }
 
         return this;

@@ -27,7 +27,7 @@ public partial class AggregateTopXUI : RDMPUserControl
     private AggregateTopX _topX;
     private AggregateConfiguration _aggregate;
 
-    private const string CountColumn  = "Count Column";
+    private const string CountColumn = "Count Column";
 
     public AggregateTopXUI()
     {

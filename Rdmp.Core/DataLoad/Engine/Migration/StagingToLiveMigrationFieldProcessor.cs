@@ -67,6 +67,7 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             ||
             UpdateOnly(field))
 
+        {
             fieldsToUpdate.Add(field);
         }
         else
@@ -91,7 +92,8 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
         );
 
         return match != null && field.IsPrimaryKey
-            ? throw new NotSupportedException($"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted")
+            ? throw new NotSupportedException(
+                $"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted")
             : match != null;
     }
 

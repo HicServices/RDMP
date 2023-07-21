@@ -34,8 +34,8 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// Names that are not allowed for user custom parameters because they
     /// are used internally by RMDP query building engines
     /// </summary>
-    public static readonly string[] ProhibitedParameterNames = {
-
+    public static readonly string[] ProhibitedParameterNames =
+    {
         "@CohortDefinitionID",
         "@ProjectNumber",
         "@dateAxis",
@@ -109,10 +109,10 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectID",parent.ID},
-            {"ReferencedObjectType",parent.GetType().Name},
-            {"ReferencedObjectRepositoryType",parent.Repository.GetType().Name},
-            {"ParameterSQL", parameterSQL}
+            { "ReferencedObjectID", parent.ID },
+            { "ReferencedObjectType", parent.GetType().Name },
+            { "ReferencedObjectRepositoryType", parent.Repository.GetType().Name },
+            { "ParameterSQL", parameterSQL }
         });
     }
 
@@ -136,7 +136,9 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper ?? throw new AmbiguousDatabaseTypeException($"Could not figure out what the query syntax helper is for {this}");
+        var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper ??
+                                          throw new AmbiguousDatabaseTypeException(
+                                              $"Could not figure out what the query syntax helper is for {this}");
         return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
     }
 
@@ -201,7 +203,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return GetOwnerIfAny() is IHasDependencies parent ? new[] {parent} : Array.Empty<IHasDependencies>();
+        return GetOwnerIfAny() is IHasDependencies parent ? new[] { parent } : Array.Empty<IHasDependencies>();
     }
 
     /// <summary>

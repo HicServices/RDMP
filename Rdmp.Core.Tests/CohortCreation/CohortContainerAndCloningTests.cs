@@ -58,7 +58,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         Assert.IsFalse(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregate1));
 
         //add a clone using aggregate1 as a template
-        var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1,null);
+        var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
         //add the clone
         rootcontainer.AddChild(clone, 0);
 
@@ -213,7 +213,7 @@ sex=@sex
         {
             WhereSQL = "sex=@sex"
         };
-        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter,null);
+        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
         filter.SaveToDatabase();
 
         //with a parameter too
@@ -243,7 +243,7 @@ sex=@sex
             cloneSQL = Regex.Replace(cloneSQL, "cic_[0-9]+_", "");
 
             //the SQL should be the same for them
-            Assert.AreEqual(beforeSQL,cloneSQL);
+            Assert.AreEqual(beforeSQL, cloneSQL);
 
             var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
                 .Where(a => a.RootFilterContainer_ID != null)

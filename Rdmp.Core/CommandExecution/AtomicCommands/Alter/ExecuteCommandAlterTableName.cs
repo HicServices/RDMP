@@ -14,7 +14,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 /// </summary>
 public class ExecuteCommandAlterTableName : AlterTableCommandExecution
 {
-    public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,tableInfo)
+    public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,
+        tableInfo)
     {
         if (IsImpossible)
             return;

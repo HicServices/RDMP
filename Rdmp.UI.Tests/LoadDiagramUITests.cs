@@ -39,7 +39,8 @@ public class LoadDiagramUITests : UITests
         _ = AndLaunch<LoadDiagramUI>(lmd);
 
         //can't launch the command
-        AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd), "does not have any associated Catalogues");
+        AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd),
+            "does not have any associated Catalogues");
 
         //and ui should be showing big problems
         AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not fetch data");

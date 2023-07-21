@@ -81,9 +81,8 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
         if (_askAtRuntime)
         {
             if (!possible.Any())
-            {
-                throw new Exception($"There are no ExtractionInformation that can be added as new dimensions to {_aggregate}");
-            }
+                throw new Exception(
+                    $"There are no ExtractionInformation that can be added as new dimensions to {_aggregate}");
 
             match = (ExtractionInformation)BasicActivator.SelectOne("Choose dimension to add", possible);
 
@@ -93,9 +92,8 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
         {
             match = possible.FirstOrDefault(a => string.Equals(_column, a.ToString()));
             if (match == null)
-            {
-                throw new Exception($"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
-            }
+                throw new Exception(
+                    $"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
         }
 
         var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueRepository, match, _aggregate);

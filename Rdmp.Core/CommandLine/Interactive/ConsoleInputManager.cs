@@ -190,7 +190,6 @@ public class ConsoleInputManager : BasicActivateItems
 
             if (picker.Examples.Any())
             {
-
                 sb.AppendLine();
                 sb.Append($"Examples:");
                 foreach (var example in picker.Examples)
@@ -211,11 +210,9 @@ public class ConsoleInputManager : BasicActivateItems
         IMapsDirectlyToDatabaseTable[] availableObjects)
     {
         if (DisallowInput)
-        {
             return args.AllowAutoSelect && availableObjects.Length == 1
                 ? availableObjects[0]
                 : throw new InputDisallowedException($"Value required for '{args}'");
-        }
 
         if (availableObjects.Length == 0)
             throw new Exception("No available objects found");
@@ -291,10 +288,9 @@ public class ConsoleInputManager : BasicActivateItems
         return result.IsBasicallyNull() ? null : new DirectoryInfo(result);
     }
 
-    public override FileInfo SelectFile(string prompt)
-    {
-        return DisallowInput ? throw new InputDisallowedException($"Value required for '{prompt}'") : SelectFile(prompt, null, null);
-    }
+    public override FileInfo SelectFile(string prompt) => DisallowInput
+        ? throw new InputDisallowedException($"Value required for '{prompt}'")
+        : SelectFile(prompt, null, null);
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
@@ -341,7 +337,7 @@ public class ConsoleInputManager : BasicActivateItems
             if (idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
 
-            var searchPattern = file[(idxLastSlash+1)..];
+            var searchPattern = file[(idxLastSlash + 1)..];
             var dirStr = file[..idxLastSlash];
 
             var dir = new DirectoryInfo(dirStr);
@@ -351,11 +347,8 @@ public class ConsoleInputManager : BasicActivateItems
                 : dir.GetFiles(searchPattern).ToArray();
         }
 
-        return new[]{ new FileInfo(file) };
-
         return new[] { new FileInfo(file) };
     }
-
 
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
@@ -366,7 +359,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
-        var result = GetString(args, new List<string> { "Yes","No","Cancel"});
+        var result = GetString(args, new List<string> { "Yes", "No", "Cancel" });
         chosen = result == "Yes";
         //user made a non-cancel decision?
         return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
@@ -400,14 +393,14 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
-        foreach(var load in GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
+        foreach (var load in GetLogs(rootObject).OrderByDescending(l => l.StartTime))
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
 
             Console.WriteLine($"Errors:{load.Errors.Count}");
 
-            foreach(var error in load.Errors)
+            foreach (var error in load.Errors)
             {
                 error.GetSummary(out var title, out var body, out _, out _);
 
@@ -421,16 +414,13 @@ public class ConsoleInputManager : BasicActivateItems
             {
                 Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
 
-                foreach(var source in t.DataSources)
+                foreach (var source in t.DataSources)
                     Console.WriteLine($"\t\tSource:{source.Source}");
             }
 
             Console.WriteLine("Progress:");
 
-            foreach(var p in load.Progress)
-            {
-                Console.WriteLine($"\t{p.Date} {p.Description}");
-            }
+            foreach (var p in load.Progress) Console.WriteLine($"\t{p.Date} {p.Description}");
         }
     }
 

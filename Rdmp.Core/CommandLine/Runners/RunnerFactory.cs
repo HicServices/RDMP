@@ -15,22 +15,21 @@ namespace Rdmp.Core.CommandLine.Runners;
 /// </summary>
 public class RunnerFactory
 {
-    public static IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
+    public static IRunner CreateRunner(IBasicActivateItems activator, RDMPCommandLineOptions command)
     {
         return command.Command == CommandLineActivity.none
             ? throw new Exception($"No command has been set on '{command.GetType().Name}'")
             : command switch
-        {
-            DleOptions dleOpts => new DleRunner(dleOpts),
-            DqeOptions dqeOpts => new DqeRunner(dqeOpts),
-            CacheOptions cacheOpts => new CacheRunner(cacheOpts),
-            ExtractionOptions extractionOpts => new ExtractionRunner(activator, extractionOpts),
-            ReleaseOptions releaseOpts => new ReleaseRunner(releaseOpts),
-            CohortCreationOptions cohortOpts => new CohortCreationRunner(cohortOpts),
-            PackOptions packOpts => new PackPluginRunner(packOpts),
-            ExecuteCommandOptions executeOpts => new ExecuteCommandRunner(executeOpts),
-            _ => throw new Exception($"RDMPCommandLineOptions Type '{command.GetType()}'")
-        };
+            {
+                DleOptions dleOpts => new DleRunner(dleOpts),
+                DqeOptions dqeOpts => new DqeRunner(dqeOpts),
+                CacheOptions cacheOpts => new CacheRunner(cacheOpts),
+                ExtractionOptions extractionOpts => new ExtractionRunner(activator, extractionOpts),
+                ReleaseOptions releaseOpts => new ReleaseRunner(releaseOpts),
+                CohortCreationOptions cohortOpts => new CohortCreationRunner(cohortOpts),
+                PackOptions packOpts => new PackPluginRunner(packOpts),
+                ExecuteCommandOptions executeOpts => new ExecuteCommandRunner(executeOpts),
+                _ => throw new Exception($"RDMPCommandLineOptions Type '{command.GetType()}'")
+            };
     }
-
 }

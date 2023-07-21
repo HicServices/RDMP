@@ -76,8 +76,12 @@ public class CohortDefinition : ICohortDefinition
 
         try
         {
-            var foundSimilar = ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
-                .Any(t => t.Description.Equals(Description) && t.Version.Equals(Version)); //and description (it might have a different ID but it is still against the rules)
+            var foundSimilar = ExtractableCohort
+                .GetImportableCohortDefinitions(
+                    (ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
+                .Any(t => t.Description.Equals(Description) &&
+                          t.Version.Equals(
+                              Version)); //and description (it might have a different ID but it is still against the rules)
             if (foundSimilar)
             {
                 matchDescription =

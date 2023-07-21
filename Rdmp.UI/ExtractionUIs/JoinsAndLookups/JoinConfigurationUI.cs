@@ -76,9 +76,10 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         _leftTableInfo = databaseObject;
         tbLeftTableInfo.Text = _leftTableInfo.ToString();
 
-        btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add).ImageToBitmap();
+        btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add)
+            .ImageToBitmap();
         UpdateValidityAssessment();
-            
+
         olvLeftColumns.ClearObjects();
         olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos);
 
@@ -140,11 +141,12 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
                 throw new Exception(
                     "You must specify at least one pair of keys to join on, do this by dragging columns out of the collection into the key boxes");
 
-            if(
+            if (
                 pk2.SelectedColumn == null != (fk2.SelectedColumn == null)
                 ||
                 pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
-                throw new Exception("You must have the same number of primary and foreign keys (they must come in pairs)");
+                throw new Exception(
+                    "You must have the same number of primary and foreign keys (they must come in pairs)");
 
             if (pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))
                 throw new Exception("All Primary Keys must come from the Left hand TableInfo");
@@ -245,16 +247,17 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         return e.Data is not OLVDataObject data || data.ModelObjects.Count != 1
             ? null
             : data.ModelObjects[0] switch
-        {
-            TableInfo ti => ti,
-            TableInfoCombineable ticmd => ticmd.TableInfo,
-            _ => null
-        };
+            {
+                TableInfo ti => ti,
+                TableInfoCombineable ticmd => ticmd.TableInfo,
+                _ => null
+            };
     }
 
     private void tbCollation_Leave(object sender, EventArgs e)
     {
-        if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
+        if (tbCollation.Text != null &&
+            tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
             tbCollation.Text = tbCollation.Text["collate".Length..].Trim();
     }
 
@@ -262,8 +265,8 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         var olv = (ObjectListView)sender;
 
-        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
+        if (olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
     }
 }
 

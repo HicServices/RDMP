@@ -79,6 +79,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
     private static readonly XmlSerializer Serializer = new(typeof(List<PermissionWindowPeriod>));
+
     private string SerializePermissionWindowPeriods()
     {
         using var output = new StringWriter();
@@ -93,9 +94,8 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
             PermissionWindowPeriods = new List<PermissionWindowPeriod>();
         }
         else
-        {
-            PermissionWindowPeriods = Serializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
-        }
+            PermissionWindowPeriods =
+                Serializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
     }
 
     /// <inheritdoc/>
@@ -104,7 +104,8 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// <inheritdoc/>
     public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
     {
-        return !PermissionWindowPeriods.Any() || PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
+        return !PermissionWindowPeriods.Any() ||
+               PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
     }
 
     public PermissionWindow()
@@ -134,10 +135,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
-    }
+    public override string ToString() => $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
 
     /// <inheritdoc/>
     public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)

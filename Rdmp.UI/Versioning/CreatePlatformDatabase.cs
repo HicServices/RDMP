@@ -87,8 +87,7 @@ public partial class CreatePlatformDatabase : Form
         var executor = new MasterDatabaseScriptExecutor(db);
 
         if (preview.ShowDialog() == DialogResult.OK)
-        {
-            _tCreateDatabase = Task.Run(()=>
+            _tCreateDatabase = Task.Run(() =>
 
                 {
                     var memory = new ToMemoryCheckNotifier(checksUI1);
@@ -114,7 +113,6 @@ public partial class CreatePlatformDatabase : Form
     }
 
 
-
     private bool silentlyApplyPatchCallback(Patch p)
     {
         checksUI1.OnCheckPerformed(new CheckEventArgs($"About to apply patch {p.locationInAssembly}",
@@ -126,14 +124,16 @@ public partial class CreatePlatformDatabase : Form
     {
         if (_tCreateDatabase != null)
             if (!_tCreateDatabase.IsCompleted && !_programaticClose)
-            {
-                if(
-                    MessageBox.Show("CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.","Really Close?",MessageBoxButtons.YesNoCancel)
+                if (
+                    MessageBox.Show(
+                        "CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.",
+                        "Really Close?", MessageBoxButtons.YesNoCancel)
                     != DialogResult.Yes)
                     e.Cancel = true;
     }
 
-    public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, IPatcher patcher)
+    public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,
+        PermissableDefaults defaultToSet, IPatcher patcher)
     {
         var createPlatform = new CreatePlatformDatabase(patcher);
         createPlatform.ShowDialog();
@@ -145,7 +145,7 @@ public partial class CreatePlatformDatabase : Form
             var newServer = new ExternalDatabaseServer(repository, db.GetRuntimeName(), patcher);
             newServer.SetProperties(db);
 
-            if(defaultToSet != PermissableDefaults.None)
+            if (defaultToSet != PermissableDefaults.None)
                 repository.SetDefault(defaultToSet, newServer);
 
             return newServer;

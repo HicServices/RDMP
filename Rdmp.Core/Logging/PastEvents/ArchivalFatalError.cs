@@ -34,7 +34,9 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
     public string ToShortString()
     {
         var s = ToString();
-        return s.Length > ArchivalDataLoadInfo.MaxDescriptionLength ? $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}..." : s;
+        return s.Length > ArchivalDataLoadInfo.MaxDescriptionLength
+            ? $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}..."
+            : s;
     }
 
     public override string ToString() =>

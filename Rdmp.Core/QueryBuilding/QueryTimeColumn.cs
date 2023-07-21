@@ -75,10 +75,7 @@ public class QueryTimeColumn : IComparable
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        return IColumn == null ? -1 : IColumn.ID;
-    }
+    public override int GetHashCode() => IColumn == null ? -1 : IColumn.ID;
 
     /// <inheritdoc/>
     public override bool Equals(object obj)
@@ -92,13 +89,11 @@ public class QueryTimeColumn : IComparable
     }
 
     /// <inheritdoc/>
-    public int CompareTo(object obj)
-    {
-        return obj is QueryTimeColumn
+    public int CompareTo(object obj) =>
+        obj is QueryTimeColumn
             ? IColumn.Order -
-                   (obj as QueryTimeColumn).IColumn.Order
+              (obj as QueryTimeColumn).IColumn.Order
             : 0;
-    }
 
     /// <summary>
     /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the
@@ -183,12 +178,13 @@ public class QueryTimeColumn : IComparable
 
                     //either way the last seen fk (or guessed fk) isn't right.  So what fks could potentially be used with the Column?
                     var probableCorrectColumn = lookupDescriptionInvolvement.Where(
-                        l =>
-                            //any lookup where there is...
-                            ColumnsInOrder.Any(
-                                qtc =>
-                                    //a column with an ID equal to the fk
-                                    qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID)).ToArray();
+                            l =>
+                                //any lookup where there is...
+                                ColumnsInOrder.Any(
+                                    qtc =>
+                                        //a column with an ID equal to the fk
+                                        qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID))
+                        .ToArray();
 
 
                     var suggestions = "";

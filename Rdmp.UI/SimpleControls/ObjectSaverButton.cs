@@ -30,7 +30,7 @@ public partial class ObjectSaverButton
     private Bitmap _undoImage;
     private Bitmap _redoImage;
 
-    private ToolStripButton btnSave  = new("Save",FamFamFamIcons.disk.ImageToBitmap());
+    private ToolStripButton btnSave = new("Save", FamFamFamIcons.disk.ImageToBitmap());
     private ToolStripButton btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
 
     private RevertableObjectReport _undoneChanges;
@@ -64,8 +64,10 @@ public partial class ObjectSaverButton
     {
         control.CommonFunctionality.Add(btnSave);
         control.CommonFunctionality.Add(btnUndoRedo);
-            
-        var f = (control as Form ?? ((Control)control).FindForm()) ?? throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
+
+        var f = (control as Form ?? ((Control)control).FindForm()) ??
+                throw new NotSupportedException(
+                    "Cannot call SetupFor before the control has been added to its parent form");
         _parent = control;
 
         Enable(false);
@@ -123,10 +125,11 @@ public partial class ObjectSaverButton
 
     public void Save()
     {
-        if(_o == null)
-            throw new Exception("Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+        if (_o == null)
+            throw new Exception(
+                "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
 
-        if(BeforeSave != null)
+        if (BeforeSave != null)
             if (!BeforeSave(_o))
                 return;
 
@@ -143,7 +146,6 @@ public partial class ObjectSaverButton
     {
         Save();
     }
-
 
 
     private void btnUndoRedo_Click(object sender, EventArgs e)

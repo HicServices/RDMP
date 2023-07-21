@@ -27,7 +27,7 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         using var con = server.GetConnection();
         con.Open();
 
-        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable",con);
+        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable", con);
         cmdTruncate.ExecuteNonQuery();
 
         con.Close();
@@ -50,6 +50,8 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
         var token = new GracefulCancellationToken();
 
+        if (allowEmptyDatasetExtractions)
+        {
             var dt = host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token);
             Assert.IsNull(host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
@@ -58,7 +60,8 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         }
         else
         {
-            var exception = Assert.Throws<Exception>(() => host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
+            var exception = Assert.Throws<Exception>(() =>
+                host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
             Assert.IsTrue(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
         }

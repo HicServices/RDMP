@@ -20,7 +20,6 @@ public abstract class CommandFactoryBase
     public static bool Is<T>(object o, out T match)
     {
         while (true)
-        {
             switch (o)
             {
                 case T o1:
@@ -33,6 +32,5 @@ public abstract class CommandFactoryBase
                     match = default;
                     return false;
             }
-        }
     }
 }

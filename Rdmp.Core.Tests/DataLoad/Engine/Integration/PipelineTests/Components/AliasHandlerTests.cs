@@ -67,7 +67,6 @@ public class AliasHandlerTests : DatabaseTests
     }
 
 
-
     [Test]
     public void ThrowBecause_ColumnNotInInputDataTable()
     {
@@ -75,7 +74,9 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("cannonballer"); //not the same as the expected input column name
         dt.Rows.Add(new object[] { "yes" });
 
-        var ex = Assert.Throws<KeyNotFoundException>(()=>_handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        var ex = Assert.Throws<KeyNotFoundException>(() =>
+            _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+                new GracefulCancellationToken()));
 
         Assert.AreEqual(
             "You asked to resolve aliases on a column called 'input' but no column by that name appeared in the DataTable being processed.  Columns in that table were:cannonballer",
@@ -96,7 +97,9 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Rows.Add(new object[] { "candle" });
 
-        var ex =  Assert.Throws<AliasTableFetchException>(()=>_handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        var ex = Assert.Throws<AliasTableFetchException>(() =>
+            _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+                new GracefulCancellationToken()));
         Assert.IsTrue(ex.Message.StartsWith("Alias table SQL should only return aliases not exact matches"));
     }
 
@@ -117,7 +120,9 @@ public class AliasHandlerTests : DatabaseTests
         dt.Rows.Add(new object[] { "dave", 100 });
         dt.Rows.Add(new object[] { "frank", 100 });
 
-        var ex = Assert.Throws<AliasTableFetchException>(() => _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        var ex = Assert.Throws<AliasTableFetchException>(() =>
+            _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+                new GracefulCancellationToken()));
 
         Assert.IsTrue(ex.Message.Contains("Alias table SQL resulted in 3 fields being returned"));
     }
@@ -132,7 +137,8 @@ public class AliasHandlerTests : DatabaseTests
         dt.Rows.Add(new object[] { "dave", 100 });
         dt.Rows.Add(new object[] { "frank", 100 });
 
-        var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+            new GracefulCancellationToken());
 
         Assert.AreEqual(2, result.Rows.Count);
     }
@@ -144,8 +150,10 @@ public class AliasHandlerTests : DatabaseTests
         var dt = new DataTable();
         dt.Columns.Add("input");
 
-        dt.Rows.Add(new object[] { "paul"});
-        Assert.Throws<AliasException>(()=> _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        dt.Rows.Add(new object[] { "paul" });
+        Assert.Throws<AliasException>(() =>
+            _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+                new GracefulCancellationToken()));
     }
 
 
@@ -163,7 +171,8 @@ public class AliasHandlerTests : DatabaseTests
         dt.Rows.Add(new object[] { 199, "frank", 200 });
         dt.Rows.Add(new object[] { 299, "freddie", 300 }); //has a two name alias
 
-        var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+            new GracefulCancellationToken());
 
         Assert.AreEqual(4, result.Rows.Count);
 
@@ -191,7 +200,8 @@ public class AliasHandlerTests : DatabaseTests
         dt.Rows.Add(new object[] { 199, "frank", 200 });
         dt.Rows.Add(new object[] { 299, "anderson", 300 });
 
-        var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+            new GracefulCancellationToken());
 
         Assert.AreEqual(5, result.Rows.Count);
 

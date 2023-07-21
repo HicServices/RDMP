@@ -121,7 +121,8 @@ public partial class DatabaseTests
         ImplementationManager.Load<PostgreSqlImplementation>();
 
         // Always ignore SSL when running tests
-        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
+        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate",
+            "true", ConnectionStringKeywordPriority.ApiRule);
 
         ReadSettingsFile();
     }
@@ -145,7 +146,6 @@ public partial class DatabaseTests
 
     public DatabaseTests()
     {
-
         var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
@@ -155,12 +155,12 @@ public partial class DatabaseTests
             ValidateCertificate = false
         };
 
-        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ?
-            new RepositoryProvider(GetFreshYamlRepository()) :
-            new PlatformDatabaseCreationRepositoryFinder(opts);
+        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo
+            ? new RepositoryProvider(GetFreshYamlRepository())
+            : new PlatformDatabaseCreationRepositoryFinder(opts);
 
         // TODO: JS 2023-06-21 Temporary workaround for FAnsi not catching OperationCanceledException
-        var missing=true;
+        var missing = true;
         try
         {
             missing = CatalogueRepository is TableRepository cataRepo && !cataRepo.DiscoveredServer.Exists();
@@ -169,16 +169,12 @@ public partial class DatabaseTests
         {
             Console.WriteLine(e);
         }
-        if (missing)
-        {
-            DealWithMissingTestDatabases(opts, CatalogueRepository as TableRepository);
-        }
+
+        if (missing) DealWithMissingTestDatabases(opts, CatalogueRepository as TableRepository);
 
         if (DataExportRepository is TableRepository tblRepo)
-        {
             Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
                 "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that server name and prefix in TestDatabases.txt match those you provide e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
-        }
 
         RunBlitzDatabases(RepositoryLocator);
 
@@ -208,7 +204,7 @@ public partial class DatabaseTests
                 if (k is "server" or "database" or "user id" or "password")
                     continue;
 
-                _=new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
+                _ = new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
             }
 
             _discoveredMySqlServer = new DiscoveredServer(builder);
@@ -235,10 +231,10 @@ public partial class DatabaseTests
             // TODO: JS 2023-06-21 Temporary workaround for FAnsi not catching OperationCanceledException in TestConnection
             Console.WriteLine(e);
         }
+
         if (HaveTriedCreatingTestDatabases || !exists)
-        {
-            Assert.Inconclusive("Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
-        }
+            Assert.Inconclusive(
+                "Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
 
         // if user is trying to connect to a test database
         // and that server exists (but TEST_ databases don't)
@@ -398,7 +394,7 @@ public partial class DatabaseTests
         DeleteAll<PipelineComponent>(y);
 
         DeleteAll<LoadModuleAssembly>(y);
-        DeleteAll<Rdmp.Core.Curation.Data.Plugin>(y);
+        DeleteAll<Plugin>(y);
 
         DeleteAll<ReleaseLog>(y);
         DeleteAll<SupplementalExtractionResults>(y);
@@ -474,10 +470,11 @@ public partial class DatabaseTests
             }
     }
 
-        private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
-        {
-            if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
-                Assert.Fail(args.SummariseAsString());
+    private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
+    {
+        if (args.Exception != null && args.Status != RDMPPlatformDatabaseStatus.Healthy &&
+            args.Status != RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+            Assert.Fail(args.SummariseAsString());
 
         switch (args.Status)
         {
@@ -500,7 +497,9 @@ public partial class DatabaseTests
 
     private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
     {
-        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
+        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}",
+            args.Status, args.Type.Name, Environment.NewLine,
+            args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
 
 
@@ -681,11 +680,9 @@ delete from {1}..Project
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
-    protected static string CollapseWhitespace(string sql)
-    {
+    protected static string CollapseWhitespace(string sql) =>
         //replace all whitespace with single spaces
-        return Spaces().Replace(sql, " ").Trim();
-    }
+        Spaces().Replace(sql, " ").Trim();
 
     private HashSet<DiscoveredDatabase> forCleanup = new();
 
@@ -775,7 +772,6 @@ delete from {1}..Project
             using var con = database.Server.GetConnection();
             con.Open();
             foreach (var t in database.DiscoverTables(false))
-            {
                 //disable system versioning on any temporal tables otherwise drop fails
                 try
                 {
@@ -788,7 +784,6 @@ delete from {1}..Project
                     TestContext.Out.WriteLine(
                         $"Failed to generate disable System Versioning check for table {t} (never mind)");
                 }
-            }
         }
 
         var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
@@ -796,7 +791,6 @@ delete from {1}..Project
         foreach (var t in tables.Order.Reverse())
             try
             {
-
                 t.Drop();
             }
             catch (Exception ex)
@@ -807,7 +801,6 @@ delete from {1}..Project
         foreach (var t in database.DiscoverTableValuedFunctions())
             try
             {
-
                 t.Drop();
             }
             catch (Exception ex)
@@ -831,10 +824,8 @@ delete from {1}..Project
 
     protected ICatalogue Import(DiscoveredTable tbl) => Import(tbl, out _, out _, out _, out _);
 
-    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
-    {
-        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out _, out _);
-    }
+    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,
+        out ColumnInfo[] columnInfosCreated) => Import(tbl, out tableInfoCreated, out columnInfosCreated, out _, out _);
 
     protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
@@ -873,7 +864,8 @@ delete from {1}..Project
 
         //they are not null so tostring them deals with int vs long etc that DbDataAdapters can be a bit flaky on
         return handleSlashRSlashN
-            ? string.Equals(o.ToString().Replace("\r","").Replace("\n",""), o2.ToString().Replace("\r","").Replace("\n",""))
+            ? string.Equals(o.ToString().Replace("\r", "").Replace("\n", ""),
+                o2.ToString().Replace("\r", "").Replace("\n", ""))
             : string.Equals(o.ToString(), o2.ToString());
     }
 
@@ -929,7 +921,6 @@ delete from {1}..Project
             var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
             credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
         }
-
     }
 
 

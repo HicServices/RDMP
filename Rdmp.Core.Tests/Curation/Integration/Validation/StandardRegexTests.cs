@@ -36,7 +36,7 @@ public class StandardRegexTests : DatabaseTests
                 CatalogueStandardRegex = regex
             };
 
-            Assert.IsNull(constraint.Validate("Fish",null,null));
+            Assert.IsNull(constraint.Validate("Fish", null, null));
             var failure = constraint.Validate("FishFingers", null, null);
             Assert.IsNotNull(failure);
         }

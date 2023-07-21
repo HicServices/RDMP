@@ -54,7 +54,6 @@ public class ItemValidatorTest
         Assert.IsNotNull(result);
         Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
         Assert.IsTrue(result.Message.Contains(nameof(DateTime)));
-            
     }
 
     [Test]
@@ -83,7 +82,4 @@ public class ItemValidatorTest
 
         Assert.AreEqual("CHI check digit did not match", result.Message);
     }
-
-
-
 }

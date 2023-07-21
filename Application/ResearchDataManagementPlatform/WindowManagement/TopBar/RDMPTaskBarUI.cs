@@ -34,16 +34,19 @@ public partial class RDMPTaskBarUI : UserControl
 
         btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
-        btnCatalogues.BackgroundImage = BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
+        btnCatalogues.BackgroundImage =
+            BackColorProvider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
 
         btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
         btnCohorts.BackgroundImage = BackColorProvider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
 
         btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode.ImageToBitmap();
-        btnSavedCohorts.BackgroundImage = BackColorProvider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
+        btnSavedCohorts.BackgroundImage =
+            BackColorProvider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
 
         btnDataExport.Image = CatalogueIcons.Project.ImageToBitmap();
-        btnDataExport.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
+        btnDataExport.BackgroundImage =
+            BackColorProvider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
 
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
         btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
@@ -81,7 +84,6 @@ public partial class RDMPTaskBarUI : UserControl
             cbCommits.Enabled = false;
             cbCommits.Text = "Repository does not support commits";
         }
-
     }
 
     /// <summary>
@@ -258,7 +260,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void btnSaveWindowLayout_Click(object sender, EventArgs e)
     {
-        if(cbxLayouts.SelectedItem is WindowLayout layout)
+        if (cbxLayouts.SelectedItem is WindowLayout layout)
         {
             var xml = _manager.MainForm.GetCurrentLayoutXml();
 

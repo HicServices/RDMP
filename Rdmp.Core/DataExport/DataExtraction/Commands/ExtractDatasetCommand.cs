@@ -47,9 +47,9 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     public IDataExportRepository DataExportRepository { get; set; }
 
-    public List<IColumn> ColumnsToExtract{get;set;}
-    public IHICProjectSalt Salt{get;set;}
-    public bool IncludeValidation {get;set;}
+    public List<IColumn> ColumnsToExtract { get; set; }
+    public IHICProjectSalt Salt { get; set; }
+    public bool IncludeValidation { get; set; }
 
     public IExtractionDirectory Directory { get; set; }
     public ICatalogue Catalogue { get; private set; }
@@ -84,7 +84,6 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         IncludeValidation = includeValidation;
         TopX = -1;
     }
-
 
 
     /// <summary>
@@ -147,31 +146,25 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     public void GenerateQueryBuilder()
     {
         var host = new ExtractionQueryBuilder(DataExportRepository);
-        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this,out var substitutions);
+        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, out var substitutions);
         ReleaseIdentifierSubstitutions = substitutions;
     }
 
-    public override string ToString()
-    {
-        return this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();
-    }
+    public override string ToString() => this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();
 
-    public override DirectoryInfo GetExtractionDirectory()
-    {
-        return this == EmptyCommand ? new DirectoryInfo(Path.GetTempPath()) : Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
-    }
+    public override DirectoryInfo GetExtractionDirectory() => this == EmptyCommand
+        ? new DirectoryInfo(Path.GetTempPath())
+        : Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
 
     public override string DescribeExtractionImplementation() => QueryBuilder.SQL;
 
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
-        IDataAccessPoint[] points;
-
-        if (QueryBuilder?.TablesUsedInQuery != null)
-            points = QueryBuilder.TablesUsedInQuery.ToArray(); //get it from the request if it has been built
-        else
-            points = Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
+        IDataAccessPoint[] points = QueryBuilder?.TablesUsedInQuery != null
+            ? QueryBuilder.TablesUsedInQuery.ToArray()
+            : //get it from the request if it has been built
+            Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
 
         var singleServer = new DataAccessPointCollection(true, DataAccessContext.DataExport);
         singleServer.AddRange(points);

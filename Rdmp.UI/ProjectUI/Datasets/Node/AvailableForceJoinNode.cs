@@ -44,7 +44,8 @@ internal class AvailableForceJoinNode : IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((AvailableForceJoinNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((AvailableForceJoinNode)obj);
     }
 
     public override int GetHashCode() => TableInfo.GetHashCode();
@@ -65,9 +66,9 @@ internal class AvailableForceJoinNode : IMasqueradeAs
 
         foreach (var theirCols in otherNodes.Where(otherNode => !Equals(otherNode, this))
                      .Select(otherNode => coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray()))
-        {
-            foundJoinInfos.AddRange(TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols, theirCols));
-        }
+            foundJoinInfos.AddRange(
+                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
+                    theirCols));
 
         JoinInfos = foundJoinInfos.ToArray();
     }

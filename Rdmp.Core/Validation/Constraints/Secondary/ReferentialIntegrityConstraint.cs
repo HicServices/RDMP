@@ -143,7 +143,6 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     }
 
 
-
     public void Check(ICheckNotifier checker)
     {
         if (OtherColumnInfo == null)
@@ -204,8 +203,9 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     /// </summary>
     private void GetUniqueValues()
     {
-        if(OtherColumnInfo == null)
-            throw new NotSupportedException("No ColumnInfo has been selected yet! unable to populate constraint HashSet");
+        if (OtherColumnInfo == null)
+            throw new NotSupportedException(
+                "No ColumnInfo has been selected yet! unable to populate constraint HashSet");
 
 
         //Get the values off the server
@@ -226,10 +226,10 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             while (reader.Read())
             {
                 var obj = reader[runtimeName];
-                if(obj != null && obj != DBNull.Value)
+                if (obj != null && obj != DBNull.Value)
                 {
                     var strValue = obj.ToString();
-                    if(!string.IsNullOrWhiteSpace(strValue))
+                    if (!string.IsNullOrWhiteSpace(strValue))
                         _uniqueValues.Add(strValue);
                 }
             }
@@ -237,7 +237,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         catch (Exception e)
         {
             throw new Exception(
-                $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",e);
+                $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",
+                e);
         }
     }
 

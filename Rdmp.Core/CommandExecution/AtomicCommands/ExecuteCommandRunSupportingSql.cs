@@ -47,7 +47,8 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         // windows GUI client needs to confirm dangerous queries (don't want misclicks to do bad things)
         if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
             BasicActivator.IsWinForms &&
-            RiskySqlRegex().IsMatch(SupportingSQLTable.SQL) && !BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
+            RiskySqlRegex().IsMatch(SupportingSQLTable.SQL) &&
+            !BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
             return null;
         return new ViewSupportingSqlCollection(SupportingSQLTable);
     }

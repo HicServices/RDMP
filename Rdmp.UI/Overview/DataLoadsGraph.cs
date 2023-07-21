@@ -141,7 +141,8 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             throw;
                         }
 
-                        var archivalDataLoadInfo = logManager.GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
+                        var archivalDataLoadInfo = logManager
+                            .GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
 
                         var loadSummary = new DataLoadsGraphResult
                         {
@@ -160,7 +161,8 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             continue; //has never been run (or has had test runs only)
                         }
 
-                        var lastLoadWasError = archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
+                        var lastLoadWasError =
+                            archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
 
                         //while we were fetching data from database the form was closed
                         if (IsDisposed || !IsHandleCreated)
@@ -184,10 +186,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     catch (Exception e)
                     {
                         ragSmiley1.Fatal(e);
-                        Invoke(new MethodInvoker(() =>
-                        {
-                            pbLoading.Visible = false;
-                        }));
+                        Invoke(new MethodInvoker(() => { pbLoading.Visible = false; }));
                     }
 
 
@@ -250,10 +249,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
             catch (Exception e)
             {
                 ragSmiley1.Fatal(e);
-                Invoke(new MethodInvoker(() =>
-                {
-                    pbLoading.Visible = false;
-                }));
+                Invoke(new MethodInvoker(() => { pbLoading.Visible = false; }));
             }
         });
         //t.SetApartmentState(ApartmentState.STA);

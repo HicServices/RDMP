@@ -153,8 +153,9 @@ public class FlatFileToDataTablePusher
 
                 try
                 {
-                    if (hackedValue is string s && typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType,out var typer))
-                        hackedValue = typer.Parse(s);
+                    if (hackedValue is string s &&
+                        typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType, out var decider))
+                        hackedValue = decider.Parse(s);
 
                     rowValues.Add(_headers[i], hackedValue);
                 }
@@ -179,7 +180,8 @@ public class FlatFileToDataTablePusher
         return 0;
     }
 
-    private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush, IDataLoadEventListener listener,FlatFileEventHandlers eventHandlers)
+    private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush,
+        IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
     {
         if (!_attemptToResolveNewlinesInRecords)
         {
@@ -241,7 +243,6 @@ public class FlatFileToDataTablePusher
 
             //add any further cells on after that
             newCells.AddRange(peekedLine.Cells.Skip(1));
-
         } while (newCells.Count < _headers.Length);
 
 
@@ -261,7 +262,6 @@ public class FlatFileToDataTablePusher
         //problem was fixed
         return true;
     }
-
 
 
     public DataTable StronglyTypeTable(DataTable workingTable, ExplicitTypingCollection explicitTypingCollection)
@@ -304,11 +304,8 @@ public class FlatFileToDataTablePusher
         if (typeChangeNeeded)
         {
             foreach (DataRow row in workingTable.Rows)
-                dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
-
-                    deciders.TryGetValue(idx,out var typer) && v is string s?
-                        typer.Parse(s) :
-                        v).ToArray());
+                dtCloned.Rows.Add(row.ItemArray.Select((v, idx) =>
+                    deciders.TryGetValue(idx, out var decider) && v is string s ? decider.Parse(s) : v).ToArray());
 
             return dtCloned;
         }

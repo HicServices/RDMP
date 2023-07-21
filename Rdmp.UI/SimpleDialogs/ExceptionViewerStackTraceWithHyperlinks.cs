@@ -93,12 +93,10 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
         for (var i = 0; i < lines.Length; i++)
         {
-
-
             //Any other things you want to not be a hyperlink because they give no useful context to the error can be added here and they will not appear as hyperlinks
             var lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
 
-            MatchStackLine(lines[i],out var filenameMatch,out var lineNumberMatch);
+            MatchStackLine(lines[i], out var filenameMatch, out var lineNumberMatch);
 
             if (!(lineNumberMatch.Success || filenameMatch.Success) || lineIsMessageConstructor)
             {
@@ -148,14 +146,12 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         Clipboard.SetText(_s);
     }
 
-    public static bool IsSourceCodeAvailable(Exception exception)
-    {
-        return exception != null  //exception exists
-               &&
-               !string.IsNullOrWhiteSpace(exception.StackTrace)  //and has a stack trace
-               &&
-               SourceCodeAvailable.IsMatch(exception.StackTrace); //and stack trace contains line numbers
-    }
+    public static bool IsSourceCodeAvailable(Exception exception) =>
+        exception != null //exception exists
+        &&
+        !string.IsNullOrWhiteSpace(exception.StackTrace) //and has a stack trace
+        &&
+        SourceCodeAvailable.IsMatch(exception.StackTrace); //and stack trace contains line numbers
 
 
     private static void OpenVisualStudio(string filename, int lineNumber)
@@ -164,7 +160,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         {
             Clipboard.SetText($"{Path.GetFileName(filename)}:{lineNumber}");
 
-            var viewer = new ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
+            var viewer = new ViewSourceCodeDialog(filename, lineNumber, Color.LawnGreen);
             viewer.ShowDialog();
         }
         catch (FileNotFoundException)
@@ -175,7 +171,6 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         {
             ExceptionViewer.Show(ex);
         }
-
     }
 
     private void button1_Click(object sender, EventArgs e)

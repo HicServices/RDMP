@@ -81,20 +81,21 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         base.Execute();
 
         //create new relationship in database between the cic and project
-        _=new ProjectCohortIdentificationConfigurationAssociation(BasicActivator.RepositoryLocator.DataExportRepository,_project, _cic);
+        _ = new ProjectCohortIdentificationConfigurationAssociation(
+            BasicActivator.RepositoryLocator.DataExportRepository, _project, _cic);
 
         Publish(_project);
         Publish(_cic);
         Emphasise(_cic);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         //if we know the cic the context is 'pick a project'
-        return _cic != null ? iconProvider.GetImage(RDMPConcept.Project,OverlayKind.Add) :
+        _cic != null
+            ? iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add)
+            :
             //if we know the _project the context is 'pick a cic'  (or if we don't know either then just use this icon too)
             iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
-    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -109,7 +110,8 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
                 break;
         }
 
-        if (_project != null && _cic != null && _project.GetAssociatedCohortIdentificationConfigurations().Contains(_cic))
+        if (_project != null && _cic != null &&
+            _project.GetAssociatedCohortIdentificationConfigurations().Contains(_cic))
             SetImpossible("Cohort Identification Configuration is already associated with this Project");
 
         return this;

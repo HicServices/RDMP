@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 internal class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
 {
-    public CommandInvokerFixedValueDelegate(Type type,object o):base(type,false,p=>o)
+    public CommandInvokerFixedValueDelegate(Type type, object o) : base(type, false, p => o)
     {
     }
 

@@ -65,12 +65,10 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-
     }
 
     public override void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public override TestDataWriterChunk TryGetPreview()

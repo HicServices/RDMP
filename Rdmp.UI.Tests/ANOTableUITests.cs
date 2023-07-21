@@ -49,6 +49,4 @@ internal class ANOTableUITests : UITests
 
         anoTable.DeleteInDatabase();
     }
-
-
 }

@@ -42,8 +42,5 @@ public class ExtractableCohortCombineable : ICombineToMakeCommand
         CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
     }
 
-    public string GetSqlString()
-    {
-        return Cohort.WhereSQL();
-    }
+    public string GetSqlString() => Cohort.WhereSQL();
 }

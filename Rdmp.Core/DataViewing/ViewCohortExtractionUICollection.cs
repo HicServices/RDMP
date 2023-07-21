@@ -22,7 +22,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 {
     public int Top
     {
-        get => _arguments.TryGetValue(TopKey,out var t) ? int.Parse(t) : 100;
+        get => _arguments.TryGetValue(TopKey, out var t) ? int.Parse(t) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
 
@@ -49,10 +49,8 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         DatabaseObjects.Add(cohort);
     }
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(_arguments);
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(_arguments);
+
     public override void LoadExtraText(string s)
     {
         _arguments = PersistStringHelper.LoadDictionaryFromString(s);

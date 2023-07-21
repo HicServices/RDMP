@@ -77,11 +77,11 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         using var r = cohortDatabase.Server.GetCommand(sql, con).ExecuteReader();
         while (r.Read())
         {
-            if(toReturn.TryGetValue(r[priv],out var oldValue))
+            if (toReturn.TryGetValue(r[priv], out var oldValue))
                 throw new Exception(
                     $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", oldValue, r[rel])}");
 
-            toReturn.Add(r[priv],r[rel]);
+            toReturn.Add(r[priv], r[rel]);
         }
 
         return toReturn;

@@ -47,8 +47,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
 
-    [JsonIgnore]
-    public List<IDilutionOperation>  DilutionOperations { get; private set; }
+    [JsonIgnore] public List<IDilutionOperation> DilutionOperations { get; private set; }
 
     public ITableInfo[] TableInfos { get; private set; }
 
@@ -57,8 +56,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     public ColumnInfo DateColumn { get; set; }
     public DateTime? StartDate { get; set; }
 
-    [JsonIgnore]
-    public HashSet<ITableInfo> SkippedTables = new();
+    [JsonIgnore] public HashSet<ITableInfo> SkippedTables = new();
     private ICatalogue _catalogue;
 
     /// <summary>
@@ -84,14 +82,12 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             plan.SetToRecommendedPlan();
     }
 
-    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
-    {
-        return !Plans.ContainsKey(col) ? throw new Exception($"No plan found for column {col}") : Plans[col];
-    }
+    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col) => !Plans.ContainsKey(col)
+        ? throw new Exception($"No plan found for column {col}")
+        : Plans[col];
 
     public IExternalDatabaseServer GetIdentifierDumpServer() =>
         Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
-
 
 
     public void Check(ICheckNotifier notifier)
@@ -126,14 +122,13 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
                 foreach (var c in new[] { lookup.ForeignKey, lookup.PrimaryKey, lookup.Description })
                 {
                     //lookup / table has already been migrated
-                    if(SkippedTables.Any(t=>t.ID == c.TableInfo_ID))
+                    if (SkippedTables.Any(t => t.ID == c.TableInfo_ID))
                         continue;
 
                     //make sure that the plan is sensible
                     if (GetPlanForColumnInfo(c).Plan != Plan.PassThroughUnchanged)
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"ColumnInfo '{c}' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
-
                 }
             }
         }
@@ -189,7 +184,8 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
             if (!pks.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised", CheckResult.Fail));
+                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised",
+                    CheckResult.Fail));
 
             if (tableInfo.IsTableValuedFunction)
                 notifier.OnCheckPerformed(new CheckEventArgs(

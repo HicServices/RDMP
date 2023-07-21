@@ -55,7 +55,9 @@ public class PipelineUser : IPipelineUser
         //otherwise get it from the user
         if (_catalogueRepository == null)
         {
-            _catalogueRepository = User.Repository as ICatalogueRepository ?? throw new Exception("User does not have a Repository! how can it be a DatabaseEntity!");
+            _catalogueRepository = User.Repository as ICatalogueRepository ??
+                                   throw new Exception(
+                                       "User does not have a Repository! how can it be a DatabaseEntity!");
 
             if (User.Repository is IDataExportRepository dataExportRepo)
                 _catalogueRepository = dataExportRepo.CatalogueRepository;
@@ -63,7 +65,6 @@ public class PipelineUser : IPipelineUser
             if (_catalogueRepository == null)
                 throw new Exception(
                     $"Repository of Host '{User}' was not an ICatalogueRepository or a IDataExportRepository.  user came from a Repository called '{user.Repository.GetType().Name}' in this case you will need to specify the ICatalogueRepository property to this method so we know where to fetch Pipelines from");
-
         }
 
         Getter = Get;

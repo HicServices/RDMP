@@ -13,7 +13,7 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCatalogueItem:RDMPCommandExecutionProposal<CatalogueItem>
+internal class ProposeExecutionWhenTargetIsCatalogueItem : RDMPCommandExecutionProposal<CatalogueItem>
 {
     public ProposeExecutionWhenTargetIsCatalogueItem(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,10 +27,8 @@ internal class ProposeExecutionWhenTargetIsCatalogueItem:RDMPCommandExecutionPro
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return cmd is ColumnInfoCombineable sourceColumnInfo
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is ColumnInfoCombineable sourceColumnInfo
             ? new ExecuteCommandLinkCatalogueItemToColumnInfo(ItemActivator, sourceColumnInfo, target)
             : (ICommandExecution)null;
-    }
 }

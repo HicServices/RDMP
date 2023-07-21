@@ -136,7 +136,6 @@ public class SuggestComboBox : ComboBox
             {
                 if (_suggLb.Parent != form)
                 {
-
                     //move it to the parent form
                     _suggLb.Parent.Controls.Remove(_suggLb);
                     form.Controls.Add(_suggLb);
@@ -305,11 +304,10 @@ public class SuggestComboBox : ComboBox
     }
 
     private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData) =>
         // the keystrokes of interest should not be processed by base class:
-        return (_suggLb.Visible && KeysToHandle.Contains(keyData)) || base.ProcessCmdKey(ref msg, keyData);
-    }
+        (_suggLb.Visible && KeysToHandle.Contains(keyData)) || base.ProcessCmdKey(ref msg, keyData);
 
     #endregion
 }

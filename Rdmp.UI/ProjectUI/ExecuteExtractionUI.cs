@@ -62,14 +62,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     private const string CoreDatasets = "Core";
     private const string ProjectSpecificDatasets = "Project Specific";
 
-    private ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets,1);
-    private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets,2);
-    private ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME,0);
+    private ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets, 1);
+    private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets, 2);
+    private ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME, 0);
 
     private ToolStripControlHost _pipelinePanel;
 
     private ToolStripLabel lblMaxConcurrent = new("Concurrent:");
-    private ToolStripTextBox tbMaxConcurrent = new() {Text="3"};
+    private ToolStripTextBox tbMaxConcurrent = new() { Text = "3" };
 
     public ExecuteExtractionUI()
     {
@@ -95,12 +95,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         _coreDatasetsFolder.CommandGetter = () =>
             new IAtomicCommand[]
             {
-                new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
-                new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration)
+                new ExecuteCommandAddDatasetsToConfiguration(Activator, _extractionConfiguration),
+                new ExecuteCommandAddPackageToConfiguration(Activator, _extractionConfiguration)
             };
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName, new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState, new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName,
+            new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState,
+            new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"));
     }
 
     private void TlvDatasets_ItemActivate(object sender, EventArgs e)
@@ -167,7 +169,9 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (model == _projectSpecificDatasetsFolder)
             return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID != null);
 
-        return _bundledStuff != null && model is ISelectedDataSets sds2 ? _bundledStuff.Where(s => s.User.Equals(sds2)) : (IEnumerable)null;
+        return _bundledStuff != null && model is ISelectedDataSets sds2
+            ? _bundledStuff.Where(s => s.User.Equals(sds2))
+            : (IEnumerable)null;
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
@@ -189,7 +193,9 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalsState();
 
-        return extractionRunner != null && rowObject is SelectedDataSets sds ? extractionRunner.GetState(sds.ExtractableDataSet) : null;
+        return extractionRunner != null && rowObject is SelectedDataSets sds
+            ? extractionRunner.GetState(sds.ExtractableDataSet)
+            : null;
     }
 
     private ToMemoryCheckNotifier GetCheckNotifier(object rowObject)
@@ -228,9 +234,12 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
             MaxConcurrentExtractions = max,
             ExtractionConfiguration = _extractionConfiguration.ID.ToString(),
-            Pipeline = _pipelineSelectionUI1.Pipeline == null? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
-            Datasets = _datasets.All(tlvDatasets.IsChecked) ? "" :
-                string.Join(",",_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString()).ToArray())
+            Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+            Datasets = _datasets.All(tlvDatasets.IsChecked)
+                ? ""
+                : string.Join(",",
+                    _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString())
+                        .ToArray())
         };
     }
 
@@ -247,13 +256,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
 
         if (!_commonFunctionality.IsSetup)
-            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings
-            {
-                AddFavouriteColumn = false,
-                SuppressChildrenAdder=true,
-                SuppressActivate = true,
-                AddCheckColumn = false
-            });
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets, activator, olvName, null,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    AddFavouriteColumn = false,
+                    SuppressChildrenAdder = true,
+                    SuppressActivate = true,
+                    AddCheckColumn = false
+                });
 
         var checkedBefore = tlvDatasets.CheckedObjects;
 
@@ -296,9 +306,11 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
             _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
 
-            _pipelinePanel = new ToolStripControlHost((Control) _pipelineSelectionUI1);
+            _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
 
-            helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
+            helpIcon1.SetHelpText("Extraction",
+                "It is a wise idea to click here if you don't know what this screen can do for you...",
+                BuildHelpFlow());
         }
 
         CommonFunctionality.Add(new ToolStripLabel("Extraction Pipeline:"));

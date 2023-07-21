@@ -44,7 +44,7 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
         if (IsImpossible)
             return;
 
-        if(Table.DiscoverColumns().Any(static c=>c.IsPrimaryKey))
+        if (Table.DiscoverColumns().Any(static c => c.IsPrimaryKey))
             SetImpossible("Table already has a primary key, try synchronizing the TableInfo");
     }
 
@@ -67,10 +67,10 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
         var task = Task.Run(() =>
             Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()), cts.Token);
 
-        Wait("Creating Primary Key...",task, cts);
+        Wait("Creating Primary Key...", task, cts);
 
-        if(task.IsFaulted)
-            ShowException("Create Primary Key Failed",task.Exception);
+        if (task.IsFaulted)
+            ShowException("Create Primary Key Failed", task.Exception);
 
         Synchronize();
 

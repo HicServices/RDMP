@@ -141,9 +141,10 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <param name="stage"></param>
     public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
     {
-        var order = repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+        var order =
+            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "LoadMetadata_ID", parent.ID },
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
@@ -279,8 +280,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
                             $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'",
                             CheckResult.Fail));
             }
-
-        }
     }
 
     /// <summary>
@@ -307,7 +306,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <returns>the new ProcessTask (the clone has a different ID to the parent)</returns>
     public ProcessTask CloneToNewLoadMetadataStage(LoadMetadata loadMetadata, LoadStage loadStage)
     {
-        var cataRepository = (ICatalogueRepository) Repository;
+        var cataRepository = (ICatalogueRepository)Repository;
 
         //clone only accepts sql connections so make sure we aren't in mysql land or something
         using (cataRepository.BeginNewTransaction())
@@ -325,7 +324,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
                 foreach (var argument in toCloneArguments)
                     //clone it but rewire it to the proper ProcessTask parent (the clone)
                     argument.ShallowClone(clone);
-                }
 
                 //the values passed into parameter
                 clone.LoadMetadata_ID = loadMetadata.ID;
@@ -403,8 +401,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <param name="o"></param>
     public void SetArgumentValue(string parameterName, object o)
     {
-        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ?? throw new Exception(
-                $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
+        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ??
+                               throw new Exception(
+                                   $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();
     }

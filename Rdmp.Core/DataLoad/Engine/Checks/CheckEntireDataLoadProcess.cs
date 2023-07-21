@@ -23,7 +23,8 @@ public class CheckEntireDataLoadProcess : ICheckable
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
     public ILoadMetadata LoadMetadata { get; set; }
 
-    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
+    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+        HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
@@ -67,9 +68,6 @@ public class CheckEntireDataLoadProcess : ICheckable
             metadataLoggingConfigurationChecks.Check(notifier);
 
             preExecutionChecks.Check(notifier);
-
-            if(!preExecutionChecks.HardFail)
-                catalogueLoadChecks.Check(notifier);
 
             if (!preExecutionChecks.HardFail)
                 catalogueLoadChecks.Check(notifier);

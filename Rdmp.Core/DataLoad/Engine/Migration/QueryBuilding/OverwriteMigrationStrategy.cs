@@ -99,7 +99,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         sbInsert.AppendLine("WHERE");
         sbInsert.AppendLine(
             $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
-            
+
         //right at the end of the SELECT
         if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)
             sbInsert.Append(" FOR UPDATE");
@@ -141,15 +141,17 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
             }
 
             //t1.Name = t2.Name, t1.Age=T2.Age etc
-            sqlLines.Add(new CustomLine(string.Join(",",toSet), QueryComponent.SET));
+            sqlLines.Add(new CustomLine(string.Join(",", toSet), QueryComponent.SET));
 
             //also update the hic_dataLoadRunID field
-            if(!job.LoadMetadata.IgnoreTrigger)
+            if (!job.LoadMetadata.IgnoreTrigger)
                 sqlLines.Add(new CustomLine(
-                    $"t1.{syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)}={dataLoadInfoID}",QueryComponent.SET));
+                    $"t1.{syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)}={dataLoadInfoID}",
+                    QueryComponent.SET));
 
             //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
-            sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=>GetORLine(c,syntax))), QueryComponent.WHERE));
+            sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c => GetORLine(c, syntax))),
+                QueryComponent.WHERE));
 
             //the join
             sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p =>

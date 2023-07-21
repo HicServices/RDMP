@@ -92,7 +92,8 @@ public class ExcelConversionTest
         Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
 
-    private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
+    private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets,
+        LoadDirectory directory)
     {
         var f = new FileInfo(targetFile);
 
@@ -104,9 +105,9 @@ public class ExcelConversionTest
             var converter = new ExcelToCSVFilesConverter();
 
             var job = new ThrowImmediatelyDataLoadJob(ThrowImmediatelyDataLoadEventListener.QuietPicky)
-                {
-                    LoadDirectory = directory
-                };
+            {
+                LoadDirectory = directory
+            };
 
             converter.ExcelFilePattern = fileExtensionToConvert;
             converter.Fetch(job, new GracefulCancellationToken());

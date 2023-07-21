@@ -35,6 +35,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports;
 public class CatalogueConstraintReport : DataQualityReport
 {
     private readonly string _dataLoadRunFieldName;
+
     //where the data is located
     private DiscoveredServer _server;
     private QueryBuilder _queryBuilder;
@@ -43,8 +44,8 @@ public class CatalogueConstraintReport : DataQualityReport
 
     public static int MaximumPivotValues = 5000;
 
-    private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
-    private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
+    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
+    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
 
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;
@@ -273,7 +274,6 @@ public class CatalogueConstraintReport : DataQualityReport
     private string _pivotCategory;
 
 
-
     public override void Check(ICheckNotifier notifier)
     {
         //there is a catalogue
@@ -481,7 +481,6 @@ public class CatalogueConstraintReport : DataQualityReport
     {
         //for each description
         foreach (var descQtc in _queryBuilder.SelectColumns.Where(static qtc => qtc.IsLookupDescription))
-        {
             try
             {
                 //if we have a the foreign key too
@@ -501,22 +500,23 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
 
                     //if it doesn't already have a prediction
-                    if (itemValidator.SecondaryConstraints.All(static constraint => constraint.GetType() != typeof(Prediction)))
+                    if (itemValidator.SecondaryConstraints.All(static constraint =>
+                            constraint.GetType() != typeof(Prediction)))
                     {
                         //Add an item validator onto the fk column that targets the description column with a nullity prediction
                         var newRule = new Prediction(new ValuePredictsOtherValueNullity(), foreignKeyFieldName)
-                            {
-                                Consequence = Consequence.Missing
-                            };
+                        {
+                            Consequence = Consequence.Missing
+                        };
 
                         //add one that says 'if I am null my fk should also be null'
                         itemValidator.SecondaryConstraints.Add(newRule);
 
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
-                                $"Dynamically added value->value Nullity constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue", CheckResult.Success));
+                                $"Dynamically added value->value Nullity constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue",
+                                CheckResult.Success));
                     }
-
                 }
             }
             catch (Exception ex)
@@ -536,9 +536,10 @@ public class CatalogueConstraintReport : DataQualityReport
 
         //ask the validator to validate!
         _validator.ValidateVerboseAdditive(
-            r,//validate the data reader
-            states.ColumnValidationFailuresByDataLoadRunID[dataLoadRunIDOfCurrentRecord],//additively adjust the validation failures dictionary
-            out var worstConsequence);//and tell us what the worst consequence in the row was
+            r, //validate the data reader
+            states.ColumnValidationFailuresByDataLoadRunID[
+                dataLoadRunIDOfCurrentRecord], //additively adjust the validation failures dictionary
+            out var worstConsequence); //and tell us what the worst consequence in the row was
 
 
         //increment the time periodicity hypercube!

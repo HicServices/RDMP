@@ -52,10 +52,12 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     {
         return catalogue == null
             ? null
-            : new HashSet<int>(catalogue.CatalogueItems.Select(static ci => ci.ColumnInfo_ID).Where(static col => col.HasValue).Select(static v => v.Value).Distinct());
+            : new HashSet<int>(catalogue.CatalogueItems.Select(static ci => ci.ColumnInfo_ID)
+                .Where(static col => col.HasValue).Select(static v => v.Value).Distinct());
     }
 
-    public override string GetCommandHelp() => "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
+    public override string GetCommandHelp() =>
+        "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
 
     public override void Execute()
     {
@@ -90,8 +92,6 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
                 WindowTitle = "Choose underlying Column"
             }, BasicActivator.CoreChildProvider.AllColumnInfos);
 
-            if (columnInfo == null) return;
-
             if (columnInfo == null)
                 return;
 
@@ -107,12 +107,12 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
 
             //set the associated column if they did pick it
             ci.SetColumnInfo(columnInfo);
-            CreateExtractionInformation(repo,ci,columnInfo);
+            CreateExtractionInformation(repo, ci, columnInfo);
 
             ci.SaveToDatabase();
 
             Publish(c);
-            Emphasise(ci,int.MaxValue);
+            Emphasise(ci, int.MaxValue);
         }
         else
         {
@@ -145,7 +145,9 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         ei.SaveToDatabase();
     }
 
-    private static bool AlreadyInCatalogue(ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) => existingColumnInfos.Contains(candidate.ID);
+    private static bool AlreadyInCatalogue(ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>
+        existingColumnInfos.Contains(candidate.ID);
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
 }

@@ -71,7 +71,7 @@ public partial class WideMessageBox : Form
 
         //try to resize form to fit bounds
         Size = GetPreferredSizeOfTextControl(richTextBox1);
-        Size = new Size(Size.Width + 10, Size.Height + 150);//leave a bit of padding
+        Size = new Size(Size.Width + 10, Size.Height + 150); //leave a bit of padding
 
         richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
@@ -124,7 +124,7 @@ public partial class WideMessageBox : Form
         //if there is a title
         if (!string.IsNullOrWhiteSpace(title))
         {
-            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE]: title;
+            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE] : title;
         }
         else
         {
@@ -179,7 +179,7 @@ public partial class WideMessageBox : Form
                 var v = row.Cells[c.Name].Value;
                 var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
-                if(stringval.Length > MAX_LENGTH_ELEMENT)
+                if (stringval.Length > MAX_LENGTH_ELEMENT)
                     stringval = $"{stringval[..MAX_LENGTH_ELEMENT]}...";
 
                 sb.AppendLine($"{c.Name}:{stringval}");
@@ -199,7 +199,6 @@ public partial class WideMessageBox : Form
             wmb.ShowDialog();
         else
             wmb.Show();
-
     }
 
     public static void Show(string title, string message, WideMessageBoxTheme theme)
@@ -253,7 +252,7 @@ public partial class WideMessageBox : Form
 
     private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
     {
-        if(e.LinkText.Contains('#'))
+        if (e.LinkText.Contains('#'))
         {
             var split = e.LinkText.Split('#');
             if (split.Length >= 2 && CommentStore.ContainsKey(split[1]))
@@ -272,15 +271,16 @@ public partial class WideMessageBox : Form
     {
         _navigationStack.Push(Args);
 
-        Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){FormatAsParagraphs = true});
+        Setup(new WideMessageBoxArgs(keyword, CommentStore[keyword], null, keyword, WideMessageBoxTheme.Help)
+            { FormatAsParagraphs = true });
     }
 
     private void SetMessage(string message, string keywordNotToAdd = null)
     {
-        if(string.IsNullOrWhiteSpace(message))
+        if (string.IsNullOrWhiteSpace(message))
             message = "";
 
-        if(message.Length > MAX_LENGTH_BODY)
+        if (message.Length > MAX_LENGTH_BODY)
             message = message[..MAX_LENGTH_BODY];
 
         //if we don't have help documentation available just set the message without looking for hyperlinks
@@ -378,7 +378,8 @@ public partial class WideMessageBox : Form
     {
         if (
             (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == 0 && e.KeyData == Keys.Up) ||
-            (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down) ||
+            (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) ==
+                richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down) ||
             (richTextBox1.SelectionStart == richTextBox1.TextLength && e.KeyData == Keys.Right) ||
             (richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left)
         ) e.Handled = true;

@@ -21,8 +21,6 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// </summary>
 public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
 {
-
-
     #region Database Properties
 
     private int _aggregateDimensionID;
@@ -97,9 +95,8 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
         repository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
-                {"AggregateDimension_ID",dimension.ID},
-                {"EndDate",todaysDateFunction}
-
+                { "AggregateDimension_ID", dimension.ID },
+                { "EndDate", todaysDateFunction }
             });
     }
 

@@ -43,9 +43,9 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         Margin = Padding.Empty;
 
         pbDelete.Visible = false;
-            
+
         Controls.Add((Control)HostedControl);
-            
+
         AdjustControlLocation();
     }
 
@@ -56,10 +56,9 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         //center it on us with a gap of BorderWidth
         if (_editMode)
         {
-
-            control.Location = new Point((int) BorderWidth, (int) BorderWidth);
-            control.Width = (int) (Width - BorderWidth*2);
-            control.Height = (int) (Height - BorderWidth*2);
+            control.Location = new Point((int)BorderWidth, (int)BorderWidth);
+            control.Width = (int)(Width - BorderWidth * 2);
+            control.Height = (int)(Height - BorderWidth * 2);
         }
         else
         {

@@ -85,7 +85,6 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
             default:
                 throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
         }
-
     }
 
     private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
@@ -96,7 +95,6 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
 
         //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
         if (cic is { QueryCachingServer_ID: not null } && ac.PatientIndexJoinablesUsed.Any())
-        {
             collection.UseQueryCache = _useCache;
 
         collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
@@ -196,9 +194,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
             return OverrideCommandName;
 
         return _obj is CohortIdentificationConfiguration
-            ? _useCache ?
-                "Query Builder SQL/Results" :
-                "Query Builder SQL/Results (No Cache)"
+            ? _useCache ? "Query Builder SQL/Results" : "Query Builder SQL/Results (No Cache)"
             : $"View {_viewType.ToString().Replace("_", " ")}";
     }
 

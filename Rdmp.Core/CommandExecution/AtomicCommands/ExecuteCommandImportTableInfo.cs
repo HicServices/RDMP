@@ -38,7 +38,7 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
         ICatalogue c = null;
         ITableInfoImporter importer;
 
-        var t = _table ?? SelectTable(false,"Select table to import");
+        var t = _table ?? SelectTable(false, "Select table to import");
 
         switch (t)
         {
@@ -46,7 +46,8 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
                 return;
             //if it isn't a table valued function
             case DiscoveredTableValuedFunction function:
-                importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, function);
+                importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository,
+                    function);
                 break;
             default:
                 importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);

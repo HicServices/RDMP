@@ -45,10 +45,7 @@ public class CohortDescriptionDataTableAsyncFetch
             DataTable.EndLoadData();
         });
 
-        Task.ContinueWith(s =>
-        {
-            Finished?.Invoke();
-        });
+        Task.ContinueWith(s => { Finished?.Invoke(); });
 
         Task.Start();
     }

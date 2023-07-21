@@ -86,10 +86,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
 
     protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
     {
-        if (m?.ShouldBeReadOnly(out var reason)==true)
-        {
-            SetImpossible($"{(m is IContainer ? "Container" : $"'{m}'")} is readonly because:{reason}");
-        }
+        if (m?.ShouldBeReadOnly(out var reason) == true)
+            SetImpossible(
+                $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
     }
 
     public BasicCommandExecution()
@@ -141,10 +140,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <returns></returns>
     public static string GetCommandName<T>() where T : BasicCommandExecution => GetCommandName(typeof(T).Name);
 
-    public virtual string GetCommandHelp()
-    {
-        return string.Empty;
-    }
+    public virtual string GetCommandHelp() => string.Empty;
 
     public virtual Image<Rgba32> GetImage(IIconProvider iconProvider) => OverrideIcon;
 
@@ -255,10 +251,8 @@ public abstract class BasicCommandExecution : IAtomicCommand
         BasicActivator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
 
     /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
-    protected bool TypeText(string header, string prompt, out string text)
-    {
-        return TypeText(header, prompt, 500, null, out text);
-    }
+    protected bool TypeText(string header, string prompt, out string text) =>
+        TypeText(header, prompt, 500, null, out text);
 
     /// <inheritdoc cref="IBasicActivateItems.ShowException"/>
     protected void ShowException(string message, Exception exception)
@@ -274,14 +268,15 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
-    {
-        return SelectOne(new DialogArgs {
+    protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
+        where T : DatabaseEntity =>
+        SelectOne(new DialogArgs
+        {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        },availableObjects, out var selected) ? selected : null;
-
-    }
+        }, availableObjects, out var selected)
+            ? selected
+            : null;
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide
@@ -301,13 +296,15 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
-    {
-        return SelectOne(new DialogArgs {
+    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false)
+        where T : DatabaseEntity =>
+        SelectOne(new DialogArgs
+        {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
-    }
+        }, repository.GetAllObjects<T>().ToList(), out var answer)
+            ? answer
+            : null;
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
@@ -341,8 +338,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        },availableObjects,out selected);
-    }
+        }, availableObjects, out selected);
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
@@ -396,11 +392,6 @@ public abstract class BasicCommandExecution : IAtomicCommand
         BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
     }
 
-    protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
-    {
-        return BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
-    }
-
     protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription) =>
         BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
 
@@ -424,7 +415,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
     {
         var invoker = new CommandInvoker(BasicActivator);
-            
+
         var constructor = constructorSelector();
 
         var constructorValues = new List<object>();
@@ -504,9 +495,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
         return
-            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase)
+            commandType.Name.Equals(ExecuteCommandPrefix + name, StringComparison.InvariantCultureIgnoreCase)
             ||
-            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase)
+            commandType.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
             ||
             commandType.GetCustomAttributes<AliasAttribute>(false)
                 .Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
@@ -555,9 +546,6 @@ public abstract class BasicCommandExecution : IAtomicCommand
             foreach (var o in trackObjects)
                 if (o is IRevertable re)
                     re.RevertToDatabaseState();
-                }
-            }
-        }
 
         return !revert;
     }

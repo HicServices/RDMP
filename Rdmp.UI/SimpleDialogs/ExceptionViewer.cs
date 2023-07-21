@@ -19,7 +19,8 @@ public class ExceptionViewer : WideMessageBox
 {
     private readonly Exception _exception;
 
-    public ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,GetStackTrace(exception,Environment.StackTrace),null,WideMessageBoxTheme.Exception))
+    public ExceptionViewer(string title, string message, Exception exception) : base(new WideMessageBoxArgs(title,
+        message, GetStackTrace(exception, Environment.StackTrace), null, WideMessageBoxTheme.Exception))
     {
         _exception = exception;
 

@@ -27,8 +27,8 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
         _request.DatasetBundle.DataSet.RevertToDatabaseState();
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
-            
-        Execute(out _,out var result);
+
+        Execute(out _, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
@@ -55,8 +55,6 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
             var extractionDirectory = new ExtractionDirectory(TestContext.CurrentContext.WorkDirectory, _configuration);
 
-
-            var ex = Assert.Throws<NotSupportedException>(() => {var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });
 
             var ex = Assert.Throws<NotSupportedException>(() =>
             {

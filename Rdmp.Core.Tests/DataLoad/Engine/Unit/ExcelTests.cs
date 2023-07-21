@@ -66,8 +66,8 @@ public class ExcelTests
             Separator = ","
         };
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), ThrowImmediatelyDataLoadEventListener.Quiet);
-        var ex = Assert.Throws<Exception>(()=>invalid.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("File Book1.xlsx has a prohibited file extension .xlsx",ex?.Message);
+        var ex = Assert.Throws<Exception>(() => invalid.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("File Book1.xlsx has a prohibited file extension .xlsx", ex?.Message);
     }
 
     [Test]
@@ -77,7 +77,8 @@ public class ExcelTests
     {
         var source = new ExcelDataFlowSource();
 
-        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]),
+            ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(6, dt.Columns.Count);
@@ -105,7 +106,8 @@ public class ExcelTests
             AddFilenameColumnNamed = "Path"
         };
 
-        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]),
+            ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(7, dt.Columns.Count);
@@ -227,14 +229,17 @@ public class ExcelTests
 
         var source = new ExcelDataFlowSource();
 
-        source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]), ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]),
+            ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(messages, new GracefulCancellationToken());
 
         var args = messages.EventsReceivedBySender[source];
 
         Console.Write(messages.ToString());
 
-        Assert.IsTrue(args.Any(a => a.Message.Contains("Discarded the following data (that was found in unnamed columns):RowCount:5") && a.ProgressEventType == ProgressEventType.Warning));
+        Assert.IsTrue(args.Any(a =>
+            a.Message.Contains("Discarded the following data (that was found in unnamed columns):RowCount:5") &&
+            a.ProgressEventType == ProgressEventType.Warning));
     }
 
     [Test]
@@ -247,8 +252,8 @@ public class ExcelTests
         Assert.IsTrue(fi.Exists);
 
         source.PreInitialize(new FlatFileToLoad(fi), ThrowImmediatelyDataLoadEventListener.Quiet);
-            
-            
+
+
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
 
@@ -272,16 +277,16 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(fi), ThrowImmediatelyDataLoadEventListener.Quiet);
 
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        var ex = Assert.Throws<FlatFileLoadException>(() =>
+            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
         Assert.AreEqual("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty", ex?.Message);
-
     }
 
     [Test]
     public void Checks_ValidFileExtension_Pass()
     {
         var source = new ExcelDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),ThrowImmediatelyDataLoadEventListener.Quiet );
+        source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")), ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
     }
 
@@ -290,8 +295,9 @@ public class ExcelTests
     {
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), ThrowImmediatelyDataLoadEventListener.Quiet);
-        var ex = Assert.Throws<Exception>(()=>source.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex?.Message);
+        var ex = Assert.Throws<Exception>(() => source.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",
+            ex?.Message);
     }
 
     [TestCase(true)]
@@ -306,9 +312,9 @@ public class ExcelTests
             PrefixWithWorkbookName = prefixWithWorkbookName
         };
 
-        var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading==loc.Directory);
-          
-        var j= new ThrowImmediatelyDataLoadJob
+        var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading == loc.Directory);
+
+        var j = new ThrowImmediatelyDataLoadJob
         {
             LoadDirectory = mockProjDir
         };

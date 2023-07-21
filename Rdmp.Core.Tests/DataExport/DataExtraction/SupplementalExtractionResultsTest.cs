@@ -11,7 +11,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-internal class SupplementalExtractionResultsTest:DatabaseTests
+internal class SupplementalExtractionResultsTest : DatabaseTests
 {
     [Test]
     public void TestCreating()

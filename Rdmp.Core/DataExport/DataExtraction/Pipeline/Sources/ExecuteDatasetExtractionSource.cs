@@ -73,14 +73,15 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
-        ,DefaultValue = DistinctStrategy.SqlDistinct)]
+        , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
 
     [DemandsInitialization("When DBMS is SqlServer then HASH JOIN should be used instead of regular JOINs")]
     public bool UseHashJoins { get; set; }
 
-    [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
+    [DemandsInitialization(
+        "When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
     public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
     [DemandsInitialization(
@@ -109,7 +110,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentCalculatingDISTINCT = new Stopwatch();
         _timeSpentBuckettingDates = new Stopwatch();
 
-        Request.ColumnsToExtract.Sort();//ensure they are in the right order so we can record the release identifiers
+        Request.ColumnsToExtract.Sort(); //ensure they are in the right order so we can record the release identifiers
 
         //if we have a cached builder already
         if (request.QueryBuilder == null)
@@ -179,14 +180,14 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
 
-        if(_cancel)
+        if (_cancel)
             throw new Exception("User cancelled data extraction");
 
         if (_hostedSource == null)
         {
             StartAudit(Request.QueryBuilder.SQL);
 
-            if(Request.DatasetBundle.DataSet.DisableExtraction)
+            if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
@@ -214,7 +215,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             {
                 var releaseIdentifierColumn = Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
 
-                if(chunk is { Rows.Count: > 0 })
+                if (chunk is { Rows.Count: > 0 })
                 {
                     //last release id in the current chunk
                     var lastReleaseId = chunk.Rows[^1][releaseIdentifierColumn];
@@ -236,7 +237,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Read from source failed", e));
         }
 
-        if(cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             throw new Exception("Data read cancelled because our cancellationToken was set, aborting data reading");
 
         //if the first chunk is null
@@ -304,7 +305,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             foreach (DataRow row in chunk.Rows)
                 ExtractionTimeTimeCoverageAggregator.ProcessRow(row);
 
-            listener.OnProgress(this, new ProgressEventArgs("Bucketting Dates",new ProgressMeasurement(_rowsBucketted,ProgressType.Records),_timeSpentCalculatingDISTINCT.Elapsed ));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Bucketting Dates", new ProgressMeasurement(_rowsBucketted, ProgressType.Records),
+                    _timeSpentCalculatingDISTINCT.Elapsed));
         }
 
         _timeSpentBuckettingDates.Stop();
@@ -347,7 +350,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     private static DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
     {
-        var removeDuplicates = new RemoveDuplicates {NoLogging=true};
+        var removeDuplicates = new RemoveDuplicates { NoLogging = true };
         return removeDuplicates.ProcessPipelineData(chunk, listener, cancellationToken);
     }
 
@@ -462,8 +465,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener) => sql;
 
-    }
-
     private void StartAudit(string sql)
     {
         var dataExportRepo = Request.DataExportRepository;
@@ -473,7 +474,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (Request.IsBatchResume)
         {
-            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ?? throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
+            var match =
+                previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ??
+                throw new Exception(
+                    $"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
             Request.CumulativeExtractionResults = match;
         }
         else
@@ -534,7 +538,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public virtual DataTable TryGetPreview()
@@ -544,7 +547,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
-        var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport,false);
+        var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
         using var con = server.GetConnection();
         con.Open();

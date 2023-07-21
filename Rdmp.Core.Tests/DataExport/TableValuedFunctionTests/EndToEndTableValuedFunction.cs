@@ -75,11 +75,12 @@ public class EndToEndTableValuedFunction : DatabaseTests
         CreateANormalCatalogue();
 
         //create a cohort database using wizard
-        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
+        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase, CatalogueRepository,
+            DataExportRepository, false);
 
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
-            ,ThrowImmediatelyCheckNotifier.Quiet);
+            , ThrowImmediatelyCheckNotifier.Quiet);
 
         //create a table valued function
         CreateTvfCatalogue(cohortDatabaseNameWillBe);
@@ -139,7 +140,8 @@ public class EndToEndTableValuedFunction : DatabaseTests
         _cic.CreateRootContainerIfNotExists();
 
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
-        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> throw new Exception("Did not expect there to be more than 1!"));
+        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,
+            (s, e) => throw new Exception("Did not expect there to be more than 1!"));
 
         var root = _cic.RootCohortAggregateContainer;
         root.AddChild(newAggregate, 0);
@@ -147,7 +149,8 @@ public class EndToEndTableValuedFunction : DatabaseTests
         //create a pipeline for executing this CIC and turning it into a cohort
         _pipe = new Pipeline(CatalogueRepository, "CREATE COHORT:By Executing CIC");
 
-        var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
+        var source = new PipelineComponent(CatalogueRepository, _pipe, typeof(CohortIdentificationConfigurationSource),
+            0, "CIC Source");
 
         _project = new Project(DataExportRepository, "TvfProject")
         {
@@ -168,11 +171,13 @@ public class EndToEndTableValuedFunction : DatabaseTests
         destination.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
 
         //create pipeline initialization objects
-        var request = new CohortCreationRequest(_project, new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository, "Here goes nothing")
-            {
-                CohortIdentificationConfiguration = _cic
-            };
-        var engine = request.GetEngine(_pipe,ThrowImmediatelyDataLoadEventListener.Quiet);
+        var request = new CohortCreationRequest(_project,
+            new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository,
+            "Here goes nothing")
+        {
+            CohortIdentificationConfiguration = _cic
+        };
+        var engine = request.GetEngine(_pipe, ThrowImmediatelyDataLoadEventListener.Quiet);
         engine.ExecutePipeline(new GracefulCancellationToken());
     }
 
@@ -292,7 +297,7 @@ end
             Assert.NotNull(r["definitionID"]);
         }
 
-        Assert.AreEqual(rowsReturned,5);
+        Assert.AreEqual(rowsReturned, 5);
     }
 
     private void TestUsingTvfForAggregates()
@@ -346,9 +351,9 @@ end
 
         //create a global overriding parameter on the aggregate
         var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int;")
-            {
-                Value = "1"
-            };
+        {
+            Value = "1"
+        };
         global.SaveToDatabase();
 
 
@@ -425,7 +430,8 @@ end
         Assert.AreEqual("10", _tvfTableInfo.GetAllParameters().Single().Value);
 
         //configure an extraction specific global of 1 so that only 1 chi number is fetched (which will be in the cohort)
-        var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
+        var globalP =
+            new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
             {
                 Value = "1"
             };
@@ -438,15 +444,13 @@ end
         source.PreInitialize(extractionCommand, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-            
-        Assert.AreEqual(1,dt.Rows.Count);
 
         Assert.AreEqual(1, dt.Rows.Count);
 
         Assert.AreEqual("ReleaseId", dt.Columns[0].ColumnName);
 
         //should be a guid
-        Assert.IsTrue(dt.Rows[0][0].ToString().Length>10);
+        Assert.IsTrue(dt.Rows[0][0].ToString().Length > 10);
         Assert.IsTrue(dt.Rows[0][0].ToString().Contains('-'));
 
         selected.DeleteInDatabase();

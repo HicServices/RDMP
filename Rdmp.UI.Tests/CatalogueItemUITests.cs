@@ -57,7 +57,7 @@ internal class CatalogueItemUITests : UITests
         var ci = WhenIHaveA<CatalogueItem>();
         var ui = AndLaunch<CatalogueItemUI>(ci);
 
-        Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
+        Assert.AreEqual("MyCataItem (Mycata)", ui.GetTabName());
 
         //introduce database change but don't save
         ci.Name = "Fish";
@@ -74,9 +74,9 @@ internal class CatalogueItemUITests : UITests
         };
 
         //and finish launching it, this should trigger the 'FreshCopyDelegate' which will exercise GetTabName.
-        ui.SetDatabaseObject(ItemActivator,ci);
+        ui.SetDatabaseObject(ItemActivator, ci);
 
-        Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
+        Assert.AreEqual("MyCataItem (Mycata)", ui.GetTabName());
 
         //clear the delgate for the next user
         ItemActivator.ShouldReloadFreshCopyDelegate = null;

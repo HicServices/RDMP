@@ -108,7 +108,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
     public void SetLimitationSQL(string limitationSQL)
     {
-        if(limitationSQL != null && limitationSQL.Contains("top"))
+        if (limitationSQL != null && limitationSQL.Contains("top"))
             throw new Exception("Use TopX property instead of limitation SQL to achieve this");
 
         LimitationSQL = limitationSQL;
@@ -259,10 +259,10 @@ public class QueryBuilder : ISqlQueryBuilder
         foreach (var parameter in ParameterManager.GetFinalResolvedParametersList())
         {
             //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
-            if(parameter is IInjectKnown<IQuerySyntaxHelper> needsToldTheSyntaxHelper)
+            if (parameter is IInjectKnown<IQuerySyntaxHelper> needsToldTheSyntaxHelper)
                 needsToldTheSyntaxHelper.InjectKnown(QuerySyntaxHelper);
 
-            if(CheckSyntax)
+            if (CheckSyntax)
                 parameter.Check(checkNotifier);
 
             toReturn += GetParameterDeclarationSQL(parameter);
@@ -283,7 +283,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
         toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
 
-        for (var i = 0; i < SelectColumns.Count;i++ )
+        for (var i = 0; i < SelectColumns.Count; i++)
         {
             //output each of the ExtractionInformations that the user requested and record the line number for posterity
             var columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
@@ -329,10 +329,7 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <inheritdoc/>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups()
-    {
-        return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
-    }
+    public IEnumerable<Lookup> GetDistinctRequiredLookups() => SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
 
     /// <summary>
     /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.

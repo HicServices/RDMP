@@ -31,12 +31,12 @@ internal class LoadProgressAnnotation
     public LineAnnotation LineAnnotationCacheProgress { get; private set; }
     public TextAnnotation TextAnnotationCacheProgress { get; private set; }
 
-    public LoadProgressAnnotation(LoadProgress lp,DataTable dt, Chart chart)
+    public LoadProgressAnnotation(LoadProgress lp, DataTable dt, Chart chart)
     {
         _lp = lp;
         _dt = dt;
 
-        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out var line, out var text);
+        GetAnnotations("OriginDate", 0.9, lp.OriginDate, chart, out var line, out var text);
         LineAnnotationOrigin = line;
         TextAnnotationOrigin = text;
 

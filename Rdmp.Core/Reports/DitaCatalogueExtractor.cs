@@ -83,12 +83,13 @@ public class DitaCatalogueExtractor : ICheckable
                     new ProgressMeasurement(cataloguesCompleted++, ProgressType.Records, catas.Count), sw.Elapsed));
 
             //ensure that it has an acronym
-            if(string.IsNullOrWhiteSpace(c.Acronym))
+            if (string.IsNullOrWhiteSpace(c.Acronym))
                 throw new Exception(
                     $"Dita Extraction requires that each catalogue have a unique Acronym, the catalogue {c.Name} is missing an Acronym");
 
             if (c.Name.Contains('\\') || c.Name.Contains('/'))
-                throw new Exception("Dita Extractor does not support catalogues with backslashes or forward slashes in their name");
+                throw new Exception(
+                    "Dita Extractor does not support catalogues with backslashes or forward slashes in their name");
 
             //catalogue main file
             xml.AppendLine($"<topicref href=\"{GetFileNameForCatalogue(c)}\">");
@@ -101,19 +102,20 @@ public class DitaCatalogueExtractor : ICheckable
             foreach (var ci in cataItems)
             {
                 xml.AppendLine($"<topicref href=\"{GetFileNameForCatalogueItem(c, ci)}\"/>");
-                CreateCatalogueItemFile(c,ci);
+                CreateCatalogueItemFile(c, ci);
             }
-            xml.AppendLine($"</topicref>");
 
+            xml.AppendLine($"</topicref>");
         }
-        listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
+
+        listener.OnProgress(this,
+            new ProgressEventArgs("Extracting",
+                new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
 
         xml.AppendLine($"{Environment.NewLine}</topicref>{Environment.NewLine}</map>");
 
-        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName ,"hic_data_catalogue.ditamap"  ),xml.ToString());
-
+        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, "hic_data_catalogue.ditamap"), xml.ToString());
     }
-
 
 
     private static string GetFileNameForCatalogueItem(Catalogue c, CatalogueItem ci)
@@ -127,7 +129,8 @@ public class DitaCatalogueExtractor : ICheckable
 
     private static string FixName(string name)
     {
-        name = Path.GetInvalidFileNameChars().Aggregate(name, (current, invalidCharacter) => current.Replace(invalidCharacter, '_'));
+        name = Path.GetInvalidFileNameChars()
+            .Aggregate(name, (current, invalidCharacter) => current.Replace(invalidCharacter, '_'));
 
         name = name.Replace("(", "");
         name = name.Replace(")", "");
@@ -156,7 +159,7 @@ public class DitaCatalogueExtractor : ICheckable
 </simpletable>            
 </conbody>
 </concept>";
-        File.WriteAllText(saveLocation,xml);
+        File.WriteAllText(saveLocation, xml);
     }
 
     private void CreateCatalogueItemFile(Catalogue c, CatalogueItem ci)
@@ -276,7 +279,7 @@ public class DitaCatalogueExtractor : ICheckable
                 CheckResult.Fail, null,
                 $"Assign it a suggested acronym: '{suggestion}'?"));
 
-            if(useSuggestion)
+            if (useSuggestion)
             {
                 c.Acronym = suggestion;
                 c.SaveToDatabase();
@@ -291,9 +294,8 @@ public class DitaCatalogueExtractor : ICheckable
             for (var j = i + 1; j < catas.Length; j++)
                 if (catas[j].Acronym.Equals(acronym))
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Duplication in acronym between Catalogues {catas[i]} and {catas[j]}, duplicate acronym value is {acronym}", CheckResult.Fail, null));
-            }
-
+                        $"Duplication in acronym between Catalogues {catas[i]} and {catas[j]}, duplicate acronym value is {acronym}",
+                        CheckResult.Fail, null));
         }
     }
 
@@ -326,6 +328,5 @@ public class DitaCatalogueExtractor : ICheckable
             //return the first letter from every word and also add in all numbers that appear after the first letter in the word
             _ => words.Aggregate("", (s, n) => s + n[..1] + n.Skip(1).Where(char.IsDigit))
         };
-
     }
 }

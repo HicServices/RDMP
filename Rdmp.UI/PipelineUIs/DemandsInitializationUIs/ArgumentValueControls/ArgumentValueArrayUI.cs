@@ -39,7 +39,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     {
         _args = args;
 
-        var value = (Array) args.InitialValue;
+        var value = (Array)args.InitialValue;
         SetUp(value);
     }
 
@@ -71,7 +71,9 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     private void btnPickDatabaseEntities_Click(object sender, EventArgs e)
     {
         var type = _args.Type;
-        var elementType = type.GetElementType() ?? throw new NotSupportedException($"No array element existed for DemandsInitialization Type {type}");
+        var elementType = type.GetElementType() ??
+                          throw new NotSupportedException(
+                              $"No array element existed for DemandsInitialization Type {type}");
         if (!_args.CatalogueRepository.SupportsObjectType(elementType))
             throw new NotSupportedException(
                 $"CatalogueRepository does not support element {elementType} for DemandsInitialization Type {type}");

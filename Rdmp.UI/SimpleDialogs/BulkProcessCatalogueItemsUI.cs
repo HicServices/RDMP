@@ -53,7 +53,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
         olvName.ImageGetter += ImageGetter;
 
-        ddExtractionCategory.DataSource = Enum.GetValues(typeof (ExtractionCategory));
+        ddExtractionCategory.DataSource = Enum.GetValues(typeof(ExtractionCategory));
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -283,7 +283,6 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
             orFilters.Add(filter);
         }
-
 
 
         filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text, StringComparison.CurrentCultureIgnoreCase));

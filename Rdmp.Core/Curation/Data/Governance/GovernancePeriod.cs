@@ -143,10 +143,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Checks that the governance has not expired before it began etc
@@ -161,10 +158,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
             notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!",
                 CheckResult.Fail));
         else
-        if (EndDate <= StartDate)
-            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date",
+                CheckResult.Success));
 
         foreach (var doc in GovernanceDocuments)
             doc.Check(notifier);
@@ -196,8 +191,5 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// True if the current date is after the <see cref="EndDate"/> (if there is one)
     /// </summary>
     /// <returns></returns>
-    public bool IsExpired()
-    {
-        return EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
-    }
+    public bool IsExpired() => EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
 }

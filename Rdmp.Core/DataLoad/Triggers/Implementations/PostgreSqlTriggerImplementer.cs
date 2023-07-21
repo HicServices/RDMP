@@ -28,7 +28,9 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso) : base(table,
         createDataLoadRunIDAlso)
     {
-        var schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
+        var schema = string.IsNullOrWhiteSpace(_table.Schema)
+            ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny()
+            : _table.Schema;
         _triggerRuntimeName = $"{_table.GetRuntimeName()}_OnUpdate";
 
         _procedureRuntimeName = $"{_table.GetRuntimeName()}_OnUpdateProc";
@@ -45,14 +47,14 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
             using var con = _server.GetConnection();
             con.Open();
 
-            using(var cmd = _server.GetCommand(
-                      $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
+            using (var cmd = _server.GetCommand(
+                       $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
             }
 
-            using(var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
+            using (var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
@@ -74,7 +76,7 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
         con.Open();
 
         CreateProcedure(con);
-            
+
         var sql =
             $@"CREATE TRIGGER ""{_triggerRuntimeName}"" BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
 EXECUTE PROCEDURE {_procedureNameFullyQualified}();";
@@ -105,9 +107,10 @@ LANGUAGE 'plpgsql';";
         using var con = _server.GetConnection();
         con.Open();
 
-        using var cmd = _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con);
+        using var cmd =
+            _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con);
         using var r = cmd.ExecuteReader();
-        return r.Read() ? r["prosrc"] as string:null;
+        return r.Read() ? r["prosrc"] as string : null;
     }
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
@@ -130,8 +133,9 @@ LANGUAGE 'plpgsql';";
 
     private static void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if(!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlNow,sqlThen);
+        if (!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql", sqlNow,
+                sqlThen);
     }
 
     private string CreateTriggerBody()
@@ -147,7 +151,6 @@ LANGUAGE 'plpgsql';";
  
             RETURN NEW;
             END;";
-
     }
 
     public override TriggerStatus GetTriggerStatus() =>

@@ -134,13 +134,9 @@ public class SqlQueryBuilderHelper
                     var possibleJoinsWere = availableJoins.Select(s => $"JoinInfo[{s}]")
                         .Aggregate((a, b) => a + Environment.NewLine + b);
 
-                        if(!comboJoinResolved)
-                            throw new QueryBuildingException(
-                                $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
-                    }
-
-                    if (!Joins.Contains(availableJoins[0]))
-                        Joins.Add(availableJoins[0]);
+                    if (!comboJoinResolved)
+                        throw new QueryBuildingException(
+                            $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
                 }
 
                 if (!Joins.Contains(availableJoins[0]))
@@ -167,7 +163,8 @@ public class SqlQueryBuilderHelper
         }
 
         return qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false
-            ? throw new QueryBuildingException("Specified PrimaryExtractionTable was not found amongst the chosen extraction columns")
+            ? throw new QueryBuildingException(
+                "Specified PrimaryExtractionTable was not found amongst the chosen extraction columns")
             : Joins;
     }
 
@@ -178,17 +175,16 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     public static IEnumerable<Lookup> GetDistinctRequiredLookups(ISqlQueryBuilder qb) =>
         //from all columns
-        return from column in qb.SelectColumns
-            where
-                (
-                    column.IsLookupForeignKey
-                    &&
-                    column.IsLookupForeignKeyActuallyUsed(qb.SelectColumns)
-                )
-                ||
-                column.IsIsolatedLookupDescription //this is when there are no foreign key columns in the SelectedColumns set but there is still a lookup description field so we have to link to the table anyway
-            select column.LookupTable;
-    }
+        from column in qb.SelectColumns
+        where
+            (
+                column.IsLookupForeignKey
+                &&
+                column.IsLookupForeignKeyActuallyUsed(qb.SelectColumns)
+            )
+            ||
+            column.IsIsolatedLookupDescription //this is when there are no foreign key columns in the SelectedColumns set but there is still a lookup description field so we have to link to the table anyway
+        select column.LookupTable;
 
     /// <summary>
     /// Make sure you have set your Filters and SelectColumns properties before calling this method so that it can find table dependencies
@@ -318,25 +314,18 @@ public class SqlQueryBuilderHelper
         //there must be at least one TableInfo here to do this... but we are going to look up all available JoinInfos from these tables to identify opportunistic joins
         foreach (var table in toReturn.ToArray())
         {
-            var available = table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
+            var available =
+                table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
 
             foreach (var newAvailableJoin in available)
-            {
-                foreach (var availableTable in new TableInfo[]{newAvailableJoin.PrimaryKey.TableInfo,newAvailableJoin.ForeignKey.TableInfo})
-                {
-                    //if it's a never before seen table
-                    if (!toReturn.Contains(availableTable))
-                    {
-                        //are there any filters which reference the available TableInfo
-                        if (filters.Any(f =>f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
-                                $"{availableTable.Name.ToLower()}.")))
-                        {
-                            toReturn.Add(availableTable);
-                        }
-                    }
-                }
-
-            }
+            foreach (var availableTable in new TableInfo[]
+                         { newAvailableJoin.PrimaryKey.TableInfo, newAvailableJoin.ForeignKey.TableInfo })
+                //if it's a never before seen table
+                if (!toReturn.Contains(availableTable))
+                    //are there any filters which reference the available TableInfo
+                    if (filters.Any(f => f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
+                            $"{availableTable.Name.ToLower()}.")))
+                        toReturn.Add(availableTable);
         }
 
 
@@ -391,8 +380,8 @@ public class SqlQueryBuilderHelper
                 //can we discard all tables but one based on the fact that they are look up tables?
                 //maybe! lookup tables are tables where there is an underlying column from that table that is a lookup description
                 var winners =
-                    qb.TablesUsedInQuery.Where(t=>
-                            !TableIsLookupTable(t,qb))
+                    qb.TablesUsedInQuery.Where(t =>
+                            !TableIsLookupTable(t, qb))
                         .ToArray();
 
                 //if we have discarded all but 1 it is the only table that does not have any lookup descriptions in it so clearly the correct table to start joins from
@@ -641,8 +630,7 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IContainer container) =>
         //skip disabled containers
-        return container is not IDisableable { IsDisabled: true };
-    }
+        container is not IDisableable { IsDisabled: true };
 
     /// <summary>
     /// Filters are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
@@ -651,8 +639,8 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IFilter filter) =>
         //skip disabled filters
-        return filter is not IDisableable { IsDisabled: true };
-    }
+        filter is not IDisableable { IsDisabled: true };
+
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
     /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para>
@@ -739,7 +727,7 @@ public class SqlQueryBuilderHelper
                 yield return lines[i];
 
                 if (i + 1 < lines.Length)
-                    yield return new CustomLine("AND" , QueryComponent.WHERE);
+                    yield return new CustomLine("AND", QueryComponent.WHERE);
             }
 
             yield break;

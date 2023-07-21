@@ -23,7 +23,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
         ei1.IsExtractionIdentifier = false;
         ei1.SaveToDatabase();
 
-        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue,
+        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object, ei1.CatalogueItem.Catalogue,
             null, "happyfun");
         cmd.Execute();
 
@@ -48,7 +48,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
         Assert.IsFalse(otherEi.IsExtractionIdentifier);
 
         // by picking the second (FFF) we should switch
-        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue,
+        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object, ei1.CatalogueItem.Catalogue,
             null, "FFF");
         cmd.Execute();
 
@@ -69,7 +69,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
         ei1.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(() =>
-            new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue, null,
+            new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object, ei1.CatalogueItem.Catalogue, null,
                     "trollolo")
                 .Execute());
         Assert.AreEqual("Could not find column(s) trollolo amongst available columns (happyfun)", ex.Message);
@@ -86,7 +86,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
         ec1.SaveToDatabase();
 
         var config = Repository.GetObjectByID<ExtractionConfiguration>(ec1.ExtractionConfiguration_ID);
-               
+
         var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object,
             ec1.CatalogueExtractionInformation.CatalogueItem.Catalogue,
             config

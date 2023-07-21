@@ -286,10 +286,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     private ExtractionInformation FetchExtractionInformationIfAny() =>
         Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
 
-    private ColumnInfo FetchColumnInfoIfAny()
-    {
-        return !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
-    }
+    private ColumnInfo FetchColumnInfoIfAny() =>
+        !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
 
     /// <inheritdoc/>
     public void InjectKnown(ExtractionInformation instance)
@@ -327,19 +325,22 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <returns></returns>
     public CatalogueItem CloneCatalogueItemWithIDIntoCatalogue(Catalogue cataToImportTo)
     {
-        if(Catalogue_ID == cataToImportTo.ID)
-            throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
+        if (Catalogue_ID == cataToImportTo.ID)
+            throw new ArgumentException(
+                "Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
         var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
 
         //Get all the properties
-        var propertyInfo = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var propertyInfo =
+            GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to taget object 's properties
         foreach (var property in propertyInfo)
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
+                    property.PropertyType.Equals(typeof(string)))
                     property.SetValue(clone, property.GetValue(this, null), null);
 
         clone.SaveToDatabase();
@@ -368,7 +369,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             return Guess;
 
         //ignore caps and remove spaces match instead
-        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
+        Guess = guessPool.Where(col =>
+            col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
         if (Guess.Any())
             return Guess;
 

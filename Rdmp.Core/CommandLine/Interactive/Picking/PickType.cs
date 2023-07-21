@@ -13,7 +13,8 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 internal partial class PickType : PickObjectBase
 {
-    private static readonly Regex NonEmptyRegex= MyRegex();
+    private static readonly Regex NonEmptyRegex = MyRegex();
+
     public PickType(IBasicActivateItems activator) : base(activator, NonEmptyRegex)
     {
     }

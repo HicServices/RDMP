@@ -56,7 +56,8 @@ public class ShareDefinitionImporter : IPluginDataProvider
         }
         catch (SharingException ex)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Error occurred importing ShareDefinitions",ex));
+            job.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning, "Error occurred importing ShareDefinitions", ex));
         }
 
         job.OnNotify(this, new NotifyEventArgs(

@@ -81,7 +81,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        if(!initialized)
+        if (!initialized)
             Initialize();
 
         ThrowIfDeleteDisallowed(oTableWrapperObject, 0);
@@ -89,7 +89,6 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-
     }
 
     private void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject, int depth)
@@ -99,7 +98,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 
         var repository = oTableWrapperObject.Repository;
 
-        if (depth >= 5)//it's fine
+        if (depth >= 5) //it's fine
             return;
 
         if (oTableWrapperObject is IHasDependencies treeObject)

@@ -61,14 +61,16 @@ public partial class PerformanceCounterResultsUI : UserControl
     {
         var treeNode = (StackFramesTree)model;
 
-        return !treeNode.Children.Any() ? null : (IEnumerable)treeNode.Children.Values.Where(c=>!c.IsInDatabaseAccessAssembly);
+        return !treeNode.Children.Any()
+            ? null
+            : (IEnumerable)treeNode.Children.Values.Where(c => !c.IsInDatabaseAccessAssembly);
     }
 
     private bool CanExpandGetter(object model)
     {
         var treeNode = (StackFramesTree)model;
 
-        return treeNode.Children.Any() && treeNode.Children.Values.Any(c=>!c.IsInDatabaseAccessAssembly);
+        return treeNode.Children.Any() && treeNode.Children.Values.Any(c => !c.IsInDatabaseAccessAssembly);
     }
 
     private List<StackFramesTree> Roots;
@@ -103,16 +105,16 @@ public partial class PerformanceCounterResultsUI : UserControl
             var query = performanceCounter.DictionaryOfQueries[stackTrace];
 
             //get the stack trace split by line reversed so the root is at the top
-            var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();
+            var lines = stackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Reverse()
+                .ToArray();
 
-            lines = lines.Where(l=>!isSystemCall.IsMatch(l)).ToArray();
+            lines = lines.Where(l => !isSystemCall.IsMatch(l)).ToArray();
 
-            if(lines.Length == 0)
+            if (lines.Length == 0)
                 continue;
 
-            if(collapseToMethod)
+            if (collapseToMethod)
             {
-
                 var uniqueMethodLines = new List<string>();
 
                 var lastMethodName = StackFramesTree.GetMethodName(lines[0]);
@@ -177,10 +179,9 @@ public partial class PerformanceCounterResultsUI : UserControl
     {
         if (tlvLocations.SelectedObject is StackFramesTree { HasSourceCode: true } model)
         {
-            var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
+            var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename, model.LineNumber, Color.GreenYellow);
             dialog.Show();
         }
-
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)

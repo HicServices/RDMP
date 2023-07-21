@@ -25,10 +25,8 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
-    }
+    public override string ToString() =>
+        string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
 
     protected bool Equals(ExtractionDirectoryNode other) => Equals(Project, other.Project);
 
@@ -36,18 +34,15 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((ExtractionDirectoryNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ExtractionDirectoryNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Project);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
-    public DirectoryInfo GetDirectoryInfoIfAny()
-    {
-        return string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? null : new DirectoryInfo(Project.ExtractionDirectory);
-    }
+    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(Project.ExtractionDirectory)
+        ? null
+        : new DirectoryInfo(Project.ExtractionDirectory);
 
     public int Order
     {

@@ -21,7 +21,9 @@ public sealed class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         if (o is not ExtractionFilter f) return CatalogueIconProvider.ConceptIs(typeof(IFilter), o) ? BasicIcon : null;
         // has known parameter values?
-        return f.ExtractionFilterParameterSets.Any() ? IconOverlayProvider.GetOverlay(BasicIcon, OverlayKind.Parameter) :
+        return f.ExtractionFilterParameterSets.Any()
+            ? IconOverlayProvider.GetOverlay(BasicIcon, OverlayKind.Parameter)
+            :
             // just a regular filter then
             BasicIcon;
     }

@@ -31,8 +31,8 @@ public class MemoryRepository : IRepository
     protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, byte> Objects =
         new();
 
-
-    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
+    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>
+        _propertyChanges = new();
 
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
@@ -61,7 +61,7 @@ public class MemoryRepository : IRepository
 
         toCreate.Repository = this;
 
-        Objects.TryAdd(toCreate,0);
+        Objects.TryAdd(toCreate, 0);
 
         toCreate.PropertyChanged += toCreate_PropertyChanged;
 
@@ -223,7 +223,6 @@ public class MemoryRepository : IRepository
     /// <param name="oTableWrapperObject"></param>
     protected virtual void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-
     }
 
     public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
@@ -247,14 +246,13 @@ public class MemoryRepository : IRepository
 
         //forget about all changes now
         _propertyChanges.TryRemove(mapsDirectlyToDatabaseTable, out _);
-
     }
 
     public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
     {
         //if we don't know about it then it was deleted
-        if(!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
-            return new RevertableObjectReport {Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
+        if (!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
+            return new RevertableObjectReport { Evaluation = ChangeDescription.DatabaseCopyWasDeleted };
 
         //if it has no changes (since a save)
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
@@ -291,12 +289,6 @@ public class MemoryRepository : IRepository
     public Version GetVersion() => GetType().Assembly.GetName().Version;
 
 
-    public Version GetVersion()
-    {
-        return GetType().Assembly.GetName().Version;
-    }
-
-
     public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
     {
         return Objects.Keys.OfType<T>().Any(o => o.ID == allegedParent);
@@ -312,7 +304,8 @@ public class MemoryRepository : IRepository
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
     {
         return Objects.Keys.SingleOrDefault(o => o.GetType() == objectType && objectId == o.ID)
-               ?? throw new KeyNotFoundException($"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
+               ?? throw new KeyNotFoundException(
+                   $"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
     }
 
     public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
@@ -345,7 +338,6 @@ public class MemoryRepository : IRepository
 
     public void TestConnection()
     {
-
     }
 
     public virtual void Clear()

@@ -37,18 +37,19 @@ public class DleRunner : Runner
         _options = options;
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
         ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator, _options.LoadMetadata);
 
         if (loadMetadata == null && loadProgress != null)
             loadMetadata = loadProgress.LoadMetadata;
-                
-        if(loadMetadata == null)
+
+        if (loadMetadata == null)
             throw new ArgumentException("No Load Metadata specified");
-            
-        if(loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
+
+        if (loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
             throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
             
         var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
@@ -59,7 +60,7 @@ public class DleRunner : Runner
             DoMigrateFromStagingToLive = !_options.StopAfterSTAGING
         };
 
-        var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags); 
+        var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags);
 
         switch (_options.Command)
         {
@@ -103,7 +104,7 @@ public class DleRunner : Runner
                 var exitCode = dataLoadProcess.Run(token);
 
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
-                return exitCode is ExitCodeType.Success or ExitCodeType.OperationNotRequired? 0: (int)exitCode;
+                return exitCode is ExitCodeType.Success or ExitCodeType.OperationNotRequired ? 0 : (int)exitCode;
             case CommandLineActivity.check:
 
                 checkable.Check(checkNotifier);
@@ -113,6 +114,4 @@ public class DleRunner : Runner
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-
 }

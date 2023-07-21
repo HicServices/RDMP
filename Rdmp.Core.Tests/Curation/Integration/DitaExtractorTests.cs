@@ -73,14 +73,17 @@ internal class DitaExtractorTests : DatabaseTests
         var testDir = _directoryHelper.Directory;
 
         //get rid of any old copies lying around
-        var oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
+        var oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>()
+            .SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
         oldCatalogueVersion?.DeleteInDatabase();
 
-        var ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist")
+        var ditaTestCatalogue =
+            new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist")
             {
                 Acronym = "DITA_TEST",
-                Description = $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs"
-            };//name of Catalogue
+                Description =
+                    $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs"
+            }; //name of Catalogue
 
         ditaTestCatalogue.SaveToDatabase();
 
@@ -128,9 +131,10 @@ internal class DitaExtractorTests : DatabaseTests
             try
             {
                 var extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
-                var ex = Assert.Throws<Exception>(()=>extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet));
-                Assert.AreEqual("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",ex.Message);
-
+                var ex = Assert.Throws<Exception>(() => extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet));
+                Assert.AreEqual(
+                    "Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",
+                    ex.Message);
             }
             finally
             {

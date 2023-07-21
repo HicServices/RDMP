@@ -29,6 +29,7 @@ namespace Rdmp.Core.Curation.Data;
 public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 {
     #region Database Properties
+
     private byte[] _bin;
     private string _committer;
     private DateTime _uploadDate;
@@ -125,7 +126,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <summary>
     /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
     /// </summary>
-    internal static IEnumerable<ValueTuple<string,MemoryStream>> GetContents(Stream pluginStream)
+    internal static IEnumerable<ValueTuple<string, MemoryStream>> GetContents(Stream pluginStream)
     {
         var isWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
         if (!pluginStream.CanSeek)
@@ -139,7 +140,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
             using var ms2 = new MemoryStream();
             s.CopyTo(ms2);
             ms2.Position = 0;
-            yield return (e.Name,ms2);
+            yield return (e.Name, ms2);
         }
     }
 
@@ -158,7 +159,8 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        var targetDirectory = downloadDirectory.FullName;
+        var targetDirectory = downloadDirectory.FullName ??
+                              throw new Exception("Could not get currently executing assembly directory");
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 

@@ -38,7 +38,7 @@ public class PipelineRunner : IPipelineRunner
     {
         // if we have no listener use a throw immediately one (generate exceptions if it went badly)
         listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
-                        
+
         // whatever happens we want a listener to record the worst result for the return code (even if theres ignore all errors listeners being used)
         var toMemory = new ToMemoryDataLoadEventListener(false);
 

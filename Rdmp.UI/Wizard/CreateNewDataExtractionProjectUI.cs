@@ -110,8 +110,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         btnCreateNewCohortSource.Enabled = sources.Length == 0;
-
-        btnCreateNewCohortSource.Enabled = sources.Length == 0;
     }
 
     private void IdentifyCompatiblePipelines()
@@ -152,8 +150,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         foreach (var dd in new ComboBox[] { ddCicPipeline, ddExtractionPipeline, ddFilePipeline })
             if (dd.Items.Count == 1)
                 dd.SelectedItem = dd.Items[0]; //select it
-        }
-
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)
@@ -232,8 +228,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
         lblCohortFile.Text = _cohortFile.Name;
         btnSelectClearCohortFile.Text = "Clear";
-        btnSelectClearCohortFile.Left = Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
-
+        btnSelectClearCohortFile.Left =
+            Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
     }
 
     private void cbxCohort_SelectionChangeCommitted(object sender, EventArgs e)
@@ -253,11 +249,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 {
                     Timeout = 5
                 };
-                source.PreInitialize(cic,ThrowImmediatelyDataLoadEventListener.Quiet);
+                source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
                 source.Check(ragCic);
 
                 ClearFile();
-
             }
             finally
             {
@@ -266,7 +261,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         gbFile.Enabled = cic == null;
-
     }
 
     private void btnClearCohort_Click(object sender, EventArgs e)
@@ -324,8 +318,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
             if (_cohortCreated == null && cbDefineCohort.Checked)
             {
-                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, ProjectCreatedIfAny.ProjectNumber.Value,
-                    (ExternalCohortTable) ddCohortSources.SelectedItem);
+                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1,
+                    ProjectCreatedIfAny.ProjectNumber.Value,
+                    (ExternalCohortTable)ddCohortSources.SelectedItem);
 
                 //execute the cohort creation bit
                 var cohortRequest = new CohortCreationRequest(ProjectCreatedIfAny, cohortDefinition,
@@ -347,11 +342,13 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
 
                     //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
-                    cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
-                        ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
+                    cmdAssociateCicWithProject =
+                        new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
+                            ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                 }
 
-                var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,ThrowImmediatelyDataLoadEventListener.Quiet);
+                var engine = cohortRequest.GetEngine((Pipeline)dd.SelectedItem,
+                    ThrowImmediatelyDataLoadEventListener.Quiet);
                 engine.ExecutePipeline(new GracefulCancellationToken());
                 _cohortCreated = cohortRequest.CohortCreatedIfAny;
             }
@@ -389,7 +386,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         {
             Cursor = Cursors.Default;
         }
-
     }
 
     private string AllRequiredDataPresent()
@@ -427,7 +423,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if (ddCohortSources.SelectedItem == null)
             return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
 
-        if(cbxCohort.SelectedItem == null && _cohortFile == null)
+        if (cbxCohort.SelectedItem == null && _cohortFile == null)
             return "You must choose either a file or a cohort identification query to build the cohort from";
 
         //no problems

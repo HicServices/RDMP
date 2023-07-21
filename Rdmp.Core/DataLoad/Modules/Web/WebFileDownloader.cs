@@ -32,7 +32,8 @@ public class WebFileDownloader : IPluginDataProvider
         Mandatory = true)]
     public Uri UriToFile { get; set; }
 
-    [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
+    [DemandsInitialization(
+        "Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
     public DataAccessCredentials WebsenseCredentials { get; set; }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
@@ -63,10 +64,12 @@ public class WebFileDownloader : IPluginDataProvider
         {
             credentials = null;
         }
-        FetchRequest(File.Create(destinationFile.FullName),UriToFile.AbsoluteUri,credentials);
+
+        FetchRequest(File.Create(destinationFile.FullName), UriToFile.AbsoluteUri, credentials);
     }
 
-    private static void FetchRequest(Stream output,string url,ICredentials credentials=null,bool useCredentials=false)
+    private static void FetchRequest(Stream output, string url, ICredentials credentials = null,
+        bool useCredentials = false)
     {
         using var httpClientHandler = new HttpClientHandler();
         if (useCredentials && credentials is not null)
@@ -94,23 +97,15 @@ public class WebFileDownloader : IPluginDataProvider
                 $"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
     }
 
-    public string GetDescription()
-    {
-        throw new NotImplementedException();
-    }
+    public string GetDescription() => throw new NotImplementedException();
 
-    public IDataProvider Clone()
-    {
-        throw new NotImplementedException();
-    }
+    public IDataProvider Clone() => throw new NotImplementedException();
 
-    public bool Validate(ILoadDirectory _)
-    {
-        return string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery)
-            ? throw new MissingFieldException("PathToFile is null or white space - should be populated externally as a parameter")
+    public bool Validate(ILoadDirectory _) =>
+        string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery)
+            ? throw new MissingFieldException(
+                "PathToFile is null or white space - should be populated externally as a parameter")
             : true;
-    }
-
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)

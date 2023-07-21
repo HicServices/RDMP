@@ -73,10 +73,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         Width = Dim.Fill();
         Height = Dim.Fill();
 
-        if (pipeline == null && _compatiblePipelines.Length == 1)
-        {
-            _pipeline = _compatiblePipelines[0];
-        }
+        if (pipeline == null && _compatiblePipelines.Length == 1) _pipeline = _compatiblePipelines[0];
 
         combobox1.Source = new ListWrapper(_compatiblePipelines);
         combobox1.AddKeyBinding(Key.CursorDown, Command.Expand);

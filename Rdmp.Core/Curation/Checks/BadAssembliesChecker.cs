@@ -30,7 +30,8 @@ public class BadAssembliesChecker : ICheckable
     public void Check(ICheckNotifier notifier)
     {
         foreach (var badAssembly in MEF.ListBadAssemblies())
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not load assembly {badAssembly.Key}", CheckResult.Fail, badAssembly.Value));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not load assembly {badAssembly.Key}", CheckResult.Fail,
+                badAssembly.Value));
 
         foreach (var t in MEF.GetAllTypes())
         {

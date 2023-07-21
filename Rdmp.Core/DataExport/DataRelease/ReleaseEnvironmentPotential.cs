@@ -59,7 +59,7 @@ public class ReleaseEnvironmentPotential : ICheckable
             Exception = e;
             return;
         }
-            
+
         if (ticketingSystem == null)
             return;
 

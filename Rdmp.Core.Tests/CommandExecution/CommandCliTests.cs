@@ -27,7 +27,7 @@ public abstract class CommandCliTests : UnitTests
 {
     protected CommandInvoker GetInvoker()
     {
-        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
         {
             DisallowInput = true
         });

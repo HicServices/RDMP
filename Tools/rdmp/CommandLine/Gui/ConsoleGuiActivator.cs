@@ -86,7 +86,6 @@ internal class ConsoleGuiActivator : BasicActivateItems
             ReadOnly = true,
             AllowsTab = false,
             WordWrap = true
-
         });
         Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
     }
@@ -96,7 +95,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         GetDialogDimensions(out var w, out var h);
 
         // don't use the full height if you're just asking a yes/no question with no big description
-        h = Math.Min(5+(args.TaskDescription?.Length ??0) / 20, h);
+        h = Math.Min(5 + (args.TaskDescription?.Length ?? 0) / 20, h);
 
         var result = MessageBox.Query(w, h, args.WindowTitle ?? "", args.TaskDescription ?? "", "yes", "no", "cancel");
         chosen = result == 0;
@@ -112,7 +111,6 @@ internal class ConsoleGuiActivator : BasicActivateItems
         w = Math.Max(64, Math.Min(80, w - 4));
         h = Math.Max(10, Math.Min(20, h - 2));
     }
-
 
 
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
@@ -215,22 +213,20 @@ internal class ConsoleGuiActivator : BasicActivateItems
         var selected = openDir.FilePath?.ToString();
 
         return selected == null ? null : new DirectoryInfo(selected);
-
-        return selected == null ? null : new DirectoryInfo(selected);
     }
 
     public override FileInfo SelectFile(string prompt)
     {
-        using var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
+        using var openDir = new OpenDialog(prompt, "Directory") { AllowsMultipleSelection = false };
 
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        return openDir.FilePaths.Count == 1 ? new FileInfo(openDir.FilePaths[0]):null;
+        return openDir.FilePaths.Count == 1 ? new FileInfo(openDir.FilePaths[0]) : null;
     }
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
-        using var openDir = new OpenDialog(prompt,"File")
+        using var openDir = new OpenDialog(prompt, "File")
         {
             AllowsMultipleSelection = false,
             AllowedFileTypes = pattern == null ? null : new[] { pattern.TrimStart('*') }
@@ -238,13 +234,15 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        var selected = openDir.FilePaths.Count==1?openDir.FilePaths[0]:null;
+        var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
 
 
         // entering "null" in a file dialog may return something like "D:\Blah\null"
-        return string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase)
+        return string.Equals(Path.GetFileName(selected), "null", StringComparison.CurrentCultureIgnoreCase)
             ? null
-            : selected == null ? null : new FileInfo(selected);
+            : selected == null
+                ? null
+                : new FileInfo(selected);
     }
 
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
@@ -320,7 +318,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         GetDialogDimensions(out var w, out var h);
 
-        var dlg = new Dialog("Error",w,h,btnOk,btnStack);
+        var dlg = new Dialog("Error", w, h, btnOk, btnStack);
         dlg.Add(textView);
 
         Application.MainLoop.Invoke(() =>

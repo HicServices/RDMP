@@ -68,8 +68,8 @@ public partial class PatchingUI : Form
             var mds = new MasterDatabaseScriptExecutor(_database);
 
 
-            mds.PatchDatabase(_patcher,toMem,PreviewPatch,
-                ()=>MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
+            mds.PatchDatabase(_patcher, toMem, PreviewPatch,
+                () => MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
 
             //if it crashed during patching
             if (toMem.GetWorst() == CheckResult.Fail)

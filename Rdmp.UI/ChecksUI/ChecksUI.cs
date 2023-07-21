@@ -115,12 +115,12 @@ public partial class ChecksUI : UserControl, ICheckNotifier
         return rowObject is not CheckEventArgs e
             ? null
             : e.Result switch
-        {
-            CheckResult.Success => _tick,
-            CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
-            CheckResult.Fail => e.Ex == null ? _fail : _failEx,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            {
+                CheckResult.Success => _tick,
+                CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
+                CheckResult.Fail => e.Ex == null ? _fail : _failEx,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 
     public bool CheckingInProgress { get; private set; }
@@ -183,7 +183,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
         CheckingInProgress = false;
 
-        AllChecksComplete?.Invoke(this,new AllChecksCompleteHandlerArgs(listener));
+        AllChecksComplete?.Invoke(this, new AllChecksCompleteHandlerArgs(listener));
     }
 
 

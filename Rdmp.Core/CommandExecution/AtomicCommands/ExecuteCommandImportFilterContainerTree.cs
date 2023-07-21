@@ -50,7 +50,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     {
         Weight = DEFAULT_WEIGHT;
 
-        if(activator.CoreChildProvider is not DataExportChildProvider)
+        if (activator.CoreChildProvider is not DataExportChildProvider)
             SetImpossible("Data export functions unavailable");
     }
 
@@ -156,16 +156,6 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
                 return;
             }
 
-            if(SelectOne(fromConfiguration,out var selected))
-            {
-                if(selected is ExtractionConfiguration ec)
-                {
-                    Import(GetEligibleChild(ec).RootFilterContainer);
-                }
-                if(selected is CohortIdentificationConfiguration cic)
-                {
-                    var chosen = SelectOne(GetEligibleChildren(cic).ToList(),null,true);
-
             if (SelectOne(fromConfiguration, out var selected))
             {
                 if (selected is ExtractionConfiguration ec) Import(GetEligibleChild(ec).RootFilterContainer);
@@ -217,7 +207,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
             subContainer.SaveToDatabase();
             into.AddChild(subContainer);
 
-            DeepClone(subContainer,container,factory);
+            DeepClone(subContainer, container, factory);
         }
 
         var wizard = new FilterImportWizard(BasicActivator);
@@ -240,7 +230,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
         return arg.RootCohortAggregateContainer_ID == null
             ? Array.Empty<AggregateConfiguration>()
             : arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-            .Where(ac=>ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
+                .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
     }
 
     /// <summary>

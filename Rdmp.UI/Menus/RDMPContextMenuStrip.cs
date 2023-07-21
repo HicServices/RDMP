@@ -43,7 +43,7 @@ public class RDMPContextMenuStrip : ContextMenuStrip
     protected ToolStripMenuItem ActivateCommandMenuItem;
     private RDMPContextMenuStripArgs _args;
 
-    private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new();
+    private Dictionary<string, ToolStripMenuItem> _subMenuDictionary = new();
 
     public const string Checks = "Run Checks";
     public const string Tree = "Tree";
@@ -85,7 +85,7 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         {
             foreach (var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
             {
-                if(mi.Tag is ExecuteCommandShow cmd)
+                if (mi.Tag is ExecuteCommandShow cmd)
                 {
                     cmd.FetchDestinationObjects();
                     mi.Enabled = !cmd.IsImpossible;
@@ -281,7 +281,9 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         if (commonFunctionality.CheckColumnProvider != null)
         {
             if (_o is DatabaseEntity databaseEntity)
-                Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
+                Add(
+                    new ExecuteCommandCheckAsync(_activator, databaseEntity,
+                        commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
             var checkAll = new ToolStripMenuItem("Check All", null,
                 (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())

@@ -49,6 +49,7 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
 
         if (GetCacheCount() == 0) SetImpossible($"There are no cache entries for {cic}");
     }
+
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         IconOverlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
             OverlayKind.Delete);
@@ -63,15 +64,23 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
         foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {
             // just in case they changed the role or something weird we should nuke all its roles
-            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
-            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery) ? 1:0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList)
+                ? 1
+                : 0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery) ? 1 : 0;
         }
 
         foreach (var joinable in _cic.GetAllJoinables())
         {
             // just in case they changed the role or something weird we should nuke all its roles
-            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
-            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) ? 1 : 0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration,
+                AggregateOperation.IndexedExtractionIdentifierList)
+                ? 1
+                : 0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration,
+                AggregateOperation.JoinableInceptionQuery)
+                ? 1
+                : 0;
         }
 
         Show("Cache Entries Cleared", $"Deleted {deleted} cache entries");

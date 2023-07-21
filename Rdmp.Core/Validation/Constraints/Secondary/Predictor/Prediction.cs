@@ -20,7 +20,8 @@ public class Prediction : SecondaryConstraint
     [ExpectsColumnNameAsInput]
     public string TargetColumn { get; set; }
 
-    [Description("The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
+    [Description(
+        "The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
     public PredictionRule Rule { get; set; }
 
     //blank constructor required for XMLSerialization
@@ -30,7 +31,7 @@ public class Prediction : SecondaryConstraint
 
     public Prediction(PredictionRule rule, string targetColumn)
     {
-        Rule = rule ?? throw new ArgumentException("You must specify a PredictionRule to follow",nameof(rule));
+        Rule = rule ?? throw new ArgumentException("You must specify a PredictionRule to follow", nameof(rule));
         TargetColumn = targetColumn;
     }
 
@@ -54,7 +55,7 @@ public class Prediction : SecondaryConstraint
         return i == -1
             ? throw new MissingFieldException(
                 $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})")
-            : Rule.Predict(this,value,otherColumns[i]);
+            : Rule.Predict(this, value, otherColumns[i]);
     }
 
 
@@ -68,10 +69,8 @@ public class Prediction : SecondaryConstraint
             TargetColumn = newName;
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return Rule == null
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        Rule == null
             ? "Normally checks input against prediction rule but no rule has yet been configured"
             : $"Checks that input follows its prediction rule: '{Rule.GetType().Name}'";
-    }
 }

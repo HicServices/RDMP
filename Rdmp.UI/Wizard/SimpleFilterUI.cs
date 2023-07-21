@@ -58,7 +58,7 @@ public partial class SimpleFilterUI : UserControl
         }
     }
 
-    private List<SimpleParameterUI>  parameterUis = new();
+    private List<SimpleParameterUI> parameterUis = new();
     private bool _mandatory;
 
     public SimpleFilterUI(IActivateItems activator, ExtractionFilter filter)
@@ -100,12 +100,13 @@ public partial class SimpleFilterUI : UserControl
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
         }
 
-        Height = 50 + parameters.Length*rowHeight;
+        Height = 50 + parameters.Length * rowHeight;
     }
 
     private void SetupKnownGoodValues()
     {
-        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
+        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
 
         if (knownGoodValues.Any())
         {
@@ -127,8 +128,6 @@ public partial class SimpleFilterUI : UserControl
             pbKnownValueSets.Visible = false;
             ddKnownGoodValues.Visible = false;
         }
-
-
     }
 
     private void btnDelete_Click(object sender, EventArgs e)
@@ -155,7 +154,7 @@ public partial class SimpleFilterUI : UserControl
     public IFilter CreateFilter(IFilterFactory factory, IContainer filterContainer, IFilter[] alreadyExisting)
     {
         var importer = new FilterImporter(factory, null);
-        var newFilter = importer.ImportFilter(filterContainer,_filter, alreadyExisting);
+        var newFilter = importer.ImportFilter(filterContainer, _filter, alreadyExisting);
 
         foreach (var parameterUi in parameterUis)
             parameterUi.HandleSettingParameters(newFilter);

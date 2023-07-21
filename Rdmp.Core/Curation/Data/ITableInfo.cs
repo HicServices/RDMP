@@ -39,7 +39,6 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     bool IsTableValuedFunction { get; set; }
 
 
-
     /// <summary>
     /// <para>Indicates that this TableInfo should be the first table joined in any query that has multiple other TableInfos</para>
     /// 
@@ -135,7 +134,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// <summary>
     /// True if the object referenced is a database view
     /// </summary>
-    bool IsView {get;set; }
+    bool IsView { get; set; }
 
     /// <summary>
     /// The repository this object is stored in

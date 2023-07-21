@@ -167,7 +167,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
         IsGlobal = (bool)r["IsGlobal"];
         SQL = r["SQL"] as string;
 
-        if(r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
+        if (r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
             ExternalDatabaseServer_ID = null;
         else
             ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]);
@@ -176,23 +176,18 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID - which can be null).  If there is no
     /// ExternalDatabaseServer_ID associated with the SupportingSQLTable then a NotSupportedException will be thrown
     /// </summary>
     /// <returns></returns>
-    public DiscoveredServer GetServer()
-    {
-        return ExternalDatabaseServer_ID == null
+    public DiscoveredServer GetServer() =>
+        ExternalDatabaseServer_ID == null
             ? throw new NotSupportedException(
                 $"No external database server has been selected for SupportingSQL table called :{ToString()} (ID={ID}).  The SupportingSQLTable currently belongs to Catalogue {Catalogue.Name}")
             : ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
-    }
 }
 
 /// <summary>

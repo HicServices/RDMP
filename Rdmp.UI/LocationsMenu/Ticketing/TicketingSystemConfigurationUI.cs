@@ -69,7 +69,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         _ticketingSystemConfiguration = ticketing.SingleOrDefault();
 
         cbxType.Items.Clear();
-        cbxType.Items.AddRange(MEF.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
+        cbxType.Items.AddRange(MEF.GetTypes<ITicketingSystem>().Select(t => t.FullName).ToArray());
 
         ddCredentials.Items.Clear();
         ddCredentials.Items.Add(NoneText);
@@ -161,7 +161,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnEditCredentials_Click(object sender, EventArgs e)
     {
-        if(ddCredentials.SelectedItem is DataAccessCredentials creds)
+        if (ddCredentials.SelectedItem is DataAccessCredentials creds)
             _activator.CommandExecutionFactory.Activate(creds);
     }
 

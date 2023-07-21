@@ -38,7 +38,6 @@ namespace Rdmp.Core.Curation.Data;
 public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,
     IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
 {
-
     #region Properties
 
     private int _catalogueItemID;
@@ -259,10 +258,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return ColumnInfo?.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ColumnInfo?.GetQuerySyntaxHelper();
 
     public override string GetSummary(bool includeName, bool includeID)
     {
@@ -274,9 +270,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         return sb.ToString();
     }
 
-    protected override string FormatPropertyNameForSummary(PropertyInfo prop)
-    {
+    protected override string FormatPropertyNameForSummary(PropertyInfo prop) =>
         // rebrand this property so it is clearer to the user that it applies only on extraction
-        return prop.Name == nameof(IsPrimaryKey) ? "Is Extraction Primary Key" : base.FormatPropertyNameForSummary(prop);
-    }
+        prop.Name == nameof(IsPrimaryKey) ? "Is Extraction Primary Key" : base.FormatPropertyNameForSummary(prop);
 }

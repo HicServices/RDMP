@@ -64,25 +64,23 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
             foreach (var dbname in databases)
-                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
+                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),
+                    loadTables.Where(t =>
+                            t.GetDatabaseRuntimeName().Equals(dbname, StringComparison.CurrentCultureIgnoreCase))
+                        .ToArray());
         }
 
         //if it is live yield all the lookups
         if (_bubble == LoadBubble.Live)
             foreach (var kvp in _liveDatabaseDictionary)
-                Children.Add(new LoadDiagramDatabaseNode(_bubble,kvp.Key,kvp.Value,config1));
+                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, config1));
         else
-            Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,loadTables,config1));
+            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, loadTables, config1));
     }
 
     public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;
 
     public override string ToString() => _description;
-
-    public override string ToString()
-    {
-        return _description;
-    }
 
     public void DiscoverState()
     {
@@ -99,13 +97,11 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDiagramServerNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramServerNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(base.GetHashCode(), _bubble, _database);
-    }
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), _bubble, _database);
 
     public string WhatIsThis()
     {

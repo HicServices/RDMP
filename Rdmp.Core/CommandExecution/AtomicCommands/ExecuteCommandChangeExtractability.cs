@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public sealed class ExecuteCommandChangeExtractability:BasicCommandExecution
+public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
     private readonly bool _markExtractable;
@@ -45,15 +45,13 @@ public sealed class ExecuteCommandChangeExtractability:BasicCommandExecution
 
     public override string GetCommandName() => _markExtractable ? "Mark Extractable" : "Mark Not Extractable";
 
-    public override string GetCommandHelp()
-    {
-
-        return !_markExtractable
+    public override string GetCommandHelp() =>
+        !_markExtractable
             ? "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations"
             : @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
-    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable?OverlayKind.Add: OverlayKind.Delete);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable ? OverlayKind.Add : OverlayKind.Delete);
 
     public override void Execute()
     {
@@ -62,7 +60,9 @@ public sealed class ExecuteCommandChangeExtractability:BasicCommandExecution
         if (_markExtractable)
         {
             if (_catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository).IsExtractable)
+            {
                 Show($"{_catalogue} is already extractable");
+            }
             else
             {
                 new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
@@ -71,9 +71,13 @@ public sealed class ExecuteCommandChangeExtractability:BasicCommandExecution
         }
         else
         {
-            var extractabilityRecord = ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == _catalogue.ID);
+            var extractabilityRecord =
+                ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds =>
+                    ds.Catalogue_ID == _catalogue.ID);
             if (extractabilityRecord == null)
+            {
                 Show($"{_catalogue} is already non-extractable");
+            }
             else
             {
                 extractabilityRecord.DeleteInDatabase();

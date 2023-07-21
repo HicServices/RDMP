@@ -45,6 +45,6 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     public void HandleRefreshObject(RefreshObjectEventArgs e)
     {
         foreach (var o in DatabaseObjects.Where(o => o.Equals(e.Object)))
-            ((IRevertable) o).RevertToDatabaseState();
+            ((IRevertable)o).RevertToDatabaseState();
     }
 }

@@ -110,7 +110,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         File ??= BasicActivator.SelectFile("File to upload");
 
-        if(File == null)
+        if (File == null)
             return;
 
         var useCase = new UploadFileUseCase(File, db, BasicActivator);
@@ -126,7 +126,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         new()
         {
             WindowTitle = "Create Catalogue from File",
-            TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
+            TaskDescription =
+                "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
         };
 
     private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
@@ -134,10 +135,11 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         var engine = args.PipelineEngine;
 
         //todo figure out what it created
-        if(engine.DestinationObject is not DataTableUploadDestination dest)
-            throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
+        if (engine.DestinationObject is not DataTableUploadDestination dest)
+            throw new Exception(
+                $"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
 
-        if(string.IsNullOrWhiteSpace(dest.TargetTableName))
+        if (string.IsNullOrWhiteSpace(dest.TargetTableName))
             throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 
         var tbl = db.ExpectTable(dest.TargetTableName);
@@ -149,9 +151,11 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
         importer.DoImport(out var ti, out _);
 
-        var cata = BasicActivator.CreateAndConfigureCatalogue(ti,null,$"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}",ProjectSpecific,TargetFolder);
+        var cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
+            $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
+            TargetFolder);
 
-        if(cata != null)
+        if (cata != null)
         {
             Publish(cata);
             Emphasise(cata);

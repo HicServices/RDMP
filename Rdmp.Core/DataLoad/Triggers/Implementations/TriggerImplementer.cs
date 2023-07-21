@@ -101,16 +101,19 @@ public abstract class TriggerImplementer : ITriggerImplementer
             using var con = _server.GetConnection();
             con.Open();
 
-            using(var cmdCreateArchive = _server.GetCommand(sql, con))
+            using (var cmdCreateArchive = _server.GetCommand(sql, con))
             {
                 cmdCreateArchive.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmdCreateArchive.ExecuteNonQuery();
             }
 
 
-            _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, UserSettings.ArchiveTriggerTimeout);
-            _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, UserSettings.ArchiveTriggerTimeout);
-            _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true, UserSettings.ArchiveTriggerTimeout);
+            _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true,
+                UserSettings.ArchiveTriggerTimeout);
+            _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true,
+                UserSettings.ArchiveTriggerTimeout);
+            _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true,
+                UserSettings.ArchiveTriggerTimeout);
         }
 
         return sql;
@@ -121,8 +124,9 @@ public abstract class TriggerImplementer : ITriggerImplementer
         var dateTimeDatatype =
             syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(DateTime)));
         var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
-            
-        _table.AddColumn(SpecialFieldNames.ValidFrom, $" {dateTimeDatatype} DEFAULT {nowFunction}", true, UserSettings.ArchiveTriggerTimeout);
+
+        _table.AddColumn(SpecialFieldNames.ValidFrom, $" {dateTimeDatatype} DEFAULT {nowFunction}", true,
+            UserSettings.ArchiveTriggerTimeout);
     }
 
 
@@ -202,6 +206,7 @@ public abstract class TriggerImplementer : ITriggerImplementer
         if (t1.Equals(t2, StringComparison.CurrentCultureIgnoreCase))
             return true;
 
-        return t1.ToLower().Contains("identity") && t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
+        return t1.ToLower().Contains("identity") &&
+               t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
     }
 }

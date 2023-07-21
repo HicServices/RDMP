@@ -46,11 +46,6 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
         _anticipatedChildren.AddRange(loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, config)));
     }
 
-    public IEnumerable<object> GetChildren()
-    {
-        return _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
-    }
-
     public IEnumerable<object> GetChildren() => _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
 
     public override string ToString() => DatabaseName;
@@ -101,13 +96,11 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDiagramDatabaseNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramDatabaseNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(DatabaseName, _bubble);
-    }
+    public override int GetHashCode() => HashCode.Combine(DatabaseName, _bubble);
 
     public string WhatIsThis()
     {

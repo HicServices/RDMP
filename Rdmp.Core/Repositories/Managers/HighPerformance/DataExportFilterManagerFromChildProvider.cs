@@ -32,31 +32,32 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
     public DataExportFilterManagerFromChildProvider(DataExportRepository repository,
         DataExportChildProvider childProvider) : base(repository)
     {
-        _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(static f=>f.FilterContainer_ID.HasValue).GroupBy(static f=>f.FilterContainer_ID.Value).ToDictionary(static gdc => gdc.Key, static gdc => gdc.ToList());
+        _containersToFilters = childProvider.AllDeployedExtractionFilters
+            .Where(static f => f.FilterContainer_ID.HasValue).GroupBy(static f => f.FilterContainer_ID.Value)
+            .ToDictionary(static gdc => gdc.Key, static gdc => gdc.ToList());
 
         var server = repository.DiscoveredServer;
         using var con = repository.GetConnection();
         using var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
-        while(r.Read())
+        while (r.Read())
         {
-
             var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
             var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
 
-            if(!_subContainers.ContainsKey(parentId))
-                _subContainers.Add(parentId,new List<FilterContainer>());
+            if (!_subContainers.ContainsKey(parentId))
+                _subContainers.Add(parentId, new List<FilterContainer>());
 
             _subContainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
         }
+
         r.Close();
     }
 
     /// <summary>
     /// Returns all subcontainers found in the <paramref name="parent"/> (results are returned from the cache created during class construction)
     /// </summary>
-    public override IContainer[] GetSubContainers(IContainer parent)
-    {
-        return _subContainers.TryGetValue(parent.ID, out var result)
+    public override IContainer[] GetSubContainers(IContainer parent) =>
+        _subContainers.TryGetValue(parent.ID, out var result)
             ? result.ToArray()
             : Array.Empty<IContainer>();
 

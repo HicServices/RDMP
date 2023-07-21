@@ -25,12 +25,12 @@ public partial class CustomMetadataReport
     /// <summary>
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
     /// </summary>
-    private Dictionary<string,Func<Catalogue,object>> Replacements = new();
+    private Dictionary<string, Func<Catalogue, object>> Replacements = new();
 
     /// <summary>
     /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
     /// </summary>
-    private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
+    private Dictionary<string, Func<CatalogueItem, object>> ReplacementsCatalogueItem = new();
 
 
     /// <summary>
@@ -75,7 +75,7 @@ public partial class CustomMetadataReport
     /// <summary>
     /// Cache of latest run DQE <see cref="Evaluation"/> by <see cref="Catalogue"/> (populated from <see cref="DQERepository"/>)
     /// </summary>
-    public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; }  = new();
+    public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; } = new();
 
     /// <summary>
     /// Describes whether a $foreach is iterating and which element type is
@@ -100,7 +100,6 @@ public partial class CustomMetadataReport
         foreach (var prop in typeof(TableInfo).GetProperties())
             // if it's not already a property of Catalogue
             Replacements.TryAdd($"${prop.Name}", c => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
-        }
 
         AddDQEReplacements();
 
@@ -113,8 +112,8 @@ public partial class CustomMetadataReport
         //add basic properties ColumnInfo
         foreach (var prop in typeof(ColumnInfo).GetProperties())
             // if it's not already a property of CatalogueItem
-            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
-        }
+            ReplacementsCatalogueItem.TryAdd($"${prop.Name}",
+                s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
 
         try
         {
@@ -262,7 +261,9 @@ public partial class CustomMetadataReport
                             for (var i = 0; i < catalogues.Length; i++)
                             {
                                 var element =
-                                    i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
+                                    i == catalogues.Length - 1
+                                        ? ElementIteration.LastElement
+                                        : ElementIteration.RegularElement;
 
                                 var newContents = DoReplacements(section.Body.ToArray(), catalogues[i], section,
                                     element);
@@ -279,6 +280,7 @@ public partial class CustomMetadataReport
                     var newContents = DoReplacements(templateBody, catalogue, null, ElementIteration.NotIterating);
 
                     if (oneFile)
+                    {
                         outFile.WriteLine(newContents);
                     }
                     else
@@ -286,7 +288,7 @@ public partial class CustomMetadataReport
                         var filename = DoReplacements(new[] { fileNaming }, catalogue, null,
                             ElementIteration.NotIterating).Trim();
 
-                        using var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename));
+                        using var sw = new StreamWriter(Path.Combine(outputDirectory.FullName, filename));
                         sw.Write(newContents);
                         sw.Flush();
                         sw.Close();
@@ -331,10 +333,11 @@ public partial class CustomMetadataReport
                 // is it a loop Catalogues
             if (str.Trim().Equals(LoopCatalogues))
             {
-                if(currentSection != null)
+                if (currentSection != null)
                     yield return currentSection.IsPlainText
                         ? currentSection
-                        : throw new CustomMetadataReportException($"Unexpected '{str}' before the end of the last one on line {i+1}",i+1);
+                        : throw new CustomMetadataReportException(
+                            $"Unexpected '{str}' before the end of the last one on line {i + 1}", i + 1);
 
                 // start new section looping Catalogues
                 currentSection = new CatalogueSection(false, i);
@@ -376,18 +379,19 @@ public partial class CustomMetadataReport
                 currentSection.Body.Add(str);
             }
         }
-            
-        if(currentSection != null)
+
+        if (currentSection != null)
             yield return currentSection.IsPlainText
                 ? currentSection
-                : throw new CustomMetadataReportException($"Reached end of template without finding an expected {EndLoop}",templateBody.Length);
+                : throw new CustomMetadataReportException(
+                    $"Reached end of template without finding an expected {EndLoop}", templateBody.Length);
     }
 
     private class CatalogueSection
     {
-        public int LineNumber { get;set;}
-        public bool IsPlainText { get;set;}
-        public List<string> Body {get;set; } = new();
+        public int LineNumber { get; set; }
+        public bool IsPlainText { get; set; }
+        public List<string> Body { get; set; } = new();
 
         public CatalogueSection(bool isPlainText, int lineNumber)
         {
@@ -423,7 +427,6 @@ public partial class CustomMetadataReport
                 foreach (var r in Replacements)
                     if (copy.Contains(r.Key))
                         copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
-                }
 
                 // when iterating we need to respect iteration symbols (e.g. $Comma).
                 if (iteration == ElementIteration.NotIterating)
@@ -488,10 +491,8 @@ public partial class CustomMetadataReport
 
         for (var j = 0; j < catalogueItems.Length; j++)
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
-                j < catalogueItems.Length -1 ?
-                    ElementIteration.RegularElement : ElementIteration.LastElement));
-        }
-                
+                j < catalogueItems.Length - 1 ? ElementIteration.RegularElement : ElementIteration.LastElement));
+
 
         result = sbResult.ToString();
 
@@ -503,15 +504,12 @@ public partial class CustomMetadataReport
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
-    private string ValueToString(object v)
-    {
-        return v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
-    }
+    private string ValueToString(object v) =>
+        v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
 
-    public string ReplaceNewlines(string input)
-    {
-        return input != null && NewlineSubstitution != null ? Newline().Replace(input, NewlineSubstitution) : input;
-    }
+    public string ReplaceNewlines(string input) => input != null && NewlineSubstitution != null
+        ? Newline().Replace(input, NewlineSubstitution)
+        : input;
 
     /// <summary>
     /// Replace all templated strings (e.g. $Name) in the <paramref name="template"/> with the corresponding values in the <paramref name="catalogueItem"/>

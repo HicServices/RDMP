@@ -85,10 +85,7 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
 
                 match = (AggregateDimension)BasicActivator.SelectOne("Choose pivot dimension", possible);
 
-                if(match == null)
-                {
-                    return;
-                }
+                if (match == null) return;
             }
             else
             {

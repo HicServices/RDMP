@@ -135,7 +135,7 @@ public class NavigationTrack<T>
         if (show)
             Activate(newHead);
 
-        Changed?.Invoke(this,EventArgs.Empty);
+        Changed?.Invoke(this, EventArgs.Empty);
 
         return newHead;
     }
@@ -160,7 +160,7 @@ public class NavigationTrack<T>
 
         _navigationStack.Push(r);
 
-        Changed?.Invoke(this,EventArgs.Empty);
+        Changed?.Invoke(this, EventArgs.Empty);
 
         return r;
     }
@@ -215,7 +215,7 @@ public class NavigationTrack<T>
 
         _navigationStack.Push(newHead);
 
-        Changed?.Invoke(this,EventArgs.Empty);
+        Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

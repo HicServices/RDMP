@@ -29,7 +29,6 @@ namespace Tests.Common.Scenarios;
 /// </summary>
 public class TestsRequiringADle : TestsRequiringA
 {
-
     protected int RowsBefore;
     protected int RowsNow => LiveTable.GetRowCount();
 
@@ -64,7 +63,7 @@ public class TestsRequiringADle : TestsRequiringA
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;
 
-        TestLoadMetadata = new LoadMetadata (CatalogueRepository,"Loading Test Catalogue")
+        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue")
         {
             LocationOfFlatFiles = LoadDirectory.RootPath.FullName
         };
@@ -78,8 +77,10 @@ public class TestsRequiringADle : TestsRequiringA
         CreateFlatFileAttacher(TestLoadMetadata, "*.csv", TestCatalogue.GetTableInfoList(false).Single(), ",");
 
         //Get DleRunner to run pre load checks (includes trigger creation etc)
-        var runner = new DleRunner(new DleOptions { LoadMetadata = TestLoadMetadata.ID.ToString(),Command = CommandLineActivity.check});
-        runner.Run(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+        var runner = new DleRunner(new DleOptions
+            { LoadMetadata = TestLoadMetadata.ID.ToString(), Command = CommandLineActivity.check });
+        runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+            new GracefulCancellationToken());
     }
 
     /// <summary>
@@ -170,11 +171,15 @@ public class TestsRequiringADle : TestsRequiringA
         if (checks)
         {
             //Get DleRunner to run pre load checks (includes trigger creation etc)
-            var checker = new DleRunner(new DleOptions { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check});
-            checker.Run(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
+            var checker = new DleRunner(new DleOptions
+                { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check });
+            checker.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+                new GracefulCancellationToken(timeout, timeout));
         }
 
-        var runner = new DleRunner(new DleOptions { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
-        runner.Run(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken(timeout,timeout));
+        var runner = new DleRunner(new DleOptions
+            { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run });
+        runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet,
+            new GracefulCancellationToken(timeout, timeout));
     }
 }

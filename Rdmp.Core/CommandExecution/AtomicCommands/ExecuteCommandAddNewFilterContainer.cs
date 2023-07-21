@@ -44,9 +44,10 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
         SetImpossibleIfReadonly(host);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
 
-    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container):base(activator)
+    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container) : base(activator)
     {
         _container = container;
 
@@ -57,10 +58,11 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
     {
         base.Execute();
 
-        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ?? throw new Exception("Unable to determine FilterFactory, is host and container null?");
+        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ??
+                      throw new Exception("Unable to determine FilterFactory, is host and container null?");
         var newContainer = factory.CreateNewContainer();
 
-        if(_host != null)
+        if (_host != null)
         {
             _host.RootFilterContainer_ID = newContainer.ID;
             _host.SaveToDatabase();

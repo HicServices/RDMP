@@ -109,8 +109,9 @@ public class SelectSQLRefactorerTests : UnitTests
         Assert.AreEqual(newName, ti.Name);
     }
 
-    [TestCase("[Donkey]..[MyTbl]","[Fish]..[MyTbl2]","'[Donkey]..[MyTbl]' has incorrect database property 'Fish'")]
-    public void RefactorTableName_IsNotRefactorable_TableInfoWithNoColumnInfos(string oldName, string newName,string expectedReason)
+    [TestCase("[Donkey]..[MyTbl]", "[Fish]..[MyTbl2]", "'[Donkey]..[MyTbl]' has incorrect database property 'Fish'")]
+    public void RefactorTableName_IsNotRefactorable_TableInfoWithNoColumnInfos(string oldName, string newName,
+        string expectedReason)
     {
         var ti = WhenIHaveA<TableInfo>();
         ti.Name = oldName;

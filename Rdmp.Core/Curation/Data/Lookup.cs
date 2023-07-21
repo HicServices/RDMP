@@ -176,6 +176,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     public override string ToString() => ToStringCached();
 
     private string _cachedToString;
+
     private string ToStringCached()
     {
         return _cachedToString ??= $" {ForeignKey.Name} = {PrimaryKey.Name}";
@@ -198,7 +199,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         if (!foreignKeyTable.Repository.Equals(primaryKeyTable.Repository))
             throw new NotSupportedException("TableInfos come from different repositories!");
 
-        var repo = (CatalogueRepository) foreignKeyTable.Repository;
+        var repo = (CatalogueRepository)foreignKeyTable.Repository;
         using var con = repo.GetConnection();
         using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
   WHERE 
@@ -227,14 +228,14 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-
         if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Foreign Key and Primary Key are from the same table for Lookup {ID}",CheckResult.Fail));
+                $"Foreign Key and Primary Key are from the same table for Lookup {ID}", CheckResult.Fail));
 
         if (Description.TableInfo_ID != PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}", CheckResult.Fail));
+                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}",
+                CheckResult.Fail));
     }
 
     /// <inheritdoc/>

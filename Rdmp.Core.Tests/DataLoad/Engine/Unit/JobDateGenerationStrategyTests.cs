@@ -19,8 +19,7 @@ public class JobDateGenerationStrategyTests
     public void TestSingleScheduleConsecutiveDateStrategy()
     {
         var schedule =
-            Substitute.For<ILoadProgress>();
-        schedule.DataLoadProgress.Returns(new DateTime(2015, 1, 1));
+            Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == new DateTime(2015, 1, 1));
 
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
@@ -39,8 +38,9 @@ public class JobDateGenerationStrategyTests
     public void TestSingleScheduleConsecutiveDateStrategy_FutureDates_AreForbidden()
     {
         //we have loaded SetUp to day before yesterday
-        var schedule = Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));
-                                    
+        var schedule =
+            Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));
+
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
         var dates = strategy.GetDates(100, false);
@@ -52,9 +52,9 @@ public class JobDateGenerationStrategyTests
     public void TestSingleScheduleConsecutiveDateStrategy_FutureDates_AreAllowed()
     {
         var schedule =
-            Substitute.For<ILoadProgress>();
-        schedule.DataLoadProgress.Returns(
-        DateTime.Now.Date.AddDays(-2)); //we have loaded SetUp to day before yesterday
+            Mock.Of<ILoadProgress>(loadProgress =>
+                loadProgress.DataLoadProgress ==
+                DateTime.Now.Date.AddDays(-2)); //we have loaded SetUp to day before yesterday
 
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 

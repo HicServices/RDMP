@@ -121,7 +121,9 @@ public class BoundDouble : Bound
         if (Lower.HasValue)
             return GreaterThanMessage(d, Lower.ToString());
 
-        return Upper.HasValue ? LessThanMessage(d, Upper.ToString()) : throw new InvalidOperationException("Illegal state.");
+        return Upper.HasValue
+            ? LessThanMessage(d, Upper.ToString())
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(double d)
@@ -137,26 +139,16 @@ public class BoundDouble : Bound
             : throw new InvalidOperationException("Illegal state.");
     }
 
-    private string BetweenMessage(double d, string l, string u)
-    {
-        return
-            $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
-    }
+    private string BetweenMessage(double d, string l, string u) =>
+        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
 
-    private string GreaterThanMessage(double d, string s)
-    {
-        return $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
-    }
+    private static string GreaterThanMessage(double d, string s) =>
+        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
 
-    private string LessThanMessage(double d, string s)
-    {
-        return $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
-    }
+    private static string LessThanMessage(double d, string s) =>
+        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
 
-    private static string Wrap(string s)
-    {
-        return $"[{s}]";
-    }
+    private static string Wrap(string s) => $"[{s}]";
 
     public BoundDouble And(int upper)
     {

@@ -42,7 +42,7 @@ public class UITests : UnitTests
     /// </summary>
     private TestActivateItems InitializeItemActivator()
     {
-        _itemActivator = new TestActivateItems(this,Repository);
+        _itemActivator = new TestActivateItems(this, Repository);
         _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
         return _itemActivator;
     }
@@ -260,41 +260,23 @@ public class UITests : UnitTests
     private List<string> GetAllErrorProviderErrorsShown()
     {
         var controls = GetControl<Control>().ToArray();
-        var errorProviders =
-            //get all controls with ErrorProvider fields
-            controls.SelectMany(GetErrorProviders)
-                //and any we registered through the BinderWithErrorProviderFactory
-                .Union(ItemActivator.Results.RegisteredRules.Select(r => r.ErrorProvider))
-                .Distinct()
-                .ToList();
-
-        //get the error messages that have been shown from any of these
-
-        return errorProviders.SelectMany(GetErrors).ToList();
+        var providers = controls.SelectMany(GetErrorProviders)
+            .Union(ItemActivator.Results.RegisteredRules.Select(static r => r.ErrorProvider)).Distinct();
+        var errors = providers.Where(static ep => ep.HasErrors)
+            .SelectMany(ep => controls.Select(ep.GetError)).Where(static s => !string.IsNullOrWhiteSpace(s));
+        return errors.ToList();
     }
 
+    private static readonly ConcurrentDictionary<Type, FieldInfo[]> ErrorProviderFieldCache = new();
 
-    private static FieldInfo _items;
-    private static IEnumerable<string> GetErrors(ErrorProvider ep)
+    private static IEnumerable<ErrorProvider> GetErrorProviders(Control arg)
     {
-        if (!ep.HasErrors) yield break;
-        _items ??= typeof(ErrorProvider).GetField("_items", BindingFlags.NonPublic|BindingFlags.Instance) ?? throw new Exception("ErrorProvider _items field missing?!");
-        var itemsV = _items.GetValue(ep) ?? throw new Exception("EP had missing _items");
-        var itemsValues = _items.FieldType.GetProperty("Values") ?? throw new Exception("No _items.Values");
-        var values = (ICollection)itemsValues.GetValue(itemsV) ?? throw new Exception("No Values");
-        foreach (var iv in values)
-        {
-            var s=iv.GetType().GetField("_error", BindingFlags.NonPublic|BindingFlags.Instance)?.GetValue(iv) as string;
-            if (!string.IsNullOrWhiteSpace(s))
-                yield return s;
-        }
-    }
-
-    private List<ErrorProvider> GetErrorProviders(Control arg)
-    {
-        var errorProviderFields = arg.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(ErrorProvider));
-
-        return errorProviderFields.Select(f => f.GetValue(arg)).Where(instance => instance != null).Cast<ErrorProvider>().ToList();
+        var t = arg.GetType();
+        var errorProviderFields = ErrorProviderFieldCache.GetOrAdd(t, static t => t
+            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+            .Where(static f => f.FieldType == typeof(ErrorProvider)).ToArray());
+        return errorProviderFields.Select(f => f.GetValue(arg)).Where(static instance => instance != null)
+            .Cast<ErrorProvider>();
     }
 
     /// <summary>
@@ -355,12 +337,12 @@ public class UITests : UnitTests
             .ToArray();
 
         var uiTypes = typeof(CatalogueUI).Assembly.GetTypes()
-            .Where(t=>t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
-                                && !t.IsAbstract && !t.IsInterface
-                                && t.BaseType?.BaseType != null
-                                && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
+            .Where(t => t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
+                                  && !t.IsAbstract && !t.IsInterface
+                                  && t.BaseType?.BaseType != null
+                                  && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
 
-        var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var methods = typeof(UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
         var objectsToTest = types
@@ -388,30 +370,10 @@ public class UITests : UnitTests
 
             try
             {
-                //todo
-                var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
+                ui = (IRDMPSingleDatabaseObjectControl)genericAndLaunch.Invoke(this, new object[] { o, true });
 
-                //ensure that the method supports the Type
-                var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
-
-                IRDMPSingleDatabaseObjectControl ui;
-
-                try
-                {
-                    ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
-
-                    if(ui is IDisposable d)
-                        d.Dispose();
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception(
-                        $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",ex);
-                }
-
-
-                action(ui);
-                ClearResults();
+                if (ui is IDisposable d)
+                    d.Dispose();
             }
             catch (Exception ex)
             {

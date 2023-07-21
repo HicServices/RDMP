@@ -26,7 +26,7 @@ public class CohortCompilerRunnerTests : DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_SimpleCase()
     {
-        SetupCohort(out var db,out var cic,out var dt);
+        SetupCohort(out var db, out var cic, out var dt);
 
         var compiler = new CohortCompiler(cic);
 
@@ -48,7 +48,7 @@ public class CohortCompilerRunnerTests : DatabaseTests
     public void CacheIdentifierListWithRunner_WithCaching()
     {
         SetupCohort(out var db, out var cic, out var dt);
-            
+
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
         e.CreateAndPatchDatabase(p, new AcceptAllCheckNotifier());

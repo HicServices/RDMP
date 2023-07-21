@@ -69,9 +69,9 @@ public partial class SelectColumnUI : RDMPUserControl
         _includedColumns = new List<IColumn>();
 
         olvEditInPopup.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
-        olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject)?"Edit...":null;
+        olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Edit..." : null;
 
-        olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject)? "Included": "Not Included";
+        olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Included" : "Not Included";
         olvSelectColumns.AlwaysGroupByColumn = olvIncluded;
         olvSelectColumns.RowFormatter += RowFormatter;
 
@@ -184,12 +184,13 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private Bitmap ImageGetter(object rowObject)
     {
-
         if (_availableColumns.Contains(rowObject))
             return _add;
 
         //if we are getting an icon for the count(*) column and it cannot be removed then don't show the icon for removal
-        return _countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn ? null : _delete;
+        return _countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn
+            ? null
+            : _delete;
     }
 
     private void CellEditFinished(object sender, CellEditEventArgs cellEditEventArgs)
@@ -229,9 +230,8 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private void ButtonClick(object sender, CellClickEventArgs cellClickEventArgs)
     {
-        if(cellClickEventArgs.Column == olvEditInPopup)
-        {
-            if(cellClickEventArgs.Model is IColumn col)
+        if (cellClickEventArgs.Column == olvEditInPopup)
+            if (cellClickEventArgs.Model is IColumn col)
             {
                 var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCombineableFactory());
 

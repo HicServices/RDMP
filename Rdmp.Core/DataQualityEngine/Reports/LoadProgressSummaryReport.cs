@@ -85,7 +85,6 @@ public class LoadProgressSummaryReport : ICheckable
             {
                 CataloguesWithDQERuns.Add(catalogue, evaluation);
             }
-
         }
         //The following code uses an epic pivot to produce something like:
         /*YearMonth	Year	Month	 6429	 6430
@@ -118,7 +117,6 @@ public class LoadProgressSummaryReport : ICheckable
 
         //Now rename the columns from ID to the catalogue name
         foreach (DataColumn col in CataloguesPeriodictiyData.Columns)
-        {
             if (int.TryParse(col.ColumnName, out var cataId))
                 col.ColumnName = CataloguesWithDQERuns.Keys.Single(c => c.ID == cataId).Name;
 
@@ -127,7 +125,6 @@ public class LoadProgressSummaryReport : ICheckable
         if (cacheProgress is { CacheFillProgress: not null })
             ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
     }
-
 
 
     private void ExtendXAxisTill(DateTime value)
@@ -235,11 +232,14 @@ public class LoadProgressSummaryReport : ICheckable
 
             try
             {
-                var cacheFileSystem = new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(new FromCheckNotifierToDataLoadEventListener(notifier));
+                var cacheFileSystem =
+                    new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(
+                        new FromCheckNotifierToDataLoadEventListener(notifier));
 
                 var layout = cacheFileSystem.CreateCacheLayout();
                 availableFiles = layout.GetSortedDateQueue(ThrowImmediatelyDataLoadEventListener.Quiet).ToArray();
-                ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
+                ResolvedCachePath =
+                    layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
             }
             catch (Exception e)
             {
@@ -311,7 +311,6 @@ public class LoadProgressSummaryReport : ICheckable
                     CheckResult.Warning));
         }
     }
-
 
 
     private static string GetTotalsByMonthSQL(Catalogue[] catalogues)

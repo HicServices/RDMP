@@ -61,7 +61,7 @@ public class EndToEndCacheTest : DatabaseTests
         _lp = new LoadProgress(CatalogueRepository, _lmd);
         _cp = new CacheProgress(CatalogueRepository, _lp);
 
-        _lp.OriginDate = new DateTime(2001,1,1);
+        _lp.OriginDate = new DateTime(2001, 1, 1);
         _lp.SaveToDatabase();
 
         _testPipeline =
@@ -107,8 +107,10 @@ public class EndToEndCacheTest : DatabaseTests
         {
             Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
-            var auto = new CacheRunner(new CacheOptions {CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
-            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
+            var auto = new CacheRunner(new CacheOptions
+                { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
+            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
         });
 
         Assert.True(t.Wait(60000));

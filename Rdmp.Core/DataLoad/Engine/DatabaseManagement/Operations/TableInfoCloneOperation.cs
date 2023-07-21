@@ -88,13 +88,16 @@ public class TableInfoCloneOperation
     }
 
 
-    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
-    {
-        return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
-            ||
-            dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
-    }
-    public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
+    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName) =>
+        tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+        tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
+        ||
+        dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+        dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+
+    public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo,
+        DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns,
+        bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
     {
         if (!sourceTable.Exists())
             throw new Exception($"Table {sourceTable} does not exist on {srcDatabaseInfo}");
@@ -146,7 +149,9 @@ public class TableInfoCloneOperation
             if (_hicDatabaseConfiguration.IgnoreColumns != null &&
                 _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
             {
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                 drop = true;
             }
 

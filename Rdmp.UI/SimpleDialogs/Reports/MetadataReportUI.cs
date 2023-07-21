@@ -105,7 +105,7 @@ public partial class MetadataReportUI : RDMPForm
         var toReturn = new List<BitmapWithDescription>();
 
 
-        aggregateGraph1.Width = (int) _report.PageWidthInPixels;
+        aggregateGraph1.Width = (int)_report.PageWidthInPixels;
         aggregateGraph1.Visible = true;
 
 
@@ -124,7 +124,7 @@ public partial class MetadataReportUI : RDMPForm
 
             aggregateGraph1.LoadGraphAsync();
 
-            while(aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
+            while (aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
             {
                 Thread.Sleep(100);
                 Application.DoEvents();
@@ -211,11 +211,10 @@ public partial class MetadataReportUI : RDMPForm
                 TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
             }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
             SetCatalogueSelection(selected);
-        }
-
     }
 
     private bool bLoading;
+
     private void SetCatalogueSelection(ICatalogue[] array)
     {
         bLoading = true;
@@ -250,7 +249,7 @@ public partial class MetadataReportUI : RDMPForm
             return;
 
         if (cbxCatalogues.SelectedItem != null)
-            _cataloguesToRun = new[] {(ICatalogue) cbxCatalogues.SelectedItem};
+            _cataloguesToRun = new[] { (ICatalogue)cbxCatalogues.SelectedItem };
     }
 
     private void btnFolder_Click(object sender, EventArgs e)
@@ -271,6 +270,5 @@ public partial class MetadataReportUI : RDMPForm
                     .AllCatalogues
                     .Where(c => c.Folder.Equals(selected))
                     .ToArray());
-        }
     }
 }

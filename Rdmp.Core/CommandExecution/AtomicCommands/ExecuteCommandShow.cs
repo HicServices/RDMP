@@ -111,12 +111,12 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
         Weight = 50.3f;
     }
 
-    public override string GetCommandName()
-    {
-        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+    public override string GetCommandName() =>
+        !string.IsNullOrWhiteSpace(OverrideCommandName)
             ? base.GetCommandName()
-            : UseIconAndTypeName && _objectType != null ? $"Show {_objectType.Name}(s)" : base.GetCommandName();
-    }
+            : UseIconAndTypeName && _objectType != null
+                ? $"Show {_objectType.Name}(s)"
+                : base.GetCommandName();
 
     public override void Execute()
     {
@@ -165,18 +165,16 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
     public override string GetCommandHelp() => "Opens the containing toolbox collection and shows the object";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return OverrideIcon != null
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        OverrideIcon != null
             ? base.GetImage(iconProvider)
             : UseIconAndTypeName &&
-               // if there is something to show
-               (_objectType != null || _objectToShow != null)
-            ?
-            // return its icon
-            iconProvider.GetImage((object)_objectToShow ?? _objectType)
-            : null;
-    }
+              // if there is something to show
+              (_objectType != null || _objectToShow != null)
+                ?
+                // return its icon
+                iconProvider.GetImage((object)_objectToShow ?? _objectType)
+                : null;
 
     /// <summary>
     /// Resolves any lamdas and returns what object(s) would be shown (if any)
@@ -186,6 +184,6 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
     {
         FetchDestinationObjects();
-        return new[] {_objectToShow};
+        return new[] { _objectToShow };
     }
 }

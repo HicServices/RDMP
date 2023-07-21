@@ -12,7 +12,8 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode :RDMPCommandExecutionProposal<StandardPipelineUseCaseNode>
+internal class
+    ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode : RDMPCommandExecutionProposal<StandardPipelineUseCaseNode>
 {
     public ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -25,10 +26,8 @@ internal class ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode :RDMPComm
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardPipelineUseCaseNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return cmd is PipelineCombineable sourcePipelineCommand
-            ? new ExecuteCommandEditPipelineWithUseCase(ItemActivator,sourcePipelineCommand.Pipeline, target.UseCase)
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is PipelineCombineable sourcePipelineCommand
+            ? new ExecuteCommandEditPipelineWithUseCase(ItemActivator, sourcePipelineCommand.Pipeline, target.UseCase)
             : (ICommandExecution)null;
-    }
 }

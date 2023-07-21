@@ -53,6 +53,9 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote", null);
         externalServer.SetProperties(db);
 
+        var attacher = new RemoteDatabaseAttacher();
+        attacher.Initialize(null, db);
+
         attacher.LoadRawColumnsOnly = scenario is Scenario.AllRawColumns or Scenario.MissingPreLoadDiscardedColumn;
         attacher.RemoteSource = externalServer;
 
@@ -61,9 +64,9 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
         var job = Mock.Of<IDataLoadJob>(p =>
-            p.RegularTablesToLoad==new List<ITableInfo> {ti} &&
-            p.LookupTablesToLoad==new List<ITableInfo>() && p.DataLoadInfo==dli);
-            
+            p.RegularTablesToLoad == new List<ITableInfo> { ti } &&
+            p.LookupTablesToLoad == new List<ITableInfo>() && p.DataLoadInfo == dli);
+
         switch (scenario)
         {
             case Scenario.AllRawColumns:
@@ -74,7 +77,8 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
                 var ex = Assert.Throws<PipelineCrashedException>(() =>
                     attacher.Attach(job, new GracefulCancellationToken()));
 
-                Assert.AreEqual("Invalid column name 'MyMissingCol'.", ex.InnerException.InnerException.InnerException.Message);
+                Assert.AreEqual("Invalid column name 'MyMissingCol'.",
+                    ex.InnerException.InnerException.InnerException.Message);
                 return;
             case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
                 break;

@@ -24,19 +24,21 @@ public class JobDateGenerationStrategyFactoryTestsUnit : UnitTests
         var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() =>
                    factory.Create(lp, new ThrowImmediatelyDataLoadEventListener()));
 
-        var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() => factory.Create(lp,ThrowImmediatelyDataLoadEventListener.Quiet));
+        var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() =>
+            factory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet));
 
-        Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null", ex.Message);
+        Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null",
+            ex.Message);
     }
 
     [Test]
     public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
     {
-        var lp = WhenIHaveA<LoadProgress>();
-        lp.DataLoadProgress = new DateTime(2001, 01, 01);
+        var lp = Mock.Of<ILoadProgress>(p => p.DataLoadProgress == new DateTime(2001, 01, 01));
 
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
-        Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy), factory.Create(lp,ThrowImmediatelyDataLoadEventListener.Quiet).GetType());
+        Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy),
+            factory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet).GetType());
     }
 }

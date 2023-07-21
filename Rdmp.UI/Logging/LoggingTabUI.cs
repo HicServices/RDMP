@@ -41,8 +41,8 @@ public class LoggingTabUI : LoggingTab_Design
     private ToolStripTextBox tbContentFilter = new();
     private ToolStripLabel label1 = new("Filter:");
     private ToolStripLabel label2 = new("Top:");
-    private ToolStripTextBox tbTop = new() {Text = "10000" };
-    private ToolStripButton cbPreferNewer = new("Newest"){CheckOnClick =true,Checked = true};
+    private ToolStripTextBox tbTop = new() { Text = "10000" };
+    private ToolStripButton cbPreferNewer = new("Newest") { CheckOnClick = true, Checked = true };
 
     private Label lblCurrentFilter;
     private PictureBox pbRemoveFilter;
@@ -271,7 +271,6 @@ public class LoggingTabUI : LoggingTab_Design
         pFilter.ResumeLayout(false);
         panel1.ResumeLayout(false);
         ResumeLayout(false);
-
     }
 
     #endregion
@@ -294,7 +293,7 @@ public class LoggingTabUI : LoggingTab_Design
 
     public void SetFilter(LogViewerFilter filter)
     {
-        if(
+        if (
             _navigationTrack is { Current: not null } //there is a back navigation stack setup
             && filter != _navigationTrack.Current //we are not doing a Back operation
         )
@@ -307,7 +306,7 @@ public class LoggingTabUI : LoggingTab_Design
 
         //push the old filter
         _navigationTrack?.Append(Filter);
-        if(_back != null)
+        if (_back != null)
             _back.Enabled = _navigationTrack.CanBack();
 
         if (filter.IsEmpty)

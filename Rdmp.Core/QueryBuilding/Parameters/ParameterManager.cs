@@ -42,7 +42,7 @@ public class ParameterManager
     /// Collection of all the parameters found at each level so far
     /// <para>Do not modify this yourself</para>
     /// </summary>
-    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
+    public Dictionary<ParameterLevel, List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
 
     /// <summary>
     /// Repository for creating temporary aggregate parameters
@@ -155,11 +155,11 @@ public class ParameterManager
         if (emptyParameter != null)
         {
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
-            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ?? throw new QueryBuildingException(exceptionMessage);
+            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ??
+                                   throw new QueryBuildingException(exceptionMessage);
 
-            //problem was from a user one from their Catalogue Database, tell them the ProblemObject aswell
-            throw new QueryBuildingException(exceptionMessage,new[]{asConcreteObject});
-
+            //problem was from a user one from their Catalogue Database, tell them the ProblemObject as well
+            throw new QueryBuildingException(exceptionMessage, new[] { asConcreteObject });
         }
 
         return toReturn.Select(t => t.Parameter);
@@ -216,7 +216,9 @@ public class ParameterManager
             //if we get here then its a duplicate but it is an exact duplicate so don't worry
         }
         else
+        {
             existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters
+        }
     }
 
     private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1,
@@ -228,13 +230,13 @@ public class ParameterManager
         var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
-        if(parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
+        if (parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
         {
             concreteObjects.Add(concrete1);
             desc1 += $" ID:{concrete1.ID}";
         }
 
-        if(parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
+        if (parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
         {
             concreteObjects.Add(concrete2);
             desc2 += $" ID:{concrete2.ID}";
@@ -275,11 +277,10 @@ public class ParameterManager
         //for each table valued parameter (TableInfo level)
         foreach (var parameterToImport in toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo])
             //it does not already exist
-            if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p => p.ParameterName.Equals(parameterToImport.ParameterName,StringComparison.CurrentCultureIgnoreCase)))
+            if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p =>
+                    p.ParameterName.Equals(parameterToImport.ParameterName, StringComparison.CurrentCultureIgnoreCase)))
                 ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(parameterToImport); //import it
-
-            //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
-        }
+        //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
         toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Clear();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -289,7 +290,9 @@ public class ParameterManager
         foreach (var parameterToImport in toImport.GetFinalResolvedParametersList())
         {
             var toImportParameterName = parameterToImport.ParameterName;
-            var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].SingleOrDefault(p => p.ParameterName.Equals(toImportParameterName, StringComparison.CurrentCultureIgnoreCase));
+            var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel]
+                .SingleOrDefault(p =>
+                    p.ParameterName.Equals(toImportParameterName, StringComparison.CurrentCultureIgnoreCase));
 
             if (existing == null)
             {
@@ -432,7 +435,8 @@ public class ParameterManager
         foreach (ParameterLevel level in Enum.GetValues(typeof(ParameterLevel)))
             if (level > currentLevel)
             {
-                var compatibleOverride = ParametersFoundSoFarInQueryGeneration[level].FirstOrDefault(o => AreDeclaredTheSame(existing, o));
+                var compatibleOverride = ParametersFoundSoFarInQueryGeneration[level]
+                    .FirstOrDefault(o => AreDeclaredTheSame(existing, o));
 
                 //there are no override compatible parameters at this candidate level or the override is itself overridden at a higher level
                 if (compatibleOverride == null || overrides.Contains(compatibleOverride))
@@ -469,7 +473,7 @@ public class ParameterManager
         return ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter))
             ? ParametersFoundSoFarInQueryGeneration
                 //take the bottom most level it was found at
-                .OrderBy(static kvp=>kvp.Key)
+                .OrderBy(static kvp => kvp.Key)
                 .First(k => k.Value.Contains(parameter)).Key
             : null;
     }
@@ -482,9 +486,9 @@ public class ParameterManager
     public ParameterManager Clone()
     {
         var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray())
-            {
-                State = State
-            };
+        {
+            State = State
+        };
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
             clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);

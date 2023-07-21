@@ -29,12 +29,6 @@ public class DeployedExtractionFilterFactory : IFilterFactory
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name)
-    {
-        return new DeployedExtractionFilter(_repository,name,null);
-    }
-
-    /// <inheritdoc/>
     public IFilter CreateNewFilter(string name) => new DeployedExtractionFilter(_repository, name, null);
 
     /// <inheritdoc/>

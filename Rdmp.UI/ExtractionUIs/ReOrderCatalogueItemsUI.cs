@@ -244,18 +244,17 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             {
                 if (e.Index == indexOfStartOfReordingInNewOrderListbox)
                     e.Graphics.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
-                else
-                if (itemsToReOrderAndOffsetRelativeToFirst != null
-                    && e.Index <= itemsToReOrderAndOffsetRelativeToFirst.Count + indexOfStartOfReordingInNewOrderListbox
-                    && e.Index > indexOfStartOfReordingInNewOrderListbox)
+                else if (itemsToReOrderAndOffsetRelativeToFirst != null
+                         && e.Index <= itemsToReOrderAndOffsetRelativeToFirst.Count +
+                         indexOfStartOfReordingInNewOrderListbox
+                         && e.Index > indexOfStartOfReordingInNewOrderListbox)
                     e.Graphics.FillRectangle(new SolidBrush(Color.Purple), e.Bounds);
                 else
                     e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
-
             }
 
-            e.Graphics.DrawString(listBox.Items[e.Index].ToString(), lbDesiredOrder.Font, new SolidBrush(Color.Black), e.Bounds);
-
+            e.Graphics.DrawString(listBox.Items[e.Index].ToString(), lbDesiredOrder.Font, new SolidBrush(Color.Black),
+                e.Bounds);
         }
     }
 
@@ -277,7 +276,8 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             else
                 e.Graphics.FillRectangle(new SolidBrush(lbDesiredOrder.BackColor), e.Bounds);
 
-            e.Graphics.DrawString(lbDesiredOrder.Items[e.Index] as string,lbDesiredOrder.Font,new SolidBrush(lbDesiredOrder.ForeColor),e.Bounds );
+            e.Graphics.DrawString(lbDesiredOrder.Items[e.Index] as string, lbDesiredOrder.Font,
+                new SolidBrush(lbDesiredOrder.ForeColor), e.Bounds);
         }
     }
 
@@ -369,8 +369,8 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
     private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
     {
-        if(olvExtractionInformations.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+        if (olvExtractionInformations.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o) { ExpansionDepth = 1 });
     }
 }
 

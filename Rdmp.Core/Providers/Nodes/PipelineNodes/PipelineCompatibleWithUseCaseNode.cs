@@ -45,22 +45,19 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
     public override bool Exists() => Pipeline.Exists();
 
     #region Equality
-    protected bool Equals(PipelineCompatibleWithUseCaseNode other)
-    {
-        return _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
-    }
+
+    protected bool Equals(PipelineCompatibleWithUseCaseNode other) =>
+        _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PipelineCompatibleWithUseCaseNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PipelineCompatibleWithUseCaseNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_useCaseType, Pipeline);
-    }
+    public override int GetHashCode() => HashCode.Combine(_useCaseType, Pipeline);
 
     #endregion
 }

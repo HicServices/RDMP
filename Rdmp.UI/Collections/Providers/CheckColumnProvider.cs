@@ -123,9 +123,8 @@ public class CheckColumnProvider
 
         lock (ocheckResultsDictionaryLock)
         {
-            if (checkResultsDictionary.TryGetValue(checkable, out var image))
-                return _iconProvider.GetImage(image).ImageToBitmap();
-
+            if (checkResultsDictionary.TryGetValue(checkable, out var value))
+                return _iconProvider.GetImage(value).ImageToBitmap();
         }
 
         //not been checked yet

@@ -100,11 +100,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
         });
 
     /// <inheritdoc/>
-    public bool Confirm(DialogArgs args)
-    {
+    public bool Confirm(DialogArgs args) =>
         // auto confirm if not in user interactive mode
-        return !IsInteractive || YesNo(args);
-    }
+        !IsInteractive || YesNo(args);
 
     /// <inheritdoc/>
     public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
@@ -181,7 +179,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
         PluginUserInterfaces = new List<IPluginUserInterface>();
 
         foreach (var pluginType in MEF.GetTypes<IPluginUserInterface>())
-        {
             try
             {
                 PluginUserInterfaces.Add((IPluginUserInterface)ObjectConstructor.Construct(pluginType, this, false));
@@ -199,10 +196,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<Type> GetIgnoredCommands()
-    {
-        return Type.EmptyTypes;
-    }
+    public virtual IEnumerable<Type> GetIgnoredCommands() => Type.EmptyTypes;
 
     /// <inheritdoc/>
     public virtual void Wait(string title, Task task, CancellationTokenSource cts)
@@ -265,9 +259,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public abstract bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen);
 
 
-    public bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen)
-    {
-        return SelectType(new DialogArgs
+    public bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen) =>
+        SelectType(new DialogArgs
         {
             WindowTitle = prompt
         }, baseTypeIfAny, out chosen);
@@ -275,9 +268,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public bool SelectType(DialogArgs args, Type baseTypeIfAny, out Type chosen) =>
         SelectType(args, baseTypeIfAny, false, false, out chosen);
 
-    public bool SelectType(string prompt, Type baseTypeIfAny,bool allowAbstract,bool allowInterfaces, out Type chosen)
-    {
-        return SelectType(new DialogArgs
+    public bool SelectType(string prompt, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces,
+        out Type chosen) =>
+        SelectType(new DialogArgs
         {
             WindowTitle = prompt
         }, baseTypeIfAny, allowAbstract, allowInterfaces, out chosen);
@@ -308,8 +301,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public void Activate(object o)
     {
-        if(o is IMapsDirectlyToDatabaseTable m)
-        {
+        if (o is IMapsDirectlyToDatabaseTable m)
             // if a plugin user interface exists to handle editing this then let them handle it instead of launching the
             // normal UI
             foreach (var pluginInterface in PluginUserInterfaces)
@@ -326,13 +318,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <param name="o"></param>
     protected virtual void ActivateImpl(object o)
     {
-
-    }
-    /// <inheritdoc/>
-    public virtual IEnumerable<T> GetAll<T>()
-    {
-        return CoreChildProvider.GetAllSearchables()
-            .Keys.OfType<T>();
     }
 
     /// <inheritdoc/>
@@ -344,7 +329,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public virtual IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t) =>
         CoreChildProvider.GetAllSearchables()
             .Keys.Where(t.IsInstanceOfType);
-    }
 
     /// <inheritdoc/>
     public abstract void ShowException(string errorText, Exception exception);
@@ -377,10 +361,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             var didDelete = InteractiveDelete(deleteable);
 
-            if (didDelete)
-            {
-                PublishNearest(deleteable);
-            }
+            if (didDelete) PublishNearest(deleteable);
 
             return didDelete;
         }
@@ -399,15 +380,19 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             case Catalogue c:
             {
-                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
                 {
-                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                    if (YesNo(
+                            "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
+                            "Make Non Extractable"))
                     {
-                        var cmd = new ExecuteCommandChangeExtractability(this,c);
+                        var cmd = new ExecuteCommandChangeExtractability(this, c);
                         cmd.Execute();
                     }
                     else
+                    {
                         return false;
+                    }
                 }
 
                 break;
@@ -423,10 +408,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                             "Delete"))
                         return false;
 
-                    foreach (var child in children)
-                    {
-                        child.DeleteInDatabase();
-                    }
+                    foreach (var child in children) child.DeleteInDatabase();
 
                     f.ClearAllInjections();
 
@@ -438,13 +420,14 @@ public abstract class BasicActivateItems : IBasicActivateItems
             }
             case AggregateConfiguration ac when ac.IsJoinablePatientIndexTable():
             {
-                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
-                if(users != null)
+                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
+                if (users != null)
                 {
                     users = users.ToArray();
-                    if(users.Any())
+                    if (users.Any())
                     {
-                        Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
+                        Show(
+                            $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
                         return false;
                     }
                 }
@@ -465,12 +448,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (databaseObject != null)
         {
             var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
-            if(exports.Any(e=>e.Exists()))
-                if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
-                {
-                    foreach(var e in exports)
+            if (exports.Any(e => e.Exists()))
+                if (YesNo(
+                        "This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?",
+                        "Delete ObjectExport"))
+                    foreach (var e in exports)
                         e.DeleteInDatabase();
-                }
                 else
                     return false;
         }
@@ -478,8 +461,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
         var overrideConfirmationText =
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
             deleteable is IDeletableWithCustomMessage customMessageDeletable
-            ? $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?"
-            : $"Are you sure you want to delete '{deleteable}'?{Environment.NewLine}({deleteable.GetType().Name}{idText})";
+                ? $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?"
+                : $"Are you sure you want to delete '{deleteable}'?{Environment.NewLine}({deleteable.GetType().Name}{idText})";
         if (
             YesNo(
                 overrideConfirmationText,
@@ -512,8 +495,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             {
                 WindowTitle = $"Enter value for {prompt}",
                 EntryLabel = prompt
-            },paramType,initialValue,out chosen);
-    }
+            }, paramType, initialValue, out chosen);
 
     /// <inheritdoc/>
     public bool SelectValueType(DialogArgs args, Type paramType, object initialValue, out object chosen)
@@ -585,24 +567,22 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
-    {
-        return SelectMany(new DialogArgs
+        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null) =>
+        SelectMany(new DialogArgs
         {
             WindowTitle = prompt,
             InitialSearchText = initialSearchText
-        },arrayElementType,availableObjects);
-    }
+        }, arrayElementType, availableObjects);
 
     /// <inheritdoc/>
     public abstract IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
         IMapsDirectlyToDatabaseTable[] availableObjects);
 
     /// <inheritdoc/>
-    public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
-        string initialSearchText = null, bool allowAutoSelect = false)
-    {
-        return SelectOne(new DialogArgs
+    public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt,
+        IMapsDirectlyToDatabaseTable[] availableObjects,
+        string initialSearchText = null, bool allowAutoSelect = false) =>
+        SelectOne(new DialogArgs
         {
             WindowTitle = prompt,
             AllowAutoSelect = allowAutoSelect,
@@ -614,9 +594,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
         IMapsDirectlyToDatabaseTable[] availableObjects);
 
     /// <inheritdoc/>
-    public bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class
-    {
-        return SelectObject<T>(new DialogArgs
+    public bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null,
+        bool allowAutoSelect = false) where T : class =>
+        SelectObject<T>(new DialogArgs
         {
             WindowTitle = prompt,
             InitialSearchText = initialSearchText,
@@ -649,16 +629,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public abstract FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
 
     /// <inheritdoc/>
-    public virtual List<CommandInvokerDelegate> GetDelegates()
-    {
-        return new List<CommandInvokerDelegate>();
-    }
+    public virtual List<CommandInvokerDelegate> GetDelegates() => new();
 
     /// <inheritdoc/>
-    public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
-    {
-        return new PipelineRunner(useCase,pipeline);
-    }
+    public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline) =>
+        new PipelineRunner(useCase, pipeline);
 
     /// <inheritdoc/>
     public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,
@@ -667,20 +642,18 @@ public abstract class BasicActivateItems : IBasicActivateItems
         int version;
         var projectNumber = project?.ProjectNumber;
 
-        if(!TypeText("Name","Enter name for cohort",255,null,out var name,false))
+        if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
             throw new Exception("User chose not to enter a name for the cohort and none was provided");
 
 
-        if(projectNumber == null)
-            if(SelectValueType("enter project number",typeof(int),0,out var chosen))
-            {
+        if (projectNumber == null)
+            if (SelectValueType("enter project number", typeof(int), 0, out var chosen))
                 projectNumber = (int)chosen;
             else
                 throw new Exception("User chose not to enter a Project number and none was provided");
 
 
-        if(SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
-        {
+        if (SelectValueType("enter version number for cohort", typeof(int), 0, out var chosenVersion))
             version = (int)chosenVersion;
         else
             throw new Exception("User chose not to enter a version number and none was provided");
@@ -709,7 +682,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
             // Mark the columns specified IsExtractionIdentifier
             foreach (var col in extractionIdentifierColumns)
             {
-                var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID) ?? throw new ArgumentException($"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
+                var match = eis.FirstOrDefault(ei => ei.ColumnInfo?.ID == col.ID) ??
+                            throw new ArgumentException(
+                                $"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
                 match.IsExtractionIdentifier = true;
                 match.SaveToDatabase();
             }
@@ -742,7 +717,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                 nameof(db));
 
         var executor = new MasterDatabaseScriptExecutor(db);
-        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true});
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true });
 
         var eds = new ExternalDatabaseServer(catalogueRepository,
             $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server", patcher);
@@ -762,7 +737,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
     {
-        SelectAnythingThen(new DialogArgs { WindowTitle = prompt}, callback);
+        SelectAnythingThen(new DialogArgs { WindowTitle = prompt }, callback);
     }
 
     public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)

@@ -89,7 +89,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             {
                 var dir = new DirectoryInfo(tbCreateNew.Text);
 
-                if(!dir.Exists)
+                if (!dir.Exists)
                     dir.Create();
 
                 Result = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name).RootPath.FullName;

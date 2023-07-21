@@ -23,7 +23,7 @@ internal class HousekeepingTests : DatabaseTests
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
         var databaseName = db.GetRuntimeName();
-        var table = db.CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int") });
+        var table = db.CreateTable(tableName, new[] { new DatabaseColumnRequest("Id", "int") });
 
         var server = db.Server;
         using (var con = server.GetConnection())

@@ -42,7 +42,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         implementer = factory.Create(tbl);
 
         //no primary keys
-        Assert.Throws<TriggerException>(()=>implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.Throws<TriggerException>(() => implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet));
 
         tbl.CreatePrimaryKey(tbl.DiscoverColumn("name"));
 
@@ -81,11 +81,11 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         {
             con.Open();
             var cmd = tbl.Database.Server.GetCommand(
-                $"INSERT INTO {tbl.GetRuntimeName()}(name,bubbles) VALUES('bob',1)",con);
+                $"INSERT INTO {tbl.GetRuntimeName()}(name,bubbles) VALUES('bob',1)", con);
             cmd.ExecuteNonQuery();
 
-            Assert.AreEqual(1,tbl.GetRowCount());
-            Assert.AreEqual(0,archiveTable.GetRowCount());
+            Assert.AreEqual(1, tbl.GetRowCount());
+            Assert.AreEqual(0, archiveTable.GetRowCount());
 
             cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set bubbles=2", con);
             cmd.ExecuteNonQuery();
@@ -95,12 +95,6 @@ public class CrossDatabaseTriggerTests : DatabaseTests
 
             var archive = archiveTable.GetDataTable();
             var dr = archive.Rows.Cast<DataRow>().Single();
-
-            Assert.AreEqual(((DateTime)dr["hic_validTo"]).Date,DateTime.Now.Date);
-        }
-            
-        //do the strict check too
-        Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody()); 
 
             Assert.AreEqual(((DateTime)dr["hic_validTo"]).Date, DateTime.Now.Date);
         }
@@ -144,7 +138,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
             Assert.AreEqual(2, archive.Rows.Cast<DataRow>().Count(r => r["amagad"] == DBNull.Value));
         }
 
-        implementer.DropTrigger(out var problems,out _);
+        implementer.DropTrigger(out var problems, out _);
 
         Assert.IsTrue(string.IsNullOrEmpty(problems));
 

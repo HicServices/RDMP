@@ -31,11 +31,10 @@ public class DilutionOperationTests : DatabaseTests
     [TestCase(null, null)]
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
-        var tbl = Substitute.For<ITableInfo>();
-        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("DateRoundingTests");
-        var col = Substitute.For<IPreLoadDiscardedColumn>();
-        col.TableInfo.Returns(tbl);
-        col.GetRuntimeName().Returns("TestField");
+        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DateRoundingTests");
+        var col = Mock.Of<IPreLoadDiscardedColumn>(c =>
+            c.TableInfo == tbl &&
+            c.GetRuntimeName() == "TestField");
 
         var o = new RoundDateToMiddleOfQuarter
         {
@@ -92,11 +91,9 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     [TestCase(null, null)]
     public void TestExcludeRight3OfUKPostcodes(string input, string expectedDilute)
     {
-        var tbl = Substitute.For<ITableInfo>();
-        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("ExcludeRight3OfPostcodes");
-        var col = Substitute.For<IPreLoadDiscardedColumn>();
-        col.TableInfo.Returns(tbl);
-        col.GetRuntimeName().Returns("TestField");
+        var tbl = Mock.Of<ITableInfo>(
+            t => t.GetRuntimeName(LoadStage.AdjustStaging, null) == "ExcludeRight3OfPostcodes");
+        var col = Mock.Of<IPreLoadDiscardedColumn>(c => c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
 
         var o = new ExcludeRight3OfUKPostcodes
         {
@@ -117,7 +114,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
 
             var result = server.GetCommand("SELECT * from ExcludeRight3OfPostcodes", con).ExecuteScalar();
 
-            if(expectedDilute == null)
+            if (expectedDilute == null)
                 Assert.AreEqual(DBNull.Value, result);
             else
                 Assert.AreEqual(expectedDilute, result);
@@ -137,10 +134,10 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     [TestCase("", "varchar(1)", true)] //This data exists regardless of if it is blank so it still gets the 1
     public void DiluteToBitFlag(string input, string inputDataType, bool expectedDilute)
     {
-        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DiluteToBitFlagTests");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
+        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DiluteToBitFlagTests");
+        var col = Mock.Of<IPreLoadDiscardedColumn>(c =>
             c.TableInfo == tbl &&
-            c.GetRuntimeName() =="TestField");
+            c.GetRuntimeName() == "TestField");
 
         var o = new CrushToBitFlag
         {
@@ -195,10 +192,10 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
         var dilution = new Dilution
         {
             ColumnToDilute = discarded,
-            Operation = typeof (CrushToBitFlag)
+            Operation = typeof(CrushToBitFlag)
         };
 
-        dilution.Initialize(db,LoadStage.AdjustStaging);
+        dilution.Initialize(db, LoadStage.AdjustStaging);
         dilution.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server, namer), ti);

@@ -23,7 +23,7 @@ public partial class ConfigureDisclaimerUI : RDMPForm
 {
     private bool _allowClose;
 
-    public ConfigureDisclaimerUI(IActivateItems activator):base(activator)
+    public ConfigureDisclaimerUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
     }

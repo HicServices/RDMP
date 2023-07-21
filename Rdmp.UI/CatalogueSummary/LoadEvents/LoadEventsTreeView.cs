@@ -38,7 +38,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// </summary>
 public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionControl
 {
-    public LoadEventsTreeViewObjectCollection Collection {get;set;}
+    public LoadEventsTreeViewObjectCollection Collection { get; set; }
 
     private BackgroundWorker _populateLoadHistory = new();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
@@ -112,10 +112,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         };
     }
 
-    private static string WithCommas(int? i)
-    {
-        return !i.HasValue ? @"N\A" : i.Value.ToString("N0");
-    }
+    private static string WithCommas(int? i) => !i.HasValue ? @"N\A" : i.Value.ToString("N0");
 
     private static object olvDate_AspectGetter(object rowObject)
     {
@@ -150,14 +147,18 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
         var children = new List<object>();
 
-        if(dli.Errors.Any())
-            children.Add(new LoadEventsTreeView_Category("Errors", dli.Errors.OrderByDescending(static d=>d.Date).ToArray(), LoggingTables.FatalError, dli.ID));
+        if (dli.Errors.Any())
+            children.Add(new LoadEventsTreeView_Category("Errors",
+                dli.Errors.OrderByDescending(static d => d.Date).ToArray(), LoggingTables.FatalError, dli.ID));
 
-        if(dli.Progress.Any())
-            children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.OrderByDescending(static d => d.Date).ToArray(),LoggingTables.ProgressLog, dli.ID));
+        if (dli.Progress.Any())
+            children.Add(new LoadEventsTreeView_Category("Progress Messages",
+                dli.Progress.OrderByDescending(static d => d.Date).ToArray(), LoggingTables.ProgressLog, dli.ID));
 
-        if(dli.TableLoadInfos.Any())
-            children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(static d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
+        if (dli.TableLoadInfos.Any())
+            children.Add(new LoadEventsTreeView_Category("Tables Loaded",
+                dli.TableLoadInfos.OrderByDescending(static d => d.Start).ToArray(), LoggingTables.TableLoadRun,
+                dli.ID));
 
         return children;
     }
@@ -179,18 +180,12 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
             AssociatedTable = associatedTable;
         }
 
-        public override string ToString()
-        {
-            return $"{_name} ({Children.Length})";
-        }
+        public override string ToString() => $"{_name} ({Children.Length})";
     }
 
-    private static bool CanExpandGetter(object model)
-    {
-        return model is ArchivalDataLoadInfo or LoadEventsTreeView_Category;
-        //it is a child of a thing in a category, so a leaf
-    }
+    private static bool CanExpandGetter(object model) => model is ArchivalDataLoadInfo or LoadEventsTreeView_Category;
 
+    //it is a child of a thing in a category, so a leaf
     private void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         llLoading.Visible = false;
@@ -291,7 +286,6 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
     {
         treeView1.ModelFilter = new TextMatchFilter(treeView1, filter, StringComparison.CurrentCultureIgnoreCase);
         treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
-
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
@@ -301,12 +295,12 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
         if (e.Model is LoadEventsTreeView_Category category)
         {
-            var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(category.AssociatedTable) { Run = category.RunId });
+            var cmd = new ExecuteCommandViewLogs(Activator,
+                new LogViewerFilter(category.AssociatedTable) { Run = category.RunId });
             RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
         }
 
         if (e.Model is ArchivalTableLoadInfo tli && Collection?.RootObject is LoadMetadata lmd)
-        {
             //if it is not a freaky temp table
             if (!tli.TargetTable.EndsWith("_STAGING") && !tli.TargetTable.EndsWith("_RAW"))
             {
@@ -354,15 +348,14 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         if (o == null)
             return;
 
-        if(o is ArchivalDataLoadInfo dli)
-            new ExecuteCommandViewLogs(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
-        else
-        if (o is LoadEventsTreeView_Category cat)
-            new ExecuteCommandViewLogs(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
-        else
-        if(o is IHasSummary s)
+        if (o is ArchivalDataLoadInfo dli)
+            new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadRun) { Run = dli.ID })
+                .Execute();
+        else if (o is LoadEventsTreeView_Category cat)
+            new ExecuteCommandViewLogs(Activator, new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId })
+                .Execute();
+        else if (o is IHasSummary s)
             WideMessageBox.Show(s);
-
     }
 
     private void treeView1_KeyUp(object sender, KeyEventArgs e)
@@ -379,15 +372,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
             //We manually implement this here because the default TreeView will only copy 340? characters... very weird but hey Windows Forms
             if (sb.Length != 0)
                 Clipboard.SetText(sb.ToString());
-
         }
-    }
-
-
-
-    public IPersistableObjectCollection GetCollection()
-    {
-        return Collection;
     }
 
 

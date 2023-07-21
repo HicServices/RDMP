@@ -52,10 +52,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             ei.SaveToDatabase();
 
             //make it part of the ExtractionConfiguration
-            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
-                {
-                    Alias = ei.Alias
-                };
+            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet,
+                (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
+            {
+                Alias = ei.Alias
+            };
             newColumn.SaveToDatabase();
 
             _extractableColumns.Add(newColumn);
@@ -85,14 +86,15 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             Assert.AreEqual(new DateTime(2001, 1, 1), dt.Rows[0]["DateOfBirth"]);
             Assert.AreEqual(2001, dt.Rows[0]["YearOfBirth"]);
 
-            Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
-            Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
+            Assert.AreEqual(_columnToTransform.Data_type,
+                destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
+            Assert.AreEqual("int", destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
 
             AssertLookupsEtcExist(dbToExtractTo);
         }
         finally
         {
-            if(dbToExtractTo?.Exists()==true)
+            if (dbToExtractTo?.Exists() == true)
                 dbToExtractTo.Drop();
 
             _pipeline?.DeleteInDatabase();
@@ -114,7 +116,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         //an extractable file
         var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob.txt");
 
-        File.WriteAllText(filename,"fishfishfish");
+        File.WriteAllText(filename, "fishfishfish");
         var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob")
         {
             URL = new Uri($"file://{filename}"),
@@ -125,7 +127,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         //an extractable global file (comes out regardless of datasets)
         var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
 
-        File.WriteAllText(filename2,"fishfishfish2");
+        File.WriteAllText(filename2, "fishfishfish2");
         var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2")
         {
             URL = new Uri($"file://{filename2}"),
@@ -144,6 +146,10 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
         sql.Extractable = true;
         sql.SaveToDatabase();
+
+
+        //an supplemental (global) table in the database (not linked against cohort)
+        var tbl2 = CreateDataset<HospitalAdmissions>(Database, 500, 1000, new Random(50));
 
         var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp")
         {
@@ -167,7 +173,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
         Import(lookupTbl, out var ti, out var columnInfos);
 
-        var lookup =  new Lookup(CatalogueRepository, columnInfos[0],
+        var lookup = new Lookup(CatalogueRepository, columnInfos[0],
             _columnToTransform,
             columnInfos[1],
             ExtractionJoinType.Left, null);
@@ -184,7 +190,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
     protected override Pipeline SetupPipeline()
     {
         //create a target server pointer
-        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null)
+        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
         {
             Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
             Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,

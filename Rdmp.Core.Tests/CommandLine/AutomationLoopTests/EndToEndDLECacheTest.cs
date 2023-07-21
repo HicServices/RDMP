@@ -30,16 +30,16 @@ public class EndToEndDLECacheTest : TestsRequiringADle
 
         var lmd = TestLoadMetadata;
 
-        var lp = new LoadProgress(CatalogueRepository,lmd)
+        var lp = new LoadProgress(CatalogueRepository, lmd)
         {
-            DataLoadProgress = new DateTime(2001,1,1),
+            DataLoadProgress = new DateTime(2001, 1, 1),
             DefaultNumberOfDaysToLoadEachTime = 10
         };
         lp.SaveToDatabase();
 
         var cp = new CacheProgress(CatalogueRepository, lp)
         {
-            CacheFillProgress = new DateTime(2001,1,11) //10 days available to load
+            CacheFillProgress = new DateTime(2001, 1, 11) //10 days available to load
         };
         cp.SaveToDatabase();
 
@@ -49,7 +49,7 @@ public class EndToEndDLECacheTest : TestsRequiringADle
         //setup the cache process task
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles)
         {
-            Path = typeof (BasicCacheDataProvider).FullName,
+            Path = typeof(BasicCacheDataProvider).FullName,
             ProcessTaskType = ProcessTaskType.DataProvider
         };
         pt.SaveToDatabase();
@@ -64,15 +64,11 @@ public class EndToEndDLECacheTest : TestsRequiringADle
         var csvFile = CreateFileInForLoading("bob.csv", 10, new Random(5000));
 
         //and move it to the cache and give it a date in the range we expect for the cached data
-        csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName,"2001-01-09.csv"));
+        csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName, "2001-01-09.csv"));
 
         RunDLE(timeoutInMilliseconds);
 
         Assert.AreEqual(10, RowsNow - RowsBefore);
-
-        Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
-        Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);
-        Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Length);
 
         Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
         Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);

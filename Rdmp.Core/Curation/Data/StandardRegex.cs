@@ -95,7 +95,7 @@ public class StandardRegex : DatabaseEntity, ICheckable
         if (string.IsNullOrWhiteSpace(Regex)) return;
         try
         {
-            _=new Regex(Regex);
+            _ = new Regex(Regex);
             notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
         }
         catch (ArgumentException ex)

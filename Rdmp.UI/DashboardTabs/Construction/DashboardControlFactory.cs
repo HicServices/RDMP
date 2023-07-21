@@ -26,18 +26,12 @@ public class DashboardControlFactory
         _startLocationForNewControls = startLocationForNewControls;
     }
 
-    public Type[] GetAvailableControlTypes()
-    {
-        return Core.Repositories.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
-    }
+    public Type[] GetAvailableControlTypes() => Core.Repositories.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
 
-    private bool IsCompatibleType(Type arg)
-    {
-        return
-            typeof (IDashboardableControl).IsAssignableFrom(arg)
-            &&
-            typeof(UserControl).IsAssignableFrom(arg);
-    }
+    private bool IsCompatibleType(Type arg) =>
+        typeof(IDashboardableControl).IsAssignableFrom(arg)
+        &&
+        typeof(UserControl).IsAssignableFrom(arg);
 
     /// <summary>
     /// Creates an instance of the user control described by the database record DashboardControl, including providing the control with a hydrated IPersistableObjectCollection that reflects

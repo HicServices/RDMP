@@ -36,7 +36,7 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
     {
         InitializeComponent();
 
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
 
         QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
@@ -67,8 +67,8 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
         {
             QueryPreview.ReadOnly = false;
             QueryPreview.Text = pattern.Replace("{0}", "[TEST]..[ExampleColumn]").Replace("{1}", "123");
-            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
-
+            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(
+                DataExportProperty.HashingAlgorithmPattern, pattern);
         }
         catch (Exception exception)
         {

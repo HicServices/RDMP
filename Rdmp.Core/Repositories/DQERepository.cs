@@ -44,8 +44,9 @@ public class DQERepository : TableRepository, IDQERepository
     {
         CatalogueRepository = catalogueRepository;
 
-        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
-        DiscoveredServer = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
+        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException(
+            "There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
+        DiscoveredServer = DataAccessPortal.ExpectServer(server, DataAccessContext.InternalDataProcessing);
         _connectionStringBuilder = DiscoveredServer.Builder;
     }
 
@@ -79,8 +80,6 @@ public class DQERepository : TableRepository, IDQERepository
     /// <inheritdoc/>
     public bool HasEvaluations(ICatalogue catalogue) => GetAllEvaluationsFor(catalogue).Any();
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t,this, reader);
-    }
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
+        ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t, this, reader);
 }

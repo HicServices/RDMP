@@ -50,7 +50,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation) : base(
         repository.FilterManager)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object> {{"Operation" ,operation.ToString()}});
+        repository.InsertAndHydrate(this, new Dictionary<string, object> { { "Operation", operation.ToString() } });
     }
 
 

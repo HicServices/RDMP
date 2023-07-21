@@ -65,11 +65,11 @@ public class Favourite : ReferenceOtherObjectDatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectID",objectToFavourite.ID},
-            {"ReferencedObjectType",objectToFavourite.GetType().Name},
-            {"ReferencedObjectRepositoryType",objectToFavourite.Repository.GetType().Name},
-            {"Username", Environment.UserName},
-            {"FavouritedDate", DateTime.Now}
+            { "ReferencedObjectID", objectToFavourite.ID },
+            { "ReferencedObjectType", objectToFavourite.GetType().Name },
+            { "ReferencedObjectRepositoryType", objectToFavourite.Repository.GetType().Name },
+            { "Username", Environment.UserName },
+            { "FavouritedDate", DateTime.Now }
         });
     }
 }

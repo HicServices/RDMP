@@ -15,7 +15,8 @@ namespace Rdmp.UI.Menus;
 
 internal class SelectedDataSetsMenu : RDMPContextMenuStrip
 {
-    public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
+    public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet) : base(args,
+        selectedDataSet)
     {
         ReBrandActivateAs("Edit Extractable Columns", RDMPConcept.ExtractionConfiguration, OverlayKind.Edit);
 
@@ -37,8 +38,8 @@ internal class SelectedDataSetsMenu : RDMPContextMenuStrip
         var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
 
         foreach (var graph in availableGraphs)
-        {
-            Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator, new ExtractionAggregateGraphObjectCollection(selectedDataSet, graph))
+            Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator,
+                new ExtractionAggregateGraphObjectCollection(selectedDataSet, graph))
             {
                 SuggestedCategory = "Graph",
                 OverrideCommandName = graph.Name,

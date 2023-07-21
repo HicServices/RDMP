@@ -48,7 +48,8 @@ public class ImportFileTests : DatabaseTests
                 StronglyTypeInput = true
             };
 
-            source.PreInitialize(new FlatFileToLoad(new FileInfo(file)), ThrowImmediatelyDataLoadEventListener.Quiet);//this is the file we want to load
+            source.PreInitialize(new FlatFileToLoad(new FileInfo(file)),
+                ThrowImmediatelyDataLoadEventListener.Quiet); //this is the file we want to load
             source.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
@@ -117,7 +118,6 @@ public class ImportFileTests : DatabaseTests
             {
                 //Couldn't delete temporary file... oh well
             }
-
         }
     }
 

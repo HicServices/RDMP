@@ -49,14 +49,17 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public CommentStore CommentStore { get; set; }
 
     private IObscureDependencyFinder _odf;
+
     public IObscureDependencyFinder ObscureDependencyFinder
     {
         get => _odf;
         set
         {
             _odf = value;
-            if (_odf is CatalogueObscureDependencyFinder catFinder && this is IDataExportRepository dataExportRepository)
-                catFinder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dataExportRepository));
+            if (_odf is CatalogueObscureDependencyFinder catFinder &&
+                this is IDataExportRepository dataExportRepository)
+                catFinder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(
+                    new RepositoryProvider(dataExportRepository));
         }
     }
 
@@ -99,7 +102,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         var dependencyFinder = new CatalogueObscureDependencyFinder(this);
 
-        if(this is IDataExportRepository dxm)
+        if (this is IDataExportRepository dxm)
         {
             dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(
                 new RepositoryProvider(dxm));
@@ -233,15 +236,13 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
         if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsList)) return null;
-        if (credentialsList.TryGetValue(context,out var credentials))
+        if (credentialsList.TryGetValue(context, out var credentials))
             return credentials;
-        return credentialsList.TryGetValue(DataAccessContext.Any,out credentials) ? credentials : null;
+        return credentialsList.TryGetValue(DataAccessContext.Any, out credentials) ? credentials : null;
     }
 
-    public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
-    {
-        return CredentialsDictionary.TryGetValue(tableInfo, out var credential) ? credential : null;
-    }
+    public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo) =>
+        CredentialsDictionary.TryGetValue(tableInfo, out var credential) ? credential : null;
 
     public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
         DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
@@ -262,7 +263,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(
         DataAccessCredentials credentials)
     {
-        var toreturn = Enum.GetValues(typeof(DataAccessContext)).Cast<DataAccessContext>().ToDictionary(context => context, _ => new List<ITableInfo>());
+        var toreturn = Enum.GetValues(typeof(DataAccessContext)).Cast<DataAccessContext>()
+            .ToDictionary(context => context, _ => new List<ITableInfo>());
 
         //add the keys
 
@@ -293,7 +295,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         if (UserSettings.AlwaysJoinEverything)
             everyone = configuration.Catalogue.GetTableInfosIdeallyJustFromMainTables();
 
-        return !ForcedJoins.ContainsKey(configuration) ? everyone.ToArray() : ForcedJoins[configuration].Union(everyone).ToArray();
+        return !ForcedJoins.ContainsKey(configuration)
+            ? everyone.ToArray()
+            : ForcedJoins[configuration].Union(everyone).ToArray();
     }
 
     public virtual void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
@@ -315,12 +319,14 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region ICohortContainerLinker
-    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new ();
+
+    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
+        new();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
         //if it is in the contents of a container
-        return CohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child))
+        return CohortContainerContents.Any(kvp => kvp.Value.Select(c => c.Orderable).Contains(child))
             ? CohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key
             : null;
     }
@@ -355,7 +361,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
-        var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
+        var o = CohortContainerContents.SelectMany(kvp => kvp.Value)
+            .SingleOrDefault(c => c.Orderable.Equals(configuration));
 
         return o?.Order;
     }
@@ -369,7 +376,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public CohortAggregateContainer GetParent(CohortAggregateContainer child)
     {
-        var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
+        var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child)))
+            .Select(kvp => kvp.Key).ToArray();
         return match.Length > 0 ? match.Single() : null;
     }
 
@@ -403,12 +411,11 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region IFilterContainerManager
 
-    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new ();
+    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new();
 
-    public IContainer[] GetSubContainers(IContainer container)
-    {
-        return !WhereSubContainers.ContainsKey(container) ? Array.Empty<IContainer>() : WhereSubContainers[container].ToArray();
-    }
+    public IContainer[] GetSubContainers(IContainer container) => !WhereSubContainers.ContainsKey(container)
+        ? Array.Empty<IContainer>()
+        : WhereSubContainers[container].ToArray();
 
     public virtual void MakeIntoAnOrphan(IContainer container)
     {
@@ -425,7 +432,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IFilter[] GetFilters(IContainer container)
     {
-        return GetAllObjects<IFilter>().Where(f =>f is not ExtractionFilter && f.FilterContainer_ID == container.ID).ToArray();
+        return GetAllObjects<IFilter>().Where(f => f is not ExtractionFilter && f.FilterContainer_ID == container.ID)
+            .ToArray();
     }
 
     public void AddChild(IContainer container, IFilter filter)
@@ -446,7 +454,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region IGovernanceManager
 
-    protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new ();
+    protected Dictionary<GovernancePeriod, HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new();
 
     public virtual void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
@@ -469,10 +477,10 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         return GovernanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
     }
 
-    public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
-    {
-        return !GovernanceCoverage.ContainsKey(governancePeriod) ? Enumerable.Empty<ICatalogue>() : GovernanceCoverage[governancePeriod];
-    }
+    public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod) =>
+        !GovernanceCoverage.ContainsKey(governancePeriod)
+            ? Enumerable.Empty<ICatalogue>()
+            : GovernanceCoverage[governancePeriod];
 
     #endregion
 
@@ -500,10 +508,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         {
             case Catalogue catalogue:
             {
-                foreach (var ci in catalogue.CatalogueItems)
-                {
-                    ci.DeleteInDatabase();
-                }
+                foreach (var ci in catalogue.CatalogueItems) ci.DeleteInDatabase();
 
                 break;
             }
@@ -516,17 +521,14 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
                 // forget about its credentials usages
                 CredentialsDictionary.Remove(t);
 
-                foreach(var c in t.ColumnInfos)
-                {
-                    c.DeleteInDatabase();
-                }
+                foreach (var c in t.ColumnInfos) c.DeleteInDatabase();
 
                 break;
             }
             // when deleting a ColumnInfo
             case ColumnInfo columnInfo:
             {
-                foreach(var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci=>ci.ColumnInfo_ID == columnInfo.ID))
+                foreach (var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci => ci.ColumnInfo_ID == columnInfo.ID))
                 {
                     ci.ColumnInfo_ID = null;
                     ci.ClearAllInjections();

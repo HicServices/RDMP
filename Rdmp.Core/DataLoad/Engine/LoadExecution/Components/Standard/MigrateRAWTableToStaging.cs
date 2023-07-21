@@ -45,7 +45,6 @@ public class MigrateRAWTableToStaging : DataLoadComponent
 
     private DataFlowPipelineEngine<DataTable> _pipeline;
 
-    private DataFlowPipelineEngine<DataTable> _pipeline;
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         if (_pipeline != null)
@@ -127,7 +126,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
     }
 
 
-    private void DeleteFullyNullRecords(string sourceTableName, DiscoveredDatabase dbInfo,IDataLoadJob job)
+    private void DeleteFullyNullRecords(string sourceTableName, DiscoveredDatabase dbInfo, IDataLoadJob job)
     {
         try
         {
@@ -136,7 +135,6 @@ public class MigrateRAWTableToStaging : DataLoadComponent
             using var con = dbInfo.Server.GetConnection();
             con.Open();
             using var cmd = dbInfo.Server.GetCommand(
-
                 //Magical code that nukes blank/null rows - where all rows are blank/null
                 $@"delete from {sourceTableName} WHERE {string.Join(" AND ",
                     cols.Select(c => $"({c} IS NULL OR {c}='')"))}", con);
@@ -153,7 +151,9 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         }
         catch (Exception e)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Could not delete fully null records, this will not prevent the data load occurring",e));
+            job.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning,
+                    "Could not delete fully null records, this will not prevent the data load occurring", e));
         }
     }
 

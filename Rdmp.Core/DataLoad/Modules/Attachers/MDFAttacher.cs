@@ -52,7 +52,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         "Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .ldf file in the DATA directory from the perspective of SQL Server")]
     public string OverrideAttachLdfPath { get; set; }
 
-    public MDFAttacher():base(false)
+    public MDFAttacher() : base(false)
     {
     }
 
@@ -111,7 +111,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
             var cmd = new SqlCommand($@"  CREATE DATABASE {nameTheyWant}   
    ON (FILENAME = '{_locations.AttachMdfPath}'),   
    (FILENAME = '{_locations.AttachLdfPath}')   
-   FOR ATTACH;  ",con);
+   FOR ATTACH;  ", con);
 
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -299,7 +299,9 @@ public class MDFAttacher : Attacher, IPluginAttacher
                     "Looking up DATA directory on server returned null (user may not have permissions to read from relevant sys tables)");
 
             var end = result.LastIndexOfAny(@"\/".ToCharArray());
-            return end == -1 ? throw new Exception($"No directory delimiter found in DB file location '{result}'") : result[..end];
+            return end == -1
+                ? throw new Exception($"No directory delimiter found in DB file location '{result}'")
+                : result[..end];
         }
         catch (SqlException e)
         {

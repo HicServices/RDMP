@@ -33,7 +33,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.Name = "RefreshPipe";
         pipe.SaveToDatabase();
 
-        Execute(out _,out _);
+        Execute(out _, out _);
 
         var oldcohort = _configuration.Cohort;
 
@@ -44,7 +44,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         _configuration.SaveToDatabase();
 
         var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
-            
+
         Assert.NotNull(engine.Request.NewCohortDefinition);
 
         var oldData = oldcohort.GetExternalData();
@@ -152,9 +152,11 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             engine = new CohortRefreshEngine(toMem, _configuration);
 
             //execute it
-            var ex = Assert.Throws<PipelineCrashedException>(()=>engine.Execute());
+            var ex = Assert.Throws<PipelineCrashedException>(() => engine.Execute());
 
-            Assert.IsTrue(ex.InnerException.InnerException.Message.Contains("CohortIdentificationCriteria execution resulted in an empty dataset"));
+            Assert.IsTrue(
+                ex.InnerException.InnerException.Message.Contains(
+                    "CohortIdentificationCriteria execution resulted in an empty dataset"));
 
             //expected this message to happen
             //that it did clear the cache

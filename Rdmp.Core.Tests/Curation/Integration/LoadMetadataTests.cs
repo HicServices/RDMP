@@ -24,7 +24,6 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
-
             loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
             loadMetadata.SaveToDatabase();
 
@@ -78,7 +77,7 @@ public class LoadMetadataTests : DatabaseTests
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl);
         var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(db.Server));
-        var ex = Assert.Throws<Exception>(()=>checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         StringAssert.IsMatch("Table '.*Imaginary.*' does not exist", ex.Message);
     }

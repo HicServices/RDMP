@@ -15,7 +15,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 internal class CsProjFileTidy
 {
-    public List<string>  csFilesFound = new();
+    public List<string> csFilesFound = new();
 
     public List<string> UntidyMessages { get; set; }
 
@@ -23,9 +23,12 @@ internal class CsProjFileTidy
     private DirectoryInfo _root;
 
     //these class files are excused from having 2+ class files in them or 0
-    private string[] Ignorelist = {
-        "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
-        "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs","TableView.cs","TreeView.cs", "MemoryCatalogueRepository.cs"
+    private string[] Ignorelist =
+    {
+        "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs", "ICustomUI.cs",
+        "MapsDirectlyToDatabaseTableStatelessDefinition.cs",
+        "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs", "TableView.cs", "TreeView.cs",
+        "MemoryCatalogueRepository.cs"
     };
 
     public CsProjFileTidy(FileInfo csProjFile)
@@ -124,7 +127,6 @@ internal class CsProjFileTidy
         }
         else
         {
-
             var firstClassNameInFile = classes[0].Groups[2].Value;
 
             if (firstClassNameInFile.Contains("_Design"))

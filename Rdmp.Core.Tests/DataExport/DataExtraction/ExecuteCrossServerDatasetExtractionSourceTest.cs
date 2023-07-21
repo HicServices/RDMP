@@ -119,7 +119,8 @@ WHERE
                 TemporaryDatabaseName = "tempdb"
             };
             s.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
-            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, ThrowImmediatelyDataLoadEventListener.QuietPicky);
+            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL,
+                ThrowImmediatelyDataLoadEventListener.QuietPicky);
 
             Assert.AreEqual(expectedOutput.Trim(), hacked.Trim());
         }

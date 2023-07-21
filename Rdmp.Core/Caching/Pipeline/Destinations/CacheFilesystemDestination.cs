@@ -38,7 +38,8 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
         DemandType.Unspecified, null)]
     public DirectoryInfo CacheDirectory { get; set; }
 
-    public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+    public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken);
 
     public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
     {

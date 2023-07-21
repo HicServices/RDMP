@@ -44,7 +44,7 @@ public abstract class Compileable : ICompileable
         {
             _state = value;
             var h = StateChanged;
-            h?.Invoke(this,EventArgs.Empty);
+            h?.Invoke(this, EventArgs.Empty);
         }
         get => _state;
     }

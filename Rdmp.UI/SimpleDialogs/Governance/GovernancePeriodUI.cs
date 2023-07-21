@@ -158,9 +158,10 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
     {
         if (e.KeyCode == Keys.Delete)
         {
-            if(olvCatalogues.SelectedObject is Catalogue toDelete)
-                if(Activator.YesNo(
-                       $"Are you sure you want to erase the fact that '{_governancePeriod.Name}' provides governance over Catalogue '{toDelete}'","Confirm Deleting Governance Relationship?"))
+            if (olvCatalogues.SelectedObject is Catalogue toDelete)
+                if (Activator.YesNo(
+                        $"Are you sure you want to erase the fact that '{_governancePeriod.Name}' provides governance over Catalogue '{toDelete}'",
+                        "Confirm Deleting Governance Relationship?"))
                 {
                     _governancePeriod.DeleteGovernanceRelationshipTo(toDelete);
                     olvCatalogues.RemoveObject(toDelete);
@@ -182,10 +183,11 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
             return;
         }
 
-        if(Activator.SelectObject(new DialogArgs
-           {
-               TaskDescription = "Select another GovernancePeriod.  All Catalogues currently associated with that period will be added to this period (they will still be covered by their previous period(s) too)"
-           }, toImportFrom,out var selected))
+        if (Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription =
+                    "Select another GovernancePeriod.  All Catalogues currently associated with that period will be added to this period (they will still be covered by their previous period(s) too)"
+            }, toImportFrom, out var selected))
         {
             var toAdd = selected.GovernedCatalogues.ToArray();
 
@@ -214,8 +216,8 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
 
     private void olvCatalogues_ItemActivate(object sender, EventArgs e)
     {
-        if(olvCatalogues.SelectedObject is Catalogue cata)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
+        if (olvCatalogues.SelectedObject is Catalogue cata)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(cata));
     }
 }
 

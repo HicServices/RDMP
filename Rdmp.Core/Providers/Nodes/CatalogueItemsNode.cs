@@ -39,14 +39,14 @@ public class CatalogueItemsNode : Node, IOrderable
         return Category == null
             ? "Non Extractable"
             : Category switch
-        {
-            ExtractionCategory.Core => "Core Items",
-            ExtractionCategory.Supplemental => "Supplemental Items",
-            ExtractionCategory.SpecialApprovalRequired => "Special Approval Items",
-            ExtractionCategory.Internal => "Internal Items",
-            ExtractionCategory.Deprecated => "Deprecated Items",
-            _ => "Catalogue Items"
-        };
+            {
+                ExtractionCategory.Core => "Core Items",
+                ExtractionCategory.Supplemental => "Supplemental Items",
+                ExtractionCategory.SpecialApprovalRequired => "Special Approval Items",
+                ExtractionCategory.Internal => "Internal Items",
+                ExtractionCategory.Deprecated => "Deprecated Items",
+                _ => "Catalogue Items"
+            };
     }
 
     protected bool Equals(CatalogueItemsNode other) =>
@@ -56,11 +56,8 @@ public class CatalogueItemsNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == typeof (CatalogueItemsNode) && Equals((CatalogueItemsNode) obj);
+        return obj.GetType() == typeof(CatalogueItemsNode) && Equals((CatalogueItemsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Catalogue, Category);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue, Category);
 }

@@ -35,7 +35,7 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
     public readonly DiscoveredTable Table;
 
     private List<LoadDiagramColumnNode> _anticipatedChildren = new();
-    private List<DiscoveredColumn>  _unplannedChildren = new();
+    private List<DiscoveredColumn> _unplannedChildren = new();
 
     public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode, TableInfo tableInfo, LoadBubble bubble,
         HICDatabaseConfiguration config)
@@ -76,15 +76,11 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
             yield return c;
     }
 
-    public override string ToString()
-    {
-        return TableName;
-    }
+    public override string ToString() => TableName;
 
-    public ICombineToMakeCommand GetCombineable()
-    {
-        return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
-    }
+    public ICombineToMakeCommand GetCombineable() =>
+        new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper()
+            .EnsureFullyQualified(DatabaseName, null, TableName));
 
     public void DiscoverState()
     {
@@ -141,13 +137,11 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDiagramTableNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramTableNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_databaseNode, Bubble, TableName);
-    }
+    public override int GetHashCode() => HashCode.Combine(_databaseNode, Bubble, TableName);
 
     public string WhatIsThis()
     {

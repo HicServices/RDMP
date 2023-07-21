@@ -39,7 +39,6 @@ public class CohortRefreshEngine
 
         //if the refresh pipeline is a cic source
         if (engine.SourceObject is CohortIdentificationConfigurationSource cicSource)
-        {
             //a cohort identification configuration is a complex query possibly with many cached subqueries, if we are refreshing the cic we will want to clear (and recache) identifiers
             //from the live tables
             cicSource.ClearCohortIdentificationConfigurationCacheBeforeRunning = true;

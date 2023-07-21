@@ -72,12 +72,18 @@ public class PackPluginRunner : IRunner
             using var s = manifests[0].Open();
             var doc = XDocument.Load(s);
 
-            var ns = doc.Root.GetDefaultNamespace();// XNamespace.Get("http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd");
-            var versionNode = doc.Root.Element(ns + "metadata").Element(ns + "version") ?? throw new Exception("Could not find version tag");
+            var ns = doc.Root
+                .GetDefaultNamespace(); // XNamespace.Get("http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd");
+            var versionNode = doc.Root.Element(ns + "metadata").Element(ns + "version") ??
+                              throw new Exception("Could not find version tag");
             pluginVersion = new Version(VersionSuffix.Replace(versionNode.Value, ""));
 
-            var rdmpDependencyNode = doc.Descendants(ns + "dependency").FirstOrDefault(e => e?.Attribute("id")?.Value == "HIC.RDMP.Plugin") ?? throw new Exception("Expected a single <dependency> tag with id = HIC.RDMP.Plugin (in order to determine plugin compatibility).  Ensure your nuspec file includes a dependency on this package.");
-            rdmpDependencyVersion = new Version(VersionSuffix.Replace(rdmpDependencyNode?.Attribute("version")?.Value??"", ""));
+            var rdmpDependencyNode =
+                doc.Descendants(ns + "dependency")
+                    .FirstOrDefault(e => e?.Attribute("id")?.Value == "HIC.RDMP.Plugin") ?? throw new Exception(
+                    "Expected a single <dependency> tag with id = HIC.RDMP.Plugin (in order to determine plugin compatibility).  Ensure your nuspec file includes a dependency on this package.");
+            rdmpDependencyVersion =
+                new Version(VersionSuffix.Replace(rdmpDependencyNode?.Attribute("version")?.Value ?? "", ""));
         }
 
         var runningSoftwareVersion = typeof(PackPluginRunner).Assembly.GetName().Version;
@@ -85,7 +91,7 @@ public class PackPluginRunner : IRunner
             throw new NotSupportedException(
                 $"Plugin version {pluginVersion} is incompatible with current running version of RDMP ({runningSoftwareVersion}).");
 
-        UploadFile(repositoryLocator,checkNotifier,toCommit,pluginVersion,rdmpDependencyVersion);
+        UploadFile(repositoryLocator, checkNotifier, toCommit, pluginVersion, rdmpDependencyVersion);
 
         return 0;
     }
@@ -94,7 +100,7 @@ public class PackPluginRunner : IRunner
         ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
     {
         // delete EXACT old versions of the Plugin
-        var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>()
+        var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Plugin>()
             .SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
 
         if (oldVersion != null)
@@ -102,7 +108,7 @@ public class PackPluginRunner : IRunner
 
         try
         {
-            var plugin = new Curation.Data.Plugin(repositoryLocator.CatalogueRepository, toCommit, pluginVersion,
+            var plugin = new Plugin(repositoryLocator.CatalogueRepository, toCommit, pluginVersion,
                 rdmpDependencyVersion);
             //add the new binary
             new LoadModuleAssembly(repositoryLocator.CatalogueRepository, toCommit, plugin);

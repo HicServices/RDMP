@@ -30,7 +30,6 @@ internal sealed class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
 
 
     internal ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator,
-
         [DemandsInitialization("The database to create")]
         DiscoveredDatabase databaseToCreate,
         [DemandsInitialization(
@@ -54,8 +53,11 @@ internal sealed class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
         base.Execute();
 
         //Create cohort store database
-        var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate, activator.RepositoryLocator.CatalogueRepository, activator.RepositoryLocator.DataExportRepository, allowNullReleaseIdentifiers);
-        Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType), ThrowImmediatelyCheckNotifier.Quiet);
+        var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate,
+            activator.RepositoryLocator.CatalogueRepository, activator.RepositoryLocator.DataExportRepository,
+            allowNullReleaseIdentifiers);
+        Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType),
+            ThrowImmediatelyCheckNotifier.Quiet);
 
         Publish(Created);
     }

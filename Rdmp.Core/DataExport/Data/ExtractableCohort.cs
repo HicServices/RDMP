@@ -79,7 +79,6 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     #endregion
 
 
-
     private int _count = -1;
 
 
@@ -206,11 +205,13 @@ where
         using var con = db.Server.GetConnection();
         con.Open();
         using var getDescription = db.Server.GetCommand(sql, con);
-        if(timeoutInSeconds != -1)
+        if (timeoutInSeconds != -1)
             getDescription.CommandTimeout = timeoutInSeconds;
 
         using var r = getDescription.ExecuteReader();
-        return r.Read() ? new ExternalCohortDefinitionData(r, ExternalCohortTable.Name) : ExternalCohortDefinitionData.Orphan;
+        return r.Read()
+            ? new ExternalCohortDefinitionData(r, ExternalCohortTable.Name)
+            : ExternalCohortDefinitionData.Orphan;
     }
 
 
@@ -283,7 +284,7 @@ where
         dtReturn.EndLoadData();
 
         dtReturn.TableName = cohortTable.GetRuntimeName();
-                
+
         return dtReturn;
     }
 
@@ -328,7 +329,7 @@ where
         con.Open();
 
         using var cmd = db.Server.GetCommand(sql, con);
-        if(timeout != -1)
+        if (timeout != -1)
             cmd.CommandTimeout = timeout;
 
         return cmd.ExecuteScalar();
@@ -349,15 +350,13 @@ where
             out var versionMemberName,
             out var projectNumberMemberName);
         foreach (DataRow r in dt.Rows)
-        {
             yield return
                 new CohortDefinition(
                     Convert.ToInt32(r[valueMemberName]),
                     r[displayMemberName].ToString(),
                     Convert.ToInt32(r[versionMemberName]),
                     Convert.ToInt32(r[projectNumberMemberName])
-                    ,externalSource);
-        }
+                    , externalSource);
     }
 
     /// <summary>
@@ -415,7 +414,8 @@ where
 
         var syntaxHelper = GetQuerySyntaxHelper();
 
-        if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+        if (syntaxHelper.GetRuntimeName(toReturn)
+            .Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
             ThrowImmediatelyCheckNotifier.Quiet
                 .OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
 
@@ -431,10 +431,7 @@ where
     public string GetPrivateIdentifierDataType() => ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
 
     /// <inheritdoc/>
-    public string GetReleaseIdentifierDataType()
-    {
-        return ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
-    }
+    public string GetReleaseIdentifierDataType() => ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
 
 
     /// <inheritdoc/>
@@ -478,7 +475,6 @@ where
                         haveWarnedAboutTop1AlreadyCount--;
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Top 1-ing will occur for release identifier {r[releaseIdentifier]} because it maps to multiple private identifiers"));
-
                     }
                     else
                     {
@@ -564,8 +560,6 @@ where
             $"Substituted {substitutions} release identifiers for private identifiers in input data table (input data table contained {toProcess.Rows.Count} rows)"));
 
         toProcess.Columns[releaseIdentifier].ColumnName = privateIdentifier;
-
-        toProcess.EndLoadData();
     }
 
     /// <summary>

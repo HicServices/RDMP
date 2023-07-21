@@ -85,22 +85,20 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
-                DataLoadInfo?.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
-                    EnsureMessageAValidLength(e.Message));
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
+                    e.Message);
                 break;
             case ProgressEventType.Warning:
                 var msg = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                msg = EnsureMessageAValidLength(msg);
-                DataLoadInfo?.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
                 break;
             case ProgressEventType.Error:
                 var err = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                err = EnsureMessageAValidLength(err);
-                DataLoadInfo?.LogFatalError(sender.ToString(), err);
+                DataLoadInfo.LogFatalError(sender.ToString(), err);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(e));
@@ -114,7 +112,15 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 
         Debug.Assert(DataLoadInfo != null, "DataLoadInfo != null");
 
-        if (e.Progress.UnitOfMeasurement != ProgressType.Records) return;
+        if (e.Progress.UnitOfMeasurement == ProgressType.Records)
+        {
+            //if(!tableLoads.Any(tbl=>tbl.))
+            if (!TableLoads.ContainsKey(e.TaskDescription))
+            {
+                var t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription,
+                    new[] { new DataSource(sender.ToString()) }, e.Progress.KnownTargetValue);
+                TableLoads.Add(e.TaskDescription, t);
+            }
 
         if (!TableLoads.TryGetValue(e.TaskDescription,out var t))
         {

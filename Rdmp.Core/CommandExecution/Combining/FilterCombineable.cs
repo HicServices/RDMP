@@ -48,10 +48,8 @@ public class FilterCombineable : ICombineToMakeCommand
             //so we can determine whether we are being draged into a new heirarchy tree (copy) or just being dragged around inside our own tree (move)
             AllContainersInEntireTreeFromRootDown.Add(RootContainerIfAny);
             AllContainersInEntireTreeFromRootDown.AddRange(RootContainerIfAny.GetAllSubContainersRecursively());
-
         }
     }
-
 
 
     public string GetSqlString() => Filter.WhereSQL;

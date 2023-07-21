@@ -13,7 +13,6 @@ namespace Rdmp.Core.Tests.ReusableCodeTests;
 
 public class UsefulStuffTests : DatabaseTests
 {
-
     [Test]
     public void GetRowCountWhenNoIndexes()
     {

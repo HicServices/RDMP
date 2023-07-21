@@ -41,7 +41,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
+        DemandType.Unspecified, true)]
     public bool MakeHeaderNamesSane { get; set; }
 
     [DemandsInitialization(AddFilenameColumnNamed_DemandDescription)]
@@ -77,18 +78,20 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         using var fs = new FileStream(_fileToLoad.File.FullName, FileMode.Open);
         IWorkbook wb = _fileToLoad.File.Extension == ".xls" ? new HSSFWorkbook(fs) : new XSSFWorkbook(fs);
 
-        DataTable toReturn=null;
+        DataTable toReturn = null;
 
         try
         {
             var worksheet =
                 //if the user hasn't picked one, use the first
-                (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
+                (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
+                throw new FlatFileLoadException(
                     $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
             toReturn = GetAllData(worksheet, listener);
 
             //set the table name the file name
-            toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+            toReturn.TableName =
+                QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
             if (toReturn.Columns.Count == 0)
                 throw new FlatFileLoadException(
@@ -185,7 +188,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             if (!gotAtLeastOneGoodValue)
                 toReturn.Rows.Remove(r);
         }
-        toReturn.EndLoadData();
+
         return toReturn;
     }
 
@@ -221,7 +224,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 if (IsDateWithoutTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd");
 
-                if(IsDateWithTime(format))
+                if (IsDateWithTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
                 if (IsTimeWithoutDate(format))
@@ -253,27 +256,18 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
     }
 
-    private bool IsDateWithTime(string formatString)
-    {
-        return formatString.Contains('h') && formatString.Contains('y');
-    }
-    private bool IsDateWithoutTime(string formatString)
-    {
-        return formatString.Contains('y') && !formatString.Contains('h');
-    }
+    private static bool IsDateWithTime(string formatString) => formatString.Contains('h') && formatString.Contains('y');
 
-    private bool IsTimeWithoutDate(string formatString)
-    {
-        return !formatString.Contains('y') && formatString.Contains('h');
-    }
+    private static bool IsDateWithoutTime(string formatString) =>
+        formatString.Contains('y') && !formatString.Contains('h');
 
     private static bool IsTimeWithoutDate(string formatString) =>
         !formatString.Contains('y') && formatString.Contains('h');
 
-    private static bool IsDateFormat(string formatString)
-    {
-        return !string.IsNullOrWhiteSpace(formatString) && (formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':'));
-    }
+    private static bool IsDateFormat(string formatString) => !string.IsNullOrWhiteSpace(formatString) &&
+                                                             (formatString.Contains('/') ||
+                                                              formatString.Contains('\\') ||
+                                                              formatString.Contains(':'));
 
     /*
 
@@ -315,10 +309,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     private bool IsAcceptableFileExtension() => acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
 
-    private static bool IsNull(object o)
-    {
-        return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
-    }
+    private static bool IsNull(object o) => o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
 
     public void Check(ICheckNotifier notifier)
     {
@@ -357,7 +348,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         DataTable dt;
         try
         {
-            dt = GetAllData(ThrowImmediatelyDataLoadEventListener.Quiet,token);
+            dt = GetAllData(ThrowImmediatelyDataLoadEventListener.Quiet, token);
         }
         catch (Exception e)
         {

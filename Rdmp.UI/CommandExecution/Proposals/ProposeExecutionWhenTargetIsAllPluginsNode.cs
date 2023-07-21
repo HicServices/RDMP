@@ -25,9 +25,7 @@ internal class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecution
     public override bool CanActivate(AllPluginsNode target) => true;
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllPluginsNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
+        InsertOption insertOption = InsertOption.Default) =>
         //drop files on to attempt to upload plugins
-        return cmd is FileCollectionCombineable f ? new ExecuteCommandAddPlugins(ItemActivator,f) : (ICommandExecution)null;
-    }
+        cmd is FileCollectionCombineable f ? new ExecuteCommandAddPlugins(ItemActivator, f) : (ICommandExecution)null;
 }

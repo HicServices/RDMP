@@ -24,7 +24,8 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
 
     private readonly bool _promptUser;
 
-    public ExecuteCommandSetArgument(IBasicActivateItems activator,IArgumentHost _, IArgument arg, object value):base(activator)
+    public ExecuteCommandSetArgument(IBasicActivateItems activator, IArgumentHost _, IArgument arg, object value) :
+        base(activator)
     {
         _arg = arg;
         _value = value;
@@ -84,7 +85,8 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
 
         if (_arg == null)
         {
-            SetImpossible($"Could not find argument called '{picker[1].RawValue}' on '{host}'.  Arguments found were {string.Join(",",args.Select(a=>a.Name))}");
+            SetImpossible(
+                $"Could not find argument called '{picker[1].RawValue}' on '{host}'.  Arguments found were {string.Join(",", args.Select(a => a.Name))}");
             return;
         }
 
@@ -134,7 +136,6 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             {
                 return;
             }
-
         }
 
         _arg.SetValue(value);

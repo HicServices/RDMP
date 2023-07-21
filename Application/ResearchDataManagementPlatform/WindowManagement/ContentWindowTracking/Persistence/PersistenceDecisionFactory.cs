@@ -59,12 +59,10 @@ public class PersistenceDecisionFactory
         return new DeserializeInstruction(controlType);
     }
 
-    public static RDMPCollection? ShouldCreateCollection(string persistString)
-    {
-        return !persistString.StartsWith(PersistableToolboxDockContent.Prefix)
+    public static RDMPCollection? ShouldCreateCollection(string persistString) =>
+        !persistString.StartsWith(PersistableToolboxDockContent.Prefix)
             ? null
             : PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
-    }
 
     public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString,
         IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -101,14 +99,15 @@ public class PersistenceDecisionFactory
         var collectionType = GetTypeByName(tokens[2], typeof(IPersistableObjectCollection), repositoryLocator);
 
         var collectionInstance = (IPersistableObjectCollection)ObjectConstructor.Construct(collectionType);
-                
-        if(collectionInstance.DatabaseObjects == null)
+
+        if (collectionInstance.DatabaseObjects == null)
             throw new PersistenceException(
                 $"Constructor of Type '{collectionType}' did not initialise property DatabaseObjects");
-            
+
         var allObjectsString = PersistStringHelper.MatchCollectionInString(persistString);
 
-        collectionInstance.DatabaseObjects.AddRange(PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
+        collectionInstance.DatabaseObjects.AddRange(
+            PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString, repositoryLocator));
 
         var extraText = PersistStringHelper.GetExtraText(persistString);
         collectionInstance.LoadExtraText(extraText);
@@ -126,5 +125,4 @@ public class PersistenceDecisionFactory
 
         return toReturn;
     }
-
 }

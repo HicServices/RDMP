@@ -39,11 +39,9 @@ public class JoinableCollectionNode : Node, IOrderable
     public int? CumulativeRowCount { set; get; }
 
 
+    public static string GetStateDescription() => "";
 
-    public string Order()
-    {
-        return "";
-    }
+    public static string Order() => "";
 
     public string ElapsedTime = "";
 
@@ -61,13 +59,11 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((JoinableCollectionNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((JoinableCollectionNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Configuration, GetType());
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Configuration, GetType());
 
     int IOrderable.Order
     {

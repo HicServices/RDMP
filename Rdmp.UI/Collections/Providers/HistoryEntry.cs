@@ -27,14 +27,11 @@ public class HistoryEntry : IMasqueradeAs
         Date = date;
     }
 
-    public string Serialize()
-    {
-        return $"{PersistStringHelper.GetObjectCollectionPersistString(Object)}{PersistStringHelper.ExtraText}{Date}";
-    }
+    public string Serialize() =>
+        $"{PersistStringHelper.GetObjectCollectionPersistString(Object)}{PersistStringHelper.ExtraText}{Date}";
 
     public static HistoryEntry Deserialize(string s, IRDMPPlatformRepositoryServiceLocator locator)
     {
-
         try
         {
             var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText, StringComparison.Ordinal)];
@@ -46,7 +43,6 @@ public class HistoryEntry : IMasqueradeAs
         {
             return null;
         }
-
     }
 
 
@@ -56,13 +52,11 @@ public class HistoryEntry : IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((HistoryEntry) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((HistoryEntry)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return Object?.GetHashCode() ?? 0;
-    }
+    public override int GetHashCode() => Object?.GetHashCode() ?? 0;
 
     public object MasqueradingAs() => Object;
 }

@@ -36,10 +36,7 @@ public class CSVOutputFormat : FileOutputFormat
         DateFormat = dateFormat;
     }
 
-    public override string GetFileExtension()
-    {
-        return ".csv";
-    }
+    public override string GetFileExtension() => ".csv";
 
     public override void Open()
     {
@@ -86,7 +83,8 @@ public class CSVOutputFormat : FileOutputFormat
 
     public string CleanString(object o)
     {
-        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
+        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,
+            RoundFloatsTo);
 
         SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 

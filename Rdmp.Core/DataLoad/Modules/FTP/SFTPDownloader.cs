@@ -48,7 +48,9 @@ public class SFTPDownloader : FTPDownloader
             var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events
-            void Callback(ulong totalBytes) => job.OnProgress(this, new ProgressEventArgs(destinationFilePath, new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
+            void Callback(ulong totalBytes) => job.OnProgress(this,
+                new ProgressEventArgs(destinationFilePath,
+                    new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
 
             using (var fs = new FileStream(destinationFilePath, FileMode.CreateNew))
             {
@@ -70,7 +72,7 @@ public class SFTPDownloader : FTPDownloader
         using var sftp = new SftpClient(_host, _username, _password);
         sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
         sftp.Connect();
-                    
+
         foreach (var retrievedFiles in _filesRetrieved)
             try
             {
@@ -96,7 +98,7 @@ public class SFTPDownloader : FTPDownloader
 
         if (string.IsNullOrWhiteSpace(directory))
             directory = ".";
-                
-        return sftp.ListDirectory(directory).Select(d=>d.Name).ToArray();
+
+        return sftp.ListDirectory(directory).Select(d => d.Name).ToArray();
     }
 }

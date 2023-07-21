@@ -61,7 +61,7 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
 
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        var newTabName = ((IRDMPSingleDatabaseObjectControl) Control).GetTabName();
+        var newTabName = ((IRDMPSingleDatabaseObjectControl)Control).GetTabName();
 
         if (ParentForm is CustomFloatWindow floatWindow)
             floatWindow.Text = newTabName;

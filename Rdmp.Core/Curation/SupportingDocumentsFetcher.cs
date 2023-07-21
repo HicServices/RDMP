@@ -32,10 +32,9 @@ public class SupportingDocumentsFetcher
         _singleDocument = true;
     }
 
-    public string ExtractToDirectory(DirectoryInfo directory)
-    {
-        return _document != null ? ExtractToDirectory(directory, _document) : throw new Exception("SupportingDocument was not specified!");
-    }
+    public string ExtractToDirectory(DirectoryInfo directory) => _document != null
+        ? ExtractToDirectory(directory, _document)
+        : throw new Exception("SupportingDocument was not specified!");
 
     private static string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
     {

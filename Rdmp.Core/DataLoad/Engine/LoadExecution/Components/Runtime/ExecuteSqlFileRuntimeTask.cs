@@ -54,7 +54,8 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
                         RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name);
 
                 if (value.Contains("<DatabaseName>"))
-                    value = value.Replace("<DatabaseName>", RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
+                    value = value.Replace("<DatabaseName>",
+                        RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
 
                 commandText = commandText.Replace($"##{kvp.Key}##", value);
             }
@@ -71,11 +72,7 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
     }
 
 
-
-    public override bool Exists()
-    {
-        return File.Exists(Filepath);
-    }
+    public override bool Exists() => File.Exists(Filepath);
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {

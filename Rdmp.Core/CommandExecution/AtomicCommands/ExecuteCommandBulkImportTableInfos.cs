@@ -84,14 +84,12 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
 
         ITableInfo anyNewTable = null;
 
-        if(!BasicActivator.SelectObjects("Import", (db.DiscoverTables(includeViews: false)
-               .Select(discoveredTable =>
-                   new { discoveredTable, collide = existing.FirstOrDefault(t => t.Is(discoveredTable)) })
-               .Where(static t1 => t1.collide == null)
-               .Select(static t1 => t1.discoveredTable)).ToArray(), out var selected))
-        {
+        if (!BasicActivator.SelectObjects("Import", db.DiscoverTables(false)
+                .Select(discoveredTable =>
+                    new { discoveredTable, collide = existing.FirstOrDefault(t => t.Is(discoveredTable)) })
+                .Where(static t1 => t1.collide == null)
+                .Select(static t1 => t1.discoveredTable).ToArray(), out var selected))
             return;
-        }
 
         foreach (var discoveredTable in selected)
         {
@@ -129,10 +127,11 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
                 foreach (var columnInfo in unmatched)
                 {
-                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
-                        {
-                            ColumnInfo_ID = columnInfo.ID
-                        };
+                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
+                        (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
+                    {
+                        ColumnInfo_ID = columnInfo.ID
+                    };
                     cataItem.SaveToDatabase();
                     married.Add(cataItem, columnInfo);
                 }
@@ -145,14 +144,11 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
 
         if (married.Any() && YesNo($"Found {married.Count} columns, make them all extractable?", "Make Extractable"))
             foreach (var (catalogueItem, columnInfo) in married)
-            {
                 // don't mark it extractable twice
-                if(catalogueItem.ExtractionInformation == null)
-                {
+                if (catalogueItem.ExtractionInformation == null)
                     //yup that's how we roll, the database is main memory!
-                    _=new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, catalogueItem, columnInfo, columnInfo.Name);
-                }
-            }
+                    _ = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, catalogueItem,
+                        columnInfo, columnInfo.Name);
 
         if (anyNewTable != null)
         {
@@ -161,13 +157,13 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
         }
     }
 
-    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
-    {
-        return property.Name.EndsWith("LoggingServer_ID", StringComparison.Ordinal)
+    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,
+        ShareDefinition shareDefinition) =>
+        property.Name.EndsWith("LoggingServer_ID", StringComparison.Ordinal)
             ? _loggingServer.ID
             : throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
-    }
 
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Database, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Database, OverlayKind.Import);
 }

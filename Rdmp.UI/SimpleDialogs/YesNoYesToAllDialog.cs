@@ -21,10 +21,10 @@ public class YesNoYesToAllDialog : WideMessageBox
     private object lockShowDialog = new();
 
     private FlowLayoutPanel p = new();
-    private Button btnYes = new() {Text ="Yes"};
-    private Button btnYesToAll = new() {Text = "Yes To All"};
-    private Button btnNo = new() {Text="No"};
-    private Button btnNoToAll = new() {Text = "No To All"};
+    private Button btnYes = new() { Text = "Yes" };
+    private Button btnYesToAll = new() { Text = "Yes To All" };
+    private Button btnNo = new() { Text = "No" };
+    private Button btnNoToAll = new() { Text = "No To All" };
 
     /// <summary>
     /// The number of pixels to allow outside of the text width when auto sizing buttons
@@ -34,12 +34,10 @@ public class YesNoYesToAllDialog : WideMessageBox
     public YesNoYesToAllDialog() : this(new WideMessageBoxArgs("YesNo", "Unknown", Environment.StackTrace, null,
         WideMessageBoxTheme.Help))
     {
-
     }
 
     private YesNoYesToAllDialog(WideMessageBoxArgs wideMessageBoxArgs) : base(wideMessageBoxArgs)
     {
-
         AddButton(btnYes);
         AddButton(btnYesToAll);
         AddButton(btnNo);
@@ -76,8 +74,8 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     public DialogResult ShowDialog(string message, string caption)
     {
-        if(InvokeRequired)
-            return (DialogResult)Invoke(() => ShowDialog(message,caption));
+        if (InvokeRequired)
+            return (DialogResult)Invoke(() => ShowDialog(message, caption));
 
         Args.Title = caption;
         Args.Message = message;
@@ -91,10 +89,14 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     private void btn_Click(object sender, EventArgs e)
     {
-        if(sender == btnYes)
+        if (sender == btnYes)
+        {
             DialogResult = DialogResult.Yes;
+        }
         else if (sender == btnNo)
+        {
             DialogResult = DialogResult.No;
+        }
         else if (sender == btnYesToAll)
         {
             YesToAllClicked = true;

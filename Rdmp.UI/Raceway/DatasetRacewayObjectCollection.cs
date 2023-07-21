@@ -29,9 +29,8 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public Catalogue[] GetCatalogues() => DatabaseObjects.Cast<Catalogue>().ToArray();
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+    public override string SaveExtraText() =>
+        PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
             { "ShowPeriod", ShowPeriod.ToString() },
             { "IgnoreRows", IgnoreRows.ToString() }
@@ -53,7 +52,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public void AddCatalogue(Catalogue catalogue)
     {
-        if(catalogue == null)
+        if (catalogue == null)
             throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Add(catalogue);
@@ -61,7 +60,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public void RemoveCatalogue(Catalogue catalogue)
     {
-        if(catalogue == null)
+        if (catalogue == null)
             throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Remove(catalogue);

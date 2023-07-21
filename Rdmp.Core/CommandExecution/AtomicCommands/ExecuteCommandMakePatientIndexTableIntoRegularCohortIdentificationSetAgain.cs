@@ -18,8 +18,9 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
-        : this (activator,new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
+    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator,
+        AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
+        : this(activator, new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
     {
     }
 

@@ -66,7 +66,6 @@ public class ExtractionConfigurationChecker : ICheckable
 
         foreach (var directoryInfo in projectDirectory.GetDirectories(
                      $"{ExtractionDirectory.GetExtractionDirectoryPrefix(_config)}*").ToArray())
-        {
             if (DirectoryIsEmpty(directoryInfo, out var firstFileFound))
             {
                 var deleteIt =

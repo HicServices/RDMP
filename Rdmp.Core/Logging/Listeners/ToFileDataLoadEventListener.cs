@@ -31,7 +31,8 @@ public class ToFileDataLoadEventListener : IDataLoadEventListener
 
     public ToFileDataLoadEventListener(object logger)
         : this(logger.GetType())
-    { }
+    {
+    }
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {

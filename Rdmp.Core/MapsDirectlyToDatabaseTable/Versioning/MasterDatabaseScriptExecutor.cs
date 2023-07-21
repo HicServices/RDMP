@@ -149,13 +149,9 @@ public class MasterDatabaseScriptExecutor
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
             .Insert(new Dictionary<string, object>
             {
-                {"script_name", kvp.Key},
-                {"text_of_script", kvp.Value.EntireScript},
-                {"text_hash", CalculateHash(kvp.Value.EntireScript)},
-
-                {"entry_date", now},
-                {"modified_date", now},
-                {"entered_by", Environment.UserName}
+                { "script_name", kvp.Key },
+                { "text_of_script", kvp.Value.EntireScript },
+                { "text_hash", CalculateHash(kvp.Value.EntireScript) },
 
                 { "entry_date", now },
                 { "modified_date", now },
@@ -184,7 +180,6 @@ public class MasterDatabaseScriptExecutor
 
     }
 
-
     private void SetVersion(string name, string version)
     {
         var versionTable = Database.ExpectTable(RoundhouseVersionTable, RoundhouseSchemaName);
@@ -197,12 +192,12 @@ public class MasterDatabaseScriptExecutor
 
         versionTable.Insert(new Dictionary<string, object>
         {
-            {"repository_path", name},
-            {"version", version},
+            { "repository_path", name },
+            { "version", version },
 
-            {"entry_date", now},
-            {"modified_date", now},
-            {"entered_by", Environment.UserName}
+            { "entry_date", now },
+            { "modified_date", now },
+            { "entered_by", Environment.UserName }
         });
     }
 
@@ -226,7 +221,6 @@ public class MasterDatabaseScriptExecutor
                 Database.CreateBackup($"Full backup of {Database}");
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
-
             }
             catch (Exception e)
             {
@@ -255,7 +249,6 @@ public class MasterDatabaseScriptExecutor
                     }
 
 
-
                     notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success,
                         null));
                 }
@@ -265,10 +258,9 @@ public class MasterDatabaseScriptExecutor
                 }
             }
 
-            SetVersion("Patching",maxPatchVersion.ToString());
-            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success));
-
-            return true;
+            SetVersion("Patching", maxPatchVersion.ToString());
+            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}",
+                CheckResult.Success));
 
             return true;
         }
@@ -342,7 +334,8 @@ public class MasterDatabaseScriptExecutor
                 {
                     //we found it and it was intact
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",CheckResult.Success, null));
+                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",
+                        CheckResult.Success, null));
 
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
@@ -372,7 +365,6 @@ public class MasterDatabaseScriptExecutor
                 $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ",
                 CheckResult.Fail, null));
             stop = true;
-
         }
 
         if (stop)
@@ -431,6 +423,6 @@ public class MasterDatabaseScriptExecutor
 
         //get everything in the /up/ folder that is .sql
         var patches = patcher.GetAllPatchesInAssembly(Database);
-        PatchDatabase(patches,notifier,p=>true);//apply all patches without question
+        PatchDatabase(patches, notifier, p => true); //apply all patches without question
     }
 }

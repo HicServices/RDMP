@@ -44,9 +44,8 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
     private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
-    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
-
-    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
+    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) :
+        base(null, connectionString)
     {
         CatalogueRepository = catalogueRepository;
 
@@ -84,19 +83,17 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
     }
 
-    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
-    {
-        return GetAllObjects<CumulativeExtractionResults>(
+    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
+        IExtractionConfiguration configuration, IExtractableDataSet dataset) =>
+        GetAllObjects<CumulativeExtractionResults>(
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
 
     private readonly ObjectConstructor _constructor = new();
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        return Constructors.TryGetValue(t, out var constructor)
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
+        Constructors.TryGetValue(t, out var constructor)
             ? constructor(this, reader)
             : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
-    }
 
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
@@ -104,9 +101,8 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
 
-    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
-    {
-        return SelectAll<SelectedDataSets>(@"
+    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
+        SelectAll<SelectedDataSets>(@"
 SELECT ID  FROM SelectedDataSets sds
 where not exists (
 select 1 FROM ExtractableColumn ec where 
@@ -134,7 +130,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {
         //we know of no children
-        return !_packageContentsDictionary.Value.TryGetValue(package.ID,out var contents)
+        return !_packageContentsDictionary.Value.TryGetValue(package.ID, out var contents)
             ? Array.Empty<IExtractableDataSet>()
             : contents.Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
     }
@@ -180,13 +176,16 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     /// <param name="dataSet"></param>
     public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
-        if (_packageContentsDictionary.Value.TryGetValue(package.ID,out var contents))
+        if (_packageContentsDictionary.Value.TryGetValue(package.ID, out var contents))
         {
             if (contents.Contains(dataSet.ID))
-                throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
+                throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'",
+                    nameof(dataSet));
         }
         else
+        {
             _packageContentsDictionary.Value.Add(package.ID, new List<int>());
+        }
 
         using (var con = GetConnection())
         {
@@ -212,7 +211,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed",
+                nameof(dataSet));
 
         using (var con = GetConnection())
         {

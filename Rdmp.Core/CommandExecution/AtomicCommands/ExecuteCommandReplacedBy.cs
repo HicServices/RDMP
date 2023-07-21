@@ -27,9 +27,11 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
     [UseWithObjectConstructor]
     public ExecuteCommandReplacedBy(IBasicActivateItems activator,
-        [DemandsInitialization("The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
+        [DemandsInitialization(
+            "The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
         IMapsDirectlyToDatabaseTable deprecated,
-        [DemandsInitialization("The object that replaces the retired one.  Pass null to clear the replacement relationship")]
+        [DemandsInitialization(
+            "The object that replaces the retired one.  Pass null to clear the replacement relationship")]
         IMapsDirectlyToDatabaseTable replacement)
         : base(activator)
     {
@@ -38,12 +40,10 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
         var type = deprecated.GetType();
 
-        if(deprecated is IMightBeDeprecated { IsDeprecated: false })
-        {
+        if (deprecated is IMightBeDeprecated { IsDeprecated: false })
             SetImpossible($"{deprecated} is not marked IsDeprecated so no replacement can be specified");
 
-        if(replacement != null && replacement.GetType() != type)
-        {
+        if (replacement != null && replacement.GetType() != type)
             SetImpossible($"'{replacement}' cannot replace '{deprecated}' because it is a different object Type");
     }
 

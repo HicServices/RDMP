@@ -20,7 +20,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Performance;
 /// </summary>
 public class ComprehensiveQueryPerformanceCounter
 {
-    public readonly Dictionary<string,QueryPerformed> DictionaryOfQueries = new();
+    public readonly Dictionary<string, QueryPerformed> DictionaryOfQueries = new();
 
     public void AddAudit(DbCommand cmd, string environmentDotStackTrace)
     {

@@ -63,11 +63,15 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     {
         base.Check(notifier);
 
-        if(PerPatient && !Pattern.Contains("$p"))
-            notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is true but Pattern {Pattern} did not contain token $p",CheckResult.Fail));
+        if (PerPatient && !Pattern.Contains("$p"))
+            notifier.OnCheckPerformed(
+                new CheckEventArgs($"PerPatient is true but Pattern {Pattern} did not contain token $p",
+                    CheckResult.Fail));
 
-        if(!PerPatient && Pattern.IndexOf("$p", StringComparison.Ordinal) != -1)
-            notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",CheckResult.Fail));
+        if (!PerPatient && Pattern.IndexOf("$p", StringComparison.Ordinal) != -1)
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",
+                CheckResult.Fail));
 
         try
         {
@@ -144,7 +148,8 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         }
         else
         {
-            var f = LocationOfFiles.GetFiles().FirstOrDefault(f=>f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
+            var f = LocationOfFiles.GetFiles()
+                .FirstOrDefault(f => f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
 
             if (f != null)
                 infos.Add(f);
@@ -163,16 +168,19 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                 var dest = Path.Combine(destinationDirectory.FullName, dir.Name);
 
                 // Recursively copy all files from input path to destination path
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying directory '{e.FullName}' to '{dest}'"));
-                CopyFolder(e.FullName,dest);
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"Copying directory '{e.FullName}' to '{dest}'"));
+                CopyFolder(e.FullName, dest);
                 atLeastOne = true;
             }
 
             if (!Directories && e is FileInfo f)
             {
-                var dest = Path.Combine(destinationDirectory.FullName,f.Name);
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying file '{f.FullName}' to '{dest}'"));
-                File.Copy(f.FullName,dest,Overwrite);
+                var dest = Path.Combine(destinationDirectory.FullName, f.Name);
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information, $"Copying file '{f.FullName}' to '{dest}'"));
+                File.Copy(f.FullName, dest, Overwrite);
                 atLeastOne = true;
             }
         }
@@ -222,8 +230,10 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                     dir.Name.Replace(privateIdentifier.ToString(), releaseSub));
 
                 // Recursively copy all files from input path to destination path
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying directory '{e.FullName}' to '{dest}'"));
-                CopyFolder(e.FullName,dest);
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"Copying directory '{e.FullName}' to '{dest}'"));
+                CopyFolder(e.FullName, dest);
                 atLeastOne = true;
             }
 
@@ -233,8 +243,9 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                     destinationDirectory.FullName,
                     f.Name.Replace(privateIdentifier.ToString(), releaseSub));
 
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Copying file '{f.FullName}' to '{dest}'"));
-                File.Copy(f.FullName,dest,Overwrite);
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information, $"Copying file '{f.FullName}' to '{dest}'"));
+                File.Copy(f.FullName, dest, Overwrite);
                 atLeastOne = true;
             }
         }

@@ -68,8 +68,6 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
         Publish(c);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
 }

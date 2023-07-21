@@ -17,15 +17,16 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 /// <summary>
 /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on name (e.g. "Catalogue:my*cata")
 /// </summary>
-public partial class PickObjectByName: PickObjectBase
+public partial class PickObjectByName : PickObjectBase
 {
     public override string Format => "{Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]";
+
     public override string Help =>
         @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
 NamePattern: must be a string that matches 1 (or more if selecting multiple objects) object based on its name (ToString).  Can include the wild card '*'.  Cannot include the ':' character.
 NamePattern2+: (optional) only allowed if you are being prompted for multiple objects, allows you to specify multiple objects of the same Type using comma separator";
 
-    public override IEnumerable<string> Examples => new []
+    public override IEnumerable<string> Examples => new[]
     {
         "Catalogue:mycata*",
         "Catalogue:mycata1,mycata2"

@@ -74,7 +74,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             AllowsTab = false
         };
 
-        TabView.AddTab(queryTab = new Tab("Query", textView),true);
+        TabView.AddTab(queryTab = new Tab("Query", textView), true);
 
         tableView = new TableView
         {
@@ -93,22 +93,18 @@ internal partial class ConsoleGuiSqlEditor : Window
 
         // Buttons on top of control
 
-        _btnRunOrCancel = new Button("Run"){
-            X= 0,
-            Y= 0
+        _btnRunOrCancel = new Button("Run")
+        {
+            X = 0,
+            Y = 0
         };
 
         _btnRunOrCancel.Clicked += () => RunOrCancel();
         Add(_btnRunOrCancel);
 
-        var resetSql = new Button("Reset Sq_l"){
-            X= Pos.Right(_btnRunOrCancel)+1};
-
-        resetSql.Clicked += ()=>ResetSql();
-        Add(resetSql);
-
-        var clearSql = new Button("Clear S_ql"){
-            X= Pos.Right(resetSql)+1
+        var resetSql = new Button("Reset Sq_l")
+        {
+            X = Pos.Right(_btnRunOrCancel) + 1
         };
 
         resetSql.Clicked += () => ResetSql();
@@ -124,7 +120,7 @@ internal partial class ConsoleGuiSqlEditor : Window
 
         var lblTimeout = new Label("Timeout:")
         {
-            X = Pos.Right(clearSql)+1
+            X = Pos.Right(clearSql) + 1
         };
         Add(lblTimeout);
 
@@ -137,8 +133,9 @@ internal partial class ConsoleGuiSqlEditor : Window
 
         Add(tbTimeout);
 
-        var btnSave = new Button("Save"){
-            X= Pos.Right(tbTimeout)+1
+        var btnSave = new Button("Save")
+        {
+            X = Pos.Right(tbTimeout) + 1
         };
         btnSave.Clicked += () => Save();
         Add(btnSave);
@@ -152,14 +149,13 @@ internal partial class ConsoleGuiSqlEditor : Window
 
         Add(btnOpen);
 
-        var btnClose = new Button("Clos_e"){
-            X= Pos.Right(btnOpen) +1
+        var btnClose = new Button("Clos_e")
+        {
+            X = Pos.Right(btnOpen) + 1
         };
 
 
-        btnClose.Clicked += ()=>{
-            Application.RequestStop();
-        };
+        btnClose.Clicked += () => { Application.RequestStop(); };
 
         Add(btnClose);
 
@@ -235,14 +231,13 @@ internal partial class ConsoleGuiSqlEditor : Window
                     }
                 }
 
-                MessageBox.Query("File Saved","Save completed","Ok");
+                MessageBox.Query("File Saved", "Save completed", "Ok");
             }
         }
         catch (Exception ex)
         {
             MessageBox.ErrorQuery("Save Failed", ex.Message, "Ok");
         }
-
     }
 
     private void TbTimeout_TextChanged(NStack.ustring value)
@@ -272,7 +267,7 @@ internal partial class ConsoleGuiSqlEditor : Window
     private void RunOrCancel()
     {
         // if task is still running we should cancel
-        if(_runSqlTask is { IsCompleted: false })
+        if (_runSqlTask is { IsCompleted: false })
         {
             // Cancel the sql command and let that naturally end the task
             _runSqlCmd?.Cancel();
@@ -323,15 +318,15 @@ internal partial class ConsoleGuiSqlEditor : Window
 
             using var con = db.Server.GetConnection();
             con.Open();
-            _runSqlCmd = db.Server.GetCommand(sql,con);
+            _runSqlCmd = db.Server.GetCommand(sql, con);
             _runSqlCmd.CommandTimeout = _timeout;
 
             using var da = db.Server.GetDataAdapter(_runSqlCmd);
             var dt = new DataTable();
             da.Fill(dt);
 
-            Application.MainLoop.Invoke(() => {
-
+            Application.MainLoop.Invoke(() =>
+            {
                 tableView.Table = dt;
 
                 // if query resulted in some data show it
@@ -353,15 +348,11 @@ internal partial class ConsoleGuiSqlEditor : Window
 
     protected virtual void OnQueryCompleted(DataTable dt)
     {
-
     }
 
     private class SqlAutocomplete : TextViewAutocomplete
     {
-        public override bool IsWordChar(Rune rune)
-        {
-            return (char)rune == '_' || base.IsWordChar(rune);
-        }
+        public override bool IsWordChar(Rune rune) => (char)rune == '_' || base.IsWordChar(rune);
     }
 
     private partial class SqlTextView : TextView
@@ -378,16 +369,6 @@ internal partial class ConsoleGuiSqlEditor : Window
                 "null", "is", "drop", "database", "table", "having", "in", "join", "on", "union", "exists"
             }, StringComparer.CurrentCultureIgnoreCase);
 
-        private readonly HashSet<string> _keywords = new(new[]
-        {
-            "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
-            "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
-            "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
-            "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
-            "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
-            "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
-            "database", "table", "having", "in", "join", "on", "union", "exists"
-        }, StringComparer.CurrentCultureIgnoreCase);
         private readonly Attribute _blue;
         private readonly Attribute _white;
 
@@ -405,7 +386,6 @@ internal partial class ConsoleGuiSqlEditor : Window
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
             _white = Driver.MakeAttribute(Color.White, Color.Black);
-
         }
 
         // The next two are renamed in 1.8.2 of Terminal.Gui.  But we could upgrade because of this issue:

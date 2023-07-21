@@ -62,7 +62,7 @@ public class ShareManager
         var defaults = RepositoryLocator.CatalogueRepository;
 
 
-        if(property.Name is "LiveLoggingServer_ID" or "TestLoggingServer_ID")
+        if (property.Name is "LiveLoggingServer_ID" or "TestLoggingServer_ID")
         {
             var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
@@ -127,7 +127,8 @@ public class ShareManager
         }
 
         //otherwise get the existing master object
-        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ?? throw new Exception($"Could not find object for persistenceString:{persistenceString}");
+        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ??
+                throw new Exception($"Could not find object for persistenceString:{persistenceString}");
         return o;
     }
 
@@ -153,11 +154,10 @@ public class ShareManager
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public bool IsImported(string sharingUID)
-    {
+    public bool IsImported(string sharingUID) =>
         //empty guids are never imported
-        return !Guid.Empty.ToString().Equals(sharingUID) && _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
-    }
+        !Guid.Empty.ToString().Equals(sharingUID) &&
+        _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
 
     /// <summary>
     /// Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and
@@ -173,11 +173,12 @@ public class ShareManager
         if (existingExport != null)
             return existingExport;
 
-        var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
+        var existingImport =
+            _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
 
         return existingImport != null
             ? new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid)
-            : new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
+            : new ObjectExport(_catalogueRepository, o, Guid.NewGuid());
     }
 
 
@@ -327,8 +328,9 @@ public class ShareManager
                     actual?.DeleteInDatabase();
                 }
 
-                var instance = (IMapsDirectlyToDatabaseTable) ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ?? throw new ObjectLacksCompatibleConstructorException(
-                        $"Could not find a ShareManager constructor for '{sd.Type}'");
+                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??
+                               throw new ObjectLacksCompatibleConstructorException(
+                                   $"Could not find a ShareManager constructor for '{sd.Type}'");
                 created.Add(instance);
             }
             catch (Exception e)
@@ -413,7 +415,8 @@ public class ShareManager
         }
     }
 
-    public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
+    public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition)
+        where T : class, IMapsDirectlyToDatabaseTable
     {
         IRepository repo;
 
@@ -543,10 +546,9 @@ public class ShareManager
 
         if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
             if (propertyType == typeof(Uri))
-                value = value is string s ? new Uri(s):(Uri) value;
-            else
-            if (typeof(Enum).IsAssignableFrom(propertyType))
-                value = Enum.ToObject(propertyType, value);//if the property is an enum
+                value = value is string s ? new Uri(s) : (Uri)value;
+            else if (typeof(Enum).IsAssignableFrom(propertyType))
+                value = Enum.ToObject(propertyType, value); //if the property is an enum
             else
                 value = UsefulStuff.ChangeType(value, propertyType); //the property is not an enum
 

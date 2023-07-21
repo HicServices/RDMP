@@ -31,14 +31,10 @@ public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
             SetImpossible($"{o} does not have a tooltip/problem");
     }
 
-    public override string GetCommandName()
-    {
-        return _isBad ? "Show Problem" : "Show Tooltip";
-    }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return (Image<Rgba32>)(_isBad ? Image.Load(FamFamFamIcons.flag_red) : iconProvider.GetImage(RDMPConcept.Help));
-    }
+    public override string GetCommandName() => _isBad ? "Show Problem" : "Show Tooltip";
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        (Image<Rgba32>)(_isBad ? Image.Load(FamFamFamIcons.flag_red) : iconProvider.GetImage(RDMPConcept.Help));
 
 
     public override void Execute()

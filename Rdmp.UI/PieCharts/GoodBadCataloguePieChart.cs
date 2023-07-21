@@ -32,11 +32,19 @@ namespace Rdmp.UI.PieCharts;
 /// </summary>
 public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnSingleCatalogue = new("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
-    private ToolStripButton btnAllCatalogues = new("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
-    private ToolStripButton btnRefresh = new("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
-    private ToolStripLabel toolStripLabel1 = new("Type:"){Name= "toolStripLabel1" };
-    private ToolStripButton btnShowLabels = new("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
+    private ToolStripButton btnSingleCatalogue = new("Single", CatalogueIcons.Catalogue.ImageToBitmap())
+        { Name = "btnSingleCatalogue" };
+
+    private ToolStripButton btnAllCatalogues =
+        new("All", CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()) { Name = "btnAllCatalogues" };
+
+    private ToolStripButton btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
+        { Name = "btnRefresh" };
+
+    private ToolStripLabel toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
+
+    private ToolStripButton btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
+        { Name = "btnShowLabels", CheckOnClick = true };
 
     private List<ToolStripMenuItem> _flagOptions = new();
 
@@ -86,7 +94,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         {
             Checked = getProp(_collection)
         };
-        btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripMenuItem)sender).Checked);};
+        btn.CheckedChanged += (sender, e) => { setProp(_collection, ((ToolStripMenuItem)sender).Checked); };
         btn.CheckedChanged += (s, e) => GenerateChart();
         btn.CheckOnClick = true;
         _flagOptions.Add(btn);
@@ -171,7 +179,6 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-
     }
 
     private bool _bLoading;
@@ -227,8 +234,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         if (isEditModeOn)
         {
-            gbWhatThisIs.Location = l with { Y = l.Y + 25 };//move it down 25 to allow space for tool bar
-            gbWhatThisIs.Size = s with { Height = s.Height - 25 };//and adjust height accordingly
+            gbWhatThisIs.Location = l with { Y = l.Y + 25 }; //move it down 25 to allow space for tool bar
+            gbWhatThisIs.Size = s with { Height = s.Height - 25 }; //and adjust height accordingly
         }
         else
         {

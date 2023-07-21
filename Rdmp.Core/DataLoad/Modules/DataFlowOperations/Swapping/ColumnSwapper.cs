@@ -30,7 +30,8 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 /// <summary>
 /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
 /// </summary>
-internal class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>, IPipelineOptionalRequirement<ICohortCreationRequest>
+internal class ColumnSwapper : IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>,
+    IPipelineOptionalRequirement<ICohortCreationRequest>
 {
     [DemandsInitialization(
         "The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
@@ -86,7 +87,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
         set => _culture = value;
     }
 
-    private Dictionary<object,List<object>> _mappingTable;
+    private Dictionary<object, List<object>> _mappingTable;
 
     /// <summary>
     /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
@@ -159,21 +160,20 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
             doTypeConversion = true;
 
             //work out a suitable anonymous method for converting between the Types
-            if(_keyType == typeof(string))
-                typeConversion = a=>a.ToString();
+            if (_keyType == typeof(string))
+                typeConversion = a => a.ToString();
             else
                 try
                 {
                     var deciderFactory = new TypeDeciderFactory(Culture);
                     var decider = deciderFactory.Create(_keyType);
-                    typeConversion = a=>decider.Parse(a.ToString());
+                    typeConversion = a => decider.Parse(a.ToString());
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Error building Type conversion decider for the mapping table key type {_keyType}",ex);
+                    throw new Exception(
+                        $"Error building Type conversion decider for the mapping table key type {_keyType}", ex);
                 }
-            }
-
         }
 
         foreach (DataRow row in toProcess.Rows)
@@ -291,11 +291,14 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 if (keyVal != DBNull.Value)
                 {
                     if (_keyType == null)
+                    {
                         _keyType = keyVal.GetType();
+                    }
                     else
                     {
                         if (_keyType != keyVal.GetType())
-                            throw new Exception($"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
+                            throw new Exception(
+                                $"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
                     }
                 }
                 else

@@ -31,7 +31,8 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
     {
         base.Execute();
 
-        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo,null,"Existing Table",ProjectSpecific,TargetFolder);
+        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo, null, "Existing Table", ProjectSpecific,
+            TargetFolder);
 
         if (cata is DatabaseEntity de)
         {
@@ -40,5 +41,6 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
 }

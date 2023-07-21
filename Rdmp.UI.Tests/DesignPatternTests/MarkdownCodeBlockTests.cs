@@ -73,13 +73,10 @@ internal class MarkdownCodeBlockTests
             {
                 if (obj is null) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode) obj);
+                return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
             }
 
-            public override int GetHashCode()
-            {
-                return Project?.GetHashCode() ?? 0;
-            }
+            public override int GetHashCode() => Project?.GetHashCode() ?? 0;
         }
 
         #endregion
@@ -174,7 +171,8 @@ internal class MarkdownCodeBlockTests
 
             #endregion
 
-            private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode, DescendancyList descendancy)
+            private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode,
+                DescendancyList descendancy)
             {
                 throw new NotImplementedException();
             }
@@ -205,7 +203,7 @@ internal class MarkdownCodeBlockTests
         {
             #region cae13dde1de14f5cac984330a222c311
 
-            public class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+            private class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {
@@ -269,12 +267,10 @@ internal class MarkdownCodeBlockTests
             #region 59f55fa3ef50404291c7ae3996772635
 
             public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
-                InsertOption insertOption = InsertOption.Default)
-            {
-                return cmd is CatalogueCombineable sourceCatalogueCombineable
-                    ? new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue)
+                InsertOption insertOption = InsertOption.Default) =>
+                cmd is CatalogueCombineable sourceCatalogueCombineable
+                    ? new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue)
                     : (ICommandExecution)null;
-            }
 
             #endregion
 
@@ -303,6 +299,5 @@ internal class MarkdownCodeBlockTests
 
             #endregion
         }
-
     }
 }

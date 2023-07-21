@@ -59,6 +59,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
     /// </summary>
     private T[] _allObjects;
+
     private List<T> _objectsToDisplay = new();
     private List<IMapsDirectlyToDatabaseTable> _tempMatches;
     private List<IMapsDirectlyToDatabaseTable> _matches;
@@ -117,16 +118,16 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// </summary>
     private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
     {
-        {typeof (Catalogue),RDMPCollection.Catalogue},
-        {typeof (CatalogueItem),RDMPCollection.Catalogue},
-        {typeof (SupportingDocument),RDMPCollection.Catalogue},
-        {typeof (Project),RDMPCollection.DataExport},
-        {typeof (ExtractionConfiguration),RDMPCollection.DataExport},
-        {typeof (ExtractableCohort),RDMPCollection.SavedCohorts},
-        {typeof (CohortIdentificationConfiguration),RDMPCollection.Cohort},
-        {typeof (TableInfo),RDMPCollection.Tables},
-        {typeof (ColumnInfo),RDMPCollection.Tables},
-        {typeof (LoadMetadata),RDMPCollection.DataLoad}
+        { typeof(Catalogue), RDMPCollection.Catalogue },
+        { typeof(CatalogueItem), RDMPCollection.Catalogue },
+        { typeof(SupportingDocument), RDMPCollection.Catalogue },
+        { typeof(Project), RDMPCollection.DataExport },
+        { typeof(ExtractionConfiguration), RDMPCollection.DataExport },
+        { typeof(ExtractableCohort), RDMPCollection.SavedCohorts },
+        { typeof(CohortIdentificationConfiguration), RDMPCollection.Cohort },
+        { typeof(TableInfo), RDMPCollection.Tables },
+        { typeof(ColumnInfo), RDMPCollection.Tables },
+        { typeof(LoadMetadata), RDMPCollection.DataLoad }
     };
 
 
@@ -307,7 +308,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
         }
-
     }
 
     protected override void OnShown(EventArgs e)
@@ -333,7 +333,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
 
             var parent = searchable?.GetMostDescriptiveParent();
-            return parent == null ? null : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
+            return parent == null
+                ? null
+                : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
         }
     }
 
@@ -344,7 +346,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            if (_searchables?.TryGetValue(m, out var descendancy)==true)
+            if (_searchables?.TryGetValue(m, out var descendancy) == true)
                 return descendancy != null
                     ? Backslashes().Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\").Trim('\\')
                     : null;
@@ -358,20 +360,17 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
         _typeNames = new HashSet<string>(_types.Select(t => t.Name));
 
-        foreach (var t in StartingEasyFilters.SelectMany(v => v.Value))
-        {
-            _typeNames.Add(t.Name);
-        }
+        foreach (var t in StartingEasyFilters.SelectMany(v => v.Value)) _typeNames.Add(t.Name);
         Type[] startingFilters = null;
 
-        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
+        if (focusedCollection != RDMPCollection.None &&
+            StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
             startingFilters = filter;
 
         var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
-        if(_types.Length > 1)
-        {
+        if (_types.Length > 1)
             foreach (var t in EasyFilterTypesAndAssociatedCollections.Keys)
             {
                 var shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
@@ -385,12 +384,12 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                     Text = $"{t.Name} ({shortCode})"
                 };
 
-                b.BackgroundImage = BackColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
+                b.BackgroundImage =
+                    BackColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
                 b.CheckedChanged += CollectionCheckedChanged;
 
                 toolStrip1.Items.Add(b);
             }
-        }
         else
             toolStripLabel1.Visible = false;
 
@@ -400,11 +399,16 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (UserSettings.AdvancedFindFilters)
         {
-            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
-            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
-            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues,
+                v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
+            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues,
+                v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
+            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues,
+                v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
+            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues,
+                v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues,
+                v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
         }
     }
 
@@ -497,15 +501,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList()
         };
 
-        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId))
-        {
-            scorer.ID = requireId;
-        }
-                
-        if (AlwaysFilterOn != null)
-        {
-            showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
-        }
+        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId)) scorer.ID = requireId;
+
+        if (AlwaysFilterOn != null) showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
 
         var scores = scorer.ScoreMatches(_searchables, text, showOnlyTypes, cancellationToken);
 
@@ -549,9 +547,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private void listBox1_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Delete && _allowDeleting && olv.SelectedObject is IDeleteable deletable)
-        {
-            if (MessageBox.Show($"Confirm deleting {deletable}", "Really delete?", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
-            {
+            if (MessageBox.Show($"Confirm deleting {deletable}", "Really delete?", MessageBoxButtons.YesNoCancel) ==
+                DialogResult.Yes)
                 try
                 {
                     deletable.DeleteInDatabase();
@@ -691,7 +688,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                         return 0;
 
                     // when returning search results always put checked items first
-                    var toDisplay = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
+                    var toDisplay =
+                        new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
 
                     toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
                     _objectsToDisplay = toDisplay.Cast<T>().ToList();

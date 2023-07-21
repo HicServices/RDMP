@@ -40,10 +40,7 @@ public class ExtractGlobalsCommand : ExtractCommand
     public override DirectoryInfo GetExtractionDirectory() =>
         new ExtractionDirectory(project.ExtractionDirectory, Configuration).GetGlobalsDirectory();
 
-    public override string DescribeExtractionImplementation()
-    {
-        return string.Join(";", Globals.Contents);
-    }
+    public override string DescribeExtractionImplementation() => string.Join(";", Globals.Contents);
 
     public override string ToString() => ExtractionDirectory.GLOBALS_DATA_NAME;
 }

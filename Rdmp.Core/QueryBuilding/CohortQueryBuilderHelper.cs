@@ -76,7 +76,7 @@ public class CohortQueryBuilderHelper
             builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
 
             //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select
-            if(!isJoinAggregate)
+            if (!isJoinAggregate)
                 builder.AddColumn(extractionIdentifier, false);
             else
                 builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), false);
@@ -109,7 +109,7 @@ public class CohortQueryBuilderHelper
 
         //Add the inception join
         if (args.JoinIfAny != null)
-            AddJoinToBuilder(aggregate,extractionIdentifier,builder, args);
+            AddJoinToBuilder(aggregate, extractionIdentifier, builder, args);
 
         //set the where container
         builder.RootFilterContainer = aggregate.RootFilterContainer;

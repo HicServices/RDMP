@@ -67,7 +67,7 @@ public class PickAnyConstructorJsonConverter : JsonConverter
 
         serializer.Populate(reader, instance);
 
-        if(instance is IPickAnyConstructorFinishedCallback callback)
+        if (instance is IPickAnyConstructorFinishedCallback callback)
             callback.AfterConstruction();
 
         return instance;
@@ -94,11 +94,9 @@ public class PickAnyConstructorJsonConverter : JsonConverter
         return constructors.Count == 1
             ? true
             : throw new ObjectLacksCompatibleConstructorException(
-            $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
+                $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 
-    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)
-    {
-        return ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
-    }
+    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType) =>
+        ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
 }

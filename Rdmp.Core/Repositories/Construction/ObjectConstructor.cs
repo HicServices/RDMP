@@ -25,17 +25,15 @@ namespace Rdmp.Core.Repositories.Construction;
 /// </summary>
 public class ObjectConstructor
 {
-    private const BindingFlags TargetBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+    private const BindingFlags TargetBindingFlags =
+        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
     /// <summary>
     /// Constructs a new instance of Type t using the blank constructor
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public static object Construct(Type t)
-    {
-        return GetUsingBlankConstructor(t);
-    }
+    public static object Construct(Type t) => GetUsingBlankConstructor(t);
 
     #region permissable constructor signatures for use with this class
 
@@ -46,10 +44,9 @@ public class ObjectConstructor
     /// <param name="serviceLocator"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public static object Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator,bool allowBlank = true)
-    {
-        return Construct<IRDMPPlatformRepositoryServiceLocator>(t,serviceLocator, allowBlank);
-    }
+    public static object
+        Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator, bool allowBlank = true) =>
+        Construct<IRDMPPlatformRepositoryServiceLocator>(t, serviceLocator, allowBlank);
 
     /// <summary>
     /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derived class)
@@ -58,10 +55,8 @@ public class ObjectConstructor
     /// <param name="catalogueRepository"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
-    {
-        return Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
-    }
+    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true) =>
+        Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
 
     /// <summary>
     /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="DatabaseEntity"/>).
@@ -71,7 +66,8 @@ public class ObjectConstructor
     /// <param name="repositoryOfTypeT"></param>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType, T repositoryOfTypeT, DbDataReader reader) where T : IRepository
+    public static IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType,
+        T repositoryOfTypeT, DbDataReader reader) where T : IRepository
     {
         // Preferred constructor
         var constructors = GetConstructors<T, DbDataReader>(objectType);
@@ -127,7 +123,7 @@ public class ObjectConstructor
             switch (p.Length)
             {
                 //is it an exact match i.e. ctor(T bob)
-                case 1 when p[0].ParameterType == typeof (T): // Exact match found
+                case 1 when p[0].ParameterType == typeof(T): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 1:
                 {
@@ -151,7 +147,7 @@ public class ObjectConstructor
     /// <typeparam name="T2"></typeparam>
     /// <param name="type"></param>
     /// <returns></returns>
-    private static List<ConstructorInfo> GetConstructors<T,T2>(Type type)
+    private static List<ConstructorInfo> GetConstructors<T, T2>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
 
@@ -161,11 +157,12 @@ public class ObjectConstructor
 
             switch (p.Length)
             {
-                case 2 when p[0].ParameterType == typeof (T) && p[1].ParameterType == typeof (T2): // Exact match found
+                case 2 when p[0].ParameterType == typeof(T) && p[1].ParameterType == typeof(T2): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 2:
                 {
-                    if(p[0].ParameterType.IsAssignableFrom(typeof(T)) && p[1].ParameterType.IsAssignableFrom(typeof(T2)))
+                    if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
+                        p[1].ParameterType.IsAssignableFrom(typeof(T2)))
                         toReturn.Add(constructor);
                     break;
                 }
@@ -184,7 +181,8 @@ public class ObjectConstructor
     /// <param name="allowPrivate"></param>
     /// <param name="parameterObjects"></param>
     /// <returns></returns>
-    public static Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
+    public static Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor,
+        bool allowPrivate, params object[] parameterObjects)
     {
         var toReturn = new Dictionary<ConstructorInfo, List<object>>();
 
@@ -196,7 +194,7 @@ public class ObjectConstructor
             var p = constructor.GetParameters();
 
             //if it is a blank constructor
-            if(!p.Any())
+            if (!p.Any())
             {
                 if (allowBlankConstructor) //if we do not allow blank constructors ignore it
                     toReturn.Add(constructor,
@@ -249,7 +247,6 @@ public class ObjectConstructor
         if (matches.Length == 0)
             //look for an assignable one instead
             matches = parameterObjects.Where(parameterType.IsInstanceOfType).ToArray();
-        }
 
         return matches.Length switch
         {
@@ -266,16 +263,19 @@ public class ObjectConstructor
         if (constructors.Count == 1)
             return constructors[0].Invoke(parameters);
 
-        var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof (UseWithObjectConstructorAttribute))).ToArray();
+        var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute)))
+            .ToArray();
         return importDecorated.Length == 1
-            ? importDecorated[0].Invoke( parameters)
+            ? importDecorated[0].Invoke(parameters)
             : throw new ObjectLacksCompatibleConstructorException(
-            $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
+                $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
     }
 
     private static object GetUsingBlankConstructor(Type t)
     {
-        var blankConstructor = t.GetConstructor(Type.EmptyTypes) ?? throw new ObjectLacksCompatibleConstructorException($"Type '{t}' did not contain a blank constructor");
+        var blankConstructor = t.GetConstructor(Type.EmptyTypes) ??
+                               throw new ObjectLacksCompatibleConstructorException(
+                                   $"Type '{t}' did not contain a blank constructor");
         return blankConstructor.Invoke(Array.Empty<object>());
     }
 
@@ -321,7 +321,7 @@ public class ObjectConstructor
                 compatible.Add(constructor);
         }
 
-        return compatible.Any() ? InvokeBestConstructor(compatible,constructorValues) : null;
+        return compatible.Any() ? InvokeBestConstructor(compatible, constructorValues) : null;
     }
 
     /// <summary>
@@ -342,6 +342,6 @@ public class ObjectConstructor
         return compatible.Count == 1
             ? compatible.Single()
             : throw new ObjectLacksCompatibleConstructorException(
-            $"No best constructor found for Type {type} (found {compatible.Count})");
+                $"No best constructor found for Type {type} (found {compatible.Count})");
     }
 }

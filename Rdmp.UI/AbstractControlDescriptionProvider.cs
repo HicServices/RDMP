@@ -20,10 +20,9 @@ public class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescript
     {
     }
 
-    public override Type GetReflectionType(Type objectType, object instance)
-    {
-        return objectType == typeof(TAbstract) ? typeof(TBase) : base.GetReflectionType(objectType, instance);
-    }
+    public override Type GetReflectionType(Type objectType, object instance) => objectType == typeof(TAbstract)
+        ? typeof(TBase)
+        : base.GetReflectionType(objectType, instance);
 
     public override object CreateInstance(IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
     {

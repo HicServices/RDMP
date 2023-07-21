@@ -39,11 +39,11 @@ public class LoggingDatabaseChecker : ICheckable
         con.Open();
         try
         {
-            CheckDataLoadTaskStatusTable(notifier,con);
-            CheckFatalErrorStatusTable(notifier,con);
-            CheckRowErrorTypeTable(notifier,con);
+            CheckDataLoadTaskStatusTable(notifier, con);
+            CheckFatalErrorStatusTable(notifier, con);
+            CheckRowErrorTypeTable(notifier, con);
 
-            CheckDefaultDatasetsExist(notifier,con);
+            CheckDefaultDatasetsExist(notifier, con);
             CheckDefaultDataLoadTasksExist(notifier);
         }
         catch (Exception e)
@@ -52,7 +52,7 @@ public class LoggingDatabaseChecker : ICheckable
         }
     }
 
-    private void CheckDataLoadTaskStatusTable(ICheckNotifier notifier,DbConnection con)
+    private void CheckDataLoadTaskStatusTable(ICheckNotifier notifier, DbConnection con)
     {
         var desired = new Dictionary<int, string>
         {
@@ -62,10 +62,10 @@ public class LoggingDatabaseChecker : ICheckable
         };
 
 
-        CheckLookupTableIsCorrectlyPopulated(notifier, "status","z_DataLoadTaskStatus",desired,con);
+        CheckLookupTableIsCorrectlyPopulated(notifier, "status", "z_DataLoadTaskStatus", desired, con);
     }
 
-    private void CheckFatalErrorStatusTable(ICheckNotifier notifier,DbConnection con)
+    private void CheckFatalErrorStatusTable(ICheckNotifier notifier, DbConnection con)
     {
         Debug.Assert((int)DataLoadInfo.FatalErrorStates.Outstanding == 1);
         Debug.Assert((int)DataLoadInfo.FatalErrorStates.Resolved == 2);
@@ -77,10 +77,11 @@ public class LoggingDatabaseChecker : ICheckable
             { 2, "Resolved" },
             { 3, "Blocked" }
         };
-        CheckLookupTableIsCorrectlyPopulated(notifier, "status", "z_FatalErrorStatus", expectedFatalErrorStatusRows, con);
+        CheckLookupTableIsCorrectlyPopulated(notifier, "status", "z_FatalErrorStatus", expectedFatalErrorStatusRows,
+            con);
     }
 
-    private void CheckRowErrorTypeTable(ICheckNotifier notifier,DbConnection con)
+    private void CheckRowErrorTypeTable(ICheckNotifier notifier, DbConnection con)
     {
         var expectedRowErrorTypes = new Dictionary<int, string>
         {
@@ -95,7 +96,7 @@ public class LoggingDatabaseChecker : ICheckable
 
     private void CheckDefaultDatasetsExist(ICheckNotifier notifier, DbConnection con)
     {
-        CheckDatasetExists(notifier, "Internal",con);
+        CheckDatasetExists(notifier, "Internal", con);
         CheckDatasetExists(notifier, "DataExtraction", con);
     }
 
@@ -113,7 +114,8 @@ public class LoggingDatabaseChecker : ICheckable
             return;
         }
 
-        if (notifier.OnCheckPerformed(new CheckEventArgs($"Did not find default dataset '{dataSetID}'.", CheckResult.Fail, null,
+        if (notifier.OnCheckPerformed(new CheckEventArgs($"Did not find default dataset '{dataSetID}'.",
+                CheckResult.Fail, null,
                 $"Create the dataset '{dataSetID}'")))
         {
             using var cmd2 =
@@ -152,7 +154,8 @@ public class LoggingDatabaseChecker : ICheckable
         }
     }
 
-    private void CheckLookupTableIsCorrectlyPopulated(ICheckNotifier notifier, string valueColumnName, string tableName, Dictionary<int, string> expected, DbConnection con)
+    private void CheckLookupTableIsCorrectlyPopulated(ICheckNotifier notifier, string valueColumnName, string tableName,
+        Dictionary<int, string> expected, DbConnection con)
     {
         //see what is in the database
         var actual = new Dictionary<int, string>();
@@ -164,8 +167,8 @@ public class LoggingDatabaseChecker : ICheckable
 
         //now reconcile what is in the database with what we expect
         ExpectedLookupsValuesArePresent(expected, actual, out var missing, out var collisions, out var misnomers);
-            
-        if(!missing.Any() && !collisions.Any() && !misnomers.Any())
+
+        if (!missing.Any() && !collisions.Any() && !misnomers.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values",
                 CheckResult.Success, null));
@@ -184,14 +187,14 @@ public class LoggingDatabaseChecker : ICheckable
         //misnomers cannot be resolved without manual intervention either
         if (misnomers.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{tableName} the following ID conflicts were found:{Environment.NewLine}{string.Join(Environment.NewLine,misnomers)}", CheckResult.Fail, null));
+                $"{tableName} the following ID conflicts were found:{Environment.NewLine}{string.Join(Environment.NewLine, misnomers)}",
+                CheckResult.Fail, null));
 
-            
 
-        if(missing.Any() && notifier.OnCheckPerformed(new CheckEventArgs(
-               $"{tableName} does not contain all the required lookup statuses",
-               CheckResult.Fail, null,
-               $"Insert the missing lookups ({missing.Aggregate("", (s, pair) => $"{s}, {pair.Value}")})")))
+        if (missing.Any() && notifier.OnCheckPerformed(new CheckEventArgs(
+                $"{tableName} does not contain all the required lookup statuses",
+                CheckResult.Fail, null,
+                $"Insert the missing lookups ({missing.Aggregate("", (s, pair) => $"{s}, {pair.Value}")})")))
         {
             //add missing values
             using var t = con.BeginTransaction();
@@ -204,12 +207,8 @@ public class LoggingDatabaseChecker : ICheckable
             _server.GetCommand($"SET IDENTITY_INSERT {tableName} OFF ", con).ExecuteNonQuery();
             t.Commit();
         }
-            
     }
 
-
-    private void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
-    {
 
     private static void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected,
         Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions,
@@ -222,13 +221,14 @@ public class LoggingDatabaseChecker : ICheckable
         //for each desired kvp
         foreach (var kvp in expected)
         {
-
             //make sure it is not a misnomer
             if (actual.Any(m =>
                     m.Value.Equals(kvp.Value) && m.Key != kvp.Key)) //if there are any actuals that have different keys
             {
                 //see if it is a misnomer e.g. 1,'MyFunkyStatus' vs 2,'MyFunkyStatus'
-                var misnomer = actual.Where(m => m.Value.Equals(kvp.Value)).Select(p => p.Key).ToArray(); //get ALL the keys that correspond to this value including exact matching key=key (to deal with schitzophrenia)
+                var misnomer =
+                    actual.Where(m => m.Value.Equals(kvp.Value)).Select(p => p.Key)
+                        .ToArray(); //get ALL the keys that correspond to this value including exact matching key=key (to deal with schitzophrenia)
 
                 misnomers.Add(
                     misnomer.Length == 1
@@ -240,13 +240,13 @@ public class LoggingDatabaseChecker : ICheckable
             //there is a required ID that does not exist e.g. 99,'MyFunkyStatus'
             if (!actual.ContainsKey(kvp.Key))
             {
-                missing.Add(kvp.Key,kvp.Value);
+                missing.Add(kvp.Key, kvp.Value);
                 continue;
             }
 
             //there is an ID but they are different values e.g. 1,'Outstanding' in one and 1,'Resolved' in the other
-            if(!actual[kvp.Key].Equals(kvp.Value))
-                collisions.Add(kvp.Key,kvp.Value);
+            if (!actual[kvp.Key].Equals(kvp.Value))
+                collisions.Add(kvp.Key, kvp.Value);
         }
     }
 }

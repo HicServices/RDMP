@@ -68,11 +68,6 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
 
     public string GetDataType() => State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
 
-    public string GetDataType()
-    {
-        return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
-    }
-
     public ICombineToMakeCommand GetCombineable()
     {
         var querySyntaxHelper = _tableNode.TableInfo.GetQuerySyntaxHelper();
@@ -107,13 +102,11 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDiagramColumnNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramColumnNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_bubble, _tableNode, ColumnName);
-    }
+    public override int GetHashCode() => HashCode.Combine(_bubble, _tableNode, ColumnName);
 
     public string WhatIsThis()
     {
@@ -127,8 +120,10 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
                     "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
                 _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
             },
-            LoadDiagramState.NotFound => "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.",
-            LoadDiagramState.New => "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load",
+            LoadDiagramState.NotFound =>
+                "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.",
+            LoadDiagramState.New =>
+                "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load",
             _ => throw new ArgumentOutOfRangeException()
         };
     }

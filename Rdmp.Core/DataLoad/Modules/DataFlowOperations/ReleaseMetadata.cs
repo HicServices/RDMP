@@ -51,7 +51,9 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
             return toProcess;
         }
 
-        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent ?? throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
+        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent ??
+                           throw new Exception(
+                               "Could not find Source Folder. DOes the project have an Extraction Directory defined?");
         var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
 
         var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);

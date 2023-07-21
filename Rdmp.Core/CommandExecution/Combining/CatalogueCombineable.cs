@@ -48,7 +48,7 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     {
         var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-        return cic == null ? null : GenerateAggregateConfigurationFor(activator,cic, importMandatoryFilters);
+        return cic == null ? null : GenerateAggregateConfigurationFor(activator, cic, importMandatoryFilters);
     }
 
     public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,

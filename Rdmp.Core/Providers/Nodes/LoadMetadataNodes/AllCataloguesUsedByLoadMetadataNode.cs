@@ -19,8 +19,13 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 {
     public LoadMetadata LoadMetadata { get; }
-    public int Order { get => 1;
-        set { } }
+
+    public int Order
+    {
+        get => 1;
+        set { }
+    }
+
     public List<Catalogue> UsedCatalogues { get; set; }
 
     public AllCataloguesUsedByLoadMetadataNode(LoadMetadata lmd)
@@ -36,11 +41,9 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((AllCataloguesUsedByLoadMetadataNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((AllCataloguesUsedByLoadMetadataNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(LoadMetadata);
-    }
+    public override int GetHashCode() => HashCode.Combine(LoadMetadata);
 }

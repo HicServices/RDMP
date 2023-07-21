@@ -36,8 +36,9 @@ public partial class ConsoleGuiServerDatabaseTableSelector
     /// Returns the DatabaseType that is selected in the dropdown or
     /// <see cref="DatabaseType.MicrosoftSQLServer"/> if none selected
     /// </summary>
-    public DatabaseType DatabaseType => cbxDatabaseType.SelectedItem < 0 ? DatabaseType.MicrosoftSQLServer :
-        (DatabaseType)cbxDatabaseType.Source.ToList()[cbxDatabaseType.SelectedItem];
+    public DatabaseType DatabaseType => cbxDatabaseType.SelectedItem < 0
+        ? DatabaseType.MicrosoftSQLServer
+        : (DatabaseType)cbxDatabaseType.Source.ToList()[cbxDatabaseType.SelectedItem];
 
     /// <summary>
     /// Returns the table type selected in the radio group or <see cref="TableType.Table"/> if none selected
@@ -54,7 +55,8 @@ public partial class ConsoleGuiServerDatabaseTableSelector
     public bool OkClicked { get; private set; }
 
 
-    public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator, string prompt, string okText, bool showTableComponents)
+    public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator, string prompt, string okText,
+        bool showTableComponents)
     {
         _activator = activator;
 
@@ -298,8 +300,10 @@ public partial class ConsoleGuiServerDatabaseTableSelector
             return null;
 
         return TableType == TableType.TableValuedFunction
-            ? new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database).ExpectTableValuedFunction(Table, Schema)
-            : new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database).ExpectTable(Table, Schema, TableType);
+            ? new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
+                .ExpectTableValuedFunction(Table, Schema)
+            : new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
+                .ExpectTable(Table, Schema, TableType);
     }
 
 

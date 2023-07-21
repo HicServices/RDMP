@@ -27,7 +27,8 @@ public class SafePrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTabl
         "The non primary key column to be used for deduplication.  This must contain different values for the same primary key and you must only want to keep one e.g. DataAge")]
     public ColumnInfo ColumnToResolveOn { get; set; }
 
-    [DemandsInitialization(@"Determines behaviour when a primary key collision is the result of one record having null and another not.
+    [DemandsInitialization(
+        @"Determines behaviour when a primary key collision is the result of one record having null and another not.
 True - Delete the non null record
 False - Delete the null record")]
     public bool PreferNulls { get; set; }
@@ -51,11 +52,11 @@ False - Delete the larger value")]
         //FYI - we are considering whether to delete records from table {0}
 
         var deleteConditional =
-            PreferNulls?
+            PreferNulls
+                ?
                 //delete rows {0} where {0} is not null and {1} is null - leaving only the null records {1}
                 $"({t1DotColumn} IS NOT NULL AND {t2DotColumn} IS NULL)"
-                :
-                string.Format("({1} IS NOT NULL AND {0} IS NULL)",t1DotColumn,t2DotColumn);
+                : string.Format("({1} IS NOT NULL AND {0} IS NULL)", t1DotColumn, t2DotColumn);
 
         deleteConditional += " OR ";
 
@@ -77,13 +78,13 @@ False - Delete the larger value")]
         cmd.CommandTimeout = Timeout;
 
         var affectedRows = cmd.ExecuteNonQuery();
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Deleted {affectedRows} rows"));
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        if(ColumnToResolveOn is { IsPrimaryKey: true })
+        if (ColumnToResolveOn is { IsPrimaryKey: true })
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"You cannot use {ColumnToResolveOn} to resolve primary key collisions because it is part of the primary key",
                 CheckResult.Fail));

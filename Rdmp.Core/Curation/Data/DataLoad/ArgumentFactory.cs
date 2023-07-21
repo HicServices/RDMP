@@ -138,7 +138,7 @@ public class ArgumentFactory
         foreach (var r in required)
         {
             var existing = existingArguments.SingleOrDefault(e => e.Name == r.Name) ?? throw new Exception(
-                    $"Despite creating new Arguments for class '{underlyingClassTypeForWhichArgumentsWillPopulate}' we do not have an IArgument called '{r.Name}' in the database (host='{host}')");
+                $"Despite creating new Arguments for class '{underlyingClassTypeForWhichArgumentsWillPopulate}' we do not have an IArgument called '{r.Name}' in the database (host='{host}')");
             if (existing.GetSystemType() != r.PropertyInfo.PropertyType)
             {
                 //user wants to fix the problem

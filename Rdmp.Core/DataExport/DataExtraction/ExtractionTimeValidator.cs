@@ -37,7 +37,7 @@ public class ExtractionTimeValidator
     public ExtractionTimeValidator(ICatalogue catalogue, List<IColumn> columnsToExtract)
     {
         _columnsToExtract = columnsToExtract;
-            
+
         Validator = Validator.LoadFromXml(catalogue.ValidatorXML);
 
         if (string.IsNullOrWhiteSpace(catalogue.ValidatorXML))
@@ -61,7 +61,6 @@ public class ExtractionTimeValidator
             if (validationColumnToPopulateIfAny != null)
                 r[validationColumnToPopulateIfAny] = consequenceOnLastRowProcessed;
         }
-        dt.EndLoadData();
     }
 
     private void Initialize(DataTable dt)

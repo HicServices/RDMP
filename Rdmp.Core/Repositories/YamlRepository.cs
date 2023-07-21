@@ -70,7 +70,8 @@ public class YamlRepository : MemoryDataExportRepository
         {
             var respect = TableRepository.GetPropertyInfos(type);
 
-            builder = type.GetProperties().Where(prop => !respect.Contains(prop)).Aggregate(builder, (current, prop) => current.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute()));
+            builder = type.GetProperties().Where(prop => !respect.Contains(prop)).Aggregate(builder,
+                (current, prop) => current.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute()));
         }
 
         return builder.Build();
@@ -95,7 +96,7 @@ public class YamlRepository : MemoryDataExportRepository
                 continue;
             }
 
-            lock(lockFs)
+            lock (lockFs)
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
                     try
@@ -133,7 +134,7 @@ public class YamlRepository : MemoryDataExportRepository
     private int ObjectDependencyOrder(Type arg)
     {
         // Load Plugin objects before dependent children
-        if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
+        if (arg == typeof(Plugin))
             return 1;
 
         return arg == typeof(LoadModuleAssembly) ? 2 : 3;
@@ -195,7 +196,7 @@ public class YamlRepository : MemoryDataExportRepository
         var path = Path.GetDirectoryName(GetPath(lma));
 
         //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
-        return Path.Combine(path, GetObjectByID<Rdmp.Core.Curation.Data.Plugin>(lma.Plugin_ID).Name);
+        return Path.Combine(path, GetObjectByID<Plugin>(lma.Plugin_ID).Name);
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -206,10 +207,7 @@ public class YamlRepository : MemoryDataExportRepository
             File.Delete(GetPath(oTableWrapperObject));
 
             // if deleting a LoadModuleAssembly also delete its binary content file (the plugin dlls in nupkg)
-            if (oTableWrapperObject is LoadModuleAssembly lma)
-            {
-                File.Delete(GetNupkgPath(lma));
-            }
+            if (oTableWrapperObject is LoadModuleAssembly lma) File.Delete(GetNupkgPath(lma));
         }
     }
 
@@ -435,7 +433,7 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach(var (usage, value) in tableToCredentialUsage.Value)
+                foreach (var (usage, value) in tableToCredentialUsage.Value)
                 {
                     var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
@@ -445,8 +443,6 @@ public class YamlRepository : MemoryDataExportRepository
 
                 CredentialsDictionary.Add(table, valDictionary);
             }
-
-
         }
     }
 
@@ -633,13 +629,12 @@ public class YamlRepository : MemoryDataExportRepository
     public override string ToString() => $"{{YamlRepository {Directory.FullName}}}";
 
     private void LoadWhereSubContainers()
-    {        
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
-        {
+    {
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ??
+                          new Dictionary<FilterContainer, HashSet<FilterContainer>>())
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
-        }
-        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
-        {
+        foreach (var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ??
+                          new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
     }
 

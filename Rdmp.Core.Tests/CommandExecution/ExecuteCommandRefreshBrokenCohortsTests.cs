@@ -40,7 +40,8 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
 
         var repoLocator = new RepositoryProvider(repo);
 
-        var activator = new ConsoleInputManager(repoLocator, ThrowImmediatelyCheckNotifier.Quiet) {
+        var activator = new ConsoleInputManager(repoLocator, ThrowImmediatelyCheckNotifier.Quiet)
+        {
             DisallowInput = true
         };
 

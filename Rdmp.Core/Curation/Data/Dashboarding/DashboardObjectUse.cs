@@ -55,11 +55,10 @@ public class DashboardObjectUse : ReferenceOtherObjectDatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectID",objectToSave.ID},
-            {"ReferencedObjectType",objectToSave.GetType().Name},
-            {"ReferencedObjectRepositoryType",objectToSave.Repository.GetType().Name},
-            {"DashboardControl_ID",parentControl.ID}
-
+            { "ReferencedObjectID", objectToSave.ID },
+            { "ReferencedObjectType", objectToSave.GetType().Name },
+            { "ReferencedObjectRepositoryType", objectToSave.Repository.GetType().Name },
+            { "DashboardControl_ID", parentControl.ID }
         });
     }
 }

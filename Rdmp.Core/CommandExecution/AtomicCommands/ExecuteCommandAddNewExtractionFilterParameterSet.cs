@@ -27,7 +27,7 @@ public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExec
     {
         _filter = filter;
 
-        if(!_filter.GetAllParameters().Any()) SetImpossible("Filter has no parameters");
+        if (!_filter.GetAllParameters().Any()) SetImpossible("Filter has no parameters");
     }
 
     public override void Execute()
@@ -40,5 +40,7 @@ public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExec
         Publish(_filter);
         Activate(parameterSet);
     }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
 }

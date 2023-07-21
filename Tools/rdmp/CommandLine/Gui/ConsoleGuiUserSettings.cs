@@ -16,7 +16,8 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-public partial class ConsoleGuiUserSettings {
+public partial class ConsoleGuiUserSettings
+{
     private Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
 
     public IBasicActivateItems _activator { get; }
@@ -71,14 +72,15 @@ public partial class ConsoleGuiUserSettings {
         if (code == null)
             return;
 
-        if(_activator.SelectEnum(new DialogArgs {
-               WindowTitle = "New Treatment"
-           }, typeof(CheckResult), out var newValue))
+        if (_activator.SelectEnum(new DialogArgs
+            {
+                WindowTitle = "New Treatment"
+            }, typeof(CheckResult), out var newValue))
         {
             UserSettings.SetErrorReportingLevelFor(code, (CheckResult)newValue);
             row[1] = newValue.ToString();
 
-            Application.MainLoop.Invoke(()=>tableview1.Update());
+            Application.MainLoop.Invoke(() => tableview1.Update());
         }
     }
 
@@ -92,7 +94,7 @@ public partial class ConsoleGuiUserSettings {
         cb.Checked = (bool)prop.GetValue(null);
 
         // register callback
-        cb.Toggled += c=>CheckboxCheckedChanged(cb,c);
+        cb.Toggled += c => CheckboxCheckedChanged(cb, c);
 
         // add help
         AddTooltip(cb, propertyName);

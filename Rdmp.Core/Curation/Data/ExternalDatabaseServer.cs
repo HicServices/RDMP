@@ -165,8 +165,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             { "DatabaseType", DatabaseType.MicrosoftSQLServer }
         };
 
-        if(creatorIfAny != null)
-            parameters.Add("CreatedByAssembly" , creatorIfAny.Name);
+        if (creatorIfAny != null)
+            parameters.Add("CreatedByAssembly", creatorIfAny.Name);
 
         Repository = repository;
         _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, DatabaseType.MicrosoftSQLServer);
@@ -178,7 +178,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         var repo = shareManager.RepositoryLocator.CatalogueRepository;
         Repository = repo;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/);
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository,
+            DatabaseType.MicrosoftSQLServer /*will get changed by UpsertAndHydrate*/);
 
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
@@ -207,8 +208,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         if (string.IsNullOrWhiteSpace(Server))
             notifier.OnCheckPerformed(new CheckEventArgs("No Server set", CheckResult.Warning));
-        else
-        if (string.IsNullOrWhiteSpace(Database))
+        else if (string.IsNullOrWhiteSpace(Database))
             notifier.OnCheckPerformed(new CheckEventArgs("No Database set", CheckResult.Warning));
         else
             try
@@ -257,16 +257,9 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     }
 
     /// <inheritdoc/>
-    public bool WasCreatedBy(IPatcher patcher)
-    {
-        return !string.IsNullOrWhiteSpace(CreatedByAssembly) && (patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly);
-    }
-
-    /// <inheritdoc/>
-    public DiscoveredDatabase Discover(DataAccessContext context)
-    {
-        return _selfCertifyingDataAccessPoint.Discover(context);
-    }
+    public bool WasCreatedBy(IPatcher patcher) => !string.IsNullOrWhiteSpace(CreatedByAssembly) &&
+                                                  (patcher.Name == CreatedByAssembly ||
+                                                   patcher.LegacyName == CreatedByAssembly);
 
     /// <inheritdoc/>
     public DiscoveredDatabase Discover(DataAccessContext context) => _selfCertifyingDataAccessPoint.Discover(context);
@@ -294,10 +287,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         foreach (PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
         {
             var existingDefault = CatalogueRepository.GetDefaultFor(d);
-            if (Equals(existingDefault))
-            {
-                CatalogueRepository.ClearDefault(d);
-            }
+            if (Equals(existingDefault)) CatalogueRepository.ClearDefault(d);
         }
     }
 

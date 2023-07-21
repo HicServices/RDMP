@@ -42,11 +42,12 @@ public class CohortSummaryQueryBuilder
         ICoreChildProvider childProvider)
     {
         if (cohort == null)
-            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor",nameof(cohort));
-            
-        if(summary.Equals(cohort))
-            throw new ArgumentException("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
-            
+            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor", nameof(cohort));
+
+        if (summary.Equals(cohort))
+            throw new ArgumentException(
+                "Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
+
         ThrowIfNotValidGraph(summary);
 
         try
@@ -69,10 +70,10 @@ public class CohortSummaryQueryBuilder
         _childProvider = childProvider;
 
         //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
-        _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d=>d.IsExtractionIdentifier);
+        _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
 
         var cic = _cohort.GetCohortIdentificationConfigurationIfAny() ?? throw new ArgumentException(
-                $"AggregateConfiguration {_cohort} looked like a cohort but did not belong to any CohortIdentificationConfiguration");
+            $"AggregateConfiguration {_cohort} looked like a cohort but did not belong to any CohortIdentificationConfiguration");
         _globals = cic.GetAllParameters();
     }
 
@@ -93,7 +94,7 @@ public class CohortSummaryQueryBuilder
         _cohortContainer = cohortAggregateContainer;
 
         var cic = _cohortContainer.GetCohortIdentificationConfiguration() ?? throw new ArgumentException(
-                $"CohortAggregateContainer {cohortAggregateContainer} is an orphan? it does not belong to any CohortIdentificationConfiguration");
+            $"CohortAggregateContainer {cohortAggregateContainer} is an orphan? it does not belong to any CohortIdentificationConfiguration");
         _globals = cic.GetAllParameters();
     }
 
@@ -169,7 +170,8 @@ public class CohortSummaryQueryBuilder
                 throw new Exception(
                     $"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had {extractionIdentifierColumn.Length}");
 
-            helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
+            CohortQueryBuilderHelper.AddJoinToBuilder(_summary, extractionIdentifierColumn[0], summaryBuilder,
+                new QueryBuilderArgs(joinUse, joinTo, joinableSql, null, _globals));
         }
 
         //if the cohort has no WHERE SQL
@@ -200,7 +202,8 @@ public class CohortSummaryQueryBuilder
 
     private AggregateBuilder GetAdjustedForExtractionIdentifiersIn()
     {
-        var cachingServer = GetQueryCachingServer() ?? throw new NotSupportedException("No Query Caching Server configured");
+        var cachingServer = GetQueryCachingServer() ??
+                            throw new NotSupportedException("No Query Caching Server configured");
         var memoryRepository = new MemoryCatalogueRepository();
 
         //Get a builder for creating the basic aggregate graph
@@ -252,11 +255,11 @@ public class CohortSummaryQueryBuilder
 
     private CohortQueryBuilder GetBuilder()
     {
-        if(_cohort != null)
-            return new CohortQueryBuilder(_cohort, _globals,_childProvider);
+        if (_cohort != null)
+            return new CohortQueryBuilder(_cohort, _globals, _childProvider);
 
         return _cohortContainer != null
-            ? new CohortQueryBuilder(_cohortContainer,_globals,_childProvider)
+            ? new CohortQueryBuilder(_cohortContainer, _globals, _childProvider)
             : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
     }
 

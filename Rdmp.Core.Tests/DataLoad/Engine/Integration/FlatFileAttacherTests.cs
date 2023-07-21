@@ -46,7 +46,7 @@ public class FlatFileAttacherTests : DatabaseTests
         toCleanup?.Delete(true);
 
         _loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, "Test_CSV_Attachment");
-            
+
         // create a separate builder for setting an initial catalogue on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
         _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
@@ -68,7 +68,6 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(",", true)]
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
-            
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
@@ -109,8 +108,6 @@ public class FlatFileAttacherTests : DatabaseTests
             var ex = Assert.Throws<FlatFileLoadException>(() =>
                 attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
 
-            var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-
             Assert.IsNotNull(ex.InnerException);
             StringAssert.StartsWith(
                 "Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does",
@@ -143,12 +140,11 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.AreEqual("Manny2", r["name"]);
             Assert.AreEqual("Ok", r["name2"]);
         }
-            
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
+
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
     }
-
 
 
     [Test]
@@ -189,15 +185,15 @@ public class FlatFileAttacherTests : DatabaseTests
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
             Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob",r["name"]);
-            Assert.AreEqual(new DateTime(2001,01,13), r["name2"]);
+            Assert.AreEqual("Bob", r["name"]);
+            Assert.AreEqual(new DateTime(2001, 01, 13), r["name2"]);
 
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Franky", r["name"]);
             Assert.AreEqual(new DateTime(2002, 01, 13), r["name2"]);
         }
-            
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
+
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         File.Delete(filename);
     }
@@ -405,23 +401,21 @@ public class FlatFileAttacherTests : DatabaseTests
         File.Delete(filename);
     }
 
-    [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-GB")]
-    [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-us")]
-    [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-us")]
-    [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-GB")]
-
-    [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-GB")]
-    [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-us")]
-    [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-us")]
-    [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-GB")]
-
-    [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-GB")]
-    [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-us")]
-    [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-us")]
-    [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-GB")]
-
-    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type,string val,string attacherCulture, string threadCulture)
-    { 
+    [TestCase(DatabaseType.MySql, "27/01/2001", "en-GB", "en-GB")]
+    [TestCase(DatabaseType.MySql, "27/01/2001", "en-GB", "en-us")]
+    [TestCase(DatabaseType.MySql, "01/27/2001", "en-us", "en-us")]
+    [TestCase(DatabaseType.MySql, "01/27/2001", "en-us", "en-GB")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "27/01/2001", "en-GB", "en-GB")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "27/01/2001", "en-GB", "en-us")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "01/27/2001", "en-us", "en-us")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "01/27/2001", "en-us", "en-GB")]
+    [TestCase(DatabaseType.Oracle, "27/01/2001", "en-GB", "en-GB")]
+    [TestCase(DatabaseType.Oracle, "27/01/2001", "en-GB", "en-us")]
+    [TestCase(DatabaseType.Oracle, "01/27/2001", "en-us", "en-us")]
+    [TestCase(DatabaseType.Oracle, "01/27/2001", "en-us", "en-GB")]
+    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type, string val, string attacherCulture,
+        string threadCulture)
+    {
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
@@ -442,7 +436,7 @@ public class FlatFileAttacherTests : DatabaseTests
             );
 
 
-        Import(tbl,out var ti,out _);
+        Import(tbl, out var ti, out _);
         var attacher = new AnySeparatorFileAttacher
         {
             Separator = ",",
@@ -451,12 +445,12 @@ public class FlatFileAttacherTests : DatabaseTests
             Culture = new CultureInfo(attacherCulture)
         };
         attacher.Initialize(_loadDirectory, db);
-            
-        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
+
+        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
         Assert.AreEqual(ExitCodeType.Success, exitCode);
-            
+
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         Assert.AreEqual(new DateTime(2001, 1, 27), tbl.GetDataTable().Rows[0][0]);
@@ -476,9 +470,9 @@ public class FlatFileAttacherTests : DatabaseTests
         source.TableToLoad = tiNotInLoad;
 
         var job = new ThrowImmediatelyDataLoadJob(ThrowImmediatelyDataLoadEventListener.QuietPicky)
-            {
-                RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad })
-            };
+        {
+            RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new[] { tiInLoad })
+        };
 
 
         var ex = Assert.Throws<Exception>(() => source.Attach(job, new GracefulCancellationToken()));

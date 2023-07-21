@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExecutionProposal<AggregateConfiguration>
+internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandExecutionProposal<AggregateConfiguration>
 {
     public ProposeExecutionWhenTargetIsAggregateConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {

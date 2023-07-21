@@ -101,10 +101,8 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     {
         //if we don't exist!
         if (_collection.DatabaseObjects.Any())
-            if(!((IRevertable)_collection.DatabaseObjects[0]).Exists())
-            {
+            if (!((IRevertable)_collection.DatabaseObjects[0]).Exists())
                 ParentForm?.Close();
-            }
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -115,7 +113,8 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ImageToBitmap();
 
-        btnResetSql.Image = IconOverlayProvider.GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
+        btnResetSql.Image = IconOverlayProvider
+            .GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
 
         if (_scintilla == null)
         {
@@ -199,8 +198,8 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         tbErrors.Visible = true;
         tbErrors.Text = exception.Message;
         tbErrors.Dock = DockStyle.Fill;
-            
-        CommonFunctionality.Fatal("Query failed",exception);
+
+        CommonFunctionality.Fatal("Query failed", exception);
     }
 
     private void HideFatal()
@@ -214,7 +213,6 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         splitContainer1.Panel2.Controls.Add(dataGridView1);
         splitContainer1.Panel2.Controls.Remove(tbErrors);
         CommonFunctionality.ResetChecks();
-
     }
 
     private void LoadDataTableAsync(DiscoveredServer server, string sql)

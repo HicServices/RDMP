@@ -60,7 +60,6 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         // if there are no explicit columns use all
         if (!cols.Any())
-        {
             cols =
                 Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
                     .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
@@ -68,7 +67,8 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         builder.AddColumnRange(cols);
 
-        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,Filters,FilterContainerOperation.AND);
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+            Filters, FilterContainerOperation.AND);
         builder.RegenerateSQL();
     }
 

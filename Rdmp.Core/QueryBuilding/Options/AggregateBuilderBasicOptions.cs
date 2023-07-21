@@ -18,10 +18,8 @@ namespace Rdmp.Core.QueryBuilding.Options;
 public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
 {
     /// <inheritdoc/>
-    public string GetTitleTextPrefix(AggregateConfiguration aggregate)
-    {
-        return aggregate.IsExtractable ? "Extractable 'Group By' Aggregate:" : "'Group By' Aggregate:";
-    }
+    public string GetTitleTextPrefix(AggregateConfiguration aggregate) =>
+        aggregate.IsExtractable ? "Extractable 'Group By' Aggregate:" : "'Group By' Aggregate:";
 
     /// <inheritdoc/>
     public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
@@ -65,7 +63,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     {
         var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
             .Select(e => e.ColumnInfo?.TableInfo)
-            .Where( t=> t != null)
+            .Where(t => t != null)
             .Distinct();
 
         var implicitJoins =

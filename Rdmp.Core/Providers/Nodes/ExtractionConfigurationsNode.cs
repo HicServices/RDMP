@@ -29,13 +29,15 @@ public class ExtractionConfigurationsNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((ExtractionConfigurationsNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ExtractionConfigurationsNode)obj);
     }
 
-    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
     public int Order
     {
-        return System.HashCode.Combine(Project);
+        get => 3;
+        set { }
     }
 }

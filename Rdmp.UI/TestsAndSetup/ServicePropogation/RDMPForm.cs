@@ -63,10 +63,8 @@ public class RDMPForm : Form, IRDMPControl
             Close();
 
         if (e.KeyCode == Keys.S && e.Control)
-        {
             if (this is ISaveableUI saveable)
                 saveable.GetObjectSaverButton().Save();
-        }
     }
 
     /// <summary>

@@ -104,7 +104,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         SetupPipelineSelectionExtraction();
         SetupPipelineSelectionCohortRefresh();
 
-        pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link).ImageToBitmap();
+        pbCic.Image = activator.CoreIconProvider
+            .GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link).ImageToBitmap();
 
         tbCreated.Text = _extractionConfiguration.dtCreated.ToString();
         tcRelease.TicketText = _extractionConfiguration.ReleaseTicket;
@@ -172,7 +173,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         ragSmiley1Refresh.Reset();
         try
         {
-            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
+            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,
+                ThrowImmediatelyDataLoadEventListener.Quiet);
         }
         catch (Exception ex)
         {

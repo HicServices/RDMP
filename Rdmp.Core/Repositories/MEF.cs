@@ -27,20 +27,21 @@ namespace Rdmp.Core.Repositories;
 public static class MEF
 {
     // TODO: Cache/preload this for AOT later; figure out generic support
-    private static Lazy<ReadOnlyDictionary<string, Type>> _types=null;
-    private static readonly ConcurrentDictionary<Type, Type[]> TypeCache=new();
-    private static readonly Dictionary<string,Exception> badAssemblies = new();
+    private static Lazy<ReadOnlyDictionary<string, Type>> _types = null;
+    private static readonly ConcurrentDictionary<Type, Type[]> TypeCache = new();
+    private static readonly Dictionary<string, Exception> badAssemblies = new();
 
     static MEF()
     {
         AppDomain.CurrentDomain.AssemblyLoad += Flush;
-        Flush(null,null);
+        Flush(null, null);
     }
 
     private static void Flush(object _1, AssemblyLoadEventArgs ale)
     {
-        if (_types?.IsValueCreated!=false)
-            _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
+        if (_types?.IsValueCreated != false)
+            _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique,
+                LazyThreadSafetyMode.ExecutionAndPublication);
         TypeCache.Clear();
     }
 
@@ -48,38 +49,44 @@ public static class MEF
     private static ReadOnlyDictionary<string, Type> PopulateUnique()
     {
         var sw = Stopwatch.StartNew();
-        var typeByName =new Dictionary<string, Type>();
+        var typeByName = new Dictionary<string, Type>();
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            if (assembly.FullName?.StartsWith("CommandLine", StringComparison.Ordinal)!=false) continue;
+            if (assembly.FullName?.StartsWith("CommandLine", StringComparison.Ordinal) != false) continue;
             try
             {
                 foreach (var type in assembly.GetTypes())
-                {
-                    foreach (var alias in new []{Tail(type.FullName),type.FullName,Tail(type.FullName).ToUpperInvariant(),type.FullName?.ToUpperInvariant()}.Where(static x=>x is not null).Distinct())
-                        if (!typeByName.TryAdd(alias, type) &&
-                            type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
-                        {
-                            // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
-                            typeByName.Remove(alias);
-                            typeByName.Add(alias,type);
-                        }
-                }
+                foreach (var alias in new[]
+                         {
+                             Tail(type.FullName), type.FullName, Tail(type.FullName).ToUpperInvariant(),
+                             type.FullName?.ToUpperInvariant()
+                         }.Where(static x => x is not null).Distinct())
+                    if (!typeByName.TryAdd(alias, type) &&
+                        type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
+                        typeByName.Remove(alias);
+                        typeByName.Add(alias, type);
+                    }
             }
             catch (Exception e)
             {
-                lock(badAssemblies)
+                lock (badAssemblies)
+                {
                     badAssemblies.TryAdd(assembly.FullName, e);
+                }
+
                 Console.WriteLine(e);
             }
         }
+
         return new ReadOnlyDictionary<string, Type>(typeByName);
     }
 
     private static string Tail(string full)
     {
         var off = full.LastIndexOf(".", StringComparison.Ordinal) + 1;
-        return off==0?full:full[off..];
+        return off == 0 ? full : full[off..];
     }
 
 
@@ -117,7 +124,9 @@ public static class MEF
     public static IReadOnlyDictionary<string, Exception> ListBadAssemblies()
     {
         lock (badAssemblies)
+        {
             return new ReadOnlyDictionary<string, Exception>(badAssemblies);
+        }
     }
 
     /// <summary>
@@ -135,7 +144,8 @@ public static class MEF
         if (!t.IsGenericType) return t.Name;
 
         if (t.GenericTypeArguments.Length != 1)
-            throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
+            throw new NotSupportedException(
+                "Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
 
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 
@@ -146,10 +156,7 @@ public static class MEF
         return $"{genericTypeName}<{underlyingType}>";
     }
 
-    public static IEnumerable<Type> GetTypes<T>()
-    {
-        return GetTypes(typeof(T));
-    }
+    public static IEnumerable<Type> GetTypes<T>() => GetTypes(typeof(T));
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
@@ -159,7 +166,9 @@ public static class MEF
     /// <returns></returns>
     private static IEnumerable<Type> GetTypes(Type type)
     {
-        return TypeCache.GetOrAdd(type, static target=> _types.Value.Values.Where(t => !t.IsInterface && !t.IsAbstract).Where(target.IsAssignableFrom).Distinct().ToArray());
+        return TypeCache.GetOrAdd(type,
+            static target => _types.Value.Values.Where(t => !t.IsInterface && !t.IsAbstract)
+                .Where(target.IsAssignableFrom).Distinct().ToArray());
     }
 
     /// <summary>
@@ -171,13 +180,11 @@ public static class MEF
     public static IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
     {
         var target = genericType.MakeGenericType(typeOfT);
-        return _types.Value.Values.Where(t => !t.IsAbstract && !t.IsGenericType && target.IsAssignableFrom(t)).Distinct();
+        return _types.Value.Values.Where(t => !t.IsAbstract && !t.IsGenericType && target.IsAssignableFrom(t))
+            .Distinct();
     }
 
-    public static IEnumerable<Type> GetAllTypes()
-    {
-        return _types.Value.Values.Distinct().AsEnumerable();
-    }
+    public static IEnumerable<Type> GetAllTypes() => _types.Value.Values.Distinct().AsEnumerable();
 
     /// <summary>
     /// Creates an instance of the named class with the provided constructor arguments
@@ -193,8 +200,9 @@ public static class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
-                $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
+        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType, args) ??
+                       throw new ObjectLacksCompatibleConstructorException(
+                           $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
         return instance;
     }
 

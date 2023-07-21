@@ -30,7 +30,8 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
             return;
 
         //For documentation/control previewing
-        difference1 ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
+        difference1 ??=
+            new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
 
         CreateScintillaComponents(
             difference1.DatabaseValue != null ? difference1.DatabaseValue.ToString() : "<Null>",
@@ -73,13 +74,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         foreach (var item in Diff.DiffText(textBefore, textAfter))
         {
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i, Color.Pink);
-
-            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
-                highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
-        }
-
-    }
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore, i, Color.Pink);
 
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);

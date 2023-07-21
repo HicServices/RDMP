@@ -86,7 +86,8 @@ public class ExecutableRuntimeTask : RuntimeTask
 
         var exitCode = ParseExitCode(_currentProcess.ExitCode);
         job.OnNotify(this,
-            new NotifyEventArgs(exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
+            new NotifyEventArgs(
+                exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
                 $"Executable has exited with state '{exitCode}'"));
 
         if (exitCode == ExitCodeType.Error)
@@ -181,10 +182,8 @@ public class ExecutableRuntimeTask : RuntimeTask
                     CheckResult.Warning));
     }
 
-    public override string ToString()
-    {
-        return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
-    }
+    public override string ToString() =>
+        string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
 
     public static XmlSchema GetSchema() => null;
 }

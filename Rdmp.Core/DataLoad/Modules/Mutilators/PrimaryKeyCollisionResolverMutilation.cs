@@ -63,7 +63,7 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 
     private void ResolvePrimaryKeyConflicts(IDataLoadEventListener job)
     {
-        using var con = (SqlConnection) _dbInfo.Server.GetConnection();
+        using var con = (SqlConnection)_dbInfo.Server.GetConnection();
         con.Open();
 
         var resolver = new PrimaryKeyCollisionResolver(TargetTable);
@@ -75,7 +75,8 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
         //if there are no primary key collisions
         if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
+            job.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
             return;
         }
 

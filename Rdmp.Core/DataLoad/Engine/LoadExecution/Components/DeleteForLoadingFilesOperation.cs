@@ -25,7 +25,7 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
     }
 
 
-    public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
         // We only delete ForLoading files after a successful load
         if (exitCode == ExitCodeType.Success)
@@ -36,12 +36,15 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
             if (!LoadDirectory.ForLoading.GetFiles().Any() && !LoadDirectory.ForLoading.GetDirectories().Any())
             {
                 //just skip it but tell user you are skipping it
-                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No files found in ForLoading so not bothering to try and delete."));
+                postLoadEventListener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        "No files found in ForLoading so not bothering to try and delete."));
                 return;
             }
 
             // Check if the attacher has communicated its intent to handle archiving
-            var archivingHandledByAttacher = File.Exists(Path.Combine(LoadDirectory.ForLoading.FullName, "attacher_is_handling_archiving"));
+            var archivingHandledByAttacher =
+                File.Exists(Path.Combine(LoadDirectory.ForLoading.FullName, "attacher_is_handling_archiving"));
 
             if (!archivingHandledByAttacher && !ArchiveHasBeenCreated())
             {

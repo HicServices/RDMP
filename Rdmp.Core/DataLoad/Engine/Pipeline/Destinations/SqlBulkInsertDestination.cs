@@ -101,7 +101,11 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
                 var isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
 
                 job.OnNotify(this,
-                    new NotifyEventArgs(isBigProblem?ProgressEventType.Error:ProgressEventType.Warning, //hic_ columns could be ok if missing so only warning, otherwise go error
+                    new NotifyEventArgs(
+                        isBigProblem
+                            ? ProgressEventType.Error
+                            : ProgressEventType
+                                .Warning, //hic_ columns could be ok if missing so only warning, otherwise go error
                         $"Column {columnInDestination.GetRuntimeName()} appears in destination table ({Table}) but is not in the pipeline (will probably be left as NULL)"));
 
                 if (isBigProblem)

@@ -30,9 +30,7 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
                  {
                      Dock = DockStyle.Top
                  }))
-        {
             flowLayoutPanel1.Controls.Add(ui);
-        }
 
 
         ShowDialog();

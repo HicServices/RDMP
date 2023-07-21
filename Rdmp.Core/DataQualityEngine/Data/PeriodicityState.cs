@@ -74,7 +74,7 @@ public class PeriodicityState
         using var r = cmd.ExecuteReader();
         while (r.Read())
         {
-            var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
+            var date = new DateTime((int)r["Year"], (int)r["Month"], 1);
 
             switch (discardOutliers)
             {
@@ -100,17 +100,21 @@ public class PeriodicityState
             switch ((string)r["RowEvaluation"])
             {
                 case "Correct":
-                    toIncrement.CountGood += (int) r["CountOfRecords"];
+                    toIncrement.CountGood += (int)r["CountOfRecords"];
                     toIncrement.Total += (int)r["CountOfRecords"];
                     break;
-                case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
+                case "InvalidatesRow":
+                    toIncrement.Total += (int)r["CountOfRecords"];
                     break;
-                case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
+                case "Missing":
+                    toIncrement.Total += (int)r["CountOfRecords"];
                     break;
-                case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
+                case "Wrong":
+                    toIncrement.Total += (int)r["CountOfRecords"];
                     break;
-                default:throw new ArgumentOutOfRangeException(
-                    $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
             }
         }
 
@@ -147,12 +151,9 @@ public class PeriodicityState
         da.Fill(dt);
 
         // if there are no rows (table is empty) return null instead
-        if(dt.Columns.Count == 0 || dt.Rows.Count == 0)
-        {
-            return null;
-        }
+        if (dt.Columns.Count == 0 || dt.Rows.Count == 0) return null;
 
-        if(pivot)
+        if (pivot)
         {
             dt.Columns["Correct"].SetOrdinal(3);
             dt.Columns["Wrong"].SetOrdinal(4);

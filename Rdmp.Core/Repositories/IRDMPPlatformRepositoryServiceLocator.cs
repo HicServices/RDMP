@@ -26,7 +26,8 @@ public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositorySer
     /// <param name="databaseObjectTypeName"></param>
     /// <param name="objectID"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName,int objectID);
+    IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName,
+        int objectID);
 
     bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID);
 

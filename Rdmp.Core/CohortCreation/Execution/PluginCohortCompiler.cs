@@ -42,12 +42,10 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}"/> instead
     /// of using this directly</param>
     /// <param name="token">Check this token for cancellation regularly if your API call takes a while to complete</param>
-    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token);
+    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken token);
 
-    public virtual bool ShouldRun(AggregateConfiguration ac)
-    {
-        return ShouldRun(ac.Catalogue);
-    }
+    public virtual bool ShouldRun(AggregateConfiguration ac) => ShouldRun(ac.Catalogue);
     public abstract bool ShouldRun(ICatalogue catalogue);
 
 
@@ -110,7 +108,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
 
         // this is how you commit the results to the cache
         var args = new CacheCommitJoinableInceptionQuery(aggregate, GetDescription(aggregate), results,
-            guessers.Select(k=>new DatabaseColumnRequest(k.Key,k.Value.Guess)).ToArray()
+            guessers.Select(k => new DatabaseColumnRequest(k.Key, k.Value.Guess)).ToArray()
             , 5000);
         cache.CommitResults(args);
     }

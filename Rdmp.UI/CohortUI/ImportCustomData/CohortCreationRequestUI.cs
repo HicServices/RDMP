@@ -62,7 +62,8 @@ public partial class CohortCreationRequestUI : RDMPForm
         pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
-            TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
+            TaskDescription =
+                "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
         });
     }
 
@@ -117,13 +118,15 @@ public partial class CohortCreationRequestUI : RDMPForm
 
 
         //construct the result
-        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text)
+        Result = new CohortCreationRequest(Project,
+            new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target),
+            (IDataExportRepository)Project.Repository, tbDescription.Text)
+        {
+            NewCohortDefinition =
             {
-                NewCohortDefinition =
-                {
-                    CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
-                }
-            };
+                CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
+            }
+        };
 
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
@@ -207,10 +210,7 @@ public partial class CohortCreationRequestUI : RDMPForm
 
         if (Project == null)
         {
-            if(interactive)
-            {
-                MessageBox.Show("You must select a Project");
-            }
+            if (interactive) MessageBox.Show("You must select a Project");
 
             return;
         }

@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public class SimpleStringValueEncryption : IEncryptStrings
 {
-    private readonly RSACryptoServiceProvider _turing=new ();
+    private readonly RSACryptoServiceProvider _turing = new();
 
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -116,6 +116,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
 
     public bool IsStringEncrypted(string value)
     {
-        return value != null && !string.IsNullOrWhiteSpace(value) && (value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47);
+        return value != null && !string.IsNullOrWhiteSpace(value) &&
+               (value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47);
     }
 }

@@ -48,7 +48,7 @@ internal class TestsExecuteCommandList : CommandCliTests
 
         var mock = GetMockActivator();
 
-        var cmd = new ExecuteCommandList(mock, new[] { c });
+        var cmd = new ExecuteCommandList(mock.Object, new[] { c });
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
         cmd.Execute();

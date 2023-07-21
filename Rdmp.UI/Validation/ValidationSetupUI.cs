@@ -48,11 +48,13 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private string ClearSelection = "<<Clear Selection>>";
 
-    private ItemValidator SelectedColumnItemValidator {get
+    private ItemValidator SelectedColumnItemValidator
     {
-        //The user has not selected a column
-        if (olvColumns.SelectedObject is not ExtractionInformation ei)
-            return null;
+        get
+        {
+            //The user has not selected a column
+            if (olvColumns.SelectedObject is not ExtractionInformation ei)
+                return null;
 
             var c = ei.GetRuntimeName();
 
@@ -143,7 +145,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             var dialog = new ResolveMissingTargetPropertiesUI(Validator,
                 olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
 
-            if(dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
                 Validator = dialog.AdjustedValidator;
         }
     }
@@ -186,7 +188,8 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         else
         {
             ddPrimaryConstraints.Text = SelectedColumnItemValidator.PrimaryConstraint.GetType().Name;
-            ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
+            ddConsequence.SelectedItem =
+                SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
         }
 
         //Make consequence selection only possible if there is a primary constraint selected
@@ -251,7 +254,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (ddSecondaryConstraints.SelectedItem != null)
         {
             var secondaryConstriant =
-                Validator.CreateConstraint(ddSecondaryConstraints.Text,Consequence.Missing) as SecondaryConstraint;
+                Validator.CreateConstraint(ddSecondaryConstraints.Text, Consequence.Missing) as SecondaryConstraint;
 
             SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
             AddSecondaryConstraintControl(secondaryConstriant);
@@ -272,7 +275,8 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         tableLayoutPanel1.RowCount++;
 
-        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant, olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
+        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant,
+            olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
         {
             Width = splitContainer1.Panel2.Width,
             Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
@@ -391,10 +395,12 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObject(new DialogArgs {
-               TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
-               AllowSelectingNull = true
-           }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))
+        if (Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription =
+                    "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
+                AllowSelectingNull = true
+            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
         {
             cbxTimePeriodColumn.SelectedItem = selected;
             SetTimePeriod(selected);
@@ -405,7 +411,8 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if (Activator.SelectObject(new DialogArgs
             {
-                TaskDescription = "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
+                TaskDescription =
+                    "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
                 AllowSelectingNull = true
             }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
         {

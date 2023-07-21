@@ -52,7 +52,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
         Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
 
         var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
-        Assert.AreEqual(true,synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual(true, synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
     }
 
     [Test]
@@ -71,8 +71,8 @@ public class TableInfoSynchronizerTests : DatabaseTests
         if (acceptChanges)
         {
             //accept changes should result in a synchronized table
-            Assert.AreEqual(true,synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(1,tableInfoCreated.ColumnInfos.Length);//should only be 1 remaining
+            Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
+            Assert.AreEqual(1, tableInfoCreated.ColumnInfos.Length); //should only be 1 remaining
         }
         else
         {
@@ -176,7 +176,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
         var tbl = db.CreateTable("FF",
             new DatabaseColumnRequest[]
             {
-                new("F",new DatabaseTypeRequest(typeof(int)))
+                new("F", new DatabaseTypeRequest(typeof(int)))
             });
 
         Import(tbl, out var ti, out _);

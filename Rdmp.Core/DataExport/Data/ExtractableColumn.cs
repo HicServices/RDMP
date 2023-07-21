@@ -81,8 +81,6 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
 
     #region Relationships
 
-    #region Relationships
-
     /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
     [NoMappingToDatabase]
     [CanBeNull]
@@ -145,7 +143,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         Alias = r["Alias"] as string;
         HashOnDataRelease = (bool)r["HashOnDataRelease"];
         IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
-        IsPrimaryKey = (bool) r["IsPrimaryKey"];
+        IsPrimaryKey = (bool)r["IsPrimaryKey"];
 
         ClearAllInjections();
     }
@@ -192,16 +190,14 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformation);
         _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfo);
     }
+
     #endregion
 
     /// <summary>
     /// Returns the <see cref="ConcreteColumn.SelectSQL"/> or <see cref="ConcreteColumn.Alias"/> of the column (if it has one)
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return !string.IsNullOrWhiteSpace(Alias) ? Alias : SelectSQL;
-    }
+    public override string ToString() => !string.IsNullOrWhiteSpace(Alias) ? Alias : SelectSQL;
 
     /// <summary>
     /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since its creation.

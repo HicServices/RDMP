@@ -49,7 +49,7 @@ public partial class ExampleDatasetsCreation
     public const int NumberOfPeople = 5000;
     public const int NumberOfRowsPerDataset = 10000;
 
-    public ExampleDatasetsCreation(IBasicActivateItems activator,IRDMPPlatformRepositoryServiceLocator repos)
+    public ExampleDatasetsCreation(IBasicActivateItems activator, IRDMPPlatformRepositoryServiceLocator repos)
     {
         _repos = repos;
         _activator = activator;
@@ -78,7 +78,8 @@ public partial class ExampleDatasetsCreation
         //create a new database for the datasets
         db.Create();
 
-        notifier.OnCheckPerformed(new CheckEventArgs($"Successfully created {db.GetRuntimeName()}",CheckResult.Success));
+        notifier.OnCheckPerformed(
+            new CheckEventArgs($"Successfully created {db.GetRuntimeName()}", CheckResult.Success));
 
         //fixed seed so everyone gets the same datasets
         var r = new Random(options.Seed);
@@ -195,7 +196,10 @@ public partial class ExampleDatasetsCreation
         var externalCohortTable = cmdCreateCohortTable.Created;
 
         //Find the pipeline for committing cohorts
-        var cohortCreationPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ?? throw new Exception("Could not find a cohort committing pipeline");
+        var cohortCreationPipeline =
+            _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p =>
+                p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ??
+            throw new Exception("Could not find a cohort committing pipeline");
 
         //A cohort creation query
         var f = CreateFilter(vConditions, "Lung Cancer Condition", "Condition", "Condition like 'C349'",
@@ -212,7 +216,7 @@ public partial class ExampleDatasetsCreation
             con.Open();
             //delete half the records (so we can simulate cohort refresh)
             using var cmd = cohortTable.Database.Server.GetCommand(
-                      $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con);
+                $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con);
             cmd.ExecuteNonQuery();
         }
 
@@ -284,11 +288,13 @@ public partial class ExampleDatasetsCreation
                 };
 
                 var runnerRelease = new ReleaseRunner(optsRelease);
-                runnerRelease.Run(_repos,ThrowImmediatelyDataLoadEventListener.Quiet,notifier,new GracefulCancellationToken());
+                runnerRelease.Run(_repos, ThrowImmediatelyDataLoadEventListener.Quiet, notifier,
+                    new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (never mind)",CheckResult.Warning,ex));
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (never mind)",
+                    CheckResult.Warning, ex));
             }
     }
 
@@ -310,8 +316,11 @@ public partial class ExampleDatasetsCreation
     private ExtractionInformation CreateExtractionInformation(ICatalogue catalogue, string name, string columnInfoName,
         string selectSQL)
     {
-        var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName) ?? throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
-        var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name)
+        var col =
+            catalogue.GetTableInfoList(false).SelectMany(t => t.ColumnInfos)
+                .SingleOrDefault(c => c.GetRuntimeName() == columnInfoName) ??
+            throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
+        var ci = new CatalogueItem(_repos.CatalogueRepository, catalogue, name)
         {
             ColumnInfo_ID = col.ID
         };
@@ -323,7 +332,7 @@ public partial class ExampleDatasetsCreation
     private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,
         string name, bool isReleased, ICheckNotifier notifier, params ICatalogue[] catalogues)
     {
-        var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project)
+        var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository, project)
         {
             Name = name,
             Cohort_ID = cohort.ID
@@ -334,7 +343,7 @@ public partial class ExampleDatasetsCreation
         {
             //Get its extractableness
             var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault()
-                      ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
+                      ?? new ExtractableDataSet(_repos.DataExportRepository, c); //or make it extractable
 
             extractionConfiguration.AddDatasetToConfiguration(eds);
         }
@@ -352,11 +361,13 @@ public partial class ExampleDatasetsCreation
             var runnerExtract = new ExtractionRunner(_activator, optsExtract);
             try
             {
-                runnerExtract.Run(_repos,ThrowImmediatelyDataLoadEventListener.Quiet,notifier,new GracefulCancellationToken());
+                runnerExtract.Run(_repos, ThrowImmediatelyDataLoadEventListener.Quiet, notifier,
+                    new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (never mind)",CheckResult.Warning,ex));
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (never mind)",
+                    CheckResult.Warning, ex));
             }
 
             extractionConfiguration.IsReleased = true;
@@ -371,7 +382,7 @@ public partial class ExampleDatasetsCreation
         string cohortName, int projectNumber, out Project project)
     {
         //create a new data extraction Project
-        project = new Project(_repos.DataExportRepository,projectName)
+        project = new Project(_repos.DataExportRepository, projectName)
         {
             ProjectNumber = projectNumber,
             ExtractionDirectory = Path.GetTempPath()
@@ -381,12 +392,14 @@ public partial class ExampleDatasetsCreation
         //create a cohort
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
-        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, auditLogBuilder.GetDescription(cic))
-            {
-                CohortIdentificationConfiguration = cic
-            };
+        var request = new CohortCreationRequest(project,
+            new CohortDefinition(null, cohortName, 1, projectNumber, externalCohortTable), _repos.DataExportRepository,
+            ExtractableCohortAuditLogBuilder.GetDescription(cic))
+        {
+            CohortIdentificationConfiguration = cic
+        };
 
-        var engine = request.GetEngine(cohortCreationPipeline,ThrowImmediatelyDataLoadEventListener.Quiet);                        
+        var engine = request.GetEngine(cohortCreationPipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         engine.ExecutePipeline(new GracefulCancellationToken());
 
@@ -399,7 +412,7 @@ public partial class ExampleDatasetsCreation
         var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository, "Tayside Lung Cancer Cohort");
 
         //create a UNION container for Inclusion Criteria
-        var container = new CohortAggregateContainer(_repos.CatalogueRepository,SetOperation.UNION)
+        var container = new CohortAggregateContainer(_repos.CatalogueRepository, SetOperation.UNION)
         {
             Name = "Inclusion Criteria"
         };
@@ -441,8 +454,9 @@ public partial class ExampleDatasetsCreation
         else
         {
             container = (AggregateFilterContainer)graph.RootFilterContainer;
-            
-        var filter = new AggregateFilter(_repos.CatalogueRepository,name,container)
+        }
+
+        var filter = new AggregateFilter(_repos.CatalogueRepository, name, container)
         {
             WhereSQL = whereSql
         };
@@ -455,51 +469,55 @@ public partial class ExampleDatasetsCreation
     {
         using var con = db.Server.GetConnection();
         con.Open();
-        using(var cmd = db.Server.GetCommand(
+        using (var cmd = db.Server.GetCommand(
+                   """
+                   create view vConditions as
 
-                  """
-                  create view vConditions as
-
-                  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
-                  FROM
-                  (
-                    SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainCondition,OtherCondition1,OtherCondition2,OtherCondition3
-                    FROM HospitalAdmissions
-                  ) AS cp
-                  UNPIVOT
-                  (
-                    Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
-                  ) AS up;
-                  """,con))
+                   SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
+                   FROM
+                   (
+                     SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainCondition,OtherCondition1,OtherCondition2,OtherCondition3
+                     FROM HospitalAdmissions
+                   ) AS cp
+                   UNPIVOT
+                   (
+                     Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
+                   ) AS up;
+                   """, con))
+        {
             cmd.ExecuteNonQuery();
+        }
 
 
-        using(var cmd = db.Server.GetCommand(
-                  """
-                  create view vOperations as
+        using (var cmd = db.Server.GetCommand(
+                   """
+                   create view vOperations as
 
-                  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
-                  FROM
-                  (
-                    SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainOperation,OtherOperation1,OtherOperation2,OtherOperation3
-                    FROM HospitalAdmissions
-                  ) AS cp
-                  UNPIVOT
-                  (
-                    Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
-                  ) AS up;
-                  """,con))
-                cmd.ExecuteNonQuery();
+                   SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
+                   FROM
+                   (
+                     SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainOperation,OtherOperation1,OtherOperation2,OtherOperation3
+                     FROM HospitalAdmissions
+                   ) AS cp
+                   UNPIVOT
+                   (
+                     Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
+                   ) AS up;
+                   """, con))
+        {
+            cmd.ExecuteNonQuery();
+        }
     }
 
     private IFilter CreateFilter(ICatalogue cata, string name, string parentExtractionInformation, string whereSql,
         string desc)
     {
-        var filter = new ExtractionFilter(_repos.CatalogueRepository,name,GetExtractionInformation(cata,parentExtractionInformation))
-            {
-                WhereSQL = whereSql,
-                Description = desc
-            };
+        var filter = new ExtractionFilter(_repos.CatalogueRepository, name,
+            GetExtractionInformation(cata, parentExtractionInformation))
+        {
+            WhereSQL = whereSql,
+            Description = desc
+        };
         filter.SaveToDatabase();
 
         var parameterCreator = new ParameterCreator(filter.GetFilterFactory(), null, null);
@@ -519,7 +537,7 @@ public partial class ExampleDatasetsCreation
     private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1, bool isAxis,
         string dimension2)
     {
-        var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name)
+        var ac = new AggregateConfiguration(_repos.CatalogueRepository, cata, name)
         {
             CountSQL = "count(*) as NumberOfRecords"
         };
@@ -533,7 +551,7 @@ public partial class ExampleDatasetsCreation
 
         if (isAxis)
         {
-            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository,mainDimension)
+            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository, mainDimension)
             {
                 StartDate = "'1970-01-01'",
                 AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year
@@ -567,8 +585,9 @@ public partial class ExampleDatasetsCreation
         ICheckNotifier notifier, int numberOfRecords, params string[] primaryKey) where T : IDataGenerator
     {
         var dataset = typeof(T).Name;
-        notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",CheckResult.Success));
-            
+        notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",
+            CheckResult.Success));
+
         var factory = new DataGeneratorFactory();
 
         //half a million biochemistry results
@@ -597,17 +616,17 @@ public partial class ExampleDatasetsCreation
 
     private static DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
     {
-
         return typeof(T) == typeof(HospitalAdmissions)
-            ? new []{
-                new DatabaseColumnRequest("MainOperation",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("MainOperationB",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("OtherOperation1",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("OtherOperation1B",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("OtherOperation2",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("OtherOperation2B",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("OtherOperation3",new DatabaseTypeRequest(typeof(string),4)),
-                new DatabaseColumnRequest("OtherOperation3B",new DatabaseTypeRequest(typeof(string),4))
+            ? new[]
+            {
+                new DatabaseColumnRequest("MainOperation", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("MainOperationB", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("OtherOperation1", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("OtherOperation1B", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("OtherOperation2", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("OtherOperation2B", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("OtherOperation3", new DatabaseTypeRequest(typeof(string), 4)),
+                new DatabaseColumnRequest("OtherOperation3B", new DatabaseTypeRequest(typeof(string), 4))
             }
             : null;
     }
@@ -620,10 +639,8 @@ public partial class ExampleDatasetsCreation
         return ti;
     }
 
-    private ICatalogue ImportCatalogue(DiscoveredTable tbl)
-    {
-        return ImportCatalogue(ImportTableInfo(tbl));
-    }
+    private ICatalogue ImportCatalogue(DiscoveredTable tbl) => ImportCatalogue(ImportTableInfo(tbl));
+
     private ICatalogue ImportCatalogue(ITableInfo ti)
     {
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ti.ColumnInfos);

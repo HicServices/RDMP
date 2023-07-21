@@ -86,10 +86,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
     protected override void Dispose(bool disposing)
     {
-        if (disposing && components != null)
-        {
-            components.Dispose();
-        }
+        if (disposing && components != null) components.Dispose();
         base.Dispose(disposing);
     }
 
@@ -221,7 +218,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         };
 
         //Things that are always visible regardless
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)
                 { OverrideCommandName = "Add New Catalogue From File...", Weight = -50.9f },
@@ -237,8 +234,9 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             new ExecuteCommandAddNewSupportingDocument(Activator, null) { Weight = -46.9f },
             new ExecuteCommandAddNewSupportingSqlTable(Activator, null) { Weight = -46.8f },
 
-            new ExecuteCommandCreateNewGovernancePeriod(Activator){OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
-            new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f }
+            new ExecuteCommandCreateNewGovernancePeriod(Activator)
+                { OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
+            new ExecuteCommandAddNewGovernanceDocument(Activator, null) { Weight = 44.9f }
         };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
@@ -288,7 +286,9 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
                     RefreshUIFromDatabase(o);
                 return;
             }
-            case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
+            case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter
+                or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation
+                or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
                 //then refresh us
                 RefreshUIFromDatabase(o);
                 break;

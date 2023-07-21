@@ -38,10 +38,6 @@ public partial class AllImportantClassesDocumented
         "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
         "Relationship.cs", //deprecated by the anonymisation object sharing framework?
         "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
-
-        "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
-        "Relationship.cs", //deprecated by the anonymisation object sharing framework?
-        "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
     };
 
     public void FindProblems(List<string> csFilesList)

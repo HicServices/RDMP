@@ -80,7 +80,8 @@ public class HICDatabaseConfiguration
         IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
     {
         //respects the override of LIVE server
-        var liveDatabase = liveServer.GetCurrentDatabase() ?? throw new Exception("Cannot load live without having a unique live named database");
+        var liveDatabase = liveServer.GetCurrentDatabase() ??
+                           throw new Exception("Cannot load live without having a unique live named database");
 
         // Default namer
         if (namer == null)

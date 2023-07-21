@@ -24,7 +24,7 @@ internal class TestExecuteCommandDescribe : UnitTests
         var c = WhenIHaveA<Catalogue>();
         c.Description = "fish";
 
-        var describe = new ExecuteCommandDescribe(mock, new[] { c });
+        var describe = new ExecuteCommandDescribe(mock.Object, new[] { c });
         Assert.IsFalse(describe.IsImpossible, describe.ReasonCommandImpossible);
 
         describe.Execute();

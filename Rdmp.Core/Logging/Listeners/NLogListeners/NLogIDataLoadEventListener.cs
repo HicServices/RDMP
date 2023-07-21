@@ -21,7 +21,7 @@ public class NLogIDataLoadEventListener : NLogListener, IDataLoadEventListener
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        Log(sender,e.ToLogLevel(), e.Exception, e.Message);
+        Log(sender, e.ToLogLevel(), e.Exception, e.Message);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)

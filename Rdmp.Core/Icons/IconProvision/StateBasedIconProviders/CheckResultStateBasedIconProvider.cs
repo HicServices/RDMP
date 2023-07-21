@@ -29,11 +29,11 @@ public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
         return o is not CheckResult result
             ? null
             : result switch
-        {
-            CheckResult.Success => _tick,
-            CheckResult.Warning => _warning,
-            CheckResult.Fail => _exception,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            {
+                CheckResult.Success => _tick,
+                CheckResult.Warning => _warning,
+                CheckResult.Fail => _exception,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

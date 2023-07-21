@@ -33,21 +33,21 @@ internal class Program
     {
         try
         {
-            var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
+            var nlog = Path.Combine(AppContext.BaseDirectory, "NLog.config");
 
             if (File.Exists(nlog))
             {
                 LogManager.ThrowConfigExceptions = false;
                 LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
             }
-
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Could not load NLog.config:{ex.Message}");
         }
 
-        if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
+        if (args.Any(a => a.Equals("-q")) ||
+            args.Any(a => a.Equals("--quiet", StringComparison.CurrentCultureIgnoreCase)))
         {
             Quiet = true;
 
@@ -110,7 +110,8 @@ internal class Program
                         {
                             return HasHelpArguments(args)
                                 ? returnCode = 0
-                                : returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                                : returnCode =
+                                    RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
             logger.Info($"Exiting with code {returnCode}");
@@ -167,8 +168,8 @@ internal class Program
         var start = new Startup.Startup(repo);
         var badTimes = false;
 
-        start.DatabaseFound += (s,e)=>{
-
+        start.DatabaseFound += (s, e) =>
+        {
             var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
 
             switch (e.Status)

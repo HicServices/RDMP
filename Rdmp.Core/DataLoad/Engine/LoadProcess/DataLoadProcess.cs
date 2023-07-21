@@ -44,7 +44,9 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
 
     private readonly ICheckable _preExecutionChecker;
 
-    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution,HICDatabaseConfiguration configuration)
+    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ILoadMetadata loadMetadata,
+        ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,
+        IDataLoadExecution loadExecution, HICDatabaseConfiguration configuration)
     {
         _repositoryLocator = repositoryLocator;
         LoadMetadata = loadMetadata;
@@ -79,7 +81,8 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
     {
         try
         {
-            DataLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
+            DataLoadEventListener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
             var thrower = ThrowImmediatelyCheckNotifier.Quiet;
             _preExecutionChecker.Check(thrower);
         }

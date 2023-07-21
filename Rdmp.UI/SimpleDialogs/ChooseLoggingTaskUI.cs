@@ -64,7 +64,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
             liveserver = ddLoggingServer.Items.Cast<ExternalDatabaseServer>()
                 .SingleOrDefault(i => i.ID == (int)_catalogue.LiveLoggingServer_ID);
             ddLoggingServer.SelectedItem = liveserver ?? throw new Exception(
-                    $"Catalogue '{_catalogue}' lists its Live Logging Server as '{_catalogue.LiveLoggingServer}' did not appear in combo box, possibly it is not marked as a '{expectedDatabaseTypeString}' server? Try editing it in Locations=>Manage External Servers");
+                $"Catalogue '{_catalogue}' lists its Live Logging Server as '{_catalogue.LiveLoggingServer}' did not appear in combo box, possibly it is not marked as a '{expectedDatabaseTypeString}' server? Try editing it in Locations=>Manage External Servers");
         }
 
         try
@@ -195,7 +195,6 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
                     new LogManager(liveServer)
                         .CreateNewLoggingTaskIfNotExists(toCreate);
-
                 }
 
                 MessageBox.Show("Done");
@@ -216,12 +215,12 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         if (args.ProposedFix != null)
             return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(null, args.Message, args.ProposedFix);
         //if it is sucessful user doesn't need to be spammed with messages
-        if(args.Result == CheckResult.Success)
+        if (args.Result == CheckResult.Success)
             return true;
 
         //its a warning or an error possibly with an exception attached
         if (args.Ex != null)
-            ExceptionViewer.Show(args.Message,args.Ex);
+            ExceptionViewer.Show(args.Message, args.Ex);
         else
             MessageBox.Show(args.Message);
 

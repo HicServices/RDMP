@@ -44,7 +44,7 @@ public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
             totalRecordsProcessed++;
             var hashOfItems = GetHashCode(row.ItemArray);
 
-            if (_uniqueHashesSeen.TryGetValue(hashOfItems,out var hashList))
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems, out var collisions))
             {
                 //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
                 if (hashList.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
@@ -110,10 +110,7 @@ public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
                 var hash = 17;
 
                 // get hash code for all items in array
-                foreach (var item in array)
-                {
-                    hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
-                }
+                foreach (var item in array) hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
 
                 return hash;
             }

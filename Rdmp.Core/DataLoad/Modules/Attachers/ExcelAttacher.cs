@@ -35,7 +35,8 @@ public class ExcelAttacher : FlatFileAttacher
     [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
     public string AddFilenameColumnNamed { get; set; }
 
-    [DemandsInitialization("Forces specific overridden headers to be for columns, this is a comma separated string that will effectively replace the column headers found in the excel file.  The number of headers MUST match the number in the original file.  This option should be used when you have a excel file with stupid names that you want to rationalise into sensible database column names")]
+    [DemandsInitialization(
+        "Forces specific overridden headers to be for columns, this is a comma separated string that will effectively replace the column headers found in the excel file.  The number of headers MUST match the number in the original file.  This option should be used when you have a excel file with stupid names that you want to rationalise into sensible database column names")]
     public string ForceReplacementHeaders { get; set; }
 
     [DemandsInitialization(
@@ -44,9 +45,8 @@ public class ExcelAttacher : FlatFileAttacher
 
     private bool _haveServedData = false;
 
-    private bool _haveServedData;
-
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         _haveServedData = false;
         _fileToLoad = fileToLoad;
@@ -125,8 +125,9 @@ public class ExcelAttacher : FlatFileAttacher
                             else
                                 targetRow[column.ColumnName] = dr[column.ColumnName]; //copy values into the destination
                         }
-                        else
-                        if (AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch)//it is an extra destination column, see if that is allowed
+                        else if
+                            (AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch) //it is an extra destination column, see if that is allowed
+                        {
                             targetRow[column.ColumnName] = DBNull.Value;
                         }
                         else

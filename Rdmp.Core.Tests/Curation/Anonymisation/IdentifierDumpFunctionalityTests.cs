@@ -119,13 +119,14 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
                 if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
                     Assert.IsTrue(r["surname"] == DBNull.Value);
                 else
-                    Assert.IsTrue(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),"Dictionary did not contain expected surname:" + r["surname"]);
+                    Assert.IsTrue(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),
+                        "Dictionary did not contain expected surname:" + r["surname"]);
             r.Close();
 
             //leave the identifier dump in the way we found it (empty)
             var tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}");
 
-            if(tbl.Exists())
+            if (tbl.Exists())
                 tbl.Drop();
 
             tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}_Archive");
@@ -150,17 +151,17 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     public void DumpAllIdentifiersInTable_UnexpectedColumnFoundInIdentifierDumpTable()
     {
         var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "surname")
-            {
-                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-                SqlDataType = "varchar(20)"
-            };
+        {
+            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+            SqlDataType = "varchar(20)"
+        };
         preDiscardedColumn1.SaveToDatabase();
 
         var preDiscardedColumn2 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-            {
-                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-                SqlDataType = "varchar(50)"
-            };
+        {
+            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+            SqlDataType = "varchar(50)"
+        };
         preDiscardedColumn2.SaveToDatabase();
 
         //give it the correct server
@@ -189,8 +190,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 
         try
         {
-            var ex = Assert.Throws<Exception>(()=>dumper2.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-            Assert.AreEqual("Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn",ex?.Message);
+            var ex = Assert.Throws<Exception>(() => dumper2.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+            Assert.AreEqual(
+                "Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn",
+                ex?.Message);
         }
         finally
         {
@@ -232,8 +235,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         try
         {
             dumper.Check(new AcceptAllCheckNotifier());
-            var ex = Assert.Throws<Exception>(()=>dumper.DumpAllIdentifiersInTable(_bulkData.GetDataTable(10)));
-            Assert.AreEqual("IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStaging() when you are done)",ex?.Message);
+            var ex = Assert.Throws<Exception>(() => dumper.DumpAllIdentifiersInTable(_bulkData.GetDataTable(10)));
+            Assert.AreEqual(
+                "IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStaging() when you are done)",
+                ex?.Message);
         }
         finally
         {
@@ -247,10 +252,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     public void IdentifierDumperCheckFails_NoTableExists()
     {
         var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-            {
-                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-                SqlDataType = "varchar(50)"
-            };
+        {
+            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+            SqlDataType = "varchar(50)"
+        };
         preDiscardedColumn1.SaveToDatabase();
 
         //give it the correct server
@@ -271,7 +276,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             var notifier = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());
             dumper.Check(notifier);
 
-            Assert.IsTrue(notifier.Messages.Any(m=>
+            Assert.IsTrue(notifier.Messages.Any(m =>
                 m.Result == CheckResult.Warning
                 &&
                 m.Message.Contains("Table ID_BulkData was not found")));
@@ -287,7 +292,8 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     [Test]
     public void IdentifierDumperCheckFails_ServerIsNotADumpServer()
     {
-        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber")
+        var preDiscardedColumn1 =
+            new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber")
             {
                 Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
                 SqlDataType = "varchar(10)"
@@ -306,9 +312,12 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         }
         catch (Exception ex)
         {
-            Assert.IsTrue(ex.Message.StartsWith("Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
+            Assert.IsTrue(
+                ex.Message.StartsWith(
+                    "Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
             Assert.IsTrue(ex.InnerException?.Message.StartsWith("Connected successfully to server"));
-            Assert.IsTrue(ex.InnerException?.Message.EndsWith(" but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)"));
+            Assert.IsTrue(ex.InnerException?.Message.EndsWith(
+                " but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)"));
         }
         finally
         {
@@ -342,10 +351,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
     public void IdentifierDumperCheckFails_LieAboutDatatype()
     {
         var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
-            {
-                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
-                SqlDataType = "varchar(50)"
-            };
+        {
+            Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+            SqlDataType = "varchar(50)"
+        };
         preDiscardedColumn1.SaveToDatabase();
         try
         {
@@ -365,9 +374,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             //get a new dumper because we have changed the pre load discarded column
             dumper = new IdentifierDumper(tableInfoCreated);
             //table doesnt exist yet it should work
-            var ex = Assert.Throws<Exception>(()=>dumper.Check(ThrowImmediatelyCheckNotifier.Quiet));
+            var ex = Assert.Throws<Exception>(() => dumper.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-            Assert.IsTrue(ex?.Message.Contains("has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
+            Assert.IsTrue(ex?.Message.Contains(
+                "has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
         }
         finally
         {

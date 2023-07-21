@@ -29,7 +29,6 @@ public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecut
     /// <param name="activator"></param>
     public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator) : base(activator)
     {
-
     }
 
     public override void Execute()
@@ -50,7 +49,7 @@ public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecut
             existing.SaveToDatabase();
         }
 
-        if(_explicitPatternProvided)
+        if (_explicitPatternProvided)
         {
             existing.Regex = _pattern;
             existing.SaveToDatabase();

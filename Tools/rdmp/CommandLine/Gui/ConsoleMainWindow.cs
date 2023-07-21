@@ -43,7 +43,7 @@ internal class ConsoleMainWindow
     private MouseFlags _rightClick = MouseFlags.Button3Clicked;
 
     // Last time the mouse moved and where it moved to
-    private Point _lastMousePos = new(0,0);
+    private Point _lastMousePos = new(0, 0);
     private DateTime _lastMouseMove = DateTime.Now;
 
     public const string Catalogues = "Catalogues";
@@ -80,8 +80,10 @@ internal class ConsoleMainWindow
 
     internal void SetUp(Toplevel top)
     {
-        var menu = new MenuBar (new MenuBarItem [] {
-            new("_File (F9)", new MenuItem [] {
+        var menu = new MenuBar(new MenuBarItem[]
+        {
+            new("_File (F9)", new MenuItem[]
+            {
                 new("_New...", "", () => New()),
                 new("_Find...", "", () => Find()),
                 new("_User Settings...", "", () => ShowUserSettings()),
@@ -89,16 +91,27 @@ internal class ConsoleMainWindow
                 new("_Refresh...", "", () => Publish()),
                 new("_Quit", "", () => Quit())
             }),
-            new("_Diagnostics", new MenuItem [] {
-                mi_default = new MenuItem {Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
-                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))}
+            new("_Diagnostics", new MenuItem[]
+            {
+                mi_default = new MenuItem { Title = "Query Catalogue", Action = () => Query(nameof(CataloguePatcher)) },
+                mi_default = new MenuItem
+                    { Title = "Query Data Export", Action = () => Query(nameof(DataExportPatcher)) }
             }),
-            new("_Color Scheme", new MenuItem [] {
-                mi_default = new MenuItem {Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)}
+            new("_Color Scheme", new MenuItem[]
+            {
+                mi_default = new MenuItem
+                {
+                    Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio,
+                    Action = () => SetColorScheme(mi_default)
+                },
+                mi_green = new MenuItem
+                {
+                    Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio,
+                    Action = () => SetColorScheme(mi_green)
+                }
             })
         });
-        top.Add (menu);
+        top.Add(menu);
 
         _win = new Window
         {
@@ -129,7 +142,8 @@ internal class ConsoleMainWindow
             TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter)
         };
         _treeView.AddObjects(
-            new string[]{
+            new string[]
+            {
                 Catalogues,
                 Projects,
                 Loads,
@@ -148,8 +162,9 @@ internal class ConsoleMainWindow
         _treeView.KeyPress += treeView_KeyPress;
         _treeView.SelectionChanged += _treeView_SelectionChanged;
         _treeView.AspectGetter = AspectGetter;
-            
-        var statusBar = new StatusBar (new StatusItem [] {
+
+        var statusBar = new StatusBar(new StatusItem[]
+        {
             new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
             new(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
             new(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
@@ -201,7 +216,6 @@ internal class ConsoleMainWindow
         {
             _activator.ShowException("Failed to build query", ex);
         }
-
     }
 
     private void SetColorScheme(MenuItem sender)
@@ -237,10 +251,7 @@ internal class ConsoleMainWindow
 
     private string AspectGetter(object model)
     {
-        if (model is IContainer container)
-        {
-            return $"{container} ({container.Operation})";
-        }
+        if (model is IContainer container) return $"{container} ({container.Operation})";
 
         if (model is CohortAggregateContainer setContainer) return $"{setContainer} ({setContainer.Operation})";
 
@@ -278,19 +289,15 @@ internal class ConsoleMainWindow
             //and refresh the selected tree node
             _treeView.RefreshObject(_treeView.SelectedObject, true);
         }
-
     }
 
     private void Find()
     {
         try
         {
-            var dlg = new ConsoleGuiSelectOne(_activator,null);
+            var dlg = new ConsoleGuiSelectOne(_activator, null);
 
-            if (dlg.ShowDialog())
-            {
-                Show(dlg.Selected);
-            }
+            if (dlg.ShowDialog()) Show(dlg.Selected);
         }
         catch (Exception e)
         {
@@ -343,7 +350,7 @@ internal class ConsoleMainWindow
         if (menu == null)
             return;
 
-        menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds<1 ? _lastMousePos: new Point(10, 5);
+        menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds < 1 ? _lastMousePos : new Point(10, 5);
         menu.Show();
     }
 
@@ -387,12 +394,10 @@ internal class ConsoleMainWindow
         }
     }
 
-    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
-    {
-        return o is IMasqueradeAs masquerade
+    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o) =>
+        o is IMasqueradeAs masquerade
             ? masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable
             : o as IMapsDirectlyToDatabaseTable;
-    }
 
 
     private IEnumerable<object> ChildGetter(object model)
@@ -408,11 +413,8 @@ internal class ConsoleMainWindow
         try
         {
             // Top level brackets for the tree view
-            if (ReferenceEquals(model , Catalogues))
-                return new []{_activator.CoreChildProvider.CatalogueRootFolder };
-
-            if (ReferenceEquals(model , Projects)  && dx != null)
-                return new[] { dx.ProjectRootFolder};
+            if (ReferenceEquals(model, Catalogues))
+                return new[] { _activator.CoreChildProvider.CatalogueRootFolder };
 
             if (ReferenceEquals(model, Projects) && dx != null)
                 return new[] { dx.ProjectRootFolder };
@@ -420,10 +422,10 @@ internal class ConsoleMainWindow
             if (ReferenceEquals(model, Loads))
                 return new[] { _activator.CoreChildProvider.LoadMetadataRootFolder };
 
-            if (ReferenceEquals(model , CohortConfigs))
+            if (ReferenceEquals(model, CohortConfigs))
                 return new[] { _activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder };
 
-            if (ReferenceEquals(model , BuiltCohorts) && dx != null)
+            if (ReferenceEquals(model, BuiltCohorts) && dx != null)
                 return dx.CohortSources;
 
             if (ReferenceEquals(model, Other))
@@ -473,7 +475,7 @@ internal class ConsoleMainWindow
 
         if (type == typeof(Project))
             return Projects;
-        if(type == typeof(LoadMetadata))
+        if (type == typeof(LoadMetadata))
             return Loads;
         if (type == typeof(FolderNode<LoadMetadata>))
             return Loads;
@@ -483,7 +485,7 @@ internal class ConsoleMainWindow
 
         if (type == typeof(ExtractableCohort))
             return BuiltCohorts;
-        return GetOtherCategoryChildren().Any(a=>a.Equals(o)) ? Other : null;
+        return GetOtherCategoryChildren().Any(a => a.Equals(o)) ? Other : null;
     }
 
     private void Run()
@@ -497,7 +499,8 @@ internal class ConsoleMainWindow
 
         var commands = commandInvoker.GetSupportedCommands();
 
-        var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),t=>BasicCommandExecution.GetCommandName(t.Name),false);
+        var dlg = new ConsoleGuiBigListBox<Type>("Choose Command", "Run", true, commands.ToList(),
+            t => BasicCommandExecution.GetCommandName(t.Name), false);
         if (dlg.ShowDialog())
             try
             {
@@ -512,8 +515,11 @@ internal class ConsoleMainWindow
     private void New()
     {
         var commandInvoker = new CommandInvoker(_activator);
-        commandInvoker.CommandImpossible += (o, e) => { _activator.Show(
-            $"Command Impossible because:{e.Command.ReasonCommandImpossible}");};
+        commandInvoker.CommandImpossible += (o, e) =>
+        {
+            _activator.Show(
+                $"Command Impossible because:{e.Command.ReasonCommandImpossible}");
+        };
 
         try
         {

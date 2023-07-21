@@ -35,7 +35,6 @@ public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
         base.LoadCompletedSoDispose(exitCode, postLoadEventListener);
 
         foreach (var value in _cacheFileMappings.Values.Where(value => value != null))
-        {
             try
             {
                 value.Delete();
@@ -45,6 +44,5 @@ public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
                 Job.LogWarning(GetType().FullName,
                     $"Could not delete cached file {value} ({e.Message}) - make sure to delete it manually otherwise Schedule and file system will be out of sync");
             }
-        }
     }
 }

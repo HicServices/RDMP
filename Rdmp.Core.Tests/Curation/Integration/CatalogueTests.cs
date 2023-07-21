@@ -273,7 +273,7 @@ public class CatalogueTests : UnitTests
             Assert.Contains(t3, lookupTablesOnly);
 
             cata.GetTableInfos(out var normalTables, out var lookupTables);
-            Assert.AreEqual(2,normalTables.Count);
+            Assert.AreEqual(2, normalTables.Count);
             Assert.AreEqual(1, lookupTables.Count);
 
             Assert.Contains(t1, normalTables);
@@ -450,9 +450,7 @@ public class CatalogueTests : UnitTests
                 ci1_2.SetColumnInfo(c2);
                 ci2_1.SetColumnInfo(c2);
                 ci2_2.SetColumnInfo(c1);
-
             }
-
 
 
             var catas = t.GetAllRelatedCatalogues();

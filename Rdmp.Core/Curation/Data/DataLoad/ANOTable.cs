@@ -188,10 +188,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return TableName;
-    }
+    public override string ToString() => TableName;
 
     /// <summary>
     /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
@@ -204,9 +201,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                 new CheckEventArgs(
                     "You must choose a suffix for your ANO identifiers so that they can be distinguished from regular identifiers",
                     CheckResult.Fail));
-        else
-        if (Suffix.StartsWith("_"))
-            notifier.OnCheckPerformed(new CheckEventArgs("Suffix will automatically include an underscore, there is no need to add it",CheckResult.Fail));
+        else if (Suffix.StartsWith("_"))
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Suffix will automatically include an underscore, there is no need to add it", CheckResult.Fail));
 
         if (NumberOfIntegersToUseInAnonymousRepresentation < 0)
             notifier.OnCheckPerformed(
@@ -214,10 +211,14 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                     CheckResult.Fail));
 
         if (NumberOfCharactersToUseInAnonymousRepresentation < 0)
-            notifier.OnCheckPerformed(new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative", CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative",
+                    CheckResult.Fail));
 
         if (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation == 0)
-            notifier.OnCheckPerformed(new CheckEventArgs("Anonymous representations must have at least 1 integer or character", CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("Anonymous representations must have at least 1 integer or character",
+                    CheckResult.Fail));
 
         try
         {
@@ -270,7 +271,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
         var tbl = GetPushedTable();
 
         if (tbl?.Exists() == true)
-            if(!tbl.IsEmpty())
+            if (!tbl.IsEmpty())
                 throw new Exception(
                     $"Cannot delete ANOTable because it references {TableName} which is a table on server {Server} which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
             else
@@ -303,10 +304,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                 NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})", CheckResult.Warning));
+                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})",
+                        CheckResult.Warning));
         }
 
-        var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
+        var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
 
         try
         {
@@ -401,9 +403,10 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             var expectedIdentifiableName = TableName["ANO".Length..];
 
             var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
-            var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
+            var identifiable =
+                columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedIdentifiableName));
 
-            if(anonymous == null)
+            if (anonymous == null)
                 throw new Exception(
                     $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
 
@@ -425,12 +428,6 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             LoadStage.PostLoad => _anonymousDataType,
             _ => throw new ArgumentOutOfRangeException(nameof(loadStage))
         };
-    }
-
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>

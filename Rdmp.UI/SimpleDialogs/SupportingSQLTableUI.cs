@@ -59,6 +59,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         QueryPreview.TextChanged += QueryPreview_TextChanged;
 
         pSQL.Controls.Add(QueryPreview);
+
         #endregion
 
         tcTicket.TicketTextChanged += TcTicketOnTicketTextChanged;
@@ -149,7 +150,6 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
                 else
                     cbGlobal.Checked = true;
             }
-
         }
     }
 

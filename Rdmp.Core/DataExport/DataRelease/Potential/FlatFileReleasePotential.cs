@@ -28,12 +28,10 @@ public class FlatFileReleasePotential : ReleasePotential
     }
 
     protected override Releaseability GetSupplementalSpecificAssessment(
-        IExtractionResults supplementalExtractionResults)
-    {
-        return File.Exists(supplementalExtractionResults.DestinationDescription)
+        IExtractionResults supplementalExtractionResults) =>
+        File.Exists(supplementalExtractionResults.DestinationDescription)
             ? Releaseability.Undefined
             : Releaseability.ExtractFilesMissing;
-    }
 
     protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
     {

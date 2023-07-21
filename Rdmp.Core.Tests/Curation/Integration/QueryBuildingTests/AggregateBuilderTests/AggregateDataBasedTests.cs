@@ -69,7 +69,7 @@ public class AggregateDataBasedTests : DatabaseTests
         out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
     {
         var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
-            
+
         var db = GetCleanedServer(type);
 
         var data = GetTestDataTable();
@@ -437,7 +437,8 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -456,7 +457,7 @@ public class AggregateDataBasedTests : DatabaseTests
             //axis is ordered ascending by date starting in 2000 so that row should come first
             Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
+            Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
             Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
             Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
             Assert.AreEqual("G", resultTable.Columns[4].ColumnName);
@@ -488,7 +489,8 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -545,7 +547,8 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -605,12 +608,13 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
         configuration.SaveToDatabase();
-            
+
         var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
         {
             OrderByDirection = AggregateTopXOrderByDirection.Descending,
@@ -668,7 +672,8 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category

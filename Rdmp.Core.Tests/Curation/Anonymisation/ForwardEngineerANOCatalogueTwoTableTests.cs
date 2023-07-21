@@ -100,12 +100,12 @@ GO";
             ExtractionJoinType.Left, null);
 
         _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T")
-            {
-                NumberOfCharactersToUseInAnonymousRepresentation = 10
-            };
+        {
+            NumberOfCharactersToUseInAnonymousRepresentation = 10
+        };
         _anoTable.SaveToDatabase();
-        _anoTable.PushToANOServerAsNewTable("int",ThrowImmediatelyCheckNotifier.Quiet);
-            
+        _anoTable.PushToANOServerAsNewTable("int", ThrowImmediatelyCheckNotifier.Quiet);
+
         _comboCata = new Catalogue(CatalogueRepository, "Combo Catalogue");
 
         //pk
@@ -147,7 +147,7 @@ GO";
         testIdHeadPlan.ANOTable = _anoTable;
 
         plan1.Check(ThrowImmediatelyCheckNotifier.Quiet);
-            
+
         var engine1 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan1);
         engine1.Execute();
 
@@ -170,7 +170,8 @@ GO";
         engine2.Execute();
 
         //Did it successfully pick SetUp the correct ANO column
-        var plan2ExtractionInformationsAtDestination = engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        var plan2ExtractionInformationsAtDestination =
+            engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
         Assert.IsTrue(ei2.Exists());
@@ -185,7 +186,7 @@ GO";
 
             var cmd = _destinationDatabase.Server.GetCommand(qb.SQL, con);
 
-            Assert.DoesNotThrow(()=>cmd.ExecuteNonQuery());
+            Assert.DoesNotThrow(() => cmd.ExecuteNonQuery());
         }
 
         Console.WriteLine($"Final migrated combo dataset SQL was:{qb.SQL}");

@@ -129,10 +129,11 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
         if (Project.ProjectNumber == null)
             throw new ProjectNumberException($"Project '{Project}' does not have a ProjectNumber");
 
-        var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable)
-            {
-                CohortReplacedIfAny = origCohort
-            };
+        var definition = new CohortDefinition(null, origCohortData.ExternalDescription,
+            origCohortData.ExternalVersion + 1, (int)Project.ProjectNumber, origCohort.ExternalCohortTable)
+        {
+            CohortReplacedIfAny = origCohort
+        };
 
         NewCohortDefinition = definition;
         DescriptionForAuditLog = "Cohort Refresh";
@@ -193,7 +194,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     public void PushToServer(IManagedConnection connection)
     {
-        if(!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
+        if (!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
             throw new Exception(reason);
 
         NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);
@@ -254,13 +255,9 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     public static PipelineUseCase DesignTime() => new CohortCreationRequest();
 
-    public override string ToString()
-    {
-        return NewCohortDefinition == null ? base.ToString() : NewCohortDefinition.Description;
-    }
+    public override string ToString() =>
+        NewCohortDefinition == null ? base.ToString() : NewCohortDefinition.Description;
 
-    public string GetSummary(bool includeName, bool includeId)
-    {
-        return $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
-    }
+    public string GetSummary(bool includeName, bool includeId) =>
+        $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
 }

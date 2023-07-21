@@ -148,10 +148,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     private void FetchLogs()
     {
-        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch))
-        {
-            fetch = 1000;
-        }
+        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch)) fetch = 1000;
 
         // no negative sized batches!
         fetch = Math.Max(0, fetch);

@@ -60,8 +60,8 @@ public partial class HeatmapUI : UserControl
     ///Table is interpreted in the following way:
     /// - First column is the axis in direction X (horizontally) containing (in order) the axis label values that will be each pixel in each heat lane
     /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
-
     private RainbowColorPicker _rainbow = new(NumberOfColors);
+
     private const double MinPixelHeight = 15.0;
     private const double MaxPixelHeight = 20.0;
 
@@ -90,7 +90,7 @@ public partial class HeatmapUI : UserControl
                 var m1 = colorRegex.Match(tokens[0]);
                 var m2 = colorRegex.Match(tokens[1]);
 
-                if(m1.Success && m2.Success)
+                if (m1.Success && m2.Success)
                 {
                     var fromColor = Color.FromArgb(
                         (int)Convert.ToByte(m1.Groups[1].Value, 16),
@@ -193,10 +193,10 @@ public partial class HeatmapUI : UserControl
         if (value == null)
             return;
 
-        if(Visible)
+        if (Visible)
             //show the tool tip
-            tt.Show(value.ToString(), this, new Point(pos.X+20,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
-
+            tt.Show(value.ToString(), this,
+                new Point(pos.X + 20, pos.Y - 10)); //allow room for cusor to not overdraw the tool tip
     }
 
     private object GetValueFromClientPosition(Point pos)
@@ -235,7 +235,7 @@ public partial class HeatmapUI : UserControl
     {
         base.OnPaint(e);
 
-        if(_dataTable == null)
+        if (_dataTable == null)
             return;
         if (_crashedPainting)
             return;
@@ -263,7 +263,6 @@ public partial class HeatmapUI : UserControl
                 //for each line of pixels in heatmap
                 for (var x = 0; x < _dataTable.Rows.Count; x++)
                     //draw the line this way -------------> with pixels of width heatPixelWidth/Height
-
                     //skip the first y value which is the x axis value
                 for (var y = 1; y < _dataTable.Columns.Count; y++)
                 {
@@ -274,21 +273,7 @@ public partial class HeatmapUI : UserControl
                     if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 &&
                         Math.Abs(_minValueInDataTable) < 0.0000000001)
                     {
-                        //the value we are drawing
-                        var cellValue = ToDouble(_dataTable.Rows[x][y]);
-
-                        //if the cell value is 0 render it as black
-                        if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 && Math.Abs(_minValueInDataTable) < 0.0000000001)
-                            brush.Color = Color.Black;
-                        else
-                        {
-                            var brightness = (cellValue - _minValueInDataTable) / (_maxValueInDataTable - _minValueInDataTable);
-                            var brightnessIndex = (int)(brightness * (NumberOfColors - 1));
-
-                            brush.Color = _rainbow.Colors[brightnessIndex];
-                        }
-
-                        e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight), (float)heatPixelWidth, (float)heatPixelHeight);
+                        brush.Color = Color.Black;
                     }
                     else
                     {
@@ -309,7 +294,7 @@ public partial class HeatmapUI : UserControl
                 //draw the labels
                 for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
-                    var labelStartY = i*heatPixelHeight;
+                    var labelStartY = i * heatPixelHeight;
 
                     var name = _dataTable.Columns[i].ColumnName;
 
@@ -320,7 +305,9 @@ public partial class HeatmapUI : UserControl
                 double lastAxisStart = -500;
                 double lastAxisLabelWidth = -500;
 
-                var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
+                var visibleArea = _useEntireControlAsVisibleArea
+                    ? new Rectangle(0, 0, Width, Height)
+                    : this.GetVisibleArea();
 
 
                 var visibleClipBoundsTop = visibleArea.Top;
@@ -351,7 +338,8 @@ public partial class HeatmapUI : UserControl
 
 
                     //draw axis black line
-                    e.Graphics.DrawLine(Pens.Black, new PointF((float) axisXStart, (float)axisYStart), new PointF((float) axisXStart, Height));
+                    e.Graphics.DrawLine(Pens.Black, new PointF((float)axisXStart, (float)axisYStart),
+                        new PointF((float)axisXStart, Height));
                 }
             }
         }
@@ -408,13 +396,12 @@ public partial class HeatmapUI : UserControl
 
     public static void CalculateLayout()
     {
-
     }
 
     public void Clear()
     {
-
-        lock(oDataTableLock)
+        lock (oDataTableLock)
+        {
             _dataTable = null;
         }
     }

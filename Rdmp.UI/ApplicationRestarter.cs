@@ -44,11 +44,8 @@ public static class ApplicationRestarter
             sb.Append(arguments[^1]);
             sb.Append('"');
         }
+
         var currentStartInfo = new ProcessStartInfo
-        {
-            FileName = Path.ChangeExtension(Application.ExecutablePath, "exe")
-        };
-        if (sb.Length > 0)
         {
             FileName = Path.ChangeExtension(Application.ExecutablePath, "exe")
         };

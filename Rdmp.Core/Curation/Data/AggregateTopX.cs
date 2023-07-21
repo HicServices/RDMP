@@ -71,13 +71,9 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
 
     /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
     [NoMappingToDatabase]
-    public AggregateDimension OrderByDimensionIfAny
-    {
-        get
-        {
-            return OrderByDimensionIfAny_ID == null ? null : Repository.GetObjectByID<AggregateDimension>(OrderByDimensionIfAny_ID.Value);
-        }
-    }
+    public AggregateDimension OrderByDimensionIfAny => OrderByDimensionIfAny_ID == null
+        ? null
+        : Repository.GetObjectByID<AggregateDimension>(OrderByDimensionIfAny_ID.Value);
 
     /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
     [NoMappingToDatabase]
@@ -124,6 +120,4 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
             { nameof(OrderByDirection), AggregateTopXOrderByDirection.Descending }
         });
     }
-
-
 }

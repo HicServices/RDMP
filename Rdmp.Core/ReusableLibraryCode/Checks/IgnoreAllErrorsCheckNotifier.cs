@@ -14,9 +14,9 @@ public class IgnoreAllErrorsCheckNotifier : ICheckNotifier
 {
     public static readonly IgnoreAllErrorsCheckNotifier Instance = new();
 
-    public IgnoreAllErrorsCheckNotifier() { }
-    public bool OnCheckPerformed(CheckEventArgs args)
+    public IgnoreAllErrorsCheckNotifier()
     {
-        return true;
     }
+
+    public bool OnCheckPerformed(CheckEventArgs args) => true;
 }

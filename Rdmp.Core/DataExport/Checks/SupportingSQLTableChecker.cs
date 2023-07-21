@@ -46,7 +46,8 @@ public class SupportingSQLTableChecker : ICheckable
             using var con = _table.GetServer().GetConnection();
             con.Open();
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}",
+                CheckResult.Success));
 
             using var cmd = supportingSQLServer.GetCommand(_table.SQL, con);
             using var reader = cmd.ExecuteReader();

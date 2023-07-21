@@ -21,9 +21,8 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
     {
     }
 
-    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
-    {
-        return new ExtractionOptions
+    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec) =>
+        new()
         {
             ExtractionConfiguration = ec.ID.ToString(),
             ExtractGlobals = true
@@ -40,12 +39,10 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
             .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
             .ToArray();
 
-        if (!compatible.Any())
-        {
-            throw new Exception("No compatible pipelines");
-        }
+        if (!compatible.Any()) throw new Exception("No compatible pipelines");
 
-        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
+        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ??
+                   throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
     }
 }

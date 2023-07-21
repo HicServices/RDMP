@@ -40,10 +40,7 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicComman
         Weight = 100.3f;
     }
 
-    public override string GetCommandName()
-    {
-        return _checkable == null ? "Check" : $"Check '{_checkable}'";
-    }
+    public override string GetCommandName() => _checkable == null ? "Check" : $"Check '{_checkable}'";
 
     public override string GetCommandHelp() =>
         "Run validation checks for this item to ensure that easily checkable properties are valid";

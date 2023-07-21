@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
 
-internal class HowDoWeAchieveMd5Test:DatabaseTests
+internal class HowDoWeAchieveMd5Test : DatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
@@ -40,8 +40,8 @@ internal class HowDoWeAchieveMd5Test:DatabaseTests
         Console.WriteLine($"Value was:{value}");
 
         Assert.IsNotNull(value);
-        Assert.AreNotEqual("Fish",value);
-        Assert.GreaterOrEqual(value.ToString().Length,32);
+        Assert.AreNotEqual("Fish", value);
+        Assert.GreaterOrEqual(value.ToString().Length, 32);
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]

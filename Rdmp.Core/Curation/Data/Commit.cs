@@ -73,10 +73,10 @@ public class Commit : DatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Transaction",transaction.ToString("N")},
-            {"Username", Environment.UserName},
-            {"Date", DateTime.Now},
-            {"Description",description}
+            { "Transaction", transaction.ToString("N") },
+            { "Username", Environment.UserName },
+            { "Date", DateTime.Now },
+            { "Description", description }
         });
     }
 

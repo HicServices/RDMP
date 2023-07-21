@@ -95,7 +95,6 @@ public class ValidatorTest
         }
         catch (MissingFieldException exception)
         {
-
             Assert.True(exception.Message.StartsWith("Validation failed"));
         }
     }
@@ -154,7 +153,7 @@ public class ValidatorTest
 
         var answer2 = v2.SaveToXml(false);
 
-        Assert.AreEqual(answer,answer2);
+        Assert.AreEqual(answer, answer2);
     }
 
 
@@ -214,7 +213,7 @@ public class ValidatorTest
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
 
         //now rename col 1
-        dictionary.Add("OldCol1","NewCol1");
+        dictionary.Add("OldCol1", "NewCol1");
         v.RenameColumns(dictionary);
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");

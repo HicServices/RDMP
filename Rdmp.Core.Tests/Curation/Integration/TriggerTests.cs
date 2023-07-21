@@ -33,9 +33,10 @@ public class TriggerTests : DatabaseTests
     {
         _database = GetCleanedServer(dbType);
 
-        _table =_database.CreateTable("TriggerTests",new DatabaseColumnRequest[]{
-            new("name",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false },
-            new("bubbles",new DatabaseTypeRequest(typeof(int)))
+        _table = _database.CreateTable("TriggerTests", new DatabaseColumnRequest[]
+        {
+            new("name", new DatabaseTypeRequest(typeof(string), 30)) { AllowNulls = false },
+            new("bubbles", new DatabaseTypeRequest(typeof(int)))
         });
 
         _archiveTable = _database.ExpectTable("TriggerTests_Archive");
@@ -62,7 +63,8 @@ public class TriggerTests : DatabaseTests
     {
         CreateTable(dbType);
 
-        var ex = Assert.Throws<TriggerException>(() => GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet));
+        var ex = Assert.Throws<TriggerException>(() =>
+            GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.AreEqual("There must be at least 1 primary key", ex.Message);
     }
 
@@ -71,7 +73,7 @@ public class TriggerTests : DatabaseTests
     {
         CreateTable(dbType);
 
-        _table.CreatePrimaryKey(new []{_table.DiscoverColumn("name")});
+        _table.CreatePrimaryKey(new[] { _table.DiscoverColumn("name") });
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
@@ -83,10 +85,12 @@ public class TriggerTests : DatabaseTests
     {
         _database = GetCleanedServer(dbType);
 
-        _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{
-            new("My Lovely Column Select * From Lolz",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false,IsPrimaryKey = true},
-            new("ANormalColumnName",new DatabaseTypeRequest(typeof(int))),
-            new("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int)))
+        _table = _database.CreateTable("Trol lol My Table Select * from Group by fish", new DatabaseColumnRequest[]
+        {
+            new("My Lovely Column Select * From Lolz", new DatabaseTypeRequest(typeof(string), 30))
+                { AllowNulls = false, IsPrimaryKey = true },
+            new("ANormalColumnName", new DatabaseTypeRequest(typeof(int))),
+            new("Group By Meeee Colll trollolol", new DatabaseTypeRequest(typeof(int)))
         });
 
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
@@ -124,14 +128,14 @@ public class TriggerTests : DatabaseTests
 
         _table.Insert(new Dictionary<string, object>
         {
-            {"name","Franky" } ,
-            {"bubbles",3 } ,
-            {"hic_validFrom",new DateTime(2001,1,2)} ,
-            {"hic_dataLoadRunID",7 }
+            { "name", "Franky" },
+            { "bubbles", 3 },
+            { "hic_validFrom", new DateTime(2001, 1, 2) },
+            { "hic_dataLoadRunID", 7 }
         });
 
-        var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
-        Assert.AreEqual(new DateTime(2001,1,2),(DateTime)liveOldRow[SpecialFieldNames.ValidFrom]);
+        var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r => r["bubbles"] as int? == 3);
+        Assert.AreEqual(new DateTime(2001, 1, 2), (DateTime)liveOldRow[SpecialFieldNames.ValidFrom]);
 
         RunSQL("UPDATE {0} set bubbles =99", _table.GetFullyQualifiedName());
 
@@ -151,7 +155,8 @@ public class TriggerTests : DatabaseTests
             Assert.AreEqual(3,
                 ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"));
             //legacy boundary case?
-            Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"));
+            Assert.AreEqual(3,
+                ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"));
 
             //legacy today it is 99
             Assert.AreEqual(99,
@@ -163,8 +168,8 @@ public class TriggerTests : DatabaseTests
         Assert.AreEqual(DateTime.Now.Date, ((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
 
         // Archived row should not have had its validFrom field broken
-        var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
-        Assert.AreEqual(new DateTime(2001,1,2),(DateTime)archivedRow[SpecialFieldNames.ValidFrom]);
+        var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r => r["bubbles"] as int? == 3);
+        Assert.AreEqual(new DateTime(2001, 1, 2), (DateTime)archivedRow[SpecialFieldNames.ValidFrom]);
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -173,15 +178,15 @@ public class TriggerTests : DatabaseTests
         CreateTable(dbType);
 
         _table.CreatePrimaryKey(_table.DiscoverColumn("name"));
-            
+
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-            
+
         _table.Insert(new Dictionary<string, object>
         {
-            {"name","Franky" } ,
-            {"bubbles",3 } ,
-            {"hic_validFrom",new DateTime(2001,1,2)} ,
-            {"hic_dataLoadRunID",7 }
+            { "name", "Franky" },
+            { "bubbles", 3 },
+            { "hic_validFrom", new DateTime(2001, 1, 2) },
+            { "hic_dataLoadRunID", 7 }
         });
 
         Thread.Sleep(1000);

@@ -26,13 +26,14 @@ public partial class ConfigurePipelineUI : Form
 
     private PipelineWorkAreaUI _workArea;
 
-    public ConfigurePipelineUI(IActivateItems activator,IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository repository)
+    public ConfigurePipelineUI(IActivateItems activator, IPipeline pipeline, IPipelineUseCase useCase,
+        ICatalogueRepository repository)
     {
         _pipeline = pipeline;
         _useCase = useCase;
         InitializeComponent();
 
-        _workArea = new PipelineWorkAreaUI(activator,pipeline, useCase,repository) {Dock = DockStyle.Fill};
+        _workArea = new PipelineWorkAreaUI(activator, pipeline, useCase, repository) { Dock = DockStyle.Fill };
         panelWorkArea.Controls.Add(_workArea);
 
         tbName.Text = pipeline.Name;

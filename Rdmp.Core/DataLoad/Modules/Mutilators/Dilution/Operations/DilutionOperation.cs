@@ -41,5 +41,4 @@ public abstract class DilutionOperation : IPluginDilutionOperation
     public override string ToString() => GetType().Name;
 
     public abstract string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer);
-
 }

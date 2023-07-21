@@ -24,7 +24,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 {
     private string[] AvailableColumns { get; set; }
 
-    public ResolveMissingTargetPropertiesUI( Validator validator, ExtractionInformation[] availableColumns)
+    public ResolveMissingTargetPropertiesUI(Validator validator, ExtractionInformation[] availableColumns)
     {
         if (validator == null && availableColumns == null)
             return;
@@ -34,8 +34,8 @@ public partial class ResolveMissingTargetPropertiesUI : Form
         AdjustedValidator = validator;
         InitializeComponent();
 
-        lbAvailableColumns.Items.AddRange(GetUnReferencedColumns(validator,AvailableColumns).ToArray());
-        lbMissingReferences.Items.AddRange(GetMissingReferences(validator,availableColumns).ToArray());
+        lbAvailableColumns.Items.AddRange(GetUnReferencedColumns(validator, AvailableColumns).ToArray());
+        lbMissingReferences.Items.AddRange(GetMissingReferences(validator, availableColumns).ToArray());
     }
 
     public Validator AdjustedValidator { get; set; }
@@ -53,11 +53,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbMissingReferences_KeyUp(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Delete)
-        {
-            DeleteSelectedReferences();
-        }
-
+        if (e.KeyCode == Keys.Delete) DeleteSelectedReferences();
     }
 
     private void DeleteSelectedReferences()
@@ -75,6 +71,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
     }
 
     #region drag and drop
+
     private ItemValidator _dragTarget;
 
     private void lbMissingReferences_MouseDown(object sender, MouseEventArgs e)
@@ -93,7 +90,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbMissingReferences_MouseMove(object sender, MouseEventArgs e)
     {
-        if(_dragTarget != null && MouseButtons == MouseButtons.Left)
+        if (_dragTarget != null && MouseButtons == MouseButtons.Left)
             DoDragDrop(_dragTarget, DragDropEffects.Link);
     }
 
@@ -106,7 +103,8 @@ public partial class ResolveMissingTargetPropertiesUI : Form
     {
         var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X, e.Y)));
 
-        if (indexFromPoint != ListBox.NoMatches && e.Data?.GetData(typeof (ItemValidator)) is ItemValidator missingReference)
+        if (indexFromPoint != ListBox.NoMatches &&
+            e.Data?.GetData(typeof(ItemValidator)) is ItemValidator missingReference)
         {
             var oldName = missingReference.TargetProperty;
             var newName = (string)lbAvailableColumns.Items[indexFromPoint];
@@ -126,7 +124,6 @@ public partial class ResolveMissingTargetPropertiesUI : Form
     private static void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
     {
         missingReference.TargetProperty = newTarget;
-
     }
 
     #endregion

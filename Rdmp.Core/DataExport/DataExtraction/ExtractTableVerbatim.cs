@@ -106,14 +106,11 @@ public class ExtractTableVerbatim
         using var con = _server.GetConnection();
         con.Open();
 
-        if (_specificSQL != null)
-        {
-            linesWritten += ExtractSQL(_specificSQL,_specificSQLTableName,con);
-        }
-            
-        if(_tableNames != null)
+        if (_specificSQL != null) linesWritten += ExtractSQL(_specificSQL, _specificSQLTableName, con);
+
+        if (_tableNames != null)
             foreach (var table in _tableNames)
-                linesWritten += ExtractSQL($"select * from {table}", table,con);
+                linesWritten += ExtractSQL($"select * from {table}", table, con);
 
         con.Close();
 
@@ -127,9 +124,9 @@ public class ExtractTableVerbatim
         using var cmdExtract = _server.GetCommand(sql, con);
         string filename = null;
 
-        if (_outputDirectory !=null)
+        if (_outputDirectory != null)
         {
-            if(!Directory.Exists(_outputDirectory.FullName))
+            if (!Directory.Exists(_outputDirectory.FullName))
                 Directory.CreateDirectory(_outputDirectory.FullName);
 
             filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
@@ -139,31 +136,35 @@ public class ExtractTableVerbatim
         }
 
         StreamWriter sw;
-                
-        if(_stream != null)
+
+        if (_stream != null)
+        {
             sw = new StreamWriter(_stream);
+        }
         else
         {
-            if(_outputDirectory == null)
-                throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
+            if (_outputDirectory == null)
+                throw new Exception(
+                    $"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
 
-            if(filename == null)
-                throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
+            if (filename == null)
+                throw new Exception(
+                    $"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
 
-            OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
+            OutputFilename = Path.Combine(_outputDirectory.FullName, filename);
             sw = new StreamWriter(OutputFilename);
         }
-                 
+
         cmdExtract.CommandTimeout = 500000;
 
-        using(var r = cmdExtract.ExecuteReader())
+        using (var r = cmdExtract.ExecuteReader())
         {
             WriteHeader(sw, r, _separator, _dateTimeFormat);
-            linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
+            linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat, RoundFloatsTo);
 
             r.Close();
         }
-                
+
         sw.Flush();
         sw.Close();
 

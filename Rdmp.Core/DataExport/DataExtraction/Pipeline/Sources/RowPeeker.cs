@@ -73,9 +73,10 @@ internal class RowPeeker
                 "Cannot AddWhile when there is an existing peeked record, call AddPeekedRowsIfAny to drain the Peek");
 
         //while we are still successfully reading rows and those rows have the same release id
-        while(source.ReadOneRow() is { } r)
-            if(equalityFunc(r))
+        while (source.ReadOneRow() is { } r)
+            if (equalityFunc(r))
                 //add it to the current chunk
+            {
                 chunk.ImportRow(r);
             }
             else

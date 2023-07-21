@@ -40,10 +40,7 @@ public class ColumnInfoToIColumn : SpontaneousObject, IColumn
     }
 
     /// <inheritdoc/>
-    public string GetRuntimeName()
-    {
-        return ColumnInfo.GetRuntimeName();
-    }
+    public string GetRuntimeName() => ColumnInfo.GetRuntimeName();
 
     /// <inheritdoc/>
     public ColumnInfo ColumnInfo { get; private set; }

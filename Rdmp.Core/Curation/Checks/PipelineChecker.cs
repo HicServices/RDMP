@@ -36,7 +36,11 @@ public class PipelineChecker : ICheckable
         foreach (var component in _pipeline.PipelineComponents)
         {
             var copy = component;
-            var mefChecker = new MEFChecker(component.Class, delegate(string s) { copy.Class = s; copy.SaveToDatabase(); });
+            var mefChecker = new MEFChecker(component.Class, delegate(string s)
+            {
+                copy.Class = s;
+                copy.SaveToDatabase();
+            });
             mefChecker.Check(notifier);
         }
     }

@@ -67,8 +67,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         var matchesFound = 0;
 
         foreach (DataRow r in toProcess.Rows)
-        {
-            if(_aliasDictionary.TryGetValue(r[AliasColumnInInputDataTables],out var aliasList))
+            if (_aliasDictionary.TryGetValue(r[AliasColumnInInputDataTables], out var aliases))
             {
                 matchesFound++;
                 switch (ResolutionStrategy)
@@ -114,7 +113,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        _aliasDictionary?.Clear();//Free up memory
+        _aliasDictionary?.Clear(); //Free up memory
     }
 
     public void Abort(IDataLoadEventListener listener)
@@ -173,17 +172,15 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                         $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
                 }
 
-                if(idx == -1)
-                {
+                if (idx == -1)
                     throw new AliasTableFetchException(
                         $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
-                }
 
-                if(idx != 0)
+                if (idx != 0)
                     throw new AliasTableFetchException(
                         $"Alias table DID contain column '{AliasColumnInInputDataTables}' but it was not the first column in the result set {expectation}");
 
-                if(r.FieldCount != 2)
+                if (r.FieldCount != 2)
                     throw new AliasTableFetchException(
                         $"Alias table SQL resulted in {r.FieldCount} fields being returned, we expect exactly 2 {expectation}");
 
@@ -193,11 +190,12 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
             var input = r[0];
             var alias = r[1];
 
-            if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
+            if (input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
                 throw new AliasTableFetchException("Alias table contained nulls");
 
-            if(input.Equals(alias))
-                throw new AliasTableFetchException("Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");
+            if (input.Equals(alias))
+                throw new AliasTableFetchException(
+                    "Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");
 
             if (!toReturn.ContainsKey(input))
                 toReturn.Add(input, new List<object>());

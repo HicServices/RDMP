@@ -17,7 +17,7 @@ namespace Rdmp.UI.TransparentHelpSystem;
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public partial class TransparentHelpForm:Form
+public partial class TransparentHelpForm : Form
 {
     private readonly Control _host;
     private Control _highlight;
@@ -58,7 +58,7 @@ public partial class TransparentHelpForm:Form
 
         //if the host is a Form and it closes we should close too
         if (host is Form form)
-            form.FormClosed +=(s,e)=> Close();
+            form.FormClosed += (s, e) => Close();
     }
 
     private void UpdateLocation()
@@ -138,7 +138,8 @@ public partial class TransparentHelpForm:Form
     }
 
     private HelpBox _currentHelpBox;
-    public HelpBox ShowStage(HelpWorkflow workflow,HelpStage stage)
+
+    public HelpBox ShowStage(HelpWorkflow workflow, HelpStage stage)
     {
         if (_currentHelpBox != null)
             _host.Controls.Remove(_currentHelpBox);
@@ -197,22 +198,23 @@ public partial class TransparentHelpForm:Form
 
             //not enough space horizontally so try to move MSG to left till there is enough space
             /**************HOST CONTROL BOUNDS***********
-            * 
-            *       HIGHLIGHT
-            *  <---|HIGHLIGHT
-            *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
-            *    
-            *********************************************/
+             *
+             *       HIGHLIGHT
+             *  <---|HIGHLIGHT
+             *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
+             *
+             *********************************************/
             return highlightBottomLeft with { X = Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width) };
         }
 
         if (currentHelpBox.Height < availableSpaceAboveHighlight)
-        {
             //No space below so go above it
-            return _currentHelpBox.Width < availableSpaceHorizontally ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height } :
+            return _currentHelpBox.Width < availableSpaceHorizontally
+                ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height }
+                :
                 //consider moving X back because message box is so wide (See diagram above)
-                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightTopLeft.Y - currentHelpBox.Height);
-        }
+                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width),
+                    highlightTopLeft.Y - currentHelpBox.Height);
 
         var screenCoordinatesTopRight = _highlight.PointToScreen(new Point(_highlight.ClientRectangle.Width, 0));
         var highlightTopRight = _host.PointToClient(screenCoordinatesTopRight);
@@ -225,6 +227,8 @@ public partial class TransparentHelpForm:Form
             return new Point(0, _host.ClientRectangle.Height - _currentHelpBox.Height);
 
         //there is space to the right or left so put it in whichever is greater
-        return spaceToRight > spaceToLeft ? highlightTopRight : new Point(highlightTopLeft.X - _currentHelpBox.Width,0);
+        return spaceToRight > spaceToLeft
+            ? highlightTopRight
+            : new Point(highlightTopLeft.X - _currentHelpBox.Width, 0);
     }
 }

@@ -25,8 +25,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit>, IDataFlowDestination<ReleaseAudit>,
     IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
 {
-    [DemandsNestedInitialization]
-    public ReleaseEngineSettings ReleaseSettings { get; set; }
+    [DemandsNestedInitialization] public ReleaseEngineSettings ReleaseSettings { get; set; }
 
     private ReleaseData _releaseData;
     private Project _project;
@@ -46,18 +45,19 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
 
         if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
 
             var recordsDeleted = 0;
 
-            foreach (var (configuration,potentials) in _releaseData.ConfigurationsForRelease)
-            {
+            foreach (var (configuration, potentials) in _releaseData.ConfigurationsForRelease)
                 //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r => potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
-                {
-                    redundantResult.DeleteInDatabase();
-                    recordsDeleted++;
-                }
+            foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r =>
+                         potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+            {
+                redundantResult.DeleteInDatabase();
+                recordsDeleted++;
             }
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,

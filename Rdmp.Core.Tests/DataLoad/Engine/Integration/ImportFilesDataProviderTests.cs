@@ -106,6 +106,5 @@ public class ImportFilesDataProviderTests : DatabaseTests
         //only forLoading file should exist (in real life that one would be handled by archivng already)
         Assert.AreEqual(1, targetDir.GetFiles().Length);
         Assert.AreEqual(0, sourceDir.GetFiles().Length);
-
     }
 }

@@ -100,7 +100,7 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
             throw new NotSupportedException(
                 $"Cannot configure AggregateConfiguration {user} as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "JoinableCohortAggregateConfiguration_ID", joinable.ID },
             { "AggregateConfiguration_ID", user.ID },

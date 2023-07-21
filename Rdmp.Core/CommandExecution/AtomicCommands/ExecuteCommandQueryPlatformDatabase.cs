@@ -43,7 +43,7 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
         _toFile = toFile;
 
         var patcherType = MEF.GetTypes<IPatcher>().FirstOrDefault(t => t.Name.Equals(databaseType) || t.Name.Equals(
-                $"{databaseType}Patcher"));
+            $"{databaseType}Patcher"));
 
         if (patcherType == null)
         {

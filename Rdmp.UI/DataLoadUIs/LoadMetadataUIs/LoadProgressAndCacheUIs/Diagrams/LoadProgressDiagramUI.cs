@@ -56,7 +56,9 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
     {
         var c = (Catalogue)rowObject;
 
-        return !_report.CataloguesWithDQERuns.ContainsKey(c) ? "Never" : _report.CataloguesWithDQERuns[c].DateOfEvaluation;
+        return !_report.CataloguesWithDQERuns.ContainsKey(c)
+            ? "Never"
+            : _report.CataloguesWithDQERuns[c].DateOfEvaluation;
     }
 
     public void SetLoadProgress(LoadProgress lp, IActivateItems activator)
@@ -135,7 +137,8 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         try
         {
             //Catalogue periodicity chart
-            ChartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
+            ChartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData,
+                "Count of records");
 
             //Annotations
             _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
@@ -179,7 +182,6 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             ragSmiley1.Fatal(e);
         }
     }
-
 
 
     private void cataloguesRowCountChart_AnnotationPositionChanged(object sender, EventArgs e)

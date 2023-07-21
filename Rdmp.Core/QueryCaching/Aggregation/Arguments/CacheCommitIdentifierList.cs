@@ -42,7 +42,9 @@ public class CacheCommitIdentifierList : CacheCommitArguments
             if (r[0] == null || r[0] == DBNull.Value)
                 results.Rows.Remove(r);
 
-        _identifierColumn = identifierColumn ?? throw new Exception("You must specify the data type of the identifier column, identifierColumn was null");
+        _identifierColumn = identifierColumn ??
+                            throw new Exception(
+                                "You must specify the data type of the identifier column, identifierColumn was null");
         _identifierColumn.AllowNulls = false;
         _identifierColumn.ColumnName = results.Columns[0].ColumnName;
     }

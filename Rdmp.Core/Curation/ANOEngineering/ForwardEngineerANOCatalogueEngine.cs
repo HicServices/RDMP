@@ -37,7 +37,7 @@ public class ForwardEngineerANOCatalogueEngine
     public LoadProgress LoadProgressIfAny { get; set; }
 
     public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new();
-    public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new();
+    public Dictionary<PreLoadDiscardedColumn, IDilutionOperation> DilutionOperationsForMigrations = new();
 
     private ShareManager _shareManager;
 
@@ -66,9 +66,8 @@ public class ForwardEngineerANOCatalogueEngine
                 //for each skipped table
                 foreach (var skippedTable in _planManager.SkippedTables)
                     //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
-                    foreach (var columnInfo in skippedTable.ColumnInfos)
-                        GetNewColumnInfoForOld(columnInfo,true);
-                }
+                foreach (var columnInfo in skippedTable.ColumnInfos)
+                    GetNewColumnInfoForOld(columnInfo, true);
 
                 //for each table that isn't being skipped
                 foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
@@ -120,7 +119,7 @@ public class ForwardEngineerANOCatalogueEngine
                     {
                         var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
 
-                        var columnPlan =_planManager.GetPlanForColumnInfo(oldColumnInfo);
+                        var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
 
                         if (columnPlan.Plan == Plan.ANO)
                         {
@@ -132,12 +131,13 @@ public class ForwardEngineerANOCatalogueEngine
                         if (columnPlan.Plan == Plan.Dilute)
                         {
                             //Create a discarded (load only) column with name matching the new columninfo
-                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName())
-                                {
-                                    //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
-                                    Destination = DiscardedColumnDestination.Dilute,
-                                    SqlDataType = oldColumnInfo.Data_type
-                                };
+                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,
+                                newColumnInfo.GetRuntimeName())
+                            {
+                                //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
+                                Destination = DiscardedColumnDestination.Dilute,
+                                SqlDataType = oldColumnInfo.Data_type
+                            };
 
                             discard.SaveToDatabase();
 
@@ -200,10 +200,11 @@ public class ForwardEngineerANOCatalogueEngine
                     if (columnPlan.ExtractionCategoryIfAny != null)
                     {
                         //Create a new ExtractionInformation for the new Catalogue
-                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name)
-                            {
-                                ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
-                            };
+                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem,
+                            newColumnInfo, newColumnInfo.Name)
+                        {
+                            ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
+                        };
 
                         newExtractionInformation.SaveToDatabase();
 
@@ -227,7 +228,8 @@ public class ForwardEngineerANOCatalogueEngine
                                     continue;
 
                                 //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
-                                refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)kvpOtherCols.Value).Name,false);
+                                SelectSQLRefactorer.RefactorColumnName(newExtractionInformation,
+                                    (ColumnInfo)kvpOtherCols.Key, ((ColumnInfo)kvpOtherCols.Value).Name, false);
                             }
 
                             //make the new one exactly as extractable
@@ -272,7 +274,11 @@ public class ForwardEngineerANOCatalogueEngine
                     var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
 
                     //see if we already have a Lookup declared for the NEW columns (unlikely)
-                    var newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ?? new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
+                    var newLookup =
+                        existingLookups.SingleOrDefault(l =>
+                            l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ??
+                        new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,
+                            lookup.Collation);
 
                     //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard)
                     foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
@@ -307,8 +313,10 @@ public class ForwardEngineerANOCatalogueEngine
                     qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepo, null,
                         new[]
                         {
-                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} >= @startDate","After batch start date","",null),
-                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} <= @endDate","Before batch end date","",null)
+                            new SpontaneouslyInventedFilter(memoryRepo, null,
+                                $"{_planManager.DateColumn} >= @startDate", "After batch start date", "", null),
+                            new SpontaneouslyInventedFilter(memoryRepo, null, $"{_planManager.DateColumn} <= @endDate",
+                                "Before batch end date", "", null)
                         }
                         , FilterContainerOperation.AND);
                 }
@@ -328,7 +336,7 @@ public class ForwardEngineerANOCatalogueEngine
             catch (Exception ex)
             {
                 _catalogueRepository.EndTransaction(false);
-                throw new Exception("Failed to create ANO version, transaction rolled back successfully",ex);
+                throw new Exception("Failed to create ANO version, transaction rolled back successfully", ex);
             }
         }
     }
@@ -350,9 +358,10 @@ public class ForwardEngineerANOCatalogueEngine
         //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
         var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
 
-        var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName(),isOptional) ?? FindNewColumnNamed(syntaxHelper,col, $"ANO{col.GetRuntimeName()}",isOptional);
+        var toReturn = FindNewColumnNamed(syntaxHelper, col, col.GetRuntimeName(), isOptional) ??
+                       FindNewColumnNamed(syntaxHelper, col, $"ANO{col.GetRuntimeName()}", isOptional);
 
-        if(toReturn == null)
+        if (toReturn == null)
             return isOptional
                 ? null
                 : throw new Exception(
@@ -431,10 +440,10 @@ public class ForwardEngineerANOCatalogueEngine
         return isOptional
             ? null
             : throw new Exception(
-            $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
+                $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
     }
 
-    private Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
+    private Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
 
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)

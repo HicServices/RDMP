@@ -46,7 +46,8 @@ public class CatalogueIconProvider : ICoreIconProvider
         _pluginIconProviders = pluginIconProviders;
         ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
-        StateBasedIconProviders.Add(CatalogueStateBasedIconProvider = new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
+        StateBasedIconProviders.Add(CatalogueStateBasedIconProvider =
+            new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
         StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
         StateBasedIconProviders.Add(new ExtractableColumnStateBasedIconProvider());
         StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
@@ -70,12 +71,10 @@ public class CatalogueIconProvider : ICoreIconProvider
         StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
     }
 
-    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
-    {
-        return concept is IDisableable { IsDisabled: true }
+    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None) =>
+        concept is IDisableable { IsDisabled: true }
             ? IconOverlayProvider.GetGreyscale(GetImageImpl(concept, kind))
             : GetImageImpl(concept, kind);
-    }
 
     protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
     {
@@ -237,10 +236,8 @@ public class CatalogueIconProvider : ICoreIconProvider
     /// <param name="t"></param>
     /// <param name="concept"></param>
     /// <returns></returns>
-    public static bool ConceptIs(Type t, object concept)
-    {
-        return t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
-    }
+    public static bool ConceptIs(Type t, object concept) =>
+        t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
 
 
     /// <summary>
@@ -264,8 +261,6 @@ public class CatalogueIconProvider : ICoreIconProvider
         return imageList;
     }
 
-    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
-    {
-        return kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
-    }
+    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind) =>
+        kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
 }

@@ -75,10 +75,10 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                 null /*no schema*/,
                 syntax.GetRuntimeName(tbl ?? string.Empty))
             : syntax.EnsureFullyQualified(
-            syntax.GetRuntimeName(db ?? string.Empty),
-            null /*no schema*/,
-            syntax.GetRuntimeName(tbl ?? string.Empty),
-            syntax.GetRuntimeName(col));
+                syntax.GetRuntimeName(db ?? string.Empty),
+                null /*no schema*/,
+                syntax.GetRuntimeName(tbl ?? string.Empty),
+                syntax.GetRuntimeName(col));
     }
 
     /// <inheritdoc/>
@@ -110,7 +110,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <summary>
     /// Fields expected to be part of any table referenced by the <see cref="DefinitionTableName"/> property
     /// </summary>
-    public static readonly string[] CohortDefinitionTable_RequiredFields = {
+    public static readonly string[] CohortDefinitionTable_RequiredFields =
+    {
         "id",
         // joins to CohortToDefinitionTableJoinColumn and is used as ID in all ExtractableCohort entities throughout DataExportManager
         "projectNumber",
@@ -182,10 +183,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
+        new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
 
     /// <inheritdoc/>
     public DiscoveredDatabase Discover() => SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);
@@ -214,11 +213,6 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
     private static DiscoveredColumn Discover(DiscoveredTable tbl, string column) =>
         tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
-
-    private DiscoveredColumn Discover(DiscoveredTable tbl, string column)
-    {
-        return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
-    }
 
 
     /// <summary>
@@ -257,7 +251,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         catch (Exception e)
         {
             throw new Exception(
-                $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})", e);
+                $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})",
+                e);
         }
     }
 
@@ -270,7 +265,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             var cohortTable = DiscoverCohortTable();
             if (cohortTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}",
+                    CheckResult.Success, null));
 
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
@@ -313,7 +309,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         {
             DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success,
+                null));
         }
         catch (Exception e)
         {
@@ -327,10 +324,10 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>
         {
-            {"projectNumber",newCohortDefinition.ProjectNumber},
-            {"version",newCohortDefinition.Version},
-            {"description",newCohortDefinition.Description}
-        },connection.ManagedTransaction);
+            { "projectNumber", newCohortDefinition.ProjectNumber },
+            { "version", newCohortDefinition.Version },
+            { "description", newCohortDefinition.Description }
+        }, connection.ManagedTransaction);
     }
 
     #endregion

@@ -45,8 +45,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
         tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
         olvDataType.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
-        olvValue.AspectGetter = static s=> (s as IArgument)?.Value;
-
+        olvValue.AspectGetter = static s => (s as IArgument)?.Value;
     }
 
 
@@ -98,7 +97,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             olvColumn1
         );
 
-        if(_isFirstTime)
+        if (_isFirstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvDataType, new Guid("c743eab7-1c07-41dd-bb10-68b25a437056"));
             CommonTreeFunctionality.SetupColumnTracking(olvValue, new Guid("157fde35-d084-42f6-97d1-13a00ba4d0c1"));
@@ -107,7 +106,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         }
 
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = static a=> new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = static a => new IAtomicCommand[]
         {
             new ExecuteCommandImportTableInfo(a, null, false),
             new ExecuteCommandBulkImportTableInfos(a)
@@ -145,5 +144,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
     }
 
-    public static bool IsRootObject(object root) => root is AllRDMPRemotesNode or AllObjectSharingNode or AllPipelinesNode or AllExternalServersNode or AllDataAccessCredentialsNode or AllANOTablesNode or AllServersNode or AllConnectionStringKeywordsNode or AllStandardRegexesNode or AllDashboardsNode;
+    public static bool IsRootObject(object root) => root is AllRDMPRemotesNode or AllObjectSharingNode
+        or AllPipelinesNode or AllExternalServersNode or AllDataAccessCredentialsNode or AllANOTablesNode
+        or AllServersNode or AllConnectionStringKeywordsNode or AllStandardRegexesNode or AllDashboardsNode;
 }

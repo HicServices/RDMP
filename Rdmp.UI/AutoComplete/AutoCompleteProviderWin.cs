@@ -77,8 +77,6 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
         scintilla.AutoCShow(word.Length, string.Join(Separator, list.Select(FormatForAutocomplete)));
     }
 
-    private string FormatForAutocomplete(string word)
-    {
-        return ItemsWithImages.TryGetValue(word, out var image) ? $"{word}?{image}" : word;
-    }
+    private string FormatForAutocomplete(string word) =>
+        ItemsWithImages.TryGetValue(word, out var image) ? $"{word}?{image}" : word;
 }

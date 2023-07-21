@@ -23,7 +23,9 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
     public IEnumerable<object> AlwaysShow { get; }
     public CancellationToken CancellationToken { get; }
 
-    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow, IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text,int maxToTake, CancellationToken cancellationToken)
+    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow,
+        IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text, int maxToTake,
+        CancellationToken cancellationToken)
     {
         AlwaysShow = alwaysShow;
         CancellationToken = cancellationToken;
@@ -38,9 +40,10 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 
             var scorer = new SearchablesMatchScorer
             {
-                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(),
+                    StringComparer.CurrentCultureIgnoreCase)
             };
-            var matches = scorer.ScoreMatches(searchThese, text,null, cancellationToken);
+            var matches = scorer.ScoreMatches(searchThese, text, null, cancellationToken);
 
             // we were cancelled
             if (matches == null)

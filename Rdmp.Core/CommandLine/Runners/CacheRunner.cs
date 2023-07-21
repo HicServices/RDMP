@@ -37,7 +37,9 @@ public class CacheRunner : Runner
         var dataLoadTask = cp.GetDistinctLoggingTask();
 
         var defaults = repositoryLocator.CatalogueRepository;
-        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) ?? throw new NotSupportedException("No default logging server specified, you must specify one in ");
+        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) ??
+                            throw new NotSupportedException(
+                                "No default logging server specified, you must specify one in ");
         var logManager = new LogManager(loggingServer);
 
         logManager.CreateNewLoggingTaskIfNotExists(dataLoadTask);

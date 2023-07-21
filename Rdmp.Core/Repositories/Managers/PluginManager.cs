@@ -34,9 +34,9 @@ public class PluginManager : IPluginManager
             .Where(a => a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion, 2));
 
         //latest versions
-        var latestVersionsOfPlugins =
-            plugins.GroupBy(p => p.GetShortName()).Select(grp => grp.MaxBy(p => p.PluginVersion));
-                        
+        var latestVersionsOfPlugins = plugins.GroupBy(static p => p.GetShortName())
+            .Select(static grp => grp.MaxBy(static p => p.PluginVersion));
+
         return latestVersionsOfPlugins.ToArray();
     }
 }

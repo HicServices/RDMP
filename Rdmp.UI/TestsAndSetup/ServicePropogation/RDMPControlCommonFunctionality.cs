@@ -60,11 +60,14 @@ public class RDMPControlCommonFunctionality
     private AtomicCommandUIFactory atomicCommandUIFactory;
 
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-    private readonly ToolStripButton _runChecksToolStripButton = new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+
+    private readonly ToolStripButton _runChecksToolStripButton =
+        new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+
     private ICheckable _checkable;
     private IActivateItems _activator;
 
-    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new();
+    private Dictionary<string, ToolStripDropDownButton> _dropDownButtons = new();
     private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new();
 
 
@@ -409,6 +412,7 @@ public class RDMPControlCommonFunctionality
         else
         {
             _menuDropDown.DropDownItems.Add(menuItem);
+        }
 
         _menuDropDown.Visible = true;
     }
@@ -445,7 +449,7 @@ public class RDMPControlCommonFunctionality
 
         ((Control)_hostControl).Controls.Add(ToolStrip);
 
-        ToolStripAddedToHost?.Invoke(this,EventArgs.Empty);
+        ToolStripAddedToHost?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -476,7 +480,8 @@ public class RDMPControlCommonFunctionality
         }
     }
 
-    private Dictionary<Scintilla,Color> _oldColours = new();
+    private Dictionary<Scintilla, Color> _oldColours = new();
+
     /// <summary>
     /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
     /// </summary>

@@ -242,15 +242,18 @@ internal class YamlRepositoryTests
         var creds = UnitTests.WhenIHaveA<DataAccessCredentials>(repo1);
         var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
 
-        Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v=>v.Value));
+        Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value));
         Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.IsNull(
+            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
-        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t, ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
+        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds, t,
+            ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
 
-        Assert.AreEqual(t,creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds,t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
+        Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(
+            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -259,9 +262,8 @@ internal class YamlRepositoryTests
 
         Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
         Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
-
-
+        Assert.IsNull(
+            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
     }
 
 

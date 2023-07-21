@@ -86,10 +86,10 @@ public class CatalogueProblemProvider : ProblemProvider
         };
     }
 
-    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
-    {
-        return !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any() ? "Load has no Catalogues therefore loads no tables" : null;
-    }
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode) =>
+        !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any()
+            ? "Load has no Catalogues therefore loads no tables"
+            : null;
 
     public string DescribeProblem(ISqlParameter parameter)
     {
@@ -113,29 +113,23 @@ public class CatalogueProblemProvider : ProblemProvider
         var v = parameter.Value;
 
         var g = new Guesser();
-                
-        if(Culture != null)
+
+        if (Culture != null)
             g.Culture = Culture;
 
         g.AdjustToCompensateForValue(v);
 
         // if user has entered a date as the value
         if (g.Guess.CSharpType == typeof(DateTime))
-        {
             // and there are no delimiters
-            if(v.All(c=>c != '\'' && c != '"'))
-            {
+            if (v.All(c => c != '\'' && c != '"'))
                 return "Parameter value looks like a date but is not surrounded by quotes";
-            }
-        }
 
         return null;
     }
 
-    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
-    {
-        return decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
-    }
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode) =>
+        decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
 
     public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
     {
@@ -148,15 +142,11 @@ public class CatalogueProblemProvider : ProblemProvider
             : null;
     }
 
-    public static string DescribeProblem(IFilter filter)
-    {
-        return string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
-    }
+    public static string DescribeProblem(IFilter filter) =>
+        string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
 
-    public static string DescribeProblem(Catalogue catalogue)
-    {
-        return !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
-    }
+    public static string DescribeProblem(Catalogue catalogue) =>
+        !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
 
     /// <summary>
     /// Identifies problems with dataset governance (e.g. <see cref="Catalogue"/> which have expired <see cref="GovernancePeriod"/>)
@@ -187,7 +177,8 @@ public class CatalogueProblemProvider : ProblemProvider
                     expiredCatalogueIds.Remove(i);
         }
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
+        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
+            .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return
@@ -211,22 +202,23 @@ public class CatalogueProblemProvider : ProblemProvider
 
             if (catalogue.IsProjectSpecific(null))
             {
-                if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
+                if (extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
                     return
                         $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
             }
-            else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            else if (extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            {
                 return
                     $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
+            }
         }
 
         return null;
     }
 
-    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
-    {
-        return LoadDirectoryNode.IsEmpty ? "No Project Directory has been specified for the load" : null;
-    }
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode) => LoadDirectoryNode.IsEmpty
+        ? "No Project Directory has been specified for the load"
+        : null;
 
     public string DescribeProblem(CatalogueItem catalogueItem)
     {
@@ -237,7 +229,9 @@ public class CatalogueProblemProvider : ProblemProvider
             j.PrimaryKey_ID == catalogueItem.ColumnInfo_ID ||
             j.ForeignKey_ID == catalogueItem.ColumnInfo_ID);
 
-        return badJoin != null ? $"Columns in joins declared on this column have mismatched collations ({badJoin})" : null;
+        return badJoin != null
+            ? $"Columns in joins declared on this column have mismatched collations ({badJoin})"
+            : null;
     }
 
     public string DescribeProblem(CohortAggregateContainer container)
@@ -256,9 +250,9 @@ public class CatalogueProblemProvider : ProblemProvider
                 // then something called 'inclusion criteria' should be the first among them
                 var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
                 if (first != null && !first.Equals(container))
-                {
-                    return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
-                }
+                    return
+                        $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
+            }
         }
 
         //count children that are not disabled

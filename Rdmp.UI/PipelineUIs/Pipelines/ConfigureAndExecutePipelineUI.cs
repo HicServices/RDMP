@@ -112,7 +112,6 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
                 "CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
 
-
         _pipelineOptionsSet = true;
 
         _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)
@@ -186,7 +185,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         //clear any old results
         progressUI1.Clear();
 
-        PipelineExecutionStarted?.Invoke(this,new PipelineEngineEventArgs(pipeline));
+        PipelineExecutionStarted?.Invoke(this, new PipelineEngineEventArgs(pipeline));
 
         progressUI1.ShowRunning(true);
 
@@ -206,11 +205,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
                     fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
                     exception = ex;
                 }
-
             }
-
-
-
         );
 
         t.ContinueWith(x =>
@@ -218,7 +213,6 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
             if (success)
                 //if it successfully got here then Thread has run the engine to completion successfully
                 PipelineExecutionFinishedsuccessfully?.Invoke(this, new PipelineEngineEventArgs(pipeline));
-            }
 
             progressUI1.ShowRunning(false);
 
@@ -302,7 +296,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
     public void CancelIfRunning()
     {
-        if(_cancel is { IsCancellationRequested: false })
+        if (_cancel is { IsCancellationRequested: false })
             _cancel.Cancel();
     }
 

@@ -23,7 +23,6 @@ public class QueryBuildingException : Exception
     public List<IMapsDirectlyToDatabaseTable> ProblemObjects { get; private set; }
 
 
-
     /// <inheritdoc cref="QueryBuildingException(string)"/>
     public QueryBuildingException(string message, IEnumerable<IMapsDirectlyToDatabaseTable> problemObjects,
         Exception innerException = null) : base(message, innerException)

@@ -26,18 +26,18 @@ internal class RowPeekerTests
         dt.Rows.Add("splish");
 
         var mock = new Mock<IDbDataCommandDataFlowSource>();
-        mock.SetupSequence(m=>m.ReadOneRow())
+        mock.SetupSequence(m => m.ReadOneRow())
             .Returns(dt.Rows[0])
             .Returns(dt.Rows[1])
             .Returns(dt.Rows[2])
-            .Returns(()=> null);
+            .Returns(() => null);
 
         var p = new RowPeeker();
         using var dt2 = new DataTable();
         dt2.Columns.Add("MyCol");
 
         //Reads fish and peeks dish
-        p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt2);
+        p.AddWhile(mock.Object, r => (string)r["MyCol"] == "fish", dt2);
 
         //read one row
         Assert.AreEqual(1, dt2.Rows.Count);
@@ -47,7 +47,7 @@ internal class RowPeekerTests
         dt3.Columns.Add("MyCol");
 
         //cannot add while there is a peek stored
-        Assert.Throws<Exception>(() => p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt2));
+        Assert.Throws<Exception>(() => p.AddWhile(mock.Object, r => (string)r["MyCol"] == "fish", dt2));
 
         //clear the peek
         //unpeeks dish
@@ -59,7 +59,7 @@ internal class RowPeekerTests
         //Reads nothing but peeks splish
         using var dt4 = new DataTable();
         dt4.Columns.Add("MyCol");
-        p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt4);
+        p.AddWhile(mock.Object, r => (string)r["MyCol"] == "fish", dt4);
 
         Assert.AreEqual(0, dt4.Rows.Count);
 
@@ -71,10 +71,8 @@ internal class RowPeekerTests
 
         using var dt6 = new DataTable();
         dt6.Columns.Add("MyCol");
-        p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt6);
+        p.AddWhile(mock.Object, r => (string)r["MyCol"] == "fish", dt6);
 
         Assert.AreEqual(0, dt6.Rows.Count);
     }
-
-
 }

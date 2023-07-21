@@ -48,13 +48,13 @@ public class ExecuteCommandSet : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandSet(IBasicActivateItems activator,
-
         [DemandsInitialization("A single object on which you want to change a given property")]
         IMapsDirectlyToDatabaseTable setOn,
         [DemandsInitialization("Name of a property you want to change e.g. Description")]
         string property,
-        [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
-        string value):base(activator)
+        [DemandsInitialization(
+            "New value to assign, this will be parsed into a valid Type if property is not a string")]
+        string value) : base(activator)
     {
         _setOn = setOn;
 
@@ -148,9 +148,9 @@ public class ExecuteCommandSet : BasicCommandExecution
             var populatedNewValueWithRelationship = false;
 
             // If the property we are getting a value for is a foreign key ID field then we should show the user the compatible objects
-            if(_property.GetCustomAttribute(typeof(RelationshipAttribute)) is RelationshipAttribute rel && (_property.PropertyType == typeof(int) || _property.PropertyType == typeof(int?)))
-            {
-                if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(rel.Cref))
+            if (_property.GetCustomAttribute(typeof(RelationshipAttribute)) is RelationshipAttribute rel &&
+                (_property.PropertyType == typeof(int) || _property.PropertyType == typeof(int?)))
+                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(rel.Cref))
                 {
                     IMapsDirectlyToDatabaseTable[] available;
 
@@ -158,7 +158,8 @@ public class ExecuteCommandSet : BasicCommandExecution
                     if (!string.IsNullOrWhiteSpace(rel.ValueGetter))
                     {
                         //get available from that method
-                        var method = on.GetType().GetMethod(rel.ValueGetter,Type.EmptyTypes) ?? throw new Exception($"Could not find a method called '{rel.ValueGetter}' on Type '{on.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
+                        var method = on.GetType().GetMethod(rel.ValueGetter, Type.EmptyTypes) ?? throw new Exception(
+                            $"Could not find a method called '{rel.ValueGetter}' on Type '{on.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
                         try
                         {
                             available = ((IEnumerable<IMapsDirectlyToDatabaseTable>)method.Invoke(on, null)).ToArray();
@@ -178,9 +179,8 @@ public class ExecuteCommandSet : BasicCommandExecution
                     NewValue = BasicActivator.SelectOne(_property.Name, available)?.ID;
                     populatedNewValueWithRelationship = true;
                 }
-            }
 
-            if(!populatedNewValueWithRelationship)
+            if (!populatedNewValueWithRelationship)
             {
                 if (BasicActivator.SelectValueType(GetDialogArgs(on), _property.PropertyType, _property.GetValue(on),
                         out var chosen))
@@ -210,9 +210,9 @@ public class ExecuteCommandSet : BasicCommandExecution
         return on is ISqlParameter p && _property.Name.Equals(nameof(ISqlParameter.Value))
             ? AnyTableSqlParameter.GetValuePromptDialogArgs(p)
             : new DialogArgs
-        {
-            WindowTitle = $"Set value for '{_property.Name}'",
-            EntryLabel = _property.Name
-        };
+            {
+                WindowTitle = $"Set value for '{_property.Name}'",
+                EntryLabel = _property.Name
+            };
     }
 }

@@ -51,7 +51,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     public ExtractableDataSetPackage[] AllPackages { get; set; }
 
-    public FolderNode<Project> ProjectRootFolder { get; private set;}
+    public FolderNode<Project> ProjectRootFolder { get; private set; }
     public Project[] Projects { get; set; }
 
     private Dictionary<int, HashSet<ExtractableCohort>> _cohortsByOriginId;
@@ -65,12 +65,14 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     public List<ExternalCohortTable> ForbidListedSources { get; private set; }
 
-    public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new();
-    public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new();
+    public List<IObjectUsedByOtherObjectNode<Project, IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new();
+
+    public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode =
+        new();
 
 
     private readonly object _oProjectNumberToCohortsDictionary = new();
-    public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new();
+    public Dictionary<int, List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new();
 
     public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
 
@@ -220,7 +222,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        }
 
         //add catalogues in folder
         foreach (var project in folder.ChildObjects) AddChildren(project, descendancy.Add(project));
@@ -240,7 +241,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
         ReportProgress("Fetching data export objects");
 
-        _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d);
+        _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository)
+            .ToDictionaryEx(ds => ds.SelectedDataSets_ID, d => d);
 
         var dsDictionary = ExtractableDataSets.ToDictionaryEx(ds => ds.ID, d => d);
         foreach (var s in SelectedDataSets)
@@ -310,7 +312,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var projectSpecificEds in ExtractableDataSets.Where(eds =>
                      eds.Project_ID == projectCataloguesNode.Project.ID))
         {
-
             var cata = (Catalogue)projectSpecificEds.Catalogue;
 
             // cata will be null if it has been deleted from the database
@@ -319,7 +320,6 @@ public class DataExportChildProvider : CatalogueChildProvider
                 children.Add(cata);
                 AddChildren(cata, descendancy.Add(projectSpecificEds.Catalogue));
             }
-
         }
 
         AddToDictionaries(children, descendancy);
@@ -458,8 +458,8 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var progress))
-            children.Add(progress);
+        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var value))
+            children.Add(value);
 
         if (selectedDataSets.RootFilterContainer_ID != null)
         {
@@ -564,12 +564,10 @@ public class DataExportChildProvider : CatalogueChildProvider
 
             using var r = cmd.ExecuteReader();
             while (r.Read())
-            {
                 //really should be only one here but still they might for some reason have 2 references to the same external cohort
-
-                if(_cohortsByOriginId.TryGetValue(Convert.ToInt32(r["OriginID"]),out var result))
+                if (_cohortsByOriginId.TryGetValue(Convert.ToInt32(r["OriginID"]), out var result))
                     //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
-                    foreach (var c in result.Where(c=> c.ExternalCohortTable_ID == source.ID))
+                    foreach (var c in result.Where(c => c.ExternalCohortTable_ID == source.ID))
                     {
                         //load external data from the result set
                         var externalData = new ExternalCohortDefinitionData(r, source.Name);
@@ -581,12 +579,12 @@ public class DataExportChildProvider : CatalogueChildProvider
                         {
                             //for performance also keep a dictionary of project number => compatible cohorts
                             if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
-                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
+                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber,
+                                    new List<ExtractableCohort>());
 
                             ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
                         }
                     }
-            }
         }
         catch (Exception e)
         {
@@ -645,7 +643,8 @@ public class DataExportChildProvider : CatalogueChildProvider
             }
 
             //add the cohort to the list of known cohorts from this source (a project can have lots of cohorts and even cohorts from different sources)
-            var cohortUsedByProject = new ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode,ExtractableCohort>(existing,cohort);
+            var cohortUsedByProject =
+                new ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>(existing, cohort);
             existing.CohortsUsed.Add(cohortUsedByProject);
 
             DuplicatesByCohortSourceUsedByProjectNode.Add(cohortUsedByProject);
@@ -654,8 +653,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         DuplicatesByProject.AddRange(toReturn);
 
         //if the project has no cohorts then add a ??? node
-        if(!toReturn.Any())
-            toReturn.Add(new CohortSourceUsedByProjectNode(project,null));
+        if (!toReturn.Any())
+            toReturn.Add(new CohortSourceUsedByProjectNode(project, null));
 
         return toReturn;
     }
@@ -767,8 +766,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             base.UpdateTo(other);
 
-            if(other is not DataExportChildProvider dxOther)
-            {
+            if (other is not DataExportChildProvider dxOther)
                 throw new NotSupportedException(
                     $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
 

@@ -34,10 +34,10 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
     public void ImportCatalogueWithMandatoryFilter()
     {
         var filter = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[0])
-            {
-                IsMandatory = true,
-                WhereSQL = "There Be Dragons"
-            };
+        {
+            IsMandatory = true,
+            WhereSQL = "There Be Dragons"
+        };
         filter.SaveToDatabase();
 
         //ensure that it is picked SetUp
@@ -49,8 +49,8 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         try
         {
-
-            importedAggregate = cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue,null);
+            importedAggregate =
+                cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
 
             Assert.AreEqual(ChangeDescription.NoChanges, importedAggregate.HasLocalChanges().Evaluation);
 
@@ -71,7 +71,6 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
             Assert.AreEqual(filter.ID, importedFilters[0].ClonedFromExtractionFilter_ID);
             //the WHERE SQL of the filters should be the same
             Assert.AreEqual(filter.WhereSQL, importedFilters[0].WhereSQL);
-
         }
         finally
         {
@@ -93,10 +92,10 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
         var parameterSQL = "DECLARE @dragonCount as varchar(100)";
 
         var filter = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[0])
-            {
-                IsMandatory = true,
-                WhereSQL = "There Be Dragons AND @dragonCount = 1"
-            };
+        {
+            IsMandatory = true,
+            WhereSQL = "There Be Dragons AND @dragonCount = 1"
+        };
         filter.SaveToDatabase();
 
         //Should result in the creation of a parameter
@@ -114,10 +113,10 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         if (createAGlobalOverrideBeforeHand)
         {
-            global = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,parameterSQL)
-                {
-                    Value = "'At Least 1000 Dragons'"
-                };
+            global = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration, parameterSQL)
+            {
+                Value = "'At Least 1000 Dragons'"
+            };
             global.SaveToDatabase();
         }
 
@@ -183,26 +182,26 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
     {
         //First mandatory
         var filter1 = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[0])
-            {
-                IsMandatory = true,
-                WhereSQL = "There Be Dragons"
-            };
+        {
+            IsMandatory = true,
+            WhereSQL = "There Be Dragons"
+        };
         filter1.SaveToDatabase();
 
         //Second mandatory
         var filter2 = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[1])
-            {
-                IsMandatory = true,
-                WhereSQL = "And Months"
-            };
+        {
+            IsMandatory = true,
+            WhereSQL = "And Months"
+        };
         filter2.SaveToDatabase();
 
         //Then one that is not mandatory
         var filter3 = new ExtractionFilter(CatalogueRepository, "MyMandatoryFilter", testData.extractionInformations[2])
-            {
-                IsMandatory = false,
-                WhereSQL = "But Can Also Be Flies"
-            };
+        {
+            IsMandatory = false,
+            WhereSQL = "But Can Also Be Flies"
+        };
         filter3.SaveToDatabase();
 
         //ensure that both are picked SetUp as mandatory filters by catalogue
@@ -214,7 +213,8 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
         try
         {
             //import the Catalogue
-            importedAggregate = cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
+            importedAggregate =
+                cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
             var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;
 
             //Must have a root container

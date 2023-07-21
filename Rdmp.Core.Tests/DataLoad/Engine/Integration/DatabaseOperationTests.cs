@@ -74,7 +74,8 @@ internal class DatabaseOperationTests : DatabaseTests
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo, LoadBubble.Raw);
+                cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
+                    LoadBubble.Raw);
 
             Assert.IsTrue(raw.Exists());
             Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
@@ -118,7 +119,8 @@ internal class DatabaseOperationTests : DatabaseTests
         foreach (var col in columnInfos)
         {
             //create it with the same name
-            var cataItem = new CatalogueItem(CatalogueRepository, cat, col.Name[(col.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)..].Trim('[', ']', '`'));
+            var cataItem = new CatalogueItem(CatalogueRepository, cat,
+                col.Name[(col.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)..].Trim('[', ']', '`'));
             toCleanUp.Push(cataItem);
 
             cataItem.SetColumnInfo(col);

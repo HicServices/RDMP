@@ -88,12 +88,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tlvCic.RowHeight = 19;
         olvExecute.AspectGetter += Common.ExecuteAspectGetter;
         tlvCic.ButtonClick += tlvCic_ButtonClick;
-        olvOrder.AspectGetter += o=> o switch
-        {
-            JoinableCollectionNode => null,
-            ISqlParameter => null,
-            _ => (o as IOrderable)?.Order
-        };
+        olvOrder.AspectGetter += static o => o is IOrderable orderable ? orderable.Order : null;
         olvOrder.IsEditable = false;
         tlvCic.ItemActivate += TlvCic_ItemActivate;
         AssociatedCollection = RDMPCollection.Cohort;
@@ -189,13 +184,15 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             activator.RefreshBus.Subscribe(this);
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
-            _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol, new RDMPCollectionCommonFunctionalitySettings
-            {
-                SuppressActivate = true,
-                AddFavouriteColumn = false,
-                AddCheckColumn = false,
-                AllowSorting =  true //important, we need sorting on so that we can override sort order with our OrderableComparer
-            });
+            _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    SuppressActivate = true,
+                    AddFavouriteColumn = false,
+                    AddCheckColumn = false,
+                    AllowSorting =
+                        true //important, we need sorting on so that we can override sort order with our OrderableComparer
+                });
             _commonFunctionality.MenuBuilt += MenuBuilt;
             tlvCic.AddObject(databaseObject);
 
@@ -275,10 +272,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         ticket.SetItemActivator(activator);
     }
 
-    public override string GetTabName()
-    {
-        return $"Execute:{base.GetTabName()}";
-    }
+    public override string GetTabName() => $"Execute:{base.GetTabName()}";
 
     private void ticket_TicketTextChanged(object sender, EventArgs e)
     {
@@ -383,7 +377,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
             e.Menu.Items.Add(
                 new ToolStripMenuItem("View Crash Message", null,
-                    (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null });
+                    (s, ev) => ViewCrashMessage(c)) { Enabled = c.CrashMessage != null });
 
             e.Menu.Items.Add(
                 BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,

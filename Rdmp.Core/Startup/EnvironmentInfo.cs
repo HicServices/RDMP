@@ -17,5 +17,5 @@ public static class EnvironmentInfo
     /// <summary>
     /// For our purposes 'Linux' = anything that isn't Windows
     /// </summary>
-    public static bool IsLinux => Environment.OSVersion.Platform!=PlatformID.Win32NT;
+    public static bool IsLinux => Environment.OSVersion.Platform != PlatformID.Win32NT;
 }

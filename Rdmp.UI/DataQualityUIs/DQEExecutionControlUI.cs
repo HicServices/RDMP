@@ -44,10 +44,8 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         SetDatabaseObject(Activator, _catalogue);
     }
 
-    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
-    {
-        return new DqeOptions { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
-    }
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) => new DqeOptions
+        { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
@@ -55,14 +53,10 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         _catalogue = databaseObject;
         checkAndExecuteUI1.SetItemActivator(activator);
 
-        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
-        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
-    }
-
-    public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
-    {
-        base.ConsultAboutClosing(sender,e);
-        checkAndExecuteUI1.ConsultAboutClosing(sender,e);
+        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue),
+            "Validation Rules...");
+        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator)
+            { OverrideCommandName = "View Results..." }.SetTarget(databaseObject));
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)

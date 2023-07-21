@@ -28,7 +28,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
     public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable) :
         base(itemActivator)
     {
-        if(fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
+        if (fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
         {
             SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}");
             return;
@@ -49,7 +49,6 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         if (_files == null)
         {
-
             var f = BasicActivator.SelectFile("Plugin to add",
                 $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
             if (f != null)
@@ -60,12 +59,13 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         foreach (var f in _files)
         {
-            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions {File = f.FullName});
-            runner.Run(BasicActivator.RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet,ThrowImmediatelyCheckNotifier.Quiet,new DataFlowPipeline.GracefulCancellationToken());
+            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions { File = f.FullName });
+            runner.Run(BasicActivator.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new DataFlowPipeline.GracefulCancellationToken());
         }
 
         Show("Changes will take effect on restart");
-        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Plugin>()
+        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>()
             .FirstOrDefault();
 
         if (p != null)

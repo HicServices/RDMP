@@ -32,7 +32,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
         if (!allConfigurations.Any())
-            SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
+            SetImpossible(
+                "You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 
         UseTripleDotSuffix = true;
     }
@@ -55,16 +56,15 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         _cic = cic;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
-    }
+    public override string GetCommandHelp() =>
+        "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
 
     public override void Execute()
     {
         base.Execute();
 
-        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
+        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query",
+            BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
         if (cic == null)
             return;
 
@@ -85,9 +85,9 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         request.CohortIdentificationConfiguration = cic;
 
-        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results",cic);
+        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results", cic);
 
-        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s,u)=>OnImportCompletedSuccessfully(cic);
+        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(cic);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

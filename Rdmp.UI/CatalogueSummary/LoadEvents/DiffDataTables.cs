@@ -34,11 +34,11 @@ public partial class DiffDataTables : UserControl
 
         foreach (DataColumn col in dt1.Columns)
             dtResult.Columns.Add(col.ColumnName);
-            
-        if(dt1.Columns.Count != dt2.Columns.Count)
+
+        if (dt1.Columns.Count != dt2.Columns.Count)
             throw new NotSupportedException("Expected DataTables to have the same number of columns");
-         
-        if(dt1.Rows.Count != dt2.Rows.Count)
+
+        if (dt1.Rows.Count != dt2.Rows.Count)
             throw new NotSupportedException("Expected DataTables to have the same number of rows");
 
         for (var r = 0; r < dt1.Rows.Count; r++)
@@ -50,10 +50,9 @@ public partial class DiffDataTables : UserControl
                 var val1 = dt1.Rows[r][c] != null ? dt1.Rows[r][c].ToString() : "";
                 var val2 = dt2.Rows[r][c] != null ? dt2.Rows[r][c].ToString() : "";
 
-                if(val1.Equals(val2))
-                    copyToRow[c] = val1;//regular difference
-                else
-                if (val1.Trim().Equals(val2.Trim()))//whitespace difference
+                if (val1.Equals(val2))
+                    copyToRow[c] = val1; //regular difference
+                else if (val1.Trim().Equals(val2.Trim())) //whitespace difference
                     copyToRow[c] = $"{val1}{WhitespaceDifference}";
                 else
                     copyToRow[c] = $"{val1}{DifferenceSymbol}{val2}";

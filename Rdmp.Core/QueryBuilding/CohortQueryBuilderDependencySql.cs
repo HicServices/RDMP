@@ -49,7 +49,8 @@ public class CohortQueryBuilderDependencySql
             throw new InvalidOperationException("Block can only be used once");
 
         //import parameters unless caching was used
-        compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed, out var renameOperations);
+        compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed,
+            out var renameOperations);
 
         //rename in the SQL too!
         foreach (var kvp in renameOperations)

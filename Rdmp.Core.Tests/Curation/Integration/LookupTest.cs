@@ -41,13 +41,17 @@ public class LookupTest : DatabaseTests
         var cata1 = new Catalogue(CatalogueRepository, "Catalogue1");
         var cata2 = new Catalogue(CatalogueRepository, "Catalogue2");
 
-        var cata2_code = new CatalogueItem(CatalogueRepository,cata2,"code");
-        var cata2_desc = new CatalogueItem(CatalogueRepository,cata2,"desc");
-        new ExtractionInformation(CatalogueRepository,cata2_code,tiHeader_Code,"[tbl]..[code]");
-        new ExtractionInformation(CatalogueRepository,cata2_desc,tiLookup_Desc,"[lookup]..[desc]");
-            
-        new CatalogueChildProvider(CatalogueRepository,null, ThrowImmediatelyCheckNotifier.QuietPicky,null);
-            
+        var cata1_code = new CatalogueItem(CatalogueRepository, cata1, "code");
+        var cata1_desc = new CatalogueItem(CatalogueRepository, cata1, "desc");
+        new ExtractionInformation(CatalogueRepository, cata1_code, tiHeader_Code, "[tbl]..[code]");
+        new ExtractionInformation(CatalogueRepository, cata1_desc, tiLookup_Desc, "[lookup]..[desc]");
+
+        var cata2_code = new CatalogueItem(CatalogueRepository, cata2, "code");
+        var cata2_desc = new CatalogueItem(CatalogueRepository, cata2, "desc");
+        new ExtractionInformation(CatalogueRepository, cata2_code, tiHeader_Code, "[tbl]..[code]");
+        new ExtractionInformation(CatalogueRepository, cata2_desc, tiLookup_Desc, "[lookup]..[desc]");
+
+        new CatalogueChildProvider(CatalogueRepository, null, ThrowImmediatelyCheckNotifier.QuietPicky, null);
     }
 
     [Test]
@@ -71,11 +75,37 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            try{child.DeleteInDatabase();}catch (Exception){}
-            try{child2.DeleteInDatabase();}catch (Exception){}
-            try{child3.DeleteInDatabase();}catch (Exception){}
-            try{parent.DeleteInDatabase();}catch (Exception){}
+            try
+            {
+                child.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
 
+            try
+            {
+                child2.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                child3.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                parent.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 

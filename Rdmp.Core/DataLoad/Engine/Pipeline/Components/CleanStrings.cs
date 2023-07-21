@@ -46,7 +46,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                     if (o == DBNull.Value || o == null)
                         continue;
 
-                    if(o is not string v)
+                    if (o is not string s)
                         throw new ArgumentException(
                             $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 
@@ -85,7 +85,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         job.OnProgress(this,
             new ProgressEventArgs(_taskDescription, new ProgressMeasurement(_rowsProcessed, ProgressType.Records),
                 timer.Elapsed));
-        toProcess.EndLoadData();
+
         return toProcess;
     }
 

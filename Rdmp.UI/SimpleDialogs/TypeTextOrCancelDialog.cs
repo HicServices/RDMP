@@ -39,9 +39,8 @@ public partial class TypeTextOrCancelDialog : Form
         {
             WindowTitle = title,
             EntryLabel = prompt
-        },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
+        }, maxCharacters, startingTextForInputBox, allowBlankText, multiLine)
     {
-
     }
 
     public TypeTextOrCancelDialog(DialogArgs args, int maxCharacters, string startingTextForInputBox = null,
@@ -135,10 +134,10 @@ public partial class TypeTextOrCancelDialog : Form
         textBox1.ForeColor = Color.Black;
 
         //if there's some text typed and we want typed text to be sane
-        if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
-        {
+        if (RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
             //if the sane name doesn't match the
-            if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
+            if (!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),
+                    StringComparison.CurrentCultureIgnoreCase))
             {
                 btnOk.Enabled = false;
                 textBox1.ForeColor = Color.Red;
@@ -170,12 +169,8 @@ public partial class TypeTextOrCancelDialog : Form
     {
         // Set the height by taking the designer height and adding on the height that the task description label wants to be
         if (_multiline)
-        {
             Height = taskDescriptionLabel1.PreferredHeight + 220;
-        }
         else
-        {
             Height = taskDescriptionLabel1.PreferredHeight + 100;
-        }
     }
 }

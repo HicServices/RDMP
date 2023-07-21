@@ -16,7 +16,7 @@ namespace Rdmp.UI.Performance.StackTraceProcessing;
 internal class StackFramesTree
 {
     public string CurrentFrame { get; private set; }
-    public int QueryCount{ get; private set; }
+    public int QueryCount { get; private set; }
 
     public bool HasSourceCode { get; private set; }
 
@@ -26,7 +26,7 @@ internal class StackFramesTree
 
     public bool IsInDatabaseAccessAssembly { get; private set; }
 
-    public Dictionary<string,StackFramesTree> Children = new();
+    public Dictionary<string, StackFramesTree> Children = new();
 
     public StackFramesTree(string[] stackFrameAndSubframes, QueryPerformed performed,
         bool isInDatabaseAccessAssemblyYet)
@@ -43,7 +43,8 @@ internal class StackFramesTree
 
     private bool PopulateSourceCode(string frame)
     {
-        HasSourceCode = ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out var filenameMatch, out var lineNumberMatch, out var method);
+        HasSourceCode = ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out var filenameMatch,
+            out var lineNumberMatch, out var method);
 
         Filename = filenameMatch;
         LineNumber = lineNumberMatch;
@@ -52,10 +53,9 @@ internal class StackFramesTree
         return HasSourceCode;
     }
 
-    public static bool FindSourceCode(string frame)
-    {
-        return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out _);
-    }
+    public static bool FindSourceCode(string frame) =>
+        ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out _);
+
     public static string GetMethodName(string frame)
     {
         ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out var method);
@@ -64,10 +64,8 @@ internal class StackFramesTree
     }
 
 
-    public override string ToString()
-    {
-        return !HasSourceCode ? CurrentFrame : $"{Path.GetFileNameWithoutExtension(Filename)}.{Method}";
-    }
+    public override string ToString() =>
+        !HasSourceCode ? CurrentFrame : $"{Path.GetFileNameWithoutExtension(Filename)}.{Method}";
 
     public void AddSubframes(string[] lines, QueryPerformed query)
     {
@@ -81,8 +79,8 @@ internal class StackFramesTree
             return;
 
         //we know about the child
-        if (Children.TryGetValue(lines[1],out var child))
-            child.AddSubframes(lines.Skip(1).ToArray(), query);//tell child to audit the relevant subframes
+        if (Children.TryGetValue(lines[1], out var child))
+            child.AddSubframes(lines.Skip(1).ToArray(), query); //tell child to audit the relevant subframes
         else
             Children.Add(lines[1], new StackFramesTree(lines.Skip(1).ToArray(), query, IsInDatabaseAccessAssembly));
     }

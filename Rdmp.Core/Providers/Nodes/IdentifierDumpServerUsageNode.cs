@@ -24,27 +24,19 @@ public class IdentifierDumpServerUsageNode : Node, IDeleteable
         IdentifierDumpServer = identifierDumpServer;
     }
 
-    public override string ToString()
-    {
-        return $"Usage of:{IdentifierDumpServer.Name}";
-    }
+    public override string ToString() => $"Usage of:{IdentifierDumpServer.Name}";
 
-    protected bool Equals(IdentifierDumpServerUsageNode other)
-    {
-        return Equals(TableInfo, other.TableInfo);
-    }
+    protected bool Equals(IdentifierDumpServerUsageNode other) => Equals(TableInfo, other.TableInfo);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((IdentifierDumpServerUsageNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((IdentifierDumpServerUsageNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(TableInfo);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(TableInfo);
 
     public void DeleteInDatabase()
     {

@@ -17,16 +17,17 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
 {
-    public readonly HashSet<object>  AlwaysShow = new();
+    public readonly HashSet<object> AlwaysShow = new();
     private readonly CompositeAllFilter _compositeFilter;
 
     public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow, ObjectListView olv, string text,
         StringComparison comparison) : base(olv, text, comparison)
     {
-        if(!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
+        if (!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
         {
             var tokens = text.Split(' ');
-            var filters = tokens.Select(token => new TextMatchFilter(olv, token, comparison)).Cast<IModelFilter>().ToList();
+            var filters = tokens.Select(token => new TextMatchFilter(olv, token, comparison)).Cast<IModelFilter>()
+                .ToList();
 
             _compositeFilter = new CompositeAllFilter(filters);
         }

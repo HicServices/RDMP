@@ -26,9 +26,10 @@ public class ProjectChecksTestsSimple : DatabaseTests
 
         try
         {
-            var ex = Assert.Throws<Exception>(()=>new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.AreEqual("Project does not have any ExtractionConfigurations yet",ex?.Message);
-
+            var ex = Assert.Throws<Exception>(() =>
+                new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(
+                    ThrowImmediatelyCheckNotifier.Quiet));
+            Assert.AreEqual("Project does not have any ExtractionConfigurations yet", ex?.Message);
         }
         finally
         {
@@ -40,9 +41,8 @@ public class ProjectChecksTestsSimple : DatabaseTests
     public void Project_NoDirectory()
     {
         var p = GetProjectWithConfig(out var config);
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
         Assert.AreEqual("Project does not have an ExtractionDirectory", ex?.Message);
-            
     }
 
     [Test]
@@ -52,10 +52,6 @@ public class ProjectChecksTestsSimple : DatabaseTests
     public void Project_NonExistentDirectory(string dir)
     {
         var p = GetProjectWithConfig(out var config);
-           
-        p.ExtractionDirectory = dir;
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
-        Assert.IsTrue(Regex.IsMatch(ex.Message,@"Project ExtractionDirectory .* Does Not Exist"));
 
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
@@ -119,9 +115,9 @@ public class ProjectChecksTestsSimple : DatabaseTests
         var lookupDir = remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
 
         //this time put a file in
-        File.AppendAllLines(Path.Combine(lookupDir.FullName,"Text.txt"),new string[]{"Amagad"});
+        File.AppendAllLines(Path.Combine(lookupDir.FullName, "Text.txt"), new string[] { "Amagad" });
 
-        config.IsReleased = true;//make environment think config is released
+        config.IsReleased = true; //make environment think config is released
         config.SaveToDatabase();
         try
         {
@@ -143,9 +139,9 @@ public class ProjectChecksTestsSimple : DatabaseTests
     public void Configuration_NoDatasets()
     {
         var p = GetProjectWithConfigDirectory(out var config, out _);
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
-        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
-
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
+        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",
+            ex.Message);
     }
 
 
@@ -164,7 +160,8 @@ public class ProjectChecksTestsSimple : DatabaseTests
     {
         try
         {
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??ThrowImmediatelyCheckNotifier.QuietPicky);
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(notifier ??
+                ThrowImmediatelyCheckNotifier.QuietPicky);
         }
         finally
         {
@@ -179,7 +176,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
         {
             ProjectNumber = -5000
         };
-        config = new ExtractionConfiguration(DataExportRepository,p);
+        config = new ExtractionConfiguration(DataExportRepository, p);
         return p;
     }
 

@@ -55,7 +55,7 @@ public class BasicParameterUseTests : DatabaseTests
             var tbl = db.ExpectTable(tableName);
 
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var ti,out var ci);
+            importer.DoImport(out var ti, out var ci);
 
             var engineer = new ForwardEngineerCatalogue(ti, ci);
             engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);
@@ -65,9 +65,9 @@ public class BasicParameterUseTests : DatabaseTests
             //create an extraction filter
             var extractionInformation = ei.Single();
             var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation)
-                {
-                    WhereSQL = $"{extractionInformation.SelectSQL} = @n"
-                };
+            {
+                WhereSQL = $"{extractionInformation.SelectSQL} = @n"
+            };
             filter.SaveToDatabase();
 
             //create the parameters for filter (no globals, masters or scope adjacent parameters)
@@ -81,7 +81,8 @@ public class BasicParameterUseTests : DatabaseTests
 
             var qb = new QueryBuilder(null, null);
             qb.AddColumn(extractionInformation);
-            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+                new[] { filter }, FilterContainerOperation.AND);
 
             using var con = db.Server.GetConnection();
             con.Open();

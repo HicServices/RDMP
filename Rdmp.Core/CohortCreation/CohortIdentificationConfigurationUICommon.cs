@@ -75,7 +75,9 @@ public class CohortIdentificationConfigurationUICommon
     {
         var key = GetKey(rowobject);
 
-        return key != null ? Configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount() : (object)null;
+        return key != null
+            ? Configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount()
+            : (object)null;
     }
 
     public object Count_AspectGetter(object rowobject)
@@ -370,11 +372,8 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception e)
             {
-                Activator.ShowException("Runner crashed",e);
+                Activator.ShowException("Runner crashed", e);
             }
-
-        }).ContinueWith((_, _) => {
-            afterDelegate();
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        }).ContinueWith((_, _) => { afterDelegate(); }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }

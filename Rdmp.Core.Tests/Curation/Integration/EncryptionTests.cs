@@ -25,7 +25,7 @@ public class EncryptionTests : DatabaseTests
         var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
 
         Assert.AreNotEqual(toEncrypt, encryptedBinaryString);
-        Assert.AreEqual(toEncrypt,encrypter.Decrypt(encryptedBinaryString));
+        Assert.AreEqual(toEncrypt, encrypter.Decrypt(encryptedBinaryString));
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class EncryptionTests : DatabaseTests
         var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
 
         Console.WriteLine($"Encrypted password was:{encryptedBinaryString}");
-            
+
         Assert.True(encrypter.IsStringEncrypted(encryptedBinaryString));
         Assert.False(encrypter.IsStringEncrypted(toEncrypt));
     }
@@ -87,8 +87,8 @@ public class EncryptionTests : DatabaseTests
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
             creds.Password = "fish";
-            Assert.AreNotEqual("fish",creds.Password);
-            Assert.AreEqual("fish", creds.GetDecryptedPassword());//but we should still be able to decrypt it
+            Assert.AreNotEqual("fish", creds.Password);
+            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
 
             //save it
             creds.SaveToDatabase();
@@ -112,10 +112,6 @@ public class EncryptionTests : DatabaseTests
             Assert.AreEqual(creds.Password, newCopy.Password); //passwords should match
             Assert.AreNotEqual("fish", creds.Password); //neither should be fish
             Assert.AreNotEqual("fish", newCopy.Password);
-
-            //both should decrypt to the same value (fish
-            Assert.AreEqual("fish",creds.GetDecryptedPassword());
-            Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
 
             //both should decrypt to the same value (fish
             Assert.AreEqual("fish", creds.GetDecryptedPassword());
@@ -196,15 +192,14 @@ public class EncryptionTests : DatabaseTests
             using (var con = CatalogueTableRepository.GetConnection())
             {
                 using var cmd = DatabaseCommandHelper.GetCommand(
-                           "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
-                           con.Transaction);
+                    "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
+                    con.Transaction);
                 Assert.AreEqual(1, cmd.ExecuteNonQuery());
-
             }
 
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
 
-            Assert.AreEqual("fish",newCopy.GetDecryptedPassword());
+            Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
             Assert.AreNotEqual("fish", newCopy.Password);
         }
         finally
@@ -230,5 +225,4 @@ public class EncryptionTests : DatabaseTests
             "The free text Value supplied to this class was too long to be encrypted (Length of string was 201)",
             ex.Message);
     }
-
 }

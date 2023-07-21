@@ -53,7 +53,6 @@ public class Validator
     public List<ItemValidator> ItemValidators { get; set; }
 
 
-
     public Validator()
     {
         ItemValidators = new List<ItemValidator>();
@@ -213,13 +212,13 @@ public class Validator
     {
         lock (_oLockExtraTypes)
         {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a=>a.GetTypes()).Where(
-
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(
                 //type is
                 type =>
                     type != null &&
                     //of the correct Type
-                    (typeof(IConstraint).IsAssignableFrom(type) || typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+                    (typeof(IConstraint).IsAssignableFrom(type) ||
+                     typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
                     &&
                     !type.IsAbstract
                     &&
@@ -329,14 +328,13 @@ public class Validator
 
         //for all the columns we need to validate
         foreach (var itemValidator in ItemValidators)
-        {
             if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out var o))
             {
                 //get the first validation failure for the given column (or null if it is valid)
                 var result = itemValidator.ValidateAll(o, vals, keys);
 
                 //if it wasn't valid then add it to the eList
-                if(result is { SourceItemValidator: null })
+                if (result is { SourceItemValidator: null })
                 {
                     result.SourceItemValidator = itemValidator;
                     eList.Add(result);
@@ -397,8 +395,7 @@ public class Validator
 
         foreach (var itemValidator in ItemValidators)
         {
-
-            if(itemValidator.TargetProperty == null)
+            if (itemValidator.TargetProperty == null)
                 throw new NullReferenceException("Target property cannot be null");
 
             try
@@ -477,7 +474,7 @@ public class Validator
             if (itemValidator.TargetProperty == oldName)
                 itemValidator.TargetProperty = newName;
 
-            itemValidator.PrimaryConstraint?.RenameColumn(oldName,newName);
+            itemValidator.PrimaryConstraint?.RenameColumn(oldName, newName);
 
             foreach (ISecondaryConstraint constraint in itemValidator.SecondaryConstraints)
                 constraint.RenameColumn(oldName, newName);

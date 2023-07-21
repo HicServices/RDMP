@@ -139,12 +139,8 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         var tbl = Database.CreateTable("TestTable", dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
-        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out var cataItems, out _extractionInformations);
+        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out _, out _extractionInformations);
 
-        var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
-
-        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out _,out _extractionInformations);
-            
         var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;
         _privateID.SaveToDatabase();
@@ -154,7 +150,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         var pipeline = SetupPipeline();
 
-        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions
+        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
         {
             Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID.ToString(),
             ExtractGlobals = true, Pipeline = pipeline.ID.ToString()
@@ -202,7 +198,6 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         results = pipelineUseCase.Destination;
         _extractableColumns = new List<IColumn>(before);
     }
-
 
 
     protected virtual Pipeline SetupPipeline()

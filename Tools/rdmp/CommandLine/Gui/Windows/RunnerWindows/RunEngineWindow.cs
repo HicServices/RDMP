@@ -201,7 +201,6 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
                     consoleOutput.Insert(0, line);
                     Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
                 }
-
             }
         });
     }
@@ -215,14 +214,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             var str = consoleOutput[item];
 
-            if (str.Length > width)
-            {
-                str = str[..width];
-            }
-            else
-            {
-                str = str.PadRight(width,' ');
-            }
+            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
 
             _results.Move(col, line);
 

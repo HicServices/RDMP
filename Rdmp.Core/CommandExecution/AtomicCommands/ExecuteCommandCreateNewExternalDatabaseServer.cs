@@ -31,8 +31,10 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, PermissableDefaults defaultToSet,DiscoveredDatabase toCreate)
-        : this(activator,defaultToSet == PermissableDefaults.None ? null : defaultToSet.ToTier2DatabaseType(),defaultToSet)
+    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator,
+        PermissableDefaults defaultToSet, DiscoveredDatabase toCreate)
+        : this(activator, defaultToSet == PermissableDefaults.None ? null : defaultToSet.ToTier2DatabaseType(),
+            defaultToSet)
     {
         _database = toCreate;
     }
@@ -112,6 +114,5 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
         var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
         return IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
-
     }
 }

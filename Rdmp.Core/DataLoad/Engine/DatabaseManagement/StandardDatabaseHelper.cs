@@ -27,11 +27,13 @@ public class StandardDatabaseHelper
         DatabaseNamer = namer;
 
 
-        foreach (var stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live })
+        foreach (var stage in new[] { LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live })
         {
             var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
-            DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));
-
+            DatabaseInfoList.Add(stage,
+                stage == LoadBubble.Raw
+                    ? rawServer.ExpectDatabase(stageName)
+                    : liveDatabase.Server.ExpectDatabase(stageName));
         }
     }
 

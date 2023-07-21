@@ -22,7 +22,7 @@ internal class ExecuteSqlInDleStage
 {
     private readonly IDataLoadJob _job;
     private readonly LoadStage _loadStage;
-    private Regex _regexEntity = new(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
+    private Regex _regexEntity = new(@"{([CT]):(\d+)}", RegexOptions.IgnoreCase);
 
     public ExecuteSqlInDleStage(IDataLoadJob job, LoadStage loadStage)
     {
@@ -38,7 +38,6 @@ internal class ExecuteSqlInDleStage
         try
         {
             Dictionary<int, Stopwatch> performance;
-
 
 
             using (var con = db.Server.GetConnection())
@@ -87,14 +86,16 @@ internal class ExecuteSqlInDleStage
         switch (entity)
         {
             case 'T':
-                var toReturnTable = tables.SingleOrDefault(t => t.ID == id) ?? throw new ExecuteSqlFileRuntimeTaskException(
-                        $"Failed to find a TableInfo in the load with ID {id}.  All TableInfo IDs referenced in script must be part of the LoadMetadata");
+                var toReturnTable = tables.SingleOrDefault(t => t.ID == id) ??
+                                    throw new ExecuteSqlFileRuntimeTaskException(
+                                        $"Failed to find a TableInfo in the load with ID {id}.  All TableInfo IDs referenced in script must be part of the LoadMetadata");
                 return toReturnTable.GetRuntimeName(_loadStage, namer);
 
             case 'C':
 
-                var toReturnColumn = tables.SelectMany(t=>t.ColumnInfos).SingleOrDefault(t => t.ID == id) ?? throw new ExecuteSqlFileRuntimeTaskException(
-                        $"Failed to find a ColumnInfo in the load with ID {id}.  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
+                var toReturnColumn = tables.SelectMany(t => t.ColumnInfos).SingleOrDefault(t => t.ID == id) ??
+                                     throw new ExecuteSqlFileRuntimeTaskException(
+                                         $"Failed to find a ColumnInfo in the load with ID {id}.  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
                 var db = toReturnColumn.TableInfo.GetDatabaseRuntimeName(_loadStage, namer);
                 var tbl = toReturnColumn.TableInfo.GetRuntimeName(_loadStage, namer);
                 var col = toReturnColumn.GetRuntimeName(_loadStage);

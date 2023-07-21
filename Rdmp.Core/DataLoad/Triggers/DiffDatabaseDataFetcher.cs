@@ -101,10 +101,11 @@ public class DiffDatabaseDataFetcher
                 allCols.Where( //from all columns take all columns where
                     c => allArchiveCols.Any(
                         //there is a column with the same name in the archive columns (ignoring case)
-                        archiveCol=>c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(), StringComparison.InvariantCultureIgnoreCase)
+                        archiveCol => c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(),
+                                          StringComparison.InvariantCultureIgnoreCase)
 
-                                    //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
-                                    && !SpecialFieldNames.IsHicPrefixed(c)
+                                      //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
+                                      && !SpecialFieldNames.IsHicPrefixed(c)
                     )).ToArray();
 
             checkNotifier.OnCheckPerformed(new CheckEventArgs(
@@ -137,21 +138,11 @@ public class DiffDatabaseDataFetcher
                 syntaxHelper.EnsureWrapped(pk.GetRuntimeName()),
                 archiveTableName);
 
-        var qb = new QueryBuilder(null, null, new[] {_tableInfo})
+        var qb = new QueryBuilder(null, null, new[] { _tableInfo })
         {
             TopX = _batchSize
         };
-        qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
-            
-        //where
-        var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null,
-            $"{syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} = {_dataLoadRunID}", "DataLoadRunID matches", null, null);
-        var filter2 =
-            new SpontaneouslyInventedFilter(memoryRepository,null,
-                $@" not exists (
-select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} < {_dataLoadRunID}
-)",
-                "Record doesn't exist in archive",null,null);
+        qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository, c)).ToArray());
 
         //where
         var filter1 = new SpontaneouslyInventedFilter(memoryRepository, null,
@@ -242,14 +233,14 @@ Join
 
 
         sql = string.Format(sql,
-            _batchSize,                         //{0}
-            tableName,                          //{1}
-            archiveTableName,                   //{2}
-            whereStatement,                     //{3}
-            syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID),    //{4}
-            _dataLoadRunID,                     //{5}
-            GetSharedColumnsSQL(tableName),     //{6}
-            GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive),   //{7}
+            _batchSize, //{0}
+            tableName, //{1}
+            archiveTableName, //{2}
+            whereStatement, //{3}
+            syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID), //{4}
+            _dataLoadRunID, //{5}
+            GetSharedColumnsSQL(tableName), //{6}
+            GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive), //{7}
             archive, //{8}
             syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
         );
@@ -274,8 +265,7 @@ Join
             var replacedRow = Updates_Replaced.Rows.Add();
 
             foreach (DataColumn column in dtComboTable.Columns)
-            {
-                if (column.ColumnName.StartsWith(zzArchive,StringComparison.InvariantCultureIgnoreCase))
+                if (column.ColumnName.StartsWith(zzArchive, StringComparison.InvariantCultureIgnoreCase))
                     replacedRow[column.ColumnName[zzArchive.Length..]] = fromRow[column];
                 else
                     newRow[column.ColumnName] = fromRow[column];
@@ -289,7 +279,8 @@ Join
         foreach (var sharedColumn in _sharedColumns)
         {
             sb.AppendLine();
-            sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
+            sb.Append(
+                $"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
             sb.Append(',');
         }
 
@@ -329,6 +320,8 @@ Join
             da.Fill(dt);
         }
         else
+        {
             checkNotifier.OnCheckPerformed(new CheckEventArgs("User decided not to execute the SQL", CheckResult.Fail));
+        }
     }
 }

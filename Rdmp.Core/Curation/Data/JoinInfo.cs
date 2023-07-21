@@ -117,6 +117,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
@@ -162,7 +163,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Joink Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "ForeignKey_ID", foreignKey.ID },
             { "PrimaryKey_ID", primaryKey.ID },
@@ -171,13 +172,8 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         });
     }
 
-    }
-
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $" {ForeignKey.Name} = {PrimaryKey.Name}";
-    }
+    public override string ToString() => $" {ForeignKey.Name} = {PrimaryKey.Name}";
 
     /// <summary>
     /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of

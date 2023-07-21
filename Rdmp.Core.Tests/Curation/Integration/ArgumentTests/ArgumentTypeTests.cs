@@ -16,14 +16,15 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
 public class ArgumentTypeTests : UnitTests
 {
-    private object[] _expectedAnswers = {
+    private object[] _expectedAnswers =
+    {
         5,
         new CultureInfo("en-us"),
         CultureInfo.CurrentCulture
     };
 
-    [TestCase(typeof(int),"5",0)]
-    [TestCase(typeof(CultureInfo),"en-us",1)]
+    [TestCase(typeof(int), "5", 0)]
+    [TestCase(typeof(CultureInfo), "en-us", 1)]
     public void Test_Type_WithStringValue(Type t, string val, int expectedAnswerIdx)
     {
         var arg = WhenIHaveA<ProcessTaskArgument>();

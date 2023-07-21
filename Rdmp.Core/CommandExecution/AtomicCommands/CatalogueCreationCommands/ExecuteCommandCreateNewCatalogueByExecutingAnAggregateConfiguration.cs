@@ -39,7 +39,8 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.Execute();
 
-        _aggregateConfiguration ??= SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _aggregateConfiguration ??=
+            SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if (_aggregateConfiguration == null)
             return;
@@ -62,7 +63,8 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
             if (externalData != null)
             {
                 var projNumber = externalData.ExternalProjectNumber;
-                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
+                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>()
+                    .Where(p => p.ProjectNumber == projNumber).ToArray();
                 if (projs.Length == 1)
                     ProjectSpecific = projs[0];
             }
@@ -75,9 +77,11 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
 
         var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
 
-        var runner = BasicActivator.GetPipelineRunner(new DialogArgs {
+        var runner = BasicActivator.GetPipelineRunner(new DialogArgs
+            {
                 WindowTitle = "Create Table from AggregateConfiguration",
-                TaskDescription = "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
+                TaskDescription =
+                    "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
             }
             , useCase, null /*TODO inject Pipeline in CLI constructor*/);
 

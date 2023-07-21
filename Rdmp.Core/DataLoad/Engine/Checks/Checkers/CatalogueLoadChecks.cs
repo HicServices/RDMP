@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-internal class CatalogueLoadChecks:ICheckable
+internal class CatalogueLoadChecks : ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
@@ -103,11 +103,8 @@ internal class CatalogueLoadChecks:ICheckable
 
         CheckTableInfoSynchronization(tableInfo, notifier);
 
-        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out var columnInfos,
-            out var columnInfosWhichArePrimaryKeys, notifier);
+        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out _, out _, notifier);
 
-        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out _, out _,notifier);
-            
         //check for trying to ignore primary keys
         foreach (var col in tableInfo.ColumnInfos)
             if (col.IgnoreInLoads && col.IsPrimaryKey)
@@ -120,7 +117,7 @@ internal class CatalogueLoadChecks:ICheckable
             if (!_loadMetadata.IgnoreTrigger)
             {
                 //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
-                CheckTriggerIntact(liveTable,notifier,out var runSynchronizationAgain);
+                CheckTriggerIntact(liveTable, notifier, out var runSynchronizationAgain);
 
                 if (runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);
@@ -173,8 +170,9 @@ internal class CatalogueLoadChecks:ICheckable
         else
         {
             var launchSyncFixer = notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {tableInfo} failed Synchronization check with following problems:{problemList}", CheckResult.Fail,
-                null,"Launch Synchronization Fixing")); //failed synchronization
+                $"TableInfo {tableInfo} failed Synchronization check with following problems:{problemList}",
+                CheckResult.Fail,
+                null, "Launch Synchronization Fixing")); //failed synchronization
 
             if (launchSyncFixer)
             {
@@ -182,7 +180,7 @@ internal class CatalogueLoadChecks:ICheckable
                     //if silent running accept all changes
                     tableInfoSynchronizer.Synchronize(notifier);
 
-                if(!userFixed)
+                if (!userFixed)
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"TableInfo {tableInfo} still failed Synchronization check", CheckResult.Fail,
                         null)); //passed synchronization
@@ -302,7 +300,7 @@ internal class CatalogueLoadChecks:ICheckable
     {
         try
         {
-            new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor
+            new MigrationColumnSet(stagingTable, liveTable, new StagingToLiveMigrationFieldProcessor
             {
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
@@ -312,7 +310,8 @@ internal class CatalogueLoadChecks:ICheckable
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
+                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}",
+                CheckResult.Fail, e));
         }
 
         //live columns

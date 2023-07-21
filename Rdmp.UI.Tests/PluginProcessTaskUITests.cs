@@ -18,7 +18,6 @@ namespace Rdmp.UI.Tests;
 
 internal class PluginProcessTaskUITests : UITests
 {
-
     [Test]
     [UITimeout(20000)]
     public void PluginProcessTaskUI_NoClass()
@@ -51,7 +50,8 @@ internal class PluginProcessTaskUITests : UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test,UITimeout(20000)]
+    [Test]
+    [UITimeout(20000)]
     public void PluginProcessTaskUI_InvalidParameter_Date()
     {
         MEF.AddTypeToCatalogForTesting(typeof(OmgDates));

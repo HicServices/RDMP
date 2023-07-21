@@ -47,8 +47,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         {
             if (!GetProjects(value).Any())
                 SetImpossible($"There are no Projects with ProjectNumber {value.ExternalProjectNumber}");
-            }
-            cohort = value; }
+            cohort = value;
+        }
     }
 
     private IEnumerable<Project> GetProjects(ExtractableCohort cohortIfAny)
@@ -146,10 +146,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         Emphasise(newConfig);
     }
 
-    private string GetTaskDescription()
-    {
-        return CohortIfAny == null
+    private string GetTaskDescription() =>
+        CohortIfAny == null
             ? "Select which Project to create the ExtractionConfiguration under"
             : $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
-    }
 }

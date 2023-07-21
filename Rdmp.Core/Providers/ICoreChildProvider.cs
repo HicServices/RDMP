@@ -131,7 +131,6 @@ public interface ICoreChildProvider : IChildProvider
     HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; }
 
 
-
     /// <summary>
     /// All components within all <see cref="Pipeline"/>
     /// </summary>

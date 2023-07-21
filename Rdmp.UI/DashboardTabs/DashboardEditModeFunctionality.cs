@@ -76,7 +76,6 @@ public class DashboardEditModeFunctionality
         //if we are changing a control currently
         if (_actionUnderwayOnControl != null)
         {
-
             _actionUnderwayOnControl.Location = new Point(
                 (int)(Math.Round(_actionUnderwayOnControl.Location.X / 5.0) * 5),
                 (int)(Math.Round(_actionUnderwayOnControl.Location.Y / 5.0) * 5));
@@ -96,8 +95,6 @@ public class DashboardEditModeFunctionality
                     kvp.Key.Y = _actionUnderwayOnControl.Location.Y;
                     kvp.Key.SaveToDatabase();
                 }
-            }
-
         }
 
         _plannedAction = EditModeAction.Move;
@@ -127,9 +124,6 @@ public class DashboardEditModeFunctionality
             _plannedControl = null;
         }
     }
-
-    private void control_MouseMove(object sender, MouseEventArgs e)
-    {
 
     private void control_MouseMove(object sender, MouseEventArgs e)
     {
@@ -171,7 +165,6 @@ public class DashboardEditModeFunctionality
             {
                 _actionUnderwayOnControl.Size
                     = new Size(
-
                         //Do not resize below the minimum size
                         Math.Max(MinimumControlSize,
 
@@ -180,7 +173,6 @@ public class DashboardEditModeFunctionality
 
                                 //change width by the length of the vector X
                                 _actionUnderwayOnControl.Width + (int)vector.X))
-
                         ,
 
                         //Do not resize below the minimum size
@@ -188,10 +180,8 @@ public class DashboardEditModeFunctionality
 
                             //do not allow resizing beyond the bottom of the control it is hosted in
                             Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Location.Y,
-
                                 _actionUnderwayOnControl.Height + (int)vector.Y))
                     );
-
 
 
                 _actionUnderwayOnControl.Invalidate();
@@ -225,12 +215,7 @@ public class DashboardEditModeFunctionality
 
     private enum EditModeAction
     {
-        return e.X > sender.Width - 20 && e.Y > sender.Height - 20;
-    }
-
-    private enum EditModeAction
-    {
-        None=0,
+        None = 0,
         Move,
         Resize
     }

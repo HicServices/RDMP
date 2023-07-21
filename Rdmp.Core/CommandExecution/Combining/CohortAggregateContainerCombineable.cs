@@ -27,6 +27,5 @@ public class CohortAggregateContainerCombineable : ICombineToMakeCommand
     }
 
 
-
     public string GetSqlString() => null;
 }

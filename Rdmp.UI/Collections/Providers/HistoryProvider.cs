@@ -31,7 +31,8 @@ public class HistoryProvider
     /// <summary>
     /// What Types to track in <see cref="Add"/>
     /// </summary>
-    public Type[] TrackTypes { get; set; } = {
+    public Type[] TrackTypes { get; set; } =
+    {
         typeof(Catalogue),
         typeof(Project),
         typeof(ExtractionConfiguration),
@@ -56,7 +57,7 @@ public class HistoryProvider
             {
                 var entry = HistoryEntry.Deserialize(s, locator);
 
-                if(entry != null)
+                if (entry != null)
                     History.Add(entry);
             }
         }
@@ -78,12 +79,11 @@ public class HistoryProvider
 
         foreach (var group in History.GroupBy(o => o.Object.GetType()))
         {
-            var recentsOfType = group.ToList().OrderByDescending(e=>e.Date).Take(numberOfEntries).ToList();
+            var recentsOfType = group.ToList().OrderByDescending(e => e.Date).Take(numberOfEntries).ToList();
 
             //save x of each Type
             sb.AppendLine(string.Join(Environment.NewLine, recentsOfType.Select(h => h.Serialize())));
             newHistory.AddRange(recentsOfType);
-
         }
 
         History = newHistory;

@@ -20,7 +20,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCommitting;
 
-internal class CommitCohortExample: DatabaseTests
+internal class CommitCohortExample : DatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer, "varchar(10)")]
     [TestCase(DatabaseType.MySql, "varchar(10)")]
@@ -33,14 +33,9 @@ internal class CommitCohortExample: DatabaseTests
         var db = GetCleanedServer(dbType);
             
         //create the cohort store table
-        var wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository,DataExportRepository,false);
-        var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);
-        var externalCohortTable = wizard.CreateDatabase(privateColumn,ThrowImmediatelyCheckNotifier.Quiet);
-
-        //create the cohort store table
         var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
         var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);
-        var externalCohortTable = wizard.CreateDatabase(privateColumn, new ThrowImmediatelyCheckNotifier());
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(dbType, externalCohortTable.DatabaseType);
 
@@ -69,11 +64,13 @@ internal class CommitCohortExample: DatabaseTests
 
         //initialize the destination
         pipelineDestination.PreInitialize(
-            new CohortCreationRequest(project, definition, DataExportRepository,"A cohort created in an example unit test"),
+            new CohortCreationRequest(project, definition, DataExportRepository,
+                "A cohort created in an example unit test"),
             ThrowImmediatelyDataLoadEventListener.Quiet);
 
         //process the cohort data table
-        pipelineDestination.ProcessPipelineData(dt,ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        pipelineDestination.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
+            new GracefulCancellationToken());
 
         //there should be no cohorts yet
         Assert.IsEmpty(DataExportRepository.GetAllObjects<ExtractableCohort>());

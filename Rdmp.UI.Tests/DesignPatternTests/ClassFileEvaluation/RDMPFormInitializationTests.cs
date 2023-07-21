@@ -31,7 +31,7 @@ public class RDMPFormInitializationTests
     private Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
     private Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
 
-    public void FindUninitializedForms(List<string> csFiles )
+    public void FindUninitializedForms(List<string> csFiles)
     {
         foreach (var readToEnd in csFiles.Select(File.ReadAllText))
         {
@@ -44,9 +44,9 @@ public class RDMPFormInitializationTests
         sbFindInstantiations.AppendJoin("|", _rdmpFormClassNames.Select(Regex.Escape));
         sbFindInstantiations.Append(")\\s*\\(");
 
-        if(_fails.Any())
-            Assert.Fail("Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
-
+        if (_fails.Any())
+            Assert.Fail(
+                "Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
     }
 
     private void DealWithRDMPUserControls(string readToEnd)
@@ -115,12 +115,15 @@ public class RDMPFormInitializationTests
     private void ComplainIfUsesVisualStudioDesignerDetectionMagic(string readToEnd)
     {
         if (!readToEnd.Contains("LicenseManager.UsageMode")) return;
-        var lineNumber = readToEnd[..readToEnd.IndexOf("LicenseManager.UsageMode", StringComparison.Ordinal)].Count(c => c == '\n');
+        var lineNumber = readToEnd[..readToEnd.IndexOf("LicenseManager.UsageMode", StringComparison.Ordinal)]
+            .Count(c => c == '\n');
 
         var msg =
             $"FAIL: Use protected variable VisualStudioDesignMode instead of LicenseManager.UsageMode (line number:{lineNumber})";
         Console.WriteLine(msg);
         _fails.Add(msg);
     }
-    private static Regex GetConstructorRegex(string className) => new($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
+
+    private static Regex GetConstructorRegex(string className) =>
+        new($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
 }

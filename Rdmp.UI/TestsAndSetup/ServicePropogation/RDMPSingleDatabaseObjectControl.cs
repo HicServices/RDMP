@@ -199,10 +199,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         //workaround for only comitting lists on loose focus
         if (c is ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } box && propertyName.Equals("SelectedItem"))
-        {
-            box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
-        }
-            
+            box.SelectionChangeCommitted += (s, e) => box.DataBindings["SelectedItem"].WriteValue();
+
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
     }
 
@@ -217,7 +215,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         try
         {
-
             if (string.IsNullOrWhiteSpace(tb.Text))
             {
                 action(null);
@@ -268,10 +265,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     public Type GetTypeOfT() => typeof(T);
 
-    public virtual string GetTabName()
-    {
-        return DatabaseObject is INamed named ? named.Name : DatabaseObject?.ToString() ?? "Unnamed Tab";
-    }
+    public virtual string GetTabName() =>
+        DatabaseObject is INamed named ? named.Name : DatabaseObject?.ToString() ?? "Unnamed Tab";
 
     public virtual string GetTabToolTip() => null;
 

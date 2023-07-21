@@ -31,7 +31,6 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// </summary>
 public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
 {
-
     private int _dataLoadRunID;
     private TableInfo _toInterrogate;
     private int _batchSizeToGet;

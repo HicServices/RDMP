@@ -48,7 +48,8 @@ public class CataloguePipelinesAndReferencesCreation
         var startup = new Startup.Startup(_repositoryLocator);
         startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
-    private void CreateServers(PlatformDatabaseCreationOptions options)
+
+    private void CreateServers()
     {
         var defaults = _repositoryLocator.CatalogueRepository;
         if(options.CreateLoggingServer){
@@ -58,13 +59,14 @@ public class CataloguePipelinesAndReferencesCreation
                     Database = _logging.InitialCatalog
                 };
 
-        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
-            {
-                Server = _logging.DataSource,
-                Database = _logging.InitialCatalog
-            };
+        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",
+            new LoggingDatabasePatcher())
+        {
+            Server = _logging.DataSource,
+            Database = _logging.InitialCatalog
+        };
 
-        if(_logging.UserID != null)
+        if (_logging.UserID != null)
         {
             _edsLogging.Username = _logging.UserID;
             _edsLogging.Password = _logging.Password;
@@ -74,7 +76,8 @@ public class CataloguePipelinesAndReferencesCreation
         defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
         Console.WriteLine("Successfully configured default logging server");
 
-        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
+        var edsDQE =
+            new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
             {
                 Server = _dqe.DataSource,
                 Database = _dqe.InitialCatalog
@@ -91,9 +94,9 @@ public class CataloguePipelinesAndReferencesCreation
         Console.WriteLine("Successfully configured default dqe server");
 
         var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null)
- {
-     Server = _dqe.DataSource
- };
+        {
+            Server = _dqe.DataSource
+        };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
         bool hasLoggingDB = _logging != null && _logging.UserID != null;
@@ -115,7 +118,8 @@ public class CataloguePipelinesAndReferencesCreation
     public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
         var bulkInsertCsvPipe =
-            CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
+            CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)",
+                typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
         var bulkInsertCsvPipewithAdjuster =
             CreatePipeline("BULK INSERT: CSV Import File (automated column-type detection)",
                 typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
@@ -126,11 +130,11 @@ public class CataloguePipelinesAndReferencesCreation
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-        if(options.CreateLoggingServer){
-            SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
-            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
-        }
-        var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File",typeof (DelimitedFlatFileDataFlowSource), typeof (BasicCohortDestination));
+        SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
+        SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
+
+        var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File", typeof(DelimitedFlatFileDataFlowSource),
+            typeof(BasicCohortDestination));
         SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");
 
         CreatePipeline("CREATE COHORT:By Executing Cohort Identification Configuration",
@@ -157,7 +161,8 @@ public class CataloguePipelinesAndReferencesCreation
         d.SaveToDatabase();
     }
 
-    private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny, params Type[] componentTypes)
+    private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny,
+        params Type[] componentTypes)
     {
         if (componentTypes == null || componentTypes.Length == 0)
             return CreatePipeline(nameOfPipe, sourceType, destinationTypeIfAny);

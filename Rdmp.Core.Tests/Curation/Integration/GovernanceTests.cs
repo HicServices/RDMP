@@ -82,7 +82,9 @@ public class GovernanceTests : DatabaseTests
         if (CatalogueRepository is TableRepository)
         {
             var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
-            StringAssert.StartsWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)", ex?.Message);
+            StringAssert.StartsWith(
+                "Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",
+                ex?.Message);
         }
     }
 
@@ -96,7 +98,9 @@ public class GovernanceTests : DatabaseTests
         gov.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         gov.EndDate = DateTime.MinValue;
-        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.Quiet));//no longer valid - notice there is no SaveToDatabase because we can shouldn't be going back to db anyway
+        var ex = Assert.Throws<Exception>(() =>
+            gov.Check(ThrowImmediatelyCheckNotifier
+                .Quiet)); //no longer valid - notice there is no SaveToDatabase because we can shouldn't be going back to db anyway
         Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex?.Message);
     }
 
@@ -107,9 +111,8 @@ public class GovernanceTests : DatabaseTests
         gov.Name = "NeverExpires";
 
         //valid to start with
-        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex?.Message);
-
+        var ex = Assert.Throws<Exception>(() => gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires", ex?.Message);
     }
 
     [TestCase(true)]
@@ -155,6 +158,7 @@ public class GovernanceTests : DatabaseTests
 
 
     private List<GovernancePeriod> toCleanup = new();
+
     private GovernancePeriod GetGov(ICatalogueRepository repo = null)
     {
         var gov = new GovernancePeriod(repo ?? CatalogueRepository);

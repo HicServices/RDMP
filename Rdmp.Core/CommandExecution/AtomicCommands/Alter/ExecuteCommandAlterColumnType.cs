@@ -39,7 +39,7 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var oldSqlType = fansiType.SQLType;
         var newSqlType = _datatype;
 
-        if(newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+        if (newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
             return;
 
         if (string.IsNullOrWhiteSpace(newSqlType))
@@ -80,7 +80,6 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
                 //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                 return;
             }
-        }
 
         Publish(columnInfo.TableInfo);
     }

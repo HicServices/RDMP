@@ -48,18 +48,16 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
         : base(activator)
     {
         if (strict && !ExtendedProperty.KnownProperties.Contains(propertyName))
-        {
-            SetImpossible($"{propertyName} is not a known property.  Known properties are: {Environment.NewLine}{string.Join(Environment.NewLine,ExtendedProperty.KnownProperties)}");
-        }
+            SetImpossible(
+                $"{propertyName} is not a known property.  Known properties are: {Environment.NewLine}{string.Join(Environment.NewLine, ExtendedProperty.KnownProperties)}");
         _setOn = setOn;
         _propertyName = propertyName;
         _value = value;
     }
 
-    public override string GetCommandName()
-    {
-        return !string.IsNullOrWhiteSpace(OverrideCommandName) ? OverrideCommandName : $"Set {_propertyName}";
-    }
+    public override string GetCommandName() => !string.IsNullOrWhiteSpace(OverrideCommandName)
+        ? OverrideCommandName
+        : $"Set {_propertyName}";
 
     public override void Execute()
     {
@@ -68,7 +66,7 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
         var catRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
         var newValue = _value;
 
-        foreach(var o in _setOn)
+        foreach (var o in _setOn)
         {
             var props = catRepo.GetExtendedProperties(_propertyName, o).ToArray();
             var oldValue = props.FirstOrDefault()?.Value;
@@ -86,10 +84,10 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
 
             // Creates the new property into the db
             // If the Value passed was null just leave it deleted
-            if(!string.IsNullOrWhiteSpace(newValue)) _ = new ExtendedProperty(catRepo, o, _propertyName, newValue);
+            if (!string.IsNullOrWhiteSpace(newValue)) _ = new ExtendedProperty(catRepo, o, _propertyName, newValue);
         }
 
-        if(_setOn.Any())
+        if (_setOn.Any())
             Publish(_setOn.First());
     }
 }

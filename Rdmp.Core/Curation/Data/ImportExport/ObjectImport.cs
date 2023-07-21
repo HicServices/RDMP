@@ -59,11 +59,10 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectRepositoryType",localObject.Repository.GetType().Name},
-            {"ReferencedObjectType",localObject.GetType().Name},
-            {"ReferencedObjectID",localObject.ID},
-            {"SharingUID",sharingUID}
-
+            { "ReferencedObjectRepositoryType", localObject.Repository.GetType().Name },
+            { "ReferencedObjectType", localObject.GetType().Name },
+            { "ReferencedObjectID", localObject.ID },
+            { "SharingUID", sharingUID }
         });
 
         if (ID == 0 || Repository != repository)

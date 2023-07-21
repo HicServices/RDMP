@@ -64,11 +64,6 @@ public class GoToCommandFactory : CommandFactoryBase
                 yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt))
                     { OverrideCommandName = "Replacement" };
 
-            if(SupportsReplacement(forObject))
-            {
-                yield return new ExecuteCommandShow(_activator, () => GetReplacementIfAny(mt)) { OverrideCommandName = "Replacement" };
-            }
-
 
             yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
         }
@@ -78,7 +73,8 @@ public class GoToCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandShow(_activator, () =>
             {
                 return _activator.CoreChildProvider is DataExportChildProvider { AllProjectAssociatedCics: not null } dx
-                    ? dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct()
+                    ? dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID)
+                        .Select(a => a.Project).Distinct()
                     : Array.Empty<CohortIdentificationConfiguration>();
             })
             {
@@ -88,7 +84,8 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out ColumnInfo columnInfo))
         {
-            yield return new ExecuteCommandSimilar(_activator, columnInfo, true) {
+            yield return new ExecuteCommandSimilar(_activator, columnInfo, true)
+            {
                 OverrideCommandName = "Different",
                 GoTo = true,
                 OverrideIcon = GetImage(RDMPConcept.ColumnInfo)
@@ -107,7 +104,8 @@ public class GoToCommandFactory : CommandFactoryBase
                 OverrideIcon = GetImage(RDMPConcept.CatalogueItem)
             };
 
-            yield return new ExecuteCommandShow(_activator, columnInfo.ANOTable_ID, typeof(ANOTable)) {
+            yield return new ExecuteCommandShow(_activator, columnInfo.ANOTable_ID, typeof(ANOTable))
+            {
                 OverrideCommandName = "ANO Table",
                 OverrideIcon = GetImage(RDMPConcept.ANOTable)
             };
@@ -162,10 +160,14 @@ public class GoToCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandShow(_activator, () =>
             {
                 return _activator.CoreChildProvider is DataExportChildProvider dx
-                    ? dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID).Select(s => s.ExtractionConfiguration)
+                    ? dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID)
+                        .Select(s => s.ExtractionConfiguration)
                     : Array.Empty<SelectedDataSets>();
             })
-            { OverrideCommandName = "Extraction Configuration(s)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
+            {
+                OverrideCommandName = "Extraction Configuration(s)",
+                OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+            };
         }
 
         if (Is(forObject, out GovernancePeriod period))
@@ -248,8 +250,10 @@ public class GoToCommandFactory : CommandFactoryBase
                 typeof(CohortIdentificationConfiguration))
             {
                 OverrideCommandName = "Cohort Identification Configuration",
-                OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration) };
-            yield return new ExecuteCommandShow(_activator, aggregate.Catalogue_ID, typeof(Catalogue)) {
+                OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
+            };
+            yield return new ExecuteCommandShow(_activator, aggregate.Catalogue_ID, typeof(Catalogue))
+            {
                 OverrideCommandName = "Catalogue",
                 OverrideIcon = GetImage(RDMPConcept.Catalogue)
             };
@@ -281,10 +285,17 @@ public class GoToCommandFactory : CommandFactoryBase
                             OverrideCommandName = "Associated Project", OverrideIcon = GetImage(RDMPConcept.Project)
                         };
 
-                    yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations.Select(c=>c.Project).Distinct()){OverrideCommandName = "Extracted In (Project)", OverrideIcon = GetImage(RDMPConcept.Project) };
-                    yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations){OverrideCommandName = "Extracted In (Extraction Configuration)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
+                    yield return new ExecuteCommandShow(_activator,
+                        () => cataEds.ExtractionConfigurations.Select(c => c.Project).Distinct())
+                    {
+                        OverrideCommandName = "Extracted In (Project)", OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations)
+                    {
+                        OverrideCommandName = "Extracted In (Extraction Configuration)",
+                        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+                    };
                 }
-
             }
 
             yield return new ExecuteCommandShow(_activator, () => catalogue.GetTableInfoList(true))
@@ -346,10 +357,7 @@ public class GoToCommandFactory : CommandFactoryBase
                     { OverrideIcon = _activator.CoreIconProvider.GetImage(m) };
     }
 
-    private static bool SupportsReplacement(object o)
-    {
-        return o is not DashboardLayout;
-    }
+    private static bool SupportsReplacement(object o) => o is not DashboardLayout;
 
     private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)
     {
@@ -359,7 +367,7 @@ public class GoToCommandFactory : CommandFactoryBase
 
         return replacement == null
             ? Enumerable.Empty<IMapsDirectlyToDatabaseTable>()
-            : new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))};
+            : new[] { mt.Repository.GetObjectByID(mt.GetType(), int.Parse(replacement.Value)) };
     }
 
     private Image<Rgba32> GetImage(RDMPConcept concept) => _activator.CoreIconProvider.GetImage(concept);

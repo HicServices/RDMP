@@ -56,7 +56,7 @@ public partial class PipelineDiagramUI : UserControl
         AllowSelection = false;
 
         Controls.Add(pipelineSmiley);
-        pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
+        pipelineSmiley.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         pipelineSmiley.Left = Width - pipelineSmiley.Width - 1;
         pipelineSmiley.Top = 1;
         pipelineSmiley.BringToFront();
@@ -130,7 +130,7 @@ public partial class PipelineDiagramUI : UserControl
 
         var factory = new AtomicCommandUIFactory(_activator);
 
-        foreach(var o in _useCase.GetInitializationObjects().Reverse())
+        foreach (var o in _useCase.GetInitializationObjects().Reverse())
         {
             var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
             pInitializationObjects.Controls.Add(b);
@@ -146,12 +146,12 @@ public partial class PipelineDiagramUI : UserControl
                     _pipelineFactory = new DataFlowPipelineEngineFactory(_useCase, _pipeline);
 
                     //create it
-                    var pipelineInstance = _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
+                    var pipelineInstance =
+                        _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
 
                     //initialize it (unless it is design time)
                     if (!_useCase.IsDesignTime)
                         pipelineInstance.Initialize(_useCase.GetInitializationObjects().ToArray());
-
                 }
                 catch (Exception ex)
                 {
@@ -162,18 +162,21 @@ public partial class PipelineDiagramUI : UserControl
 
                 //was there an explicit instance?
                 if (_useCase.ExplicitSource != null)
-                    AddExplicit(_useCase.ExplicitSource);//if so add it
+                    AddExplicit(_useCase.ExplicitSource); //if so add it
                 else
                     //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.SourcePipelineComponent_ID != null)
                     AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
                         pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
                 else
-                    AddBlankComponent(PipelineComponentRole.Source);//the user hasn't put one in yet
+                    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet
 
 
-                foreach (var middleComponent in pipeline.PipelineComponents.Where( c=>c.ID!= pipeline.SourcePipelineComponent_ID && c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp=>comp.Order))
-                    AddPipelineComponent(middleComponent, PipelineComponentRole.Middle);//add the possibly broken PipelineComponent to the diagram
+                foreach (var middleComponent in pipeline.PipelineComponents.Where(c =>
+                             c.ID != pipeline.SourcePipelineComponent_ID &&
+                             c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp => comp.Order))
+                    AddPipelineComponent(middleComponent,
+                        PipelineComponentRole.Middle); //add the possibly broken PipelineComponent to the diagram
 
                 //was there an explicit instance?
                 if (_useCase.ExplicitDestination != null)
@@ -192,7 +195,7 @@ public partial class PipelineDiagramUI : UserControl
                 else
                 {
                     AddDividerIfReorderingAvailable();
-                    AddBlankComponent(PipelineComponentRole.Destination);//the user hasn't put one in yet
+                    AddBlankComponent(PipelineComponentRole.Destination); //the user hasn't put one in yet
                 }
 
 
@@ -247,7 +250,8 @@ public partial class PipelineDiagramUI : UserControl
             {
                 if (!_useCase.IsDesignTime)
                 {
-                    _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, value, _useCase.GetInitializationObjects().ToArray());
+                    _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, value,
+                        _useCase.GetInitializationObjects().ToArray());
                     component.Check();
                 }
 
@@ -313,7 +317,8 @@ public partial class PipelineDiagramUI : UserControl
         try
         {
             if (!_useCase.IsDesignTime)
-                _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, component.Value, _useCase.GetInitializationObjects().ToArray());
+                _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, component.Value,
+                    _useCase.GetInitializationObjects().ToArray());
         }
         catch (Exception e)
         {
@@ -487,11 +492,9 @@ public partial class PipelineDiagramUI : UserControl
         return toReturn;
     }
 
-    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
-    {
-        return e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
-            dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context
+    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e) =>
+        e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
+        dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context
             ? context
             : null;
-    }
 }

@@ -30,10 +30,7 @@ public class ExecuteCommandAddMissingParameters : BasicCommandExecution
         _sets = sets;
 
         // if nobody is missing any entries
-        if (!_sets.Any(static s => s.GetMissingEntries().Any()))
-        {
-            SetImpossible("There are no missing parameters");
-        }
+        if (!_sets.Any(static s => s.GetMissingEntries().Any())) SetImpossible("There are no missing parameters");
     }
 
     public override void Execute()

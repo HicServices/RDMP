@@ -202,19 +202,14 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <inheritdoc/>
-    public Type GetDestinationType()
-    {
-        return MEF.GetType(_destinationType);
-    }
+    public Type GetDestinationType() => MEF.GetType(_destinationType);
 
     /// <inheritdoc/>
     public bool IsReferenceTo(Type t) => t == typeof(ExtractableDataSet);
 
     /// <inheritdoc/>
-    public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
-    {
-        return o is ExtractableDataSet eds && eds.ID == ExtractionConfiguration_ID;
-    }
+    public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o) =>
+        o is ExtractableDataSet eds && eds.ID == ExtractionConfiguration_ID;
 
     /// <inheritdoc/>
     public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted,

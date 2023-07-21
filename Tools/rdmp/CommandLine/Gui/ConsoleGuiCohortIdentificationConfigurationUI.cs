@@ -28,10 +28,9 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
     private List<object> RowObjects = new();
     private bool _contextMenuShowing = false;
 
-    private List<object> RowObjects = new();
-    private bool _contextMenuShowing;
-
-    public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
+    public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic)
+    {
         InitializeComponent();
 
         Modal = true;
@@ -44,10 +43,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
         Common.Configuration = cic;
         Common.Compiler.CohortIdentificationConfiguration = cic;
 
-        cbCumulativeTotals.Toggled += e =>
-        {
-            Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked);
-        };
+        cbCumulativeTotals.Toggled += e => { Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked); };
         btnClearCache.Clicked += () =>
         {
             var cmd = new ExecuteCommandClearQueryCache(activator, Common.Configuration);
@@ -77,8 +73,6 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
                 cmd.Execute();
             else
                 MessageBox.ErrorQuery("Cannot Commit", cmd.ReasonCommandImpossible);
-            }
-
         };
         Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), RefreshTableCallback);
 
@@ -153,7 +147,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
             var factory = new ConsoleGuiContextMenuFactory(_activator);
             var menu = factory.Create(Array.Empty<object>(), o);
 
-            if(menu != null)
+            if (menu != null)
             {
                 var p = tableview1.CellToScreen(obj.Col, obj.Row);
 

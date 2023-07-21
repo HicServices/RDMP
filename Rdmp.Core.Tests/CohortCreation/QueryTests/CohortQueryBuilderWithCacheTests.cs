@@ -22,7 +22,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 {
     protected DiscoveredDatabase queryCacheDatabase;
     protected ExternalDatabaseServer externalDatabaseServer;
-    protected DatabaseColumnRequest _chiColumnSpecification = new("chi","varchar(10)");
+    protected DatabaseColumnRequest _chiColumnSpecification = new("chi", "varchar(10)");
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -71,7 +71,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 	FROM 
 	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 )
-",cohortIdentificationConfiguration.ID)),
+", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
 
             var server = queryCacheDatabase.Server;
@@ -112,7 +112,6 @@ FROM
         finally
         {
             cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
-
         }
     }
 }

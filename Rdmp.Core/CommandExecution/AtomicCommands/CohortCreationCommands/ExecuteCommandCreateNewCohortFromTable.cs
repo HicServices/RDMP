@@ -35,10 +35,8 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         ExternalCohortTable = externalCohortTable;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a cohort using ALL of the patient identifiers in the referenced table";
-    }
+    public override string GetCommandHelp() =>
+        "Creates a cohort using ALL of the patient identifiers in the referenced table";
 
 
     public override void Execute()
@@ -52,7 +50,8 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         if (!BasicActivator.SelectObject(new DialogArgs
             {
                 EntryLabel = "Patient Identifier Column",
-                TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
+                TaskDescription =
+                    $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
                 AllowAutoSelect = true
             }, tbl.DiscoverColumns(), out var col))
             // user cancelled selecting a column

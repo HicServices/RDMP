@@ -44,7 +44,7 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         Assert.IsNotNull(dest.OutputFile);
         FileAssert.Exists(dest.OutputFile);

@@ -58,7 +58,6 @@ public interface IBasicActivateItems
     void ShowGraph(AggregateConfiguration aggregate);
 
 
-
     /// <summary>
     /// Display information about the logged activities of the <paramref name="rootObject"/>
     /// </summary>
@@ -193,7 +192,8 @@ public interface IBasicActivateItems
     /// <param name="availableObjects"></param>
     /// <param name="initialSearchText"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
+    IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null);
 
     /// <inheritdoc cref="SelectMany(string, Type, IMapsDirectlyToDatabaseTable[], string)"/>
     IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
@@ -278,7 +278,7 @@ public interface IBasicActivateItems
     /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
     /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
     /// <returns></returns>
-    FileInfo SelectFile(string prompt,string patternDescription, string pattern);
+    FileInfo SelectFile(string prompt, string patternDescription, string pattern);
 
 
     /// <summary>

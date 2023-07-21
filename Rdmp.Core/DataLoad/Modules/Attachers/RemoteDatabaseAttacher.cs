@@ -98,7 +98,7 @@ False - Trigger an error reporting the missing table(s)
 
 
             string sql;
-            if(LoadRawColumnsOnly)
+            if (LoadRawColumnsOnly)
             {
                 var rawColumns = LoadRawColumnsOnly
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)

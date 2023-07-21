@@ -54,14 +54,14 @@ public class FilterImporter
     public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster,
         IFilter[] existingFiltersAlreadyInScope)
     {
-        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null)
+        if (fromMaster is ExtractionFilter extractionFilter &&
+            extractionFilter.ExtractionInformation.ColumnInfo == null)
             throw new Exception(
                 $"Could not import filter {extractionFilter} because it could not be traced back to a ColumnInfo");
 
         //If user is trying to publish a filter into the Catalogue as a new master top level filter, make sure it is properly documented
         if (_factory is ExtractionFilterFactory)
-        {
-            if(!IsProperlyDocumented(fromMaster, out var reason))
+            if (!IsProperlyDocumented(fromMaster, out var reason))
                 throw new Exception($"Cannot clone filter called '{fromMaster.Name}' because:{reason}");
 
         //Handle problems with existing filters
@@ -86,8 +86,8 @@ public class FilterImporter
         newFilter.WhereSQL = fromMaster.WhereSQL;
 
         //if we are down cloning from a master ExtractionFilter so record that the new filter is
-        if(fromMaster is ExtractionFilter)
-            newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID;//make the new filters parent the master
+        if (fromMaster is ExtractionFilter)
+            newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID; //make the new filters parent the master
 
         //if we are up cloning we are publishing a child into being a new master catalogue filter (ExtractionFilter)
         if (newFilter is ExtractionFilter)
@@ -107,8 +107,10 @@ public class FilterImporter
             existingFiltersAlreadyInScope.SelectMany(f => f.GetAllParameters()).ToArray();
 
         //now create parameters while respecting globals
-        var parameterCreator = new ParameterCreator(_factory, _globals, AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
-        parameterCreator.CreateAll(newFilter, existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
+        var parameterCreator = new ParameterCreator(_factory, _globals,
+            AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
+        parameterCreator.CreateAll(newFilter,
+            existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
 
         return newFilter;
     }
@@ -159,7 +161,6 @@ public class FilterImporter
         if (reason == null)
             //check to see if there's a problem with the parameters
             foreach (var filterParameter in filter.GetAllParameters())
-            {
                 if (!ExtractionFilterParameter.IsProperlyDocumented(filterParameter, out var reasonParameterRejected))
                 {
                     reason = $"Parameter '{filterParameter.ParameterName}' was rejected :{reasonParameterRejected}";

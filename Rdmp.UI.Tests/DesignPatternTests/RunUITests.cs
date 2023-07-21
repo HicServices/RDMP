@@ -89,18 +89,21 @@ public class RunUITests : DatabaseTests
         Assert.IsTrue(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
 
         var notSupported = MEF.GetAllTypes()
-            .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
+            .Where(t => typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract &&
+                        !t.IsInterface) //must be something we would normally expect to be a supported Type
             .Except(allowedToBeIncompatible) //and isn't a permissible one
             .Where(t => commandCaller.WhyCommandNotSupported(t) is not null) //but for some reason isn't
             .ToArray();
 
-        Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
+        Assert.AreEqual(0, notSupported.Length,
+            "The following commands were not compatible with RunUI:" + Environment.NewLine +
+            string.Join(Environment.NewLine, notSupported.Select(t => t.Name)));
     }
 
     [Test]
     public void Test_IsSupported_BasicActivator()
     {
-        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet);
+        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
 
         var commandCaller = new CommandInvoker(basic);
         foreach (var t in new[]
@@ -115,11 +118,10 @@ public class RunUITests : DatabaseTests
         }
     }
 
-    private class TestCommandDiscoveredDatabase:BasicCommandExecution
+    private class TestCommandDiscoveredDatabase : BasicCommandExecution
     {
-        public TestCommandDiscoveredDatabase(IBasicActivateItems activator,DiscoveredDatabase _):base(activator)
+        public TestCommandDiscoveredDatabase(IBasicActivateItems activator, DiscoveredDatabase _) : base(activator)
         {
-
         }
     }
 
@@ -128,7 +130,6 @@ public class RunUITests : DatabaseTests
         public TestCommandLotsOfParameters(IRDMPPlatformRepositoryServiceLocator _1, DiscoveredDatabase _2,
             DirectoryInfo _3) : base()
         {
-
         }
     }
 
@@ -136,7 +137,6 @@ public class RunUITests : DatabaseTests
     {
         public TestCommandTypeParameter(IRDMPPlatformRepositoryServiceLocator _1, Type _2) : base()
         {
-
         }
     }
 }

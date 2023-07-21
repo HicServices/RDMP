@@ -44,11 +44,11 @@ public partial class Date : PrimaryConstraint
                     DateTime.Parse(s, _ukCulture.DateTimeFormat);
 
                     if (NotAFullySpecifiedDate(s))
-                        return new ValidationFailure("Partial dates not allowed.",this);
+                        return new ValidationFailure("Partial dates not allowed.", this);
                 }
                 catch (FormatException ex)
                 {
-                    return new ValidationFailure(ex.Message,this);
+                    return new ValidationFailure(ex.Message, this);
                 }
 
                 return null;

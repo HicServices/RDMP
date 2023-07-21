@@ -65,7 +65,6 @@ public class CachingPreExecutionChecker : ICheckable
                         CheckResult.Fail));
 
             if (_cacheProgress.PermissionWindow_ID != null && !_cacheProgress.PermissionWindow.WithinPermissionWindow())
-            {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Current time is {DateTime.UtcNow} which is not a permitted time according to the configured PermissionWindow {_cacheProgress.PermissionWindow.Description} of the CacheProgress {_cacheProgress}",
                     CheckResult.Warning));

@@ -51,7 +51,7 @@ public abstract class CacheLayout : ICacheLayout
 
     public virtual bool CheckExists(DateTime archiveDate, IDataLoadEventListener listener)
     {
-        var fi = GetArchiveFileInfoForDate(archiveDate,listener);
+        var fi = GetArchiveFileInfoForDate(archiveDate, listener);
         return fi is { Exists: true };
     }
 
@@ -97,7 +97,7 @@ public abstract class CacheLayout : ICacheLayout
             throw new NullReferenceException("RootDirectory has not been set yet");
 
         var downloadDirectory = Resolver.GetLoadCacheDirectory(RootDirectory) ?? throw new Exception(
-                $"Resolver {Resolver} of type {Resolver.GetType().FullName} returned null from GetLoadCacheDirectory");
+            $"Resolver {Resolver} of type {Resolver.GetType().FullName} returned null from GetLoadCacheDirectory");
         if (downloadDirectory.Exists)
         {
             listener.OnNotify(this,
@@ -146,25 +146,23 @@ public abstract class CacheLayout : ICacheLayout
     public bool CheckCacheFilesAvailability(IDataLoadEventListener listener) =>
         GetArchiveFilesInLoadCacheDirectory(listener).Any();
 
-    public DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
-    {
-        return GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Max();
-    }
+    public DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener) =>
+        GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Max();
 
-    public DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
-    {
-        return GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Min();
-    }
+    public DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener) =>
+        GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Min();
 
     protected void ArchiveFiles(FileInfo[] files, DateTime archiveDate, IDataLoadEventListener listener)
     {
         if (!files.Any()) return;
 
         if (ArchiveType == CacheArchiveType.None)
-            throw new ArgumentException("When using CacheArchiveType.None you should not use ArchiveFiles, instead just copy them into the relevant Cache directory yourself.  Remember that you must have 1 file per day and the filename must be the date according to the DateFormat e.g. 2001-01-01.csv or 2001-01-01.txt or whatever");
+            throw new ArgumentException(
+                "When using CacheArchiveType.None you should not use ArchiveFiles, instead just copy them into the relevant Cache directory yourself.  Remember that you must have 1 file per day and the filename must be the date according to the DateFormat e.g. 2001-01-01.csv or 2001-01-01.txt or whatever");
 
-        var archiveFilepath = GetArchiveFileInfoForDate(archiveDate,listener);
-        var archiveDirectory = archiveFilepath.DirectoryName ?? throw new Exception("The directory for the archive within the cache is being reported as null, which should not be possible.");
+        var archiveFilepath = GetArchiveFileInfoForDate(archiveDate, listener);
+        var archiveDirectory = archiveFilepath.DirectoryName ?? throw new Exception(
+            "The directory for the archive within the cache is being reported as null, which should not be possible.");
         if (!Directory.Exists(archiveDirectory))
             Directory.CreateDirectory(archiveDirectory);
 
@@ -196,8 +194,9 @@ public abstract class CacheLayout : ICacheLayout
                     if (!existing.Contains(dataFile.Name))
                         zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, Compression);
             }
+
             // On .Net Core 3.0 and later, we can use the 3-argument variant of .Move to do this atomically
-            File.Move(ziptmp,archiveFilepath.FullName,true);
+            File.Move(ziptmp, archiveFilepath.FullName, true);
         }
     }
 }

@@ -85,7 +85,7 @@ public sealed class ProcessTaskArgument : Argument
         try
         {
             //if the import is into a repository other than the master original repository
-            if(!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
+            if (!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
             {
                 //and we are a reference type e.g. to a ColumnInfo or something
                 var t = GetConcreteSystemType();
@@ -108,10 +108,7 @@ public sealed class ProcessTaskArgument : Argument
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Creates new ProcessTaskArguments for the supplied class T (based on what DemandsInitialization fields it has).  Parent is the ProcessTask that hosts the class T e.g. IAttacher
@@ -122,7 +119,6 @@ public sealed class ProcessTaskArgument : Argument
     {
         var argFactory = new ArgumentFactory();
         return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
-
                 //tell it how to create new instances of us related to parent
                 parent,
 

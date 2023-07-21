@@ -27,7 +27,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
+internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 {
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -45,8 +45,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         File.WriteAllText(f.FullName, @"UPDATE Fish Set Lawl = 1");
 
-        var pt = Substitute.For<IProcessTask>();
-        pt.Path.Returns(f.FullName);
+        var pt = Mock.Of<IProcessTask>(x => x.Path == f.FullName);
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
@@ -83,8 +82,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
 
-        var pt = Substitute.For<IProcessTask>();
-        pt.Path.Returns(f.FullName);
+        var pt = Mock.Of<IProcessTask>(x => x.Path == f.FullName);
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
@@ -97,14 +95,15 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         var configuration = new HICDatabaseConfiguration(db.Server);
 
         var job = Mock.Of<IDataLoadJob>(x =>
-            x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
+            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);
-                                  
-        var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
-        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
+        var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(() =>
+            task.Run(job, new GracefulCancellationToken()));
+        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.Message);
+
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -123,13 +122,17 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var sql = @"UPDATE {T:0} Set {C:0} = 1";
 
-        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+            "ExecuteSqlFileRuntimeTaskTests", true);
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
-        var sqlArg = new IArgument[]{Mock.Of<IArgument>(x =>
-            x.Name == "Sql" &&
-            x.Value == sql &&
-            x.GetValueAsSystemType() == sql) };
+        var sqlArg = new IArgument[]
+        {
+            Mock.Of<IArgument>(x =>
+                x.Name == "Sql" &&
+                x.Value == sql &&
+                x.GetValueAsSystemType() == sql)
+        };
 #pragma warning restore CS0252, CS0253
 
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
@@ -139,23 +142,24 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
             x.GetAllArguments() == sqlArg
         );
 
-        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt,args);
+        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args);
 
         task.Check(ThrowImmediatelyCheckNotifier.Quiet);
         var configuration = new HICDatabaseConfiguration(db.Server);
 
         var job = new ThrowImmediatelyDataLoadJob
         {
-            RegularTablesToLoad = new List<ITableInfo> {ti},
+            RegularTablesToLoad = new List<ITableInfo> { ti },
             LookupTablesToLoad = new List<ITableInfo>(),
             Configuration = configuration
         };
 
-        var ex = Assert.Throws<Exception>(()=>task.Run(job, new GracefulCancellationToken()));
-
         var ex = Assert.Throws<Exception>(() => task.Run(job, new GracefulCancellationToken()));
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,ThrowImmediatelyDataLoadEventListener.Quiet);
+        StringAssert.Contains("Mutilate failed", ex.Message);
+        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.InnerException.Message);
+
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -183,8 +187,8 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         //we renamed the table to simulate RAW, confirm TableInfo doesn't think it exists
         Assert.IsFalse(ti.Discover(DataAccessContext.InternalDataProcessing).Exists());
 
-        var pt = Substitute.For<IProcessTask>();
-        pt.Path.Returns(f.FullName);
+        var pt = Mock.Of<IProcessTask>(x => x.Path == f.FullName);
+
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
 
@@ -196,10 +200,10 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         //create a namer that tells the user
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
-        var configuration = new HICDatabaseConfiguration(db.Server,namer);
+        var configuration = new HICDatabaseConfiguration(db.Server, namer);
 
         var job = Mock.Of<IDataLoadJob>(x =>
-            x.RegularTablesToLoad == new List<ITableInfo> { ti }&&
+            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);
 

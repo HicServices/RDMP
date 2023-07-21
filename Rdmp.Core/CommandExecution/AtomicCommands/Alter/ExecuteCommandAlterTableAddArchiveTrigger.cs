@@ -49,7 +49,7 @@ public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecut
         if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
         {
             _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-            Show(GlobalStrings.CreateArchiveTableSuccess , $"{TableInfo.GetRuntimeName()}_Archive ");
+            Show(GlobalStrings.CreateArchiveTableSuccess, $"{TableInfo.GetRuntimeName()}_Archive ");
         }
 
         Synchronize();

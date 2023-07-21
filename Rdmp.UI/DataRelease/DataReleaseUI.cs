@@ -61,7 +61,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
 
-    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
+    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME, -500);
 
 
     private bool _isExecuting;
@@ -120,13 +120,13 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         return checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner
             ? null
             : rowObject switch
-        {
-            IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
-            ISelectedDataSets sds => releaseRunner.GetState(sds),
-            SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
-            SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
-            _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
-        };
+            {
+                IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
+                ISelectedDataSets sds => releaseRunner.GetState(sds),
+                SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
+                SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
+                _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
+            };
     }
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
@@ -213,8 +213,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
         CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
         CommonFunctionality.Add(_pipelinePanel);
-        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
-            
+        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline",
+            "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
+
         checkAndExecuteUI1.SetItemActivator(activator);
 
         var checkedBefore = tlvReleasePotentials.CheckedObjects;
@@ -241,10 +242,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
 
-    public override string GetTabName()
-    {
-        return $"Release: {_project}";
-    }
+    public override string GetTabName() => $"Release: {_project}";
 
     public void TickAllFor(ExtractionConfiguration configuration)
     {

@@ -17,7 +17,7 @@ public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, IContainer toMove, IContainer into)
-        : this(activator,new ContainerCombineable(toMove),into)
+        : this(activator, new ContainerCombineable(toMove), into)
     {
     }
 

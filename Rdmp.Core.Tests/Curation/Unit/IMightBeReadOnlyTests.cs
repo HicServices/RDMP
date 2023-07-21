@@ -65,7 +65,6 @@ internal class IMightBeReadOnlyTests : UnitTests
     }
 
 
-
     [Test]
     public void IsReadonly_AggregateFilter()
     {

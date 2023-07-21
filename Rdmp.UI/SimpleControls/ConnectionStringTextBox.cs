@@ -112,7 +112,8 @@ public class ConnectionStringTextBox : TextBox
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||
-                lastBitBeingTyped.Contains('='))//user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
+                lastBitBeingTyped
+                    .Contains('=')) //user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
                 return;
 
             //we will suggest Server because user typed se
@@ -136,8 +137,9 @@ public class ConnectionStringTextBox : TextBox
             Text = Text.Insert(whereUserIsCurrently, bitToSuggest);
             SelectionStart = whereUserIsCurrently;
             SelectionLength = TextLength - whereUserIsCurrently;
-            suppressAutocomplete = false;//we are done
-        } catch (Exception ex)
+            suppressAutocomplete = false; //we are done
+        }
+        catch (Exception ex)
         {
             ExceptionViewer.Show(ex);
         }
@@ -156,6 +158,7 @@ public class ConnectionStringTextBox : TextBox
         else if (char.IsLetterOrDigit((char)e.KeyCode) || e.KeyCode == Keys.Space)
             suppressAutocomplete = false;
         else
-            suppressAutocomplete = true;//user is pressing some arrow keys or delete keys or something, don't suggest anything until
+            suppressAutocomplete =
+                true; //user is pressing some arrow keys or delete keys or something, don't suggest anything until
     }
 }

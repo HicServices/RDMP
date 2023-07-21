@@ -35,7 +35,8 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         try
         {
-            _request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+            _request = new ExtractDatasetCommand(_configuration,
+                new ExtractableDatasetBundle(CustomExtractableDataSet));
             Execute(out _, out var results);
 
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
@@ -142,9 +143,9 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         _selectedDataSet.SaveToDatabase();
 
         var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer)
- {
-     WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
- };
+        {
+            WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
+        };
         filter.SaveToDatabase();
         rootContainer.AddChild(filter);
 

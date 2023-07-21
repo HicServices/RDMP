@@ -74,7 +74,6 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
 
     public CacheFetchFailure()
     {
-
     }
 
     /// <summary>

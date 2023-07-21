@@ -40,7 +40,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="cohortName"></param>
     /// <param name="project"></param>
     /// <param name="pipeline"></param>
-    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable = null, string cohortName = null, Project project = null, IPipeline pipeline = null) : base(activator)
+    protected CohortCreationCommandExecution(IBasicActivateItems activator,
+        ExternalCohortTable externalCohortTable = null, string cohortName = null, Project project = null,
+        IPipeline pipeline = null) : base(activator)
     {
         //May be null
         _explicitCohortName = cohortName;
@@ -69,16 +71,14 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
                     GetChooseCohortDialogArgs(),
                     BasicActivator.RepositoryLocator.DataExportRepository,
                     out ect)) //not yet, get user to pick one
-            {
-                return null;//user didn't select one and cancelled dialog
-            }
+                return null; //user didn't select one and cancelled dialog
 
 
         //and document the request
 
         // if we have everything we need to create the cohort right here
         if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
-            return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription,ect);
+            return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription, ect);
         // otherwise we are going to have to ask the user for it
 
         //Get a new request for the source they are trying to populate
@@ -93,9 +93,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable"/>
     /// </summary>
     /// <returns></returns>
-    public static DialogArgs GetChooseCohortDialogArgs()
-    {
-        return new DialogArgs
+    public static DialogArgs GetChooseCohortDialogArgs() =>
+        new()
         {
             WindowTitle = "Choose where to save cohort",
             TaskDescription =
@@ -112,10 +111,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var version = 1;
 
         // If the user has used this description before then we can just bump the version by 1
-        if (existing.Any())
-        {
-            version = existing.Max(static v => v.Version) + 1;
-        }
+        if (existing.Any()) version = existing.Max(static v => v.Version) + 1;
 
         return new CohortCreationRequest(Project,
             new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect),
@@ -143,10 +139,12 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     {
         var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs {
+        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs
+        {
             WindowTitle = "Commit Cohort",
-            TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes successfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
-        },request, Pipeline);
+            TaskDescription =
+                $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes successfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
+        }, request, Pipeline);
 
         pipelineRunner.PipelineExecutionFinishedsuccessfully += (_, _) => OnCohortCreatedSuccessfully(request);
 
@@ -158,7 +156,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
         //create a db listener
-        var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
+        var toDbListener =
+            new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask,
+                description);
 
         //make all messages go to both the db and the UI
         pipelineRunner.SetAdditionalProgressListener(toDbListener);

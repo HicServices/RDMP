@@ -46,7 +46,9 @@ public class RuntimeTaskPackager
             return new List<IRuntimeTask>();
 
         var factory = new RuntimeTaskFactory(_repository);
-        return tasksForThisLoadStage.Select(processTask => RuntimeTaskFactory.Create(processTask, _loadArgsDictionary[processTask.LoadStage])).Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
+        return tasksForThisLoadStage
+            .Select(processTask => RuntimeTaskFactory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]))
+            .Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
     }
 
     public IEnumerable<IRuntimeTask> GetAllRuntimeTasks()

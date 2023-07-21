@@ -42,7 +42,8 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
          ", Mandatory = true, DefaultValue = "$d")]
     public string MetadataNamingPattern { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         toProcess.TableName = GetTableName();
         toProcess.ExtendedProperties.Add("ProperlyNamed", true);
@@ -51,7 +52,9 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         {
             var catalogue = extractDatasetCommand.Catalogue;
 
-            var sourceFolder = _request.GetExtractionDirectory() ?? throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
+            var sourceFolder = _request.GetExtractionDirectory() ??
+                               throw new Exception(
+                                   "Could not find Source Folder. Does the project have an Extraction Directory defined?");
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));
 
@@ -99,7 +102,6 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
     public void Check(ICheckNotifier notifier)
     {
         if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
-        {
             if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a",

@@ -95,7 +95,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     {
         name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", name },
             { "ExtractionFilter_ID", filter.ID }
@@ -143,10 +143,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
 
     public override void DeleteInDatabase()
     {
-        foreach(var v in Values)
-        {
-            v.DeleteInDatabase();
-        }
+        foreach (var v in Values) v.DeleteInDatabase();
 
         base.DeleteInDatabase();
     }

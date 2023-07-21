@@ -32,10 +32,10 @@ public class DatabaseCommandHelper
 {
     private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new()
     {
-        {DatabaseType.MySql,new MySqlImplementation()},
-        {DatabaseType.Oracle,new OracleImplementation()},
-        {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
-        {DatabaseType.PostgreSql,new PostgreSqlImplementation()}
+        { DatabaseType.MySql, new MySqlImplementation() },
+        { DatabaseType.Oracle, new OracleImplementation() },
+        { DatabaseType.MicrosoftSQLServer, new MicrosoftSQLImplementation() },
+        { DatabaseType.PostgreSql, new PostgreSqlImplementation() }
     };
 
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
@@ -44,7 +44,6 @@ public class DatabaseCommandHelper
     /// Sets the default Global timeout in seconds for new DbCommand objects being created
     /// </summary>
     public static int GlobalTimeout = 30;
-
 
 
     public static IDiscoveredServerHelper For(DbConnection con)
@@ -77,7 +76,7 @@ public class DatabaseCommandHelper
     {
         var cmd = For(con).GetCommand(s, con, transaction);
 
-        PerformanceCounter?.AddAudit(cmd,Environment.StackTrace.ToString());
+        PerformanceCounter?.AddAudit(cmd, Environment.StackTrace.ToString());
 
         cmd.CommandTimeout = GlobalTimeout;
         return cmd;

@@ -67,7 +67,7 @@ public class DatabaseEntityJsonConverter : JsonConverter
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
-            
+
         if (reader.TokenType != JsonToken.StartObject)
             throw new JsonReaderException("Malformed json");
 
@@ -84,7 +84,9 @@ public class DatabaseEntityJsonConverter : JsonConverter
         reader.Read();
 
         //read the end object
-        return reader.TokenType != JsonToken.EndObject ? throw new JsonReaderException("Did not find EndObject") : (object)o;
+        return reader.TokenType != JsonToken.EndObject
+            ? throw new JsonReaderException("Did not find EndObject")
+            : (object)o;
     }
 
     /// <summary>

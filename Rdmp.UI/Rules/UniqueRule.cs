@@ -38,10 +38,8 @@ internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTa
             : null;
     }
 
-    private bool AreEqual(T arg, object currentValue)
-    {
-        return currentValue is string s
+    private bool AreEqual(T arg, object currentValue) =>
+        currentValue is string s
             ? string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase)
             : Equals(currentValue, PropertyToCheck(arg));
-    }
 }

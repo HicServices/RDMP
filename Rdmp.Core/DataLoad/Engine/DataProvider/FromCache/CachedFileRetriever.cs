@@ -54,7 +54,8 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
     {
-        var cacheProgress = job.LoadProgress.CacheProgress ?? throw new NullReferenceException("cacheProgress cannot be null");
+        var cacheProgress = job.LoadProgress.CacheProgress ??
+                            throw new NullReferenceException("cacheProgress cannot be null");
         return CreateCacheLayout(cacheProgress, job);
     }
 
@@ -67,7 +68,9 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected static ScheduledDataLoadJob ConvertToScheduledJob(IDataLoadJob dataLoadJob)
     {
-        var scheduledJob = dataLoadJob as ScheduledDataLoadJob ?? throw new Exception("CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
+        var scheduledJob = dataLoadJob as ScheduledDataLoadJob ??
+                           throw new Exception(
+                               "CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
         return scheduledJob;
     }
 
@@ -79,7 +82,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         _workload = new Dictionary<DateTime, FileInfo>();
         foreach (var date in job.DatesToRetrieve)
         {
-            var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
+            var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date, job);
 
             if (fileInfo == null)
                 OnCacheFileNotFound(
@@ -196,7 +199,6 @@ public abstract class CachedFileRetriever : ICachedDataProvider
     }
 
 
-
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
     }
@@ -251,7 +253,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
                 return;
             }
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Cache Directory Is:{d.FullName}",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Cache Directory Is:{d.FullName}", CheckResult.Success));
         }
         catch (Exception ex)
         {

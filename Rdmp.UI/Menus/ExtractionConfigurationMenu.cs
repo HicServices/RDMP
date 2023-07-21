@@ -13,7 +13,7 @@ using Rdmp.UI.ProjectUI;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class ExtractionConfigurationMenu:RDMPContextMenuStrip
+internal class ExtractionConfigurationMenu : RDMPContextMenuStrip
 {
     public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
         : base(args, extractionConfiguration)

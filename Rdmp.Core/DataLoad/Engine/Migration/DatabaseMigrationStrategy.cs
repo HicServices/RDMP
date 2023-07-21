@@ -24,7 +24,8 @@ public abstract class DatabaseMigrationStrategy
     protected IManagedConnection _managedConnection;
     protected const int Timeout = 60000;
 
-    public abstract void MigrateTable(IDataLoadJob toMigrate, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
+    public abstract void MigrateTable(IDataLoadJob toMigrate, MigrationColumnSet columnsToMigrate, int dataLoadInfoID,
+        GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
 
     protected DatabaseMigrationStrategy(IManagedConnection connection)
     {

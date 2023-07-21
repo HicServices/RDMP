@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-internal class PrematureLoadEnderTests:DatabaseTests
+internal class PrematureLoadEnderTests : DatabaseTests
 {
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -23,13 +23,7 @@ internal class PrematureLoadEnderTests:DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        var ender = new PrematureLoadEnder
-        {
-            ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase,
-            ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired
-        };
-
-        ender.Initialize(database,LoadStage.AdjustRaw);
+        Assert.AreEqual(0, database.DiscoverTables(false).Length);
 
         var ender = new PrematureLoadEnder
         {

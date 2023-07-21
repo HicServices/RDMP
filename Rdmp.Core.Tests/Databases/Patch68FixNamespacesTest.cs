@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;
 
-internal class Patch68FixNamespacesTest:UnitTests
+internal class Patch68FixNamespacesTest : UnitTests
 {
     /// <summary>
     /// Tests the systems ability to migrate old class paths in deployed databases to the new namespaces as they exist in
@@ -44,15 +44,14 @@ internal class Patch68FixNamespacesTest:UnitTests
 
             var foundNow = Core.Repositories.MEF.GetType(newClass);
 
-            Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '{0}' which after renaming became '{1}'", oldClass, newClass);
-
+            Assert.IsNotNull(foundNow, "Patch did not work correctly for Type '{0}' which after renaming became '{1}'",
+                oldClass, newClass);
         }
-
-
     }
 
     private string[] ExpectedClasses
-        = {
+        =
+        {
             "CachingEngine.PipelineExecution.Destinations.CacheFileGranularity",
             "CatalogueLibrary.Data.ColumnInfo",
             "CatalogueLibrary.Data.DataAccessCredentials",

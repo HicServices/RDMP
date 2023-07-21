@@ -16,9 +16,16 @@ internal sealed class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBas
 {
     private static readonly Image<Rgba32> Basic = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemsNode);
     private static readonly Image<Rgba32> Core = IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable);
-    private static readonly Image<Rgba32> Internal = IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable_Internal);
-    private static readonly Image<Rgba32> Supplemental = IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable_Supplemental);
-    private static readonly Image<Rgba32> Special = IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable_SpecialApproval);
+
+    private static readonly Image<Rgba32> Internal =
+        IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable_Internal);
+
+    private static readonly Image<Rgba32> Supplemental =
+        IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable_Supplemental);
+
+    private static readonly Image<Rgba32> Special =
+        IconOverlayProvider.GetOverlay(Basic, OverlayKind.Extractable_SpecialApproval);
+
     private static readonly Image<Rgba32> Deprecated = IconOverlayProvider.GetOverlay(Basic, OverlayKind.Deprecated);
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -29,13 +36,13 @@ internal sealed class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBas
         return cin.Category == null
             ? Basic
             : cin.Category.Value switch
-        {
-            Curation.Data.ExtractionCategory.Core => Core,
-            Curation.Data.ExtractionCategory.Supplemental => Supplemental,
-            Curation.Data.ExtractionCategory.SpecialApprovalRequired => Special,
-            Curation.Data.ExtractionCategory.Internal => Internal,
-            Curation.Data.ExtractionCategory.Deprecated => Deprecated,
-            _ => Basic
-        };
+            {
+                Curation.Data.ExtractionCategory.Core => Core,
+                Curation.Data.ExtractionCategory.Supplemental => Supplemental,
+                Curation.Data.ExtractionCategory.SpecialApprovalRequired => Special,
+                Curation.Data.ExtractionCategory.Internal => Internal,
+                Curation.Data.ExtractionCategory.Deprecated => Deprecated,
+                _ => Basic
+            };
     }
 }

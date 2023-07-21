@@ -96,8 +96,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(StandardRegex), (rep, r) => new StandardRegex((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AnyTableSqlParameter),
             (rep, r) => new AnyTableSqlParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Curation.Data.Plugin),
-            (rep, r) => new Curation.Data.Plugin((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Plugin), (rep, r) => new Plugin((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(ANOTable), (rep, r) => new ANOTable((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AggregateConfiguration),
             (rep, r) => new AggregateConfiguration((ICatalogueRepository)rep, r));
@@ -191,17 +190,16 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         };
     }
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        return Constructors.TryGetValue(t, out var constructor)
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
+        Constructors.TryGetValue(t, out var constructor)
             ? constructor(this, reader)
             : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
-    }
 
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
+
     public override T[] GetAllObjects<T>()
     {
-        return _caches.GetOrAdd(typeof(T),t=> new RowVerCache<T>(this))
+        return _caches.GetOrAdd(typeof(T), t => new RowVerCache<T>(this))
             .GetAllObjects<T>();
     }
 
@@ -236,17 +234,14 @@ select 0", con.Connection, con.Transaction);
         return Convert.ToBoolean(cmd.ExecuteScalar());
     }
 
-    public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
-    {
-
-        return GetAllObjects<Catalogue>(
+    public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo) =>
+        GetAllObjects<Catalogue>(
             $@"Where
   Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
   CatalogueItem join
   ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
   where
   TableInfo_ID = {tableInfo.ID} )").ToArray();
-    }
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
     {
@@ -309,7 +304,8 @@ select 0", con.Connection, con.Transaction);
         if (toChange == PermissableDefaults.None)
             throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
-        const string sql = "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
+        const string sql =
+            "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
         var affectedRows = Update(sql, new Dictionary<string, object>
         {

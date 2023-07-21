@@ -19,7 +19,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public static class AssemblyResolver
 {
-    private static Dictionary<string,Assembly> assemblyResolveAttempts = new();
+    private static Dictionary<string, Assembly> assemblyResolveAttempts = new();
 
     public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
     {
@@ -33,9 +33,9 @@ public static class AssemblyResolver
                 return expression;
 
             //start out assuming we cannot load it
-            assemblyResolveAttempts.Add(assemblyInfo,null);
+            assemblyResolveAttempts.Add(assemblyInfo, null);
 
-            foreach(var dir in dirs)
+            foreach (var dir in dirs)
             {
                 var dll = dir.EnumerateFiles($"{name}.dll").SingleOrDefault();
                 if (dll != null)

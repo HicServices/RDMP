@@ -32,8 +32,9 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
     [UseWithCommandLine(
         ParameterHelpList = "<command,type or object>",
-        ParameterHelpBreakdown = @"An object (or array of objects) to describe (e.g. Catalogue:bob) or Type name, or the name of a command")]
-    public ExecuteCommandDescribe(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
+        ParameterHelpBreakdown =
+            @"An object (or array of objects) to describe (e.g. Catalogue:bob) or Type name, or the name of a command")]
+    public ExecuteCommandDescribe(IBasicActivateItems activator, CommandLineObjectPicker picker) : base(activator)
     {
         if (picker.Length != 1)
         {
@@ -55,17 +56,17 @@ public class ExecuteCommandDescribe : BasicCommandExecution
         {
             // Maybe they typed the alias or name of a command
             _nonDatabaseObjectToDescribe = new CommandInvoker(BasicActivator).GetSupportedCommands()
-                .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
+                .FirstOrDefault(t => HasCommandNameOrAlias(t, picker[0].RawValue));
 
 
-            if(_nonDatabaseObjectToDescribe == null)
+            if (_nonDatabaseObjectToDescribe == null)
                 SetImpossible("Did not recognise parameter as a valid command");
         }
     }
 
     [UseWithObjectConstructor]
     public ExecuteCommandDescribe(IBasicActivateItems activator,
-        IMapsDirectlyToDatabaseTable[] toDescribe):base(activator)
+        IMapsDirectlyToDatabaseTable[] toDescribe) : base(activator)
     {
         _databaseObjectToDescribe = toDescribe;
     }
@@ -75,17 +76,14 @@ public class ExecuteCommandDescribe : BasicCommandExecution
         _nonDatabaseObjectToDescribe = randomThing;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return _nonDatabaseObjectToDescribe != null ? iconProvider.GetImage(_nonDatabaseObjectToDescribe) : base.GetImage(iconProvider);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => _nonDatabaseObjectToDescribe != null
+        ? iconProvider.GetImage(_nonDatabaseObjectToDescribe)
+        : base.GetImage(iconProvider);
 
-    public override string GetCommandName()
-    {
-        return _nonDatabaseObjectToDescribe != null
+    public override string GetCommandName() =>
+        _nonDatabaseObjectToDescribe != null
             ? _nonDatabaseObjectToDescribe is Type t ? t.Name : _nonDatabaseObjectToDescribe.ToString()
             : base.GetCommandName();
-    }
 
     public override string GetCommandHelp()
     {
@@ -228,14 +226,16 @@ public class ExecuteCommandDescribe : BasicCommandExecution
                 sbParameters.AppendLine(FormatParameterDescription(req, commandCtor));
             }
 
-            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,p => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
-            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, p => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Database", sbSyntaxes, parameters,
+                p => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Table", sbSyntaxes, parameters,
+                p => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
 
-            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
+            anySyntaxes = ShowSyntax("Pick RDMP Object", sbSyntaxes, parameters,
+                p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
                 new PickObjectByID(BasicActivator),
                 new PickObjectByName(BasicActivator),
                 new PickObjectByQuery(BasicActivator)) || anySyntaxes;
-
         }
 
 
@@ -276,10 +276,12 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
         try
         {
-            if(BasicActivator is ConsoleInputManager)
+            if (BasicActivator is ConsoleInputManager)
             {
                 var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name[..nameColWidth];
-                var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name[..typeColWidth];
+                var type = req.Type.Name.Length < typeColWidth
+                    ? req.Type.Name.PadRight(typeColWidth)
+                    : req.Type.Name[..typeColWidth];
 
                 var desc = req.DemandIfAny?.Description;
 
@@ -293,12 +295,10 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
                 var availableDescriptionWidth = availableWidth - occupied;
 
-                if(availableDescriptionWidth < 0)
+                if (availableDescriptionWidth < 0)
                     return $"{name} {type}";
 
-                var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
-
-                return $"{name} {type} {wrappedDesc}";
+                var wrappedDesc = Wrap(desc, availableDescriptionWidth, occupied);
 
                 return $"{name} {type} {wrappedDesc}";
             }
@@ -367,6 +367,5 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
         sb.Append(BasicCommandExecution.GetCommandName(commandType.Name));
         sb.Append(' ');
-
     }
 }

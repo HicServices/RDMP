@@ -28,7 +28,7 @@ public class TableInfoSynchronizer
     private DiscoveredServer _toSyncTo;
     private ICatalogueRepository _repository;
 
-    public HashSet<Catalogue> ChangedCatalogues  = new();
+    public HashSet<Catalogue> ChangedCatalogues = new();
 
     /// <summary>
     /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
@@ -135,7 +135,8 @@ public class TableInfoSynchronizer
         {
             //see if user wants to add missing columns
             var addMissingColumns = notifier.OnCheckPerformed(new CheckEventArgs(
-                $"The following columns are missing from the TableInfo:{string.Join(",", newColumnsInLive.Select(c => c.GetRuntimeName()))}",CheckResult.Fail,null,"The ColumnInfos will be created and added to the TableInfo"));
+                $"The following columns are missing from the TableInfo:{string.Join(",", newColumnsInLive.Select(c => c.GetRuntimeName()))}",
+                CheckResult.Fail, null, "The ColumnInfos will be created and added to the TableInfo"));
 
             var added = new List<ColumnInfo>();
 
@@ -163,7 +164,6 @@ public class TableInfoSynchronizer
         if (columnsInCatalogueButSinceDisapeared.Any())
             foreach (var columnInfo in columnsInCatalogueButSinceDisapeared)
             {
-
                 var deleteExtraColumnInfos = notifier.OnCheckPerformed(new CheckEventArgs(
                     $"The ColumnInfo {columnInfo.GetRuntimeName()} no longer appears in the live table.",
                     CheckResult.Fail, null,
@@ -219,7 +219,7 @@ public class TableInfoSynchronizer
                     var c = new ForwardEngineerCatalogue(_tableToSync, added.ToArray());
 
                     //In the Catalogue
-                    c.ExecuteForwardEngineering(relatedCatalogues[0],out var cata, out var cis, out var eis);
+                    c.ExecuteForwardEngineering(relatedCatalogues[0], out var cata, out var cis, out var eis);
 
                     //make them extractable only as internal since it is likely they could contain sensitive data if user is just used to hammering Ok on all dialogues
                     foreach (var e in eis)
@@ -374,7 +374,6 @@ public class TableInfoSynchronizer
                     return false;
 
                 ((IDeleteable)currentParameter).DeleteInDatabase();
-
             }
 
         return true;

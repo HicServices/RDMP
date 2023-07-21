@@ -16,6 +16,5 @@ public class TestCaseNotWrittenYetException : Exception
 
     public TestCaseNotWrittenYetException(string msg, Exception ex) : base(msg, ex)
     {
-
     }
 }

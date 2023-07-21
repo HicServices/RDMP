@@ -18,6 +18,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public partial class PickDatabase : PickObjectBase
 {
     public override string Format => "DatabaseType:{DatabaseType}:[Name:{DatabaseName}:]{ConnectionString}";
+
     public override string Help =>
         @"DatabaseType (Required):
     MicrosoftSQLServer
@@ -53,8 +54,9 @@ ConnectionString (Required)";
         var db = string.IsNullOrWhiteSpace(dbName) ? server.GetCurrentDatabase() : server.ExpectDatabase(dbName);
 
         return db == null
-            ? throw new CommandLineObjectPickerParseException("Missing database name parameter, it was not in connection string or specified explicitly",idx,arg)
-            : new CommandLineObjectPickerArgumentValue(arg,idx,db);
+            ? throw new CommandLineObjectPickerParseException(
+                "Missing database name parameter, it was not in connection string or specified explicitly", idx, arg)
+            : new CommandLineObjectPickerArgumentValue(arg, idx, db);
     }
 
     public override IEnumerable<string> GetAutoCompleteIfAny()

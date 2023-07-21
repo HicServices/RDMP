@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IAtomicCommand
+internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution, IAtomicCommand
 {
     private readonly IExternalDatabaseServer _anoStoreServer;
 
@@ -27,9 +27,11 @@ internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IA
             SetImpossible("No default ANOStore has been set");
     }
 
-    public override string GetCommandHelp() => "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
+    public override string GetCommandHelp() =>
+        "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
 
     public override void Execute()
     {
@@ -38,11 +40,12 @@ internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IA
         if (!TypeText("ANO Concept Name", "Name", 500, null, out var name)) return;
         if (!TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix)) return;
 
-        if(!name.StartsWith("ANO", StringComparison.Ordinal))
+        if (!name.StartsWith("ANO", StringComparison.Ordinal))
             name = $"ANO{name}";
         suffix = suffix.Trim('_');
 
-        var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository, (ExternalDatabaseServer) _anoStoreServer,name,suffix);
+        var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository,
+            (ExternalDatabaseServer)_anoStoreServer, name, suffix);
         Publish(anoTable);
         Activate(anoTable);
     }

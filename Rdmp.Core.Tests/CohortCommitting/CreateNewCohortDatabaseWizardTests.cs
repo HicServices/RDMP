@@ -124,7 +124,9 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() => wizard.CreateDatabase(
             candidate,
             ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table", ex.Message);
+        Assert.AreEqual(
+            "Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table",
+            ex.Message);
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -153,7 +155,7 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
 
         //the ExternalCohortTable should pass tests
         ect.Check(ThrowImmediatelyCheckNotifier.Quiet);
-            
+
         //now try putting someone in it
         //the project it will go under
         var project = new Project(DataExportRepository, "MyProject")
@@ -175,10 +177,10 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         var dest = new BasicCohortDestination();
 
         dest.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
-            
+
         //tell it to use the guid allocator
-        dest.ReleaseIdentifierAllocator = typeof (GuidReleaseIdentifierAllocator);
-            
+        dest.ReleaseIdentifierAllocator = typeof(GuidReleaseIdentifierAllocator);
+
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
@@ -228,7 +230,7 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         Assert.AreEqual("101243", dtAno.Rows[1][cohort.GetPrivateIdentifier(true)]);
 
         //make sure that it shows up in the child provider (provides fast object access in CLI and builds tree model for UI)
-        var repo = new DataExportChildProvider(RepositoryLocator, null,ThrowImmediatelyCheckNotifier.Quiet,null);
+        var repo = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
         var descendancy = repo.GetDescendancyListIfAnyFor(cohort);
         Assert.IsNotNull(descendancy);
     }
@@ -255,8 +257,10 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
 
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
 
-        var ex = Assert.Throws<Exception>(()=>ect.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", ex.Message);
+        var ex = Assert.Throws<Exception>(() => ect.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual(
+            "R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)",
+            ex.Message);
 
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
 

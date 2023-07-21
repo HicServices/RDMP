@@ -28,10 +28,8 @@ public class SessionCollection : PersistableObjectCollection
         SessionName = name;
     }
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> {{nameof(SessionName), SessionName}});
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { nameof(SessionName), SessionName } });
 
     public override void LoadExtraText(string s)
     {

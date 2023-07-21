@@ -92,7 +92,6 @@ public class CredentialsTests : DatabaseTests
         finally
         {
             newCredentials.DeleteInDatabase();
-
         }
     }
 
@@ -180,9 +179,6 @@ public class CredentialsTests : DatabaseTests
 
 
             Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
-
-
-            Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
         }
         finally
         {
@@ -223,7 +219,6 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void GetCredentialsFromATableInfo()
     {
-
         var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
         {
             Name = "My Exciting Table"
@@ -260,8 +255,7 @@ public class CredentialsTests : DatabaseTests
 
         try
         {
-
-            tableInfo1.SetCredentials(creds,DataAccessContext.InternalDataProcessing);
+            tableInfo1.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo2.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo1.SaveToDatabase();
             tableInfo2.SaveToDatabase();
@@ -331,12 +325,6 @@ public class CredentialsTests : DatabaseTests
                 Password = "pass"
             };
 
-            cred = new DataAccessCredentials(CatalogueRepository, "bob")
-            {
-                Username = "bob",
-                Password = "pass"
-            };
-
             Assert.AreNotEqual("pass", cred.Password);
             Assert.AreEqual("pass", cred.GetDecryptedPassword());
 
@@ -352,15 +340,12 @@ public class CredentialsTests : DatabaseTests
             Assert.False(constr.IntegratedSecurity);
             Assert.AreEqual("bob", constr.UserID);
             Assert.AreEqual("pass", constr.Password);
-
-
         }
         finally
         {
             t.DeleteInDatabase();
             cred?.DeleteInDatabase();
-            c.DeleteInDatabase();//no need to delete ci because of cascades
-
+            c.DeleteInDatabase(); //no need to delete ci because of cascades
         }
     }
 

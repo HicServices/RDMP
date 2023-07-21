@@ -58,7 +58,7 @@ public class PlatformDatabaseCreation
             var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
 
-            examples.Create(server.GetCurrentDatabase(),ThrowImmediatelyCheckNotifier.Quiet,options);
+            examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
     }
 
@@ -81,7 +81,7 @@ public class PlatformDatabaseCreation
         {
             BinaryCollation = options.BinaryCollation
         };
-        executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
 
         return builder;

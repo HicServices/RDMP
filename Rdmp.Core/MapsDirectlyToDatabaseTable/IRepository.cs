@@ -56,7 +56,8 @@ public interface IRepository
     /// <param name="toCreate"></param>
     /// <param name="constructorParameters"></param>
     /// <returns></returns>
-    void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable;
+    void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
+        where T : IMapsDirectlyToDatabaseTable;
 
     /// <summary>
     /// Get object with the given id, all implementations of this method should set the Repository field on T for you (automatically)

@@ -53,7 +53,8 @@ public class OrderableComparer : IComparer, IComparer<object>
             return -yOrder.Value;
 
         //or use whatever the model is
-        return _nestedComparer?.Compare(x, y) ?? string.Compare(x?.ToString(), y?.ToString(),StringComparison.CurrentCulture);
+        return _nestedComparer?.Compare(x, y) ??
+               string.Compare(x?.ToString(), y?.ToString(), StringComparison.CurrentCulture);
     }
 
     private static int? GetOrderIfAny(object o)

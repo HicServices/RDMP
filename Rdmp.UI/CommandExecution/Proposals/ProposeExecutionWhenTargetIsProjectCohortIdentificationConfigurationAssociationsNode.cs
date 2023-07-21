@@ -12,7 +12,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
+internal class
+    ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<
+        ProjectCohortIdentificationConfigurationAssociationsNode>
 {
     public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(
         IActivateItems itemActivator) : base(itemActivator)
@@ -27,10 +29,9 @@ internal class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurat
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
         ProjectCohortIdentificationConfigurationAssociationsNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return cmd is CohortIdentificationConfigurationCommand cicCommand
-            ? new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project)
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is CohortIdentificationConfigurationCommand cicCommand
+            ? new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
+                .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project)
             : (ICommandExecution)null;
-    }
 }

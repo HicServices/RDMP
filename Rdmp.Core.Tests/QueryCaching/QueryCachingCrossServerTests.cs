@@ -26,7 +26,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 
-internal class QueryCachingCrossServerTests: TestsRequiringA
+internal class QueryCachingCrossServerTests : TestsRequiringA
 {
     [TestCase(DatabaseType.MicrosoftSQLServer, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
@@ -91,7 +91,9 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
+        Assert.IsTrue(
+            compiler.Tasks.Where(t => t.Key is AggregationContainerTask)
+                .Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
     }
 
     /// <summary>
@@ -245,8 +247,6 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
             AssertNoErrors(compiler);
         }
-
-
     }
 
 
@@ -304,11 +304,17 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         AssertNoErrors(compiler);
 
 
-        Assert.AreEqual(compiler.Tasks.Single(static t=> t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount,0);
-        Assert.Greater(compiler.Tasks.Single(t=>t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, 0); //both ac should have the same total
-        Assert.Greater(compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, 0); // that is not 0
+        Assert.AreEqual(
+            compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, 0);
+        Assert.Greater(
+            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount,
+            0); //both ac should have the same total
+        Assert.Greater(
+            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount,
+            0); // that is not 0
 
-        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected EXCEPT container to use the cache");
+        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+            "Expected EXCEPT container to use the cache");
     }
 
     /// <summary>
@@ -352,7 +358,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
 
-        var joinable = SetupPatientIndexTable(db,people,r,cic);
+        var joinable = SetupPatientIndexTable(db, people, r, cic);
 
         cic.CreateRootContainerIfNotExists();
         cic.QueryCachingServer_ID = cache?.ID;
@@ -428,7 +434,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
+        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+            "Expected cache to be used only for the final UNION");
     }
 
     /// <summary>
@@ -479,7 +486,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
+        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+            "Expected cache to be used only for the final UNION");
     }
 
 
@@ -652,7 +660,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         cic.EnsureNamingConvention(ac);
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and)
+        var filter = new AggregateFilter(CatalogueRepository, "TestCode is NA", and)
         {
             WhereSQL = $"{syntax.EnsureWrapped("TestCode")} = 'NA'"
         };
@@ -664,7 +672,9 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         return new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, ac);
     }
 
-    private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+    private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db,
+        PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName,
+        string paramValue)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
 
@@ -740,7 +750,6 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
             var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
             parameter.Value = paramValue;
             parameter.SaveToDatabase();
-
         }
         else
         {
@@ -812,9 +821,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var i = 0;
         foreach (var kvp in compiler.Tasks.Keys)
-            TestContext.WriteLine($"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
+            TestContext.WriteLine(
+                $"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
 
-        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
+        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished),
+            "Expected all tasks to finish without error");
     }
 
     /// <summary>
@@ -878,10 +889,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         string expectedCacheUsageCount)
     {
         //cache should have been used
-        var containerResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
+        var containerResult =
+            compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
 
-        Assert.AreEqual(CompilationState.Finished,containerResult.Key.State);
-        Assert.AreEqual(expectedCacheUsageCount,containerResult.Key.GetCachedQueryUseCount());
+        Assert.AreEqual(CompilationState.Finished, containerResult.Key.State);
+        Assert.AreEqual(expectedCacheUsageCount, containerResult.Key.GetCachedQueryUseCount());
     }
 
     #endregion

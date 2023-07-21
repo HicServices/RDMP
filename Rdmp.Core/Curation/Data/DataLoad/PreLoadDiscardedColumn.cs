@@ -196,10 +196,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
         MicrosoftQuerySyntaxHelper.Instance.GetRuntimeName(RuntimeColumnName);
 
     /// <inheritdoc/>
-    public string GetRuntimeName(LoadStage stage)
-    {
-        return GetRuntimeName();
-    }
+    public string GetRuntimeName(LoadStage stage) => GetRuntimeName();
 
     /// <summary>
     /// true if destination for column is to store in identifier dump including undiluted versions of dilutes

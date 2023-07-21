@@ -55,10 +55,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public bool IsAllowable(Type t)
-    {
-        return IsAllowable(t, out string _);
-    }
+    public bool IsAllowable(Type t) => IsAllowable(t, out string _);
 
     /// <inheritdoc/>
     public bool IsAllowable(Type t, out string reason)
@@ -138,7 +135,6 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     public bool IsAllowable(IPipeline pipeline, out string reason)
     {
         foreach (var component in pipeline.PipelineComponents)
-        {
             if (!IsAllowable(component.GetClassAsSystemType(), out Type forbiddenType))
             {
                 reason =
@@ -174,7 +170,6 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
                 if (!mustHaveType.IsAssignableFrom(pipelineComponentType))
                     return
                         $"The pipeline requires a {descriptionOfThingBeingChecked} of type {GetFullName(mustHaveType)} but the currently configured {descriptionOfThingBeingChecked}{GetFullName(pipelineComponentType)} is not of the same type or a derived type";
-                }
             }
         else
             //it cannot have destination
@@ -186,10 +181,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     }
 
     /// <inheritdoc/>
-    public bool IsAllowable(IPipeline pipeline)
-    {
-        return IsAllowable(pipeline, out _);
-    }
+    public bool IsAllowable(IPipeline pipeline) => IsAllowable(pipeline, out _);
 
 
     /// <summary>
@@ -215,7 +207,8 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     }
 
 
-    private void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component, params object[] parameters)
+    private void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component,
+        params object[] parameters)
     {
         //these are all the interfaces like IPipelineRequirement<TableInfo> etc
         var requirements = component.GetType().GetInterfaces().Where(i =>
@@ -273,7 +266,8 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     {
         var compatibleInterfaces = component.GetType()
             .GetInterfaces().Where(i =>
-                i.IsGenericType && (i.GenericTypeArguments[0] == value.GetType() || i.GenericTypeArguments[0].IsInstanceOfType(value))
+                i.IsGenericType && (i.GenericTypeArguments[0] == value.GetType() ||
+                                    i.GenericTypeArguments[0].IsInstanceOfType(value))
             ).ToArray();
 
         switch (compatibleInterfaces.Length)
@@ -292,15 +286,15 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
             var preInit = interfaceToInvokeIfAny.GetMethod("PreInitialize");
 
             //but first document the fact that we have found it
-            if (!initializedComponents.ContainsKey(component))
-                initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
+            if (!initializedComponents.TryGetValue(component, out var dict))
+                initializedComponents.Add(component, dict = new Dictionary<MethodInfo, object>());
 
-            if (!initializedComponents[component].TryAdd(preInit, value))
+            if (dict.TryGetValue(preInit, out var existing))
                 throw new MultipleMatchingImplmentationException(
                     $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{initializedComponents[component][preInit]}' ('{initializedComponents[component][preInit].GetType().Name}') and '{value}' ('{value.GetType().Name}')");
 
             //invoke it
-            preInit.Invoke(component, new[] {value, listener});
+            preInit.Invoke(component, new[] { value, listener });
 
             //return the type of T for IPipelineRequirement<T> interface that was called
             return interfaceToInvokeIfAny.GenericTypeArguments[0];

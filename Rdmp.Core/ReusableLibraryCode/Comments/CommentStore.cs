@@ -22,9 +22,10 @@ namespace Rdmp.Core.ReusableLibraryCode.Comments;
 /// </summary>
 public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 {
-    private readonly Dictionary<string,string> _dictionary = new(StringComparer.CurrentCultureIgnoreCase);
+    private readonly Dictionary<string, string> _dictionary = new(StringComparer.CurrentCultureIgnoreCase);
 
-    private string[] _ignoreHelpFor = {
+    private string[] _ignoreHelpFor =
+    {
         "CsvHelper.xml",
         "Google.Protobuf.xml",
         "MySql.Data.xml",
@@ -192,7 +193,8 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index] => _dictionary.TryGetValue(index,out var r) ? r : null; // Indexer declaration
+    public string this[string index] =>
+        _dictionary.TryGetValue(index, out var value) ? value : null; // Indexer declaration
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _dictionary.GetEnumerator();
 
@@ -279,8 +281,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public static string FormatAsParagraphs(string message)
     {
-
-        message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
+        message = Regex.Replace(message, $"{Environment.NewLine}\\s*", Environment.NewLine + Environment.NewLine);
         message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", m => m.Groups[2].Value);
 
         return message;

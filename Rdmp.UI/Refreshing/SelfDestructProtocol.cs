@@ -47,12 +47,13 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
         {
             var parent = User.ParentForm;
             if (parent is { IsDisposed: false })
-                parent.Close();//self destruct because object was deleted
+                parent.Close(); //self destruct because object was deleted
 
             return;
         }
 
-        if (o != null && o.ID == OriginalObject.ID && o.GetType() == OriginalObject.GetType())//object was refreshed, probably an update to some fields in it
+        if (o != null && o.ID == OriginalObject.ID &&
+            o.GetType() == OriginalObject.GetType()) //object was refreshed, probably an update to some fields in it
             User.SetDatabaseObject(_activator, o); //give it the new object
     }
 }

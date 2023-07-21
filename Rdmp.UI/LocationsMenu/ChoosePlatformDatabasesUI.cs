@@ -172,11 +172,8 @@ public partial class ChoosePlatformDatabasesUI : Form
 
     private void ChooseDatabase_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.Enter)
-            btnSaveAndClose_Click(null,null);
-
-        if(e.KeyCode == Keys.Escape)
-            Close();
+        if (e.KeyCode == Keys.Enter)
+            btnSaveAndClose_Click(null, null);
 
         if (e.KeyCode == Keys.Escape)
             Close();
@@ -330,9 +327,6 @@ public partial class ChoosePlatformDatabasesUI : Form
             UserSettings.CatalogueConnectionString = cata.ConnectionString;
             UserSettings.DataExportConnectionString = export.ConnectionString;
 
-            if(!failed)
-                RestartApplication();
-
             if (!failed)
                 RestartApplication();
         }
@@ -412,7 +406,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 _seed = result;
             else if (sender == tbPeopleCount)
                 _peopleCount = result;
-            else if(sender == tbRowCount)
+            else if (sender == tbRowCount)
                 _rowCount = result;
 
             tb.ForeColor = Color.Black;
@@ -437,13 +431,6 @@ public partial class ChoosePlatformDatabasesUI : Form
             var yaml = serializer.Serialize(toSerialize);
 
             var sfd = new SaveFileDialog
-            {
-                Filter = "Yaml|*.yaml",
-                Title = "Save yaml",
-                InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
-            };
-
-            if (sfd.ShowDialog() == DialogResult.OK)
             {
                 Filter = "Yaml|*.yaml",
                 Title = "Save yaml",

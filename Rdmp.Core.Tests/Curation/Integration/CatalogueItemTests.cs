@@ -146,7 +146,6 @@ internal class CatalogueItemTests : DatabaseTests
             child.DeleteInDatabase();
             parent.DeleteInDatabase();
             parent2.DeleteInDatabase();
-
         }
     }
 

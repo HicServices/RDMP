@@ -33,7 +33,8 @@ internal class GovernanceManager : IGovernanceManager
             return;
 
         _catalogueRepository.Insert(
-            $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})", null);
+            $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})",
+            null);
     }
 
     /// <inheritdoc/>

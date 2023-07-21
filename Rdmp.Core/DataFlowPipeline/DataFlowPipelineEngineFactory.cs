@@ -45,11 +45,11 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         _context = useCase.GetContext();
         _useCase = useCase;
         _flowType = _context.GetFlowType();
-        _engineType = typeof (DataFlowPipelineEngine<>).MakeGenericType(_flowType);
+        _engineType = typeof(DataFlowPipelineEngine<>).MakeGenericType(_flowType);
     }
 
     /// <inheritdoc/>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline): this(useCase)
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline) : this(useCase)
     {
     }
 
@@ -63,11 +63,16 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         var source = GetBest(_useCase.ExplicitSource, CreateSourceIfExists(pipeline), "source");
 
         //engine (this is the source, target is the destination)
-        var dataFlowEngine = (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline);
+        var dataFlowEngine =
+            (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination,
+                listener, pipeline);
 
         //now go fetch everything that the user has configured for this particular pipeline except the source and destination
         //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
-        foreach (var component in pipeline.PipelineComponents.Where(pc=>pc.ID!=pipeline.DestinationPipelineComponent_ID && pc.ID!=pipeline.SourcePipelineComponent_ID).Select(CreateComponent))
+        foreach (var component in pipeline.PipelineComponents.Where(pc =>
+                         pc.ID != pipeline.DestinationPipelineComponent_ID &&
+                         pc.ID != pipeline.SourcePipelineComponent_ID)
+                     .Select(CreateComponent))
             dataFlowEngine.ComponentObjects.Add(component);
 
         return dataFlowEngine;
@@ -85,13 +90,17 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: explicitThing == null && pipelineConfigurationThing == null
-        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) &&
+            EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
                 $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");
 
         //if one of them only is null - XOR
-        if(EqualityComparer<T2>.Default.Equals(explicitThing, default) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
-            return EqualityComparer<T2>.Default.Equals(explicitThing, default) ? pipelineConfigurationThing : explicitThing; //return the not null one
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) ^
+            EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+            return EqualityComparer<T2>.Default.Equals(explicitThing, default)
+                ? pipelineConfigurationThing
+                : explicitThing; //return the not null one
 
         //both of them are populated
         throw new Exception(
@@ -268,7 +277,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
         if (initizationObjects == null)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("initializationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
+            checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                "initializationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
                 CheckResult.Fail));
             return;
         }

@@ -43,7 +43,8 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var numberOfRecordsToGenerate = 10000;
         var startTime = DateTime.Now;
 
-        var testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
+        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer),
+            numberOfRecordsToGenerate);
         testData.SetupTestData();
         testData.ImportAsCatalogue();
 
@@ -162,7 +163,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         {
             var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
-            var e = Assert.Throws<Exception>(()=> report.Check(ThrowImmediatelyCheckNotifier.Quiet));
+            var e = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
             Assert.IsTrue(
                 e?.Message.StartsWith(
                     "Failed to create DQE Repository, possibly there is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager")
@@ -184,8 +185,8 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //it has no validator XML currently
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(()=>report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("There is no ValidatorXML specified for the Catalogue TestTable",ex.Message);
+        var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("There is no ValidatorXML specified for the Catalogue TestTable", ex.Message);
     }
 
     [Test]
@@ -197,8 +198,9 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //it has no validator XML currently
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(()=>report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator",ex.Message);
+        var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator",
+            ex.Message);
     }
 
     [Test]
@@ -210,8 +212,9 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //it has no validator XML currently
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(()=>report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Could not find a column in the extraction SQL that would match TargetProperty chi",ex.Message);
+        var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual("Could not find a column in the extraction SQL that would match TargetProperty chi",
+            ex.Message);
     }
 
     [Test]
@@ -236,7 +239,8 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         Assert.IsTrue(report.CatalogueSupportsReport(_catalogue));
 
         var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.IsTrue(ex.Message == "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
+        Assert.IsTrue(ex.Message ==
+                      "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
     }
 
     #endregion

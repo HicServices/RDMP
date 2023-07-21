@@ -132,12 +132,11 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        return _encryptedPasswordHost == null
-            ? throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+    public string GetDecryptedPassword() =>
+        _encryptedPasswordHost == null
+            ? throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
             : _encryptedPasswordHost.GetDecryptedPassword() ?? "";
-    }
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();

@@ -37,13 +37,11 @@ public class TableInfoServerNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((TableInfoServerNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((TableInfoServerNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(DatabaseType, ServerName);
-    }
+    public override int GetHashCode() => HashCode.Combine(DatabaseType, ServerName);
 
     public bool IsSameServer(TableInfo tableInfo) =>
         ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)

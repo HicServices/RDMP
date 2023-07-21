@@ -23,9 +23,8 @@ public partial class CommitsUI : CommitsUI_Design
 {
     private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new();
 
-    private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
-
-    public const string GeneralAdviceAboutWhatIsShown = "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
+    public const string GeneralAdviceAboutWhatIsShown =
+        "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
 
     private CommitsUI()
     {
@@ -58,7 +57,8 @@ public partial class CommitsUI : CommitsUI_Design
             TaskDescription = $"Showing all commits. {GeneralAdviceAboutWhatIsShown}"
         });
     }
-    public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o):this()
+
+    public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : this()
     {
         SetItemActivator(activator);
 
@@ -68,7 +68,7 @@ public partial class CommitsUI : CommitsUI_Design
         var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
             .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
             .Where(m => m.IsReferenceTo(o))
-            .Select(m=>m.Commit_ID)
+            .Select(m => m.Commit_ID)
             .Distinct()
             .ToList();
 

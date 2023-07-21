@@ -51,14 +51,13 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         }
     }
 
-    public override string GetCommandName()
-    {
-        return _extractionInformations is not { Length: > 1 }
+    public override string GetCommandName() =>
+        _extractionInformations is not { Length: > 1 }
             ? "Set ExtractionCategory"
             : "Set ALL to ExtractionCategory";
-    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractionInformation);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionInformation);
 
     public override void Execute()
     {
@@ -75,9 +74,8 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
 
         // if project specific only let them set to project specific
         if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
-        {
-            throw new Exception("All CatalogueItems in ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
-        }
+            throw new Exception(
+                "All CatalogueItems in ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
 
         if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue

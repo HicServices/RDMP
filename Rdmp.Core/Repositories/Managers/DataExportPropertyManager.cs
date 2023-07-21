@@ -123,7 +123,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         using (var con = repo.GetConnection())
         {
             using var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
-                       con.Connection, con.Transaction);
+                con.Connection, con.Transaction);
             using var reader = cmd.ExecuteReader();
             _cacheDictionary.Clear();
 
@@ -134,7 +134,6 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
                 _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
                     val, (k, o) => val);
             }
-
         }
 
         _cacheOutOfDate = false;

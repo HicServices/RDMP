@@ -46,10 +46,10 @@ public class BoundDate : Bound
         var d = (DateTime)value;
 
         if (value != null && !IsWithinRange(d))
-            return new ValidationFailure(CreateViolationReportUsingDates(d),this);
+            return new ValidationFailure(CreateViolationReportUsingDates(d), this);
 
-        return value != null && !IsWithinRange(d,otherColumns, otherColumnNames)
-            ? new ValidationFailure(CreateViolationReportUsingFieldNames(d),this)
+        return value != null && !IsWithinRange(d, otherColumns, otherColumnNames)
+            ? new ValidationFailure(CreateViolationReportUsingFieldNames(d), this)
             : null;
     }
 
@@ -92,12 +92,26 @@ public class BoundDate : Bound
             ? null
             : lookupFieldNamed switch
         {
-            DateTime dateTime => dateTime,
-            string named when string.IsNullOrWhiteSpace(named) => null,
-            string named => DateTime.TryParse(named, out var result) ? result : null,
-            _ => throw new ArgumentException(
-                $"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}")
-        };
+            if (string.IsNullOrWhiteSpace(named))
+                return null;
+            try
+            {
+                lookupFieldNamed = DateTime.Parse(named);
+            }
+            catch (InvalidCastException)
+            {
+                return
+                    null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
+
+            return (DateTime)lookupFieldNamed;
+        }
+
+        throw new ArgumentException($"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}");
     }
 
     private string CreateViolationReportUsingDates(DateTime d)
@@ -108,7 +122,9 @@ public class BoundDate : Bound
         if (Lower != null)
             return GreaterThanMessage(d, Lower.ToString());
 
-        return Upper != null ? LessThanMessage(d, Upper.ToString()) : throw new InvalidOperationException("Illegal state.");
+        return Upper != null
+            ? LessThanMessage(d, Upper.ToString())
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
@@ -134,11 +150,6 @@ public class BoundDate : Bound
         $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
 
     private static string Wrap(string s) => $"[{s}]";
-
-    private static string Wrap(string s)
-    {
-        return $"[{s}]";
-    }
 
     public override string GetHumanReadableDescriptionOfValidation()
     {

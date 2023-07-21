@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
+internal class ProposeExecutionWhenTargetIsFilterContainer : RDMPCommandExecutionProposal<IContainer>
 {
     public ProposeExecutionWhenTargetIsFilterContainer(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -42,8 +42,7 @@ internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionP
 
             //so instead let's let them create a new copy (possibly including changing the type e.g. importing a master
             //filter into a data export AND/OR container
-            return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer,sourceFilterCommand.Filter);
-
+            return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer, sourceFilterCommand.Filter);
         }
 
         //drag a container into another container
@@ -56,11 +55,9 @@ internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionP
             //is it a movement within the current container tree
             return sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer)
                 ? new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer)
-                : new ExecuteCommandImportFilterContainerTree(ItemActivator,targetContainer,sourceContainerCommand.Container);
+                : new ExecuteCommandImportFilterContainerTree(ItemActivator, targetContainer,
+                    sourceContainerCommand.Container);
         }
-
-        return null;
-        
 
         return null;
     }

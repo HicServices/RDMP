@@ -68,17 +68,14 @@ public class FilterContainer : ConcreteContainer, IContainer
     /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Operation.ToString();
-    }
+    public override string ToString() => Operation.ToString();
 
 
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves
         var clonedFilterContainer = ShallowClone();
-            
+
         //clone our filters
         foreach (var deployedExtractionFilter in GetFilters())
         {
@@ -124,7 +121,9 @@ public class FilterContainer : ConcreteContainer, IContainer
     {
         var root = GetRootContainerOrSelf();
 
-        return root == null ? null : Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
+        return root == null
+            ? null
+            : Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
     }
 
 
@@ -152,7 +151,6 @@ public class FilterContainer : ConcreteContainer, IContainer
 
         //our parent must be the root container maybe? recursive
         return parent?.GetSelectedDataSetsRecursively();
-
     }
 
     public override IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);

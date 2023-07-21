@@ -56,10 +56,13 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             linenumber = Math.Max(0, linenumber - 1);
 
-            var lines = ReadAllLinesCached(filename) ?? throw new FileNotFoundException($"Could not find source code for file:{Path.GetFileName(filename)}");
+            var lines = ReadAllLinesCached(filename) ??
+                        throw new FileNotFoundException(
+                            $"Could not find source code for file:{Path.GetFileName(filename)}");
 
             //get height of any given line
-            var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + LINE_PADDING*2f;
+            var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts", e.Font).Height +
+                                 LINE_PADDING * 2f;
 
             var midpointY = HEIGHT / 2;
 
@@ -124,7 +127,6 @@ internal class ViewSourceCodeToolTip : ToolTip
                     return null;
 
                 fileContents = contentsInOneLine.Split('\n');
-
             }
 
             SourceFileCache.Add(filename, fileContents);

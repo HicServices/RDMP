@@ -24,11 +24,9 @@ public abstract class PipelineUseCase : IPipelineUseCase
     public HashSet<object> GetInitializationObjects() => InitializationObjects;
 
     /// <inheritdoc/>
-    public IDataFlowPipelineContext GetContext()
-    {
-        return _context ?? throw new Exception(
+    public IDataFlowPipelineContext GetContext() =>
+        _context ?? throw new Exception(
             $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
-    }
 
     /// <summary>
     /// Call this in your constructor
@@ -84,10 +82,8 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
-    {
-        return pipelines.Where(IsAllowable);
-    }
+    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines) =>
+        pipelines.Where(IsAllowable);
 
     /// <inheritdoc/>
     public virtual IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)

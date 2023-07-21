@@ -17,7 +17,6 @@ namespace Tests.Common.Helpers;
 /// </summary>
 public class TestDataPipelineAssembler
 {
-
     /// <summary>
     /// Blueprint for a <see cref="TestDataWriter"/>
     /// </summary>

@@ -38,12 +38,12 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         if (string.IsNullOrWhiteSpace(value))
             return;
 
-        var lines = value.Split(new []{'\n','\r'},StringSplitOptions.RemoveEmptyEntries);
+        var lines = value.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (lines.Length > 0)
         {
             var fields = lines[0].Split(';');
-            if(fields.Length>0)
+            if (fields.Length > 0)
                 if (Enum.TryParse(fields[0], out DataLoadProgressUpdateStrategy strat))
                     Strategy = strat;
 
@@ -112,10 +112,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         return added;
     }
 
-    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job)
-    {
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
-    }
+    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job) =>
+        DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
     {
@@ -129,7 +127,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         var scalarValue = cmd.ExecuteScalar();
 
         if (scalarValue == null || scalarValue == DBNull.Value)
-            throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
+            throw new DataLoadProgressUpdateException(
+                "ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
 
         try
         {
@@ -138,7 +137,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         catch (Exception e)
         {
             throw new DataLoadProgressUpdateException(
-                $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}", e);
+                $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}",
+                e);
         }
     }
 

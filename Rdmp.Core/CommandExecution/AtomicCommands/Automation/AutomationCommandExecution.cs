@@ -17,7 +17,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 public abstract class AutomationCommandExecution : BasicCommandExecution
 {
     protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-    public static readonly string AutomationServiceExecutable = Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
+
+    public static readonly string AutomationServiceExecutable =
+        Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
 
     private readonly TableRepository _cataTableRepo;
     private readonly TableRepository _dataExportTableRepo;
@@ -37,7 +39,6 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
 
         if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
             SetImpossible("Current repository is not not TableRepository/YamlRepository");
-
     }
 
     /// <summary>

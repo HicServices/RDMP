@@ -227,13 +227,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         if (dt.Rows.Count == 0) return;
 
         if (!UserSettings.IncludeZeroSeriesInGraphs)
-        {
-            dt.BeginLoadData();
             foreach (var col in dt.Columns.Cast<DataColumn>().ToArray())
                 if (dt.Rows.Cast<DataRow>().All(r => IsBasicallyZero(r[col.ColumnName])))
                     dt.Columns.Remove(col);
-            dt.EndLoadData();
-        }
     }
 
     private static bool IsBasicallyZero(object v) => v == null || v == DBNull.Value ||
@@ -600,7 +596,6 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     private bool orderFetchAttempted;
 
 
-
     /// <summary>
     /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
     /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.
@@ -653,12 +648,13 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var aggregateDimension in AggregateDimensions)
         {
-            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone)
-                {
-                    Alias = aggregateDimension.Alias,
-                    SelectSQL = aggregateDimension.SelectSQL,
-                    Order = aggregateDimension.Order
-                };
+            var cloneDimension = new AggregateDimension((ICatalogueRepository)Repository,
+                aggregateDimension.ExtractionInformation, clone)
+            {
+                Alias = aggregateDimension.Alias,
+                SelectSQL = aggregateDimension.SelectSQL,
+                Order = aggregateDimension.Order
+            };
             cloneDimension.SaveToDatabase();
 
             if (aggregateDimension.AggregateContinuousDateAxis != null)

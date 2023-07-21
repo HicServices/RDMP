@@ -25,7 +25,8 @@ public class PopulateRAW : CompositeDataLoadComponent
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
 
-    public PopulateRAW(List<IRuntimeTask> collection,HICDatabaseConfiguration databaseConfiguration):base(collection.Cast<IDataLoadComponent>().ToList())
+    public PopulateRAW(List<IRuntimeTask> collection, HICDatabaseConfiguration databaseConfiguration) : base(
+        collection.Cast<IDataLoadComponent>().ToList())
     {
         _databaseConfiguration = databaseConfiguration;
         Description = "Populate RAW";
@@ -61,7 +62,8 @@ public class PopulateRAW : CompositeDataLoadComponent
             {
                 // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
                 var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
-                var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
+                var numAttachersRequiringDbCreation =
+                    attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
                 if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
                     throw new Exception(
@@ -106,7 +108,6 @@ public class PopulateRAW : CompositeDataLoadComponent
             var message = $"The Mounting stage has not populated the RAW database ({rawDbInfo}) with any data";
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, message));
             throw new Exception(message);
-
         }
     }
 }

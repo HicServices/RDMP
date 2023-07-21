@@ -130,7 +130,6 @@ public partial class ViewSourceCodeDialog : Form
                     if (readToEnd != null) //the entry was found and read
                         return readToEnd;
                 }
-            }
         }
         catch (Exception)
         {

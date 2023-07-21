@@ -46,7 +46,7 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
         var repo = new MemoryCatalogueRepository();
 
         //we are hijacking the query builder creation for this graph
-        var toReturn =  base.GetQueryBuilder(aggregateConfiguration);
+        var toReturn = base.GetQueryBuilder(aggregateConfiguration);
 
         //instead of only filtering on the filters of the Aggregate, also filter on the configurations data extraction filters AND on the cohort ID
         var spontedContainer = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.AND);
@@ -86,7 +86,7 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
                 "Expected there to be at least 1 custom join line returned by the ISqlQueryBuilder fetched with Request.GetQueryBuilder but it had 0 so how did it know what cohort table to join against?");
 
         foreach (var line in customLines)
-            toReturn.AddCustomLine(line.Text,QueryComponent.JoinInfoJoin);
+            toReturn.AddCustomLine(line.Text, QueryComponent.JoinInfoJoin);
 
         spontedContainer.AddChild(spontedFilter);
 
@@ -98,7 +98,9 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
 
     protected override object[] GetRibbonObjects()
     {
-        return _collection == null ? base.GetRibbonObjects() : new object[] { Request.Configuration,"Graphing Extraction Query"};
+        return _collection == null
+            ? base.GetRibbonObjects()
+            : new object[] { Request.Configuration, "Graphing Extraction Query" };
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -134,7 +136,7 @@ public sealed class ExtractionAggregateGraphUI : AggregateGraphUI, IObjectCollec
     {
         var parent = ParentForm;
         if (parent is { IsDisposed: false })
-            parent.Close();//self destruct because object was deleted
+            parent.Close(); //self destruct because object was deleted
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

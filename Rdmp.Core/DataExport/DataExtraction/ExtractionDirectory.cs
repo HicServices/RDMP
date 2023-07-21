@@ -65,7 +65,7 @@ public class ExtractionDirectory : IExtractionDirectory
             throw new Exception(
                 $"You cannot call a dataset '{CUSTOM_COHORT_DATA_FOLDER_NAME}' because this string is reserved for cohort custom data the system spits out itself");
 
-        if(!Catalogue.IsAcceptableName(dataset.Catalogue.Name,out var reason))
+        if (!Catalogue.IsAcceptableName(dataset.Catalogue.Name, out var reason))
             throw new NotSupportedException(
                 $"Cannot extract dataset {dataset} because it points at Catalogue with an invalid name, name is invalid because:{reason}");
 
@@ -93,7 +93,8 @@ public class ExtractionDirectory : IExtractionDirectory
         //The configuration number matches but directory isn't the currently configured Project extraction directory
         var p = configuration.Project;
 
-        return directory.Parent.FullName == Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME) && directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
+        return directory.Parent.FullName == Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME) &&
+               directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
     }
 
     public DirectoryInfo GetDirectoryForCohortCustomData() =>

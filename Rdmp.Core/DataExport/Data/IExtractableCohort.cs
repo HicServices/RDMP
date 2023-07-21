@@ -138,5 +138,4 @@ public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated,
     /// <param name="allowCaching"></param>
     /// <exception cref="KeyNotFoundException"></exception>
     void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener, bool allowCaching);
-
 }

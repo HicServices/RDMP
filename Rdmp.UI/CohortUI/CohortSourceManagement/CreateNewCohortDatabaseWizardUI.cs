@@ -95,7 +95,6 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
     }
 
 
-
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)
     {
         PrivateIdentifierPrototype = (PrivateIdentifierPrototype)listView1.SelectedObject;
@@ -108,8 +107,7 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         var pb = new PictureBox
         {
             Image = bmp,
-            Size = new System.Drawing.Size(bmp.Width,bmp.Height)
-
+            Size = new System.Drawing.Size(bmp.Width, bmp.Height)
         };
 
         new SingleControlForm(pb).Show();

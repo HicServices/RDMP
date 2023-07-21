@@ -15,7 +15,7 @@ using Rdmp.Core;
 
 namespace Rdmp.UI.Tests;
 
-internal class ArbitraryFolderNodeTests:UITests
+internal class ArbitraryFolderNodeTests : UITests
 {
     [Test]
     [UITimeout(50000)]
@@ -42,7 +42,7 @@ internal class ArbitraryFolderNodeTests:UITests
 
         // expect 2 new entries in the context menu.  The "Do Nothing" command added above
         // and a tool strip seperator to divide the menu commands from the common commands
-        Assert.AreEqual(count1+2,count2);
+        Assert.AreEqual(count1 + 2, count2);
 
         //what happens if the delegate crashes?
         node.CommandGetter = () => throw new NotSupportedException("It went wrong!");

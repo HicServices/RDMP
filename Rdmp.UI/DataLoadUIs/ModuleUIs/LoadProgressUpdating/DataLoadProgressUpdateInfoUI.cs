@@ -35,9 +35,6 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     private const string WarningRAW =
         "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
 
-    private const string WarningLIVE = "(Must return a single date value.  IMPORTANT: Since you are targetting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
-    private const string WarningRAW = "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
-
     public Scintilla QueryEditor { get; set; }
 
     public DataLoadProgressUpdateInfoUI()
@@ -75,7 +72,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         {
             ExecuteScalarSQL = QueryEditor.Text,
             Timeout = _timeout,
-            Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem
+            Strategy = (DataLoadProgressUpdateStrategy)ddStrategy.SelectedItem
         };
 
         return toReturn;

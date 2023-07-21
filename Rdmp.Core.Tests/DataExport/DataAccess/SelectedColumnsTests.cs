@@ -33,7 +33,7 @@ public class SelectedColumnsTests : DatabaseTests
 
         try
         {
-            _=new SelectedDataSets(DataExportRepository,config, ds,null);
+            _ = new SelectedDataSets(DataExportRepository, config, ds, null);
 
             var cols = config.GetAllExtractableColumnsFor(ds);
 

@@ -195,6 +195,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
     }
 
     private readonly List<string> _errors = new();
+
     private void Error(string s)
     {
         Console.WriteLine(s);
@@ -271,7 +272,6 @@ public partial class AutoCommentsEvaluator
 
             for (var i = 0; i < text.Length; i++)
             {
-
                 //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
                 if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                 {
@@ -287,7 +287,6 @@ public partial class AutoCommentsEvaluator
                         var m = PublicRegex().Match(next);
                         if (m.Success)
                         {
-
                             var whitespace = m.Groups[1].Value;
                             var member = m.Groups[3].Value;
 
@@ -345,7 +344,8 @@ public partial class AutoCommentsEvaluator
                         sbSuggestedText.AppendLine(text[i]);
 
                         //add the para tag
-                        var nextLine = text[i + 1].Insert(text[i+1].IndexOf("///", StringComparison.Ordinal)+4,"<para>");
+                        var nextLine = text[i + 1].Insert(text[i + 1].IndexOf("///", StringComparison.Ordinal) + 4,
+                            "<para>");
                         sbSuggestedText.AppendLine(nextLine);
                         i++;
                         paraOpened = true;

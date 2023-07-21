@@ -34,10 +34,9 @@ internal class DataAccessPortalCollectionTests
     public void TestOneServer_CountCorrect(bool singleServer)
     {
         var collection = new DataAccessPointCollection(singleServer);
-        var _dap = Substitute.For<IDataAccessPoint>();
-        _dap.Server.Returns("loco");
-        _dap.DatabaseType.Returns(DatabaseType.Oracle);
-        collection.Add(_dap);
+        collection.Add(Mock.Of<IDataAccessPoint>(m =>
+            m.Server == "loco" &&
+            m.DatabaseType == DatabaseType.Oracle));
         Assert.AreEqual(1, collection.Points.Count);
     }
 
@@ -61,7 +60,7 @@ internal class DataAccessPortalCollectionTests
         Assert.AreEqual(2, collection.Points.Count);
 
         var db = collection.GetDistinctServer().GetCurrentDatabase();
-        Assert.IsNull(db);
+        Assert.AreEqual("B", db.GetRuntimeName());
     }
 
     [Test]
@@ -107,6 +106,13 @@ internal class DataAccessPortalCollectionTests
         _dap.DatabaseType.Returns(DatabaseType.Oracle);
         _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
 
+        collection.Add(Mock.Of<IDataAccessPoint>(m =>
+            m.Server == "loco" &&
+            m.Database == "B" &&
+            m.DatabaseType == DatabaseType.Oracle &&
+            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
+                u.Username == "ff" &&
+                u.GetDecryptedPassword() == "pwd")));
 
         var _dap0 = Substitute.For<IDataAccessPoint>();
         _dap0.Server.Returns("loco");
@@ -149,7 +155,7 @@ internal class DataAccessPortalCollectionTests
         );
 
         //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("ollection could not agree on a single Username",
+        StringAssert.Contains("collection could not agree whether to use Credentials or not",
             ex.InnerException.Message);
         Assert.AreEqual(1, collection.Points.Count);
     }
@@ -183,7 +189,14 @@ internal class DataAccessPortalCollectionTests
 
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(_dap0)
+            collection.Add(Mock.Of<IDataAccessPoint>(m =>
+                m.Server == "loco" &&
+                m.Database == "A" &&
+                m.DatabaseType == DatabaseType.Oracle &&
+                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(
+                    u =>
+                        u.Username == "user2" &&
+                        u.GetDecryptedPassword() == "pwd")))
         );
 
         //should be relevant error and it shouldn't have been added
@@ -221,7 +234,14 @@ internal class DataAccessPortalCollectionTests
 
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(_dap0)
+            collection.Add(Mock.Of<IDataAccessPoint>(m =>
+                m.Server == "loco" &&
+                m.Database == "A" &&
+                m.DatabaseType == DatabaseType.Oracle &&
+                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(
+                    u =>
+                        u.Username == "user1" &&
+                        u.GetDecryptedPassword() == "pwd2")))
         );
 
         //should be relevant error and it shouldn't have been added

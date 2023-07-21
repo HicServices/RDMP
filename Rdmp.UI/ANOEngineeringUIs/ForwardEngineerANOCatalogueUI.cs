@@ -51,8 +51,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
 
         olvSuffix.AspectGetter = o => o is ANOTable anoTable ? anoTable.Suffix : null;
-        olvNumberOfCharacters.AspectGetter = o => o is ANOTable anoTable ? anoTable.NumberOfCharactersToUseInAnonymousRepresentation: null;
-        olvNumberOfDigits.AspectGetter = o => o is ANOTable anoTable ? anoTable.NumberOfIntegersToUseInAnonymousRepresentation : null;
+        olvNumberOfCharacters.AspectGetter = o =>
+            o is ANOTable anoTable ? anoTable.NumberOfCharactersToUseInAnonymousRepresentation : null;
+        olvNumberOfDigits.AspectGetter = o =>
+            o is ANOTable anoTable ? anoTable.NumberOfIntegersToUseInAnonymousRepresentation : null;
 
         olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
 
@@ -91,10 +93,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         return _planManager.SkippedTables.Contains(table) ? "Already Exists" : (object)null;
     }
 
-    private Image PickedANOTable_ImageGetter(object rowObject)
-    {
-        return rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null ? imageList1.Images["ANOTable"] : null;
-    }
+    private Image PickedANOTable_ImageGetter(object rowObject) =>
+        rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null
+            ? imageList1.Images["ANOTable"]
+            : null;
 
     private object PickedANOTableAspectGetter(object rowobject)
     {
@@ -270,7 +272,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            if(e.RowObject is not ColumnInfo col)
+            if (e.RowObject is not ColumnInfo col)
                 return;
 
             var plan = _planManager.GetPlanForColumnInfo(col);
@@ -293,10 +295,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 }
                 else
                 {
-                    Enum.TryParse((string) cbx.SelectedItem, out ExtractionCategory c);
+                    Enum.TryParse((string)cbx.SelectedItem, out ExtractionCategory c);
                     plan.ExtractionCategoryIfAny = c;
                 }
-
             }
         }
         catch (Exception exception)
@@ -329,17 +330,19 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
             //Set up tree view to show ANO Tables that are usable
             tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
-            tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null, settings);
+            tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null,
+                settings);
 
             tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
             tlvANOTables.ExpandAll();
 
             //Setup tree view to show all TableInfos that you are trying to Migrate
             tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
-            tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator, olvTableInfoName, null, settings);
+            tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator,
+                olvTableInfoName, null, settings);
 
             //don't display anything below ColumnInfo
-            tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
+            tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] { typeof(ColumnInfo) };
 
             _setup = true;
         }
@@ -459,11 +462,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
     {
         var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting)
-            {
-                ProcessTaskType = ProcessTaskType.Attacher,
-                Name = $"Read from {t}",
-                Path = typeof(RemoteTableAttacher).FullName
-            };
+        {
+            ProcessTaskType = ProcessTaskType.Attacher,
+            Name = $"Read from {t}",
+            Path = typeof(RemoteTableAttacher).FullName
+        };
         pt.SaveToDatabase();
 
         pt.CreateArgumentsForClassIfNotExists<RemoteTableAttacher>();
@@ -548,7 +551,6 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void btnSavePlan_Click(object sender, EventArgs e)
     {
-
         var sfd = new SaveFileDialog
         {
             Filter = "Plans (*.plan)|*.plan"
@@ -557,10 +559,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         {
             var fi = new FileInfo(sfd.FileName);
 
-            var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory)
-                {
-                    ShowInExplorer = false
-                };
+            var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator,
+                Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory)
+            {
+                ShowInExplorer = false
+            };
 
             if (!cmdAnoTablesToo.IsImpossible)
                 cmdAnoTablesToo.Execute();
@@ -582,7 +585,8 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
             var fi = new FileInfo(ofd.FileName);
             var json = File.ReadAllText(fi.FullName);
             _planManager = (ForwardEngineerANOCataloguePlanManager)
-                JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), Activator.RepositoryLocator);
+                JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager),
+                    Activator.RepositoryLocator);
 
             if (_planManager.StartDate != null)
                 tbStartDate.Text = _planManager.StartDate.Value.ToString(CultureInfo.CurrentCulture);

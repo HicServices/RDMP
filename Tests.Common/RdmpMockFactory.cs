@@ -28,11 +28,9 @@ public class RdmpMockFactory
     public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(
         string databaseNameToReturn, string tableNameToReturn)
     {
-        var mock = Substitute.For<INameDatabasesAndTablesDuringLoads>();
-
-        mock.GetDatabaseName(Arg.Any<string>(), Arg.Any<LoadBubble>()).Returns(databaseNameToReturn);
-        mock.GetName(Arg.Any<string>(), Arg.Any<LoadBubble>()).Returns(tableNameToReturn);
-        return mock;
+        return Mock.Of<INameDatabasesAndTablesDuringLoads>(x =>
+            x.GetDatabaseName(It.IsAny<string>(), It.IsAny<LoadBubble>()) == databaseNameToReturn &&
+            x.GetName(It.IsAny<string>(), It.IsAny<LoadBubble>()) == tableNameToReturn);
     }
 
     /// <inheritdoc cref="Mock_INameDatabasesAndTablesDuringLoads(string, string)"/>
@@ -62,9 +60,14 @@ public class RdmpMockFactory
         lmd.GetAllCatalogues().Returns(new[] { cata });
         lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
 
-        cata.GetTableInfoList(Arg.Any<bool>()).Returns(new[] { tableInfo });
-        cata.LoggingDataTask.Returns(TestLoggingTask);
-        return lmd;
+        lmd.Setup(m => m.GetDistinctLiveDatabaseServer())
+            .Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
+        lmd.Setup(m => m.GetAllCatalogues()).Returns(new[] { cata.Object });
+        lmd.Setup(p => p.GetDistinctLoggingTask()).Returns(TestLoggingTask);
+
+        cata.Setup(m => m.GetTableInfoList(It.IsAny<bool>())).Returns(new[] { tableInfo });
+        cata.Setup(m => m.LoggingDataTask).Returns(TestLoggingTask);
+        return lmd.Object;
     }
 
     /// <summary>
@@ -74,11 +77,11 @@ public class RdmpMockFactory
     /// <returns></returns>
     public static ITableInfo Mock_TableInfo(DiscoveredTable table)
     {
-        return Mock.Of<ITableInfo>(p=>
+        return Mock.Of<ITableInfo>(p =>
             p.Name == table.GetFullyQualifiedName() &&
-            p.Database==table.Database.GetRuntimeName() &&
-            p.DatabaseType==table.Database.Server.DatabaseType &&
+            p.Database == table.Database.GetRuntimeName() &&
+            p.DatabaseType == table.Database.Server.DatabaseType &&
             p.IsTableValuedFunction == (table.TableType == TableType.TableValuedFunction) &&
-            p.Discover(It.IsAny<DataAccessContext>())==table);
+            p.Discover(It.IsAny<DataAccessContext>()) == table);
     }
 }

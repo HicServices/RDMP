@@ -49,7 +49,6 @@ public class Plugin : DatabaseEntity, INamed
     }
 
 
-
     /// <summary>
     /// Returns <see cref="Name"/> without the verison e.g. "Rdmp.Dicom" from an ambigious name:
     ///  Rdmp.Dicom.0.0.1.nupkg
@@ -100,12 +99,11 @@ public class Plugin : DatabaseEntity, INamed
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", pluginZipFile.Name},
-            {"UploadedFromDirectory", pluginZipFile.DirectoryName},
-            {"PluginVersion", pluginVersion ?? new Version(0,0,0,0)},
-            {"RdmpVersion", rdmpVersion ?? new Version(0,0,0,0)}
+            { "Name", pluginZipFile.Name },
+            { "UploadedFromDirectory", pluginZipFile.DirectoryName },
+            { "PluginVersion", pluginVersion ?? new Version(0, 0, 0, 0) },
+            { "RdmpVersion", rdmpVersion ?? new Version(0, 0, 0, 0) }
         });
-
     }
 
     internal Plugin(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
@@ -167,6 +165,6 @@ public class Plugin : DatabaseEntity, INamed
 
         return string.IsNullOrWhiteSpace(pluginName)
             ? throw new Exception("Plugin doesn't have a valid name")
-            : Path.Combine(downloadDirectoryRoot.FullName ,pluginName);
+            : Path.Combine(downloadDirectoryRoot.FullName, pluginName);
     }
 }

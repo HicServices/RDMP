@@ -92,7 +92,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     public string CacheLagPeriodLoadDelay
     {
         get => _cacheLagPeriodLoadDelay;
-        set => SetField(ref  _cacheLagPeriodLoadDelay, value);
+        set => SetField(ref _cacheLagPeriodLoadDelay, value);
     }
 
     #endregion
@@ -122,16 +122,13 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     #endregion
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
-    public CacheLagPeriod GetCacheLagPeriod()
-    {
-        return string.IsNullOrWhiteSpace(CacheLagPeriod) ? null : new CacheLagPeriod(CacheLagPeriod);
-    }
+    public CacheLagPeriod GetCacheLagPeriod() =>
+        string.IsNullOrWhiteSpace(CacheLagPeriod) ? null : new CacheLagPeriod(CacheLagPeriod);
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
-    public CacheLagPeriod GetCacheLagPeriodLoadDelay()
-    {
-        return string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay) ? Cache.CacheLagPeriod.Zero : new CacheLagPeriod(CacheLagPeriodLoadDelay);
-    }
+    public CacheLagPeriod GetCacheLagPeriodLoadDelay() => string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay)
+        ? Cache.CacheLagPeriod.Zero
+        : new CacheLagPeriod(CacheLagPeriodLoadDelay);
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
     public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
@@ -185,7 +182,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
         using (var conn = ((CatalogueRepository)Repository).GetConnection())
         {
             using var cmd =
-                  DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
+                DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
 WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
 ORDER BY FetchRequestStart
 OFFSET {start} ROWS
@@ -236,7 +233,8 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
     {
         return PermissionWindow_ID == null
             ? LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray()
-            : PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
+            : PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues())
+                .Cast<Catalogue>().Distinct().ToArray();
     }
 
     /// <summary>

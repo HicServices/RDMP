@@ -22,7 +22,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class BackfillTests : FromToDatabaseTests
 {
-
     private ICatalogue _catalogue;
 
 
@@ -900,7 +899,7 @@ public class BackfillTests : FromToDatabaseTests
         using (var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery();
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})", con).ExecuteNonQuery();
         }
     }
 
@@ -929,6 +928,7 @@ public class BackfillTests : FromToDatabaseTests
 
         // should be all entities set SetUp now
         Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+
         #endregion
 
         // add data
@@ -1111,9 +1111,7 @@ public class BackfillTests : FromToDatabaseTests
 
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
-        {
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
-        }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
 

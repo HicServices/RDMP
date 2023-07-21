@@ -37,8 +37,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     {
         if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
             Cursor = Cursors.Hand;
-        else
-        if (pbYellow.Tag != null || pbRed.Tag != null)
+        else if (pbYellow.Tag != null || pbRed.Tag != null)
             Cursor = Cursors.Hand;
         else
             Cursor = Cursors.Arrow;

@@ -48,9 +48,11 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
     /// <param name="pointTo"></param>
     [UseWithObjectConstructor]
     public ExecuteCommandSetFilterTreeShortcut(IBasicActivateItems activator,
-        [DemandsInitialization("An aggregate for whom you want to set the WHERE logic on (must not have any current filters/containers)")]
+        [DemandsInitialization(
+            "An aggregate for whom you want to set the WHERE logic on (must not have any current filters/containers)")]
         AggregateConfiguration setOn,
-        [DemandsInitialization("The destination aggregate which contains a WHERE logic tree (containers and filters) that you want to copy.  Pass Null to clear")]
+        [DemandsInitialization(
+            "The destination aggregate which contains a WHERE logic tree (containers and filters) that you want to copy.  Pass Null to clear")]
         AggregateConfiguration pointTo) : base(activator)
     {
         _setOn = setOn;
@@ -93,7 +95,7 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
                 return;
             }
 
-            pointTo = (AggregateConfiguration)BasicActivator.SelectOne("Target",available,null,false);
+            pointTo = (AggregateConfiguration)BasicActivator.SelectOne("Target", available, null, false);
 
             // Looks like they didn't make a choice
             if (pointTo == null)

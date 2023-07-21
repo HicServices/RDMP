@@ -40,10 +40,12 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
 
         _share.GetImportAs(ec.SharingUID, c2);
         _share.GetImportAs(eci.SharingUID, ci2);
-            
+
         Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectExport>().Length);
         Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
-        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);//successive calls shouldhn't generate extra entries since they are same obj
+        Assert.AreEqual(2,
+            CatalogueRepository.GetAllObjects<ObjectImport>()
+                .Length); //successive calls shouldhn't generate extra entries since they are same obj
         Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
 
         //cannot delete the shared object

@@ -24,11 +24,11 @@ public class GetDatabaseDiagramBinaryTest : DatabaseTests
         //The system diagram exists
         Assert.IsTrue(reader.Read());
 
-        var bytes = (byte[]) reader[0];
+        var bytes = (byte[])reader[0];
         var bytesAsString = ByteArrayToString(bytes);
-                    
+
         Console.WriteLine(bytesAsString);
-        Assert.Greater(bytesAsString.Length,100000);
+        Assert.Greater(bytesAsString.Length, 100000);
     }
 
     public static string ByteArrayToString(byte[] ba)

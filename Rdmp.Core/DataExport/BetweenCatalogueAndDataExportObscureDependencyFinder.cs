@@ -43,7 +43,8 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
         if (oTableWrapperObject is Catalogue cata)
         {
             //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
-            var dependencies = _serviceLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID" , cata.ID).ToArray();
+            var dependencies = _serviceLocator.DataExportRepository
+                .GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cata.ID).ToArray();
 
             //we have any dependant catalogues?
             if (dependencies.Any())

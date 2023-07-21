@@ -26,7 +26,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 /// <summary>
 /// Tests caching the results of an <see cref="AggregateConfiguration"/> which hits up multiple underlying tables.
 /// </summary>
-internal class CohortCompilerCacheJoinableTest:FromToDatabaseTests
+internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
 {
     [Test]
     public void CohortIdentificationConfiguration_Join_PatientIndexTable()

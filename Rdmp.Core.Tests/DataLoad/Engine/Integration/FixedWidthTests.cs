@@ -121,9 +121,7 @@ public class FixedWidthTests : DatabaseTests
             Assert.AreEqual("FM", dataTable.Rows[0]["initials"]);
             Assert.AreEqual("38051", dataTable.Rows[0]["practice_code"]);
             Assert.AreEqual(new DateTime(2004, 4, 1), dataTable.Rows[0]["date_into_practice"]);
-            Assert.AreEqual(new DateTime(2009,5,1), dataTable.Rows[0]["date_out_of_practice"]);
-
-
+            Assert.AreEqual(new DateTime(2009, 5, 1), dataTable.Rows[0]["date_out_of_practice"]);
         }
         finally
         {
@@ -224,8 +222,6 @@ public class FixedWidthTests : DatabaseTests
 
             //Assert the expected error result is the real one
             Assert.IsTrue(errorRegex.IsMatch(ex.Message));
-
-
         }
         finally
         {

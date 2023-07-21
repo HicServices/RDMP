@@ -44,7 +44,7 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
 
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
-        level = EventType == "OnWarning"? CheckResult.Warning : CheckResult.Success;
+        level = EventType == "OnWarning" ? CheckResult.Warning : CheckResult.Success;
         title = Date.ToString(CultureInfo.InvariantCulture);
         body = Description;
         stackTrace = null;

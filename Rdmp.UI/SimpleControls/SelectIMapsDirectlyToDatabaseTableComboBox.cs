@@ -40,7 +40,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
                 else
                     suggestComboBox1.SelectedIndex = -1;
 
-                suggestComboBox1_SelectedIndexChanged(this,EventArgs.Empty);
+                suggestComboBox1_SelectedIndexChanged(this, EventArgs.Empty);
             }
         }
     }
@@ -54,7 +54,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     {
         InitializeComponent();
 
-        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>": o.ToString());
+        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>" : o.ToString());
         suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
     }
 
@@ -97,6 +97,4 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
         if (string.IsNullOrWhiteSpace(suggestComboBox1.Text))
             suggestComboBox1.SelectedIndex = -1;
     }
-
-
 }

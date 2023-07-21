@@ -90,7 +90,8 @@ public partial class FindAndReplaceUI : RDMPUserControl
             _allObjects.Add(o);
 
         if (Activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
-            foreach (var o in dxmChildProvider.GetAllExtractableColumns(Activator.RepositoryLocator.DataExportRepository))
+            foreach (var o in dxmChildProvider.GetAllExtractableColumns(
+                         Activator.RepositoryLocator.DataExportRepository))
                 _allObjects.Add(o);
 
         foreach (var o in g.GetAllObjectsInAllDatabases())
@@ -99,7 +100,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
     {
-        if( e?.RowObject == null)
+        if (e?.RowObject == null)
             return;
 
         var node = (FindAndReplaceNode)e.RowObject;
@@ -111,15 +112,14 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private object PropertyAspectGetter(object rowobject)
     {
-        var node = (FindAndReplaceNode) rowobject;
+        var node = (FindAndReplaceNode)rowobject;
 
         return node.PropertyName;
     }
 
-    private Bitmap ImageGetter(object rowObject)
-    {
-        return rowObject == null ? null : Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
-    }
+    private Bitmap ImageGetter(object rowObject) => rowObject == null
+        ? null
+        : Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
 
 
     private void CheckedChanged(object sender, EventArgs e)
@@ -153,7 +153,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
     {
         if (olvAllObjects.SelectedObject is not FindAndReplaceNode node) return;
         var cmd = new ExecuteCommandActivate(Activator, node.Instance);
-        if(!cmd.IsImpossible)
+        if (!cmd.IsImpossible)
             cmd.Execute();
     }
 
@@ -161,7 +161,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void btnFind_Click(object sender, EventArgs e)
     {
-        if(olvAllObjects.ModelFilter is not CompositeAllFilter all)
+        if (olvAllObjects.ModelFilter is not CompositeAllFilter all)
             olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
 
         if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))

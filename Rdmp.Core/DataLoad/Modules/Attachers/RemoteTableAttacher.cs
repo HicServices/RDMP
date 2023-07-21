@@ -58,7 +58,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
     public string RemoteTableName { get; set; }
 
     [Sql]
-    [DemandsInitialization("When provided this OVERRIDES RemoteTableName and is intended for running a complicated query on the remote machine in order to pull data in a suitable format.",DemandType.SQL)]
+    [DemandsInitialization(
+        "When provided this OVERRIDES RemoteTableName and is intended for running a complicated query on the remote machine in order to pull data in a suitable format.",
+        DemandType.SQL)]
     public string RemoteSelectSQL { get; set; }
 
     [DemandsInitialization(
@@ -143,10 +145,8 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         if (RemoteServerReference != null)
         {
             if (!string.IsNullOrWhiteSpace(RemoteServer))
-                notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
-
-            if (!string.IsNullOrWhiteSpace(RemoteDatabaseName))
-                notifier.OnCheckPerformed(new CheckEventArgs("RemoteDatabaseName must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "RemoteServer must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
 
             if (!string.IsNullOrWhiteSpace(RemoteDatabaseName))
                 notifier.OnCheckPerformed(new CheckEventArgs(
@@ -166,7 +166,8 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         else
         {
             if (string.IsNullOrWhiteSpace(RemoteServer))
-                notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "RemoteServer is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
 
             if (string.IsNullOrWhiteSpace(RemoteDatabaseName))
                 notifier.OnCheckPerformed(new CheckEventArgs(
@@ -190,7 +191,6 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
             try
             {
-
                 try
                 {
                     Setup();
@@ -228,9 +228,10 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                     var fixDate = Progress.OriginDate.Value.AddDays(-1);
 
                     var setDataLoadProgressDateToOriginDate = notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date", CheckResult.Fail, null,
+                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",
+                        CheckResult.Fail, null,
                         $"Set the data load progress date to the OriginDate minus one Day? {Environment.NewLine}Set DataLoadProgress = {Progress.OriginDate} -1 day = {fixDate}"));
-                    if(setDataLoadProgressDateToOriginDate)
+                    if (setDataLoadProgressDateToOriginDate)
                     {
                         Progress.DataLoadProgress = fixDate;
                         Progress.SaveToDatabase();
@@ -244,8 +245,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 else
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",CheckResult.Fail, null));
-
+                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",
+                        CheckResult.Fail, null));
+                }
             }
 
             if (ProgressUpdateStrategy == null)
@@ -343,7 +345,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
             }
 
-            _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, remoteUsername, remotePassword).GetCurrentDatabase();
+            _remoteDatabase =
+                new DiscoveredServer(RemoteServer, RemoteDatabaseName, DatabaseType, remoteUsername, remotePassword)
+                    .GetCurrentDatabase();
         }
     }
 
@@ -359,11 +363,6 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
             ? RemoteSelectSQL
             : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
-
-        if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
-            sql = RemoteSelectSQL;
-        else
-            sql = $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
 
         var scheduleMismatch = false;
 
@@ -399,7 +398,6 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
         //For Oracle / Postgres we have to add the parameters to the DbCommand directly
         if (_minDateParam.HasValue && _maxDateParam.HasValue && !syntax.SupportsEmbeddedParameters())
-        {
             source.CommandAdjuster = cmd =>
             {
                 var pmin = cmd.CreateParameter();
@@ -413,16 +411,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 cmd.Parameters.Add(pmax);
             };
 
-        string rawTableName;
-
-        if(RAWTableToLoad != null)
-        {
-            rawTableName = RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer);
-        }
-        else
-        {
-            rawTableName = RAWTableName;
-        }
+        var rawTableName = RAWTableToLoad != null
+            ? RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer)
+            : RAWTableName;
 
         var destination = new SqlBulkInsertDestination(_dbInfo, rawTableName, Enumerable.Empty<string>());
 
@@ -472,8 +463,8 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
     private string GetScheduleParameterDeclarations(IDataLoadJob job, out bool scheduleMismatch)
     {
-
-        var jobAsScheduledJob = job as ScheduledDataLoadJob ?? throw new NotSupportedException(
+        if (job is not ScheduledDataLoadJob jobAsScheduledJob)
+            throw new NotSupportedException(
                 $"Job must be of type {nameof(ScheduledDataLoadJob)} because you have specified a LoadProgress");
 
         //if the currently scheduled job is not our Schedule then it is a mismatch and we should skip it
@@ -483,7 +474,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         var max = jobAsScheduledJob.DatesToRetrieve.Max();
 
         //since it's a date time and fetch list is Dates then we should set the max to the last second of the day (23:59:59) but leave the min as the first second of the day (00:00:00).  This allows for single day loads too
-        if(max.Hour == 0  && max is { Minute: 0, Second: 0 })
+        if (max.Hour == 0 && max is { Minute: 0, Second: 0 })
         {
             max = max.AddHours(23);
             max = max.AddMinutes(59);
@@ -513,6 +504,8 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         var endSQL = declareEndDateParameter + Environment.NewLine;
         endSQL += $"SET {EndDateParameter} = '{max:yyyy-MM-dd HH:mm:ss}';{Environment.NewLine}";
 
-        return min > DateTime.Now ? throw new Exception($"{FutureLoadMessage} (min is {min})") : startSql + endSQL + Environment.NewLine;
+        return min > DateTime.Now
+            ? throw new Exception($"{FutureLoadMessage} (min is {min})")
+            : startSql + endSQL + Environment.NewLine;
     }
 }

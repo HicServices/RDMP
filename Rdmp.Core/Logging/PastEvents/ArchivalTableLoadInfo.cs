@@ -74,15 +74,10 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
         return toReturn;
     }
 
-    private static int? ToNullableInt(object i)
-    {
-        return i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
-    }
+    private static int? ToNullableInt(object i) => i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
 
-    public override string ToString()
-    {
-        return $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
-    }
+    public override string ToString() =>
+        $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
 
     public int CompareTo(object obj)
     {

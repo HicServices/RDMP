@@ -80,7 +80,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
     }
 
-    internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
+    internal ArchivalDataLoadInfo(DbDataReader r, DiscoveredDatabase loggingDatabase)
     {
         _loggingDatabase = loggingDatabase;
         ID = Convert.ToInt32(r["ID"]);
@@ -116,16 +116,14 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         using var con = _loggingDatabase.Server.GetConnection();
         con.Open();
 
-        using var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con);
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con);
         using var r = cmd.ExecuteReader();
-        while(r.Read())
+        while (r.Read())
         {
             var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
 
-            if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
-            {
-                continue;
-            }
+            if ((audit.Inserts ?? 0) <= 0 && (audit.Updates ?? 0) <= 0 && (audit.Deletes ?? 0) <= 0 &&
+                UserSettings.HideEmptyTableLoadRunAudits) continue;
 
             toReturn.Add(audit);
         }

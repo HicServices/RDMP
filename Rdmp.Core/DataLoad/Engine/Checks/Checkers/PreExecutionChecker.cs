@@ -80,8 +80,10 @@ public class PreExecutionChecker : ICheckable
     {
         var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
 
-        var tableNames = allTableInfos.Select(info => info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
-        var alreadyExistingTableInfosThatShouldntBeThere = tableNames.Where(tableName => stagingDbInfo.ExpectTable(tableName).Exists()).ToList();
+        var tableNames = allTableInfos.Select(info =>
+            info.GetRuntimeName(LoadBubble.Staging, _databaseConfiguration.DatabaseNamer));
+        var alreadyExistingTableInfosThatShouldntBeThere =
+            tableNames.Where(tableName => stagingDbInfo.ExpectTable(tableName).Exists()).ToList();
 
         if (alreadyExistingTableInfosThatShouldntBeThere.Any())
         {
@@ -128,7 +130,7 @@ public class PreExecutionChecker : ICheckable
             var tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
             var table = dbInfo.ExpectTable(tableName);
 
-            if(!table.Exists())
+            if (!table.Exists())
                 throw new Exception(
                     $"PreExecutionChecker spotted that table does not exist:{table} it was about to check whether the TableInfo matched the columns or not");
         }
@@ -249,7 +251,6 @@ public class PreExecutionChecker : ICheckable
         PreExecutionStagingDatabaseCheck(false);
         PreExecutionDatabaseCheck();
     }
-
 
 
     private void AtLeastOneTaskCheck()

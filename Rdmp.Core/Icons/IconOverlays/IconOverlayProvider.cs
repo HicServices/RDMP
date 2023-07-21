@@ -16,9 +16,10 @@ namespace Rdmp.Core.Icons.IconOverlays;
 
 public static class IconOverlayProvider
 {
-    private static readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> Cache=new ();
+    private static readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>, OverlayKind>, Image<Rgba32>> Cache = new();
 
-    private static readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  ResultCacheCustom = new();
+    private static readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>, Image<Rgba32>>, Image<Rgba32>>
+        ResultCacheCustom = new();
 
     private static readonly ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>> GreyscaleCache = new();
 
@@ -31,14 +32,15 @@ public static class IconOverlayProvider
         ResultCacheCustom.GetOrAdd((forImage, customOverlay),
             _ => forImage.Clone<Rgba32>(x => x.DrawImage(customOverlay, 1.0f)));
 
-    public static Image<Rgba32> GetGreyscale(Image<Rgba32> forImage) => GreyscaleCache.GetOrAdd(forImage, MakeGreyscale);
+    public static Image<Rgba32> GetGreyscale(Image<Rgba32> forImage) =>
+        GreyscaleCache.GetOrAdd(forImage, MakeGreyscale);
 
     /// <summary>
     /// Use ImageSharp's greyscale converter
     /// </summary>
     /// <param name="original"></param>
     /// <returns></returns>
-    private static Image<Rgba32> MakeGreyscale(Image<Rgba32> original) => original.Clone(static x=>x.Grayscale());
+    private static Image<Rgba32> MakeGreyscale(Image<Rgba32> original) => original.Clone(static x => x.Grayscale());
 
     public static Image<Rgba32> GetOverlayNoCache(Image<Rgba32> forImage, OverlayKind overlayKind) =>
         forImage.Clone<Rgba32>(x => x.DrawImage(Images[overlayKind], 1.0f));

@@ -65,15 +65,15 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
             var offer = new List<Type>();
 
             bool Filter(Type t, object o) => t.IsGenericType &&
-                                          (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
-                                           t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+                                             (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
+                                              t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
 
             //get any source and flow components compatible with any context
             offer.AddRange(
                 Repositories.MEF.GetAllTypes()
                     .Where(t => !t.IsInterface && !t.IsAbstract)
                     .Where(t => t.FindInterfaces(Filter, null).Any())
-                    .Where(t=> context == null || context.IsAllowable(t))
+                    .Where(t => context == null || context.IsAllowable(t))
             );
 
             if (!BasicActivator.SelectObject("Add", offer.ToArray(), out add))
@@ -132,6 +132,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         // check if it is a source or destination (or if both are false it is a middle component)
         bool SourceFilter(Type t, object o) =>
             t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+
         bool DestFilter(Type t, object o) =>
             t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
     }

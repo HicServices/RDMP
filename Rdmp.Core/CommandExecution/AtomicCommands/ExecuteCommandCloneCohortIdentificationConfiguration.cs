@@ -75,7 +75,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
         if (_project != null) // clone the association
-            _=new ProjectCohortIdentificationConfigurationAssociation(
+            _ = new ProjectCohortIdentificationConfigurationAssociation(
                 BasicActivator.RepositoryLocator.DataExportRepository,
                 _project,
                 CloneCreatedIfAny);

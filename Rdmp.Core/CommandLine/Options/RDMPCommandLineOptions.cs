@@ -49,10 +49,11 @@ public abstract class RDMPCommandLineOptions
         Default = "Databases.yaml")]
     public string ConnectionStringsFile { get; set; }
 
-    [Option(Required =false, HelpText = @"Log StartUp output")]
-    public bool LogStartup{get;set;}
+    [Option(Required = false, HelpText = @"Log StartUp output")]
+    public bool LogStartup { get; set; }
 
-    [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ", Default = CommandLineActivity.run)]
+    [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ",
+        Default = CommandLineActivity.run)]
     public CommandLineActivity Command { get; set; } = CommandLineActivity.run;
 
     [Option(Required = false, Default = false,
@@ -81,9 +82,12 @@ public abstract class RDMPCommandLineOptions
     protected const string ExampleCatalogueConnectionString =
         "Server=myServer;Database=RDMP_Catalogue;User Id=myUsername;Password=myPassword;";
 
+    protected const string ExampleDataExportConnectionString =
+        "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
+
     public IRDMPPlatformRepositoryServiceLocator DoStartup(ICheckNotifier checkNotifier)
     {
-        var startup = new Startup.Startup(GetRepositoryLocator()) { SkipPatching = SkipPatching};
+        var startup = new Startup.Startup(GetRepositoryLocator()) { SkipPatching = SkipPatching };
         startup.DoStartup(checkNotifier);
         return startup.RepositoryLocator;
     }
@@ -92,9 +96,7 @@ public abstract class RDMPCommandLineOptions
     {
         if (_repositoryLocator != null) return _repositoryLocator;
         if (!string.IsNullOrWhiteSpace(Dir))
-        {
             return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
-        }
 
         GetConnectionStrings(out var c, out var d);
         return _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
@@ -120,16 +122,13 @@ public abstract class RDMPCommandLineOptions
             {
                 throw new Exception("CatalogueConnectionString is invalid", ex);
             }
-        else
-        if (CatalogueDatabaseName != null)
-        {
+        else if (CatalogueDatabaseName != null)
             c = new SqlConnectionStringBuilder
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
                 InitialCatalog = CatalogueDatabaseName
             };
-        }
         else
             c = null;
 
@@ -142,16 +141,13 @@ public abstract class RDMPCommandLineOptions
             {
                 throw new Exception("DataExportConnectionString is invalid", ex);
             }
-        else
-        if (DataExportDatabaseName != null)
-        {
+        else if (DataExportDatabaseName != null)
             d = new SqlConnectionStringBuilder
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
                 InitialCatalog = DataExportDatabaseName
             };
-        }
         else
             d = null;
     }

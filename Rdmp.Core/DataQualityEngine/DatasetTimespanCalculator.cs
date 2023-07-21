@@ -29,7 +29,9 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
         var result = GetMachineReadableTimespanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
 
-        return result.Item1 == null || result.Item2 == null ? "Unknown" : $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
+        return result.Item1 == null || result.Item2 == null
+            ? "Unknown"
+            : $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
     }
 
     public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation,
@@ -96,7 +98,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         {
             var currentValue = Convert.ToInt32(row["CountOfRecords"]);
 
-            if(currentValue == 0)
+            if (currentValue == 0)
                 continue;
 
             total += currentValue;

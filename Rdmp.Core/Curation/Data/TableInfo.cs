@@ -192,8 +192,8 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"IdentifierDumpServer_ID",dumpServer?.ID ?? (object) DBNull.Value}
+            { "Name", name },
+            { "IdentifierDumpServer_ID", dumpServer?.ID ?? (object)DBNull.Value }
         });
 
         ClearAllInjections();
@@ -209,13 +209,6 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         _state = r["State"].ToString();
         Schema = r["Schema"].ToString();
         _validationXml = r["ValidationXml"].ToString();
-            
-        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
-            
-        if(r["IsPrimaryExtractionTable"] == DBNull.Value)
-            IsPrimaryExtractionTable = false;
-        else
-            IsPrimaryExtractionTable = Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
 
         IsTableValuedFunction =
             r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
@@ -256,10 +249,8 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public string GetRuntimeName() => GetQuerySyntaxHelper().GetRuntimeName(Name);
 
     /// <inheritdoc cref="ITableInfo.GetFullyQualifiedName"/>
-    public string GetFullyQualifiedName()
-    {
-        return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
-    }
+    public string GetFullyQualifiedName() =>
+        GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
 
     /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()"/>
     public string GetDatabaseRuntimeName() => Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
@@ -287,18 +278,14 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <inheritdoc/>
-    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
-    {
-        return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
-    }
+    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null) =>
+        GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
 
     /// <inheritdoc/>
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
-        return context == DataAccessContext.Any
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+        context == DataAccessContext.Any
             ? throw new Exception("You cannot ask for any credentials, you must supply a usage context.")
             : _knownCredentials[context].Value;
-    }
 
     /// <summary>
     /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this
@@ -413,11 +400,11 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
             else if (loadStage <= LoadStage.AdjustStaging &&
                      c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
                 continue;
-            else
-            if(loadStage == LoadStage.AdjustStaging &&
-               //these two do not appear in staging
-               (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)  || c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-              )
+            else if (loadStage == LoadStage.AdjustStaging &&
+                     //these two do not appear in staging
+                     (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
+                      c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
+                    )
                 continue;
             else
                 yield return c;
@@ -463,7 +450,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
         return IsTableValuedFunction
             ? db.ExpectTableValuedFunction(GetRuntimeName(), Schema)
-            : db.ExpectTable(GetRuntimeName(),Schema, IsView?TableType.View : TableType.Table);
+            : db.ExpectTable(GetRuntimeName(), Schema, IsView ? TableType.View : TableType.Table);
     }
 
     /// <inheritdoc/>

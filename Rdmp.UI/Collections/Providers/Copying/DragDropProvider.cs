@@ -51,7 +51,7 @@ public class DragDropProvider : SimpleDragSource
     {
         var dropTargetModel = e.DropTargetItem?.RowObject;
 
-        if(e.DataObject is not DataObject dataObject)
+        if (e.DataObject is not DataObject dataObject)
             return;
 
         if (dataObject is OLVDataObject)
@@ -95,7 +95,7 @@ public class DragDropProvider : SimpleDragSource
             //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop
             var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject, e.DropTargetItem.RowObject);
 
-            if(execution is { IsImpossible: false })
+            if (execution is { IsImpossible: false })
                 execution.Execute();
         }
         catch (Exception exception)
@@ -181,7 +181,6 @@ public class DragDropProvider : SimpleDragSource
 
         return base.StartDrag(olv, button, item);
     }
-
 
 
     private static void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)

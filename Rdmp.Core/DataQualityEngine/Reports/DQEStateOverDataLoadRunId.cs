@@ -124,22 +124,16 @@ public class DQEStateOverDataLoadRunId
         foreach (var column in AllColumnStates[dataLoadRunID])
             //if it is a constrained column
             if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var kvp))
+                .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var consequence))
             {
-                //if it is a constrained column
-                if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                    .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var consequence))
-                {
-                    //adjust our correct value downwards according to the results of the dictionary of failure
+                //adjust our correct value downwards according to the results of the dictionary of failure
+                column.CountMissing = consequence[Consequence.Missing];
+                column.CountWrong = consequence[Consequence.Wrong];
+                column.CountInvalidatesRow = consequence[Consequence.InvalidatesRow];
 
-                    column.CountMissing = consequence[Consequence.Missing];
-                    column.CountWrong = consequence[Consequence.Wrong];
-                    column.CountInvalidatesRow = consequence[Consequence.InvalidatesRow];
-
-                    column.CountCorrect -= consequence[Consequence.Missing];
-                    column.CountCorrect -= consequence[Consequence.Wrong];
-                    column.CountCorrect -= consequence[Consequence.InvalidatesRow];
-                }
+                column.CountCorrect -= consequence[Consequence.Missing];
+                column.CountCorrect -= consequence[Consequence.Wrong];
+                column.CountCorrect -= consequence[Consequence.InvalidatesRow];
             }
     }
 

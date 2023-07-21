@@ -59,8 +59,7 @@ public partial class ArgumentValueDictionaryUI : UserControl, IArgumentValueUI
 
     private List<object> keys = new();
     private List<object> values = new();
-
-    private Stack<Tuple<Control,Control>> controls = new();
+    private Stack<Tuple<Control, Control>> controls = new();
 
 
     private void btnAdd_Click(object sender, EventArgs e)

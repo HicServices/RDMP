@@ -26,7 +26,7 @@ public sealed class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListen
     public static readonly ThrowImmediatelyDataLoadEventListener QuietPicky = new(false, true);
     public static readonly ThrowImmediatelyDataLoadEventListener NoisyPicky = new(true, true);
 
-    private ThrowImmediatelyDataLoadEventListener(bool write,bool picky)
+    private ThrowImmediatelyDataLoadEventListener(bool write, bool picky)
     {
         WriteToConsole = write;
         ThrowOnWarning = picky;
@@ -42,8 +42,8 @@ public sealed class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListen
         if (WriteToConsole)
             Console.WriteLine($"{sender}:{e.Message}");
 
-        if(e.ProgressEventType == ProgressEventType.Error ||
-           (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))
+        if (e.ProgressEventType == ProgressEventType.Error ||
+            (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))
             throw new Exception(e.Message, e.Exception);
     }
 

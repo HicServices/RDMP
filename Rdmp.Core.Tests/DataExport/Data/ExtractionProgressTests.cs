@@ -35,7 +35,7 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
     public void ExtractionProgressConstructor_Normal()
     {
         ExtractionProgress progress = null;
-        Assert.DoesNotThrow(()=> progress = CreateAnExtractionProgress());
+        Assert.DoesNotThrow(() => progress = CreateAnExtractionProgress());
         progress?.DeleteInDatabase();
     }
 

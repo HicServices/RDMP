@@ -35,7 +35,6 @@ public class ExecuteCommandClearFavourites : BasicUICommandExecution
             Activator.FavouritesProvider.CurrentFavourites.Clear();
 
             Publish(first);
-
         }
     }
 }

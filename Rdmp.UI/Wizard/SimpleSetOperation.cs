@@ -57,10 +57,9 @@ public partial class SimpleSetOperation : UserControl
         pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op).ImageToBitmap();
     }
 
-    private SetOperation GetSetOperation()
-    {
-        return (string) ddSetOperation.SelectedItem == _intersectText ? SetOperation.INTERSECT : SetOperation.UNION;
-    }
+    private SetOperation GetSetOperation() => (string)ddSetOperation.SelectedItem == _intersectText
+        ? SetOperation.INTERSECT
+        : SetOperation.UNION;
 
     public CohortAggregateContainer CreateCohortAggregateContainer(CohortAggregateContainer rootContainer)
     {

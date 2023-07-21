@@ -21,11 +21,11 @@ public partial class Chi : PrimaryConstraint
             return null;
 
 
-        if(value is not string valueAsString)
+        if (value is not string valueAsString)
             return new ValidationFailure(
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}", this);
 
-        return !IsValidChi(valueAsString, out var reason) ? new ValidationFailure(reason,this) : null;
+        return !IsValidChi(valueAsString, out var reason) ? new ValidationFailure(reason, this) : null;
     }
 
 

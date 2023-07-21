@@ -43,12 +43,6 @@ public class PlatformDatabaseCreationOptions
             "Skips creating the default Pipelines and Managed Server References in the Catalogue database once created.")]
     public bool SkipPipelines { get; set; }
 
-    [Option('e', "ExampleDatasets", Default = false, HelpText = "Create example datasets, projects, extraction configurations and cohort queries")]
-    public bool ExampleDatasets{get;set;}
-
-    [Option('l', "Create Logging Server", Default = true, HelpText = "Create the default logging server in the Catalogue database once created. Is superseeded by 'Skip Pipelines'")]
-    public bool CreateLoggingServer { get; set; }
-    
     [Option('e', "ExampleDatasets", Default = false,
         HelpText = "Create example datasets, projects, extraction configurations and cohort queries")]
     public bool ExampleDatasets { get; set; }

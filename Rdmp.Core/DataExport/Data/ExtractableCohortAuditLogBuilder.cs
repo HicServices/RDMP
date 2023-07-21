@@ -69,17 +69,17 @@ public partial class ExtractableCohortAuditLogBuilder
     /// <param name="cohort"></param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public static object GetObjectIfAny(IExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static object GetObjectIfAny(IExtractableCohort cohort,
+        Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var audit = cohort.AuditLog;
 
         // no audit means no object
         if (string.IsNullOrWhiteSpace(audit)) return null;
 
-        if(LegacyCic.IsMatch(audit))
-        {
-            return GetObjectFromLog<CohortIdentificationConfiguration>(LegacyCic.Match(audit), repositoryLocator.CatalogueRepository);
-        }
+        if (LegacyCic.IsMatch(audit))
+            return GetObjectFromLog<CohortIdentificationConfiguration>(LegacyCic.Match(audit),
+                repositoryLocator.CatalogueRepository);
 
         if (audit.Contains(InCohortIdentificationConfiguration))
             return GetObjectFromLog<CohortIdentificationConfiguration>(audit, repositoryLocator.CatalogueRepository);
@@ -90,8 +90,7 @@ public partial class ExtractableCohortAuditLogBuilder
         if (audit.Contains(InFile))
         {
             var m = RegexGetFilePath.Match(audit);
-            if(m.Success)
-            {
+            if (m.Success)
                 try
                 {
                     return new FileInfo(m.Groups[1].Value);
@@ -106,17 +105,15 @@ public partial class ExtractableCohortAuditLogBuilder
         if (audit.Contains(InColumn))
         {
             var m = RegexGetColumn.Match(audit);
-            if (m.Success)
-            {
-                return m.Groups[1].Value;
-            }
+            if (m.Success) return m.Groups[1].Value;
         }
 
         // who knows how this cohort was created
         return null;
     }
 
-    private static T GetObjectFromLog<T>(string audit, IRepository repository) where T: class, IMapsDirectlyToDatabaseTable
+    private static T GetObjectFromLog<T>(string audit, IRepository repository)
+        where T : class, IMapsDirectlyToDatabaseTable
     {
         var m = RegexGetID.Match(audit);
 
@@ -141,10 +138,13 @@ public partial class ExtractableCohortAuditLogBuilder
 
     [GeneratedRegex("\\(ID=(\\d+)\\)")]
     private static partial Regex GetId();
+
     [GeneratedRegex("Patient identifiers in file '(.*)'")]
     private static partial Regex GetFilePath();
+
     [GeneratedRegex("Patient identifiers in column  '(.*)'")]
     private static partial Regex GetColumn();
+
     [GeneratedRegex("Created by running cic ([\\d]+)")]
     private static partial Regex GetLegacyCic();
 }

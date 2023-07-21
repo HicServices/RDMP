@@ -158,14 +158,14 @@ public class CohortQueryBuilderResult
         Sql = BuildSql(d, parameterManager);
     }
 
-    private string BuildSql(CohortAggregateContainer container,ParameterManager parameterManager)
+    private string BuildSql(CohortAggregateContainer container, ParameterManager parameterManager)
     {
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary;
 
         //if we are fully cached on everything
         if (Dependencies.All(d => d.SqlFullyCached != null))
         {
-            SetTargetServer(GetCacheServer(),"all dependencies are fully cached"); //run on the cache server
+            SetTargetServer(GetCacheServer(), "all dependencies are fully cached"); //run on the cache server
 
             //all are cached
             CountOfCachedSubQueries = CountOfSubQueries;
@@ -191,7 +191,7 @@ public class CohortQueryBuilderResult
                     SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
                         $"not all dependencies are cached while {uncached}");
 
-                    CountOfCachedSubQueries = Dependencies.Count(d=>d.SqlFullyCached != null);
+                    CountOfCachedSubQueries = Dependencies.Count(d => d.SqlFullyCached != null);
 
                     sqlDictionary =
                         Dependencies.ToDictionary(k => k,
@@ -345,7 +345,8 @@ public class CohortQueryBuilderResult
             case CacheUsage.AllOrNothing:
 
                 //It's not fully cached so we have to run it entirely uncached
-                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"cache and data are on separate servers / access credentials and not all datasets are in the cache");
+                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
+                    "cache and data are on separate servers / access credentials and not all datasets are in the cache");
                 return dependency.SqlCacheless.Use(parameterManager);
             default:
                 throw new ArgumentOutOfRangeException();
@@ -403,7 +404,7 @@ public class CohortQueryBuilderResult
         {
             _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
             foreach (var dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
-                HandleDependency(dependency,false, dependantTable);
+                HandleDependency(dependency, false, dependantTable);
 
             if (dependency.JoinedTo != null)
             {
@@ -428,8 +429,9 @@ public class CohortQueryBuilderResult
                 _log.AppendLine($"Found problematic dependant table '{dependantTable}'");
 
                 //if there's no cache server that's a problem!
-                if(CacheServer == null)
-                    throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
+                if (CacheServer == null)
+                    throw new QueryBuildingException(
+                        $"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
 
                 //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
                 var canUseCacheForDependantTable =

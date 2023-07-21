@@ -39,10 +39,8 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
         _toMove = toMove;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return OverrideIcon ?? Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        OverrideIcon ?? Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
 
     public override void Execute()
     {

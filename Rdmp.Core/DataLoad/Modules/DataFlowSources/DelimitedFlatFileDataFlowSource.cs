@@ -53,7 +53,9 @@ public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>,
         "True if the parser should treat double quotes as normal characters";
 
     public const string IgnoreBlankLines_DemandDescription = "True if the parser should skip over blank lines";
-    public const string MakeHeaderNamesSane_DemandDescription = "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
+
+    public const string MakeHeaderNamesSane_DemandDescription =
+        "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
 
     public const string BadDataHandlingStrategy_DemandDescription =
         @"Determines system behaviour when unprocessable rows are found in the file being loaded:
@@ -113,7 +115,8 @@ This will not help you avoid bad data as the full file structure must still be r
         DemandType.Unspecified, true)]
     public bool StronglyTypeInput { get; set; }
 
-    [DemandsInitialization("BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
+    [DemandsInitialization(
+        "BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
     public int StronglyTypeInputBatchSize { get; set; }
 
     [DemandsInitialization(
@@ -228,7 +231,8 @@ This will not help you avoid bad data as the full file structure must still be r
             {
                 //create a table with the name of the file
                 _workingTable = Headers.GetDataTableWithHeaders(_listener);
-                _workingTable.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                _workingTable.TableName =
+                    QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                 //set the data table to the new untyped but correctly headered table
                 SetDataTable(_workingTable);
@@ -357,7 +361,8 @@ This will not help you avoid bad data as the full file structure must still be r
 
         if (StronglyTypeInput && StronglyTypeInputBatchSize < 500)
             notifier.OnCheckPerformed(
-                new CheckEventArgs("StronglyTypeInputBatchSize is less than the recommended 500: this may cause errors when determining the best data type from the source file.",
+                new CheckEventArgs(
+                    "StronglyTypeInputBatchSize is less than the recommended 500: this may cause errors when determining the best data type from the source file.",
                     CheckResult.Warning));
 
         if (_fileToLoad.File == null)
@@ -425,7 +430,6 @@ This will not help you avoid bad data as the full file structure must still be r
 
         Headers.GetHeadersFromFile(_reader);
     }
-
 
 
     private bool ShouldSkipRecord(ShouldSkipRecordArgs args)
@@ -517,7 +521,7 @@ This will not help you avoid bad data as the full file structure must still be r
             InitializeComponents();
             OpenFile(_fileToLoad.File);
 
-            Headers.MakeDataTableFitHeaders(dt,_listener);
+            Headers.MakeDataTableFitHeaders(dt, _listener);
         }
 
         _workingTable = dt;

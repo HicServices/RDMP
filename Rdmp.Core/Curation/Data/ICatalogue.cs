@@ -94,7 +94,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// User specified free text field.  Not used for anything by RDMP.
     /// <seealso cref="Periodicity"/>
     /// </summary>
-    string Time_coverage {get;set;}
+    string Time_coverage { get; set; }
 
     /// <summary>
     /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded

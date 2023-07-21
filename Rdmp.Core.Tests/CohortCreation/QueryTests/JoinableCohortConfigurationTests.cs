@@ -215,7 +215,6 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         Console.WriteLine(builder.SQL);
         try
         {
-
             using (var con = (SqlConnection)Database.Server.GetConnection())
             {
                 con.Open();
@@ -392,13 +391,14 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
         aggregate2.SaveToDatabase();
 
         //add the first aggregate to the configuration
-        rootcontainer.AddChild(aggregate1,1);
-            
-        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)")
-            {
-                Comment = "Comments for the crazies",
-                Value = "'fishes'"
-            };
+        rootcontainer.AddChild(aggregate1, 1);
+
+        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,
+            "DECLARE @fish varchar(50)")
+        {
+            Comment = "Comments for the crazies",
+            Value = "'fishes'"
+        };
         globalParameter.SaveToDatabase();
 
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
@@ -494,8 +494,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
 
         try
         {
-
-            var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
+            var builderForCaching = new CohortQueryBuilder(aggregate2, null, null);
 
             var cacheDt = new DataTable();
             using (var con = (SqlConnection)Database.Server.GetConnection())
@@ -511,7 +510,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
 
             try
             {
-                var builder = new CohortQueryBuilder(aggregate1, null,null)
+                var builder = new CohortQueryBuilder(aggregate1, null, null)
                 {
                     //make the builder use the query cache we just set SetUp
                     CacheServer = queryCachingDatabaseServer
@@ -563,7 +562,6 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
         {
             queryCachingDatabaseServer.DeleteInDatabase();
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName).Drop();
-
         }
     }
 }

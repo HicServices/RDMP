@@ -33,17 +33,17 @@ public class DataExportIconProvider : CatalogueIconProvider
         return concept as Type == typeof(SelectedDataSets)
             ? base.GetImageImpl(RDMPConcept.ExtractableDataSet)
             : concept switch
-        {
-            SelectedDataSets sds => base.GetImageImpl(sds.ExtractableDataSet),
-            PackageContentNode pcn => base.GetImageImpl(pcn.DataSet),
-            ProjectCohortIdentificationConfigurationAssociation association =>
-                association.CohortIdentificationConfiguration != null
-                    ? GetImageImpl(association.CohortIdentificationConfiguration, OverlayKind.Link)
-                    :
-                    //it's an orphan or user cannot fetch the cic for some reason
-                    GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link),
-            _ => base.GetImageImpl(concept, kind)
-        };
+            {
+                SelectedDataSets sds => base.GetImageImpl(sds.ExtractableDataSet),
+                PackageContentNode pcn => base.GetImageImpl(pcn.DataSet),
+                ProjectCohortIdentificationConfigurationAssociation association =>
+                    association.CohortIdentificationConfiguration != null
+                        ? GetImageImpl(association.CohortIdentificationConfiguration, OverlayKind.Link)
+                        :
+                        //it's an orphan or user cannot fetch the cic for some reason
+                        GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link),
+                _ => base.GetImageImpl(concept, kind)
+            };
 
         //fallback on parent implementation if none of the above unique snowflake cases are met
     }

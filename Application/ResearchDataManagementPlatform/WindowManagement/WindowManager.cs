@@ -38,7 +38,7 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 public class WindowManager
 {
     private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new();
-    private readonly List<RDMPSingleControlTab>  _trackedWindows = new();
+    private readonly List<RDMPSingleControlTab> _trackedWindows = new();
     private readonly List<DockContent> _trackedAdhocWindows = new();
 
     public NavigationTrack<INavigation> Navigation { get; private set; }
@@ -68,14 +68,15 @@ public class WindowManager
         ActivateItems = new ActivateItems(theme, refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this,
             globalErrorCheckNotifier);
 
-        GlobalExceptionHandler.Instance.Handler = e=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
+        GlobalExceptionHandler.Instance.Handler = e =>
+            globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
 
         _mainDockPanel = mainDockPanel;
 
         MainForm = mainForm;
         RepositoryLocator = repositoryLocator;
 
-        Navigation = new NavigationTrack<INavigation>(c=>c.IsAlive,c=>c.Activate(ActivateItems));
+        Navigation = new NavigationTrack<INavigation>(c => c.IsAlive, c => c.Activate(ActivateItems));
         mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
         ActivateItems.Emphasise += RecordEmphasis;
     }
@@ -156,15 +157,14 @@ public class WindowManager
 
         CollectionCreated?.Invoke(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
-        collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
+        collection.CommonTreeFunctionality.Tree.SelectionChanged += (s, e) =>
         {
-            if(collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
+            if (collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
                 Navigation.Append(new CollectionNavigation(im));
         };
 
         return toReturn;
     }
-
 
 
     private PersistableToolboxDockContent Show(RDMPCollection collection, RDMPCollectionUI control, string label,
@@ -293,7 +293,8 @@ public class WindowManager
         {
             _home = new HomeUI(ActivateItems);
 
-            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", Image.Load<Rgba32>(FamFamFamIcons.application_home));
+            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home",
+                Image.Load<Rgba32>(FamFamFamIcons.application_home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
         }
@@ -345,9 +346,9 @@ public class WindowManager
 
     private void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
     {
-        var newTab = (DockContent) _mainDockPanel.ActiveDocument;
+        var newTab = (DockContent)_mainDockPanel.ActiveDocument;
 
-        if(newTab?.ParentForm != null)
+        if (newTab?.ParentForm != null)
         {
             Navigation.Append(new TabNavigation(newTab));
             newTab.ParentForm.Text = $"{newTab.TabText} - RDMP";
@@ -365,9 +366,10 @@ public class WindowManager
     /// <param name="window"></param>
     public void AddWindow(RDMPSingleControlTab window)
     {
-        if(window is PersistableSingleDatabaseObjectDockContent singleObjectUI)
-            if(AlreadyActive(singleObjectUI.Control.GetType(),singleObjectUI.DatabaseObject))
-                throw new ArgumentOutOfRangeException($"Cannot create another window for object {singleObjectUI.DatabaseObject} of type {singleObjectUI.Control.GetType()} because there is already a window active for that object/window type");
+        if (window is PersistableSingleDatabaseObjectDockContent singleObjectUI)
+            if (AlreadyActive(singleObjectUI.Control.GetType(), singleObjectUI.DatabaseObject))
+                throw new ArgumentOutOfRangeException(
+                    $"Cannot create another window for object {singleObjectUI.DatabaseObject} of type {singleObjectUI.Control.GetType()} because there is already a window active for that object/window type");
 
         _trackedWindows.Add(window);
 
@@ -414,7 +416,8 @@ public class WindowManager
     {
         return !typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType)
             ? throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab")
-            : _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
+            : _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t =>
+                t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
     }
 
     /// <summary>

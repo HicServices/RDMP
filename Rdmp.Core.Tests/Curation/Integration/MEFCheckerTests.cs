@@ -16,7 +16,6 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 public class MEFCheckerTests : UnitTests
 {
-
     [Test]
     public void FindClass_WrongCase_FoundAnyway()
     {
@@ -27,8 +26,10 @@ public class MEFCheckerTests : UnitTests
     public void FindClass_EmptyString()
     {
         var m = new MEFChecker("", s => Assert.Fail());
-        var ex =  Assert.Throws<Exception>(()=>m.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",ex.Message);
+        var ex = Assert.Throws<Exception>(() => m.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual(
+            "MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",
+            ex.Message);
     }
 
     [Test]
@@ -51,8 +52,9 @@ public class MEFCheckerTests : UnitTests
     public void FindClass_NonExistent()
     {
         var m = new MEFChecker("CatalogueLibrary.UncleSam", s => Assert.Fail());
-        var ex = Assert.Throws<Exception>(()=>m.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",ex?.Message);
+        var ex = Assert.Throws<Exception>(() => m.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains(
+            "Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",
+            ex?.Message);
     }
-
 }

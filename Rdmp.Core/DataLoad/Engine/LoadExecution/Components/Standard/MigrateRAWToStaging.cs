@@ -26,7 +26,8 @@ public class MigrateRAWToStaging : DataLoadComponent
 
     private readonly Stack<IDisposeAfterDataLoad> _toDispose = new();
 
-    public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
+    public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration,
+        HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
 

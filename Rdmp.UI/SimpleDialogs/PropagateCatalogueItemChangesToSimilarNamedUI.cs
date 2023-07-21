@@ -44,7 +44,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private Scintilla previewOldValue;
     private Scintilla previewNewValue;
 
-    public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
+    public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator,
+        CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed) : base(activator)
     {
         _catalogueItemBeingSaved = catalogueItemBeingSaved;
         InitializeComponent();
@@ -113,7 +114,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        if(olvCatalogues.SelectedObject is not CatalogueItem ci)
+        if (olvCatalogues.SelectedObject is not CatalogueItem ci)
             return;
 
         var menu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
@@ -152,8 +153,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
     {
         return Activator.CoreChildProvider.AllCatalogueItems
-            .Where(ci=>
-                ci.Name.Equals(catalogueItemBeingSaved.Name,StringComparison.CurrentCultureIgnoreCase)
+            .Where(ci =>
+                ci.Name.Equals(catalogueItemBeingSaved.Name, StringComparison.CurrentCultureIgnoreCase)
                 && ci.ID != catalogueItemBeingSaved.ID)
             .ToArray();
     }
@@ -215,9 +216,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         var diff = new Diff();
         foreach (var item in Diff.DiffText(sOld, sNew))
         {
-
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue, i, Color.Pink);
 
             //if it is single line change
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
@@ -254,7 +254,6 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         DialogResult = DialogResult.Cancel;
         Close();
-
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)
@@ -263,5 +262,4 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         if (olv.SelectedObject != null)
             olv.ToggleCheckObject(olv.SelectedObject);
     }
-
 }

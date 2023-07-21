@@ -95,7 +95,9 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
         var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
 
-        return cols == null || cols.Length == 0 ? _commandName : $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
+        return cols == null || cols.Length == 0
+            ? _commandName
+            : $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
     }
 
     public override void Execute()
@@ -132,7 +134,8 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         }
         else
         {
-            if (SelectMany(new DialogArgs {
+            if (SelectMany(new DialogArgs
+                {
                     InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
                     AllowSelectingNull = true,
                     WindowTitle = $"Set {_commandProperty}",

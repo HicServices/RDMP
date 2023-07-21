@@ -67,5 +67,5 @@ public abstract class Attacher : IAttacher
     public abstract void Check(ICheckNotifier notifier);
 
 
-    public abstract void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener);
+    public abstract void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener);
 }

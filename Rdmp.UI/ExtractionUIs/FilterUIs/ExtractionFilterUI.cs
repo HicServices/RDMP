@@ -162,7 +162,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         try
         {
             var factory = new ParameterCollectionUIOptionsFactory();
-            options = factory.Create(databaseObject,activator.CoreChildProvider);
+            options = factory.Create(databaseObject, activator.CoreChildProvider);
         }
         catch (Exception e)
         {
@@ -216,7 +216,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if(e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
+        if (e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
             return;
 
         if (!filter.Exists()) //it's deleted

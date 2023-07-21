@@ -34,7 +34,7 @@ internal class MySqlTriggerImplementer : TriggerImplementer
             using var con = _server.GetConnection();
             con.Open();
 
-            using(var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
+            using (var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
@@ -104,7 +104,7 @@ internal class MySqlTriggerImplementer : TriggerImplementer
     protected virtual string CreateTriggerBody()
     {
         var syntax = _server.GetQuerySyntaxHelper();
-            
+
         return $@"BEGIN
     INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
         $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
@@ -113,10 +113,8 @@ internal class MySqlTriggerImplementer : TriggerImplementer
   END";
     }
 
-    public override TriggerStatus GetTriggerStatus()
-    {
-        return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
-    }
+    public override TriggerStatus GetTriggerStatus() =>
+        string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
 
     public override TriggerStatus GetTriggerStatus() =>
         string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
@@ -129,10 +127,8 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         using var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con);
         using var r = cmd.ExecuteReader();
         while (r.Read())
-        {
             if (r["Trigger"].Equals(GetTriggerName()))
-                return (string) r["Statement"];
-        }
+                return (string)r["Statement"];
 
         return null;
     }
@@ -155,7 +151,8 @@ internal class MySqlTriggerImplementer : TriggerImplementer
 
     protected virtual void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if(!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlNow,sqlThen);
+        if (!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql", sqlNow,
+                sqlThen);
     }
 }

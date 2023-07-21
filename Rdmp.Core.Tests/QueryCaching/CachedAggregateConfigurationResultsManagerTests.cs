@@ -23,7 +23,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     private Catalogue _cata;
     private AggregateConfiguration _config;
     private CachedAggregateConfigurationResultsManager _manager;
-    private DatabaseColumnRequest _myColSpecification = new("MyCol","varchar(10)");
+    private DatabaseColumnRequest _myColSpecification = new("MyCol", "varchar(10)");
 
 
     [SetUp]
@@ -130,8 +130,6 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         var ex = Assert.Throws<NotSupportedException>(() =>
             _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
         Assert.IsTrue(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
-
-
     }
 
     [Test]

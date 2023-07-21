@@ -147,7 +147,6 @@ public class ExtractableCohortDescription
     }
 
 
-
     private void FetchOnFinished()
     {
         try
@@ -160,9 +159,9 @@ public class ExtractableCohortDescription
             if (Fetch.DataTable == null)
                 throw new Exception($"IsFaulted was false but DataTable was not populated for fetch {Fetch.Source}");
 
-            var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
-                    $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
-
+            var row = Fetch.DataTable.Rows.Cast<DataRow>()
+                .FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
+                $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
 
             //it's overriden ugh, got to go the slow way
@@ -176,7 +175,6 @@ public class ExtractableCohortDescription
                 //it's a proper not overriden release identifier so we can use the DataTable value
                 Count = Convert.ToInt32(row["Count"]);
                 CountDistinct = Convert.ToInt32(row["CountDistinct"]);
-
             }
 
             ProjectNumber = Convert.ToInt32(row["ProjectNumber"]);
@@ -191,15 +189,7 @@ public class ExtractableCohortDescription
     }
 
 
-    public override string ToString()
-    {
-        return Cohort.ToString();
-    }
-
     public override string ToString() => Cohort.ToString();
 
-    private static DateTime? ObjectToNullableDateTime(object o)
-    {
-        return o == null || o == DBNull.Value ? null : (DateTime)o;
-    }
+    private static DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
 }

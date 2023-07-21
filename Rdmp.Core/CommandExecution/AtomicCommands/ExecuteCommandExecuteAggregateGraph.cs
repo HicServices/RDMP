@@ -50,10 +50,5 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.Graph);
-    }
-
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Graph);
 }

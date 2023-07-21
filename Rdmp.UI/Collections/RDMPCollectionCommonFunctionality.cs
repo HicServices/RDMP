@@ -64,7 +64,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public bool IsSetup { get; private set; }
 
-    public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
+    public Func<IActivateItems, IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
 
     public OLVColumn IDColumn { get; set; }
     public CheckColumnProvider CheckColumnProvider { get; set; }
@@ -83,15 +83,15 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public event EventHandler<MenuBuiltEventArgs> MenuBuilt;
 
-    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new()
+    private static readonly Dictionary<RDMPCollection, Guid> TreeGuids = new()
     {
-        {RDMPCollection.Tables,new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2")},
-        {RDMPCollection.Catalogue,new Guid("d0f72b03-63f1-487e-9afa-51c03afa7819")},
-        {RDMPCollection.DataExport,new Guid("9fb651f6-3e4f-4629-b64e-f61551ae009e")},
-        {RDMPCollection.SavedCohorts,new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f")},
-        {RDMPCollection.Cohort,new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef")},
-        {RDMPCollection.Favourites,new Guid("39d37439-ac7a-4346-8c79-9867384db92e")},
-        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")}
+        { RDMPCollection.Tables, new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2") },
+        { RDMPCollection.Catalogue, new Guid("d0f72b03-63f1-487e-9afa-51c03afa7819") },
+        { RDMPCollection.DataExport, new Guid("9fb651f6-3e4f-4629-b64e-f61551ae009e") },
+        { RDMPCollection.SavedCohorts, new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f") },
+        { RDMPCollection.Cohort, new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef") },
+        { RDMPCollection.Favourites, new Guid("39d37439-ac7a-4346-8c79-9867384db92e") },
+        { RDMPCollection.DataLoad, new Guid("600aad33-df6c-4013-ad92-65de19d494cf") }
     };
 
     /// <summary>
@@ -220,7 +220,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             Tree.RowHeight = 19;
 
         //add colour indicator bar
-        Tree.Location = Tree.Location with { Y = tree.Location.Y+3 };
+        Tree.Location = Tree.Location with { Y = tree.Location.Y + 3 };
         Tree.Height -= 3;
 
         CreateColorIndicator(Tree, collection);
@@ -359,7 +359,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             lastInvalidatedCache = DateTime.Now;
         }
 
-        if(cache.TryGetValue(sum, out var body))
+        if (cache.TryGetValue(sum, out var body))
             return body;
 
         var sb = new StringBuilder();
@@ -378,10 +378,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 var val = string.Join(", ", kvp.Value.Select(o => o.ToString()).ToArray());
 
-                if(val.Length>100)
-                {
-                    val = $"{val[..100]}...";
-                }
+                if (val.Length > 100) val = $"{val[..100]}...";
 
                 sb.AppendLine($"{kvp.Key}: {val}");
             }
@@ -415,7 +412,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private static void TreeOnAfterSorting(object sender, AfterSortingEventArgs e, Guid collectionGuid)
     {
-        UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort?.Text, e.SortOrder == SortOrder.Ascending);
+        UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort?.Text,
+            e.SortOrder == SortOrder.Ascending);
     }
 
     private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)
@@ -447,11 +445,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         if (e.Model is IDisableable { IsDisabled: true } disableable)
         {
-            e.Item.ForeColor = Color.FromArgb(152,152,152);
-
-            //make it italic
-            if(!e.Item.Font.Italic)
-                e.Item.Font = new Font(e.Item.Font,FontStyle.Italic);
+            e.Item.ForeColor = Color.FromArgb(152, 152, 152);
 
             //make it italic
             if (!e.Item.Font.Italic)
@@ -470,10 +464,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    private TreeListView.Tree TreeFactoryGetter(TreeListView view)
-    {
-        return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
-    }
+    private TreeListView.Tree TreeFactoryGetter(TreeListView view) =>
+        new RDMPCollectionCommonFunctionalityTreeHijacker(view);
 
     // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
     private object _lastMenuObject;
@@ -593,10 +585,9 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             ExpandToDepth(expansionDepth - 1, o);
     }
 
-    private IEnumerable ChildrenGetter(object model)
-    {
-        return AxeChildren != null && AxeChildren.Contains(model.GetType()) ? Array.Empty<object>() : (IEnumerable)CoreChildProvider.GetChildren(model);
-    }
+    private IEnumerable ChildrenGetter(object model) => AxeChildren != null && AxeChildren.Contains(model.GetType())
+        ? Array.Empty<object>()
+        : (IEnumerable)CoreChildProvider.GetChildren(model);
 
     private bool CanExpandGetter(object model)
     {
@@ -665,7 +656,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 //found a menu with compatible constructor arguments
                 if (menu != null)
                 {
-                    MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
+                    MenuBuilt?.Invoke(this, new MenuBuiltEventArgs(menu, o));
                     return Sort(menu);
                 }
 
@@ -673,7 +664,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
                 defaultMenu.AddCommonMenuItems(this);
 
-                MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
+                MenuBuilt?.Invoke(this, new MenuBuiltEventArgs(defaultMenu, o));
                 return Sort(defaultMenu);
             }
 
@@ -707,11 +698,11 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
-    private Dictionary<Type,Type> _cachedMenuCompatibility = new();
+    private readonly Dictionary<Type, Type> _cachedMenuCompatibility = new();
 
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
-        var args = new RDMPContextMenuStripArgs(_activator,Tree,o)
+        var args = new RDMPContextMenuStripArgs(_activator, Tree, o)
         {
             Masquerader = oMasquerader ?? o as IMasqueradeAs
         };
@@ -720,11 +711,9 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         //if we have encountered this object type before
         if (_cachedMenuCompatibility.TryGetValue(oType, out var compatibleMenu))
-        {
             //we know there are no menus compatible with o
             return compatibleMenu == null ? null : ConstructMenu(compatibleMenu, args, o);
-        }
-                
+
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
         foreach (var menuType in MEF.GetTypes<RDMPContextMenuStrip>())
@@ -733,7 +722,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 continue;
 
             //try constructing menu with:
-            var menu = ConstructMenu(menuType,args,o);
+            var menu = ConstructMenu(menuType, args, o);
 
             //find first menu that's compatible
             if (menu == null) continue;
@@ -796,10 +785,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 if (item is ToolStripMenuItem { DropDownItems.Count: > 0 } mi)
                     // if menu item has submenus
-                {
                     // sort those too - recurisvely
                     OrderMenuItems(mi.DropDownItems);
-                }
             }
 
             // if there are more buckets to come

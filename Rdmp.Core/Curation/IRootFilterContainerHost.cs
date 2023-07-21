@@ -15,7 +15,6 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public interface IRootFilterContainerHost : ISaveable, IMapsDirectlyToDatabaseTable, IMightBeReadOnly
 {
-
     /// <summary>
     /// The root AND/OR container which provides WHERE logic that should be included in the query when extracting the dataset
     /// </summary>

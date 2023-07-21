@@ -41,10 +41,8 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         ViewType = viewType;
     }
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { "ViewType", ViewType.ToString() } });
 
     public override void LoadExtraText(string s)
     {

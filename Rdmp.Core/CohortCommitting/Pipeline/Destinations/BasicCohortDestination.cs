@@ -33,7 +33,10 @@ public class BasicCohortDestination : IPluginCohortDestination
 
     private string _fk;
 
-    [DemandsInitialization("Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier", TypeOf = typeof(IAllocateReleaseIdentifiers),DefaultValue=typeof(ProjectConsistentGuidReleaseIdentifierAllocator))]
+    [DemandsInitialization(
+        "Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier",
+        TypeOf = typeof(IAllocateReleaseIdentifiers),
+        DefaultValue = typeof(ProjectConsistentGuidReleaseIdentifierAllocator))]
     public Type ReleaseIdentifierAllocator { get; set; }
 
     [DemandsInitialization(
@@ -65,7 +68,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         //if user has picked an allocator get an instance
         if (ReleaseIdentifierAllocator != null && _allocator == null)
         {
-            _allocator = (IAllocateReleaseIdentifiers) ObjectConstructor.Construct(ReleaseIdentifierAllocator);
+            _allocator = (IAllocateReleaseIdentifiers)ObjectConstructor.Construct(ReleaseIdentifierAllocator);
             _allocator.Initialize(Request);
         }
 
@@ -134,10 +137,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
 
-    private static bool IsNull(object o)
-    {
-        return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
-    }
+    private static bool IsNull(object o) => o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
 
     /// <summary>
     /// Commits the cohort created into the database (assuming no error occured during pipeline processing - See <paramref name="pipelineFailureExceptionIfAny"/>).
@@ -185,8 +185,6 @@ public class BasicCohortDestination : IPluginCohortDestination
                             dt.Rows.Add(kvp.Key, Request.NewCohortDefinition.ID);
                         else
                             dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
-                        }
-                    }
 
 
                     bulkCopy.Upload(dt);
@@ -206,7 +204,7 @@ public class BasicCohortDestination : IPluginCohortDestination
 
         var id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Cohort successfully committed to destination and imported as an RDMP ExtractableCohort (ID={id} <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:{Request.NewCohortDefinition.ID})"));
     }
 
@@ -256,8 +254,10 @@ public class BasicCohortDestination : IPluginCohortDestination
         }
 
         if (ReleaseIdentifierAllocator == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated after committing manually",CheckResult.Warning));
-            
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated after committing manually",
+                CheckResult.Warning));
+
         notifier.OnCheckPerformed(new CheckEventArgs(
             $"Cohort identifier columns are '{_privateIdentifier}' (private) and '{_releaseIdentifier}' (release)",
             CheckResult.Success));

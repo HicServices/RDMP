@@ -58,9 +58,11 @@ public class BackfillSqlHelper
             joinPath[0].PrimaryKey.TableInfo_ID == _tiWithTimeColumn.ID)
             joinPath.Reverse();
 
-        if (joinPath[^1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID && joinPath[^1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
-            throw new InvalidOperationException("The TimePeriodicity table is not at the beginning or end of the join path.");
-            
+        if (joinPath[^1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID &&
+            joinPath[^1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
+            throw new InvalidOperationException(
+                "The TimePeriodicity table is not at the beginning or end of the join path.");
+
         var sql =
             $@"SELECT {tableAlias}.*, {timePeriodTableAlias}.{_timePeriodicityField.GetRuntimeName()} AS TimePeriodicityField 
 FROM {$"[{dbInfo.GetRuntimeName()}]..[{tableInfo.GetRuntimeName()}]"} {tableAlias}";

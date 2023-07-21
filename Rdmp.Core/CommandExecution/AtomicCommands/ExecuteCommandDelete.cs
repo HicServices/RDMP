@@ -29,7 +29,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
     private readonly bool _allowDeleteMany;
 
     public ExecuteCommandDelete(IBasicActivateItems activator,
-        IDeleteable deletable) : this(activator,new []{ deletable})
+        IDeleteable deletable) : this(activator, new[] { deletable })
     {
         Weight = 50.4f;
     }
@@ -46,7 +46,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
     {
         _deletables = deletables;
         _allowDeleteMany = deleteMany;
-        if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
+        if (_deletables.Any(d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
 
         var reason = "";
@@ -85,7 +85,8 @@ public class ExecuteCommandDelete : BasicCommandExecution
         // if the thing we are deleting is important and sensitive then we should use a transaction
         if (_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
         {
-            ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+            ExecuteWithCommit(ExecuteImpl, GetDescription(),
+                _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
             PublishNearest();
         }
         else
@@ -94,18 +95,13 @@ public class ExecuteCommandDelete : BasicCommandExecution
         }
     }
 
-    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
-    {
-        return
-            deleteable is CatalogueItem or ExtractionInformation;
-    }
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable) =>
+        deleteable is CatalogueItem or ExtractionInformation;
 
-    private string GetDescription()
-    {
-        return _deletables.Count == 1
+    private string GetDescription() =>
+        _deletables.Count == 1
             ? $"Delete '{_deletables.Single()}'"
             : $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
-    }
 
     private void ExecuteImpl()
     {
@@ -131,7 +127,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
         try
         {
-            foreach (var d in _deletables.Where(d=>d is not DatabaseEntity exists || exists.Exists()))
+            foreach (var d in _deletables.Where(d => d is not DatabaseEntity exists || exists.Exists()))
                 d.DeleteInDatabase();
         }
         finally

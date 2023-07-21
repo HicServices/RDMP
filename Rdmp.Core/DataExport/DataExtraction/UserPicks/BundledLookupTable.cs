@@ -45,7 +45,7 @@ public class BundledLookupTable : IBundledLookupTable
         using var con = server.GetConnection();
         con.Open();
         using var da = server.GetDataAdapter(
-            server.GetCommand(GetDataTableFetchSql(),con));
+            server.GetCommand(GetDataTableFetchSql(), con));
         da.Fill(dt);
 
         return dt;
@@ -72,7 +72,8 @@ public class BundledLookupTable : IBundledLookupTable
                 return qb.SQL;
             }
 
-            throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
+            throw new QueryBuildingException(
+                $"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
         }
 
         return $"select * from {TableInfo.GetFullyQualifiedName()}";

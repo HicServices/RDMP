@@ -32,8 +32,8 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
                 ? Releaseability.Undefined
                 : Releaseability.ExtractFilesMissing;
 
-        return supplementalExtractionResults.IsReferenceTo(typeof (SupportingSQLTable)) ||
-            supplementalExtractionResults.IsReferenceTo(typeof(TableInfo))
+        return supplementalExtractionResults.IsReferenceTo(typeof(SupportingSQLTable)) ||
+               supplementalExtractionResults.IsReferenceTo(typeof(TableInfo))
             ? GetSpecificAssessment(supplementalExtractionResults)
             : Releaseability.Undefined;
     }

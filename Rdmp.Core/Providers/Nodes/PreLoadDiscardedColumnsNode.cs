@@ -30,13 +30,9 @@ public class PreLoadDiscardedColumnsNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PreLoadDiscardedColumnsNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PreLoadDiscardedColumnsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return TableInfo != null ? TableInfo.GetHashCode() : 0;
-    }
-
-
+    public override int GetHashCode() => TableInfo != null ? TableInfo.GetHashCode() : 0;
 }

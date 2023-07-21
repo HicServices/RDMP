@@ -43,9 +43,8 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             RDMPCollection.Cohort,
             tlvCohortIdentificationConfigurations,
             Activator,
-            olvName,//column with the icon
-            olvName//column that can be renamed
-
+            olvName, //column with the icon
+            olvName //column that can be renamed
         );
         CommonTreeFunctionality.AxeChildren = new[]
         {
@@ -61,9 +60,11 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .CohortIdentificationConfigurationRootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
+            .TemplateAggregateConfigurationsNode);
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]{
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+        {
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
             new ExecuteCommandMergeCohortIdentificationConfigurations(a, null)
         };
@@ -72,8 +73,11 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
         var factory = new AtomicCommandUIFactory(activator);
 
-        CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
-        CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
+        CommonFunctionality.Add(
+            factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)), "New...");
+        CommonFunctionality.Add(
+            factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator, null)
+                { OverrideCommandName = "By Merging Existing..." }), "New...");
 
         if (_firstTime)
         {
@@ -87,20 +91,16 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         }
     }
 
-    public static bool IsRootObject(object root)
-    {
+    public static bool IsRootObject(object root) =>
         // The root CohortIdentificationConfiguration FolderNode is a root element in this tree
-        return root is FolderNode<CohortIdentificationConfiguration> f
+        root is FolderNode<CohortIdentificationConfiguration> f
             ? f.Name == FolderHelper.Root
             : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
-    }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
     }
 
-    private string FrozenAspectGetter(object o)
-    {
-        return o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
-    }
+    private string FrozenAspectGetter(object o) =>
+        o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
 }

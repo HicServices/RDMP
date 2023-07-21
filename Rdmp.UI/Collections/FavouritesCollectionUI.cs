@@ -25,6 +25,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 {
     private List<IMapsDirectlyToDatabaseTable> favourites = new();
     private bool _firstTime = true;
+
     public FavouritesCollectionUI()
     {
         InitializeComponent();
@@ -61,7 +62,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private void RefreshFavourites()
     {
-        var actualRootFavourites = FindRootObjects(Activator,IncludeObject);
+        var actualRootFavourites = FindRootObjects(Activator, IncludeObject);
 
         //no change in root favouratism
         if (favourites.SequenceEqual(actualRootFavourites))

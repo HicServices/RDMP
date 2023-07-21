@@ -278,7 +278,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     {
         var factory = GetFactory();
 
-        if(ddPipeline.SelectedItem is not Pipeline p)
+        if (ddPipeline.SelectedItem is not Pipeline p)
             return;
         try
         {
@@ -327,7 +327,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
         var source = (IDataFlowSource<DataTable>)DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
 
-        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile), new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
+        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),
+            new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
 
         Cursor.Current = Cursors.WaitCursor;
         var preview = source.TryGetPreview();
@@ -343,10 +344,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private UploadFileUseCase GetUseCase() =>
         new(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(), Activator);
 
-    private DataFlowPipelineEngineFactory GetFactory()
-    {
-        return new DataFlowPipelineEngineFactory(GetUseCase());
-    }
+    private DataFlowPipelineEngineFactory GetFactory() => new(GetUseCase());
 
     private void btnExecute_Click(object sender, EventArgs e)
     {
@@ -356,7 +354,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             return;
         }
 
-        if(string.IsNullOrWhiteSpace(tbTableName.Text))
+        if (string.IsNullOrWhiteSpace(tbTableName.Text))
         {
             MessageBox.Show("Enter Catalogue name");
             return;
@@ -375,27 +373,27 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             dest.TableNamerDelegate = () => tbTableName.Text;
 
             using var cts = new CancellationTokenSource();
-            var t =Task.Run(() =>
+            var t = Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
-                    }
-                    catch (PipelineCrashedException ex)
-                    {
-                        Activator.ShowException("Error uploading", ex.InnerException ?? ex);
-                        if (dest.CreatedTable)
-                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
-                        crashed = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Activator.ShowException("Error uploading", ex);
-                        if (dest.CreatedTable)
-                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
-                        crashed = true;
-                    }
-                }, cts.Token);
+                    engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
+                }
+                catch (PipelineCrashedException ex)
+                {
+                    Activator.ShowException("Error uploading", ex.InnerException ?? ex);
+                    if (dest.CreatedTable)
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                    crashed = true;
+                }
+                catch (Exception ex)
+                {
+                    Activator.ShowException("Error uploading", ex);
+                    if (dest.CreatedTable)
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                    crashed = true;
+                }
+            }, cts.Token);
 
             Activator.Wait("Uploading Table...", t, cts);
 
@@ -448,7 +446,6 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 $"Successfully imported new Dataset '{catalogue}'.\r\nThe edit functionality will now open.");
 
             Activator.WindowArranger.SetupEditAnything(this, catalogue);
-
         }
 
         if (cbAutoClose.Checked)
@@ -470,7 +467,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void tbTableName_TextChanged(object sender, EventArgs e)
     {
-        if(!string.IsNullOrWhiteSpace(tbTableName.Text))
+        if (!string.IsNullOrWhiteSpace(tbTableName.Text))
             //if the sane name doesn't match the
             tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
                 StringComparison.CurrentCultureIgnoreCase)

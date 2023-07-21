@@ -33,7 +33,9 @@ public class AllKeywordsDescribedTest : DatabaseTests
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
 
-        var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
+        var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t =>
+            typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract &&
+            !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
 
         var problems = databaseTypes
             .Select(type => new
@@ -44,7 +46,8 @@ public class AllKeywordsDescribedTest : DatabaseTests
             })
             .Where(t => string.IsNullOrWhiteSpace(t.docs))
             .Select(t =>
-                $"Type {t.type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)").ToList();
+                $"Type {t.type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)")
+            .ToList();
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
@@ -64,7 +67,8 @@ public class AllKeywordsDescribedTest : DatabaseTests
         allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
 
         var problems = allKeys.Where(fkName => !CatalogueRepository.CommentStore.ContainsKey(fkName))
-            .Select(fkName => $"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText").ToList();
+            .Select(fkName => $"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText")
+            .ToList();
 
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
@@ -99,7 +103,8 @@ public class AllKeywordsDescribedTest : DatabaseTests
     {
         using var con = server.GetConnection();
         con.Open();
-        var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con).ExecuteReader();
+        var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con)
+            .ExecuteReader();
 
         while (r.Read())
             yield return (string)r["name"];

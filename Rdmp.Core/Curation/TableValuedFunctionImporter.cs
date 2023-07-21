@@ -106,7 +106,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
         var toAdd =
-            new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(),
+            new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
                 discoveredColumn.DataType.SQLType, parent)
             {
                 Format = discoveredColumn.Format,
@@ -161,5 +161,4 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
         return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
     }
-
 }

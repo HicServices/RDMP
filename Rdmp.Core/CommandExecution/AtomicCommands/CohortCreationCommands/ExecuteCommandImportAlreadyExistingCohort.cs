@@ -27,9 +27,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         _externalCohortTable = externalCohortTable;
         _specificProject = specificProject;
 
-        if(specificProject is { ProjectNumber: null })
-        {
-            SetImpossible("Project does not have a ProjectNumber yet");
+        if (specificProject is { ProjectNumber: null }) SetImpossible("Project does not have a ProjectNumber yet");
     }
 
 
@@ -48,16 +46,13 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         if (ect == null)
         {
             var available = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
-            if(!SelectOne(available,out ect,null,true))
-            {
-                return;
-            }
+            if (!SelectOne(available, out ect, null, true)) return;
         }
 
         var newId = _explicitOriginIDToImport ?? GetWhichCohortToImport(ect);
         if (!newId.HasValue) return;
 
-        _=new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
+        _ = new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
         Publish(ect);
     }
 
@@ -87,14 +82,16 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
 
             if (!available.Any())
             {
-                BasicActivator.Show($"There are no new cohorts to import for ProjectNumber {_specificProject.ProjectNumber}");
+                BasicActivator.Show(
+                    $"There are no new cohorts to import for ProjectNumber {_specificProject.ProjectNumber}");
                 return null;
             }
         }
 
         // pick which one to import
-        return BasicActivator.SelectObject("Import Cohort",available, out var cd) ? cd.ID : null;
+        return BasicActivator.SelectObject("Import Cohort", available, out var cd) ? cd.ID : null;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
 }

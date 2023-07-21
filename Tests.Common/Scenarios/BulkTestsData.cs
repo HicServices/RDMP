@@ -118,11 +118,11 @@ public class BulkTestsData
             tbl.Drop();
 
         //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
-        Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{
-            new("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
-            new("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
-            new("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}
-
+        Table = BulkDataDatabase.CreateTable(BulkDataTable, dt, new DatabaseColumnRequest[]
+        {
+            new("chi", new DatabaseTypeRequest(typeof(string), 10)) { IsPrimaryKey = true },
+            new("dtCreated", new DatabaseTypeRequest(typeof(DateTime))) { IsPrimaryKey = true },
+            new("hb_extract", new DatabaseTypeRequest(typeof(string), 1)) { IsPrimaryKey = true }
         });
     }
 
@@ -143,8 +143,8 @@ public class BulkTestsData
         var f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
         f.DoImport(out tableInfo, out columnInfos);
 
-        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
-        forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
+        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo, columnInfos);
+        forwardEngineer.ExecuteForwardEngineering(out var c, out catalogueItems, out extractionInformations);
         catalogue = c;
 
         var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));

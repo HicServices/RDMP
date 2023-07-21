@@ -106,12 +106,13 @@ public class DocXHelper
     {
         using var ms = new MemoryStream();
         bmp.SaveAsPng(ms);
-                
+
         ms.Seek(0, 0);
-                
+
         // Add an image into the document.
-        var picture = run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width * PICTURE_SCALING), Units.ToEMU(bmp.Height *PICTURE_SCALING));
-                
+        var picture = run.AddPicture(ms, PICTURE_TYPE_PNG, "", Units.ToEMU(bmp.Width * PICTURE_SCALING),
+            Units.ToEMU(bmp.Height * PICTURE_SCALING));
+
         return picture;
     }
 
@@ -207,10 +208,8 @@ public class DocXHelper
     /// </summary>
     /// <param name="fileInfo"></param>
     /// <returns></returns>
-    protected XWPFDocumentFile GetNewDocFile(FileInfo fileInfo)
-    {
-        return new XWPFDocumentFile(fileInfo,new FileStream(fileInfo.FullName,FileMode.Create));
-    }
+    protected static XWPFDocumentFile GetNewDocFile(FileInfo fileInfo) =>
+        new(fileInfo, new FileStream(fileInfo.FullName, FileMode.Create));
 
     protected static void InsertSectionPageBreak(XWPFDocument document)
     {
@@ -223,11 +222,11 @@ public class DocXHelper
     {
         document.Document.body.sectPr ??= new CT_SectPr();
         document.Document.body.sectPr.pgSz ??= new CT_PageSz();
-            
+
         document.Document.body.sectPr.pgSz.orient = ST_PageOrientation.landscape;
         document.Document.body.sectPr.pgSz.w = 842 * 20;
         document.Document.body.sectPr.pgSz.h = 595 * 20;
-        
+
 
         //document.PageLayout.Orientation = Orientation.Landscape;
     }
@@ -252,8 +251,8 @@ public class DocXHelper
     protected static void SetMargins(XWPFDocumentFile document, int marginSize)
     {
         document.Document.body.sectPr ??= new CT_SectPr();
-        document.Document.body.sectPr.pgMar.right = (ulong) (marginSize * 14.60);
-        document.Document.body.sectPr.pgMar.left = (ulong) (marginSize * 14.60);
+        document.Document.body.sectPr.pgMar.right = (ulong)(marginSize * 14.60);
+        document.Document.body.sectPr.pgMar.left = (ulong)(marginSize * 14.60);
 
         /*document.MarginLeft = marginSize;
         document.MarginRight= marginSize;
@@ -273,7 +272,7 @@ public class DocXHelper
         public FileInfo FileInfo { get; }
         private readonly FileStream _stream;
 
-        public XWPFDocumentFile(FileInfo fileInfo,FileStream stream)
+        public XWPFDocumentFile(FileInfo fileInfo, FileStream stream)
         {
             FileInfo = fileInfo;
             _stream = stream;

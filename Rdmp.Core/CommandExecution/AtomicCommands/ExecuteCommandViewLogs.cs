@@ -46,23 +46,25 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
             switch (obj)
             {
                 case ILoggedActivityRootObject root:
-                    RootObject =  root;
+                    RootObject = root;
                     break;
                 case ExternalDatabaseServer eds:
-                    _loggingServers = new ExternalDatabaseServer[]{eds};
+                    _loggingServers = new ExternalDatabaseServer[] { eds };
                     break;
                 default:
-                    throw new Exception($"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
+                    throw new Exception(
+                        $"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
             }
         }
 
         var table = LoggingTables.None;
 
         // Optional second argument: table to filter for
-        if(picker.Length >= 1 && Enum.TryParse(picker[1].RawValue, out table)) _filter = new LogViewerFilter(table);
+        if (picker.Length >= 1 && Enum.TryParse(picker[1].RawValue, out table)) _filter = new LogViewerFilter(table);
 
         // Optional third argument: foreign key ID to filter on
-        if(picker.Length >= 2 && int.TryParse(picker[2].RawValue, out var id)) _filter = new LogViewerFilter(table, id);
+        if (picker.Length >= 2 && int.TryParse(picker[2].RawValue, out var id))
+            _filter = new LogViewerFilter(table, id);
     }
 
     [UseWithObjectConstructor]
@@ -101,7 +103,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         base.Execute();
 
 
-        if(RootObject != null)
+        if (RootObject != null)
         {
             BasicActivator.ShowLogs(RootObject);
         }
@@ -112,14 +114,12 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         }
     }
 
-    public override string GetCommandName()
-    {
-        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+    public override string GetCommandName() =>
+        !string.IsNullOrWhiteSpace(OverrideCommandName)
             ? OverrideCommandName
-            : _filter != null ?
-                UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
+            : _filter != null
+                ? UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
                 : base.GetCommandName();
-    }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Logging);
 }

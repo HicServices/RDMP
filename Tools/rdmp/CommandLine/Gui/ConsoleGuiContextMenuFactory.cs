@@ -130,8 +130,8 @@ internal class ConsoleGuiContextMenuFactory
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator)
             };
         if (ReferenceEquals(o, ConsoleMainWindow.Loads))
-        {
-            return new IAtomicCommand[] {
+            return new IAtomicCommand[]
+            {
                 new ExecuteCommandCreateNewLoadMetadata(activator)
             };
         if (ReferenceEquals(o, ConsoleMainWindow.Projects))

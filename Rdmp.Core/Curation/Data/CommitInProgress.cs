@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class CommitInProgress : IDisposable
 {
-    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
+    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new();
 
     public CommitInProgressSettings Settings { get; }
 
@@ -103,7 +103,6 @@ public class CommitInProgress : IDisposable
 
             if (originalStates[e.Object].Type == MementoType.Add)
                 // ok user created this object during the commit then deleted it again... odd but fair enough
-
                 // pretend it never existed
                 originalStates.Remove(e.Object);
             else
@@ -139,7 +138,7 @@ public class CommitInProgress : IDisposable
         foreach (var t in originalStates)
         {
             // serialize the current state on finishing into yaml (or use null for deleted objects)
-            var newYaml = t.Value.Type == MementoType.Delete ? null :  _serializer.Serialize(t.Key);
+            var newYaml = t.Value.Type == MementoType.Delete ? null : _serializer.Serialize(t.Key);
 
             //something changed
             if (newYaml != t.Value.OldYaml) changes.Add(t.Key, Tuple.Create(t.Value, newYaml));
@@ -209,7 +208,9 @@ public class CommitInProgress : IDisposable
 
         // no visible changes... but yaml is different which is odd.
         // Either way abandon this commit.
-        return !props.Any() ? null : $"Update {kv.Key.GetType().Name} {string.Join(", ",props.Select(p => p.Name).ToArray())}";
+        return !props.Any()
+            ? null
+            : $"Update {kv.Key.GetType().Name} {string.Join(", ", props.Select(p => p.Name).ToArray())}";
     }
 
     public void Dispose()

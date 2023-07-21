@@ -147,9 +147,7 @@ public partial class GenerateTestDataUI : RDMPForm
     {
         var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui => ui.Generate).ToArray();
 
-        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
-
-        if(!uis.Any())
+        if (!uis.Any())
         {
             MessageBox.Show("At least one dataset must be selected");
             return;
@@ -183,7 +181,11 @@ public partial class GenerateTestDataUI : RDMPForm
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
                     var ui1 = ui;
-                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};
+                    ui.Completed += () =>
+                    {
+                        Executing.Remove(ui1);
+                        AnnounceIfComplete();
+                    };
                 }
             }
             else
@@ -209,7 +211,7 @@ public partial class GenerateTestDataUI : RDMPForm
         var dataGeneratorFactory = new DataGeneratorFactory();
 
         //reset the current generator to use the seed provided
-        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(),r);
+        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(), r);
 
 
         current.BeginGeneration(identifiers, _extractDirectory);

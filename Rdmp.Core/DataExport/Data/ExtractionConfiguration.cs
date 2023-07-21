@@ -220,40 +220,28 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc cref="DefaultPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline DefaultPipeline
-    {
-        get
-        {
-            return DefaultPipeline_ID == null
-                ? null
-                : (IPipeline)((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<Pipeline>(DefaultPipeline_ID.Value);
-        }
-    }
+    public IPipeline DefaultPipeline =>
+        DefaultPipeline_ID == null
+            ? null
+            : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
+                DefaultPipeline_ID.Value);
 
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration
-    {
-        get
-        {
-            return CohortIdentificationConfiguration_ID == null
-                ? null
-                : ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
-        }
-    }
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
+        CohortIdentificationConfiguration_ID == null
+            ? null
+            : ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(
+                CohortIdentificationConfiguration_ID.Value);
 
     /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline CohortRefreshPipeline
-    {
-        get
-        {
-            return CohortRefreshPipeline_ID == null
-                ? null
-                : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID.Value);
-        }
-    }
+    public IPipeline CohortRefreshPipeline =>
+        CohortRefreshPipeline_ID == null
+            ? null
+            : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
+                CohortRefreshPipeline_ID.Value);
 
     /// <summary>
     /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)
@@ -305,12 +293,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// </summary>
     /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
     /// <returns></returns>
-    public string GetProjectHint(bool shortString)
-    {
-        return
-            shortString ? $"({ Project.ProjectNumber})" :
-                $"'{Project.Name}' (PNo. { Project.ProjectNumber})";
-    }
+    public string GetProjectHint(bool shortString) =>
+        shortString ? $"({Project.ProjectNumber})" : $"'{Project.Name}' (PNo. {Project.ProjectNumber})";
 
     /// <summary>
     /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.
@@ -405,8 +389,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     }
 
                     //clone should copy accross the forced joins (if any)
-                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
-                        new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
+                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
+                                 selected))
+                        new SelectedDataSetsForcedJoin((IDataExportRepository)Repository, newSelectedDataSet,
+                            oldForcedJoin.TableInfo);
 
                     // clone should copy any ExtractionProgresses
                     if (selected.ExtractionProgressIfAny != null)
@@ -498,7 +484,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         var uniqueLoggingServerID = -1;
 
-        var repo = (IDataExportRepository) Repository;
+        var repo = (IDataExportRepository)Repository;
 
         foreach (int? catalogueID in GetAllExtractableDataSets().Select(ds => ds.Catalogue_ID))
         {
@@ -509,7 +495,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
             var loggingServer = catalogue.LiveLoggingServer_ID ?? throw new Exception(
-                    $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
+                $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
             if (uniqueLoggingServerID == -1)
             {
                 uniqueLoggingServerID = (int)catalogue.LiveLoggingServer_ID;
@@ -525,10 +511,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <inheritdoc/>
-    public IExtractableCohort GetExtractableCohort()
-    {
-        return Cohort_ID == null ? null : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
-    }
+    public IExtractableCohort GetExtractableCohort() => Cohort_ID == null
+        ? null
+        : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
 
     /// <inheritdoc/>
     public IExtractableDataSet[] GetAllExtractableDataSets()
@@ -624,7 +609,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         if (string.IsNullOrWhiteSpace(column.SelectSQL))
             throw new ArgumentException(
-                $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager", nameof(column));
+                $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager",
+                nameof(column));
 
         var query = column.SelectSQL;
 

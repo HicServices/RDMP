@@ -38,9 +38,14 @@ namespace Rdmp.UI.Raceway;
 /// </summary>
 public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnAddCatalogue = new("Add Catalogue"){Name= "btnAddCatalogue" };
-    private ToolStripButton btnRemoveAll = new("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
-    private ToolStripButton btnAddExtractableDatasetPackage = new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
+    private ToolStripButton btnAddCatalogue = new("Add Catalogue") { Name = "btnAddCatalogue" };
+
+    private ToolStripButton btnRemoveAll = new("Clear", FamFamFamIcons.delete_multi.ImageToBitmap())
+        { Name = "btnRemoveAll" };
+
+    private ToolStripButton btnAddExtractableDatasetPackage =
+        new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
+
     private ToolStripLabel toolStripLabel1 = new("Show Period") { Name = "toolStripLabel1" };
     private ToolStripComboBox ddShowPeriod = new() { Name = "ddShowPeriod", Size = new Size(121, 25) };
     private ToolStripButton cbIgnoreRowCounts = new() { Name = "cbIgnoreRowCounts" };
@@ -56,9 +61,9 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         cbIgnoreRowCounts.CheckOnClick = true;
         cbIgnoreRowCounts.CheckedChanged += cbIgnoreRowCounts_CheckedChanged;
         btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
-            
-        ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
-            
+
+        ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof(RacewayShowPeriod));
+
         btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
         _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
         _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
@@ -220,13 +225,14 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
-        if(_activator.SelectObjects(new DialogArgs {
-                   TaskDescription = "Choose which new Catalogues should be represented in the diagram."
-               },
-               _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
-                   .Except(_collection.GetCatalogues())
-                   .ToArray(),
-               out var selected))
+        if (_activator.SelectObjects(new DialogArgs
+                {
+                    TaskDescription = "Choose which new Catalogues should be represented in the diagram."
+                },
+                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
+                    .Except(_collection.GetCatalogues())
+                    .ToArray(),
+                out var selected))
         {
             foreach (var catalogue in selected)
                 AddCatalogue(catalogue);
@@ -251,24 +257,21 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddExtractableDatasetPackage_Click(object sender, EventArgs e)
     {
-        if(_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
+        if (_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
             return;
 
-        if(Activator.SelectObject(new DialogArgs
-           {
-               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
-
-           }, dataExportChildProvider.AllPackages,out var packageToAdd))
+        if (Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
+            }, dataExportChildProvider.AllPackages, out var packageToAdd))
         {
             var contents =
                 _activator.RepositoryLocator.DataExportRepository.GetAllDataSets(packageToAdd,
                     dataExportChildProvider.ExtractableDataSets);
 
             foreach (var cata in contents.Select(ds => ds.Catalogue))
-            {
-                if(!_collection.GetCatalogues().Contains(cata))
-                    AddCatalogue((Catalogue) cata);
-            }
+                if (!_collection.GetCatalogues().Contains(cata))
+                    AddCatalogue((Catalogue)cata);
 
             SaveCollectionChanges();
             GenerateChart();

@@ -54,7 +54,8 @@ public class ANOTransformer
                 $"Expected destination column {destColumn.ColumnName} to be {ANOTable.ANOPrefix}{srcColumn.ColumnName}");
 
         if (tableOfIdentifiersRequiringSubstitution.Columns.Count != 1)
-            throw new Exception("Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
+            throw new Exception(
+                "Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
 
         //if there is no data to transform, don't bother
         if (table.Rows.Count == 0 || tableOfIdentifiersRequiringSubstitution.Rows.Count == 0)
@@ -67,7 +68,8 @@ public class ANOTransformer
         substitutionTable.PrimaryKey = new[] { substitutionTable.Columns[0] };
 
         if (substitutionTable.Columns.Count != 2)
-            throw new Exception("Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
+            throw new Exception(
+                "Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
 
         if (substitutionTable.Columns[0].ColumnName.StartsWith(ANOTable.ANOPrefix))
             throw new Exception(
@@ -88,8 +90,8 @@ public class ANOTransformer
 
             //its not null so look up the mapped value
             var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
-                    $"Substitution table returned by {SubstitutionStoredProcedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
-            var substitutionValue = substitutionRow[1];//substitution value
+                $"Substitution table returned by {SubstitutionStoredProcedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
+            var substitutionValue = substitutionRow[1]; //substitution value
 
             //overwrite the value with the substitution
             destColumn.Table.Rows[i][destColumn.ColumnName] = substitutionValue;
@@ -128,7 +130,9 @@ public class ANOTransformer
         try
         {
             con.Open();
-            using var transaction = con.BeginTransaction(); //if it is preview only we will use a transaction which we will then rollback
+            using var
+                transaction =
+                    con.BeginTransaction(); //if it is preview only we will use a transaction which we will then rollback
 
             if (previewOnly)
             {
@@ -172,8 +176,10 @@ public class ANOTransformer
             cmdSubstituteIdentifiers.Parameters["@batch"].Value = table;
 
             cmdSubstituteIdentifiers.Parameters["@tableName"].Value = _anoTable.TableName;
-            cmdSubstituteIdentifiers.Parameters["@numberOfIntegersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
-            cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
+            cmdSubstituteIdentifiers.Parameters["@numberOfIntegersToUseInAnonymousRepresentation"].Value =
+                _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
+            cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value =
+                _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
             cmdSubstituteIdentifiers.Parameters["@suffix"].Value = _anoTable.Suffix;
 
             var da = new SqlDataAdapter(cmdSubstituteIdentifiers);
@@ -215,17 +221,13 @@ public class ANOTransformer
             Console.WriteLine(e.Message);
     }
 
-    public string GetDestinationColumnExpectedDataType()
-    {
-        return _anoTable.GetRuntimeDataType(LoadStage.PostLoad);
-    }
+    public string GetDestinationColumnExpectedDataType() => _anoTable.GetRuntimeDataType(LoadStage.PostLoad);
 
 
     public static void ConfirmDependencies(DiscoveredDatabase database, ICheckNotifier notifier)
     {
         try
         {
-
             if (database.DiscoverStoredprocedures().Any(p => p.Name.Equals(SubstitutionStoredProcedure)))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"successfully found {SubstitutionStoredProcedure} on {database}", CheckResult.Success, null));
@@ -236,7 +238,8 @@ public class ANOTransformer
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Exception occurred when trying to find stored procedure {SubstitutionStoredProcedure} on {database}", CheckResult.Fail, e));
+                $"Exception occurred when trying to find stored procedure {SubstitutionStoredProcedure} on {database}",
+                CheckResult.Fail, e));
         }
     }
 }

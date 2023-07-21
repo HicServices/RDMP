@@ -42,7 +42,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     /// </summary>
     public IExecuteDatasetExtractionDestination Destination { get; private set; }
 
-    public ExtractionPipelineUseCase(IBasicActivateItems activator,IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
+    public ExtractionPipelineUseCase(IBasicActivateItems activator, IProject project, IExtractCommand extractCommand,
+        IPipeline pipeline, DataLoadInfo dataLoadInfo)
     {
         _dataLoadInfo = dataLoadInfo;
         ExtractCommand = extractCommand;
@@ -58,7 +59,6 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
         GenerateContext();
     }
-
 
 
     protected override IDataFlowPipelineContext GenerateContextImpl()
@@ -98,7 +98,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                     runSuccessful = false;
                 }
 
-                if(runSuccessful)
+                if (runSuccessful)
                 {
                     runAgain = IncrementProgressIfAny(eds, listener);
                     consecutiveFailureCount = 0;
@@ -178,7 +178,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
         var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
 
-        return progress?.ApplyRetryWaitStrategy(Token,listener, totalFailureCount, consecutiveFailureCount) == true;
+        return progress?.ApplyRetryWaitStrategy(Token, listener, totalFailureCount, consecutiveFailureCount) == true;
     }
 
 
@@ -286,8 +286,10 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     public override IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
     {
         var engine = base.GetEngine(pipeline, listener);
-            
-        Destination = (IExecuteDatasetExtractionDestination)engine.DestinationObject; //record the destination that was created as part of the Pipeline configured
+
+        Destination =
+            (IExecuteDatasetExtractionDestination)engine
+                .DestinationObject; //record the destination that was created as part of the Pipeline configured
         Source = (ExecuteDatasetExtractionSource)engine.SourceObject;
 
         return engine;
@@ -310,7 +312,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             // tell user that we could not run the report and set the status to warning
             ExtractCommand.ElevateState(ExtractCommandState.Warning);
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED",e));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED", e));
             return;
         }
 

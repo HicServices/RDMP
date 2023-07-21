@@ -20,7 +20,7 @@ namespace Rdmp.UI.Progress;
 /// </summary>
 public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 {
-    private readonly Dictionary<string,ProgressBar> _progressBars = new();
+    private readonly Dictionary<string, ProgressBar> _progressBars = new();
     private readonly ToolTip _tt = new();
 
     public float EmSize = 9f;
@@ -63,7 +63,9 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
         }
 
         if (_progressBars.TryGetValue(e.TaskDescription, out var bar))
+        {
             UpdateProgressBar(bar, e);
+        }
         else
         {
             var y = GetRowYForNewProgressBar();
@@ -86,7 +88,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 
             UpdateProgressBar(pb, e);
 
-            _progressBars.Add(e.TaskDescription,pb);
+            _progressBars.Add(e.TaskDescription, pb);
         }
     }
 
@@ -99,7 +101,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
     {
         var text = $"{progressEventArgs.Progress.Value} {progressEventArgs.Progress.UnitOfMeasurement}";
 
-        _tt.SetToolTip(progressBar,text);
+        _tt.SetToolTip(progressBar, text);
 
         if (progressEventArgs.Progress.KnownTargetValue != 0)
         {
@@ -115,7 +117,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-        if(ParentForm is { IsHandleCreated: true })
+        if (ParentForm is { IsHandleCreated: true })
             ParentForm.Close();
     }
 

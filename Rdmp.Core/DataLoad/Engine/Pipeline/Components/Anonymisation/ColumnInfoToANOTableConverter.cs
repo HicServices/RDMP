@@ -44,7 +44,7 @@ public class ColumnInfoToANOTableConverter
 
         var rowcount = tbl.GetRowCount();
 
-        if(rowcount>0)
+        if (rowcount > 0)
             throw new NotSupportedException(
                 $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
@@ -58,7 +58,7 @@ public class ColumnInfoToANOTableConverter
 
         AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-        DropOldColumn(shouldApplySql, con,null);
+        DropOldColumn(shouldApplySql, con, null);
 
 
         //synchronize again
@@ -81,9 +81,9 @@ public class ColumnInfoToANOTableConverter
 
         AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-        MigrateExistingData(shouldApplySql,con, notifier,tbl);
+        MigrateExistingData(shouldApplySql, con, notifier, tbl);
 
-        DropOldColumn(shouldApplySql, con,null);
+        DropOldColumn(shouldApplySql, con, null);
 
         //synchronize again
         new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
@@ -126,13 +126,14 @@ public class ColumnInfoToANOTableConverter
             {
                 //get the existing data
                 using var cmdGetExistingData =
-                       DatabaseCommandHelper.GetCommand(
-                           $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con);
+                    DatabaseCommandHelper.GetCommand(
+                        $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con);
                 using var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData);
-                da.Fill(dt);//into memory
+                da.Fill(dt); //into memory
 
                 //transform it in memory
-                var transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                var transformer =
+                    new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
                 transformer.Transform(dt, dt.Columns[0], dt.Columns[1]);
 
                 var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
@@ -144,13 +145,12 @@ public class ColumnInfoToANOTableConverter
 
             //create an empty table for the anonymised data
             using var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
-                       string.Format(
-                           "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
-                           from, to, tbl.GetFullyQualifiedName()), con);
+                string.Format(
+                    "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
+                    from, to, tbl.GetFullyQualifiedName()), con);
             if (!shouldApplySql(cmdUpdateMainTable.CommandText))
                 throw new Exception("User decided not to perform update on table");
             cmdUpdateMainTable.ExecuteNonQuery();
-
         }
         finally
         {
@@ -167,7 +167,7 @@ public class ColumnInfoToANOTableConverter
 
         if (shouldApplySql(alterSql))
         {
-            using var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction);
+            using var cmd = DatabaseCommandHelper.GetCommand(alterSql, con, transaction);
             cmd.ExecuteNonQuery();
         }
         else

@@ -40,7 +40,6 @@ public class ExpectedIdenticalStringsException : Exception
             //give them a preview of the location of the difference
             if (!expected[i].Equals(actual[i]))
             {
-
                 message = $"{message}{Environment.NewLine}Strings differ at index {i}";
                 message += GetPreviewsAround(i, expected, actual);
 
@@ -57,7 +56,7 @@ public class ExpectedIdenticalStringsException : Exception
     {
         var toReturn = "";
 
-        var previewExpected = GetPreviewAround(i,expected,out var iIsAtCharacterPosition);
+        var previewExpected = GetPreviewAround(i, expected, out var iIsAtCharacterPosition);
         var previewActual = GetPreviewAround(i, actual, out iIsAtCharacterPosition);
 
         var differencePointer = "";
@@ -84,7 +83,9 @@ public class ExpectedIdenticalStringsException : Exception
         iIsAtCharacterPosition =
             i - startSubstringAt; //if difference is at index 350 then return 350 - (350-20) i.e. 20 but if difference is at index 3 then return 3 - 0 (see Math.Max on line above)
 
-        var lengthWeWantToTake = i - startSubstringAt + charsAfter;//usually the full amount unless charsBefore is truncated due to the start of the string (when difference is early in the string)
+        var lengthWeWantToTake =
+            i - startSubstringAt +
+            charsAfter; //usually the full amount unless charsBefore is truncated due to the start of the string (when difference is early in the string)
         var lengthAvailable = str.Length - startSubstringAt;
         var lengthWeWillActuallyTake = Math.Min(lengthWeWantToTake, lengthAvailable);
 

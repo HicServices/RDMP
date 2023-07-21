@@ -20,7 +20,9 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 /// </summary>
 public partial class SQLBeforeAndAfterViewer : Form
 {
-    public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore, string headerTextForAfter, string caption, MessageBoxButtons buttons, SyntaxLanguage language = SyntaxLanguage.SQL)
+    public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore,
+        string headerTextForAfter, string caption, MessageBoxButtons buttons,
+        SyntaxLanguage language = SyntaxLanguage.SQL)
     {
         InitializeComponent();
 
@@ -55,12 +57,11 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
-            for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(queryEditorBefore,i,Color.Pink);
+            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(queryEditorBefore, i, Color.Pink);
 
-            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
+            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(queryEditorAfter, i, Color.LawnGreen);
-
         }
 
         switch (buttons)

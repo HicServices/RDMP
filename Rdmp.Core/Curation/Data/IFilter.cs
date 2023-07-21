@@ -77,5 +77,4 @@ public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper,
     /// </summary>
     /// <returns></returns>
     Catalogue GetCatalogue();
-
 }

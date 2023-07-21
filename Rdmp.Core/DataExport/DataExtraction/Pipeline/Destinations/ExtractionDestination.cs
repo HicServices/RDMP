@@ -152,7 +152,7 @@ e.g. /$i/$a")]
             WriteBundleContents(extractDatasetCommand.DatasetBundle, job, cancellationToken);
             haveWrittenBundleContents = true;
         }
-                
+
         if (_request is ExtractGlobalsCommand extractGlobalsCommand)
         {
             ExtractGlobals(extractGlobalsCommand, job, _dataLoadInfo);
@@ -167,8 +167,8 @@ e.g. /$i/$a")]
             Open(toProcess, job, cancellationToken);
 
             //create an audit object
-            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", OutputFile, new DataSource[] { new(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
-
+            TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", OutputFile,
+                new DataSource[] { new(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
         }
 
         WriteRows(toProcess, job, cancellationToken, stopwatch);
@@ -255,7 +255,9 @@ e.g. /$i/$a")]
     #region Release Related Methods
 
     /// <inheritdoc/>
-    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
+    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSet);
+
     /// <inheritdoc/>
     public abstract GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
@@ -314,16 +316,14 @@ e.g. /$i/$a")]
 
         //extract lookups
         foreach (BundledLookupTable lookup in datasetBundle.LookupTables)
-        {
-
-            datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir,job)
+            datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir, job)
                 ? ExtractCommandState.Completed
                 : ExtractCommandState.Crashed;
     }
 
     public DirectoryInfo GetDirectoryFor(IExtractCommand request)
     {
-        if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
+        if (string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
             return request.GetExtractionDirectory();
 
         var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;
@@ -380,11 +380,10 @@ e.g. /$i/$a")]
                 var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(
                     $"SELECT * FROM {lookup.TableInfo.Name}", lookup.TableInfo);
-                supplementalResult.CompleteAudit(GetType(), destinationDescription, linesWritten,false,false);
+                supplementalResult.CompleteAudit(GetType(), destinationDescription, linesWritten, false, false);
             }
 
             return true;
-
         }
         catch (Exception e)
         {
@@ -416,7 +415,7 @@ e.g. /$i/$a")]
             {
                 var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
-                supplementalResult.CompleteAudit(GetType(), outputPath, 0,false , false);
+                supplementalResult.CompleteAudit(GetType(), outputPath, 0, false, false);
             }
             else
             {
@@ -427,7 +426,7 @@ e.g. /$i/$a")]
                     extractGlobalsCommand.Configuration,
                     null,
                     doc);
-                result.CompleteAudit(GetType(), outputPath, 0,false,false);
+                result.CompleteAudit(GetType(), outputPath, 0, false, false);
                 extractGlobalsCommand.ExtractionResults.Add(result);
             }
 
@@ -460,8 +459,6 @@ e.g. /$i/$a")]
             TryExtractSupportingSQLTableImpl(sql, directory, configuration, listener, out var sqlLinesWritten,
                 out var description);
 
-            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
-
             sw.Stop();
 
             //end auditing it
@@ -472,7 +469,7 @@ e.g. /$i/$a")]
             {
                 var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
-                supplementalResult.CompleteAudit(GetType(),description , sqlLinesWritten, false,false);
+                supplementalResult.CompleteAudit(GetType(), description, sqlLinesWritten, false, false);
             }
             else
             {
@@ -535,5 +532,4 @@ e.g. /$i/$a")]
     }
 
     #endregion
-
 }

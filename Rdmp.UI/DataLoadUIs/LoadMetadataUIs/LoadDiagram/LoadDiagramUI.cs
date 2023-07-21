@@ -55,9 +55,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private LoadDiagramServerNode _raw;
     private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
 
-    private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
-
-    private readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
+    private readonly ToolStripButton _btnFetchData = new("Fetch State", CatalogueIcons.DatabaseRefresh.ImageToBitmap())
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
     };
@@ -101,7 +99,8 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             if (tableNode.Bubble == LoadBubble.Live)
             {
                 //for live just use the TableInfo!
-                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
+                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(
+                    new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
                 return;
             }
             else
@@ -116,14 +115,10 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
     {
-        if (e.Column == olvDataType)
-        {
-            if (e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different } colNode)
-                e.SubItem.ForeColor = Color.Red;
-        }
+        if (e.Column == olvDataType && e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different })
+            e.SubItem.ForeColor = Color.Red;
 
         if (e.Column == olvState && e.CellValue is LoadDiagramState loadDiagramState)
-        {
             e.SubItem.ForeColor = loadDiagramState switch
             {
                 LoadDiagramState.Anticipated => Color.LightGray,
@@ -135,7 +130,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 LoadDiagramState.New => Color.Red,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
     }
 
     private object olvState_AspectGetter(object rowobject)
@@ -158,32 +152,31 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         };
     }
 
-    private string CellToolTipGetter(OLVColumn column, object modelObject)
-    {
-        return modelObject is LoadDiagramServerNode loadDiagramServerNode
+    private string CellToolTipGetter(OLVColumn column, object modelObject) =>
+        modelObject is LoadDiagramServerNode loadDiagramServerNode
             ? loadDiagramServerNode.ErrorDescription
             : null;
-    }
 
     private Bitmap ImageGetter(object rowObject)
     {
         return Activator == null
             ? null
             : rowObject switch
-        {
-            UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
-                .ImageToBitmap(),
-            DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
-                .ImageToBitmap(),
-            LoadDiagramServerNode loadDiagramServerNode =>
-                string.IsNullOrWhiteSpace(loadDiagramServerNode.ErrorDescription)
-                    ? Activator.CoreIconProvider.GetImage(loadDiagramServerNode).ImageToBitmap()
-                    : Activator.CoreIconProvider.GetImage(loadDiagramServerNode, OverlayKind.Problem).ImageToBitmap(),
-            LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
-            LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
-            LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
-            _ => null
-        };
+            {
+                UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
+                    .ImageToBitmap(),
+                DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
+                    .ImageToBitmap(),
+                LoadDiagramServerNode loadDiagramServerNode =>
+                    string.IsNullOrWhiteSpace(loadDiagramServerNode.ErrorDescription)
+                        ? Activator.CoreIconProvider.GetImage(loadDiagramServerNode).ImageToBitmap()
+                        : Activator.CoreIconProvider.GetImage(loadDiagramServerNode, OverlayKind.Problem)
+                            .ImageToBitmap(),
+                LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
+                LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
+                LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
+                _ => null
+            };
     }
 
     private IEnumerable ChildrenGetter(object model)
@@ -275,18 +268,19 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         base.SetDatabaseObject(activator, databaseObject);
 
         if (!_collectionCommonFunctionality.IsSetup)
-            _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings
-            {
-                AddFavouriteColumn = false,
-                AddIDColumn = false,
-                SuppressChildrenAdder = true,
-                SuppressActivate = true,
-                AddCheckColumn = false
-            });
+            _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables, activator, null, null,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    AddFavouriteColumn = false,
+                    AddIDColumn = false,
+                    SuppressChildrenAdder = true,
+                    SuppressActivate = true,
+                    AddCheckColumn = false
+                });
 
-        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator),
-            tlvLoadedTables);
-            
+        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(),
+            new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
+
         _loadMetadata = databaseObject;
         RefreshUIFromDatabase();
 
@@ -300,7 +294,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private void btnFetch_Click(object sender, EventArgs e)
     {
         //execution is already underway
-        if(taskDiscoverState is { IsCompleted: false })
+        if (taskDiscoverState is { IsCompleted: false })
             return;
 
         CommonFunctionality.ResetChecks();
@@ -344,7 +338,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private void DiscoverStates()
     {
         if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<object>().Any())
-            CommonFunctionality.Fatal("There are no tables loaded by the load",null);
+            CommonFunctionality.Fatal("There are no tables loaded by the load", null);
 
 
         //update the states of the objects (do UI code happens here)

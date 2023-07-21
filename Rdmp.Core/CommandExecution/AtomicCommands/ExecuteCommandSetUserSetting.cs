@@ -20,7 +20,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
 {
-
     private readonly PropertyInfo _property;
     private readonly ErrorCode _errorCode;
     private readonly CheckResult _errorCodeValue;
@@ -37,10 +36,10 @@ public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandSetUserSetting(IBasicActivateItems activator,
-
         [DemandsInitialization("Name of a property you want to change e.g. AllowIdentifiableExtractions")]
         string property,
-        [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
+        [DemandsInitialization(
+            "New value to assign, this will be parsed into a valid Type if property is not a string")]
         string value) : base(activator)
     {
         // if user is calling to set an error code e.g. 'rdmp SetUserSetting R001 Success'
@@ -112,7 +111,7 @@ public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
         if (_property == null)
             return;
 
-        ShareManager.SetValue(_property,NewValue,null);
+        ShareManager.SetValue(_property, NewValue, null);
         Success = true;
     }
 }

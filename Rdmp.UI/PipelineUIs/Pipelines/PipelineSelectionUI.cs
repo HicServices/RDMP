@@ -32,7 +32,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private ToolTip tt = new();
 
     private const string ShowAll = "Show All/Incompatible Pipelines";
-    public bool showAll;
+    public bool showAll = false;
+
     public IPipeline Pipeline
     {
         get => _pipeline;
@@ -88,7 +89,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             : "<<None>>";
     }
 
-    public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
+    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository)
     {
         _activator = activator;
         _useCase = useCase;
@@ -105,7 +106,6 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
         ddPipelines.DrawItem += cmb_Type_DrawItem;
-
     }
 
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
@@ -133,10 +133,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1),
                 new Point(e.Bounds.Right, e.Bounds.Top + 1));
 
-            if(showAll)
-            {
-                render = $"\u2713 {render}";
-            }
+            if (showAll) render = $"\u2713 {render}";
 
             TextRenderer.DrawText(e.Graphics, render, italic,
                 new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue,
@@ -177,7 +174,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         if (!Equals(_previousSelection, Pipeline))
         {
-            PipelineChanged?.Invoke(this,EventArgs.Empty);
+            PipelineChanged?.Invoke(this, EventArgs.Empty);
             _previousSelection = Pipeline;
         }
     }

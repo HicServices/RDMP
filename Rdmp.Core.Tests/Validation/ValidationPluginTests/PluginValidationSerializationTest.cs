@@ -56,6 +56,6 @@ public class FishConstraint : PluginPrimaryConstraint
 
         var result = value as string ?? value.ToString();
 
-        return result.Equals("Fish") ? null : new ValidationFailure($"Value '{value}' was not 'Fish'!",this);
+        return result.Equals("Fish") ? null : new ValidationFailure($"Value '{value}' was not 'Fish'!", this);
     }
 }

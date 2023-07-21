@@ -67,7 +67,7 @@ public interface ISqlQueryBuilder
     /// <summary>
     /// The <see cref="IContainer"/> (AND / OR) that contains all the lines of WHERE SQL (<see cref="IFilter"/>) including subcontainers.
     /// </summary>
-    IContainer RootFilterContainer{get;set;}
+    IContainer RootFilterContainer { get; set; }
 
     /// <summary>
     /// True to check the syntax of columns, parameters etc.  This should result in SyntaxErrorException being thrown when generating the SQL if it is substantially malformed

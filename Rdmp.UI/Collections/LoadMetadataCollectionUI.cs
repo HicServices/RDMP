@@ -79,7 +79,8 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             olvName,
             olvName);
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+            { new ExecuteCommandCreateNewLoadMetadata(a) };
 
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
@@ -112,11 +113,9 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         BuildCommandList();
     }
 
-    public static bool IsRootObject(object root)
-    {
+    public static bool IsRootObject(object root) =>
         // The root LoadMetadata FolderNode is a root element in this tree
-        return root is FolderNode<LoadMetadata> f ? f.Name == FolderHelper.Root : root is AllPermissionWindowsNode;
-    }
+        root is FolderNode<LoadMetadata> f ? f.Name == FolderHelper.Root : root is AllPermissionWindowsNode;
 
     public void BuildCommandList()
     {

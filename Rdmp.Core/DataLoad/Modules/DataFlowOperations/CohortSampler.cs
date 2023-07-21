@@ -32,7 +32,9 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
         DefaultValue = 100)]
     public int SampleSize { get; set; } = 100;
 
-    [DemandsInitialization("Determines components behaviour if not enough unique identifiers are being committed.  True to crash.  False to pass on however many records there are.",DefaultValue = true)]
+    [DemandsInitialization(
+        "Determines components behaviour if not enough unique identifiers are being committed.  True to crash.  False to pass on however many records there are.",
+        DefaultValue = true)]
     public bool FailIfNotEnoughIdentifiers { get; set; } = true;
 
     [DemandsInitialization(
@@ -70,7 +72,9 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
 
         var expectedFieldName = GetPrivateFieldName();
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,$"Looking for column called '{expectedFieldName}' in the data in order to produce a sample"));
+        listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information,
+                $"Looking for column called '{expectedFieldName}' in the data in order to produce a sample"));
 
         if (!toProcess.Columns.Contains(expectedFieldName))
             throw new Exception(

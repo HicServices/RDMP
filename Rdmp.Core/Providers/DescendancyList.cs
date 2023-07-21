@@ -29,7 +29,7 @@ public class DescendancyList
     /// For use with <see cref="GetMostDescriptiveParent"/> these objects will be skipped when finding a descriptive parent
     /// </summary>
     private static HashSet<Type> TypesThatAreNotUsefulParents = new(
-        new []
+        new[]
         {
             typeof(CatalogueItemsNode),
             typeof(DocumentationNode),

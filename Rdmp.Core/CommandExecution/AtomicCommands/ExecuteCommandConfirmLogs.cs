@@ -48,12 +48,10 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution
     /// <param name="withinTime"></param>
     /// <param name="requireLoadedRows"></param>
     public ExecuteCommandConfirmLogs(IBasicActivateItems activator,
-
         [DemandsInitialization("The object you want to confirm passing log entries for")]
         ILoggedActivityRootObject obj,
         [DemandsInitialization("Optional time period in which to expect successful logs e.g. 24:00:00 (24 hours)")]
         string withinTime = null,
-
         [DemandsInitialization("Optional.  Pass true to require rows to be loaded if obj is a LoadMetadata")]
         bool requireLoadedRows = false) : base(activator)
     {
@@ -140,7 +138,8 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution
         // tables where there was at least 1 insert or update and it wasn't in a RAW or STAGING table
         var loadedTables = arg.TableLoadInfos
             .Where(l => l.Inserts > 0 || l.Updates > 0)
-            .Where(l => !l.TargetTable.Contains("_RAW",StringComparison.Ordinal) && !l.TargetTable.Contains("_STAGING",StringComparison.Ordinal));
+            .Where(l => !l.TargetTable.Contains("_RAW", StringComparison.Ordinal) &&
+                        !l.TargetTable.Contains("_STAGING", StringComparison.Ordinal));
 
         // of those they must match the live table name
         return loadedTables.Any(l =>

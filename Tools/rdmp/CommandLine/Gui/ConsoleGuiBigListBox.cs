@@ -96,10 +96,7 @@ internal class ConsoleGuiBigListBox<T>
 
         public override int GetHashCode() => Object.GetHashCode();
 
-        public override bool Equals(object obj)
-        {
-            return obj is ListViewObject<T2> other && Object.Equals(other.Object);
-        }
+        public override bool Equals(object obj) => obj is ListViewObject<T2> other && Object.Equals(other.Object);
     }
 
     /// <summary>
@@ -131,7 +128,7 @@ internal class ConsoleGuiBigListBox<T>
         };
 
         _listView.KeyPress += _listView_KeyPress;
-        _listView.SetSource( (_collection = BuildList(GetInitialSource())).ToList());
+        _listView.SetSource((_collection = BuildList(GetInitialSource())).ToList());
         win.Add(_listView);
 
         var btnOk = new Button(_okText, true)
@@ -168,7 +165,8 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(searchLabel);
 
-            _mainInput = new TextField ("") {
+            _mainInput = new TextField("")
+            {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
                 Width = 30
@@ -222,7 +220,7 @@ internal class ConsoleGuiBigListBox<T>
     {
     }
 
-    private bool Timer (MainLoop caller)
+    private bool Timer(MainLoop caller)
     {
         if (_changes && DateTime.Now.Subtract(_lastKeypress) > TimeSpan.FromSeconds(1))
             lock (_taskCancellationLock)
@@ -230,13 +228,12 @@ internal class ConsoleGuiBigListBox<T>
                 var oldSelected = _listView.SelectedItem;
                 _listView.SetSource(_collection.ToList());
 
-                if(oldSelected < _collection.Count)
-                    _listView.SelectedItem = oldSelected ;
+                if (oldSelected < _collection.Count)
+                    _listView.SelectedItem = oldSelected;
 
                 _changes = false;
                 return true;
             }
-        }
 
         return true;
     }
@@ -270,7 +267,6 @@ internal class ConsoleGuiBigListBox<T>
                 _collection = result;
                 _changes = true;
             }
-
         }, cts.Token);
     }
 
@@ -278,8 +274,8 @@ internal class ConsoleGuiBigListBox<T>
     {
         var toReturn = listOfT.Select(o => new ListViewObject<T>(o, AspectGetter)).ToList();
 
-        if(_addNull)
-            toReturn.Add(new ListViewObject<T>((T)(object)null,o=>"Null"));
+        if (_addNull)
+            toReturn.Add(new ListViewObject<T>((T)(object)null, o => "Null"));
 
         return toReturn;
     }
@@ -300,8 +296,7 @@ internal class ConsoleGuiBigListBox<T>
         ).ToList();
     }
 
-    protected virtual IList<T> GetInitialSource()
-    {
-        return _publicCollection ?? throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
-    }
+    protected virtual IList<T> GetInitialSource() => _publicCollection ??
+                                                     throw new InvalidOperationException(
+                                                         "When using the protected constructor derived classes must override this method ");
 }

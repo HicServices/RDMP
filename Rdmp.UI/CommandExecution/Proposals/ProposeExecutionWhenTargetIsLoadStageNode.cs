@@ -14,16 +14,13 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionProposal<LoadStageNode>
+internal class ProposeExecutionWhenTargetIsLoadStageNode : RDMPCommandExecutionProposal<LoadStageNode>
 {
     public ProposeExecutionWhenTargetIsLoadStageNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(LoadStageNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(LoadStageNode target) => false;
 
     public override void Activate(LoadStageNode target)
     {
@@ -43,11 +40,14 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionPro
             switch (f.Extension)
             {
                 case ".sql":
-                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,targetStage.LoadMetadata, targetStage.LoadStage,f);
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
                 case ".exe":
-                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable, targetStage.LoadMetadata, targetStage.LoadStage, f);
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
             }
         }
+
         return null;
     }
 }

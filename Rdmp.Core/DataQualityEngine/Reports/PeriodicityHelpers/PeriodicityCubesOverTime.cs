@@ -24,8 +24,7 @@ public class PeriodicityCubesOverTime
 {
     private readonly string _pivotCategory;
     private List<PeriodicityCube> allCubes = new();
-
-    private Dictionary<int,Dictionary<int,PeriodicityCube>>  hyperCube = new();
+    private Dictionary<int, Dictionary<int, PeriodicityCube>> hyperCube = new();
 
     public PeriodicityCubesOverTime(string pivotCategory)
     {

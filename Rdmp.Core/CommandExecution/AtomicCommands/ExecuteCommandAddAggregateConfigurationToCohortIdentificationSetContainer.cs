@@ -149,12 +149,12 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
                     return;
             }
 
-            if(!BasicActivator.SelectObjects(new DialogArgs
-               {
-                   WindowTitle = "Add Aggregate Configuration(s) to Container",
-                   TaskDescription = $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'."
-               },available,out var selected))
-            {
+            if (!BasicActivator.SelectObjects(new DialogArgs
+                {
+                    WindowTitle = "Add Aggregate Configuration(s) to Container",
+                    TaskDescription =
+                        $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'."
+                }, available, out var selected))
                 // user cancelled
                 return;
 

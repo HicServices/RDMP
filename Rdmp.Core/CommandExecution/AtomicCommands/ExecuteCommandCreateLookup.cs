@@ -114,7 +114,8 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
                     toBumpDown.SaveToDatabase();
                 }
 
-                var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString())
+                var newExtractionInformation =
+                    new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString())
                     {
                         ExtractionCategory = ExtractionCategory.Supplemental,
                         Alias = newCatalogueItem.Name,

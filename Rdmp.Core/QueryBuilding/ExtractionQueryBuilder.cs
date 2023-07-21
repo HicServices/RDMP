@@ -52,7 +52,7 @@ public class ExtractionQueryBuilder
             throw new NullReferenceException("No Cohort selected");
             
         var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType() ?? throw new NotSupportedException(
-                $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
+            $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
         var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType);
 
         substitutions = new List<ReleaseIdentifierSubstitution>();
@@ -62,8 +62,9 @@ public class ExtractionQueryBuilder
         switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
         {
             //no extraction identifiers
-            case 0: throw new Exception(
-                $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier");
+            case 0:
+                throw new Exception(
+                    $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier");
 
             //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
             case 1:
@@ -89,7 +90,8 @@ public class ExtractionQueryBuilder
         //identify any tables we are supposed to force join to
         var forcedJoins = request.SelectedDataSets.SelectedDataSetsForcedJoins;
 
-        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray())
+        var queryBuilder =
+            new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray())
             {
                 TopX = request.TopX
             };
@@ -210,8 +212,8 @@ public class ExtractionQueryBuilder
 
         if (project.ProjectNumber == null)
             throw new ProjectNumberException("Project number has not been entered, cannot create constant parameters");
-            
-        if(extractableCohort == null)
+
+        if (extractableCohort == null)
             throw new Exception("Cohort has not been selected, cannot create constant parameters");
 
         var externalCohortTable = extractableCohort.ExternalCohortTable;

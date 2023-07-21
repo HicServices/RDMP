@@ -71,7 +71,6 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
 
     #region Relationships
 
-    /// <inheritdoc cref="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
     public DeployedExtractionFilter ExtractionFilter =>
         Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);

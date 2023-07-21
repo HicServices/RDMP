@@ -21,7 +21,7 @@ public sealed class AggregateConfigurationStateBasedIconProvider : IObjectStateB
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is Type && o.Equals(typeof (AggregateConfiguration)))
+        if (o is Type && o.Equals(typeof(AggregateConfiguration)))
             return Aggregates;
 
         if (o is not AggregateConfiguration ac)
@@ -36,7 +36,7 @@ public sealed class AggregateConfigurationStateBasedIconProvider : IObjectStateB
             img = IconOverlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
         if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-            img =IconOverlayProvider.GetOverlay(img, OverlayKind.Shortcut);
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Shortcut);
 
         if (ac.Catalogue.IsApiCall())
             img = IconOverlayProvider.GetOverlay(img, OverlayKind.Cloud);

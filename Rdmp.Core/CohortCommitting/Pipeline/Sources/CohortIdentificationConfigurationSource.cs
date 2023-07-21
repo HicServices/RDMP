@@ -76,10 +76,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         _cancelGlobalOperations.Cancel();
     }
 
-    public DataTable TryGetPreview()
-    {
-        return GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
-    }
+    public DataTable TryGetPreview() => GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
@@ -96,17 +93,19 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
         ICompileable rootContainerTask;
         //no caching set up so no point in running CohortCompilerRunner
-        if(_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
+        if (_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
             rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
         else
-            rootContainerTask =  RunAllTasksWithRunner(cohortCompiler,listener);
+            rootContainerTask = RunAllTasksWithRunner(cohortCompiler, listener);
 
-        if(rootContainerTask.State == CompilationState.Executing)
+        if (rootContainerTask.State == CompilationState.Executing)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning,
+                    "Root container task was unexpectedly still executing... let's give it a little longer to run"));
 
-            var countdown = Math.Max(5000,Timeout*1000);
-            while(rootContainerTask.State == CompilationState.Executing && countdown>0)
+            var countdown = Math.Max(5000, Timeout * 1000);
+            while (rootContainerTask.State == CompilationState.Executing && countdown > 0)
             {
                 Thread.Sleep(100);
                 countdown -= 100;
@@ -125,6 +124,8 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         if (execution.Identifiers == null || execution.Identifiers.Rows.Count == 0)
             throw new Exception(
                 "CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
+
+        var dt = execution.Identifiers;
 
         DataTable dt = execution.Identifiers;
         dt.BeginLoadData();
@@ -185,8 +186,6 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             var cacheManager =
                 new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
 
-            var cacheManager = new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
-
             cohortCompiler.AddAllTasks(false);
             foreach (var cacheable in cohortCompiler.Tasks.Keys.OfType<ICacheableTask>())
                 cacheable.ClearYourselfFromCache(cacheManager);
@@ -196,7 +195,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         {
             RunSubcontainers = false
         };
-        runner.PhaseChanged += (s,e)=> listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        runner.PhaseChanged += (s, e) => listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"CohortCompilerRunner entered Phase '{runner.ExecutionPhase}'"));
         return runner.Run(_cancelGlobalOperations.Token);
     }

@@ -32,10 +32,7 @@ public class DoNothingCacheDestination : CacheFilesystemDestination
 
 
         var run = 0;
-        if (toProcess is DoNothingCacheChunk chunk)
-        {
-            run = chunk.RunIteration;
-        }
+        if (toProcess is DoNothingCacheChunk chunk) run = chunk.RunIteration;
 
         for (var i = 0; i < 10; i++)
         {

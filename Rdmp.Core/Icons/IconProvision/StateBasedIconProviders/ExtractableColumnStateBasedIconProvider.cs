@@ -40,19 +40,19 @@ public sealed class ExtractableColumnStateBasedIconProvider : IObjectStateBasedI
         return ei == null
             ? toReturn
             : ei.ExtractionCategory switch
-        {
-            ExtractionCategory.ProjectSpecific =>
-                IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
-            ExtractionCategory.Core => IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
-            ExtractionCategory.Supplemental => IconOverlayProvider.GetOverlay(toReturn,
-                OverlayKind.Extractable_Supplemental),
-            ExtractionCategory.SpecialApprovalRequired => IconOverlayProvider.GetOverlay(toReturn,
-                OverlayKind.Extractable_SpecialApproval),
-            ExtractionCategory.Internal => IconOverlayProvider.GetOverlay(toReturn,
-                OverlayKind.Extractable_Internal),
-            ExtractionCategory.Deprecated => IconOverlayProvider.GetOverlay(
-                IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable), OverlayKind.Deprecated),
-            _ => throw new ArgumentOutOfRangeException(nameof(o))
-        };
+            {
+                ExtractionCategory.ProjectSpecific =>
+                    IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
+                ExtractionCategory.Core => IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
+                ExtractionCategory.Supplemental => IconOverlayProvider.GetOverlay(toReturn,
+                    OverlayKind.Extractable_Supplemental),
+                ExtractionCategory.SpecialApprovalRequired => IconOverlayProvider.GetOverlay(toReturn,
+                    OverlayKind.Extractable_SpecialApproval),
+                ExtractionCategory.Internal => IconOverlayProvider.GetOverlay(toReturn,
+                    OverlayKind.Extractable_Internal),
+                ExtractionCategory.Deprecated => IconOverlayProvider.GetOverlay(
+                    IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable), OverlayKind.Deprecated),
+                _ => throw new ArgumentOutOfRangeException(nameof(o))
+            };
     }
 }

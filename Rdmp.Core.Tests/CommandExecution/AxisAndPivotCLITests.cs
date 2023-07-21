@@ -18,7 +18,7 @@ public class AxisAndPivotCLITests : CommandCliTests
     {
         var ac = WhenIHaveA<AggregateConfiguration>();
 
-        var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "fff");
+        var cmd = new ExecuteCommandSetPivot(GetMockActivator().Object, ac, "fff");
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
         Assert.AreEqual(
@@ -58,7 +58,7 @@ public class AxisAndPivotCLITests : CommandCliTests
         dim.Alias = "frogmarch";
         dim.ColumnInfo.Data_type = "datetime";
 
-        var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
+        var cmd = new ExecuteCommandSetPivot(GetMockActivator().Object, ac, "frogmarch");
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
         Assert.AreEqual("AggregateDimension frogmarch is a Date so cannot set it as a Pivot for Aggregate My graph",

@@ -111,12 +111,12 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         // if user hasn't picked a Catalogue yet
         if (_catalogueCombineable == null)
         {
-            if(!BasicActivator.SelectObjects(new DialogArgs
-               {
-                   WindowTitle = "Add Catalogue(s) to Container",
-                   TaskDescription = $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-               },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-            {
+            if (!BasicActivator.SelectObjects(new DialogArgs
+                {
+                    WindowTitle = "Add Catalogue(s) to Container",
+                    TaskDescription =
+                        $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 // user didn't pick one
                 return;
 
@@ -127,7 +127,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
                 UpdateIsImpossibleFor(combineable);
 
-                if(IsImpossible)
+                if (IsImpossible)
                     throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
                 // add it to the cic container

@@ -11,7 +11,7 @@ using Rdmp.UI.LoadExecutionUIs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCacheProgress:RDMPCommandExecutionProposal<CacheProgress>
+internal class ProposeExecutionWhenTargetIsCacheProgress : RDMPCommandExecutionProposal<CacheProgress>
 {
     public ProposeExecutionWhenTargetIsCacheProgress(IActivateItems itemActivator) : base(itemActivator)
     {

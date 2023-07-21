@@ -98,8 +98,6 @@ AND
                 var request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
                 request2.GenerateQueryBuilder();
 
-                Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);
-
                 Assert.AreEqual(request.QueryBuilder.SQL, request2.QueryBuilder.SQL);
             }
             finally
@@ -109,7 +107,6 @@ AND
         }
         finally
         {
-
             filter.DeleteInDatabase();
         }
     }
@@ -121,9 +118,9 @@ AND
         var sds = _configuration.SelectedDataSets[0];
         var ci = sds.GetCatalogue().CatalogueItems.First();
         var origProgress = new ExtractionProgress(DataExportRepository, sds, null, DateTime.Now, 10, "fff drrr", ci.ID)
-            {
-                ProgressDate = new DateTime(2001, 01, 01)
-            };
+        {
+            ProgressDate = new DateTime(2001, 01, 01)
+        };
         origProgress.SaveToDatabase();
 
         var deepClone = _configuration.DeepCloneWithNewIDs();
@@ -160,6 +157,7 @@ AND
 
         using var con = DataExportTableRepository.GetConnection();
         DataExportTableRepository.DiscoveredServer.GetCommand(
-            $"UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = {int.MaxValue} where ID = {name.ID}", con).ExecuteNonQuery();
+            $"UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = {int.MaxValue} where ID = {name.ID}",
+            con).ExecuteNonQuery();
     }
 }

@@ -211,8 +211,6 @@ public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
         }
     }
 
-    protected override DirectoryInfo PrepareSourceGlobalFolder()
-    {
-        return _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
-    }
+    protected override DirectoryInfo PrepareSourceGlobalFolder() =>
+        _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
 }

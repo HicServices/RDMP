@@ -352,8 +352,6 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
                             clonedFilter.WhereSQL = clonedFilter.WhereSQL.Replace(oldTableAlias, newTableAlias);
                             clonedFilter.SaveToDatabase();
                         }
-                    }
-
                 }
             }
 

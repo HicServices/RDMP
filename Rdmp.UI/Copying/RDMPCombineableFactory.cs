@@ -50,7 +50,6 @@ public class RDMPCombineableFactory : ICombineableFactory
             //try to create command from all the data objects as an array
             _ => Create(o.ModelObjects.Cast<object>().ToArray())
         };
-
     }
 
     public ICombineToMakeCommand Create(FileInfo[] files) => new FileCollectionCombineable(files);
@@ -101,7 +100,9 @@ public class RDMPCombineableFactory : ICombineableFactory
         var catalogues = IsArrayOf<Catalogue>(modelObject);
 
         if (catalogues != null)
-            return catalogues.Length == 1 ? new CatalogueCombineable(catalogues[0]) : new ManyCataloguesCombineable(catalogues);
+            return catalogues.Length == 1
+                ? new CatalogueCombineable(catalogues[0])
+                : new ManyCataloguesCombineable(catalogues);
 
         //filters
         if (modelObject is IFilter filter)
@@ -127,7 +128,7 @@ public class RDMPCombineableFactory : ICombineableFactory
         if (extractableDataSets != null)
             return new ExtractableDataSetCombineable(extractableDataSets);
 
-        if(modelObject is ExtractableDataSetPackage extractableDataSetPackage)
+        if (modelObject is ExtractableDataSetPackage extractableDataSetPackage)
             return new ExtractableDataSetCombineable(extractableDataSetPackage);
 
         if (modelObject is DataAccessCredentials dataAccessCredentials)
@@ -150,8 +151,8 @@ public class RDMPCombineableFactory : ICombineableFactory
 
     private static T[] IsArrayOf<T>(object modelObject)
     {
-        if(modelObject is T t)
-            return new [] { t };
+        if (modelObject is T modelObject1)
+            return new[] { modelObject1 };
 
         if (modelObject is not IEnumerable array)
             return null;

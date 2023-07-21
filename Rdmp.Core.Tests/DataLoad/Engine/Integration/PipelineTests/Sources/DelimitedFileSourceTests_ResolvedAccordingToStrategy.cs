@@ -21,7 +21,8 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex?.Message);
         }
         else
@@ -40,12 +41,13 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
             StringAssert.StartsWith("File DelimitedFileSourceTests.txt is empty", ex?.Message);
         }
         else
         {
-            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException,false));
+            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException, false));
         }
     }
 
@@ -84,7 +86,12 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
         if (throwOnEmpty)
         {
             var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file,
-                s =>{ s.ThrowOnEmptyFiles = true; s.ForceHeaders="Name,Address"; s.ForceHeadersReplacesFirstLineInFile = true;}));
+                s =>
+                {
+                    s.ThrowOnEmptyFiles = true;
+                    s.ForceHeaders = "Name,Address";
+                    s.ForceHeadersReplacesFirstLineInFile = true;
+                }));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
         }
         else
@@ -169,11 +176,11 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
         }
     }
 
-    [TestCase(BadDataHandlingStrategy.DivertRows,true)]
-    [TestCase(BadDataHandlingStrategy.ThrowException,false)]
-    [TestCase(BadDataHandlingStrategy.ThrowException,true)]
-    [TestCase(BadDataHandlingStrategy.IgnoreRows,false)]
-    public void BadCSV_TooFewCellsInRow(BadDataHandlingStrategy strategy,bool tryToResolve)
+    [TestCase(BadDataHandlingStrategy.DivertRows, true)]
+    [TestCase(BadDataHandlingStrategy.ThrowException, false)]
+    [TestCase(BadDataHandlingStrategy.ThrowException, true)]
+    [TestCase(BadDataHandlingStrategy.IgnoreRows, false)]
+    public void BadCSV_TooFewCellsInRow(BadDataHandlingStrategy strategy, bool tryToResolve)
     {
         var file = CreateTestFile(
             "Name,Description,Age",
@@ -364,5 +371,4 @@ to be honest",
         Assert.AreEqual("Thomas", dt.Rows[0]["Name"]);
         Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
     }
-
 }

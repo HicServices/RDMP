@@ -34,7 +34,7 @@ public interface IDataAccessPoint : IHasQuerySyntaxHelper
     /// <summary>
     /// The DBMS type of the server e.g. Sql Server / MySql / Oracle
     /// </summary>
-    DatabaseType DatabaseType { get; set;}
+    DatabaseType DatabaseType { get; set; }
 
     /// <summary>
     /// The username/password to use when connecting to the server (otherwise integrated security is used)
@@ -42,7 +42,6 @@ public interface IDataAccessPoint : IHasQuerySyntaxHelper
     /// <param name="context">What you intend to do after you have connected (may determine which credentials to use e.g. readonly vs readwrite)</param>
     /// <returns></returns>
     IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context);
-
 
 
     /// <summary>

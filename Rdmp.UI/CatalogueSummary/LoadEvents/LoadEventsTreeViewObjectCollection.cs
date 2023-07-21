@@ -25,8 +25,10 @@ public class LoadEventsTreeViewObjectCollection : PersistableObjectCollection
 
     public LoadEventsTreeViewObjectCollection(ILoggedActivityRootObject rootObject)
     {
-        if(rootObject is not DatabaseEntity de)
-            throw new ArgumentException("rootObject ILoggedActivityRootObject must be a DatabaseEntity (to ensure persistence works)",nameof(rootObject));
+        if (rootObject is not DatabaseEntity de)
+            throw new ArgumentException(
+                "rootObject ILoggedActivityRootObject must be a DatabaseEntity (to ensure persistence works)",
+                nameof(rootObject));
 
         DatabaseObjects.Add(de);
     }

@@ -67,7 +67,9 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         }
 
 
-        tbStartDate.Text = databaseObject.StartDate == null ? "" :databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
+        tbStartDate.Text = databaseObject.StartDate == null
+            ? ""
+            : databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
         tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
         tbProgress.Text = databaseObject.ProgressDate == null
             ? ""
@@ -95,20 +97,9 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 
     private void tbDate_TextChanged(object sender, EventArgs e)
     {
-        if(sender == tbStartDate)
-        {
-            SetDate(tbStartDate, v => ExtractionProgress.StartDate = v);
-        }
+        if (sender == tbStartDate) SetDate(tbStartDate, v => ExtractionProgress.StartDate = v);
 
-        if (sender == tbEndDate)
-        {
-            SetDate(tbEndDate, v => ExtractionProgress.EndDate = v);
-        }
-
-        if (sender == tbProgress)
-        {
-            SetDate(tbProgress, v => ExtractionProgress.ProgressDate = v);
-        }
+        if (sender == tbEndDate) SetDate(tbEndDate, v => ExtractionProgress.EndDate = v);
 
         if (sender == tbProgress) SetDate(tbProgress, v => ExtractionProgress.ProgressDate = v);
     }

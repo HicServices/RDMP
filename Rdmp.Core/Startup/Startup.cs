@@ -53,7 +53,8 @@ public class Startup
     private readonly PatcherManager _patcherManager = new();
 
     #region Constructors
-    public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator):this()
+
+    public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator) : this()
     {
         RepositoryLocator = repositoryLocator;
     }
@@ -143,7 +144,7 @@ public class Startup
     private void FindTier3Databases(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
         foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
-            FindWithPatcher(patcher,notifier);
+            FindWithPatcher(patcher, notifier);
     }
 
     private bool Find(IRepository repository, IPatcher patcher, ICheckNotifier notifier)
@@ -189,7 +190,9 @@ public class Startup
                 new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
                 {
                     Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
-                    Patch.PatchingState.Required => SkipPatching ? RDMPPlatformDatabaseStatus.Healthy : RDMPPlatformDatabaseStatus.RequiresPatching,
+                    Patch.PatchingState.Required => SkipPatching
+                        ? RDMPPlatformDatabaseStatus.Healthy
+                        : RDMPPlatformDatabaseStatus.RequiresPatching,
                     Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
                     _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
                 }));
@@ -230,6 +233,7 @@ public class Startup
 
 
     #region MEF
+
     /// <summary>
     /// Load the plugins from the platform DB
     /// </summary>
@@ -240,8 +244,9 @@ public class Startup
         /*foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
                      .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))*/
         // Ignore tiny nupkg files from  old 'unit test'
-        foreach(var (name,body) in  Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory,"*.nupkg").Where(path=>new FileInfo(path).Length>100).Select(File.OpenRead).SelectMany(LoadModuleAssembly.GetContents))
-        {
+        foreach (var (name, body) in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg")
+                     .Where(path => new FileInfo(path).Length > 100).Select(File.OpenRead)
+                     .SelectMany(LoadModuleAssembly.GetContents))
             try
             {
                 AssemblyLoadContext.Default.LoadFromStream(body);
@@ -250,19 +255,18 @@ public class Startup
             {
                 var msg = $"Could not load plugin component {name} due to {e.Message}";
                 Console.Error.WriteLine(msg);
-                notifier.OnCheckPerformed(new CheckEventArgs(msg,CheckResult.Warning,e));
+                notifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Warning, e));
             }
             finally
             {
                 body.Dispose();
             }
-        }
 
         if (CatalogueRepository.SuppressHelpLoading) return;
 
         notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
         var sw = Stopwatch.StartNew();
-        catalogueRepository.CommentStore.ReadComments( "SourceCodeForSelfAwareness.zip");
+        catalogueRepository.CommentStore.ReadComments("SourceCodeForSelfAwareness.zip");
         sw.Stop();
         notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
     }

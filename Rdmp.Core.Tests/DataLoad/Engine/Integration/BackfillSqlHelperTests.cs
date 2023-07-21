@@ -142,9 +142,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
 
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
-        {
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
-        }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
 
@@ -156,7 +154,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
     {
         using var conn = db.Server.GetConnection();
         conn.Open();
-        CreateTableWithColumnDefinitions(db,tableName, columnDefinitions, conn);
+        CreateTableWithColumnDefinitions(db, tableName, columnDefinitions, conn);
     }
 
     public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,

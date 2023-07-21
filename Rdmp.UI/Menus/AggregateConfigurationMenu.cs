@@ -17,7 +17,7 @@ using Rdmp.UI.SubComponents.Graphs;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class AggregateConfigurationMenu :RDMPContextMenuStrip
+internal class AggregateConfigurationMenu : RDMPContextMenuStrip
 {
     public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate) : base(args,
         aggregate)

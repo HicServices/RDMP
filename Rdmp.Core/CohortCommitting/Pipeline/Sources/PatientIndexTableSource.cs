@@ -33,7 +33,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
 {
     private ExtractableCohort _extractableCohort;
 
-    protected override  string GetSQL()
+    protected override string GetSQL()
     {
         var builder = new CohortQueryBuilder(AggregateConfiguration,
             CohortIdentificationConfigurationIfAny.GetAllParameters(), null);
@@ -54,7 +54,9 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         var insertionPoint = sql.IndexOf("group by", 0, StringComparison.CurrentCultureIgnoreCase);
 
         //if there isn't a group by
-        return insertionPoint == -1 ? $"{sql}{Environment.NewLine}{impromptuSql}" :
+        return insertionPoint == -1
+            ? $"{sql}{Environment.NewLine}{impromptuSql}"
+            :
             //there is a group by
             $"{sql[..insertionPoint]}{Environment.NewLine}{impromptuSql}{Environment.NewLine}{sql[insertionPoint..]}";
     }

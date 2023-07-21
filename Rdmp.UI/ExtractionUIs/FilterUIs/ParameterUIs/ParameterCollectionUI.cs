@@ -105,13 +105,12 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_AboutToCreateGroups(object sender, CreateGroupsEventArgs e)
     {
-
         var order = new Dictionary<string, int>
         {
-            {ParameterLevel.Global.ToString(),0},
-            {ParameterLevel.CompositeQueryLevel.ToString(),1},
-            {ParameterLevel.QueryLevel.ToString(),2},
-            {ParameterLevel.TableInfo.ToString(),3}
+            { ParameterLevel.Global.ToString(), 0 },
+            { ParameterLevel.CompositeQueryLevel.ToString(), 1 },
+            { ParameterLevel.QueryLevel.ToString(), 2 },
+            { ParameterLevel.TableInfo.ToString(), 3 }
         };
 
         foreach (var g in e.Groups)
@@ -421,7 +420,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             if (Options.IsOverridden(sqlParameter))
                 return "Overridden.png";
 
-            if(Options.IsHigherLevel(sqlParameter))
+            if (Options.IsHigherLevel(sqlParameter))
                 return "Locked.png";
         }
         catch (Exception)
@@ -446,14 +445,12 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miOverrideParameter.Enabled = CanOverride(parameter);
     }
 
-    private bool CanOverride(ISqlParameter sqlParameter)
-    {
-        return sqlParameter != null &&
-               //if it is not already overridden
-               !Options.IsOverridden(sqlParameter) &&
-               //and it exists at a lower level
-               Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
-    }
+    private bool CanOverride(ISqlParameter sqlParameter) =>
+        sqlParameter != null &&
+        //if it is not already overridden
+        !Options.IsOverridden(sqlParameter) &&
+        //and it exists at a lower level
+        Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
 
     private void miOverride_Click(object sender, EventArgs e)
     {
@@ -477,5 +474,4 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
-
 }

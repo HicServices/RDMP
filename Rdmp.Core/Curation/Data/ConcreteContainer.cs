@@ -117,10 +117,8 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     }
 
     /// <inheritdoc/>
-    public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-    {
-        return GetAllFiltersIncludingInSubContainersRecursively(this);
-    }
+    public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively() =>
+        GetAllFiltersIncludingInSubContainersRecursively(this);
 
     private static List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
     {

@@ -68,67 +68,66 @@ public class WordDataWriter : DocXHelper
 
             InsertTableOfContents(document);
 
-            InsertHeader(document,"File Data");
+            InsertHeader(document, "File Data");
 
-            int rowCount;
-            if (_destination.GeneratesFiles)
-                rowCount = 10;
-            else
-                rowCount = 5;
+            var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
             var t = InsertTable(document, rowCount, 2);
 
             var rownum = 0;
             if (_destination.GeneratesFiles)
             {
-                SetTableCell(t,rownum,0,"File Name");
-                SetTableCell(t,rownum,1,new FileInfo(_destination.OutputFile).Name);
+                SetTableCell(t, rownum, 0, "File Name");
+                SetTableCell(t, rownum, 1, new FileInfo(_destination.OutputFile).Name);
                 rownum++;
             }
 
             var request = Executer.Source.Request;
 
-            SetTableCell(t,rownum,0,"Cohort Size (Distinct)");
-            SetTableCell(t,rownum,1, request.ExtractableCohort.CountDistinct.ToString());
+            SetTableCell(t, rownum, 0, "Cohort Size (Distinct)");
+            SetTableCell(t, rownum, 1, request.ExtractableCohort.CountDistinct.ToString());
             rownum++;
 
-            SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
-            SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+            SetTableCell(t, rownum, 0, "Cohorts Found In Dataset");
+            SetTableCell(t, rownum, 1,
+                request.IsBatchResume
+                    ? "unknown (batching was used)"
+                    : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
             rownum++;
 
-            SetTableCell(t,rownum,0,"Dataset Line Count");
-            SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
+            SetTableCell(t, rownum, 0, "Dataset Line Count");
+            SetTableCell(t, rownum, 1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
             rownum++;
 
             if (_destination.GeneratesFiles)
             {
-                SetTableCell(t,rownum,0,"MD5");
-                SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
+                SetTableCell(t, rownum, 0, "MD5");
+                SetTableCell(t, rownum, 1, FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                 rownum++;
 
                 var f = new FileInfo(_destination.OutputFile);
-                SetTableCell(t,rownum,0,"File Size");
-                SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
+                SetTableCell(t, rownum, 0, "File Size");
+                SetTableCell(t, rownum, 1, $"{f.Length}bytes ({f.Length / 1024}KB)");
                 rownum++;
             }
 
-            SetTableCell(t,rownum,0,"Extraction Date");
-            SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.EndTime.ToString(CultureInfo.CurrentCulture));
+            SetTableCell(t, rownum, 0, "Extraction Date");
+            SetTableCell(t, rownum, 1, Executer.Destination.TableLoadInfo.EndTime.ToString(CultureInfo.CurrentCulture));
             rownum++;
 
-            SetTableCell(t,rownum,0,"Table Load ID (for HIC)");
-            SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.ID.ToString());
+            SetTableCell(t, rownum, 0, "Table Load ID (for HIC)");
+            SetTableCell(t, rownum, 1, Executer.Destination.TableLoadInfo.ID.ToString());
             rownum++;
 
             if (_destination.GeneratesFiles)
             {
-                SetTableCell(t,rownum,0,"Separator");
-                SetTableCell(t,rownum,1,
+                SetTableCell(t, rownum, 0, "Separator");
+                SetTableCell(t, rownum, 1,
                     $"{Executer.Source.Request.Configuration.Separator}\t({_destination.SeparatorsStrippedOut} values stripped from data)");
                 rownum++;
 
-                SetTableCell(t,rownum,0,"Date Format");
-                SetTableCell(t,rownum,1,_destination.DateFormat);
+                SetTableCell(t, rownum, 0, "Date Format");
+                SetTableCell(t, rownum, 1, _destination.DateFormat);
                 rownum++;
             }
 
@@ -136,7 +135,7 @@ public class WordDataWriter : DocXHelper
             {
                 InsertSectionPageBreak(document);
 
-                InsertHeader(document,"Validation Information");
+                InsertHeader(document, "Validation Information");
 
                 CreateValidationRulesTable(document);
 
@@ -146,24 +145,20 @@ public class WordDataWriter : DocXHelper
             }
 
             //if a count of date times seen exists for this extraction create a graph of the counts seen
-            if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null && Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
-            {
-                if(!request.IsBatchResume)
-                {
+            if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null &&
+                Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
+                if (!request.IsBatchResume)
                     try
                     {
                         InsertSectionPageBreak(document);
                         InsertHeader(document, "Dataset Timespan");
 
                         CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
-
                     }
                     catch (Exception e)
                     {
                         ExceptionsGeneratingWordFile.Add(e);
                     }
-                }
-            }
 
             InsertSectionPageBreak(document);
 
@@ -283,6 +278,16 @@ public class WordDataWriter : DocXHelper
             var supplementalValuesForThisOne = new List<Tuple<string, string>> {
                 //Jim no longer wants these to appear in metadata
                 /*
+                if (value.FoundAtExtractTime)
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
+                else
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
+                */
+
+                new("Datatype (SQL):", value.DataTypeInCatalogue)
+            };
+
+
             if (value.FoundAtExtractTime)
                 supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
             else
@@ -299,9 +304,8 @@ public class WordDataWriter : DocXHelper
 
 
             //add it with supplemental values
-            if(value.CatalogueItem != null)
-                supplementalData.Add(value.CatalogueItem ,supplementalValuesForThisOne.ToArray());
-
+            if (value.CatalogueItem != null)
+                supplementalData.Add(value.CatalogueItem, supplementalValuesForThisOne.ToArray());
         }
 
         catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(), supplementalData);
@@ -451,7 +455,7 @@ public class WordDataWriter : DocXHelper
         //output list of validations we skipped
         foreach (var iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
         {
-            SetTableCell(t, tableLine, 0 , iv.TargetProperty);
+            SetTableCell(t, tableLine, 0, iv.TargetProperty);
             SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Anonymised");
             tableLine++;
         }
@@ -474,10 +478,10 @@ public class WordDataWriter : DocXHelper
 
         foreach (var (colName, consequences) in results.DictionaryOfFailure)
         {
-            SetTableCell(t,tableLine, 0,colName);
-            SetTableCell(t,tableLine, 1,consequences[Consequence.Missing].ToString());
-            SetTableCell(t,tableLine, 2,consequences[Consequence.Wrong].ToString());
-            SetTableCell(t,tableLine, 3,consequences[Consequence.InvalidatesRow].ToString());
+            SetTableCell(t, tableLine, 0, colname);
+            SetTableCell(t, tableLine, 1, value[Consequence.Missing].ToString());
+            SetTableCell(t, tableLine, 2, value[Consequence.Wrong].ToString());
+            SetTableCell(t, tableLine, 3, value[Consequence.InvalidatesRow].ToString());
             tableLine++;
         }
     }

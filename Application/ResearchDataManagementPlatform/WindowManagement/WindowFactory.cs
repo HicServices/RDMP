@@ -57,12 +57,13 @@ public class WindowFactory
         return content;
     }
 
-    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
+    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,
+        IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
     {
         var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject, refreshBus);
         _windowManager.AddWindow(content);
 
-        AddControlToDockContent(activator, (Control)control,content,"Loading...",image);
+        AddControlToDockContent(activator, (Control)control, content, "Loading...", image);
 
         if (!RDMPMainForm.Loading)
             activator.HistoryProvider.Add(databaseObject);
@@ -77,7 +78,7 @@ public class WindowFactory
         var content = new PersistableObjectCollectionDockContent(activator, control, objectCollection);
 
         //add the control to the tab
-        AddControlToDockContent(activator,(Control)control, content,content.TabText, image);
+        AddControlToDockContent(activator, (Control)control, content, content.TabText, image);
 
         //add to the window tracker
         _windowManager.AddWindow(content);
@@ -103,9 +104,9 @@ public class WindowFactory
 
     public DockContent Create(IActivateItems activator, Control control, string label, Image<Rgba32> image)
     {
-        DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
+        DockContent content = new RDMPSingleControlTab(activator.RefreshBus, control);
 
-        AddControlToDockContent(activator, control, content,label, image);
+        AddControlToDockContent(activator, control, content, label, image);
 
         _windowManager.AddAdhocWindow(content);
 
@@ -119,18 +120,14 @@ public class WindowFactory
         content.Controls.Add(control);
         content.TabText = label;
 
-        if(image != null)
-        {
-            content.Icon = _iconFactory.GetIcon(image);
-        }
-
+        if (image != null) content.Icon = _iconFactory.GetIcon(image);
 
 
         if (control is IConsultableBeforeClosing consult)
             content.FormClosing += consult.ConsultAboutClosing;
 
-        if(control is ISaveableUI saveable)
-            content.FormClosing += (s,e)=>saveable.GetObjectSaverButton()?.CheckForUnsavedChangesAnOfferToSave();
+        if (control is ISaveableUI saveable)
+            content.FormClosing += (s, e) => saveable.GetObjectSaverButton()?.CheckForUnsavedChangesAnOfferToSave();
 
         content.KeyPreview = true;
 
@@ -150,8 +147,6 @@ public class WindowFactory
 
             //register the event handler
             activator.RefreshBus.AfterPublish += Handler;
-
         }
-
     }
 }

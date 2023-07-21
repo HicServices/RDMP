@@ -125,14 +125,12 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf, "fish");
 
             var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
-            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
+            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                serverDatabasePath, null);
 
 
             Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
             Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
-
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf", locations.CopyToLdf);
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.CopyToMdf);
 
             Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf",
                 locations.CopyToLdf);
@@ -171,8 +169,9 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf2, "fish");
 
             var serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
-            Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
-
+            Assert.Throws<MultipleMatchingFilesException>(() =>
+                new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                    serverDatabasePath, null));
         }
         finally
         {
@@ -257,13 +256,10 @@ public class MDFAttacherTests : DatabaseTests
         }
     }
 
-    public class MyClass:IAttacher,ICheckable
+    public class MyClass : IAttacher, ICheckable
     {
-        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
+        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken) =>
             throw new NotImplementedException();
-        }
-
 
 
         public void Check(ICheckNotifier notifier)
@@ -279,23 +275,13 @@ public class MDFAttacherTests : DatabaseTests
 
         public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
-
         }
 
         public static string GetDescription() => "Test class that does nothing";
 
 
-
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
         {
-            return "Test class that does nothing";
-        }
-
-
-
-        public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
-
         }
     }
 
@@ -314,16 +300,15 @@ public class MDFAttacherTests : DatabaseTests
             throw new TypeLoadException($"Type {type} does not implement IAttacher");
 
         //find the blank constructor
-        var constructorInfo = type.GetConstructor(Array.Empty<Type>()) ?? throw new TypeLoadException($"Type {type} does not have a blank constructor");
+        var constructorInfo = type.GetConstructor(Array.Empty<Type>()) ??
+                              throw new TypeLoadException($"Type {type} does not have a blank constructor");
 
         //call the blank constructor and return the results
         _ = (IAttacher)constructorInfo.Invoke(Array.Empty<object>());
 
 
         //call the blank constructor and return the results
-        var bob = (IAttacher) constructorInfo.Invoke(Array.Empty<Type>());
-
-
+        var bob = (IAttacher)constructorInfo.Invoke(Array.Empty<Type>());
     }
 
     [Test]

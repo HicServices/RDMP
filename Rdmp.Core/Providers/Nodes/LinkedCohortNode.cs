@@ -26,27 +26,20 @@ public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
 
     public override string ToString() => Cohort.ToString();
 
-    public object MasqueradingAs()
-    {
-        return Cohort;
-    }
+    public object MasqueradingAs() => Cohort;
 
-    protected bool Equals(LinkedCohortNode other)
-    {
-        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
-    }
+    protected bool Equals(LinkedCohortNode other) =>
+        Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LinkedCohortNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LinkedCohortNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Configuration, Cohort);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Configuration, Cohort);
 
     public void DeleteInDatabase()
     {

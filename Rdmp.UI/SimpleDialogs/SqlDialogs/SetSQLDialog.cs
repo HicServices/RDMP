@@ -36,7 +36,6 @@ public partial class SetSQLDialog : Form
         QueryEditor.Text = originalSQL;
 
         panel1.Controls.Add(QueryEditor);
-
     }
 
     private void button1_Click(object sender, EventArgs e)

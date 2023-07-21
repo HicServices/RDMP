@@ -36,9 +36,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         DiscoveredTable existingTable,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         IProject projectSpecific,
-
-        [DemandsInitialization(Desc_TargetFolder,DefaultValue = "\\")]
-        string targetFolder = "\\") : base(activator,projectSpecific, targetFolder)
+        [DemandsInitialization(Desc_TargetFolder, DefaultValue = "\\")]
+        string targetFolder = "\\") : base(activator, projectSpecific, targetFolder)
     {
         _importTable = existingTable;
     }
@@ -58,17 +57,19 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         var c = BasicActivator.CreateAndConfigureCatalogue(ti, null, "Existing table", ProjectSpecific, TargetFolder);
 
         if (c?.Exists() == true) return;
-        if(BasicActivator.IsInteractive
-           && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out var chosen)
-           && chosen)
-        {
+        if (BasicActivator.IsInteractive
+            && BasicActivator.YesNo(
+                "You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?",
+                "Delete TableInfo", out var chosen)
+            && chosen)
             ti.DeleteInDatabase();
-        }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
 
     public override string GetCommandHelp() => GlobalStrings.CreateNewCatalogueByImportingExistingDataTableHelp;
 
-    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
+    public override string GetCommandName() =>
+        OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
 }

@@ -37,7 +37,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         _filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
-        var sw = new StreamWriter(_filename);    
+        var sw = new StreamWriter(_filename);
         sw.WriteLine("PrivateID,ReleaseID,SomeHeader");
         sw.WriteLine("Priv_1111,Pub_1111,Smile buddy");
         sw.WriteLine("Priv_2222,Pub_2222,Your on tv");
@@ -51,9 +51,13 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     {
         var proj = new Project(DataExportRepository, ProjName);
 
-        var request = new CohortCreationRequest(proj, new CohortDefinition(511, "CommittingNewCohorts",1,999,_externalCohortTable), DataExportRepository, "fish");
-        var ex = Assert.Throws<Exception>(()=>request.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",ex.Message);
+        var request = new CohortCreationRequest(proj,
+            new CohortDefinition(511, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
+            "fish");
+        var ex = Assert.Throws<Exception>(() => request.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual(
+            "Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",
+            ex.Message);
     }
 
     [Test]
@@ -61,20 +65,27 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     {
         var proj = new Project(DataExportRepository, ProjName);
 
-        var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
-        var ex = Assert.Throws<Exception>(()=>request.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",ex.Message);
+        var request = new CohortCreationRequest(proj,
+            new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
+            "fish");
+        var ex = Assert.Throws<Exception>(() => request.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual(
+            "Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",
+            ex.Message);
     }
 
     [Test]
     public void CommittingNewCohortFile_ProjectNumberMismatch()
     {
-        var proj = new Project(DataExportRepository, ProjName) {ProjectNumber = 321};
+        var proj = new Project(DataExportRepository, ProjName) { ProjectNumber = 321 };
         proj.SaveToDatabase();
 
-        var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
-        var ex = Assert.Throws<Exception>(()=>request.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",ex.Message);
+        var request = new CohortCreationRequest(proj,
+            new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
+            "fish");
+        var ex = Assert.Throws<Exception>(() => request.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",
+            ex.Message);
     }
 
     [Test]
@@ -88,7 +99,9 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         };
         proj.SaveToDatabase();
 
-        var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
+        var request = new CohortCreationRequest(proj,
+            new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
+            "fish");
         request.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var source = new DelimitedFlatFileDataFlowSource();
@@ -96,9 +109,10 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         source.Separator = ",";
         source.StronglyTypeInput = true;
-            
-        var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>) request.GetContext(),source,destination,listener);
-        pipeline.Initialize(new FlatFileToLoad(new FileInfo(_filename)),request);
+
+        var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>)request.GetContext(),
+            source, destination, listener);
+        pipeline.Initialize(new FlatFileToLoad(new FileInfo(_filename)), request);
         pipeline.ExecutePipeline(new GracefulCancellationToken());
 
         //there should be a new ExtractableCohort now

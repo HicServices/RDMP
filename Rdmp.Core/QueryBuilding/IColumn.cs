@@ -58,5 +58,4 @@ public interface IColumn : IHasRuntimeName, ICheckable, IOrderable, IMapsDirectl
     /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
     /// </summary>
     bool IsPrimaryKey { get; }
-
 }

@@ -19,7 +19,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests;
 
-internal class MemoryRepositoryVsDatabaseRepository:DatabaseTests
+internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
 {
     [Test]
     public void TestMemoryVsDatabaseRepository_CatalogueConstructor()
@@ -116,8 +116,4 @@ internal class MemoryRepositoryVsDatabaseRepository:DatabaseTests
         UnitTests.AssertAreEqual(memCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo),
             dbCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo));
     }
-
-
-
-
 }

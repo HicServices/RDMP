@@ -47,7 +47,8 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             if (_uiType == null)
             {
                 var shortUIClassName = $"{t.Name}UI";
-                var candidates = Core.Repositories.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
+                var candidates = Core.Repositories.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName))
+                    .ToArray();
 
                 _uiType = candidates.Length switch
                 {
@@ -77,7 +78,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var uiInstance = Activator.CreateInstance(_uiType);
 
-            var instanceAsCustomUI = (ICustomUI) uiInstance;
+            var instanceAsCustomUI = (ICustomUI)uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
             instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance);

@@ -73,11 +73,10 @@ public class ItemValidator
         }
     }
 
-    private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns, string[] otherColumnNames)
+    private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns,
+        string[] otherColumnNames)
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
-        {
-
             try
             {
                 var result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
@@ -106,7 +105,7 @@ public class ItemValidator
 
     public void As(string constraintType)
     {
-        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType,Consequence.Wrong);
+        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType, Consequence.Wrong);
     }
 
     public ItemValidator OfType(Type type)

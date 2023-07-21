@@ -52,7 +52,8 @@ internal class AggregateForcedJoin : IAggregateForcedJoinManager
     {
         using var con = _repository.GetConnection();
         using var cmd = DatabaseCommandHelper.GetCommand(
-            $"INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({configuration.ID},{tableInfo.ID})", con.Connection,con.Transaction);
+            $"INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({configuration.ID},{tableInfo.ID})",
+            con.Connection, con.Transaction);
         cmd.ExecuteNonQuery();
     }
 }

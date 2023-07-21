@@ -24,7 +24,7 @@ using Spectre.Console;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
-internal class ExecuteCommandRunner:IRunner
+internal class ExecuteCommandRunner : IRunner
 {
     private readonly ExecuteCommandOptions _options;
     private ConsoleInputManager _input;
@@ -79,12 +79,9 @@ internal class ExecuteCommandRunner:IRunner
 
 
         _picker =
-            _options.CommandArgs != null && _options.CommandArgs.Any() ?
-                new CommandLineObjectPicker(_options.CommandArgs, _input) :
-                null;
-            
-        if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
-            throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialize the file or correctly use the ExecuteCommandOptions class");
+            _options.CommandArgs != null && _options.CommandArgs.Any()
+                ? new CommandLineObjectPicker(_options.CommandArgs, _input)
+                : null;
 
         if (!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
             throw new Exception(
@@ -102,10 +99,10 @@ internal class ExecuteCommandRunner:IRunner
 
     private void RunCommand(string command)
     {
-        if(_commands.TryGetValue(command,out var commandType))
+        if (_commands.TryGetValue(command, out var runner))
         {
-            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{commandType.Name}'"));
-            _invoker.ExecuteCommand(commandType,_picker);
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"Running Command '{runner.Name}'"));
+            _invoker.ExecuteCommand(runner, _picker);
         }
         else
         {
@@ -167,7 +164,7 @@ internal class ExecuteCommandRunner:IRunner
     {
         if (command.Contains(' '))
         {
-            picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),_input);
+            picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(), _input);
             return command[..command.IndexOf(' ')];
         }
 
@@ -237,14 +234,12 @@ internal class ExecuteCommandRunner:IRunner
             {
                 inQuotes = c;
             }
-            else
-            if(c == inQuotes)
+            else if (c == inQuotes)
             {
                 //if we exit quotes
                 inQuotes = null;
             }
-            else
-            if(c == ' ' && inQuotes == null)
+            else if (c == ' ' && inQuotes == null)
             {
                 //break character outside of quotes
                 var resultWord = word.ToString().Trim();

@@ -54,7 +54,8 @@ public class GovernanceReport : DocXHelper
             writer.NextRecord();
 
 
-            var govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
+            var govs = _repository.GetAllObjects<GovernancePeriod>()
+                .ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
 
             foreach (var catalogue in _repository.GetAllObjects<Catalogue>()
                          .Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null))
@@ -64,8 +65,10 @@ public class GovernanceReport : DocXHelper
                     continue;
 
                 //get active governances
-                var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
-                var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
+                var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired())
+                    .Select(g => g.Key).ToArray();
+                var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired())
+                    .Select(g => g.Key).ToArray();
 
                 string relevantGovernance = null;
 

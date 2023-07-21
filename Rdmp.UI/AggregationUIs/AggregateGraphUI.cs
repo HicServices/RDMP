@@ -66,8 +66,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     public Scintilla QueryEditor { get; private set; }
 
-    public Scintilla QueryEditor { get;private set; }
-
     public int Timeout
     {
         get => _timeoutControls.Timeout;
@@ -78,7 +76,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private AggregateConfiguration _aggregateConfiguration;
     private readonly ToolStripMenuItem _miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
-    private readonly ToolStripMenuItem _miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+
+    private readonly ToolStripMenuItem _miCopyToClipboard =
+        new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+
     private readonly ToolStripMenuItem _miClipboardWord = new("Word Format");
     private readonly ToolStripMenuItem _miClipboardCsv = new("Comma Separated Format");
     private readonly ToolStripMenuItem _btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
@@ -105,7 +106,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         #region Query Editor setup
 
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create();
@@ -220,7 +221,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             : AggregateConfiguration.Description;
 
     private DbCommand _cmd;
-    private readonly ChartDashStyle[] _styleList = {
+
+    private readonly ChartDashStyle[] _styleList =
+    {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,
         ChartDashStyle.Dot,
@@ -335,7 +338,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
     {
         var haveSetSource = false;
-        if(chart1.Legends.Count == 0)
+        if (chart1.Legends.Count == 0)
             chart1.Legends.Add(new Legend());
 
         chart1.Titles.Clear();
@@ -512,7 +515,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 chart1.Series[index].ChartType = SeriesChartType.Line;
 
                 //alternate in rotating style the various lines on the graph
-                chart1.Series[index].BorderDashStyle = _styleList[index%_styleList.Length];
+                chart1.Series[index].BorderDashStyle = _styleList[index % _styleList.Length];
                 chart1.Series[index].BorderWidth = 2;
             }
             else
@@ -530,7 +533,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     chart1.ChartAreas[0].AxisX.Interval = 1;
                     chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
                 }
-
             }
 
             //name series based on column 3 or the aggregate name
@@ -552,7 +554,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if (Silent)
                 throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
             else
-                abandon = !Activator.YesNo($"Data Table has {cells:n0} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
+                abandon = !Activator.YesNo(
+                    $"Data Table has {cells:n0} cells.  Are you sure you want to attempt to graph it?",
+                    "Render Graph?");
 
         if (!abandon)
         {
@@ -565,12 +569,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         lblLoadStage.Visible = false;
 
         //set publish enabledness to the enabledness of
-        _btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+        _btnCache.Enabled =
+            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults
+                .WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
         //Make publish button enabledness be dependant on cache
         if (_btnCache.Enabled)
-        {
             //let them clear if there is a query caching server and the manager has cached results already
             btnClearFromCache.Enabled =
                 GetCacheManager()
@@ -612,10 +617,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         aggregateConfiguration.GetQueryBuilder();
 
 
-    private static string GetSeriesName(object o)
-    {
-        return o == null || o == DBNull.Value ? "NULL" : o.ToString();
-    }
+    private static string GetSeriesName(object o) => o == null || o == DBNull.Value ? "NULL" : o.ToString();
 
     public void SaveTo(DirectoryInfo subdir, string nameOfFile, ICheckNotifier notifier,
         Dictionary<AggregateGraphUI, string> graphSaveLocations = null)
@@ -637,7 +639,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
             notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
-            graphSaveLocations?.Add(this,imgSavePath);
+            graphSaveLocations?.Add(this, imgSavePath);
         }
         catch (Exception e)
         {
@@ -817,13 +819,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private void ClipboardClick(object sender, EventArgs e)
     {
-        if(sender == _miClipboardWord)
+        if (sender == _miClipboardWord)
         {
             var s = UsefulStuff.DataTableToHtmlDataTable(_dt);
 
             var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
 
-            Clipboard.SetText(formatted,TextDataFormat.Html);
+            Clipboard.SetText(formatted, TextDataFormat.Html);
         }
 
         if (sender == _miClipboardCsv)
@@ -850,7 +852,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 (DataTable)dataGridView1.DataSource, Timeout);
             cacheManager.CommitResults(args);
 
-            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ?? throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
+            var result =
+                cacheManager.GetLatestResultsTable(AggregateConfiguration,
+                    AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ??
+                throw new NullReferenceException(
+                    "CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
             MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
             btnClearFromCache.Enabled = true;
         }

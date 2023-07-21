@@ -30,7 +30,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
         : base(task, args)
     {
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
-        var mountingStageArgs = args.StageSpecificArguments ;
+        var mountingStageArgs = args.StageSpecificArguments;
         if (mountingStageArgs.LoadStage != LoadStage.Mounting)
             throw new Exception("AttacherRuntimeTask can only be called as a Mounting stage process");
 
@@ -74,10 +74,10 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
                 .GetRuntimeName();
             var afterDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
 
-            if(!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) && beforeDatabaseType == afterDatabaseType))
+            if (!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) &&
+                  beforeDatabaseType == afterDatabaseType))
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                     $"Attacher {Attacher.GetType().Name} modified the ConnectionString during attaching"));
-
         }
     }
 

@@ -74,7 +74,7 @@ internal class IColumnTests
             Alias = "test"
         };
 
-        Assert.AreEqual(tc.GetRuntimeName(),"test");
+        Assert.AreEqual(tc.GetRuntimeName(), "test");
 
         tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])"; //still has Alias
         Assert.AreEqual(tc.GetRuntimeName(), "test");
@@ -92,7 +92,7 @@ internal class IColumnTests
             SelectSQL = "MangleQuery([mydb]..[myExcitingField])"
         };
 
-        var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
+        var ex = Assert.Throws<RuntimeNameException>(() => tc.GetRuntimeName());
     }
 
 
@@ -109,7 +109,6 @@ internal class IColumnTests
         tc.Check(ThrowImmediatelyCheckNotifier.Quiet);
         tc.Alias = "`[bob smith]`";
         tc.Check(ThrowImmediatelyCheckNotifier.Quiet);
-
     }
 
 
@@ -120,9 +119,8 @@ internal class IColumnTests
         {
             Alias = "bob smith"
         };
-        var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
-
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"", ex.Message);
     }
 
     [Test]
@@ -134,8 +132,7 @@ internal class IColumnTests
         };
 
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
-           
+        Assert.AreEqual("Invalid characters found in Alias \"`bob\"", ex.Message);
     }
 
     [Test]
@@ -146,12 +143,10 @@ internal class IColumnTests
             Alias = "bob]"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
-            
+        Assert.AreEqual("Invalid characters found in Alias \"bob]\"", ex.Message);
     }
 
     [Test]
-
     public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
     {
         var tc = new TestColumn
@@ -160,6 +155,6 @@ internal class IColumnTests
             SelectSQL = "GetSomething('here'"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
+        Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'", ex.Message);
     }
 }

@@ -13,7 +13,7 @@ namespace Rdmp.Core.CommandExecution;
 /// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
 /// e.g. "ls" instead of "List"
 /// </summary>
-[AttributeUsage(AttributeTargets.Class,AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class AliasAttribute : Attribute
 {
     public string Name { get; }

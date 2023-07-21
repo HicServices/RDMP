@@ -30,8 +30,6 @@ public class PipelineTests : DatabaseTests
             var pipelineComponent =
                 new PipelineComponent(CatalogueRepository, pipeline, typeof(BasicAnonymisationEngine), 0);
 
-            var pipelineComponent = new PipelineComponent(CatalogueRepository, pipeline, typeof (BasicAnonymisationEngine), 0);
-
             try
             {
                 Assert.AreEqual(pipelineComponent.Class, typeof(BasicAnonymisationEngine).FullName);
@@ -45,8 +43,9 @@ public class PipelineTests : DatabaseTests
                     argument1.SetValue("bob");
                     argument1.SaveToDatabase();
 
-                    var dt = DateTime.Now ;
-                    dt = new DateTime(dt.Ticks - dt.Ticks % TimeSpan.TicksPerSecond,dt.Kind);//get rid of the milliseconds
+                    var dt = DateTime.Now;
+                    dt = new DateTime(dt.Ticks - dt.Ticks % TimeSpan.TicksPerSecond,
+                        dt.Kind); //get rid of the milliseconds
 
                     argument2.SetType(typeof(DateTime));
                     argument2.SetValue(dt);
@@ -57,7 +56,6 @@ public class PipelineTests : DatabaseTests
                 }
                 finally
                 {
-
                     argument1.DeleteInDatabase();
                     argument2.DeleteInDatabase();
                 }
@@ -140,8 +138,10 @@ public class PipelineTests : DatabaseTests
 
         Assert.AreEqual(p2.Name, $"{p.Name} (Clone)");
 
-        Assert.AreEqual(componentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Length);
-        Assert.AreEqual(argumentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Length);
+        Assert.AreEqual(componentsBefore * 2,
+            RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Length);
+        Assert.AreEqual(argumentsBefore * 2,
+            RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Length);
 
         //p the original should have a pipeline component that has the value we set earlier
         Assert.AreEqual(
@@ -175,10 +175,10 @@ public class PipelineTests : DatabaseTests
         var p = new Pipeline(CatalogueRepository);
 
         //Setup a pipeline with a source component type that doesn't exist
-        var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0)
- {
-     Class = "Trollololol"
- };
+        var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0)
+        {
+            Class = "Trollololol"
+        };
         source.SaveToDatabase();
 
         var arg = source.CreateNewArgument();

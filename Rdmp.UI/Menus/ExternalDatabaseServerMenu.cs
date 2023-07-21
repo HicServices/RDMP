@@ -44,7 +44,8 @@ internal class ExternalDatabaseServerMenu : RDMPContextMenuStrip
 
             viewLogs.DropDownItems.Add(new ToolStripSeparator());
 
-            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(), ExecuteSqlOnLoggingDatabase));
+            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(),
+                ExecuteSqlOnLoggingDatabase));
 
             Items.Add(viewLogs);
         }

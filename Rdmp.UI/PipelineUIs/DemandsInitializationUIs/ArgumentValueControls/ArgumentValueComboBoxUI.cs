@@ -71,7 +71,8 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
         }
     }
 
-    private bool haveLateLoaded;
+    private bool haveLateLoaded = false;
+
     private void LateLoad(object[] objectsForComboBox)
     {
         if (haveLateLoaded) return;
@@ -118,12 +119,9 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
         //user chose to clear selection from a combo box
         if (cbxValue.Text == ClearSelection)
             _args.Setter(null);
-        else
-        if (cbxValue.SelectedItem != null)
-            if (types != null)
-                _args.Setter(types.Single(t => t.Name.Equals(cbxValue.SelectedItem)));
-            else
-                _args.Setter(cbxValue.SelectedItem);
+        else if (cbxValue.SelectedItem != null)
+            _args.Setter(
+                types != null ? types.Single(t => t.Name.Equals(cbxValue.SelectedItem)) : cbxValue.SelectedItem);
     }
 
     private void btnPick_Click(object sender, EventArgs e)
@@ -132,7 +130,7 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
             {
                 TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
                 AllowSelectingNull = true
-            }, _objectsForComboBox,out var selected))
+            }, _objectsForComboBox, out var selected))
         {
             if (selected == null)
             {

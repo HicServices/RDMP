@@ -135,7 +135,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     public ExtractionFilterParameterSetValue(ICatalogueRepository repository, ExtractionFilterParameterSet parent,
         ExtractionFilterParameter valueIsForParameter)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "ExtractionFilterParameterSet_ID", parent.ID },
             { "ExtractionFilterParameter_ID", valueIsForParameter.ID }

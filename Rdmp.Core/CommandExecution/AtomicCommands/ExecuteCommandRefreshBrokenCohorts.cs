@@ -35,7 +35,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         }
 
         // if we only want to clear one
-        if(ect != null)
+        if (ect != null)
         {
             if (!dx.ForbidListedSources.Contains(ect)) SetImpossible($"'{ect}' is not broken");
         }
@@ -43,9 +43,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         {
             // we want to clear all of them
             if (!dx.ForbidListedSources.Any())
-            {
                 SetImpossible("There are no broken ExternalCohortTable to clear status on");
-            }
         }
     }
 

@@ -37,7 +37,7 @@ public class ImportAndTestTests : DatabaseTests
         var server = _database.Server;
         using var con = server.GetConnection();
         con.Open();
-        var r = server.GetCommand("Select * from dbo.MyAwesomeFunction(5,10,'Fish')",con).ExecuteReader();
+        var r = server.GetCommand("Select * from dbo.MyAwesomeFunction(5,10,'Fish')", con).ExecuteReader();
 
         r.Read();
         Assert.AreEqual(5, r["Number"]);
@@ -85,10 +85,13 @@ public class ImportAndTestTests : DatabaseTests
         db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
         //create it within the scope of the transaction
-        var cmd = db.Server.GetCommand(_function.CreateFunctionSQL[(_function.CreateFunctionSQL.IndexOf("GO", StringComparison.Ordinal) + 3)..], con);
+        var cmd = db.Server.GetCommand(
+            _function.CreateFunctionSQL[(_function.CreateFunctionSQL.IndexOf("GO", StringComparison.Ordinal) + 3)..],
+            con);
         cmd.ExecuteNonQuery();
 
-        Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction).Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
+        Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction)
+            .Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
         Assert.IsTrue(db.ExpectTableValuedFunction("MyAwesomeFunction").Exists(con.ManagedTransaction));
 
         var cols = db.ExpectTableValuedFunction("MyAwesomeFunction").DiscoverColumns(con.ManagedTransaction);
@@ -113,14 +116,14 @@ public class ImportAndTestTests : DatabaseTests
             new AnyTableSqlParameter(CatalogueRepository, _function.TableInfoCreated, "DECLARE @fish as int");
         var checker = new ToMemoryCheckNotifier();
         _function.TableInfoCreated.Check(checker);
-            
-        Assert.IsTrue(checker.Messages.Any(m=>m.Result == CheckResult.Fail
-                                              &&
-                                              m.Message.Contains(expectedMessage)));
+
+        Assert.IsTrue(checker.Messages.Any(m => m.Result == CheckResult.Fail
+                                                &&
+                                                m.Message.Contains(expectedMessage)));
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
-        var ex = Assert.Throws<Exception>(()=>syncer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
+        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.IsTrue(ex.Message.Contains(expectedMessage));
 
         //no changes yet
@@ -172,7 +175,7 @@ public class ImportAndTestTests : DatabaseTests
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
         var ex = Assert.Throws<Exception>(() => syncer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains(expectedMessage,ex?.Message);
+        StringAssert.Contains(expectedMessage, ex?.Message);
 
         //no changes should yet have taken place since we didn't accept it yet
         Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);

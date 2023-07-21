@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement.EntityNaming;
 
-internal class HICDatabaseConfigurationTests: UnitTests
+internal class HICDatabaseConfigurationTests : UnitTests
 {
     /// <summary>
     /// Tests the ability of <see cref="HICDatabaseConfiguration"/> to predict where tables will exist
@@ -40,9 +40,9 @@ internal class HICDatabaseConfigurationTests: UnitTests
         lookup.Database = "LookupsDb";
         lookup.SaveToDatabase();
 
-        var job = Substitute.For<IDataLoadJob>();
-        job.RegularTablesToLoad.Returns(new List<ITableInfo>(new[] { ti }));
-        job.LookupTablesToLoad.Returns(new List<ITableInfo>(new[] { lookup }));
+        var job = Mock.Of<IDataLoadJob>(m =>
+            m.RegularTablesToLoad == new List<ITableInfo>(new[] { ti }) &&
+            m.LookupTablesToLoad == new List<ITableInfo>(new[] { lookup }));
 
         var result = conf.ExpectTables(job, LoadBubble.Raw, testLookup).ToArray();
 

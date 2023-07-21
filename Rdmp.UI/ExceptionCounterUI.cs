@@ -25,7 +25,7 @@ public class ExceptionCounterUI : ToolStripButton, ICheckNotifier
 {
     private const float EmSize = 8f;
 
-    private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true,false));
+    private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true, false));
 
     private const float NotifyWidth = 15;
 
@@ -81,7 +81,7 @@ public class ExceptionCounterUI : ToolStripButton, ICheckNotifier
         //handle cross thread invocations
         var p = GetCurrentParent();
 
-        if(p is { InvokeRequired: true })
+        if (p is { InvokeRequired: true })
         {
             p.BeginInvoke(new MethodInvoker(() => { OnCheckPerformed(args); }));
             return false;

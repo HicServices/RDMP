@@ -111,7 +111,6 @@ public abstract class TableRepository : ITableRepository
     }
 
 
-
     /// <inheritdoc/>
     public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
@@ -136,7 +135,7 @@ public abstract class TableRepository : ITableRepository
             using var managedConnection = GetConnection();
             var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType(), managedConnection);
 
-            PopulateUpdateCommandValuesWithCurrentState(cmd,oTableWrapperObject);
+            PopulateUpdateCommandValuesWithCurrentState(cmd, oTableWrapperObject);
 
             cmd.Connection = managedConnection.Connection;
 
@@ -173,7 +172,8 @@ public abstract class TableRepository : ITableRepository
             var propValue = prop.GetValue(oTableWrapperObject, null);
 
             //if it is a complex type but IConvertible e.g. CatalogueFolder
-            if(!prop.PropertyType.IsValueType && propValue is IConvertible c && c.GetTypeCode() == TypeCode.String) propValue = c.ToString(CultureInfo.CurrentCulture);
+            if (!prop.PropertyType.IsValueType && propValue is IConvertible c && c.GetTypeCode() == TypeCode.String)
+                propValue = c.ToString(CultureInfo.CurrentCulture);
 
             SetParameterToValue(p, propValue);
         }
@@ -192,11 +192,6 @@ public abstract class TableRepository : ITableRepository
             Version => propValue.ToString(),
             _ => propValue
         };
-    }
-
-    public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
-    {
-        return StillExists(typeof(T),id);
     }
 
     public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable => StillExists(typeof(T), id);
@@ -223,12 +218,11 @@ public abstract class TableRepository : ITableRepository
         //no cached result so fallback on regular method
         GetAllObjectsWhere<T>($"{parent.GetType().Name}_ID", parent.ID);
 
-    public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
-    {
-        return typeof(T).IsInterface
-            ? throw new Exception("GetObjectByID<T> requires a proper class not an interface so that it can access the correct table")
-            : (T) GetObjectByID(typeof (T), id);
-    }
+    public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable =>
+        typeof(T).IsInterface
+            ? throw new Exception(
+                "GetObjectByID<T> requires a proper class not an interface so that it can access the correct table")
+            : (T)GetObjectByID(typeof(T), id);
 
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
     {
@@ -387,7 +381,8 @@ public abstract class TableRepository : ITableRepository
             throw new NotSupportedException(
                 "Why are you comparing two null things against one another with this method?");
 
-        return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
+        return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID &&
+               obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
     }
 
     /// <inheritdoc/>
@@ -422,7 +417,7 @@ public abstract class TableRepository : ITableRepository
         }
 
         //Mark any cached data as out of date
-        if(localCopy is IInjectKnown inject)
+        if (localCopy is IInjectKnown inject)
             inject.ClearAllInjections();
     }
 
@@ -471,7 +466,6 @@ public abstract class TableRepository : ITableRepository
 
     #region new
 
-
     public void TestConnection()
     {
         try
@@ -486,8 +480,8 @@ public abstract class TableRepository : ITableRepository
 
             var pass = DiscoveredServer.Helper.GetExplicitPasswordIfAny(_connectionStringBuilder);
 
-            if(!string.IsNullOrWhiteSpace(pass))
-                msg = msg.Replace(pass,"****");
+            if (!string.IsNullOrWhiteSpace(pass))
+                msg = msg.Replace(pass, "****");
 
             throw new Exception($"Testing connection failed, connection string was '{msg}'", e);
         }
@@ -503,13 +497,12 @@ public abstract class TableRepository : ITableRepository
         using (var cmd = DatabaseCommandHelper.GetCommand(selectQuery, opener.Connection, opener.Transaction))
         {
             using var r = cmd.ExecuteReader();
-            while (r.Read())
-            {
-                idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
-            }
+            while (r.Read()) idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
         }
 
-        return !idsToReturn.Any() ? Enumerable.Empty<T>() : GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
+        return !idsToReturn.Any()
+            ? Enumerable.Empty<T>()
+            : GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
     }
 
     /// <summary>
@@ -525,7 +518,9 @@ public abstract class TableRepository : ITableRepository
     /// <param name="columnWithObjectID"></param>
     /// <param name="dbNullSubstition"></param>
     /// <returns></returns>
-    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default) where T : IMapsDirectlyToDatabaseTable
+    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null,
+        Dictionary<string, object> parameters = null, T dbNullSubstition = default)
+        where T : IMapsDirectlyToDatabaseTable
     {
         columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
@@ -555,10 +550,10 @@ public abstract class TableRepository : ITableRepository
             return Enumerable.Empty<T>();
 
 
-        var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
+        var toReturn = GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
 
         //this bit of hackery is if you're a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
-        if(dbNullSubstition != null)
+        if (dbNullSubstition != null)
             for (var i = 0; i < nullsFound; i++)
                 toReturn.Add(dbNullSubstition);
 
@@ -566,9 +561,8 @@ public abstract class TableRepository : ITableRepository
     }
 
 
-
-
-    private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
+    private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null)
+        where T : IMapsDirectlyToDatabaseTable
     {
         using var opener = GetConnection();
         var query = CreateInsertStatement<T>(parameters);
@@ -602,7 +596,6 @@ public abstract class TableRepository : ITableRepository
 
         return query;
     }
-
 
 
     public int Delete(string deleteQuery, Dictionary<string, object> parameters = null,
@@ -655,7 +648,8 @@ public abstract class TableRepository : ITableRepository
 
     #endregion
 
-    public void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
+    public void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
+        where T : IMapsDirectlyToDatabaseTable
     {
         var id = InsertAndReturnID<T>(constructorParameters);
 
@@ -673,7 +667,7 @@ public abstract class TableRepository : ITableRepository
     }
 
     private object ongoingConnectionsLock = new();
-    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new();
+    private readonly Dictionary<Thread, IManagedConnection> ongoingConnections = new();
     private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
 
 
@@ -774,28 +768,23 @@ public abstract class TableRepository : ITableRepository
         }
     }
 
-    public int? ObjectToNullableInt(object o)
-    {
-        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
-    }
+    public int? ObjectToNullableInt(object o) => o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
 
-    public DateTime? ObjectToNullableDateTime(object o)
-    {
-        return o == null || o == DBNull.Value ? null : (DateTime)o;
-    }
+    public DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
 
-    private Dictionary<Type,bool> _knownSupportedTypes = new();
+    private Dictionary<Type, bool> _knownSupportedTypes = new();
     private object oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {
         if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            throw new NotSupportedException("This method can only be passed Types derived from IMapsDirectlyToDatabaseTable");
-            
+            throw new NotSupportedException(
+                "This method can only be passed Types derived from IMapsDirectlyToDatabaseTable");
+
         lock (oLockKnownTypes)
         {
             if (!_knownSupportedTypes.ContainsKey(type))
-                _knownSupportedTypes.Add(type,DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
+                _knownSupportedTypes.Add(type, DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
 
             return _knownSupportedTypes[type];
         }
@@ -842,10 +831,10 @@ public abstract class TableRepository : ITableRepository
         }
         catch (Exception e)
         {
-            throw new Exception($"Failed to GetAllObjects of Type '{string.Join(',',_compatibleTypes.Select(t=>t.FullName))}'",e);
+            throw new Exception(
+                $"Failed to GetAllObjects of Type '{string.Join(',', _compatibleTypes.Select(t => t.FullName))}'", e);
         }
     }
-
 
 
     /// <inheritdoc/>
@@ -865,9 +854,6 @@ public abstract class TableRepository : ITableRepository
                         //or with a spontaneous base class
                         && (t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
                         && IsCompatibleType(t)
-
-
-
                 ).ToArray();
     }
 

@@ -26,7 +26,7 @@ public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecutio
         _cic = cic;
         _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
             .Where(static s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
-        if(!_caches.Any())
+        if (!_caches.Any())
             SetImpossible("There are no Query Caching databases set up");
     }
 
@@ -41,7 +41,9 @@ public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecutio
         Publish(_cic);
     }
 
-    public override string GetCommandName() => _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
+    public override string GetCommandName() =>
+        _cic.QueryCachingServer_ID == null ? "Set Query Cache" : "Change Query Cache";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
 }

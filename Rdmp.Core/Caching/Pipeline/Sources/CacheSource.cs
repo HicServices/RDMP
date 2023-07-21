@@ -105,6 +105,4 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     {
         CatalogueRepository = value;
     }
-
-
 }

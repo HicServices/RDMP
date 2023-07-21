@@ -27,8 +27,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
     private ReleaseData _releaseData;
     private DirectoryInfo _releaseFolder;
 
-    [DemandsNestedInitialization]
-    public ReleaseFolderSettings FolderSettings { get; set; }
+    [DemandsNestedInitialization] public ReleaseFolderSettings FolderSettings { get; set; }
 
     public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
@@ -70,8 +69,8 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
     private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
     {
-        if (FolderSettings.CustomReleaseFolder != null && !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
-        {
+        if (FolderSettings.CustomReleaseFolder != null &&
+            !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
             _releaseFolder = FolderSettings.CustomReleaseFolder;
         else
             _releaseFolder = GetFromProjectFolder(_project);
@@ -79,7 +78,8 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
         {
             if (notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
+                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null,
+                    "Do you want to delete it? You should check the contents first.")))
                 _releaseFolder.Delete(true);
             else
                 return;

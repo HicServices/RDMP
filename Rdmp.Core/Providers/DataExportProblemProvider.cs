@@ -41,12 +41,10 @@ public class DataExportProblemProvider : ProblemProvider
         };
     }
 
-    private string DescribeProblem(ExternalCohortTable externalCohortTable)
-    {
-        return _exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable)
+    private string DescribeProblem(ExternalCohortTable externalCohortTable) =>
+        _exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable)
             ? "Cohort Source database was unreachable"
             : null;
-    }
 
     private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
     {
@@ -79,24 +77,23 @@ public class DataExportProblemProvider : ProblemProvider
         return null;
     }
 
-    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
-    {
-        return _exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
+    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode) =>
+        _exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
             ? "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations"
             : null;
-    }
 
 
-    private static string DescribeProblem(ExtractionDirectoryNode edn)
-    {
-        return edn.GetDirectoryInfoIfAny() == null ? "No Extraction Directory has been specified" : null;
-    }
+    private static string DescribeProblem(ExtractionDirectoryNode edn) => edn.GetDirectoryInfoIfAny() == null
+        ? "No Extraction Directory has been specified"
+        : null;
 
     private static string DescribeProblem(Project project)
     {
         if (project.ProjectNumber == null)
             return "Project has no ProjectNumber";
 
-        return string.IsNullOrWhiteSpace(project.ExtractionDirectory) ? "Project has no Extraction Directory configured" : null;
+        return string.IsNullOrWhiteSpace(project.ExtractionDirectory)
+            ? "Project has no Extraction Directory configured"
+            : null;
     }
 }

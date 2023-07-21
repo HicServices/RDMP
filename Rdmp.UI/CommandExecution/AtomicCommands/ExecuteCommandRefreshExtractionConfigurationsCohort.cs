@@ -27,14 +27,14 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
     {
         _extractionConfiguration = extractionConfiguration;
         var project = (Project)_extractionConfiguration.Project;
-            
-        if(extractionConfiguration.Cohort_ID == null)
+
+        if (extractionConfiguration.Cohort_ID == null)
             SetImpossible("No Cohort Set");
 
         if (extractionConfiguration.CohortRefreshPipeline_ID == null)
             SetImpossible("No Refresh Pipeline Set");
 
-        if(!project.ProjectNumber.HasValue)
+        if (!project.ProjectNumber.HasValue)
             SetImpossible($"Project '{project}' does not have a Project Number");
     }
 
@@ -66,7 +66,7 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
             progressUi.ShowRunning(false);
 
             //then on the UI thread
-            if(s.IsFaulted)
+            if (s.IsFaulted)
                 return;
 
             //issue save and refresh

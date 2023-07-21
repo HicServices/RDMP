@@ -18,7 +18,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// AggregateConfigurations
 /// 
 /// </summary>
-internal class FilterManagerFromChildProvider: AggregateFilterManager
+internal class FilterManagerFromChildProvider : AggregateFilterManager
 {
     /// <summary>
     /// Where ID key is the ID of the parent and the Value List is all the subcontainers.  If there is no key there are no subcontainers.
@@ -30,37 +30,34 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
     public FilterManagerFromChildProvider(CatalogueRepository repository, ICoreChildProvider childProvider) :
         base(repository)
     {
-
         _containersToFilters =
-            childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue)
-                .GroupBy(f=>f.FilterContainer_ID.Value)
+            childProvider.AllAggregateFilters.Where(f => f.FilterContainer_ID.HasValue)
+                .GroupBy(f => f.FilterContainer_ID.Value)
                 .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
 
         var server = repository.DiscoveredServer;
         using var con = repository.GetConnection();
-        var r = server.GetCommand("SELECT [AggregateFilterContainer_ParentID],[AggregateFilterContainer_ChildID]  FROM [AggregateFilterSubContainer]", con).ExecuteReader();
-        while(r.Read())
+        var r = server
+            .GetCommand(
+                "SELECT [AggregateFilterContainer_ParentID],[AggregateFilterContainer_ChildID]  FROM [AggregateFilterSubContainer]",
+                con).ExecuteReader();
+        while (r.Read())
         {
-
             var parentId = Convert.ToInt32(r["AggregateFilterContainer_ParentID"]);
             var subcontainerId = Convert.ToInt32(r["AggregateFilterContainer_ChildID"]);
 
-            if(!_subcontainers.ContainsKey(parentId))
-                _subcontainers.Add(parentId,new List<AggregateFilterContainer>());
+            if (!_subcontainers.ContainsKey(parentId))
+                _subcontainers.Add(parentId, new List<AggregateFilterContainer>());
 
             _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
         }
+
         r.Close();
     }
 
-    public override IContainer[] GetSubContainers(IContainer container)
-    {
-        return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :
-            Array.Empty<IContainer>();
-    }
+    public override IContainer[] GetSubContainers(IContainer container) =>
+        _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() : Array.Empty<IContainer>();
 
-    public override IFilter[] GetFilters(IContainer container)
-    {
-        return _containersToFilters.TryGetValue(container.ID,out var result) ? result.ToArray() : Array.Empty<IFilter>();
-    }
+    public override IFilter[] GetFilters(IContainer container) =>
+        _containersToFilters.TryGetValue(container.ID, out var result) ? result.ToArray() : Array.Empty<IFilter>();
 }

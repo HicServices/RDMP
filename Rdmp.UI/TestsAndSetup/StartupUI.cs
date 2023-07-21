@@ -44,7 +44,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         InitializeComponent();
 
-        if(_startup == null)
+        if (_startup == null)
             return;
 
         Text = $"RDMP - v{GetVersion()}";
@@ -98,7 +98,7 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
         }
 
-        pbLoadProgress.Value = 800;//80% done
+        pbLoadProgress.Value = 800; //80% done
     }
 
     private bool escapePressed;
@@ -131,9 +131,9 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void TimerTick(object sender, EventArgs e)
     {
-        var t = (Timer) sender;
+        var t = (Timer)sender;
 
-        if(escapePressed)
+        if (escapePressed)
         {
             t.Stop();
             return;
@@ -156,7 +156,6 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
 
         StartOrRestart(false);
-
     }
 
     private void StartOrRestart(bool forceClearRepositorySettings)
@@ -309,7 +308,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if (match.Success)
         {
             var percent = float.Parse(match.Groups[1].Value);
-            pbLoadProgress.Value = (int) (500 + percent*2.5);//500-750
+            pbLoadProgress.Value = (int)(500 + percent * 2.5); //500-750
         }
 
         switch (args.Result)
@@ -323,7 +322,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 args.Result = CheckResult.Warning;
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(args),$"Invalid result {args.Result}");
+                throw new ArgumentOutOfRangeException(nameof(args), $"Invalid result {args.Result}");
         }
 
         lblProgress.Text = args.Message;
@@ -352,7 +351,6 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);
         _choosePlatformsUI.ShowDialog();
-
     }
 
     private void pbDisconnected_Click(object sender, EventArgs e)

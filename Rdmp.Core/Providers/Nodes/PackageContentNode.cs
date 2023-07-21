@@ -30,27 +30,19 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
         DataSet = dataSet;
     }
 
-    public override string ToString()
-    {
-        return DataSet.ToString();
-    }
+    public override string ToString() => DataSet.ToString();
 
-    protected bool Equals(PackageContentNode other)
-    {
-        return Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
-    }
+    protected bool Equals(PackageContentNode other) => Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PackageContentNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PackageContentNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Package, DataSet);
-    }
+    public override int GetHashCode() => HashCode.Combine(Package, DataSet);
 
     public void DeleteInDatabase()
     {
@@ -60,10 +52,7 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
     public object MasqueradingAs() => DataSet;
 
     /// <inheritdoc/>
-    public string GetDeleteMessage()
-    {
-        return $"remove '{DataSet}' from Package";
-    }
+    public string GetDeleteMessage() => $"remove '{DataSet}' from Package";
 
     /// <inheritdoc/>
     public string GetDeleteVerb() => "Remove";

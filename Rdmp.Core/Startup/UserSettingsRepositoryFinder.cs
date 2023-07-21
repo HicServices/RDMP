@@ -31,7 +31,8 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                 RefreshRepositoriesFromUserSettings();
 
             return _linkedRepositoryProvider == null
-                ? throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                ? throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
                 : _linkedRepositoryProvider.CatalogueRepository;
         }
     }
@@ -44,7 +45,8 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                 RefreshRepositoriesFromUserSettings();
 
             return _linkedRepositoryProvider == null
-                ? throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                ? throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
                 : _linkedRepositoryProvider.DataExportRepository;
         }
     }
@@ -86,9 +88,7 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
 
         //if we have a new repo
         if (newrepo.CatalogueRepository != null)
-        {
             newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
-        }
 
 
         _linkedRepositoryProvider = newrepo;

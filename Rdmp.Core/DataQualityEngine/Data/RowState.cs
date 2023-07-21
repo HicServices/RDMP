@@ -37,11 +37,9 @@ public class RowState
     }
 
 
-
     public RowState(Evaluation evaluation, int dataLoadRunID, int correct, int missing, int wrong, int invalid,
         string validatorXml, string pivotCategory, DbConnection con, DbTransaction transaction)
     {
-
         var sql =
             $"INSERT INTO RowState(Evaluation_ID,Correct,Missing,Wrong,Invalid,DataLoadRunID,ValidatorXML,PivotCategory)VALUES({evaluation.ID},{correct},{missing},{wrong},{invalid},{dataLoadRunID},@validatorXML,@pivotCategory)";
 

@@ -90,10 +90,10 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name ?? $"Run {componentType.Name}" },
-            {"Pipeline_ID", parent.ID},
-            {"Class", componentType.ToString()},
-            {"Order", order}
+            { "Name", name ?? $"Run {componentType.Name}" },
+            { "Pipeline_ID", parent.ID },
+            { "Class", componentType.ToString() },
+            { "Order", order }
         });
     }
 
@@ -107,32 +107,20 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     }
 
     /// <inheritdoc/>
-    public IEnumerable<IArgument> GetAllArguments()
-    {
-        return PipelineComponentArguments;
-    }
-    /// <inheritdoc/>
-    public IArgument CreateNewArgument()
-    {
-        return new PipelineComponentArgument((ICatalogueRepository)Repository,this);
-    }
-    /// <inheritdoc/>
-    public string GetClassNameWhoArgumentsAreFor()
-    {
-        return Class;
-    }
+    public IEnumerable<IArgument> GetAllArguments() => PipelineComponentArguments;
 
     /// <inheritdoc/>
-    public Type GetClassAsSystemType()
-    {
-        return MEF.GetType(Class);
-    }
+    public IArgument CreateNewArgument() => new PipelineComponentArgument((ICatalogueRepository)Repository, this);
 
     /// <inheritdoc/>
-    public string GetClassNameLastPart()
-    {
-        return string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
-    }
+    public string GetClassNameWhoArgumentsAreFor() => Class;
+
+    /// <inheritdoc/>
+    public Type GetClassAsSystemType() => MEF.GetType(Class);
+
+    /// <inheritdoc/>
+    public string GetClassNameLastPart() =>
+        string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
 
     /// <inheritdoc/>
     public PipelineComponent Clone(Pipeline intoTargetPipeline)
@@ -141,7 +129,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
         var type = GetClassAsSystemType();
 
-        var clone = new PipelineComponent(cataRepo, intoTargetPipeline,type ?? typeof(object) , Order);
+        var clone = new PipelineComponent(cataRepo, intoTargetPipeline, type ?? typeof(object), Order);
 
         // the Type for the PipelineComponent could not be resolved
         // Maybe the user created this pipe with a Plugin and then uninstalled
@@ -190,7 +178,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     public override void DeleteInDatabase()
     {
-        if(Pipeline is Pipeline parent)
+        if (Pipeline is Pipeline parent)
         {
             if (parent.SourcePipelineComponent_ID == ID)
                 CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);

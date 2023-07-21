@@ -68,7 +68,6 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
     }
 
 
-
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         var newTabName = _control.GetTabName();
@@ -87,10 +86,8 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         var collection = _control.GetCollection();
 
         foreach (var o in collection.DatabaseObjects)
-        {
             if (o is IRevertable revertable)
                 revertable.RevertToDatabaseState();
-        }
 
         _control.SetCollection(activator, collection);
     }

@@ -98,7 +98,8 @@ public class CohortCompilerRunner
             SetPhase(Phase.RunningAggregateTasks);
 
             // Add all aggregates
-            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), c => Compiler.AddTask(c, globals));
+            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(),
+                c => Compiler.AddTask(c, globals));
 
             Compiler.CancelAllTasks(false);
 
@@ -119,9 +120,8 @@ public class CohortCompilerRunner
             if (RunSubcontainers)
                 Parallel.ForEach(
                     _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
-                        c=>CohortQueryBuilderResult.IsEnabled(c,Compiler.CoreChildProvider)),
-                    a=>Compiler.AddTask(a, globals));
-            }
+                        c => CohortQueryBuilderResult.IsEnabled(c, Compiler.CoreChildProvider)),
+                    a => Compiler.AddTask(a, globals));
 
 
             Compiler.CancelAllTasks(false);
@@ -169,6 +169,6 @@ public class CohortCompilerRunner
         ExecutionPhase = p;
 
         var h = PhaseChanged;
-        h?.Invoke(this,EventArgs.Empty);
+        h?.Invoke(this, EventArgs.Empty);
     }
 }

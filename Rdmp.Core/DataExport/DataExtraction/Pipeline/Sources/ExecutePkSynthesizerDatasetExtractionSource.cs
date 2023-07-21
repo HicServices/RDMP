@@ -30,6 +30,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 {
     private const string SYNTH_PK_COLUMN = "SynthesizedPk";
     private bool _synthesizePkCol;
+
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {
         // let's look for primary keys in the Extraction Information
@@ -86,9 +87,9 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
         var catalogueItemPkColumns = GetCatalogueItemPrimaryKeys().Select(c => c.GetRuntimeName()).ToArray();
 
         if (catalogueItemPkColumns.Any())
-            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c => catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
-        else
-        if (_synthesizePkCol)
+            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c =>
+                catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
+        else if (_synthesizePkCol)
             chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
 
         return chunk;
@@ -117,8 +118,8 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
                     CheckResult.Success));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'", CheckResult.Fail));
-
+                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'",
+                    CheckResult.Fail));
         }
         else
         {
@@ -131,10 +132,9 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
     private IEnumerable<IColumn> GetCatalogueItemPrimaryKeys()
     {
         foreach (var column in Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions))
-        {
             switch (column)
             {
-                case ReleaseIdentifierSubstitution ri when (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey):
+                case ReleaseIdentifierSubstitution ri when ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey:
                     yield return ri;
 
                     break;
@@ -143,11 +143,10 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
                     break;
             }
-        }
     }
 
     private IEnumerable<ColumnInfo> GetColumnInfoPrimaryKeys()
     {
-        return GetProperTables().SelectMany(static t=>t.ColumnInfos).Where(static column => column.IsPrimaryKey);
+        return GetProperTables().SelectMany(static t => t.ColumnInfos).Where(static column => column.IsPrimaryKey);
     }
 }

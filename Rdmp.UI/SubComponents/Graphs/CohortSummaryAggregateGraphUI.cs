@@ -43,16 +43,13 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        _collection.RevertIfMatchedInCollectionObjects(e.Object,out var shouldCloseInstead);
+        _collection.RevertIfMatchedInCollectionObjects(e.Object, out var shouldCloseInstead);
 
         if (shouldCloseInstead)
-        {
             ParentForm?.Close();
-        }
         else
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();
-
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -62,7 +59,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
 
         BuildMenu(activator);
 
-        SetAggregate(activator,_collection.Graph);
+        SetAggregate(activator, _collection.Graph);
         LoadGraphAsync();
     }
 
@@ -73,7 +70,9 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
         if (_collection.CohortIfAny != null)
             return $"Cohort Graph {_collection.CohortIfAny}({_collection.Adjustment})";
 
-        return _collection.CohortContainerIfAny != null ? $"Cohort Container Graph {_collection.CohortContainerIfAny}" : "Loading...";
+        return _collection.CohortContainerIfAny != null
+            ? $"Cohort Container Graph {_collection.CohortContainerIfAny}"
+            : "Loading...";
     }
 
     protected override string GetDescription()

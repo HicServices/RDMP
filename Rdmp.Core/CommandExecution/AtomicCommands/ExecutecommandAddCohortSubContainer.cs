@@ -16,7 +16,8 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomi
 {
     private readonly CohortAggregateContainer _container;
 
-    public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
+    public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container) :
+        base(activator)
     {
         Weight = 0.12f;
         _container = container;
@@ -24,7 +25,8 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomi
         if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortAggregateContainer,OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortAggregateContainer, OverlayKind.Add);
 
     public override void Execute()
     {

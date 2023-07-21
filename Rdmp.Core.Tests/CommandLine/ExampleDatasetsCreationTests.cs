@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-internal class ExampleDatasetsCreationTests:DatabaseTests
+internal class ExampleDatasetsCreationTests : DatabaseTests
 {
     /// <summary>
     /// Tests the creation of example datasets during first installation of RDMP or when running "rdmp.exe install [...] -e" from the CLI
@@ -28,13 +28,14 @@ internal class ExampleDatasetsCreationTests:DatabaseTests
         Assert.AreEqual(0, CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
 
         //create the pipelines
-        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator,null,null);
-        pipes.CreatePipelines(new PlatformDatabaseCreationOptions {});
+        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
+        pipes.CreatePipelines();
 
         //create all the stuff
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator),RepositoryLocator);
-        creator.Create(db,ThrowImmediatelyCheckNotifier.Quiet,new PlatformDatabaseCreationOptions {Seed = 500,DropDatabases = true });
+        var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
+        creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
+            new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
 
         //should be at least 2 views (marked as view)
         var views = CatalogueRepository.GetAllObjects<TableInfo>().Count(ti => ti.IsView);

@@ -176,7 +176,7 @@ public partial class ScintillaTextEditorFactory
     private static void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
     {
         //point they are dragged over
-        var editor = (Scintilla) sender;
+        var editor = (Scintilla)sender;
 
         if (editor.ReadOnly)
             return;

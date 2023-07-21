@@ -28,7 +28,8 @@ public class HelpWorkflow
     public HelpStage RootStage { get; set; }
     public HelpStage CurrentStage { get; set; }
 
-    public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider):this(hostControl,null,progressProvider)
+    public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider) : this(
+        hostControl, null, progressProvider)
     {
         WorkflowGuid = workflowGuid;
     }
@@ -48,7 +49,7 @@ public class HelpWorkflow
         if (RootStage == null)
             throw new Exception("No RootStage exists for Help, you will need to create one");
 
-        if(!force && !ProgressProvider.ShouldShowUserWorkflow(this))
+        if (!force && !ProgressProvider.ShouldShowUserWorkflow(this))
             return;
 
         _cancellationTokenSource = new CancellationTokenSource();
@@ -107,7 +108,7 @@ public class HelpWorkflow
             return false;
 
         if (HostControl.InvokeRequired)
-            return (bool) HostControl.Invoke(ShowNextStageOrClose);
+            return (bool)HostControl.Invoke(ShowNextStageOrClose);
 
         //if there is a next stage and help hasn't been closed
         if (CurrentStage is { Next: not null } && !_helpClosed)

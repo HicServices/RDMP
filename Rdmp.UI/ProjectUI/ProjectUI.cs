@@ -48,13 +48,14 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void SetCohorts()
     {
-        if(_project?.ProjectNumber == null)
+        if (_project?.ProjectNumber == null)
             return;
 
-        if(Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
+        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
             return;
 
-        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts.Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
+        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts
+            .Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
     }
 
     //menu item setup
@@ -65,7 +66,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     /// Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems
     /// </summary>
     private int _rightClickedRowExtractionConfigurationID = -1;
-
 
 
     public ProjectUI()
@@ -80,7 +80,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         AssociatedCollection = RDMPCollection.DataExport;
     }
-
 
 
     public void RefreshLists()
@@ -99,7 +98,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         //now load the UI form
         _project = databaseObject;
 
@@ -246,13 +245,15 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if (e.RowIndex >= 0)
             if (e.Button == MouseButtons.Right)
             {
-
                 menu.Items.Clear();
 
 
-                _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+                _rightClickedRowExtractionConfigurationID =
+                    int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
-                var selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+                var selectedExtractionConfiguration =
+                    Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+                        _rightClickedRowExtractionConfigurationID);
 
                 menu.Items.Clear();
 
@@ -260,11 +261,8 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
                     menu.Items.Add(mi_SetDescription);
 
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
-
             }
     }
-
-
 
     #endregion
 
@@ -302,7 +300,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         {
             tbExtractionDirectory.ForeColor = Color.Red;
         }
-
     }
 
     private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -329,7 +326,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void tbProjectNumber_TextChanged(object sender, EventArgs e)
     {
-
         if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
         {
             _project.ProjectNumber = null;
@@ -346,7 +342,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         {
             tbProjectNumber.ForeColor = Color.Red;
         }
-
     }
 
     private void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)

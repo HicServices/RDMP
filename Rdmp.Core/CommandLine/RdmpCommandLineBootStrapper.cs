@@ -45,7 +45,7 @@ public class RdmpCommandLineBootStrapper
                     ExecuteCommandOptions>(args)
                 .MapResult(
                     //Add new verbs as options here and invoke relevant runner
-                    (DleOptions opts) => Run(opts,null, existingLocator),
+                    (DleOptions opts) => Run(opts, null, existingLocator),
                     (DqeOptions opts) => Run(opts, null, existingLocator),
                     (CacheOptions opts) => Run(opts, null, existingLocator),
                     (ExtractionOptions opts) => Run(opts, null, existingLocator),
@@ -117,14 +117,13 @@ public class RdmpCommandLineBootStrapper
             // where RDMP objects are stored
             repositoryLocator = opts.GetRepositoryLocator();
 
-            if(repositoryLocator?.CatalogueRepository == null)
+            if (repositoryLocator?.CatalogueRepository == null)
             {
                 listener.OnNotify(typeof(RdmpCommandLineBootStrapper),
                     new NotifyEventArgs(ProgressEventType.Error,
                         "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
                 return REPO_ERROR;
             }
-
 
 
             if (!CheckRepo(repositoryLocator)) return REPO_ERROR;
@@ -172,31 +171,28 @@ public class RdmpCommandLineBootStrapper
         var logger = LogManager.GetCurrentClassLogger();
         if (repo is not LinkedRepositoryProvider l) return true;
         if (l.CatalogueRepository is TableRepository c)
-        {
             try
             {
                 c.DiscoveredServer.TestConnection(15_000);
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                logger.Error(ex,
+                    $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
                 return false;
             }
-        }
 
         if (l.DataExportRepository is TableRepository d)
-        {
             try
             {
                 d.DiscoveredServer.TestConnection();
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                logger.Error(ex,
+                    $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
                 return false;
-
             }
-        }
 
         return true;
     }

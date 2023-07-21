@@ -61,7 +61,6 @@ public class RefreshBus
                 {
                     if (ChildProvider != null && e.DeletedObjectDescendancy == null)
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
-                    }
                 }
 
                 RefreshObject?.Invoke(sender, e);
@@ -101,16 +100,19 @@ public class RefreshBus
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c)
     {
         if (c is not IRefreshBusSubscriber subscriber)
-            throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription", nameof(c));
+            throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription",
+                nameof(c));
 
         //ignore double requests for subscription
         if (subscribers.Contains(subscriber))
             return;
 
-        if(c is not ContainerControl containerControl)
+        if (c is not ContainerControl containerControl)
             throw new ArgumentOutOfRangeException(nameof(c));
 
-        var parentForm = containerControl.ParentForm ?? throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",nameof(c));
+        var parentForm = containerControl.ParentForm ?? throw new ArgumentException(
+            "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
+            nameof(c));
         Subscribe(subscriber);
         parentForm.FormClosing += (s, e) => Unsubscribe(subscriber);
     }
@@ -146,7 +148,8 @@ public class RefreshBus
             if (!existingSubscription.OriginalObject
                     .Equals(originalObject)) //wait a minute! they subscribed for a different object!
                 throw new ArgumentException(
-                    $"user {user} attempted to subscribe twice for self destruct but with two different objects '{existingSubscription.OriginalObject}' and '{originalObject}'", nameof(user));
+                    $"user {user} attempted to subscribe twice for self destruct but with two different objects '{existingSubscription.OriginalObject}' and '{originalObject}'",
+                    nameof(user));
             else
                 return; //they subscribed for the same object it's all ok
 
@@ -159,7 +162,9 @@ public class RefreshBus
         //subscribe them now
         Subscribe(subscriber);
 
-        var parentForm = user.ParentForm ?? throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)", "c");
+        var parentForm = user.ParentForm ?? throw new ArgumentException(
+            "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
+            "c");
 
         //when their parent closes we unsubscribe them
         parentForm.FormClosed += (s, e) =>

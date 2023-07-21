@@ -70,10 +70,10 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         };
     }
 
-    private object CohortVersionAspectGetter(object rowObject)
-    {
-        return rowObject is IMasqueradeAs masquerade && masquerade.MasqueradingAs() is ExtractableCohort c ? c.ExternalVersion : (object)null;
-    }
+    private object CohortVersionAspectGetter(object rowObject) =>
+        rowObject is IMasqueradeAs masquerade && masquerade.MasqueradingAs() is ExtractableCohort c
+            ? c.ExternalVersion
+            : (object)null;
 
     public override void SetItemActivator(IActivateItems activator)
     {
@@ -89,7 +89,8 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
 
-        CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
+        CommonTreeFunctionality.MaintainRootObjects = new Type[]
+            { typeof(ExtractableDataSetPackage), typeof(FolderNode<Project>) };
 
         var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
 
@@ -110,11 +111,6 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
 
             if (dataExportChildProvider != null) tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
-
-            if(dataExportChildProvider != null)
-            {
-                tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
-            }
 
             _isFirstTime = false;
         }
@@ -141,8 +137,8 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         var uiFactory = new AtomicCommandUIFactory(Activator);
         var cohortSubmenu = new ToolStripMenuItem("Cohort");
         cohortSubmenu.DropDownItems.AddRange(
-            new[] {
-
+            new[]
+            {
                 // from cic
                 uiFactory.CreateMenuItem(
                     new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null)
@@ -153,7 +149,8 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                     { OverrideCommandName = "From File" }),
 
                 // from catalogue
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" }),
+                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator, (Catalogue)null)
+                    { OverrideCommandName = "From Catalogue" }),
 
                 // from table
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator, null)

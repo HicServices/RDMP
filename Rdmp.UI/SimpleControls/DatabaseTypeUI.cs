@@ -29,7 +29,6 @@ public partial class DatabaseTypeUI : UserControl
 
             ddDatabaseType.SelectedItem = value;
             pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ImageToBitmap();
-
         }
     }
 
@@ -53,6 +52,7 @@ public partial class DatabaseTypeUI : UserControl
     }
 
     private bool changing;
+
     private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (changing)
@@ -62,7 +62,7 @@ public partial class DatabaseTypeUI : UserControl
 
         DatabaseType = (DatabaseType)ddDatabaseType.SelectedItem;
 
-        DatabaseTypeChanged?.Invoke(this,EventArgs.Empty);
+        DatabaseTypeChanged?.Invoke(this, EventArgs.Empty);
 
         changing = false;
     }

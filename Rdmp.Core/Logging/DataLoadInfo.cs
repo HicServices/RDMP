@@ -32,8 +32,6 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
 
-
-
     public string PackageName { get; }
 
 
@@ -76,7 +74,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
     public DataLoadInfo(string dataLoadTaskName, string packageName, string description,
         string suggestedRollbackCommand, bool isTest, DiscoveredServer settings)
     {
-        if(settings != null)
+        if (settings != null)
             DatabaseSettings = settings;
 
         PackageName = packageName;
@@ -152,7 +150,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         con.Open();
 
         var cmd = DatabaseSettings.GetCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
-        DatabaseSettings.AddParameterWithValueToCommand("@name",cmd, dataLoadTaskName);
+        DatabaseSettings.AddParameterWithValueToCommand("@name", cmd, dataLoadTaskName);
 
 
         var result = cmd.ExecuteScalar();
@@ -170,10 +168,11 @@ SELECT @@IDENTITY;", con);
         DatabaseSettings.AddParameterWithValueToCommand("@description", cmd, Description);
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, StartTime);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
-        DatabaseSettings.AddParameterWithValueToCommand("@isTest",cmd, IsTest);
+        DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, IsTest);
         DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, PackageName);
         DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, UserAccount);
-        DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, SuggestedRollbackCommand ?? string.Empty);
+        DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
+            SuggestedRollbackCommand ?? string.Empty);
 
 
         //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
@@ -196,12 +195,11 @@ SELECT @@IDENTITY;", con);
             using var con = DatabaseSettings.BeginNewTransactedConnection();
             try
             {
-
                 var cmdUpdateToClosed =
                     DatabaseSettings.GetCommand("UPDATE DataLoadRun SET endTime=@endTime WHERE ID=@ID",
                         con);
 
-                DatabaseSettings.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
+                DatabaseSettings.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed, DateTime.Now);
                 DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
 
                 var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
@@ -223,23 +221,7 @@ SELECT @@IDENTITY;", con);
             }
 
             //once a record has been committed to the database it is redundant and no further attempts to read/change it should be made by anyone
-            foreach (var t in TableLoads.Values.Where(static t => !t.IsClosed))
-            {
-                t.CloseAndArchive();
-            }
-            catch (Exception)
-            {
-                //if something goes wrong with the update, roll it back
-                con.ManagedTransaction.AbandonAndCloseConnection();
-
-                throw;
-            }
-
-            //once a record has been committed to the database it is redundant and no further attempts to read/change it should be made by anyone
-            foreach (var t in TableLoads.Values)
-                //close any table loads that have not yet completed
-                if (!t.IsClosed)
-                    t.CloseAndArchive();
+            foreach (var t in TableLoads.Values.Where(static t => !t.IsClosed)) t.CloseAndArchive();
         }
     }
 
@@ -250,7 +232,7 @@ SELECT @@IDENTITY;", con);
         DataSource[] sources, int expectedInserts) => new TableLoadInfo(this, suggestedRollbackCommand,
         destinationTable, sources, expectedInserts);
 
-    public static readonly DataLoadInfo Empty= new();
+    public static readonly DataLoadInfo Empty = new();
 
     private DataLoadInfo()
     {
@@ -285,13 +267,15 @@ SELECT @@IDENTITY;", con);
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
 
-        var cmdLookupStatusID = DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
-        DatabaseSettings.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
+        var cmdLookupStatusID =
+            DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
+        DatabaseSettings.AddParameterWithValueToCommand("@status", cmdLookupStatusID, initialErrorStatus);
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
         var cmdRecordFatalError = DatabaseSettings.GetCommand(
-            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", con);
+            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
+            con);
         DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
         DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
         DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
@@ -316,6 +300,7 @@ SELECT @@IDENTITY;", con);
 
     private static int logCounter = 0;
     private static long logTime = 0;
+
     public void LogProgress(ProgressEventType pevent, string source, string description)
     {
         var sw = Stopwatch.StartNew();
@@ -323,11 +308,13 @@ SELECT @@IDENTITY;", con);
         try
         {
             using var con = DatabaseSettings.GetConnection();
-            using var cmdRecordProgress = DatabaseSettings.GetCommand("INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con);
+            using var cmdRecordProgress = DatabaseSettings.GetCommand(
+                "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
+                con);
             cmdRecordProgress.CommandTimeout = 120;
             con.Open();
 
-            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordProgress, ID);
+            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);
             DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
             DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordProgress, source);
             DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordProgress, description);
@@ -336,13 +323,17 @@ SELECT @@IDENTITY;", con);
             cmdRecordProgress.ExecuteNonQuery();
             if (sw.ElapsedMilliseconds <= 1000) return;
 
-            using var cmdRecordSlowWarning = DatabaseSettings.GetCommand("INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con);
+            using var cmdRecordSlowWarning = DatabaseSettings.GetCommand(
+                "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
+                con);
             cmdRecordSlowWarning.CommandTimeout = 120;
 
-            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordSlowWarning, ID);
-            DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordSlowWarning, ProgressEventType.OnWarning.ToString());
+            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordSlowWarning, ID);
+            DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordSlowWarning,
+                ProgressEventType.OnWarning.ToString());
             DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordSlowWarning, "RDMP");
-            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordSlowWarning, $"Warning: slow log entry detected ({sw.ElapsedMilliseconds}ms; total {logTime+sw.ElapsedMilliseconds} so far for {logCounter} inserts)");
+            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordSlowWarning,
+                $"Warning: slow log entry detected ({sw.ElapsedMilliseconds}ms; total {logTime + sw.ElapsedMilliseconds} so far for {logCounter} inserts)");
             DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordSlowWarning, DateTime.Now);
 
             cmdRecordSlowWarning.ExecuteNonQuery();

@@ -103,7 +103,8 @@ public class ArgumentValueUIFactory
         catch (Exception e)
         {
             throw new Exception(
-                $"A problem occurred trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'", e);
+                $"A problem occurred trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'",
+                e);
         }
 
         ((Control)toReturn).Dock = DockStyle.Fill;
@@ -149,18 +150,21 @@ public class ArgumentValueUIFactory
         if (parent is ProcessTask pt)
             return pt.GetTableInfos();
 
-        return parent is LoadMetadata lmd ? lmd.GetDistinctTableInfoList(true) : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
+        return parent is LoadMetadata lmd
+            ? lmd.GetDistinctTableInfoList(true)
+            : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
     }
 
 
-    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
-            ? GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos)
+            ? GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos)
             : repository.GetAllObjects<ColumnInfo>();
     }
 
-    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(
+        ICatalogueRepository repository, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
             ? GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns)

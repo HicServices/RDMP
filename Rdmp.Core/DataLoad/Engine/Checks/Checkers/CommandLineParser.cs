@@ -33,7 +33,7 @@ internal class CommandLineParser
         {
             var ch = cmd[i];
 
-            if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
+            if (char.IsWhiteSpace(ch)) throw new InvalidOperationException();
 
             switch (ch)
             {

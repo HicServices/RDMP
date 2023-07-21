@@ -69,14 +69,13 @@ public partial class LookupUI : LookupUI_Design
 
     private void olvExtractionDescriptions_ItemActivate(object sender, EventArgs e)
     {
-        if(olvExtractionDescriptions.SelectedObject is ExtractionInformation ei)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(ei));
-
+        if (olvExtractionDescriptions.SelectedObject is ExtractionInformation ei)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(ei));
     }
 
     private void olv_KeyUp(object sender, KeyEventArgs e)
     {
-        if(((ObjectListView)sender).SelectedObject is IDeleteable d)
+        if (((ObjectListView)sender).SelectedObject is IDeleteable d)
         {
             Activator.DeleteWithConfirmation(d);
             UpdateTreeViews();

@@ -44,7 +44,7 @@ public class VerboseValidationResults
 
         foreach (var iv in validators)
         {
-            DictionaryOfFailure.Add(iv.TargetProperty,null);
+            DictionaryOfFailure.Add(iv.TargetProperty, null);
             DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>
             {
                 { Consequence.Missing, 0 },
@@ -76,7 +76,7 @@ public class VerboseValidationResults
                         ReasonsRowsInvalidated.Add(
                             $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
-                if (worstConsequences.TryGetValue(subException.SourceItemValidator,out var oldConsequence))
+                if (worstConsequences.TryGetValue(subException.SourceItemValidator, out var oldConsequence))
                 {
                     //see if situation got worse
                     var newConsequence = subException.SourceConstraint.Consequence.Value;

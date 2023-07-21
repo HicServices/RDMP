@@ -45,8 +45,9 @@ public class DelimitedFileSourceTests
     public void FileToLoadNotSet_Throws()
     {
         var source = new DelimitedFlatFileDataFlowSource();
-        var ex = Assert.Throws<Exception>(()=>source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-        StringAssert.Contains("_fileToLoad was not set",ex.Message);
+        var ex = Assert.Throws<Exception>(() =>
+            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        StringAssert.Contains("_fileToLoad was not set", ex.Message);
     }
 
     [Test]
@@ -54,8 +55,9 @@ public class DelimitedFileSourceTests
     {
         var testFile = new FileInfo(filename);
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(testFile),ThrowImmediatelyDataLoadEventListener.Quiet );
-        var ex = Assert.Throws<Exception>(()=>source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+        source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
+        var ex = Assert.Throws<Exception>(() =>
+            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
         StringAssert.Contains("Separator has not been set", ex.Message);
     }
 
@@ -85,8 +87,9 @@ public class DelimitedFileSourceTests
         Assert.AreEqual(1, chunk.Rows.Count);
         Assert.AreEqual("0101010101", chunk.Rows[0][0]);
         Assert.AreEqual(5, chunk.Rows[0][1]);
-        Assert.AreEqual(new DateTime(2001 , 1 , 5), chunk.Rows[0][2]);//notice the strong typing (we are not looking for strings here)
-            
+        Assert.AreEqual(new DateTime(2001, 1, 5),
+            chunk.Rows[0][2]); //notice the strong typing (we are not looking for strings here)
+
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
 
@@ -158,14 +161,14 @@ public class DelimitedFileSourceTests
         source.Separator = ",";
         source.IgnoreQuotes = true;
         source.MaxBatchSize = 10000;
-        source.StronglyTypeInput = true;//makes the source interpret the file types properly
+        source.StronglyTypeInput = true; //makes the source interpret the file types properly
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         Assert.AreEqual(3, dt.Rows.Count);
         Assert.AreEqual("\"Sick\" headaches", dt.Rows[0][1]);
         Assert.AreEqual("2\" length of wood", dt.Rows[1][1]);
         Assert.AreEqual("\"\"The bends\"\"", dt.Rows[2][1]);
 
-        source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
+        source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
 
 
@@ -202,17 +205,20 @@ public class DelimitedFileSourceTests
             switch (strategy)
             {
                 case BadDataHandlingStrategy.ThrowException:
-                    var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-                    StringAssert.Contains("line 4",ex.Message);
+                    var ex = Assert.Throws<FlatFileLoadException>(() =>
+                        source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+                    StringAssert.Contains("line 4", ex.Message);
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
-                    var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,new GracefulCancellationToken());
+                    var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
+                        new GracefulCancellationToken());
                     Assert.IsNotNull(dt);
 
                     Assert.AreEqual(4, dt.Rows.Count);
                     break;
                 case BadDataHandlingStrategy.DivertRows:
-                    var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+                    var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
+                        new GracefulCancellationToken());
                     Assert.AreEqual(4, dt2.Rows.Count);
 
                     Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
@@ -305,7 +311,7 @@ public class DelimitedFileSourceTests
         try
         {
             var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-            Assert.AreEqual(5,chunk.Rows.Count);
+            Assert.AreEqual(5, chunk.Rows.Count);
             Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
             Assert.AreEqual($"Dave is {Environment.NewLine}over 1000 years old", chunk.Rows[2][2]);
             Assert.AreEqual("Dave is over\" 1000 years old\"",
@@ -349,7 +355,8 @@ public class DelimitedFileSourceTests
 
         try
         {
-            var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
             Assert.AreEqual("Bad data found on line 3", ex.Message);
         }
         finally
@@ -387,7 +394,8 @@ old"",2001-01-05");
         source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
         try
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
             Assert.AreEqual("Bad data found on line 3", ex.Message);
         }
         finally
@@ -431,17 +439,20 @@ old"",2001-01-05");
             switch (strategy)
             {
                 case BadDataHandlingStrategy.ThrowException:
-                    var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+                    var ex = Assert.Throws<FlatFileLoadException>(() =>
+                        source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
                     StringAssert.Contains("line 6", ex.Message);
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
-                    var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+                    var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
+                        new GracefulCancellationToken());
                     Assert.IsNotNull(dt);
 
                     Assert.AreEqual(4, dt.Rows.Count);
                     break;
                 case BadDataHandlingStrategy.DivertRows:
-                    var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+                    var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
+                        new GracefulCancellationToken());
                     Assert.AreEqual(4, dt2.Rows.Count);
 
                     Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
@@ -457,7 +468,7 @@ old"",2001-01-05");
         finally
         {
             source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
-        }   
+        }
     }
 
     [Test]
@@ -492,8 +503,7 @@ old"",2001-01-05");
             Assert.IsNotNull(dt);
             Assert.AreEqual(5, dt.Rows.Count);
             Assert.AreEqual(@"5
-    The first",dt.Rows[0][1]);
-
+    The first", dt.Rows[0][1]);
         }
         finally
         {
@@ -534,17 +544,20 @@ old"",2001-01-05");
             switch (strategy)
             {
                 case BadDataHandlingStrategy.ThrowException:
-                    var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
+                    var ex = Assert.Throws<FlatFileLoadException>(() =>
+                        source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
                     StringAssert.Contains("line 2", ex.Message);
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
-                    var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+                    var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
+                        new GracefulCancellationToken());
                     Assert.IsNotNull(dt);
 
                     Assert.AreEqual(4, dt.Rows.Count);
                     break;
                 case BadDataHandlingStrategy.DivertRows:
-                    var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+                    var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
+                        new GracefulCancellationToken());
                     Assert.AreEqual(4, dt2.Rows.Count);
 
                     Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
@@ -561,7 +574,7 @@ old"",2001-01-05");
         finally
         {
             source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
-        }   
+        }
     }
 
 
@@ -581,7 +594,8 @@ old"",2001-01-05");
 
         var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
-        source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
+        source.Separator =
+            "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
         source.ForceHeaders = "CHI\tStudyID\tDate";
         source.MaxBatchSize = 10000;
 
@@ -617,7 +631,8 @@ old"",2001-01-05");
 
         var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
-        source.Separator = "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
+        source.Separator =
+            "\\t"; //<-- Important this is the string value SLASH T not an actual escaped tab as C# understands it.  This reflects the user pressing slash and t on his keyboard for the Separator argument in the UI
         source.ForceHeaders = "CHI\tStudyID\tDate\tSomeText";
         source.MaxBatchSize = 10000;
         source.IgnoreColumns = "StudyID\tDate\t";
@@ -682,10 +697,10 @@ old"",2001-01-05");
         source.StronglyTypeInputBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
         source.StronglyTypeInput = true;
 
-        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,new GracefulCancellationToken());
+        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
         Assert.AreEqual(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize, dt.Rows.Count);
-            
+
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
         Assert.AreEqual(2, dt.Rows.Count);
@@ -717,6 +732,6 @@ old"",2001-01-05");
         var toMem = new ToMemoryDataLoadEventListener(true);
         var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(toMem, new GracefulCancellationToken()));
         Assert.AreEqual("Bad data found on line 2", ex.Message);
-        source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
+        source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
 }

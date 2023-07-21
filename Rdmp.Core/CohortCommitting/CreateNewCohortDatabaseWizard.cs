@@ -40,7 +40,6 @@ public class CreateNewCohortDatabaseWizard
     private const string DefinitionTableForeignKeyField = "cohortDefinition_id";
 
 
-
     public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, ICatalogueRepository catalogueRepository,
         IDataExportRepository dataExportRepository, bool allowNullReleaseIdentifiers)
     {
@@ -83,7 +82,6 @@ public class CreateNewCohortDatabaseWizard
         var tt = _targetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;
 
 
-
         if (tt.GetLengthIfString(privateIdentifierPrototype.DataType) == int.MaxValue)
             throw new Exception(
                 "Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table");
@@ -99,16 +97,21 @@ public class CreateNewCohortDatabaseWizard
         {
             var definitionTable = _targetDatabase.CreateTable("CohortDefinition", new[]
             {
-                new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,IsAutoIncrement = true,IsPrimaryKey = true},
-                new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false},
-                new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false},
-                new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),3000)){AllowNulls =  false},
-                new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false,Default=MandatoryScalarFunctions.GetTodaysDate}
+                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                    { AllowNulls = false },
+                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
             });
 
 
             var idColumn = definitionTable.DiscoverColumn("id");
-            var foreignKey = new DatabaseColumnRequest(DefinitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
+            var foreignKey =
+                new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
+                    { IsPrimaryKey = true };
 
             // Look up the collations of all the private identifier columns
             var collations = privateIdentifierPrototype.MatchingExtractionInformations
@@ -128,7 +131,8 @@ public class CreateNewCohortDatabaseWizard
                         // when creating the private column so that the DBMS can link them no bother
                         Collation = collations.Length == 1 ? collations[0] : null
                     },
-                    new DatabaseColumnRequest(ReleaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)){AllowNulls = AllowNullReleaseIdentifiers},
+                    new DatabaseColumnRequest(ReleaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                        { AllowNulls = AllowNullReleaseIdentifiers },
                     foreignKey
                 }
                 ,
@@ -164,7 +168,6 @@ public class CreateNewCohortDatabaseWizard
             notifier.OnCheckPerformed(new CheckEventArgs("Finished", CheckResult.Success));
 
             return pointer;
-
         }
         catch (Exception e)
         {

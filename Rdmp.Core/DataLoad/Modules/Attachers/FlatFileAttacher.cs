@@ -72,24 +72,28 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         timer.Start();
 
 
-        if(string.IsNullOrWhiteSpace(TableName))
-            throw new ArgumentNullException(nameof(TableName),"TableName has not been set, set it in the DataCatalogue");
+        if (string.IsNullOrWhiteSpace(TableName))
+            throw new ArgumentNullException(nameof(TableName),
+                "TableName has not been set, set it in the DataCatalogue");
 
         var table = _dbInfo.ExpectTable(TableName);
 
         //table didn't exist!
         if (!table.Exists())
-            throw new FlatFileLoadException(_dbInfo.DiscoverTables(false).Any()? $"RAW database did not have a table called:{TableName}" : "Raw database had 0 tables we could load");
+            throw new FlatFileLoadException(_dbInfo.DiscoverTables(false).Any()
+                ? $"RAW database did not have a table called:{TableName}"
+                : "Raw database had 0 tables we could load");
 
 
         //load the flat file
         var filePattern = FilePattern ?? "*";
 
-        var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filePattern).OrderBy(a=>a.Name,StringComparer.InvariantCultureIgnoreCase).ToList();
+        var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filePattern)
+            .OrderBy(a => a.Name, StringComparer.InvariantCultureIgnoreCase).ToList();
 
         if (!filesToLoad.Any())
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                 $"Did not find any files matching pattern {filePattern} in forLoading directory"));
 
             return SendLoadNotRequiredIfFileNotFound ? ExitCodeType.OperationNotRequired : ExitCodeType.Success;
@@ -124,16 +128,16 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         insert.Timeout = 500000;
 
         //if user wants to use a specific explicit format for datetimes
-        if(ExplicitDateTimeFormat != null)
-            insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[]{ExplicitDateTimeFormat};
+        if (ExplicitDateTimeFormat != null)
+            insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[] { ExplicitDateTimeFormat };
 
         //bulk insert ito destination
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to open file {fileToLoad.FullName}"));
-        OpenFile(fileToLoad,job,token);
+        OpenFile(fileToLoad, job, token);
 
         //confirm the validity of the headers
-        ConfirmFlatFileHeadersAgainstDataTable(dt,job);
+        ConfirmFlatFileHeadersAgainstDataTable(dt, job);
 
         con.Open();
 
@@ -141,11 +145,11 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         var batchNumber = 1;
         var maxBatchSize = 10000;
         var recordsCreatedSoFar = 0;
-                
+
         try
         {
             //while there is data to be loaded into table
-            while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize,token) != 0)
+            while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize, token) != 0)
             {
                 DropEmptyColumns(dt);
                 ConfirmFitToDestination(dt, tableToLoad, job);
@@ -162,7 +166,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                 catch (Exception e)
                 {
                     throw new Exception(
-                        $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})",e);
+                        $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})", e);
                 }
             }
         }
@@ -199,9 +203,6 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                     CheckResult.Fail));
     }
 
-    private void ConfirmFitToDestination(DataTable dt, DiscoveredTable tableToLoad,IDataLoadJob job)
-    {
-
     private void ConfirmFitToDestination(DataTable dt, DiscoveredTable tableToLoad, IDataLoadJob job)
     {
         var columnsAtDestination = tableToLoad.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
@@ -232,7 +233,8 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     /// <param name="maxBatchSize"></param>
     /// <param name="cancellationToken"></param>
     /// <returns>return the number of rows read, if you return >0 then you will be called again to get more data (if during this second or subsequent call there is no more data to read from source, return 0)</returns>
-    protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken);
+    protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
+        GracefulCancellationToken cancellationToken);
 
 
 
@@ -261,13 +263,6 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                 if (!foundValue)
                     dt.Columns.Remove(dt.Columns[i]);
             }
-        }
-    }
-
-    protected virtual object HackValueReadFromFile(string s)
-    {
-            
-        return s;
     }
 
     protected virtual object HackValueReadFromFile(string s) => s;

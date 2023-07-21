@@ -116,7 +116,8 @@ public class DataLoadJob : IDataLoadJob
         if (DataLoadInfo == null)
             CreateDataLoadInfo();
 
-        DataLoadInfo.LogFatalError(nameof(DataLoadProcess), message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
+        DataLoadInfo.LogFatalError(nameof(DataLoadProcess),
+            message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
         DataLoadInfo.CloseAndMarkComplete();
     }
 

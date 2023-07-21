@@ -150,27 +150,27 @@ public class TableInfoImporter : ITableInfoImporter
         parent.SaveToDatabase();
 
         tableInfoCreated = parent;
-        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn)).ToArray();
+        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn))
+            .ToArray();
 
         //if there is a username then we need to associate it with the TableInfo we just created
         if (!string.IsNullOrWhiteSpace(_username))
-        {
             new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
-        }
     }
 
     /// <inheritdoc/>
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
-            {
-                //if it has an explicitly specified format (Collation)
-                Format = discoveredColumn.Format,
-                //if it is a primary key
-                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
-                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
-                Collation = discoveredColumn.Collation
-            };
+        var col = new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
+            discoveredColumn.DataType.SQLType, parent)
+        {
+            //if it has an explicitly specified format (Collation)
+            Format = discoveredColumn.Format,
+            //if it is a primary key
+            IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+            IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+            Collation = discoveredColumn.Collation
+        };
 
         col.SaveToDatabase();
 
@@ -184,7 +184,8 @@ public class TableInfoImporter : ITableInfoImporter
         DoImport(out _, out _);
     }
 
-    private static readonly string[] ProhibitedNames = {
+    private static readonly string[] ProhibitedNames =
+    {
         "ADD",
         "EXTERNAL",
         "PROCEDURE",

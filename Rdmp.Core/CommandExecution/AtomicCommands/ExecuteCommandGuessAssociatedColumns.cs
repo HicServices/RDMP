@@ -83,7 +83,6 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
                 var acceptedOne = false;
 
                 for (var i = 0; i < guesses.Length; i++)
-                {
                     //ask confirmation
                     if (!BasicActivator.IsInteractive || BasicActivator.YesNo(
                             $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",

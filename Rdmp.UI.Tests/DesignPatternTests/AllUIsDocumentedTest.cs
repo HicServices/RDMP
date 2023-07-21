@@ -56,7 +56,8 @@ public class AllUIsDocumentedTest : UnitTests
         Assert.AreEqual(Errors.Count, 0);
     }
 
-    private string[] _exemptNamespaces = {
+    private string[] _exemptNamespaces =
+    {
         "System.ComponentModel.Design",
         "System.Windows.Forms",
         "Rdmp.UI.ScintillaHelper"
@@ -66,7 +67,9 @@ public class AllUIsDocumentedTest : UnitTests
     {
         return Core.Repositories.MEF.GetAllTypes()
             .Where(InterfaceType.IsAssignableFrom)
-            .Where(type => type.Namespace?.Contains(".Tests") == false && !_exemptNamespaces.Any(e => type.Namespace.Contains(e))&& !legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
+            .Where(type => type.Namespace?.Contains(".Tests") == false &&
+                           !_exemptNamespaces.Any(e => type.Namespace.Contains(e)) &&
+                           !legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
             .Select(type =>
                 $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'");
     }

@@ -34,8 +34,8 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         var tbl = db.CreateTable("Fish", new[]
         {
-            new DatabaseColumnRequest("Dave",new DatabaseTypeRequest(typeof(string),100)),
-            new DatabaseColumnRequest("Frank",new DatabaseTypeRequest(typeof(int)))
+            new DatabaseColumnRequest("Dave", new DatabaseTypeRequest(typeof(string), 100)),
+            new DatabaseColumnRequest("Frank", new DatabaseTypeRequest(typeof(int)))
         });
 
         Import(tbl, out var ti, out var cols);
@@ -44,15 +44,16 @@ public class TableVarcharMaxerTests : DatabaseTests
         {
             AllDataTypes = allDataTypes,
             TableRegexPattern = new Regex(".*"),
-            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue))
+            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater
+                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue))
         };
 
-        maxer.Initialize(db,LoadStage.AdjustRaw);
+        maxer.Initialize(db, LoadStage.AdjustRaw);
         maxer.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
 
         var job = Mock.Of<IDataLoadJob>(x =>
-            x.RegularTablesToLoad==new List<ITableInfo> {ti} &&
-            x.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
+            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
+            x.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
 
         maxer.Mutilate(job);
 
@@ -83,8 +84,8 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         var tbl = db.CreateTable("Fi ; '`sh", new[]
         {
-            new DatabaseColumnRequest("Da'   ,,;ve",new DatabaseTypeRequest(typeof(string),100)),
-            new DatabaseColumnRequest("Frrrrr ##' ank",new DatabaseTypeRequest(typeof(int)))
+            new DatabaseColumnRequest("Da'   ,,;ve", new DatabaseTypeRequest(typeof(string), 100)),
+            new DatabaseColumnRequest("Frrrrr ##' ank", new DatabaseTypeRequest(typeof(int)))
         });
 
         Import(tbl, out var ti, out var cols);
@@ -92,16 +93,17 @@ public class TableVarcharMaxerTests : DatabaseTests
         var maxer = new TableVarcharMaxer
         {
             TableRegexPattern = new Regex(".*"),
-            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue))
+            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater
+                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue))
         };
 
-        maxer.Initialize(db,LoadStage.AdjustRaw);
+        maxer.Initialize(db, LoadStage.AdjustRaw);
         maxer.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
 
         var job = new ThrowImmediatelyDataLoadJob
         {
-            RegularTablesToLoad = new List<ITableInfo> {ti},
-            Configuration = new HICDatabaseConfiguration(db.Server,null,null,null)
+            RegularTablesToLoad = new List<ITableInfo> { ti },
+            Configuration = new HICDatabaseConfiguration(db.Server, null, null, null)
         };
 
         maxer.Mutilate(job);

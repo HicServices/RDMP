@@ -218,7 +218,6 @@ public partial class CacheProgressUI : CacheProgressUI_Design, ISaveableUI
                 var dt = DateTime.Parse(tbCacheProgress.Text);
                 _cacheProgress.CacheFillProgress = dt;
             }
-
         });
     }
 

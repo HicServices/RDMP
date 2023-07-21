@@ -32,7 +32,8 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1),100,"mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
+            new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
             ProgressDate = new DateTime(1995, 1, 1) // we are half way through
@@ -40,8 +41,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         ep.SaveToDatabase();
 
-        var ex = Assert.Throws<Exception>(()=>checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)", ex.Message);
+        var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.AreEqual(
+            "R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)",
+            ex.Message);
     }
 
     [Test]
@@ -54,12 +57,6 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
             new DateTime(2001, 1, 1), 100, "mybatch",
-            _extractionInformations[0].ID)
-        {
-            ProgressDate = new DateTime(1995, 1, 1) // we are half way through
-        };
-
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
             ProgressDate = new DateTime(1995, 1, 1) // we are half way through
@@ -89,7 +86,8 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
+            new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
             ProgressDate = new DateTime(1995, 1, 1) // we are half way through

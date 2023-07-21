@@ -22,27 +22,29 @@ public partial class RichTextBoxEx : RichTextBox
     [StructLayout(LayoutKind.Sequential)]
     private struct CHARFORMAT2_STRUCT
     {
-        public uint	cbSize;
-        public uint   dwMask;
-        public uint   dwEffects;
-        public int    yHeight;
-        public int    yOffset;
-        public int	crTextColor;
-        public byte     bCharSet;
-        public byte     bPitchAndFamily;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst=32)]
-        public char[]   szFaceName;
-        public ushort	wWeight;
-        public ushort	sSpacing;
-        public int		crBackColor; // Color.ToArgb() -> int
-        public int		lcid;
-        public int		dwReserved;
-        public short	sStyle;
-        public short	wKerning;
-        public byte		bUnderlineType;
-        public byte		bAnimation;
-        public byte		bRevAuthor;
-        public byte		bReserved1;
+        public uint cbSize;
+        public uint dwMask;
+        public uint dwEffects;
+        public int yHeight;
+        public int yOffset;
+        public int crTextColor;
+        public byte bCharSet;
+        public byte bPitchAndFamily;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public char[] szFaceName;
+
+        public ushort wWeight;
+        public ushort sSpacing;
+        public int crBackColor; // Color.ToArgb() -> int
+        public int lcid;
+        public int dwReserved;
+        public short sStyle;
+        public short wKerning;
+        public byte bUnderlineType;
+        public byte bAnimation;
+        public byte bRevAuthor;
+        public byte bReserved1;
     }
 
     [LibraryImport("user32.dll")]
@@ -57,15 +59,6 @@ public partial class RichTextBoxEx : RichTextBox
     private const int SCF_ALL = 0x0004;
 
     #region CHARFORMAT2 Flags
-    private const uint CFE_BOLD		= 0x0001;
-    private const uint CFE_ITALIC		= 0x0002;
-    private const uint CFE_UNDERLINE	= 0x0004;
-    private const uint CFE_STRIKEOUT	= 0x0008;
-    private const uint CFE_PROTECTED	= 0x0010;
-    private const uint CFE_LINK		= 0x0020;
-    private const uint CFE_AUTOCOLOR	= 0x40000000;
-    private const uint CFE_SUBSCRIPT	= 0x00010000;		/* Superscript and subscript are */
-    private const uint CFE_SUPERSCRIPT= 0x00020000;		/*  mutually exclusive			 */
 
     private const uint CFE_BOLD = 0x0001;
     private const uint CFE_ITALIC = 0x0002;
@@ -98,19 +91,19 @@ public partial class RichTextBoxEx : RichTextBox
     private const int CFM_REVAUTHOR = 0x00008000;
 
 
-    private const uint CFM_BOLD		= 0x00000001;
-    private const uint CFM_ITALIC		= 0x00000002;
-    private const uint CFM_UNDERLINE	= 0x00000004;
-    private const uint CFM_STRIKEOUT	= 0x00000008;
-    private const uint CFM_PROTECTED	= 0x00000010;
-    private const uint CFM_LINK		= 0x00000020;
-    private const uint CFM_SIZE		= 0x80000000;
-    private const uint CFM_COLOR		= 0x40000000;
-    private const uint CFM_FACE		= 0x20000000;
-    private const uint CFM_OFFSET		= 0x10000000;
-    private const uint CFM_CHARSET	= 0x08000000;
-    private const uint CFM_SUBSCRIPT	= CFE_SUBSCRIPT | CFE_SUPERSCRIPT;
-    private const uint CFM_SUPERSCRIPT= CFM_SUBSCRIPT;
+    private const uint CFM_BOLD = 0x00000001;
+    private const uint CFM_ITALIC = 0x00000002;
+    private const uint CFM_UNDERLINE = 0x00000004;
+    private const uint CFM_STRIKEOUT = 0x00000008;
+    private const uint CFM_PROTECTED = 0x00000010;
+    private const uint CFM_LINK = 0x00000020;
+    private const uint CFM_SIZE = 0x80000000;
+    private const uint CFM_COLOR = 0x40000000;
+    private const uint CFM_FACE = 0x20000000;
+    private const uint CFM_OFFSET = 0x10000000;
+    private const uint CFM_CHARSET = 0x08000000;
+    private const uint CFM_SUBSCRIPT = CFE_SUBSCRIPT | CFE_SUPERSCRIPT;
+    private const uint CFM_SUPERSCRIPT = CFM_SUBSCRIPT;
 
     private const byte CFU_UNDERLINENONE = 0x00000000;
     private const byte CFU_UNDERLINE = 0x00000001;
@@ -197,7 +190,8 @@ public partial class RichTextBoxEx : RichTextBox
             throw new ArgumentOutOfRangeException(nameof(position));
 
         //if it ends with whitespace then we have to put that outside the RTF
-        var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());
+        var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t')
+            .Reverse());
 
         SelectionStart = position;
         SelectedRtf = $@"{{\rtf1\ansi {text.TrimEnd()}\v #{hyperlink}\v0}}";
@@ -206,9 +200,8 @@ public partial class RichTextBoxEx : RichTextBox
         Select(position + text.Length + hyperlink.Length + 1, 0);
 
         //avoids bong
-        if(suffix != "")
+        if (suffix != "")
             SelectedText = suffix;
-
     }
 
     /// <summary>
@@ -235,7 +228,7 @@ public partial class RichTextBoxEx : RichTextBox
         cf.dwEffects = effect;
 
         var wpar = new IntPtr(SCF_SELECTION);
-        var lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) );
+        var lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
         Marshal.StructureToPtr(cf, lpar, false);
 
         var res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
@@ -250,7 +243,7 @@ public partial class RichTextBoxEx : RichTextBox
         cf.szFaceName = new char[32];
 
         var wpar = new IntPtr(SCF_SELECTION);
-        var lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) );
+        var lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
         Marshal.StructureToPtr(cf, lpar, false);
 
         var res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
@@ -260,15 +253,9 @@ public partial class RichTextBoxEx : RichTextBox
         int state;
         // dwMask holds the information which properties are consistent throughout the selection:
         if ((cf.dwMask & mask) == mask)
-        {
-            if ((cf.dwEffects & effect) == effect)
-                state = 1;
-            else
-                state = 0;
-        }
+            state = (cf.dwEffects & effect) == effect ? 1 : 0;
         else
             state = -1;
-        }
 
         Marshal.FreeCoTaskMem(lpar);
         return state;

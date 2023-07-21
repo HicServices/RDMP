@@ -42,10 +42,8 @@ public class PersistableToolboxDockContent : DockContent
 
         return $"{Prefix}{PersistStringHelper.Separator}{PersistStringHelper.SaveDictionaryToString(args)}";
     }
-    public RDMPCollectionUI GetCollection()
-    {
-        return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
-    }
+
+    public RDMPCollectionUI GetCollection() => Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
 
     public RDMPCollectionUI GetCollection() => Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
 

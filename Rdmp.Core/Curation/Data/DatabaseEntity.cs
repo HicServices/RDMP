@@ -110,7 +110,9 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     {
         var uri = r[fieldName];
 
-        return uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()) ? null : new Uri(uri.ToString());
+        return uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString())
+            ? null
+            : new Uri(uri.ToString());
     }
 
     /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
@@ -151,30 +153,24 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static DateTime? ObjectToNullableDateTime(object o)
-    {
-        return o == null || o == DBNull.Value ? null : (DateTime)o;
-    }
+    protected static DateTime? ObjectToNullableDateTime(object o) =>
+        o == null || o == DBNull.Value ? null : (DateTime)o;
 
     /// <summary>
     /// Converts the supplied object to a <see cref="int"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static int? ObjectToNullableInt(object o)
-    {
-        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
-    }
+    protected static int? ObjectToNullableInt(object o) =>
+        o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
 
     /// <summary>
     /// Converts the supplied object to a <see cref="bool"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static bool? ObjectToNullableBool(object o)
-    {
-        return o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
-    }
+    protected static bool? ObjectToNullableBool(object o) =>
+        o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
 
     /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
     public event PropertyChangedEventHandler PropertyChanged;
@@ -307,10 +303,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
         }
         catch (TargetInvocationException ex)
         {
-            if(ex.InnerException is NotSupportedException)
-            {
-                return;
-            }
+            if (ex.InnerException is NotSupportedException) return;
 
             throw;
         }
@@ -329,9 +322,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
                 $"{(includePropertyName ? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
-            {
                 representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
-            }
 
             if (representation.Contains('\n')) representation = Regex.Replace(representation, @"\r?\n", " ");
 
@@ -352,8 +343,5 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
-    protected static string FormatForSummary(object val)
-    {
-        return val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
-    }
+    protected static string FormatForSummary(object val) => val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
 }

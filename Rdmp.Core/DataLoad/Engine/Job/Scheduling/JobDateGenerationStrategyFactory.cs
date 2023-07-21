@@ -44,7 +44,8 @@ public class JobDateGenerationStrategyFactory
         var loadMetadata = loadProgress.LoadMetadata;
 
         return _typeToCreate == typeof(SingleScheduleCacheDateTrackingStrategy)
-            ? (IJobDateGenerationStrategy)new SingleScheduleCacheDateTrackingStrategy(CacheLayoutFactory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress,listener)
+            ? (IJobDateGenerationStrategy)new SingleScheduleCacheDateTrackingStrategy(
+                CacheLayoutFactory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress, listener)
             : throw new Exception("Factory has been configured to supply an unknown type");
     }
 }

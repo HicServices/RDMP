@@ -54,7 +54,7 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
 
         if (identifier == null)
             return;
-            
+
         _identifiersSeen.Add(identifier);
     }
 

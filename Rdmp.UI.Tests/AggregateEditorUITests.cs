@@ -13,7 +13,7 @@ using Rdmp.UI.AggregationUIs.Advanced;
 
 namespace Rdmp.UI.Tests;
 
-internal class AggregateEditorUITests:UITests
+internal class AggregateEditorUITests : UITests
 {
     [Test]
     [UITimeout(50000)]
@@ -42,7 +42,7 @@ internal class AggregateEditorUITests:UITests
         var ei = config.Catalogue.CatalogueItems[0].ExtractionInformation;
 
         //create a new dimension to the config in the database
-        _=new AggregateDimension(Repository, ei, config);
+        _ = new AggregateDimension(Repository, ei, config);
 
         //publish a refresh
         Publish(config);
@@ -66,7 +66,7 @@ internal class AggregateEditorUITests:UITests
     [UITimeout(50000)]
     public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
     {
-        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi,out var otherEi);
+        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
 
         var dimDate = new AggregateDimension(Repository, dateEi, config);
         var dimOther = new AggregateDimension(Repository, otherEi, config);
@@ -104,7 +104,7 @@ internal class AggregateEditorUITests:UITests
         //these commands should be impossible
         var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
         Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains("no extractable columns",cmd.ReasonCommandImpossible);
+        StringAssert.Contains("no extractable columns", cmd.ReasonCommandImpossible);
 
         //and if the broken config is activated
         var ui = AndLaunch<AggregateEditorUI>(config);
@@ -116,19 +116,13 @@ internal class AggregateEditorUITests:UITests
     }
 
 
-
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions() =>
-        GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
+        GetAggregateConfigurationWithNoDimensions(out _, out _);
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi,
         out ExtractionInformation otherEi)
     {
-        return GetAggregateConfigurationWithNoDimensions(out _, out _);
-    }
-
-    private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)
-    {
-        var config = WhenIHaveA(Repository,out dateEi, out otherEi);
+        var config = WhenIHaveA(Repository, out dateEi, out otherEi);
 
         //remove any existing dimensions
         foreach (var d in config.AggregateDimensions)

@@ -124,10 +124,9 @@ public partial class DataFlowComponentVisualisation : UserControl
                 $"{lblText.Text}{Environment.NewLine}Arguments:{Environment.NewLine}{result}");
     }
 
-    protected bool _isEmpty ;
+    protected bool _isEmpty;
     private Pen _emptyPen = new(new SolidBrush(Color.Black));
     protected Pen _fullPen = new(new SolidBrush(Color.Black));
-
 
 
     protected override void OnPaintBackground(PaintEventArgs e)

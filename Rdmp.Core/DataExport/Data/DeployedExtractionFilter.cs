@@ -147,7 +147,6 @@ public class DeployedExtractionFilter : ConcreteFilter
     public override string ToString() => Name;
 
 
-
     /// <summary>
     /// Checks the filter is properly defined (e.g. not blank).
     /// </summary>
@@ -156,7 +155,8 @@ public class DeployedExtractionFilter : ConcreteFilter
     {
         base.Check(notifier);
 
-        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
+        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID,
+            ((IDataExportRepository)Repository).CatalogueRepository);
         checker.Check(notifier);
     }
 

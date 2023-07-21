@@ -60,14 +60,14 @@ public class WordDataReleaseFileGenerator : DocXHelper
         using var document = GetNewDocFile(f);
         //actually changes it to landscape :)
         SetLandscape(document);
-                               
-        InsertHeader(document, $"Project:{Project.Name}",1);
-        InsertHeader(document, Configuration.Name,2);
-                
+
+        InsertHeader(document, $"Project:{Project.Name}", 1);
+        InsertHeader(document, Configuration.Name, 2);
+
         var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-        if(disclaimer != null)
-            InsertParagraph(document,disclaimer);
+        if (disclaimer != null)
+            InsertParagraph(document, disclaimer);
 
         CreateTopTable1(document);
 
@@ -75,10 +75,10 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         CreateCohortDetailsTable(document);
 
-        InsertParagraph(document,Environment.NewLine);
+        InsertParagraph(document, Environment.NewLine);
 
         CreateFileSummary(document);
-                                
+
         //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
         if (string.IsNullOrWhiteSpace(saveAsFilename))
             ShowFile(f);
@@ -148,13 +148,18 @@ public class WordDataReleaseFileGenerator : DocXHelper
         SetTableCell(table, tableLine, 2, "Date Extracted");
         SetTableCell(table, tableLine, 3, "Unique Individuals");
         tableLine++;
-            
-        SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
-        SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
 
-        var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString(CultureInfo.CurrentCulture) : "Never";
-        SetTableCell(table,tableLine, 2, lastExtracted);
-        SetTableCell(table,tableLine, 3, Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
+        SetTableCell(table, tableLine, 0,
+            Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
+        SetTableCell(table, tableLine, 1,
+            $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})"); //description fetched from remote table
+
+        var lastExtracted = ExtractionResults.Any()
+            ? ExtractionResults.Max(r => r.DateOfExtraction).ToString(CultureInfo.CurrentCulture)
+            : "Never";
+        SetTableCell(table, tableLine, 2, lastExtracted);
+        SetTableCell(table, tableLine, 3,
+            Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
     }
 
     private void CreateFileSummary(XWPFDocument document)
@@ -174,11 +179,12 @@ public class WordDataReleaseFileGenerator : DocXHelper
         {
             var filename = GetFileName(result);
 
-            SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
-            SetTableCell(table,tableLine, 1,result.FiltersUsed);
-            SetTableCell(table,tableLine, 2,filename);
-            SetTableCell(table,tableLine, 3,result.RecordsExtracted.ToString("N0"));
-            SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
+            SetTableCell(table, tableLine, 0,
+                _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
+            SetTableCell(table, tableLine, 1, result.FiltersUsed);
+            SetTableCell(table, tableLine, 2, filename);
+            SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));
+            SetTableCell(table, tableLine, 4, result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
     }
