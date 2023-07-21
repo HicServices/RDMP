@@ -77,7 +77,7 @@ internal class MarkdownCodeBlockTests
                 return Equals((FrozenExtractionConfigurationsNode)obj);
             }
 
-            public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+            public override int GetHashCode() => Project?.GetHashCode() ?? 0;
         }
 
         #endregion

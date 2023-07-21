@@ -226,8 +226,9 @@ public class UserInterfaceStandardisationChecker
             return;
         var hasText = File.ReadAllText(file)
             .Replace(" ", "")
-            .ToLowerInvariant()
-            .Contains(expectedString.Replace(" ", "").ToLowerInvariant());
+            .Replace("\n", "")
+            .Replace("\r", "")
+            .Contains(expectedString.Replace(" ", ""),StringComparison.OrdinalIgnoreCase);
 
         if (mustHaveText)
         {

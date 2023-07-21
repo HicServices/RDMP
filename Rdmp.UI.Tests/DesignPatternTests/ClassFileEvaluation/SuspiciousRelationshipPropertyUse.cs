@@ -33,19 +33,19 @@ public class SuspiciousRelationshipPropertyUse
     public void FindPropertyMisuse(List<string> csFilesFound)
     {
         //Find all the types that come from the database
-        var types = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t));
-        types = types.Union(typeof(Project).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+        var types = typeof(Catalogue).Assembly.GetTypes().Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t));
+        types = types.Union(typeof(Project).Assembly.GetTypes().Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t)))
             .ToArray();
 
         foreach (var type in types)
         {
-            //if it's a spont object ignore it
+            //if it's a spontaneous object ignore it
             if (typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) ||
                 type == typeof(SpontaneouslyInventedFilter))
                 continue;
 
             //Find the C sharp code for the class
-            var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
+            var relationshipProperties = type.GetProperties().Where(static p => p.CanRead && !p.CanWrite);
 
             var expectedFileName = $"{type.Name}.cs";
             var files = csFilesFound
@@ -73,7 +73,7 @@ public class SuspiciousRelationshipPropertyUse
             var matches = r.Matches(classSourceCode);
 
             if (matches.Count == 1)
-                relationshipsRegion = matches[0].Groups[1].Value;
+                relationshipsRegion = Regex.Replace(matches[0].Groups[1].Value,"[ \r\n\t]+"," ");
 
             if (matches.Count > 1)
                 _fails.Add($"FAIL: Class {type.FullName} has multiple '#region Relationships' blocks");
@@ -83,7 +83,7 @@ public class SuspiciousRelationshipPropertyUse
                 if (relationshipProperty.Name.Equals("ID"))
                     continue;
 
-                if (relationshipProperty.CustomAttributes.All(c => c.AttributeType != typeof(NoMappingToDatabase)))
+                if (relationshipProperty.CustomAttributes.All(static c => c.AttributeType != typeof(NoMappingToDatabase)))
                 {
                     _fails.Add(
                         $"FAIL: Class {type.FullName} has readonly property {relationshipProperty} which is not decorated with NoMapping");
@@ -115,15 +115,15 @@ public class SuspiciousRelationshipPropertyUse
 
 
             var databaseProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanRead && p.CanWrite);
+                .Where(static p => p.CanRead && p.CanWrite);
 
             var suggestedFieldDeclarations = "";
             var suggestedMethodWrappers = "";
 
             foreach (var p in databaseProperties)
             {
-                //its a NoMapping
-                if (p.CustomAttributes.Any(c => c.AttributeType == typeof(NoMappingToDatabase)))
+                //it's a NoMapping
+                if (p.CustomAttributes.Any(static c => c.AttributeType == typeof(NoMappingToDatabase)))
                     continue;
 
                 //special case, let this one pass, nobody should be changing it as a user anyway
@@ -163,8 +163,8 @@ public class SuspiciousRelationshipPropertyUse
 
                     suggestedMethodWrappers += $"public {typeName} {p.Name}{Environment.NewLine}";
                     suggestedMethodWrappers += $"{{{Environment.NewLine}";
-                    suggestedMethodWrappers += $"\tget {{ return {fieldName};}}{Environment.NewLine}";
-                    suggestedMethodWrappers += $"\tset {{ SetField(ref {fieldName},value);}}{Environment.NewLine}";
+                    suggestedMethodWrappers += $"\tget => {fieldName};{Environment.NewLine}";
+                    suggestedMethodWrappers += $"\tset => SetField(ref {fieldName},value);{Environment.NewLine}";
                     suggestedMethodWrappers += $"}}{Environment.NewLine}";
                 }
 
@@ -203,73 +203,10 @@ public class SuspiciousRelationshipPropertyUse
             }
         }
 
-        AnalyseRelationshipPropertyUsages();
-
         foreach (var fail in _fails)
             Console.WriteLine(fail);
 
         Assert.AreEqual(0, _fails.Count);
-    }
-
-    private void AnalyseRelationshipPropertyUsages()
-    {
-        foreach (var t in mef.GetAllTypes())
-        {
-            if (!t.IsClass)
-                continue;
-
-            //don't worry about the ToString method on classes that are IInjectKnown
-            var toStringMethod = t.GetMethod("ToString", Type.EmptyTypes);
-
-            //it doesn't have any ToString methods!
-            if (toStringMethod == null)
-                continue;
-
-            if (toStringMethod.DeclaringType == typeof(object))
-                continue;
-
-            if (toStringMethod.DeclaringType == typeof(MarshalByRefObject))
-                continue;
-            /*
-            IList<Instruction> instructions = null;
-            try
-            {
-                instructions = toStringMethod.GetInstructions();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            if (instructions != null)
-                foreach (Instruction instruction in instructions)
-                {
-                    MethodInfo methodInfo = instruction.Operand as MethodInfo;
-
-                    if (methodInfo != null)
-                    {
-                        //is it a call to property
-                        PropertyInfo prop;
-
-                        if (RelationshipPropertyInfos.TryGetBySecond(methodInfo, out prop))
-                        {
-
-                            //It doesn't look injected but it is
-                            if(t == typeof(JoinInfo))
-                                continue;
-
-                            //if we are injectable for it
-                    if( t.GetInterfaces().Any(x =>
-                          x.IsGenericType &&
-                          x.GetGenericTypeDefinition() == typeof(IInjectKnown<>) &&
-                          x.GetGenericArguments()[0] == prop.PropertyType))
-                        continue;
-
-                            _fails.Add("FAIL: ToString method in Type " + t.FullName + " uses Relationship PropertyInfo " + prop.Name);
-                        }
-                    }
-                }*/
-        }
     }
 
 
@@ -284,11 +221,8 @@ public class SuspiciousRelationshipPropertyUse
             return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(propertyType.GetElementType());
 
         //or it's a generic collection of them e.g. IEnumerable<Catalogue>
-        if (propertyType.IsGenericType &&
-            propertyType.GetGenericArguments().Any(g => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(g)))
-            return true;
-
-        return false;
+        return propertyType.IsGenericType &&
+               propertyType.GetGenericArguments().Any(static g => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(g));
     }
 
     public static bool MightBeCouldBeMaybeAutoGeneratedInstanceProperty(PropertyInfo info)
