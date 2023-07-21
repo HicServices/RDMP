@@ -65,7 +65,7 @@ public class SuspiciousRelationshipPropertyUse
             var matches = r.Matches(classSourceCode);
 
             if (matches.Count == 1)
-                relationshipsRegion = matches[0].Groups[1].Value;
+                relationshipsRegion = Regex.Replace(matches[0].Groups[1].Value,"[ \r\n\t]+"," ");
 
             if (matches.Count > 1)
                 _fails.Add($"FAIL: Class {type.FullName} has multiple '#region Relationships' blocks");

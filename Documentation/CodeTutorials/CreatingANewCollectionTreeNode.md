@@ -74,10 +74,7 @@ private class FrozenExtractionConfigurationsNode
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Frozen Extraction Configurations";
-    }
+    public override string ToString() => "Frozen Extraction Configurations";
 }
 ```
 
@@ -94,27 +91,18 @@ private class FrozenExtractionConfigurationsNode
 		Project = project;
 	}
 
-	public override string ToString()
-	{
-		return "Frozen Extraction Configurations";
-	}
+	public override string ToString() => "Frozen Extraction Configurations";
 
-	protected bool Equals(FrozenExtractionConfigurationsNode other)
-	{
-		return Equals(Project, other.Project);
-	}
+	protected bool Equals(FrozenExtractionConfigurationsNode other) => Equals(Project, other.Project);
 
 	public override bool Equals(object obj)
 	{
 		if (obj is null) return false;
 		if (ReferenceEquals(this, obj)) return true;
-		return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode) obj);
+		return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
 	}
 
-	public override int GetHashCode()
-	{
-		return Project?.GetHashCode() ?? 0;
-	}
+	public override int GetHashCode() => Project?.GetHashCode() ?? 0;
 }
 ```
 
@@ -143,7 +131,7 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
     var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
     children.Add(frozenConfigurationsNode);
 
-    var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+    var configs = ExtractionConfigurations .Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
     foreach (var config in configs)
     {
         AddChildren(config, descendancy.Add(config));
@@ -249,11 +237,11 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 	children.Add(frozenConfigurationsNode);
 
 	//Add children to the frozen folder
-	AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
+	AddChildren(frozenConfigurationsNode, descendancy.Add(frozenConfigurationsNode));
 
 	//Add ExtractionConfigurations which are not released (frozen)
-	var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-	foreach (var config in configs.Where(c=>!c.IsReleased))
+	var configs = ExtractionConfigurations .Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+	foreach (var config in configs.Where(c => !c.IsReleased))
 	{
 		AddChildren(config, descendancy.Add(config));
 		children.Add(config);
@@ -267,14 +255,14 @@ private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConf
 	var children = new HashSet<object>();
 
 	//Add ExtractionConfigurations which are not released (frozen)
-	var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
+	var configs = ExtractionConfigurations .Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
 	foreach (var config in configs.Where(c => c.IsReleased))
 	{
 		AddChildren(config, descendancy.Add(config));
 		children.Add(config);
 	}
 
-	AddToDictionaries(children,descendancy);
+	AddToDictionaries(children, descendancy);
 }
 ```
 Now when you run RDMP, the final tree should look something like:

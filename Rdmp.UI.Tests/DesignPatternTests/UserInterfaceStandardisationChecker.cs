@@ -219,8 +219,7 @@ public partial class UserInterfaceStandardisationChecker
         if (file == null)
             return;
 
-        var hasText = File.ReadAllText(file)
-            .Replace(" ", "")
+        var hasText = Regex.Replace(File.ReadAllText(file),"[ \r\n\t]+","")
             .Contains(expectedString.Replace(" ", ""), StringComparison.OrdinalIgnoreCase);
 
         if (mustHaveText)

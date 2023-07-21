@@ -31,26 +31,20 @@ Create a new class called `ProposeExecutionWhenTargetIs<TypeName>` in namespace 
 
 <!--- cae13dde1de14f5cac984330a222c311 --->
 ```csharp
-private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+private class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
 {
     public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(Pipeline target)
-    {
-        return true;
-    }
+    public override bool CanActivate(Pipeline target) => true;
 
     public override void Activate(Pipeline target)
     {
         MessageBox.Show("Double clicked");
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default) => null;
 }
 ```
 
@@ -98,10 +92,7 @@ To add support for dropping an object with an existing `ICombineToMakeCommand` y
 
 <!--- 59f55fa3ef50404291c7ae3996772635 --->
 ```csharp
-public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
-{
-	return cmd is CatalogueCombineable sourceCatalogueCombineable ? new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue) : (ICommandExecution)null;
-}
+public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default) => cmd is CatalogueCombineable sourceCatalogueCombineable ? new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue) : (ICommandExecution)null;
 ```
 
 While not terribly useful, you can now drop a [Catalogue] on `Pipeline` to delete the [Catalogue]
@@ -144,10 +135,7 @@ public class PipelineCombineable : ICombineToMakeCommand
         IsEmpty = Pipeline.PipelineComponents.Count == 0;
     }
 
-    public string GetSqlString()
-    {
-        return "";
-    }
+    public string GetSqlString() => "";
 }
 ```
 

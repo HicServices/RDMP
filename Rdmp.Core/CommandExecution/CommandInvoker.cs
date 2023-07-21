@@ -408,9 +408,9 @@ public class CommandInvoker
     /// <param name="type">The type of command you want to fetch the constructor from</param>
     /// <param name="picker">The command line arguments that you want to use to hydrate the <paramref name="type"/> constructor</param>
     /// <returns></returns>
-    public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker)
+    public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker=null)
     {
-        var constructors = type.GetConstructors();
+        var constructors = type.GetConstructors(BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public);
 
         if (constructors.Length == 0)
             return null;
