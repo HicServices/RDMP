@@ -27,6 +27,7 @@ public class StandardRegex : DatabaseEntity, ICheckable
     public const string DataLoadEngineGlobalIgnorePattern = "DataLoadEngineGlobalIgnorePattern";
 
     #region Database Properties
+
     private string _conceptName;
     private string _regex;
     private string _description;
@@ -62,7 +63,6 @@ public class StandardRegex : DatabaseEntity, ICheckable
 
     public StandardRegex()
     {
-
     }
 
     /// <summary>
@@ -72,10 +72,10 @@ public class StandardRegex : DatabaseEntity, ICheckable
     /// <param name="repository"></param>
     public StandardRegex(ICatalogueRepository repository)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ConceptName", $"New StandardRegex{Guid.NewGuid()}" },
-            {"Regex", ".*"}
+            { "ConceptName", $"New StandardRegex{Guid.NewGuid()}" },
+            { "Regex", ".*" }
         });
     }
 
@@ -88,17 +88,14 @@ public class StandardRegex : DatabaseEntity, ICheckable
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return ConceptName;
-    }
+    public override string ToString() => ConceptName;
 
     public void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(Regex)) return;
         try
         {
-            _=new Regex(Regex);
+            _ = new Regex(Regex);
             notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
         }
         catch (ArgumentException ex)

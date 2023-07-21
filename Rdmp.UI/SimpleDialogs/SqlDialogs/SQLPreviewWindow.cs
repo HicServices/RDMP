@@ -51,13 +51,13 @@ public partial class SQLPreviewWindow : Form
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        DialogResult=DialogResult.Cancel;
+        DialogResult = DialogResult.Cancel;
         Close();
     }
 
-    public static DialogResult Show(string title,string message, string sql)
+    public static DialogResult Show(string title, string message, string sql)
     {
-        var dialog = new SQLPreviewWindow(title,message, sql);
+        var dialog = new SQLPreviewWindow(title, message, sql);
         dialog.ShowDialog();
 
         return dialog.DialogResult;

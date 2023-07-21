@@ -17,24 +17,26 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
     private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohort cohort, ExtractionConfiguration targetExtractionConfiguration)
+    public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohort cohort,
+        ExtractionConfiguration targetExtractionConfiguration)
         : this(activator, new ExtractableCohortCombineable(cohort), targetExtractionConfiguration)
     {
-
     }
 
-    public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
+    public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator,
+        ExtractableCohortCombineable sourceExtractableCohortComand,
+        ExtractionConfiguration targetExtractionConfiguration) : base(activator)
     {
         _sourceExtractableCohortComand = sourceExtractableCohortComand;
         _targetExtractionConfiguration = targetExtractionConfiguration;
 
-        if(_sourceExtractableCohortComand.Cohort.IsDeprecated)
+        if (_sourceExtractableCohortComand.Cohort.IsDeprecated)
         {
             SetImpossible("Cohort is deprecated");
             return;
         }
 
-        if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
+        if (_sourceExtractableCohortComand.ErrorGettingCohortData != null)
         {
             SetImpossible(
                 $"Could not fetch Cohort data:{_sourceExtractableCohortComand.ErrorGettingCohortData.Message}");
@@ -54,12 +56,13 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
             return;
         }
 
-        if(_targetExtractionConfiguration.Cohort_ID != null)
+        if (_targetExtractionConfiguration.Cohort_ID != null)
         {
-            if(_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID)
+            if (_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID)
                 SetImpossible("ExtractionConfiguration already uses this cohort");
             else
-                SetImpossible("ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
+                SetImpossible(
+                    "ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
 
             SetImpossible(_targetExtractionConfiguration.Cohort_ID == sourceExtractableCohortComand.Cohort.ID
                 ? "ExtractionConfiguration already uses this cohort"
@@ -67,8 +70,6 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
 
             return;
         }
-
-
     }
 
     public override void Execute()
@@ -78,6 +79,5 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
         _targetExtractionConfiguration.Cohort_ID = _sourceExtractableCohortComand.Cohort.ID;
         _targetExtractionConfiguration.SaveToDatabase();
         Publish(_targetExtractionConfiguration);
-
     }
 }

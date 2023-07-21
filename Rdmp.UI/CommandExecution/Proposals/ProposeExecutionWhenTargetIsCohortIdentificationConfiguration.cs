@@ -11,25 +11,24 @@ using Rdmp.UI.SubComponents;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
+internal class
+    ProposeExecutionWhenTargetIsCohortIdentificationConfiguration : RDMPCommandExecutionProposal<
+        CohortIdentificationConfiguration>
 {
-    public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(itemActivator)
+    public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(
+        itemActivator)
     {
     }
 
-    public override bool CanActivate(CohortIdentificationConfiguration target)
-    {
-        return true;
-    }
+    public override bool CanActivate(CohortIdentificationConfiguration target) => true;
 
     public override void Activate(CohortIdentificationConfiguration target)
     {
         ItemActivator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CohortIdentificationConfiguration target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        CohortIdentificationConfiguration target,
+        InsertOption insertOption = InsertOption.Default) =>
+        null;
 }

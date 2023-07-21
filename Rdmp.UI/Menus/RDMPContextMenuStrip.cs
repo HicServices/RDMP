@@ -32,7 +32,7 @@ namespace Rdmp.UI.Menus;
 /// when the selected object is changed.
 /// </summary>
 [System.ComponentModel.DesignerCategory("")]
-public class RDMPContextMenuStrip:ContextMenuStrip
+public class RDMPContextMenuStrip : ContextMenuStrip
 {
     private readonly object _o;
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
@@ -43,7 +43,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
     protected ToolStripMenuItem ActivateCommandMenuItem;
     private RDMPContextMenuStripArgs _args;
 
-    private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new();
+    private Dictionary<string, ToolStripMenuItem> _subMenuDictionary = new();
 
     public const string Checks = "Run Checks";
     public const string Tree = "Tree";
@@ -70,10 +70,8 @@ public class RDMPContextMenuStrip:ContextMenuStrip
             var activateCommand = new ExecuteCommandActivate(_activator, args.Masquerader ?? o);
             ActivateCommandMenuItem = Add(activateCommand, Keys.None);
 
-            if (activateCommand.ReasonCommandImpossible?.Equals(GlobalStrings.ObjectCannotBeActivated)??false)
-            {
+            if (activateCommand.ReasonCommandImpossible?.Equals(GlobalStrings.ObjectCannotBeActivated) ?? false)
                 Items.Remove(ActivateCommandMenuItem);
-            }
         }
     }
 
@@ -85,16 +83,16 @@ public class RDMPContextMenuStrip:ContextMenuStrip
     {
         gotoMenu.DropDownOpening += (s, e) =>
         {
-            foreach(var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
+            foreach (var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
             {
-                if(mi.Tag is ExecuteCommandShow cmd)
+                if (mi.Tag is ExecuteCommandShow cmd)
                 {
                     cmd.FetchDestinationObjects();
                     mi.Enabled = !cmd.IsImpossible;
                     mi.ToolTipText = cmd.ReasonCommandImpossible;
                 }
 
-                if(mi.Tag is ExecuteCommandSimilar cmdSimilar)
+                if (mi.Tag is ExecuteCommandSimilar cmdSimilar)
                 {
                     cmdSimilar.FetchMatches();
                     mi.Enabled = !cmdSimilar.IsImpossible;
@@ -104,13 +102,11 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         };
     }
 
-    protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
+    protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept,
+        OverlayKind overlayKind = OverlayKind.None)
     {
         // if we are rebranding activate let's make sure its definitely in the menu
-        if(!Items.Contains(ActivateCommandMenuItem))
-        {
-            Items.Insert(0,ActivateCommandMenuItem);
-        }
+        if (!Items.Contains(ActivateCommandMenuItem)) Items.Insert(0, ActivateCommandMenuItem);
         ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind).ImageToBitmap();
         ActivateCommandMenuItem.Text = newTextForActivate;
     }
@@ -140,16 +136,16 @@ public class RDMPContextMenuStrip:ContextMenuStrip
     /// <param name="image"></param>
     protected void Add(IAtomicCommand cmd, Keys shortcutKey, string submenu, Image image = null)
     {
-        Add(cmd,shortcutKey,AddMenuIfNotExists(submenu,image));
+        Add(cmd, shortcutKey, AddMenuIfNotExists(submenu, image));
     }
 
 
     private ToolStripMenuItem AddMenuIfNotExists(string submenu, Image image = null)
     {
-        if(!_subMenuDictionary.ContainsKey(submenu))
+        if (!_subMenuDictionary.ContainsKey(submenu))
         {
-            var m = new ToolStripMenuItem(submenu,image);
-            _subMenuDictionary.Add(submenu,m);
+            var m = new ToolStripMenuItem(submenu, image);
+            _subMenuDictionary.Add(submenu, m);
         }
 
         return _subMenuDictionary[submenu];
@@ -157,17 +153,13 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
     public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
     {
-
         AddFactoryMenuItems();
 
         var databaseEntity = _o as DatabaseEntity;
 
         var treeMenuItem = AddMenuIfNotExists(Tree);
 
-        if(_o is IMapsDirectlyToDatabaseTable m)
-        {
-            Add(new ExecuteCommandViewCommits(_activator, m));
-        }
+        if (_o is IMapsDirectlyToDatabaseTable m) Add(new ExecuteCommandViewCommits(_activator, m));
 
         //ensure all submenus appear in the same place
         foreach (var mi in _subMenuDictionary.Values)
@@ -175,7 +167,6 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         //add plugin menu items
         foreach (var plugin in _activator.PluginUserInterfaces)
-        {
             try
             {
                 foreach (var cmd in plugin.GetAdditionalRightClickMenuItems(
@@ -188,7 +179,6 @@ public class RDMPContextMenuStrip:ContextMenuStrip
                     $"Plugin '{plugin.GetType().Name}' failed in call to 'GetAdditionalRightClickMenuItems':{Environment.NewLine}{ex.Message}",
                     CheckResult.Fail, ex));
             }
-        }
 
         //Check if we even want to display this
         if (commonFunctionality.CheckColumnProvider != null)
@@ -204,8 +194,9 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         if (databaseEntity != null)
         {
-            Add(new ExecuteCommandAddFavourite(_activator,databaseEntity));
-            Add(new ExecuteCommandAddToSession(_activator,new IMapsDirectlyToDatabaseTable[]{ databaseEntity },null));
+            Add(new ExecuteCommandAddFavourite(_activator, databaseEntity));
+            Add(new ExecuteCommandAddToSession(_activator, new IMapsDirectlyToDatabaseTable[] { databaseEntity },
+                null));
         }
 
         //add refresh and then finally help
@@ -215,9 +206,9 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
         Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
 
-        var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i=>i.Text.Equals(AtomicCommandFactory.GoTo));
+        var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text.Equals(AtomicCommandFactory.GoTo));
 
-        if(gotoMenu != null)
+        if (gotoMenu != null)
             RegisterFetchGoToObjecstCallback(gotoMenu);
 
         //ensure any new submenus still appear
@@ -245,13 +236,14 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         if (UserSettings.DebugPerformance)
         {
-            var timings = string.Join(Environment.NewLine, performance.Select(kvp => $"{kvp.Key}:{kvp.Value.TotalMilliseconds}ms"));
+            var timings = string.Join(Environment.NewLine,
+                performance.Select(kvp => $"{kvp.Key}:{kvp.Value.TotalMilliseconds}ms"));
 
             _activator.GlobalErrorCheckNotifier.OnCheckPerformed(
-                new CheckEventArgs($"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",
+                new CheckEventArgs(
+                    $"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",
                     CheckResult.Success));
         }
-
     }
 
     public void Add(IAtomicCommand toPresent)
@@ -274,20 +266,27 @@ public class RDMPContextMenuStrip:ContextMenuStrip
     {
         if (_args.Tree != null && !commonFunctionality.Settings.SuppressChildrenAdder)
         {
-            Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);
-            Add(new ExecuteCommandCollapseChildNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);
+            Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model), Keys.None,
+                treeMenuItem);
+            Add(new ExecuteCommandCollapseChildNodes(_activator, commonFunctionality, _args.Model), Keys.None,
+                treeMenuItem);
         }
+
         treeMenuItem.Enabled = treeMenuItem.HasDropDown;
     }
 
-    private void PopulateChecksMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
+    private void PopulateChecksMenu(RDMPCollectionCommonFunctionality commonFunctionality,
+        ToolStripMenuItem inspectionMenuItem)
     {
         if (commonFunctionality.CheckColumnProvider != null)
         {
             if (_o is DatabaseEntity databaseEntity)
-                Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
+                Add(
+                    new ExecuteCommandCheckAsync(_activator, databaseEntity,
+                        commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
-            var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())
+            var checkAll = new ToolStripMenuItem("Check All", null,
+                (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())
             {
                 /* The Weight of ExecuteCommandCheckAsync to ensure there is no tool strip separator*/
                 Tag = 100.4f,
@@ -299,7 +298,8 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         }
 
         // disable menu if checking is not supported in the collection or objects clicked are not checkable
-        inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown && inspectionMenuItem.DropDownItems.OfType<ToolStripMenuItem>().Any(m=>m.Enabled);
+        inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown &&
+                                     inspectionMenuItem.DropDownItems.OfType<ToolStripMenuItem>().Any(m => m.Enabled);
     }
 
     protected void Activate(DatabaseEntity o)
@@ -313,10 +313,8 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
     }
 
-    protected Image GetImage(object concept, OverlayKind shortcut = OverlayKind.None)
-    {
-        return _activator.CoreIconProvider.GetImage(concept, shortcut).ImageToBitmap();
-    }
+    protected Image GetImage(object concept, OverlayKind shortcut = OverlayKind.None) =>
+        _activator.CoreIconProvider.GetImage(concept, shortcut).ImageToBitmap();
 
     protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
     {

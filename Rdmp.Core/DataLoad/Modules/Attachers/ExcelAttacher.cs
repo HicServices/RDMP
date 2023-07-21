@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// Data load component for loading Microsoft Excel files into RAW tables.  This class relies on pipeline source component ExcelDataFlowSource for the actual
 /// reading and handles only the rationalisation of columns read vs RAW columns available.
 /// </summary>
-public class ExcelAttacher:FlatFileAttacher
+public class ExcelAttacher : FlatFileAttacher
 {
     private ExcelDataFlowSource _hostedSource;
     private DataTable _dataTable;
@@ -35,15 +35,18 @@ public class ExcelAttacher:FlatFileAttacher
     [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
     public string AddFilenameColumnNamed { get; set; }
 
-    [DemandsInitialization("Forces specific overridden headers to be for columns, this is a comma separated string that will effectively replace the column headers found in the excel file.  The number of headers MUST match the number in the original file.  This option should be used when you have a excel file with stupid names that you want to rationalise into sensible database column names")]
+    [DemandsInitialization(
+        "Forces specific overridden headers to be for columns, this is a comma separated string that will effectively replace the column headers found in the excel file.  The number of headers MUST match the number in the original file.  This option should be used when you have a excel file with stupid names that you want to rationalise into sensible database column names")]
     public string ForceReplacementHeaders { get; set; }
 
-    [DemandsInitialization("By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
+    [DemandsInitialization(
+        "By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
     private bool _haveServedData = false;
 
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         _haveServedData = false;
         _fileToLoad = fileToLoad;
@@ -53,7 +56,7 @@ public class ExcelAttacher:FlatFileAttacher
             AddFilenameColumnNamed = AddFilenameColumnNamed
         };
 
-        _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad),listener);
+        _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to start processing {fileToLoad.FullName}"));
 
@@ -62,9 +65,10 @@ public class ExcelAttacher:FlatFileAttacher
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
         {
             //split headers by , (and trim leading/trailing whitespace).
-            var replacementHeadersSplit = ForceReplacementHeaders.Split(',').Select(h=>string.IsNullOrWhiteSpace(h)?h:h.Trim()).ToArray();
+            var replacementHeadersSplit = ForceReplacementHeaders.Split(',')
+                .Select(h => string.IsNullOrWhiteSpace(h) ? h : h.Trim()).ToArray();
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
 
             if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
@@ -73,15 +77,18 @@ public class ExcelAttacher:FlatFileAttacher
                         $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {_dataTable.Columns.Count} (there must be the same number of replacement headers as headers in the excel file)"));
             else
                 for (var i = 0; i < replacementHeadersSplit.Length; i++)
-                    _dataTable.Columns[i].ColumnName = replacementHeadersSplit[i];//rename the columns to match the forced replacments
+                    _dataTable.Columns[i].ColumnName =
+                        replacementHeadersSplit[i]; //rename the columns to match the forced replacments
         }
 
         //all data should now be exhausted
-        if(_hostedSource.GetChunk(listener,cancellationToken)!= null)
-            throw new Exception("Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
+        if (_hostedSource.GetChunk(listener, cancellationToken) != null)
+            throw new Exception(
+                "Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
     }
 
-    private static string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit, DataColumnCollection columns)
+    private static string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit,
+        DataColumnCollection columns)
     {
         var sb = new StringBuilder("");
 
@@ -98,7 +105,8 @@ public class ExcelAttacher:FlatFileAttacher
         return sb.ToString();
     }
 
-    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable loadTarget, int maxBatchSize,GracefulCancellationToken cancellationToken)
+    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable loadTarget, int maxBatchSize,
+        GracefulCancellationToken cancellationToken)
     {
         if (!_haveServedData)
         {
@@ -109,26 +117,30 @@ public class ExcelAttacher:FlatFileAttacher
 
                     //column names must be the same!
                     foreach (DataColumn column in loadTarget.Columns)
-                    {
                         if (_dataTable.Columns.Contains(column.ColumnName))
                         {
-                            if (dr[column.ColumnName] == null || string.IsNullOrWhiteSpace(dr[column.ColumnName].ToString()))
+                            if (dr[column.ColumnName] == null ||
+                                string.IsNullOrWhiteSpace(dr[column.ColumnName].ToString()))
                                 targetRow[column.ColumnName] = DBNull.Value;
                             else
-                                targetRow[column.ColumnName] = dr[column.ColumnName];//copy values into the destination
+                                targetRow[column.ColumnName] = dr[column.ColumnName]; //copy values into the destination
+                        }
+                        else if
+                            (AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch) //it is an extra destination column, see if that is allowed
+                        {
+                            targetRow[column.ColumnName] = DBNull.Value;
                         }
                         else
-                        if (AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch)//it is an extra destination column, see if that is allowed
-                            targetRow[column.ColumnName] = DBNull.Value;
-                        else
+                        {
                             throw new Exception(
                                 $"Could not find column {column.ColumnName} in the source table we loaded from Excel, this should have been picked up earlier in GenerateColumnNameMismatchErrors");
-                    }
+                        }
                 }
                 catch (Exception e)
                 {
                     throw new Exception(
-                        $"Could not import values into RAW DataTable structure (from Excel DataTable structure):{string.Join(",", dr.ItemArray)}",e);
+                        $"Could not import values into RAW DataTable structure (from Excel DataTable structure):{string.Join(",", dr.ItemArray)}",
+                        e);
                 }
 
             _haveServedData = true;
@@ -137,17 +149,17 @@ public class ExcelAttacher:FlatFileAttacher
         }
 
         return 0;
-
     }
 
 
-    private void GenerateColumnNameMismatchErrors(List<string> columnsExcelButNotInDataTable, List<string> columnsInDataTableButNotInExcel)
+    private void GenerateColumnNameMismatchErrors(List<string> columnsExcelButNotInDataTable,
+        List<string> columnsInDataTableButNotInExcel)
     {
         //if there are unmatched columns in the flat file
         if (columnsExcelButNotInDataTable.Any() ||
 
             //or there are unmatched columns in the destination (and we are not happy just leaving those as null)
-            (columnsInDataTableButNotInExcel.Any() && ! AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch))
+            (columnsInDataTableButNotInExcel.Any() && !AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch))
             throw new Exception(
                 $"Mismatch between RAW table {TableName} and Excel file \"{_fileToLoad.FullName}\":{Environment.NewLine}Columns in Excel file but not in DataTable {TableName}:{Environment.NewLine}{columnsExcelButNotInDataTable.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}{Environment.NewLine}Columns in DataTable but not in Excel file \"{_fileToLoad.FullName}\":{Environment.NewLine}{columnsInDataTableButNotInExcel.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}{Environment.NewLine}{Environment.NewLine}"
             );
@@ -155,7 +167,6 @@ public class ExcelAttacher:FlatFileAttacher
 
     protected override void CloseFile()
     {
-            
     }
 
 
@@ -169,5 +180,4 @@ public class ExcelAttacher:FlatFileAttacher
             colsInSource.Except(colsInTarget).ToList(),
             colsInTarget.Except(colsInSource).ToList());
     }
-
 }

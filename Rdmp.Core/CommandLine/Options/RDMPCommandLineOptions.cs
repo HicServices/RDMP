@@ -22,40 +22,54 @@ public abstract class RDMPCommandLineOptions
 {
     private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
-    [Option(Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
+    [Option(Required = false,
+        HelpText =
+            @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
     public string ServerName { get; set; }
 
     [Option(Required = false, HelpText = "Name of the Catalogue database e.g. RDMP_Catalogue")]
     public string CatalogueDatabaseName { get; set; }
 
-    [Option( Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
+    [Option(Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
     public string DataExportDatabaseName { get; set; }
 
-    [Option(Required = false, HelpText = "Full connection string to the Catalogue database, this overrides CatalogueDatabaseName and allows custom ports, username/password etc")]
+    [Option(Required = false,
+        HelpText =
+            "Full connection string to the Catalogue database, this overrides CatalogueDatabaseName and allows custom ports, username/password etc")]
     public string CatalogueConnectionString { get; set; }
 
-    [Option(Required = false, HelpText = "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
+    [Option(Required = false,
+        HelpText =
+            "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
     public string DataExportConnectionString { get; set; }
 
-    [Option(Required = false, HelpText = "Path to the yaml file containing database connection strings.  Defaults to 'Databases.yaml'.  Explicit command line arguments (e.g. --CatalogueConnectionString) override this", Default = "Databases.yaml")]
+    [Option(Required = false,
+        HelpText =
+            "Path to the yaml file containing database connection strings.  Defaults to 'Databases.yaml'.  Explicit command line arguments (e.g. --CatalogueConnectionString) override this",
+        Default = "Databases.yaml")]
     public string ConnectionStringsFile { get; set; }
 
-    [Option(Required =false, HelpText = @"Log StartUp output")]
-    public bool LogStartup{get;set;}
+    [Option(Required = false, HelpText = @"Log StartUp output")]
+    public bool LogStartup { get; set; }
 
-    [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ", Default = CommandLineActivity.run)]
+    [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ",
+        Default = CommandLineActivity.run)]
     public CommandLineActivity Command { get; set; } = CommandLineActivity.run;
 
-    [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
+    [Option(Required = false, Default = false,
+        HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
     public bool FailOnWarnings { get; set; }
 
-    [Option(Required = false, HelpText = "Connect to an RDMP platform 'database' stored on the file system at this folder")]
+    [Option(Required = false,
+        HelpText = "Connect to an RDMP platform 'database' stored on the file system at this folder")]
     public string Dir { get; set; }
 
-    [Option('q',"quiet",Required = false, HelpText = "Suppress all console logging not directly tied to show/get value etc")]
+    [Option('q', "quiet", Required = false,
+        HelpText = "Suppress all console logging not directly tied to show/get value etc")]
     public bool Quiet { get; set; }
 
-    [Option("skip-patching", Required = false, HelpText = "Do not check to see if platform databases are out of date or suggest patching them")]
+    [Option("skip-patching", Required = false,
+        HelpText = "Do not check to see if platform databases are out of date or suggest patching them")]
     public bool SkipPatching { get; set; }
 
     /// <summary>
@@ -65,12 +79,15 @@ public abstract class RDMPCommandLineOptions
     /// </summary>
     public ConnectionStringsYamlFile ConnectionStringsFileLoaded { get; private set; }
 
-    protected const string ExampleCatalogueConnectionString = "Server=myServer;Database=RDMP_Catalogue;User Id=myUsername;Password=myPassword;";
-    protected const string ExampleDataExportConnectionString = "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
+    protected const string ExampleCatalogueConnectionString =
+        "Server=myServer;Database=RDMP_Catalogue;User Id=myUsername;Password=myPassword;";
+
+    protected const string ExampleDataExportConnectionString =
+        "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
 
     public IRDMPPlatformRepositoryServiceLocator DoStartup(ICheckNotifier checkNotifier)
     {
-        var startup = new Startup.Startup(GetRepositoryLocator()) { SkipPatching = SkipPatching};
+        var startup = new Startup.Startup(GetRepositoryLocator()) { SkipPatching = SkipPatching };
         startup.DoStartup(checkNotifier);
         return startup.RepositoryLocator;
     }
@@ -79,18 +96,13 @@ public abstract class RDMPCommandLineOptions
     {
         if (_repositoryLocator != null) return _repositoryLocator;
         if (!string.IsNullOrWhiteSpace(Dir))
-        {
             return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
-        }
 
         GetConnectionStrings(out var c, out var d);
         return _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
     }
 
-    protected virtual bool ShouldLoadHelp()
-    {
-        return false;
-    }
+    protected virtual bool ShouldLoadHelp() => false;
 
     /// <summary>
     /// Gets the connection strings that have been defined on the command line or by providing a Databases.yaml file
@@ -108,18 +120,15 @@ public abstract class RDMPCommandLineOptions
             }
             catch (Exception ex)
             {
-                throw new Exception("CatalogueConnectionString is invalid",ex);
+                throw new Exception("CatalogueConnectionString is invalid", ex);
             }
-        else
-        if (CatalogueDatabaseName != null)
-        {
+        else if (CatalogueDatabaseName != null)
             c = new SqlConnectionStringBuilder
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
                 InitialCatalog = CatalogueDatabaseName
             };
-        }
         else
             c = null;
 
@@ -132,16 +141,13 @@ public abstract class RDMPCommandLineOptions
             {
                 throw new Exception("DataExportConnectionString is invalid", ex);
             }
-        else
-        if (DataExportDatabaseName != null)
-        {
+        else if (DataExportDatabaseName != null)
             d = new SqlConnectionStringBuilder
             {
                 DataSource = ServerName,
                 IntegratedSecurity = true,
                 InitialCatalog = DataExportDatabaseName
             };
-        }
         else
             d = null;
     }
@@ -151,14 +157,12 @@ public abstract class RDMPCommandLineOptions
     /// be used (e.g. from Databases.yaml).
     /// </summary>
     /// <returns></returns>
-    public bool NoConnectionStringsSpecified()
-    {
-        return string.IsNullOrWhiteSpace(ServerName) &&
-               string.IsNullOrWhiteSpace(CatalogueDatabaseName) &&
-               string.IsNullOrWhiteSpace(DataExportDatabaseName) &&
-               string.IsNullOrWhiteSpace(CatalogueConnectionString) &&
-               string.IsNullOrWhiteSpace(DataExportConnectionString);
-    }
+    public bool NoConnectionStringsSpecified() =>
+        string.IsNullOrWhiteSpace(ServerName) &&
+        string.IsNullOrWhiteSpace(CatalogueDatabaseName) &&
+        string.IsNullOrWhiteSpace(DataExportDatabaseName) &&
+        string.IsNullOrWhiteSpace(CatalogueConnectionString) &&
+        string.IsNullOrWhiteSpace(DataExportConnectionString);
 
     public void PopulateConnectionStringsFromYamlIfMissing(ICheckNotifier notifier)
     {
@@ -166,7 +170,8 @@ public abstract class RDMPCommandLineOptions
 
         if (!NoConnectionStringsSpecified())
         {
-            logger.Info("Connection string options have been specified on command line, yaml config values will be ignored");
+            logger.Info(
+                "Connection string options have been specified on command line, yaml config values will be ignored");
             return;
         }
 
@@ -174,7 +179,6 @@ public abstract class RDMPCommandLineOptions
         var yaml = Path.Combine(assemblyFolder, ConnectionStringsFile);
 
         if (File.Exists(yaml))
-        {
             try
             {
                 var cstrs = ConnectionStringsYamlFile.LoadFrom(new FileInfo(yaml));
@@ -185,8 +189,8 @@ public abstract class RDMPCommandLineOptions
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Failed to read yaml file '{yaml}'", CheckResult.Fail,ex));
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs($"Failed to read yaml file '{yaml}'", CheckResult.Fail, ex));
             }
-        }
     }
 }

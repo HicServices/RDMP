@@ -30,14 +30,13 @@ public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",l=>l.ID);
-        Bind(tbName,"Text","Name",l=>l.Name);
-        Bind(tbDescription,"Text","Description",l=>l.Description);
+        Bind(tbID, "Text", "ID", l => l.ID);
+        Bind(tbName, "Text", "Name", l => l.Name);
+        Bind(tbDescription, "Text", "Description", l => l.Description);
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadMetadataUI_Design, UserControl>))]
 public abstract class LoadMetadataUI_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
 {
-
 }

@@ -21,12 +21,12 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 
-public class CohortCompilerRunnerTests:DatabaseTests
+public class CohortCompilerRunnerTests : DatabaseTests
 {
     [Test]
     public void CacheIdentifierListWithRunner_SimpleCase()
     {
-        SetupCohort(out var db,out var cic,out var dt);
+        SetupCohort(out var db, out var cic, out var dt);
 
         var compiler = new CohortCompiler(cic);
 
@@ -36,22 +36,22 @@ public class CohortCompilerRunnerTests:DatabaseTests
         Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
 
         var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
-            
+
         Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
         Assert.IsNull(rootTask.Key.CrashMessage);
         Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
 
-        Assert.AreEqual(dt.Rows.Count,rootTask.Value.Identifiers.Rows.Count);
+        Assert.AreEqual(dt.Rows.Count, rootTask.Value.Identifiers.Rows.Count);
     }
 
     [Test]
     public void CacheIdentifierListWithRunner_WithCaching()
     {
         SetupCohort(out var db, out var cic, out var dt);
-            
+
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
-        e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
+        e.CreateAndPatchDatabase(p, new AcceptAllCheckNotifier());
 
         var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
         serverReference.SetProperties(db);
@@ -76,6 +76,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
 
         Assert.AreEqual(dt.Rows.Count, rootTask.Value.Identifiers.Rows.Count);
     }
+
     private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)
     {
         dt = new DataTable();

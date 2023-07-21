@@ -22,25 +22,27 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential;
 /// </summary>
 public class FlatFileReleasePotential : ReleasePotential
 {
-    public FlatFileReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets): base(repositoryLocator, selectedDataSets)
+    public FlatFileReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSets) : base(repositoryLocator, selectedDataSets)
     {
     }
 
-    protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
-    {
-        return File.Exists(supplementalExtractionResults.DestinationDescription)
+    protected override Releaseability GetSupplementalSpecificAssessment(
+        IExtractionResults supplementalExtractionResults) =>
+        File.Exists(supplementalExtractionResults.DestinationDescription)
             ? Releaseability.Undefined
             : Releaseability.ExtractFilesMissing;
-    }
 
     protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
     {
         ExtractDirectory = new FileInfo(extractionResults.DestinationDescription).Directory;
         if (FilesAreMissing(extractionResults))
             return Releaseability.ExtractFilesMissing;
-            
+
         ThrowIfPollutionFoundInConfigurationRootExtractionFolder();
-        return Releaseability.Undefined;// Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
+        return
+            Releaseability
+                .Undefined; // Assesment = SqlDifferencesVsLiveCatalogue() ? Releaseability.ColumnDifferencesVsCatalogue : Releaseability.Releaseable;
     }
 
     private bool FilesAreMissing(IExtractionResults extractionResults)
@@ -49,7 +51,7 @@ public class FlatFileReleasePotential : ReleasePotential
         var metadataFile = new FileInfo(extractionResults.DestinationDescription.Replace(".csv", ".docx"));
 
         if (!ExtractFile.Exists)
-            return true;//extract is missing
+            return true; //extract is missing
 
         if (!ExtractFile.Extension.Equals(".csv"))
             throw new Exception($"Extraction file had extension '{ExtractFile.Extension}' (expected .csv)");
@@ -66,7 +68,8 @@ public class FlatFileReleasePotential : ReleasePotential
                 $"Unexpected file found in extract directory {unexpectedFile.FullName} (pollution of extract directory is not permitted)");
 
         var unexpectedDirectory = ExtractFile.Directory.EnumerateDirectories().FirstOrDefault(d =>
-            !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") || d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
+            !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") ||
+              d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
 
         return unexpectedDirectory != null
             ? throw new Exception(
@@ -76,7 +79,8 @@ public class FlatFileReleasePotential : ReleasePotential
 
     private void ThrowIfPollutionFoundInConfigurationRootExtractionFolder()
     {
-        Debug.Assert(ExtractDirectory.Parent != null, "Don't call this method until you have determined that an extracted file was actually produced!");
+        Debug.Assert(ExtractDirectory.Parent != null,
+            "Don't call this method until you have determined that an extracted file was actually produced!");
 
         if (ExtractDirectory.Parent.GetFiles().Any())
             throw new Exception(

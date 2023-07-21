@@ -56,12 +56,12 @@ public partial class PipelineDiagramUI : UserControl
         AllowSelection = false;
 
         Controls.Add(pipelineSmiley);
-        pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
+        pipelineSmiley.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         pipelineSmiley.Left = Width - pipelineSmiley.Width - 1;
         pipelineSmiley.Top = 1;
         pipelineSmiley.BringToFront();
 
-        _deleteSelectedMenuItem = new ToolStripMenuItem("Delete selected component",null, DeleteSelectedComponent)
+        _deleteSelectedMenuItem = new ToolStripMenuItem("Delete selected component", null, DeleteSelectedComponent)
         {
             ShortcutKeys = Keys.Delete,
             Enabled = false
@@ -74,8 +74,8 @@ public partial class PipelineDiagramUI : UserControl
     private void DeleteSelectedComponent(object sender, EventArgs e)
     {
         if (SelectedComponent != null)
-        {
-            if(MessageBox.Show($"Do you want to delete {SelectedComponent.Class}?","Confirm Delete",MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Do you want to delete {SelectedComponent.Class}?", "Confirm Delete",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 //if they are deleting the destination
                 if (SelectedComponent.ID == _pipeline.DestinationPipelineComponent_ID)
@@ -97,22 +97,21 @@ public partial class PipelineDiagramUI : UserControl
                 SelectedComponent = null;
                 _deleteSelectedMenuItem.Enabled = false;
             }
-        }
     }
 
 
     public void RefreshUIFromDatabase()
     {
-        SetTo(_pipeline,_useCase);
+        SetTo(_pipeline, _useCase);
     }
 
 
     public void Clear()
     {
         _pipeline = null;
-        if (_useCase == null)//it is already cleared?
+        if (_useCase == null) //it is already cleared?
             return;
-        SetTo(null,_useCase);
+        SetTo(null, _useCase);
     }
 
     public void SetTo(IPipeline pipeline, IPipelineUseCase useCase)
@@ -131,7 +130,7 @@ public partial class PipelineDiagramUI : UserControl
 
         var factory = new AtomicCommandUIFactory(_activator);
 
-        foreach(var o in _useCase.GetInitializationObjects().Reverse())
+        foreach (var o in _useCase.GetInitializationObjects().Reverse())
         {
             var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
             pInitializationObjects.Controls.Add(b);
@@ -147,12 +146,12 @@ public partial class PipelineDiagramUI : UserControl
                     _pipelineFactory = new DataFlowPipelineEngineFactory(_useCase, _pipeline);
 
                     //create it
-                    var pipelineInstance = _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
+                    var pipelineInstance =
+                        _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
 
                     //initialize it (unless it is design time)
-                    if(!_useCase.IsDesignTime)
+                    if (!_useCase.IsDesignTime)
                         pipelineInstance.Initialize(_useCase.GetInitializationObjects().ToArray());
-
                 }
                 catch (Exception ex)
                 {
@@ -163,32 +162,40 @@ public partial class PipelineDiagramUI : UserControl
 
                 //was there an explicit instance?
                 if (_useCase.ExplicitSource != null)
-                    AddExplicit(_useCase.ExplicitSource);//if so add it
+                    AddExplicit(_useCase.ExplicitSource); //if so add it
                 else
                     //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.SourcePipelineComponent_ID != null)
-                    AddPipelineComponent((int) pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
+                    AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
+                        pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
                 else
-                    AddBlankComponent(PipelineComponentRole.Source);//the user hasn't put one in yet
+                    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet
 
 
-                foreach (var middleComponent in pipeline.PipelineComponents.Where( c=>c.ID!= pipeline.SourcePipelineComponent_ID && c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp=>comp.Order))
-                    AddPipelineComponent(middleComponent, PipelineComponentRole.Middle);//add the possibly broken PipelineComponent to the diagram
+                foreach (var middleComponent in pipeline.PipelineComponents.Where(c =>
+                             c.ID != pipeline.SourcePipelineComponent_ID &&
+                             c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp => comp.Order))
+                    AddPipelineComponent(middleComponent,
+                        PipelineComponentRole.Middle); //add the possibly broken PipelineComponent to the diagram
 
                 //was there an explicit instance?
                 if (_useCase.ExplicitDestination != null)
                 {
                     AddDividerIfReorderingAvailable();
-                    AddExplicit(_useCase.ExplicitDestination);//if so add it
+                    AddExplicit(_useCase.ExplicitDestination); //if so add it
                 }
                 else
                     //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.DestinationPipelineComponent_ID != null)
-                    AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID, PipelineComponentRole.Destination, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
+                {
+                    AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID,
+                        PipelineComponentRole.Destination,
+                        pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
+                }
                 else
                 {
                     AddDividerIfReorderingAvailable();
-                    AddBlankComponent(PipelineComponentRole.Destination);//the user hasn't put one in yet
+                    AddBlankComponent(PipelineComponentRole.Destination); //the user hasn't put one in yet
                 }
 
 
@@ -232,9 +239,10 @@ public partial class PipelineDiagramUI : UserControl
             AddDividerIfReorderingAvailable();
 
         //create the visualization
-        var component = new PipelineComponentVisualisation(toRealize, role, value, exConstruction, component_shouldAllowDrop);
+        var component =
+            new PipelineComponentVisualisation(toRealize, role, value, exConstruction, component_shouldAllowDrop);
         component.DragDrop += component_DragDrop;
-        flpPipelineDiagram.Controls.Add(component);//add the component
+        flpPipelineDiagram.Controls.Add(component); //add the component
 
         //try to initialize the realization (we do this after creating visualization so that when the events come in we can record where on UI the consumption events happen and also because later on it might be that initialization takes ages and we want to use a Thread)
         if (value != null)
@@ -242,7 +250,8 @@ public partial class PipelineDiagramUI : UserControl
             {
                 if (!_useCase.IsDesignTime)
                 {
-                    _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, value, _useCase.GetInitializationObjects().ToArray());
+                    _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, value,
+                        _useCase.GetInitializationObjects().ToArray());
                     component.Check();
                 }
 
@@ -269,7 +278,7 @@ public partial class PipelineDiagramUI : UserControl
 
     private void AddDividerIfReorderingAvailable()
     {
-        if(!AllowReOrdering)
+        if (!AllowReOrdering)
             return;
 
         var divider = new DividerLineControl(dividerLine_shouldAllowDrop);
@@ -291,7 +300,7 @@ public partial class PipelineDiagramUI : UserControl
         foreach (var componentVisualisation in flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>())
             componentVisualisation.IsSelected = false;
 
-        ((PipelineComponentVisualisation) sender).IsSelected = true;
+        ((PipelineComponentVisualisation)sender).IsSelected = true;
         SelectedComponentChanged?.Invoke(this, selected);
 
         Focus();
@@ -299,21 +308,21 @@ public partial class PipelineDiagramUI : UserControl
 
     private void AddExplicit(object value)
     {
-
         var role = PipelineComponent.GetRoleFor(value.GetType());
 
-        var component = new DataFlowComponentVisualisation(role,value,null);
-        flpPipelineDiagram.Controls.Add(component);//add the explicit component
+        var component = new DataFlowComponentVisualisation(role, value, null);
+        flpPipelineDiagram.Controls.Add(component); //add the explicit component
         component.IsLocked = true;
         try
         {
             if (!_useCase.IsDesignTime)
-                _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, component.Value, _useCase.GetInitializationObjects().ToArray());
+                _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, component.Value,
+                    _useCase.GetInitializationObjects().ToArray());
         }
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"PreInitialize failed on Explicit (locked component) {component.Value.GetType().Name}",e);
+                $"PreInitialize failed on Explicit (locked component) {component.Value.GetType().Name}", e);
         }
     }
 
@@ -324,12 +333,12 @@ public partial class PipelineDiagramUI : UserControl
         flpPipelineDiagram.Controls.Add(toAdd);
     }
 
-    private DragDropEffects component_shouldAllowDrop(DragEventArgs arg,DataFlowComponentVisualisation sender)
+    private DragDropEffects component_shouldAllowDrop(DragEventArgs arg, DataFlowComponentVisualisation sender)
     {
         var obj = GetAdvertisedObjectFromDragOperation(arg);
 
         //if they are dragging a new component
-        if(obj != null)
+        if (obj != null)
             //of the correct role and the source/destination is empty
             if (sender.Value == null && obj.GetRole() == sender.GetRole())
                 return DragDropEffects.Move;
@@ -368,11 +377,13 @@ public partial class PipelineDiagramUI : UserControl
         var divider = (DividerLineControl)sender;
 
         if (GetAdvertisedObjectFromDragOperation(e) != null)
-            AddAdvertisedComponent(e,divider);
+        {
+            AddAdvertisedComponent(e, divider);
+        }
         else
         {
             var forReorder = (PipelineComponentVisualisation)e.Data.GetData(typeof(PipelineComponentVisualisation));
-            HandleReorder(forReorder,divider);
+            HandleReorder(forReorder, divider);
         }
 
         RefreshUIFromDatabase();
@@ -380,11 +391,11 @@ public partial class PipelineDiagramUI : UserControl
 
     private void HandleReorder(PipelineComponentVisualisation forReorder, DividerLineControl divider)
     {
-        forReorder.PipelineComponent.Order =  GetOrderMakingSpaceIfNessesary(forReorder,divider);
+        forReorder.PipelineComponent.Order = GetOrderMakingSpaceIfNessesary(forReorder, divider);
         forReorder.PipelineComponent.SaveToDatabase();
     }
 
-    private void AddAdvertisedComponent(DragEventArgs e,DividerLineControl divider)
+    private void AddAdvertisedComponent(DragEventArgs e, DividerLineControl divider)
     {
         var advert = GetAdvertisedObjectFromDragOperation(e);
 
@@ -437,13 +448,15 @@ public partial class PipelineDiagramUI : UserControl
         RefreshUIFromDatabase();
 
 
-        var viz = flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>().Single(v => Equals(v.PipelineComponent, newcomp));
+        var viz = flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>()
+            .Single(v => Equals(v.PipelineComponent, newcomp));
 
         component_Selected(viz, newcomp);
     }
 
 
-    private int GetOrderMakingSpaceIfNessesary(PipelineComponentVisualisation beingReorderedIfAny, DividerLineControl divider)
+    private int GetOrderMakingSpaceIfNessesary(PipelineComponentVisualisation beingReorderedIfAny,
+        DividerLineControl divider)
     {
         var newOrder = 0;
         var toReturn = 0;
@@ -478,11 +491,9 @@ public partial class PipelineDiagramUI : UserControl
         return toReturn;
     }
 
-    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
-    {
-        return e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
-            dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context
+    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e) =>
+        e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
+        dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context
             ? context
             : null;
-    }
 }

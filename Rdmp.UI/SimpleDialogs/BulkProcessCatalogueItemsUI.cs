@@ -53,7 +53,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
         olvName.ImageGetter += ImageGetter;
 
-        ddExtractionCategory.DataSource = Enum.GetValues(typeof (ExtractionCategory));
+        ddExtractionCategory.DataSource = Enum.GetValues(typeof(ExtractionCategory));
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -76,14 +76,10 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         cbTableInfos.Items.AddRange(_catalogue.GetTableInfoList(true));
     }
 
-    private Bitmap ImageGetter(object rowObject)
-    {
-        return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
-    }
+    private Bitmap ImageGetter(object rowObject) => Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
 
     private void groupBox2_Enter(object sender, EventArgs e)
     {
-
     }
 
     private void lbPastedColumns_KeyUp(object sender, KeyEventArgs e)
@@ -105,9 +101,9 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
     private void btnApplyTransform_Click(object sender, EventArgs e)
     {
-
-        if(rbDelete.Checked)
-            if(MessageBox.Show("Are you sure you want to delete?","Confirm delete",MessageBoxButtons.YesNo) != DialogResult.Yes)
+        if (rbDelete.Checked)
+            if (MessageBox.Show("Are you sure you want to delete?", "Confirm delete", MessageBoxButtons.YesNo) !=
+                DialogResult.Yes)
                 return;
 
         ColumnInfo[] guessPoolColumnInfo = null;
@@ -129,11 +125,10 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         var countOfColumnInfoAssociationsCreated = 0;
 
         foreach (CatalogueItem catalogueItem in olvCatalogueItems.Objects)
-        {
             if (ShouldTransformCatalogueItem(catalogueItem))
             {
                 //bulk operation is delete
-                if(rbDelete.Checked)
+                if (rbDelete.Checked)
                 {
                     catalogueItem.DeleteInDatabase();
                     deleteCount++;
@@ -161,7 +156,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     var guesses = catalogueItem.GuessAssociatedColumn(guessPoolColumnInfo).ToArray();
 
                     //exact matches are straight up accepted
-                    if(guesses.Length == 1)
+                    if (guesses.Length == 1)
                     {
                         catalogueItem.SetColumnInfo(guesses[0]);
                         countOfColumnInfoAssociationsCreated++;
@@ -169,16 +164,17 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     else
                     {
                         //multiple matches so ask the user what one he wants
-                        for (var i = 0; i < guesses.Length; i++) //note that this sneakily also deals with case where guesses is empty
-                        {
+                        for (var i = 0;
+                             i < guesses.Length;
+                             i++) //note that this sneakily also deals with case where guesses is empty
                             if (Activator.YesNo(
-                                    $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}", "Multiple matched guesses"))
+                                    $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",
+                                    "Multiple matched guesses"))
                             {
                                 catalogueItem.SetColumnInfo(guesses[i]);
                                 countOfColumnInfoAssociationsCreated++;
                                 break;
                             }
-                        }
                     }
                 }
 
@@ -196,11 +192,10 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     if (catalogueItem.ExtractionInformation != null)
                     {
                         //unless user wants to do reckless recategorisation
-                        if(cbRecategorise.Checked)
+                        if (cbRecategorise.Checked)
                         {
-
                             var ei = catalogueItem.ExtractionInformation;
-                            ei.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
+                            ei.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
                             ei.SaveToDatabase();
                         }
 
@@ -208,25 +203,25 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     }
 
                     //we got to here so we have a legit 1 column info to cataitem we can enable for extraction
-                    var created = new ExtractionInformation((CatalogueRepository) catalogueItem.Repository, catalogueItem, col, null);
+                    var created = new ExtractionInformation((CatalogueRepository)catalogueItem.Repository,
+                        catalogueItem, col, null);
 
-                    if(ddExtractionCategory.SelectedItem != null)
+                    if (ddExtractionCategory.SelectedItem != null)
                     {
-                        created.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
+                        created.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
                         created.SaveToDatabase();
                     }
 
                     countExtractionInformationsCreated++;
                 }
             }
-        }
 
         var message = "";
 
         if (deleteCount != 0)
             message += $"Performed {deleteCount} delete operations{Environment.NewLine}";
 
-        if (countExtractionInformationsCreated !=0)
+        if (countExtractionInformationsCreated != 0)
             message += $"Created  {countExtractionInformationsCreated} ExtractionInformations{Environment.NewLine}";
 
         if (countOfColumnInfoAssociationsCreated != 0)
@@ -242,10 +237,8 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
     }
 
 
-    private bool ShouldTransformCatalogueItem(CatalogueItem catalogueItem)
-    {
-        return olvCatalogueItems.FilteredObjects.Cast<CatalogueItem>().Contains(catalogueItem);
-    }
+    private bool ShouldTransformCatalogueItem(CatalogueItem catalogueItem) =>
+        olvCatalogueItems.FilteredObjects.Cast<CatalogueItem>().Contains(catalogueItem);
 
     private void btnClear_Click(object sender, EventArgs e)
     {
@@ -265,7 +258,6 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
     private void rbMarkExtractable_CheckedChanged(object sender, EventArgs e)
     {
-
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
@@ -288,11 +280,12 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 filter.RegexOptions = RegexOptions.IgnoreCase;
                 filter.RegexStrings = new List<string> { $"^{item}$" };
             }
+
             orFilters.Add(filter);
         }
 
 
-        filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text,StringComparison.CurrentCultureIgnoreCase));
+        filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text, StringComparison.CurrentCultureIgnoreCase));
 
         if (orFilters.Any())
             filters.Add(new CompositeAnyFilter(orFilters));

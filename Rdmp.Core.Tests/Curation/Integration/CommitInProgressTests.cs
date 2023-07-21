@@ -27,8 +27,8 @@ public class CommitInProgressTests : DatabaseTests
         c.SaveToDatabase();
 
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
-            
-        Assert.IsNull(start.TryFinish(activator),"No changes made to Catalogue so expected no commit");
+
+        Assert.IsNull(start.TryFinish(activator), "No changes made to Catalogue so expected no commit");
 
         c.Name = "abadaba";
         c.IsDeprecated = true;
@@ -51,7 +51,7 @@ public class CommitInProgressTests : DatabaseTests
     {
         var c = new Catalogue(CatalogueRepository, "Hey");
 
-        Assert.AreEqual(ChangeDescription.NoChanges,c.HasLocalChanges().Evaluation,
+        Assert.AreEqual(ChangeDescription.NoChanges, c.HasLocalChanges().Evaluation,
             "We just created this Catalogue, how can db copy be different?!");
 
         var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c)

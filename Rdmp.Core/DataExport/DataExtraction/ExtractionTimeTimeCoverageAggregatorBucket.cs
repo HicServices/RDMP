@@ -49,12 +49,12 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
     {
         CountOfTimesSeen++;
 
-        if(identifier == DBNull.Value)
+        if (identifier == DBNull.Value)
             return;
 
-        if(identifier == null)
+        if (identifier == null)
             return;
-            
+
         _identifiersSeen.Add(identifier);
     }
 

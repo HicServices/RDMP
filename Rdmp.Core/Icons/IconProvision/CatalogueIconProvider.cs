@@ -46,7 +46,8 @@ public class CatalogueIconProvider : ICoreIconProvider
         _pluginIconProviders = pluginIconProviders;
         ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
-        StateBasedIconProviders.Add(CatalogueStateBasedIconProvider = new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
+        StateBasedIconProviders.Add(CatalogueStateBasedIconProvider =
+            new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
         StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
         StateBasedIconProviders.Add(new ExtractableColumnStateBasedIconProvider());
         StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
@@ -70,12 +71,10 @@ public class CatalogueIconProvider : ICoreIconProvider
         StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
     }
 
-    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
-    {
-        return concept is IDisableable { IsDisabled: true }
+    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None) =>
+        concept is IDisableable { IsDisabled: true }
             ? IconOverlayProvider.GetGreyscale(GetImageImpl(concept, kind))
             : GetImageImpl(concept, kind);
-    }
 
     protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
     {
@@ -92,7 +91,7 @@ public class CatalogueIconProvider : ICoreIconProvider
                 return null; //it's a string but an unhandled one so give them null back
         }
 
-        if(concept.GetType().IsGenericType && concept.GetType().GetGenericTypeDefinition() == typeof(FolderNode<>))
+        if (concept.GetType().IsGenericType && concept.GetType().GetGenericTypeDefinition() == typeof(FolderNode<>))
             return GetImage(RDMPConcept.CatalogueFolder, kind);
 
         //if they already passed in an image just return it back (optionally with the overlay).
@@ -162,10 +161,9 @@ public class CatalogueIconProvider : ICoreIconProvider
         if (ReferenceEquals(concept, typeof(PipelineCompatibleWithUseCaseNode)))
             return GetImageImpl(RDMPConcept.Pipeline);
 
-        foreach (var bmp in StateBasedIconProviders.Select(stateBasedIconProvider => stateBasedIconProvider.GetImageIfSupportedObject(concept)).Where(bmp => bmp != null))
-        {
-            return GetImageImpl(bmp, kind);
-        }
+        foreach (var bmp in StateBasedIconProviders
+                     .Select(stateBasedIconProvider => stateBasedIconProvider.GetImageIfSupportedObject(concept))
+                     .Where(bmp => bmp != null)) return GetImageImpl(bmp, kind);
 
         var conceptTypeName = concept.GetType().Name;
 
@@ -173,7 +171,7 @@ public class CatalogueIconProvider : ICoreIconProvider
 
         //It is a System.Type, get the name and see if there's a corresponding image
         if (concept is Type type)
-            if (TryParseTypeNameToRdmpConcept(type,out t))
+            if (TryParseTypeNameToRdmpConcept(type, out t))
                 return GetImageImpl(ImagesCollection[t], kind);
 
         //It is an instance of something, get the System.Type and see if there's a corresponding image
@@ -185,8 +183,8 @@ public class CatalogueIconProvider : ICoreIconProvider
             //if the object is masquerading as something else
             case IMasqueradeAs @as:
             {
-                    //get what it's masquerading as
-                    var masqueradingAs = @as.MasqueradingAs();
+                //get what it's masquerading as
+                var masqueradingAs = @as.MasqueradingAs();
 
                 //provided we don't have a circular reference here!
                 if (masqueradingAs is not IMasqueradeAs)
@@ -199,32 +197,22 @@ public class CatalogueIconProvider : ICoreIconProvider
 
 
         return ImageUnknown;
-
     }
 
     private static bool TryParseTypeNameToRdmpConcept(Type type, out RDMPConcept t)
     {
         // is it a known Type like Project
-        if(Enum.TryParse(type.Name, out t))
-        {
-            return true;
-        }
+        if (Enum.TryParse(type.Name, out t)) return true;
 
         // try trimming the I off of IProject
-        if(type.IsInterface && Enum.TryParse(type.Name[1..], out t))
-        {
-            return true;
-        }
+        if (type.IsInterface && Enum.TryParse(type.Name[1..], out t)) return true;
 
         // we don't have a known icon for the Type yet
         return false;
     }
 
     /// <inheritdoc/>
-    public bool HasIcon(object o)
-    {
-        return GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
-    }
+    public bool HasIcon(object o) => GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
 
     public static RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
     {
@@ -248,10 +236,8 @@ public class CatalogueIconProvider : ICoreIconProvider
     /// <param name="t"></param>
     /// <param name="concept"></param>
     /// <returns></returns>
-    public static bool ConceptIs(Type t, object concept)
-    {
-        return t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
-    }
+    public static bool ConceptIs(Type t, object concept) =>
+        t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
 
 
     /// <summary>
@@ -275,8 +261,6 @@ public class CatalogueIconProvider : ICoreIconProvider
         return imageList;
     }
 
-    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
-    {
-        return kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
-    }
+    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind) =>
+        kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
 }

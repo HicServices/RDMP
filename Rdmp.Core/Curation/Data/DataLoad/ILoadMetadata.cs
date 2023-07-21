@@ -36,7 +36,7 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// <summary>
     /// Set to true to ignore the requirement for live tables to need the backup archive trigger
     /// </summary>
-    bool IgnoreTrigger {get;}
+    bool IgnoreTrigger { get; }
 
     /// <summary>
     /// Optional - Overrides the <see cref="ServerDefaults"/> RAWDataLoadServer with an explicit RAW server to use this load only.

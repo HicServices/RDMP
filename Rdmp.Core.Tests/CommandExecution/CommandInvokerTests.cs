@@ -21,10 +21,10 @@ public class CommandInvokerTests : UnitTests
     [Timeout(5000)]
     public void Test_ListSupportedCommands_NoPicker()
     {
-        var mgr =  GetActivator();
+        var mgr = GetActivator();
         var invoker = new CommandInvoker(mgr);
-            
-        invoker.ExecuteCommand(typeof(ExecuteCommandListSupportedCommands),null);
+
+        invoker.ExecuteCommand(typeof(ExecuteCommandListSupportedCommands), null);
     }
 
     [Test]
@@ -36,8 +36,8 @@ public class CommandInvokerTests : UnitTests
 
         WhenIHaveA<Catalogue>();
 
-        var picker = new CommandLineObjectPicker(new[] {"Catalogue:*"}, mgr);
-        invoker.ExecuteCommand(typeof(ExecuteCommandDelete),picker);
+        var picker = new CommandLineObjectPicker(new[] { "Catalogue:*" }, mgr);
+        invoker.ExecuteCommand(typeof(ExecuteCommandDelete), picker);
     }
 
     [Test]
@@ -49,19 +49,15 @@ public class CommandInvokerTests : UnitTests
 
         WhenIHaveA<Catalogue>();
 
-        invoker.ExecuteCommand(typeof(GenericTestCommand<DatabaseEntity>),GetPicker("Catalogue:*"));
-        invoker.ExecuteCommand(typeof(GenericTestCommand<Type>),GetPicker("Pipeline"));
-        invoker.ExecuteCommand(typeof(GenericTestCommand<DiscoveredDatabase,bool>),
+        invoker.ExecuteCommand(typeof(GenericTestCommand<DatabaseEntity>), GetPicker("Catalogue:*"));
+        invoker.ExecuteCommand(typeof(GenericTestCommand<Type>), GetPicker("Pipeline"));
+        invoker.ExecuteCommand(typeof(GenericTestCommand<DiscoveredDatabase, bool>),
             GetPicker(
                 "DatabaseType:MicrosoftSqlServer:Name:imaging:Server=localhost\\sqlexpress;Database=master;Trusted_Connection=True;",
                 "true"));
-            
     }
 
-    private CommandLineObjectPicker GetPicker(params string[] args)
-    {
-        return new CommandLineObjectPicker(args, GetActivator());
-    }
+    private CommandLineObjectPicker GetPicker(params string[] args) => new(args, GetActivator());
 
     private class GenericTestCommand<T> : BasicCommandExecution
     {
@@ -80,7 +76,7 @@ public class CommandInvokerTests : UnitTests
         }
     }
 
-    private class GenericTestCommand<T1,T2> : BasicCommandExecution
+    private class GenericTestCommand<T1, T2> : BasicCommandExecution
     {
         private readonly T1 _a;
         private readonly T2 _b;

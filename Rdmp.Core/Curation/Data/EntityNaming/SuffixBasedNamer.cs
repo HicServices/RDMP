@@ -17,10 +17,10 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
 {
     protected static readonly Dictionary<LoadBubble, string> Suffixes = new()
     {
-        {LoadBubble.Raw, ""},
-        {LoadBubble.Staging, "_STAGING"},
-        {LoadBubble.Live, ""},
-        {LoadBubble.Archive, "_Archive"}
+        { LoadBubble.Raw, "" },
+        { LoadBubble.Staging, "_STAGING" },
+        { LoadBubble.Live, "" },
+        { LoadBubble.Archive, "_Archive" }
     };
 
     /// <inheritdoc/>
@@ -36,11 +36,8 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
     }
 
     /// <inheritdoc/>
-    public virtual string GetName(string tableName, LoadBubble convention)
-    {
-        return !Suffixes.ContainsKey(convention)
+    public virtual string GetName(string tableName, LoadBubble convention) =>
+        !Suffixes.ContainsKey(convention)
             ? throw new ArgumentException($"Do not have a suffix for convention: {convention}")
             : tableName + Suffixes[convention];
-    }
-
 }

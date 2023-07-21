@@ -45,7 +45,6 @@ internal class TableNamingConventionTests : DatabaseTests
         Assert.IsTrue(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
 
         tableInfoAfter.DeleteInDatabase();
-            
     }
 
     [Test]
@@ -60,5 +59,4 @@ internal class TableNamingConventionTests : DatabaseTests
         var newLookupTable = namingScheme.GetName(baseTableName, LoadBubble.Live);
         Assert.AreEqual("MyTable", newLookupTable);
     }
-
 }

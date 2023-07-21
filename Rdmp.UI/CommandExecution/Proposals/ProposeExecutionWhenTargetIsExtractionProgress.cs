@@ -15,21 +15,17 @@ internal class ProposeExecutionWhenTargetIsExtractionProgress : RDMPCommandExecu
 {
     public ProposeExecutionWhenTargetIsExtractionProgress(IActivateItems itemActivator) : base(itemActivator)
     {
+    }
 
-    }
-    public override bool CanActivate(ExtractionProgress target)
-    {
-        return true;
-    }
+    public override bool CanActivate(ExtractionProgress target) => true;
 
     public override void Activate(ExtractionProgress target)
     {
         ItemActivator.Activate<ExtractionProgressUI, ExtractionProgress>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionProgress target, InsertOption insertOption = InsertOption.Default)
-    {
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionProgress target,
+        InsertOption insertOption = InsertOption.Default) =>
         // no drag and drop support
-        return null;
-    }
+        null;
 }

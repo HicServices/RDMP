@@ -18,25 +18,28 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
-        : this (activator,new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
+    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator,
+        AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
+        : this(activator, new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
     {
-
     }
 
-    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator,
+        AggregateConfigurationCombineable sourceAggregateCommand,
+        CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
     {
         _sourceAggregateCommand = sourceAggregateCommand;
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-        if (!_sourceAggregateCommand.CohortIdentificationConfigurationIfAny.Equals(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
+        if (!_sourceAggregateCommand.CohortIdentificationConfigurationIfAny.Equals(_targetCohortAggregateContainer
+                .GetCohortIdentificationConfiguration()))
             SetImpossible("Aggregate belongs to a different CohortIdentificationConfiguration");
-            
-        if(_sourceAggregateCommand.JoinableUsersIfAny.Any())
+
+        if (_sourceAggregateCommand.JoinableUsersIfAny.Any())
             SetImpossible(
                 $"The following Cohort Set(s) use this PatientIndex table:{string.Join(",", _sourceAggregateCommand.JoinableUsersIfAny.Select(j => j.ToString()))}");
 
-        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+        if (_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 

@@ -12,9 +12,8 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 
 public class TestAcronymGeneration : DatabaseTests
 {
-
     [Test]
-    [TestCase("bob","bob")]
+    [TestCase("bob", "bob")]
     [TestCase("Demography", "Demog")]
     [TestCase("DMPCatalogue", "DMPC")]
     [TestCase("Datasheet1", "D1")]
@@ -26,6 +25,6 @@ public class TestAcronymGeneration : DatabaseTests
 
         var suggestion = DitaCatalogueExtractor.GetAcronymSuggestionFromCatalogueName(name);
 
-        Assert.AreEqual(predictedAcronym,suggestion);
+        Assert.AreEqual(predictedAcronym, suggestion);
     }
 }

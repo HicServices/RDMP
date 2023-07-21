@@ -42,9 +42,6 @@ public class ExplicitDatabaseNameChecker
                 "PlatformDatabaseCreationOptions.cs",
                 "PackOptions.cs",
                 "PasswordEncryptionKeyLocation.cs"
-
-
-
             }); //allowed because it's default arguments for CLI
 
         prohibitedStrings.Add("TEST_");
@@ -52,7 +49,7 @@ public class ExplicitDatabaseNameChecker
 
         foreach (var file in csFilesFound)
         {
-            if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
+            if (ignoreList.Any(str => str.Equals(Path.GetFileName(file))))
                 continue;
 
             var contents = File.ReadAllText(file);
@@ -68,6 +65,6 @@ public class ExplicitDatabaseNameChecker
             Console.WriteLine(
                 $"FAIL: File '{kvp.Key}' contains a reference to an explicitly prohibited database name string ('{kvp.Value}')");
 
-        Assert.AreEqual(0,problemFiles.Count);
+        Assert.AreEqual(0, problemFiles.Count);
     }
 }

@@ -12,7 +12,7 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// <summary>
 /// Records the fact that the user visited a specific <see cref="DockContent"/> (Tab)
 /// </summary>
-public class TabNavigation: INavigation
+public class TabNavigation : INavigation
 {
     public DockContent Tab { get; }
 
@@ -32,22 +32,18 @@ public class TabNavigation: INavigation
     {
         Tab.Close();
     }
-    public override string ToString()
-    {
-        return Tab.TabText;
-    }
 
-    public override bool Equals(object obj)
-    {
-        return obj is TabNavigation navigation &&
-               EqualityComparer<DockContent>.Default.Equals(Tab, navigation.Tab);
-    }
+    public override string ToString() => Tab.TabText;
+
+    public override bool Equals(object obj) =>
+        obj is TabNavigation navigation &&
+        EqualityComparer<DockContent>.Default.Equals(Tab, navigation.Tab);
 
     public override int GetHashCode()
     {
         unchecked
         {
             return -2031380020 + EqualityComparer<DockContent>.Default.GetHashCode(Tab);
-        }            
+        }
     }
 }

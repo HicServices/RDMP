@@ -19,11 +19,10 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// 
 /// <para>For this to work the AggregateDimension output data should be of type a date also.</para>
 /// </summary>
-public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
+public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
 {
-
-
     #region Database Properties
+
     private int _aggregateDimensionID;
     private string _startDate;
     private string _endDate;
@@ -37,7 +36,7 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     public int AggregateDimension_ID
     {
         get => _aggregateDimensionID;
-        set => SetField(ref  _aggregateDimensionID, value);
+        set => SetField(ref _aggregateDimensionID, value);
     }
 
     /// <summary>
@@ -46,7 +45,7 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     public string StartDate
     {
         get => _startDate;
-        set => SetField(ref  _startDate, value);
+        set => SetField(ref _startDate, value);
     }
 
     /// <summary>
@@ -55,7 +54,7 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     public string EndDate
     {
         get => _endDate;
-        set => SetField(ref  _endDate, value);
+        set => SetField(ref _endDate, value);
     }
 
     /// <summary>
@@ -64,12 +63,13 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     public AxisIncrement AxisIncrement
     {
         get => _axisIncrement;
-        set => SetField(ref  _axisIncrement, value);
+        set => SetField(ref _axisIncrement, value);
     }
 
     #endregion
 
     #region Relationships
+
     /// <inheritdoc cref="AggregateDimension_ID"/>
     [NoMappingToDatabase]
     public AggregateDimension AggregateDimension => Repository.GetObjectByID<AggregateDimension>(AggregateDimension_ID);
@@ -78,7 +78,6 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
 
     public AggregateContinuousDateAxis()
     {
-
     }
 
     /// <summary>
@@ -88,30 +87,27 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
     /// <remarks>To use this you will first have to create an AggregateConfiguration and setup the count(*)/sum(*) etc stuff and then add a new AggregateDimension <see cref="AggregateConfiguration.AddDimension"/> </remarks>
     /// <param name="repository"></param>
     /// <param name="dimension"></param>
-    public AggregateContinuousDateAxis(ICatalogueRepository repository,AggregateDimension dimension)
+    public AggregateContinuousDateAxis(ICatalogueRepository repository, AggregateDimension dimension)
     {
-        var todaysDateFunction = dimension.AggregateConfiguration.GetQuerySyntaxHelper().GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+        var todaysDateFunction = dimension.AggregateConfiguration.GetQuerySyntaxHelper()
+            .GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
 
         repository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
-                {"AggregateDimension_ID",dimension.ID},
-                {"EndDate",todaysDateFunction}
-
+                { "AggregateDimension_ID", dimension.ID },
+                { "EndDate", todaysDateFunction }
             });
     }
 
     /// <inheritdoc/>
-    internal AggregateContinuousDateAxis(ICatalogueRepository repository,DbDataReader r) : base(repository,r)
+    internal AggregateContinuousDateAxis(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         AggregateDimension_ID = int.Parse(r["AggregateDimension_ID"].ToString());
         StartDate = r["StartDate"].ToString();
         EndDate = r["EndDate"].ToString();
-        AxisIncrement = (AxisIncrement) r["AxisIncrement"];
+        AxisIncrement = (AxisIncrement)r["AxisIncrement"];
     }
 
-    public override string ToString()
-    {
-        return "Axis";
-    }
+    public override string ToString() => "Axis";
 }

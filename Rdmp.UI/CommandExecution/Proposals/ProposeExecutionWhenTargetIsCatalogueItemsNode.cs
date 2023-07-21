@@ -19,16 +19,14 @@ internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecu
     {
     }
 
-    public override bool CanActivate(CatalogueItemsNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(CatalogueItemsNode target) => false;
 
     public override void Activate(CatalogueItemsNode target)
     {
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {

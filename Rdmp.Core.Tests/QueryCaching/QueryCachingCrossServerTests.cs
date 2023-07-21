@@ -26,14 +26,14 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 
-internal class QueryCachingCrossServerTests: TestsRequiringA
+internal class QueryCachingCrossServerTests : TestsRequiringA
 {
-    [TestCase(DatabaseType.MicrosoftSQLServer,typeof(QueryCachingPatcher))]
+    [TestCase(DatabaseType.MicrosoftSQLServer, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.PostgreSql, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MicrosoftSQLServer, typeof(DataQualityEnginePatcher))]
-    public void Create_QueryCache(DatabaseType dbType,Type patcherType)
+    public void Create_QueryCache(DatabaseType dbType, Type patcherType)
     {
         var db = GetCleanedServer(dbType);
 
@@ -49,15 +49,14 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// second server is the cache server
     /// </summary>
     /// <param name="dbType"></param>
-    [TestCase(DatabaseType.MySql,true)]
-    [TestCase(DatabaseType.MySql,false)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+    [TestCase(DatabaseType.MySql, true)]
+    [TestCase(DatabaseType.MySql, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
     //[TestCase(DatabaseType.Oracle,true)] //Oracle FAnsi doesn't currently support parameters
     //[TestCase(DatabaseType.Oracle,false)]
     public void Test_SingleServer_WithOneParameter(DatabaseType dbType, bool useParameter)
     {
-
         /*
          *           Server1                        Server2
          *       _____________________         _____________________
@@ -76,14 +75,15 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         people.GeneratePeople(5000, r);
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
-        var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,useParameter,"@date_of_max","'2001-01-01'");
+        var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic, useParameter, "@date_of_max",
+            "'2001-01-01'");
 
         cic.CreateRootContainerIfNotExists();
         cic.QueryCachingServer_ID = cache.ID;
         cic.SaveToDatabase();
 
         var root = cic.RootCohortAggregateContainer;
-        root.AddChild(ac1,0);
+        root.AddChild(ac1, 0);
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
@@ -91,7 +91,9 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
+        Assert.IsTrue(
+            compiler.Tasks.Where(t => t.Key is AggregationContainerTask)
+                .Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
     }
 
     /// <summary>
@@ -100,21 +102,20 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// overwrite one another.
     /// </summary>
     /// <param name="dbType"></param>
-    [TestCase(DatabaseType.MySql,true)]
+    [TestCase(DatabaseType.MySql, true)]
     //[TestCase(DatabaseType.MySql,false)] //only works with cache because container operations (UNION) are not supported on MySql
-    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
     //[TestCase(DatabaseType.Oracle)] //Oracle FAnsi doesn't currently support parameters
-    public void Test_SingleServer_WithTwoParameters(DatabaseType dbType,bool useCache)
+    public void Test_SingleServer_WithTwoParameters(DatabaseType dbType, bool useCache)
     {
-
         /*
          *           Server1                        Server2
          *        ____________________         _____________________
          *        |HospitalAdmissions |   →    |      Cache         |
          *           @date_of_max
-         *        ____________________     ↗   
-         *        |HospitalAdmissions |      
+         *        ____________________     ↗
+         *        |HospitalAdmissions |
          *           @date_of_max
          *
          *   (has different value so rename operations come into effect)
@@ -123,7 +124,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var server1 = GetCleanedServer(dbType);
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        var cache = useCache ? CreateCache(server2): null;
+        var cache = useCache ? CreateCache(server2) : null;
 
         var r = new Random(500);
         var people = new PersonCollection();
@@ -131,16 +132,16 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
 
-        var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,true,"@date_of_max","'2001-01-01'");
-        var ac2 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,true,"@date_of_max","'2005-01-01'");
+        var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic, true, "@date_of_max", "'2001-01-01'");
+        var ac2 = SetupAggregateConfigurationWithFilter(server1, people, r, cic, true, "@date_of_max", "'2005-01-01'");
 
         cic.CreateRootContainerIfNotExists();
         cic.QueryCachingServer_ID = cache?.ID;
         cic.SaveToDatabase();
 
         var root = cic.RootCohortAggregateContainer;
-        root.AddChild(ac1,0);
-        root.AddChild(ac2,1);
+        root.AddChild(ac1, 0);
+        root.AddChild(ac2, 1);
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
@@ -149,47 +150,48 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         AssertNoErrors(compiler);
 
         //each container on its own ran with the normal SQL
-        AssertNoErrors(compiler,ac1,"@date_of_max='2001-01-01'");
-        AssertNoErrors(compiler,ac2,"@date_of_max='2005-01-01'");
+        AssertNoErrors(compiler, ac1, "@date_of_max='2001-01-01'");
+        AssertNoErrors(compiler, ac2, "@date_of_max='2005-01-01'");
 
 
         if (useCache)
         {
             //the root container run with dual cache fetch and no parameters
-            AssertNoErrors(compiler,root,"IndexedExtractionIdentifierList");
-            AssertCacheUsed(compiler,root,"2/2");
+            AssertNoErrors(compiler, root, "IndexedExtractionIdentifierList");
+            AssertCacheUsed(compiler, root, "2/2");
         }
         else
         {
             //the root container ran with a rename operations (no cache available)
-            AssertNoErrors(compiler,root,"@date_of_max='2001-01-01'","@date_of_max_2='2005-01-01'");
-            AssertCacheUsed(compiler,root,"0/2");
+            AssertNoErrors(compiler, root, "@date_of_max='2001-01-01'", "@date_of_max_2='2005-01-01'");
+            AssertCacheUsed(compiler, root, "0/2");
         }
     }
+
     /// <summary>
     /// Tests running a simple cic a cohort that has a parameter and a patient index table which also has a parameter.
     /// </summary>
     /// <param name="dbType"></param>
-    [TestCase(DatabaseType.MySql,true,true)]
-    [TestCase(DatabaseType.MySql,true,false)]
-    [TestCase(DatabaseType.MySql,false,true)]
-    [TestCase(DatabaseType.MySql,false,false)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,true,true)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,true,false)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,false,true)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,false,false)]
-    public void Test_SingleServerPatientIndexTable_WithTwoParameters(DatabaseType dbType,bool useSameName,bool useCache)
+    [TestCase(DatabaseType.MySql, true, true)]
+    [TestCase(DatabaseType.MySql, true, false)]
+    [TestCase(DatabaseType.MySql, false, true)]
+    [TestCase(DatabaseType.MySql, false, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false, false)]
+    public void Test_SingleServerPatientIndexTable_WithTwoParameters(DatabaseType dbType, bool useSameName,
+        bool useCache)
     {
-
         /*
          *           Server1                                  (Also Server1 - if useCache is true)
          *        ______________________________            __________________________
          *        |   Patient Index Table       |     →    |         Cache           |
-         *        |  (NA by date )              |         ↗ 
+         *        |  (NA by date )              |         ↗
          *           @date_of_max '2001-01-01'
-         *                                              ↗  
+         *                                              ↗
          *            JOIN (should use cache)
-         *         ___________________________       ↗   
+         *         ___________________________       ↗
          *        | Hospitalised after NA (ac) |
          *          @date_of_max (or @maximum) '2005-01-01'
          *
@@ -198,7 +200,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var server1 = GetCleanedServer(dbType);
 
-        var cache = useCache? CreateCache(server1): null;
+        var cache = useCache ? CreateCache(server1) : null;
 
         var r = new Random(500);
         var people = new PersonCollection();
@@ -206,16 +208,17 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
 
-        var patientIndexTable = SetupPatientIndexTableWithFilter(server1, people, r, cic,true,"@date_of_max","'2001-01-01'");
-        var ac = SetupPatientIndexTableUserWithFilter(server1, people, r, cic,patientIndexTable,true,
-            useSameName ? "@date_of_max": "@maximum","'2005-01-01'");
+        var patientIndexTable =
+            SetupPatientIndexTableWithFilter(server1, people, r, cic, true, "@date_of_max", "'2001-01-01'");
+        var ac = SetupPatientIndexTableUserWithFilter(server1, people, r, cic, patientIndexTable, true,
+            useSameName ? "@date_of_max" : "@maximum", "'2005-01-01'");
 
         cic.CreateRootContainerIfNotExists();
         cic.QueryCachingServer_ID = cache?.ID;
         cic.SaveToDatabase();
 
         var root = cic.RootCohortAggregateContainer;
-        root.AddChild(ac,0);
+        root.AddChild(ac, 0);
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
@@ -223,24 +226,27 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         if (useSameName)
         {
-            AssertCrashed(compiler, ac, "PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were @date_of_max");
+            AssertCrashed(compiler, ac,
+                "PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were @date_of_max");
         }
         else
         {
             if (useCache)
             {
                 //we should hit up the cache for the interior of the query and therefore not need the parameter
-                AssertNoErrors(compiler,ac,"@maximum='2005-01-01'","JoinableInceptionQuery_AggregateConfiguration","AdmissionDate. < @maximum");
+                AssertNoErrors(compiler, ac, "@maximum='2005-01-01'", "JoinableInceptionQuery_AggregateConfiguration",
+                    "AdmissionDate. < @maximum");
 
                 AssertCacheUsed(compiler, root, "1/1");
             }
             else
-                AssertNoErrors(compiler,ac,"@date_of_max='2001-01-01'","@maximum='2005-01-01'","SampleDate. < @date_of_max","AdmissionDate. < @maximum");
+            {
+                AssertNoErrors(compiler, ac, "@date_of_max='2001-01-01'", "@maximum='2005-01-01'",
+                    "SampleDate. < @date_of_max", "AdmissionDate. < @maximum");
+            }
 
             AssertNoErrors(compiler);
         }
-
-
     }
 
 
@@ -249,10 +255,9 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// patients
     /// </summary>
     /// <param name="dbType"></param>
-    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     public void Test_EXCEPT_TwoAggregates(DatabaseType dbType)
     {
-
         /*
          *           Server1
          *       _____________________
@@ -288,8 +293,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         root.Operation = SetOperation.EXCEPT;
         root.Name = "EXCEPT";
         root.SaveToDatabase();
-        root.AddChild(ac1,0);
-        root.AddChild(ac2,1);
+        root.AddChild(ac1, 0);
+        root.AddChild(ac2, 1);
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
@@ -299,11 +304,17 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         AssertNoErrors(compiler);
 
 
-        Assert.AreEqual(compiler.Tasks.Single(static t=> t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount,0);
-        Assert.Greater(compiler.Tasks.Single(t=>t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, 0); //both ac should have the same total
-        Assert.Greater(compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, 0); // that is not 0
+        Assert.AreEqual(
+            compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, 0);
+        Assert.Greater(
+            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount,
+            0); //both ac should have the same total
+        Assert.Greater(
+            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount,
+            0); // that is not 0
 
-        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected EXCEPT container to use the cache");
+        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+            "Expected EXCEPT container to use the cache");
     }
 
     /// <summary>
@@ -314,13 +325,13 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// </summary>
     /// <param name="dbType"></param>
     /// <param name="createQueryCache"></param>
-    [TestCase(DatabaseType.Oracle,true)]
-    [TestCase(DatabaseType.MySql,true)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+    [TestCase(DatabaseType.Oracle, true)]
+    [TestCase(DatabaseType.MySql, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
     [TestCase(DatabaseType.Oracle, false)]
     [TestCase(DatabaseType.MySql, false)]
     [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-    public void Join_PatientIndexTable_OptionalCacheOnSameServer(DatabaseType dbType,bool createQueryCache)
+    public void Join_PatientIndexTable_OptionalCacheOnSameServer(DatabaseType dbType, bool createQueryCache)
     {
         /*
          *           Server1
@@ -343,18 +354,18 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var r = new Random(500);
         var people = new PersonCollection();
-        people.GeneratePeople(5000,r);
+        people.GeneratePeople(5000, r);
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
 
-        var joinable = SetupPatientIndexTable(db,people,r,cic);
+        var joinable = SetupPatientIndexTable(db, people, r, cic);
 
         cic.CreateRootContainerIfNotExists();
         cic.QueryCachingServer_ID = cache?.ID;
         cic.SaveToDatabase();
 
         var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
-        cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions,0);
+        cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
@@ -363,11 +374,14 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        if(createQueryCache)
-            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected cache to be used for the joinable");
+        if (createQueryCache)
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+                "Expected cache to be used for the joinable");
         else
-            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/1")), "Did not create cache so expected cache usage to be 0");
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/1")),
+                "Did not create cache so expected cache usage to be 0");
     }
+
     /// <summary>
     /// Tests the ability to run a cic in which there are 2 tables, one patient index table with the dates of biochemistry test codes
     /// and another which joins and filters on the results of that table to produce a count of patients hospitalised after an NA test.
@@ -375,14 +389,14 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <para>In this case the cache is on another server so we cannot use the cached result for a join and should not try</para>
     /// </summary>
     /// <param name="dbType"></param>
-    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     public void Join_PatientIndexTable_DoNotUseCacheOnDifferentServer(DatabaseType dbType)
     {
         /*
          *           Server1                    Server 2
          *         _____________                _________
          *        |Biochemistry|    →          | Cache  | (cache is still populated but not used in the resulting join).
-         *               
+         *
          *            ↓ join ↓    (do not use cache)
          *    _____________________
          *    | Hospital Admissions|
@@ -420,7 +434,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
+        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+            "Expected cache to be used only for the final UNION");
     }
 
     /// <summary>
@@ -437,7 +452,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
          *           Server1                    Server 2
          *         _____________                _________
          *        |Biochemistry|    →          | Cache  |  (cache must first be populated)
-         *               
+         *
          *                        ↘ join   ↘ (must use cache)
          *                                  _____________________
          *                                  | Hospital Admissions|
@@ -471,7 +486,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
+        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+            "Expected cache to be used only for the final UNION");
     }
 
 
@@ -490,8 +506,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         /*
          *           Server1                    Server 2                                Server 3
          *         _____________                                                       _________
-         *        |Biochemistry|    →          (successfully caches joinable bit)      | Cache  |  
-         *               
+         *        |Biochemistry|    →          (successfully caches joinable bit)      | Cache  |
+         *
          *                        ↘ join   ↘ (should crash)
          *                                  _____________________
          *                                  | Hospital Admissions|
@@ -524,30 +540,32 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         runner.Run(new CancellationToken());
 
-        var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>().Single(t => t.Aggregate.Equals(hospitalAdmissions));
+        var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>()
+            .Single(t => t.Aggregate.Equals(hospitalAdmissions));
 
-        Assert.AreEqual(CompilationState.Crashed,hospitalAdmissionsTask.State);
+        Assert.AreEqual(CompilationState.Crashed, hospitalAdmissionsTask.State);
 
-        StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",hospitalAdmissionsTask.CrashMessage.ToString());
+        StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",
+            hospitalAdmissionsTask.CrashMessage.ToString());
     }
 
-    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     public void Join_PatientIndexTable_ThenShipToCacheForSets(DatabaseType dbType)
     {
         /*
-        *           Server1                    Server 2
-        *         _____________                _________
-        *        |Biochemistry|    →          | Cache  | (cache is still populated but not used in the resulting join).
-        *               
-        *            ↓ join ↓    (do not use cache)
-        *    _______________________
-        *    | Hospital Admissions 1|        →       results1
-        *
-        *            EXCEPT
-        *    _______________________
-        *    | Hospital Admissions 2|        →        results 2
+         *           Server1                    Server 2
+         *         _____________                _________
+         *        |Biochemistry|    →          | Cache  | (cache is still populated but not used in the resulting join).
+         *
+         *            ↓ join ↓    (do not use cache)
+         *    _______________________
+         *    | Hospital Admissions 1|        →       results1
+         *
+         *            EXCEPT
+         *    _______________________
+         *    | Hospital Admissions 2|        →        results 2
          *                                          ↓ result = 0 records
-        */
+         */
 
         //get the data database
         var db = GetCleanedServer(dbType);
@@ -555,7 +573,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         //create the cache on the other server type (either Sql Server or Oracle) since  MySql can't do EXCEPT or UNION etc)
         var dbCache =
             GetCleanedServer(Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().First(t =>
-                t != dbType && t!= DatabaseType.MySql));
+                t != dbType && t != DatabaseType.MySql));
 
         var cache = CreateCache(dbCache);
 
@@ -572,7 +590,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         cic.SaveToDatabase();
 
         var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
-        var hospitalAdmissions2 = SetupAggregateConfiguration(db, people,r, cic);
+        var hospitalAdmissions2 = SetupAggregateConfiguration(db, people, r, cic);
 
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(hospitalAdmissions, 0);
@@ -589,7 +607,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected cache to be used for both top level operations in the EXCEPT");
+        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+            "Expected cache to be used for both top level operations in the EXCEPT");
     }
 
 
@@ -616,16 +635,18 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="r"></param>
     /// <param name="cic"></param>
     /// <returns></returns>
-    private JoinableCohortAggregateConfiguration SetupPatientIndexTable(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic)
+    private JoinableCohortAggregateConfiguration SetupPatientIndexTable(DiscoveredDatabase db, PersonCollection people,
+        Random r, CohortIdentificationConfiguration cic)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var tbl = CreateDataset<Biochemistry>(db, people, 10000, r);
-        var cata = Import(tbl,out _, out _, out _,out var eis);
+        var cata = Import(tbl, out _, out _, out _, out var eis);
 
         var chi = eis.Single(ei => ei.GetRuntimeName().Equals("chi", StringComparison.CurrentCultureIgnoreCase));
         var code = eis.Single(ei => ei.GetRuntimeName().Equals("TestCode", StringComparison.CurrentCultureIgnoreCase));
-        var date = eis.Single(ei => ei.GetRuntimeName().Equals("SampleDate", StringComparison.CurrentCultureIgnoreCase));
+        var date = eis.Single(ei =>
+            ei.GetRuntimeName().Equals("SampleDate", StringComparison.CurrentCultureIgnoreCase));
 
         chi.IsExtractionIdentifier = true;
         chi.SaveToDatabase();
@@ -639,7 +660,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         cic.EnsureNamingConvention(ac);
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and)
+        var filter = new AggregateFilter(CatalogueRepository, "TestCode is NA", and)
         {
             WhereSQL = $"{syntax.EnsureWrapped("TestCode")} = 'NA'"
         };
@@ -651,12 +672,15 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         return new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, ac);
     }
 
-    private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+    private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db,
+        PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName,
+        string paramValue)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var joinable = SetupPatientIndexTable(db, people, r, cic);
-        AddFilter(db,"Test After", $"{syntax.EnsureWrapped("SampleDate")} < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
+        AddFilter(db, "Test After", $"{syntax.EnsureWrapped("SampleDate")} < ", joinable.AggregateConfiguration,
+            useParameter, paramName, paramValue);
         return joinable;
     }
 
@@ -669,11 +693,12 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="r"></param>
     /// <param name="cic"></param>
     /// <param name="joinable"></param>
-    private AggregateConfiguration SetupPatientIndexTableUser(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable)
+    private AggregateConfiguration SetupPatientIndexTableUser(DiscoveredDatabase db, PersonCollection people, Random r,
+        CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
 
-        var ac = SetupAggregateConfiguration(db,people,r,cic);
+        var ac = SetupAggregateConfiguration(db, people, r, cic);
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and)
@@ -691,25 +716,29 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         return ac;
     }
 
-    private AggregateConfiguration SetupPatientIndexTableUserWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable, bool useParameter, string paramName, string paramValue)
+    private AggregateConfiguration SetupPatientIndexTableUserWithFilter(DiscoveredDatabase db, PersonCollection people,
+        Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable,
+        bool useParameter, string paramName, string paramValue)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
 
-        var ac1 = SetupPatientIndexTableUser(db, people, r, cic,joinable);
+        var ac1 = SetupPatientIndexTableUser(db, people, r, cic, joinable);
 
-        AddFilter(db,"My Filter", $"{syntax.EnsureWrapped("AdmissionDate")} < ", ac1, useParameter, paramName, paramValue);
+        AddFilter(db, "My Filter", $"{syntax.EnsureWrapped("AdmissionDate")} < ", ac1, useParameter, paramName,
+            paramValue);
 
         return ac1;
     }
 
-    private void AddFilter(DiscoveredDatabase db,string filterName, string whereSqlFirstHalf, AggregateConfiguration ac, bool useParameter, string paramName, string paramValue)
+    private void AddFilter(DiscoveredDatabase db, string filterName, string whereSqlFirstHalf,
+        AggregateConfiguration ac, bool useParameter, string paramName, string paramValue)
     {
         var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         ac.RootFilterContainer_ID = container.ID;
         ac.SaveToDatabase();
 
         //create a filter
-        var filter = new AggregateFilter(CatalogueRepository,filterName,container);
+        var filter = new AggregateFilter(CatalogueRepository, filterName, container);
 
         if (useParameter)
         {
@@ -721,10 +750,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
             var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
             parameter.Value = paramValue;
             parameter.SaveToDatabase();
-
         }
         else
+        {
             filter.WhereSQL = whereSqlFirstHalf + paramValue;
+        }
 
         filter.SaveToDatabase();
     }
@@ -737,7 +767,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="r"></param>
     /// <param name="cic"></param>
     /// <returns></returns>
-    private AggregateConfiguration SetupAggregateConfiguration(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic)
+    private AggregateConfiguration SetupAggregateConfiguration(DiscoveredDatabase db, PersonCollection people, Random r,
+        CohortIdentificationConfiguration cic)
     {
         var existingTbl = db.ExpectTable("HospitalAdmissions");
         var tbl = existingTbl.Exists() ? existingTbl : CreateDataset<HospitalAdmissions>(db, people, 10000, r);
@@ -767,11 +798,13 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="paramName"></param>
     /// <param name="paramValue"></param>
     /// <returns></returns>
-    private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+    private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people,
+        Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
         var ac1 = SetupAggregateConfiguration(db, people, r, cic);
-        AddFilter(db, "My Filter", $"{syntax.EnsureWrapped("AdmissionDate")} < ", ac1, useParameter, paramName, paramValue);
+        AddFilter(db, "My Filter", $"{syntax.EnsureWrapped("AdmissionDate")} < ", ac1, useParameter, paramName,
+            paramValue);
         return ac1;
     }
 
@@ -788,20 +821,23 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var i = 0;
         foreach (var kvp in compiler.Tasks.Keys)
-            TestContext.WriteLine($"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
+            TestContext.WriteLine(
+                $"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
 
-        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
+        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished),
+            "Expected all tasks to finish without error");
     }
 
     /// <summary>
     /// Asserts that the given <paramref name="task"/> (when run on its own) crashed with the given
     /// <see cref="expectedErrorMessageToContain"/>
     /// </summary>
-    private static void AssertCrashed(CohortCompiler compiler, AggregateConfiguration task, string expectedErrorMessageToContain)
+    private static void AssertCrashed(CohortCompiler compiler, AggregateConfiguration task,
+        string expectedErrorMessageToContain)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
-        Assert.AreEqual(CompilationState.Crashed,acResult.Key.State);
-        StringAssert.Contains(expectedErrorMessageToContain,acResult.Key.CrashMessage.Message);
+        Assert.AreEqual(CompilationState.Crashed, acResult.Key.State);
+        StringAssert.Contains(expectedErrorMessageToContain, acResult.Key.CrashMessage.Message);
     }
 
     /// <summary>
@@ -819,10 +855,10 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         Console.WriteLine($"Build Log For '{task}':");
         Console.WriteLine(acResult.Key.Log);
 
-        Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
+        Assert.AreEqual(CompilationState.Finished, acResult.Key.State);
 
         foreach (var s in expectedSqlBits)
-            StringAssert.IsMatch(s,acResult.Value.CountSQL);
+            StringAssert.IsMatch(s, acResult.Value.CountSQL);
     }
 
     /// <summary>
@@ -836,10 +872,10 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         params string[] expectedSqlBits)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask a && a.Container.Equals(task));
-        Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
+        Assert.AreEqual(CompilationState.Finished, acResult.Key.State);
 
         foreach (var s in expectedSqlBits)
-            StringAssert.Contains(s,acResult.Value.CountSQL);
+            StringAssert.Contains(s, acResult.Value.CountSQL);
     }
 
     /// <summary>
@@ -849,13 +885,16 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="compiler"></param>
     /// <param name="container"></param>
     /// <param name="expectedCacheUsageCount">The amount you expect to be used of the cache e.g. "2/2" </param>
-    private static void AssertCacheUsed(CohortCompiler compiler, CohortAggregateContainer container, string expectedCacheUsageCount)
+    private static void AssertCacheUsed(CohortCompiler compiler, CohortAggregateContainer container,
+        string expectedCacheUsageCount)
     {
         //cache should have been used
-        var containerResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
+        var containerResult =
+            compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
 
-        Assert.AreEqual(CompilationState.Finished,containerResult.Key.State);
-        Assert.AreEqual(expectedCacheUsageCount,containerResult.Key.GetCachedQueryUseCount());
+        Assert.AreEqual(CompilationState.Finished, containerResult.Key.State);
+        Assert.AreEqual(expectedCacheUsageCount, containerResult.Key.GetCachedQueryUseCount());
     }
+
     #endregion
 }

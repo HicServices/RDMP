@@ -28,7 +28,9 @@ public class RuntimeTaskPackager
     private readonly IEnumerable<ICatalogue> _cataloguesToLoad;
     private readonly ICatalogueRepository _repository;
 
-    public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, ICatalogueRepository repository)
+    public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks,
+        Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad,
+        ICatalogueRepository repository)
     {
         ProcessTasks = processTasks;
         _loadArgsDictionary = loadArgsDictionary;
@@ -44,20 +46,23 @@ public class RuntimeTaskPackager
             return new List<IRuntimeTask>();
 
         var factory = new RuntimeTaskFactory(_repository);
-        return tasksForThisLoadStage.Select(processTask => RuntimeTaskFactory.Create(processTask, _loadArgsDictionary[processTask.LoadStage])).Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
+        return tasksForThisLoadStage
+            .Select(processTask => RuntimeTaskFactory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]))
+            .Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
     }
 
     public IEnumerable<IRuntimeTask> GetAllRuntimeTasks()
     {
         var runtimeTasks = new List<IRuntimeTask>();
 
-        foreach (LoadStage loadStage in Enum.GetValues(typeof (LoadStage)))
+        foreach (LoadStage loadStage in Enum.GetValues(typeof(LoadStage)))
             runtimeTasks.AddRange(GetRuntimeTasksForStage(loadStage));
 
         return runtimeTasks;
     }
 
-    public CompositeDataLoadComponent CreateCompositeDataLoadComponentFor(LoadStage loadStage,string descriptionForComponent)
+    public CompositeDataLoadComponent CreateCompositeDataLoadComponentFor(LoadStage loadStage,
+        string descriptionForComponent)
     {
         var factory = new RuntimeTaskFactory(_repository);
 

@@ -65,28 +65,30 @@ public class CommandLineObjectPickerArgumentValue
 
     private Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
+    public CommandLineObjectPickerArgumentValue(string rawValue, int idx)
     {
         RawValue = rawValue;
         Index = idx;
     }
 
-    public CommandLineObjectPickerArgumentValue(string rawValue,int idx,IMapsDirectlyToDatabaseTable[] entities):this(rawValue, idx)
+    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, IMapsDirectlyToDatabaseTable[] entities) :
+        this(rawValue, idx)
     {
         DatabaseEntities = new ReadOnlyCollection<IMapsDirectlyToDatabaseTable>(entities);
     }
 
-    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, DiscoveredDatabase database):this(rawValue, idx)
+    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, DiscoveredDatabase database) : this(rawValue,
+        idx)
     {
         Database = database;
     }
 
-    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, DiscoveredTable table):this(rawValue, idx)
+    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, DiscoveredTable table) : this(rawValue, idx)
     {
         Table = table;
     }
 
-    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, Type type):this(rawValue,idx)
+    public CommandLineObjectPickerArgumentValue(string rawValue, int idx, Type type) : this(rawValue, idx)
     {
         Type = type;
     }
@@ -105,7 +107,7 @@ public class CommandLineObjectPickerArgumentValue
         if (typeof(DirectoryInfo) == paramType)
             return new DirectoryInfo(RawValue);
 
-        if(typeof(FileInfo) == paramType)
+        if (typeof(FileInfo) == paramType)
             return new FileInfo(RawValue);
 
         if (typeof(string) == paramType)
@@ -126,37 +128,39 @@ public class CommandLineObjectPickerArgumentValue
         var nullableType = Nullable.GetUnderlyingType(paramType);
 
         //it's an array of DatabaseEntities (IMapsDirectlyToDatabaseTable implements IDeleteable)
-        if (paramType.IsArray && DatabaseEntities != null && typeof(IDeleteable).IsAssignableFrom(paramType.GetElementType()))
+        if (paramType.IsArray && DatabaseEntities != null &&
+            typeof(IDeleteable).IsAssignableFrom(paramType.GetElementType()))
         {
-            if(DatabaseEntities.Count == 0)
+            if (DatabaseEntities.Count == 0)
                 _logger.Warn($"Pattern matched no objects '{RawValue}'");
 
             if (element != typeof(IDeleteable))
             {
                 var typedArray = Array.CreateInstance(element, DatabaseEntities.Count);
                 for (var i = 0; i < DatabaseEntities.Count; i++)
-                    typedArray.SetValue(DatabaseEntities[i],i);
+                    typedArray.SetValue(DatabaseEntities[i], i);
 
                 return typedArray;
             }
 
             return DatabaseEntities.ToArray();
         }
+
         if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType))
             return GetOneDatabaseEntity<DatabaseEntity>();
 
         if (typeof(IMightBeDeprecated).IsAssignableFrom(paramType))
             return GetOneDatabaseEntity<IMightBeDeprecated>();
 
-        if (typeof (IDisableable) == paramType)
+        if (typeof(IDisableable) == paramType)
             return GetOneDatabaseEntity<IDisableable>();
 
-        if (typeof (INamed) == paramType)
+        if (typeof(INamed) == paramType)
             return GetOneDatabaseEntity<INamed>();
-            
-        if (typeof (IDeleteable) == paramType)
+
+        if (typeof(IDeleteable) == paramType)
             return GetOneDatabaseEntity<IDeleteable>();
-            
+
         if (typeof(ICheckable) == paramType)
             return GetOneDatabaseEntity<ICheckable>();
 
@@ -173,7 +177,7 @@ public class CommandLineObjectPickerArgumentValue
         if (basicType.IsValueType && !typeof(Enum).IsAssignableFrom(basicType))
             return UsefulStuff.ChangeType(RawValue, basicType);
 
-        return basicType.IsEnum ? Enum.Parse(basicType, RawValue,true) : null;
+        return basicType.IsEnum ? Enum.Parse(basicType, RawValue, true) : null;
     }
 
     private object GetOneDatabaseEntity<T>()
@@ -182,24 +186,23 @@ public class CommandLineObjectPickerArgumentValue
         if (DatabaseEntities == null)
             return null;
 
-        if(DatabaseEntities.Count != 1)
+        if (DatabaseEntities.Count != 1)
         {
             var latest = NewObjectPool.Latest(DatabaseEntities.Where(d => d is T));
 
             if (latest == null)
-            {
-                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
-            }
+                _logger.Warn(
+                    $"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
 
             return latest;
-        }   
+        }
 
         //return the single object as the type you want e.g. ICheckable
-        if(DatabaseEntities[0] is T)
+        if (DatabaseEntities[0] is T)
             return DatabaseEntities.Single();
-            
+
         //it's not ICheckable, user made an invalid object selection
-        throw new CommandLineObjectPickerParseException($"Specified object was not an '{typeof(T)}''",Index,RawValue);
+        throw new CommandLineObjectPickerParseException($"Specified object was not an '{typeof(T)}''", Index, RawValue);
     }
 
     /// <summary>
@@ -237,7 +240,7 @@ public class CommandLineObjectPickerArgumentValue
     {
         foreach (var other in others)
         {
-            if(other.Index != Index || other.RawValue != RawValue)
+            if (other.Index != Index || other.RawValue != RawValue)
                 throw new ArgumentException("Merge only arguments of the same object");
 
             Type ??= other.Type;
@@ -245,14 +248,12 @@ public class CommandLineObjectPickerArgumentValue
             Table ??= other.Table;
 
             //if they have some
-            if(other.DatabaseEntities != null)
+            if (other.DatabaseEntities != null)
                 //do we have any? yet
-                if ( DatabaseEntities == null || !DatabaseEntities.Any()) //no
+                if (DatabaseEntities == null || !DatabaseEntities.Any()) //no
                     DatabaseEntities = other.DatabaseEntities; //use theirs
-                else
-                if(other.DatabaseEntities.Any())
+                else if (other.DatabaseEntities.Any())
                     throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntities");
-
         }
 
         return this;

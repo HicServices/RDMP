@@ -76,10 +76,12 @@ public class CohortQueryBuilderResult
     /// </summary>
     public DiscoveredServer TargetServer { get; set; }
 
-    public IOrderable StopContainerWhenYouReach { get;set; }
+    public IOrderable StopContainerWhenYouReach { get; set; }
     public int CountOfSubQueries => Dependencies.Count;
     public int CountOfCachedSubQueries { get; private set; }
-    public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } = Array.Empty<PluginCohortCompiler>().ToList().AsReadOnly();
+
+    public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } =
+        Array.Empty<PluginCohortCompiler>().ToList().AsReadOnly();
 
     /// <summary>
     /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
@@ -89,7 +91,8 @@ public class CohortQueryBuilderResult
     /// <param name="helper"></param>
     /// <param name="customise"></param>
     /// <param name="cancellationToken"></param>
-    public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise,CancellationToken cancellationToken)
+    public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider,
+        CohortQueryBuilderHelper helper, QueryBuilderCustomArgs customise, CancellationToken cancellationToken)
     {
         CacheServer = cacheServer;
         ChildProvider = childProvider;
@@ -120,19 +123,21 @@ public class CohortQueryBuilderResult
 
         _log.AppendLine($"Starting Build for {container}");
         //gather dependencies
-        foreach(var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>().Where(IsEnabled).OrderBy(ac=>ac.Order))
+        foreach (var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>()
+                     .Where(IsEnabled).OrderBy(ac => ac.Order))
             AddDependency(cohortSet);
-            
-        if(!Dependencies.Any())
-            throw new QueryBuildingException($"There are no AggregateConfigurations under the SET container '{container}'");
+
+        if (!Dependencies.Any())
+            throw new QueryBuildingException(
+                $"There are no AggregateConfigurations under the SET container '{container}'");
 
         LogDependencies();
 
         BuildDependenciesSql(parameterManager.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
 
         MakeCacheDecision();
-            
-        Sql = BuildSql(container,parameterManager);
+
+        Sql = BuildSql(container, parameterManager);
     }
 
     public void BuildFor(AggregateConfiguration configuration, ParameterManager parameterManager)
@@ -142,7 +147,7 @@ public class CohortQueryBuilderResult
 
         _log.AppendLine($"Starting Build for {configuration}");
         var d = AddDependency(configuration);
-            
+
         LogDependencies();
 
         BuildDependenciesSql(parameterManager.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
@@ -150,22 +155,24 @@ public class CohortQueryBuilderResult
         MakeCacheDecision();
 
 
-        Sql = BuildSql(d,parameterManager);
+        Sql = BuildSql(d, parameterManager);
     }
 
-    private string BuildSql(CohortAggregateContainer container,ParameterManager parameterManager)
+    private string BuildSql(CohortAggregateContainer container, ParameterManager parameterManager)
     {
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary;
-            
+
         //if we are fully cached on everything
         if (Dependencies.All(d => d.SqlFullyCached != null))
         {
-            SetTargetServer(GetCacheServer(),"all dependencies are fully cached"); //run on the cache server
+            SetTargetServer(GetCacheServer(), "all dependencies are fully cached"); //run on the cache server
 
             //all are cached
             CountOfCachedSubQueries = CountOfSubQueries;
 
-            sqlDictionary = Dependencies.ToDictionary(k => k, v => v.SqlFullyCached.Use(parameterManager)); //run the fully cached sql
+            sqlDictionary =
+                Dependencies.ToDictionary(k => k,
+                    v => v.SqlFullyCached.Use(parameterManager)); //run the fully cached sql
         }
         else
         {
@@ -184,13 +191,13 @@ public class CohortQueryBuilderResult
                     SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
                         $"not all dependencies are cached while {uncached}");
 
-                    CountOfCachedSubQueries = Dependencies.Count(d=>d.SqlFullyCached != null);
+                    CountOfCachedSubQueries = Dependencies.Count(d => d.SqlFullyCached != null);
 
                     sqlDictionary =
                         Dependencies.ToDictionary(k => k,
-                            v =>  v.SqlFullyCached?.Use(parameterManager) ??
-                                  v.SqlPartiallyCached?.Use(parameterManager) ??
-                                  v.SqlCacheless.Use(parameterManager)); //run the fully cached sql
+                            v => v.SqlFullyCached?.Use(parameterManager) ??
+                                 v.SqlPartiallyCached?.Use(parameterManager) ??
+                                 v.SqlCacheless.Use(parameterManager)); //run the fully cached sql
                     break;
 
                 case CacheUsage.AllOrNothing:
@@ -202,24 +209,24 @@ public class CohortQueryBuilderResult
                     //cannot use any of the caches because it's all or nothing
                     CountOfCachedSubQueries = 0;
                     sqlDictionary =
-                        Dependencies.ToDictionary(k => k, v => v.SqlCacheless.Use(parameterManager)); //run the fully uncached sql
+                        Dependencies.ToDictionary(k => k,
+                            v => v.SqlCacheless.Use(parameterManager)); //run the fully uncached sql
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        return WriteContainers(container, TargetServer.GetQuerySyntaxHelper(), sqlDictionary,0);
+        return WriteContainers(container, TargetServer.GetQuerySyntaxHelper(), sqlDictionary, 0);
     }
 
     private void SetTargetServer(DiscoveredServer target, string reason)
     {
-        if(TargetServer != null)
+        if (TargetServer != null)
             throw new InvalidOperationException("You are only supposed to pick a target server once");
 
         TargetServer = target;
         _log.AppendLine($"Picked TargetServer as {target} because {reason}");
-
     }
 
     private string WriteContainers(CohortAggregateContainer container, IQuerySyntaxHelper syntaxHelper,
@@ -231,19 +238,20 @@ public class CohortQueryBuilderResult
         var toWriteOut = container.GetOrderedContents().Where(IsEnabled).ToArray();
 
         if (toWriteOut.Any())
-            sql += Environment.NewLine + TabIn( "(",tabs) + Environment.NewLine;
+            sql += Environment.NewLine + TabIn("(", tabs) + Environment.NewLine;
         else
-        {
             throw new QueryBuildingException($"Container '{container}' is empty, Disable it if you don't want it run'");
-        }
 
         var firstEntityWritten = false;
         foreach (var toWrite in toWriteOut)
         {
             if (firstEntityWritten)
-                sql += Environment.NewLine + TabIn(GetSetOperationSql(container.Operation,syntaxHelper.DatabaseType) + Environment.NewLine + Environment.NewLine,tabs);
+                sql += Environment.NewLine +
+                       TabIn(
+                           GetSetOperationSql(container.Operation, syntaxHelper.DatabaseType) + Environment.NewLine +
+                           Environment.NewLine, tabs);
 
-            if(toWrite is AggregateConfiguration)
+            if (toWrite is AggregateConfiguration)
                 sql += TabIn(sqlDictionary.Single(kvp => Equals(kvp.Key.CohortSet, toWrite)).Value, tabs);
 
             if (toWrite is CohortAggregateContainer sub)
@@ -254,22 +262,20 @@ public class CohortQueryBuilderResult
 
             if (StopContainerWhenYouReach != null && StopContainerWhenYouReach.Equals(toWrite))
                 if (tabs != 0)
-                    throw new NotSupportedException("Stopping prematurely only works when the aggregate to stop at is in the top level container");
+                    throw new NotSupportedException(
+                        "Stopping prematurely only works when the aggregate to stop at is in the top level container");
                 else
                     break;
         }
 
         //if we outputted anything
         if (toWriteOut.Any())
-            sql += Environment.NewLine + TabIn(")",tabs) + Environment.NewLine ;
+            sql += Environment.NewLine + TabIn(")", tabs) + Environment.NewLine;
 
         return sql;
     }
 
-    private bool IsEnabled(IOrderable arg)
-    {
-        return IsEnabled(arg, ChildProvider);
-    }
+    private bool IsEnabled(IOrderable arg) => IsEnabled(arg, ChildProvider);
 
     /// <summary>
     /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
@@ -287,12 +293,10 @@ public class CohortQueryBuilderResult
             return false;
 
         // skip empty containers unless strict validation is enabled
-        if(arg is CohortAggregateContainer container &&
-           !UserSettings.StrictValidationForCohortBuilderContainers)
-        {
+        if (arg is CohortAggregateContainer container &&
+            !UserSettings.StrictValidationForCohortBuilderContainers)
             if (!container.GetOrderedContents().Any())
                 return false;
-        }
 
         //or you yourself are disabled
         return arg is not IDisableable { IsDisabled: true };
@@ -304,7 +308,7 @@ public class CohortQueryBuilderResult
     /// <param name="currentContainerOperation"></param>
     /// <param name="dbType"></param>
     /// <returns></returns>
-    protected virtual string GetSetOperationSql(SetOperation currentContainerOperation,DatabaseType dbType)
+    protected virtual string GetSetOperationSql(SetOperation currentContainerOperation, DatabaseType dbType)
     {
         return currentContainerOperation switch
         {
@@ -316,12 +320,12 @@ public class CohortQueryBuilderResult
         };
     }
 
-    private string BuildSql(CohortQueryBuilderDependency dependency,ParameterManager parameterManager)
+    private string BuildSql(CohortQueryBuilderDependency dependency, ParameterManager parameterManager)
     {
         //if we are fully cached on everything
         if (dependency.SqlFullyCached != null)
         {
-            SetTargetServer(GetCacheServer()," dependency is cached"); //run on the cache server
+            SetTargetServer(GetCacheServer(), " dependency is cached"); //run on the cache server
             CountOfCachedSubQueries++; //it is cached
             return dependency.SqlFullyCached.Use(parameterManager); //run the fully cached sql
         }
@@ -335,51 +339,48 @@ public class CohortQueryBuilderResult
             case CacheUsage.Opportunistic:
 
                 //The cache and dataset are on the same server so run it
-                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"data and cache are on the same server");
-                return dependency.SqlPartiallyCached?.Use(parameterManager) ?? dependency.SqlCacheless.Use(parameterManager);
+                SetTargetServer(DependenciesSingleServer.GetDistinctServer(), "data and cache are on the same server");
+                return dependency.SqlPartiallyCached?.Use(parameterManager) ??
+                       dependency.SqlCacheless.Use(parameterManager);
             case CacheUsage.AllOrNothing:
 
                 //It's not fully cached so we have to run it entirely uncached
-                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"cache and data are on separate servers / access credentials and not all datasets are in the cache");
+                SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
+                    "cache and data are on separate servers / access credentials and not all datasets are in the cache");
                 return dependency.SqlCacheless.Use(parameterManager);
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    private DiscoveredServer GetCacheServer()
-    {
-        return CacheServer.Discover(DataAccessContext.InternalDataProcessing).Server;
-    }
+    private DiscoveredServer GetCacheServer() => CacheServer.Discover(DataAccessContext.InternalDataProcessing).Server;
 
     private void BuildDependenciesSql(ISqlParameter[] globals)
     {
         foreach (var d in Dependencies)
-            d.Build(this,globals, CancellationToken);
+            d.Build(this, globals, CancellationToken);
     }
 
 
     private CohortQueryBuilderDependency AddDependency(AggregateConfiguration cohortSet)
     {
-        if(cohortSet.Catalogue.IsApiCall())
+        if (cohortSet.Catalogue.IsApiCall())
         {
-            if(CacheManager == null)
-            {
-                throw new Exception($"Caching must be enabled to execute API call '{cohortSet}'");
-            }
+            if (CacheManager == null) throw new Exception($"Caching must be enabled to execute API call '{cohortSet}'");
 
-            if (!PluginCohortCompilers.Any(c=>c.ShouldRun(cohortSet)))
-            {
-                throw new Exception($"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
-            }
+            if (!PluginCohortCompilers.Any(c => c.ShouldRun(cohortSet)))
+                throw new Exception(
+                    $"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
         }
 
         var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
-        if(join.Length > 1)
-            throw new NotSupportedException($"There are {join.Length} joins configured to AggregateConfiguration {cohortSet}");
+        if (join.Length > 1)
+            throw new NotSupportedException(
+                $"There are {join.Length} joins configured to AggregateConfiguration {cohortSet}");
 
-        var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider, PluginCohortCompilers);
+        var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider,
+            PluginCohortCompilers);
         _dependencies.Add(d);
 
         return d;
@@ -388,45 +389,49 @@ public class CohortQueryBuilderResult
     private void MakeCacheDecision()
     {
         if (CacheServer == null)
-            SetCacheUsage(CacheUsage.AllOrNothing,"there is no cache server");
+        {
+            SetCacheUsage(CacheUsage.AllOrNothing, "there is no cache server");
+        }
         else
         {
             _log.AppendLine($"Cache Server:{CacheServer.Server} (DatabaseType:{CacheServer.DatabaseType})");
             SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server (so starting with Opportunistic)");
         }
-            
-        DependenciesSingleServer =  new DataAccessPointCollection(true);
+
+        DependenciesSingleServer = new DataAccessPointCollection(true);
 
         foreach (var dependency in Dependencies)
         {
-
             _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
             foreach (var dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
-                HandleDependency(dependency,false, dependantTable);
+                HandleDependency(dependency, false, dependantTable);
 
             if (dependency.JoinedTo != null)
             {
                 _log.AppendLine($"Evaluating '{dependency.JoinedTo}'");
                 foreach (var dependantTable in dependency.JoinedTo.Catalogue.GetTableInfoList(false))
-                    HandleDependency(dependency,true,dependantTable);
+                    HandleDependency(dependency, true, dependantTable);
             }
         }
     }
 
-    private void HandleDependency(CohortQueryBuilderDependency dependency,bool isPatientIndexTable, ITableInfo dependantTable)
+    private void HandleDependency(CohortQueryBuilderDependency dependency, bool isPatientIndexTable,
+        ITableInfo dependantTable)
     {
-        _log.AppendLine($"Found dependant table '{dependantTable}' (Server:{dependantTable.Server} DatabaseType:{dependantTable.DatabaseType})");
-            
+        _log.AppendLine(
+            $"Found dependant table '{dependantTable}' (Server:{dependantTable.Server} DatabaseType:{dependantTable.DatabaseType})");
+
         //if dependencies are on different servers / access credentials
-        if(DependenciesSingleServer != null)
+        if (DependenciesSingleServer != null)
             if (!DependenciesSingleServer.TryAdd(dependantTable))
             {
                 //we can no longer establish a consistent connection to all the dependencies
                 _log.AppendLine($"Found problematic dependant table '{dependantTable}'");
 
                 //if there's no cache server that's a problem!
-                if(CacheServer == null)
-                    throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
+                if (CacheServer == null)
+                    throw new QueryBuildingException(
+                        $"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
 
                 //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
                 var canUseCacheForDependantTable =
@@ -443,8 +448,9 @@ public class CohortQueryBuilderResult
                     DependenciesSingleServer = null;
 
                     //there IS a cache so we now Must use it
-                    if(CacheUsageDecision != CacheUsage.MustUse)
-                        SetCacheUsage(CacheUsage.MustUse,$"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
+                    if (CacheUsageDecision != CacheUsage.MustUse)
+                        SetCacheUsage(CacheUsage.MustUse,
+                            $"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
                 }
             }
 
@@ -455,18 +461,20 @@ public class CohortQueryBuilderResult
             //We can only do opportunistic joins if the Cache and Data server are on the same server
             var canCombine = DependenciesSingleServer.AddWouldBePossible(CacheServer);
 
-            if(!canCombine)
-                SetCacheUsage(CacheUsage.AllOrNothing,"All datasets are on one server/access credentials while Cache is on a separate one");
+            if (!canCombine)
+                SetCacheUsage(CacheUsage.AllOrNothing,
+                    "All datasets are on one server/access credentials while Cache is on a separate one");
         }
-                
     }
+
     private void LogDependencies()
     {
         foreach (var d in Dependencies)
         {
             _log.AppendLine($"Dependency '{d}' is {d.DescribeCachedState()}");
-            _log.AppendLine($"Dependency '{d}' IsExtractionIdentifier column is {d.ExtractionIdentifierColumn?.GetRuntimeName() ?? "NULL"}");
-        }   
+            _log.AppendLine(
+                $"Dependency '{d}' IsExtractionIdentifier column is {d.ExtractionIdentifierColumn?.GetRuntimeName() ?? "NULL"}");
+        }
     }
 
 
@@ -480,7 +488,7 @@ public class CohortQueryBuilderResult
     {
         if (_alreadyBuilt)
             throw new InvalidOperationException("Dependencies have already been built");
-            
+
         _alreadyBuilt = true;
     }
 
@@ -492,6 +500,4 @@ public class CohortQueryBuilderResult
         var tabs = new string('\t', numberOfTabs);
         return tabs + str.Replace(Environment.NewLine, Environment.NewLine + tabs);
     }
-
-
 }

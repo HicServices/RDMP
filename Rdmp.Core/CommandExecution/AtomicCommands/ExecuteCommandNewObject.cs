@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Creates a new <see cref="DatabaseEntity"/> in the RDMP Platform database with the provided arguments.
 /// </summary>
-public class ExecuteCommandNewObject:BasicCommandExecution
+public class ExecuteCommandNewObject : BasicCommandExecution
 {
     /// <summary>
     /// The type of <see cref="DatabaseEntity"/> the user wants to construct
@@ -28,6 +28,7 @@ public class ExecuteCommandNewObject:BasicCommandExecution
     /// values
     /// </summary>
     private CommandLineObjectPicker _picker;
+
     private Func<IMapsDirectlyToDatabaseTable> _func;
 
     /// <summary>
@@ -37,10 +38,10 @@ public class ExecuteCommandNewObject:BasicCommandExecution
     /// <param name="type"></param>
     [UseWithObjectConstructor]
     public ExecuteCommandNewObject(IBasicActivateItems activator,
-        [DemandsInitialization("Type to create",TypeOf = typeof(DatabaseEntity))]
-        Type type):base(activator)
+        [DemandsInitialization("Type to create", TypeOf = typeof(DatabaseEntity))]
+        Type type) : base(activator)
     {
-        if(!typeof(DatabaseEntity).IsAssignableFrom(type))
+        if (!typeof(DatabaseEntity).IsAssignableFrom(type))
             SetImpossible("Type must be derived from DatabaseEntity");
         _type = type;
     }
@@ -55,15 +56,17 @@ public class ExecuteCommandNewObject:BasicCommandExecution
         ParameterHelpList = "<type> <arg1> <arg2> <etc>",
         ParameterHelpBreakdown = @"type	The object to create e.g. Catalogue
 args    Dynamic list of values to satisfy the types constructor")]
-    public ExecuteCommandNewObject(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
+    public ExecuteCommandNewObject(IBasicActivateItems activator, CommandLineObjectPicker picker) : base(activator)
     {
-        if(!picker.HasArgumentOfType(0, typeof(Type)))
+        if (!picker.HasArgumentOfType(0, typeof(Type)))
+        {
             SetImpossible("First parameter must be a Type of DatabaseEntity");
+        }
         else
         {
             _type = picker[0].Type;
 
-            if(!typeof(DatabaseEntity).IsAssignableFrom(_type))
+            if (!typeof(DatabaseEntity).IsAssignableFrom(_type))
                 SetImpossible("Type must be derived from DatabaseEntity");
         }
 
@@ -75,7 +78,8 @@ args    Dynamic list of values to satisfy the types constructor")]
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="callCtor"></param>
-    public ExecuteCommandNewObject(IBasicActivateItems activator, Func<IMapsDirectlyToDatabaseTable> callCtor) : base(activator)
+    public ExecuteCommandNewObject(IBasicActivateItems activator, Func<IMapsDirectlyToDatabaseTable> callCtor) :
+        base(activator)
     {
         _func = callCtor;
     }
@@ -85,22 +89,18 @@ args    Dynamic list of values to satisfy the types constructor")]
         base.Execute();
 
         IMapsDirectlyToDatabaseTable instance;
-        if(_func != null)
+        if (_func != null)
             instance = _func();
         else
-        {
             instance = (DatabaseEntity)Construct(_type,
-
                 //use the IRepository constructor of the _type
-                ()=>ObjectConstructor.GetRepositoryConstructor(_type),
-
+                () => ObjectConstructor.GetRepositoryConstructor(_type),
                 //first argument is the Type, the rest are fed into the constructor of _type
                 _picker?.Arguments?.Skip(1));
-        }
-            
-        if(instance == null)
+
+        if (instance == null)
             throw new Exception("Failed to construct object with provided parameters");
 
-        Publish( instance);
+        Publish(instance);
     }
 }

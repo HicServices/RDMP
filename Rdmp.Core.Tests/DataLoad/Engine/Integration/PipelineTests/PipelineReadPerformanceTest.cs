@@ -11,7 +11,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
 
-public class PipelineReadPerformanceTest:DatabaseTests
+public class PipelineReadPerformanceTest : DatabaseTests
 {
     private BulkTestsData _bulkTestData;
 
@@ -22,7 +22,6 @@ public class PipelineReadPerformanceTest:DatabaseTests
 
         _bulkTestData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
         _bulkTestData.SetupTestData();
-
     }
 
     [Test]
@@ -36,7 +35,7 @@ public class PipelineReadPerformanceTest:DatabaseTests
         var manualCount = Convert.ToInt32(cmd.ExecuteScalar());
 
         //manual count matches expected
-        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
+        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData, manualCount);
 
         //now get the fast approximate rowcount
         var fastRowcount = _bulkTestData.BulkDataDatabase
@@ -44,6 +43,6 @@ public class PipelineReadPerformanceTest:DatabaseTests
             .GetRowCount();
 
         //it should also match
-        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,fastRowcount);
+        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData, fastRowcount);
     }
 }

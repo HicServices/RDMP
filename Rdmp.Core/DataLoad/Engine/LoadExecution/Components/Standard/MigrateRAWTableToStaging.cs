@@ -35,7 +35,8 @@ public class MigrateRAWTableToStaging : DataLoadComponent
     private readonly bool _isLookupTable;
     private readonly HICDatabaseConfiguration _databaseConfiguration;
 
-    public MigrateRAWTableToStaging(ITableInfo tableInfo, bool isLookupTable, HICDatabaseConfiguration databaseConfiguration)
+    public MigrateRAWTableToStaging(ITableInfo tableInfo, bool isLookupTable,
+        HICDatabaseConfiguration databaseConfiguration)
     {
         _tableInfo = tableInfo;
         _isLookupTable = isLookupTable;
@@ -43,13 +44,15 @@ public class MigrateRAWTableToStaging : DataLoadComponent
     }
 
     private DataFlowPipelineEngine<DataTable> _pipeline;
+
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        if(_pipeline != null)
+        if (_pipeline != null)
             throw new Exception("Pipeline already executed once");
 
         var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
-        var context = contextFactory.Create(PipelineUsage.LoadsSingleTableInfo | PipelineUsage.FixedDestination | PipelineUsage.LogsToTableLoadInfo);
+        var context = contextFactory.Create(PipelineUsage.LoadsSingleTableInfo | PipelineUsage.FixedDestination |
+                                            PipelineUsage.LogsToTableLoadInfo);
 
         //where we are coming from (source)
         var sourceConvention = LoadBubble.Raw;
@@ -66,18 +69,21 @@ public class MigrateRAWTableToStaging : DataLoadComponent
                 return ExitCodeType.Success;
             }
             else
+            {
                 job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error,
                         $"Table {sourceTableName} did not exist in RAW database {sourceDatabase} when it came time to migrate RAW to STAGING (and the table is not a lookup)"));
+            }
 
 
         // where we are going to (destination)
         // ignore any columns that are marked for discard
         var destinationConvention = LoadBubble.Staging;
         var destinationDatabase = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-        var destinationTableName = _tableInfo.GetRuntimeName(destinationConvention, _databaseConfiguration.DatabaseNamer);
-        
-        DeleteFullyNullRecords(sourceTableName, sourceDatabase,job);
+        var destinationTableName =
+            _tableInfo.GetRuntimeName(destinationConvention, _databaseConfiguration.DatabaseNamer);
+
+        DeleteFullyNullRecords(sourceTableName, sourceDatabase, job);
 
         //audit
         var tableLoadInfo = job.DataLoadInfo.CreateTableLoadInfo(
@@ -94,11 +100,14 @@ public class MigrateRAWTableToStaging : DataLoadComponent
             sourceDatabase.Server.Builder, 50000);
 
         //ignore those that are pre load discarded columns (unless they are dilution in which case they get passed through in a decrepid state instead of dumped entirely - these fields will still bein ANODump in pristene state btw)
-        var columnNamesToIgnoreForBulkInsert = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination != DiscardedColumnDestination.Dilute).Select(column => column.RuntimeColumnName).ToList();
+        var columnNamesToIgnoreForBulkInsert = _tableInfo.PreLoadDiscardedColumns
+            .Where(c => c.Destination != DiscardedColumnDestination.Dilute).Select(column => column.RuntimeColumnName)
+            .ToList();
 
         //pass pre load discard
-        var destination = new SqlBulkInsertDestination(destinationDatabase, destinationTableName, columnNamesToIgnoreForBulkInsert);
-            
+        var destination = new SqlBulkInsertDestination(destinationDatabase, destinationTableName,
+            columnNamesToIgnoreForBulkInsert);
+
         //engine that will move data
         _pipeline = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
 
@@ -107,8 +116,8 @@ public class MigrateRAWTableToStaging : DataLoadComponent
 
         //add dropping of preload discard columns
         _pipeline.ComponentObjects.Add(new BasicAnonymisationEngine());
-            
-        _pipeline.Initialize(tableLoadInfo,_tableInfo);
+
+        _pipeline.Initialize(tableLoadInfo, _tableInfo);
 
         //tell it to move data
         _pipeline.ExecutePipeline(cancellationToken);
@@ -117,7 +126,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
     }
 
 
-    private void DeleteFullyNullRecords(string sourceTableName, DiscoveredDatabase dbInfo,IDataLoadJob job)
+    private void DeleteFullyNullRecords(string sourceTableName, DiscoveredDatabase dbInfo, IDataLoadJob job)
     {
         try
         {
@@ -126,7 +135,6 @@ public class MigrateRAWTableToStaging : DataLoadComponent
             using var con = dbInfo.Server.GetConnection();
             con.Open();
             using var cmd = dbInfo.Server.GetCommand(
-
                 //Magical code that nukes blank/null rows - where all rows are blank/null
                 $@"delete from {sourceTableName} WHERE {string.Join(" AND ",
                     cols.Select(c => $"({c} IS NULL OR {c}='')"))}", con);
@@ -143,12 +151,14 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         }
         catch (Exception e)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Could not delete fully null records, this will not prevent the data load occurring",e));
+            job.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning,
+                    "Could not delete fully null records, this will not prevent the data load occurring", e));
         }
     }
 
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
     }
 

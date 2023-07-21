@@ -27,7 +27,8 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
     private string _taskDescription;
     private Stopwatch timer = new();
 
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job,
+        GracefulCancellationToken cancellationToken)
     {
         timer.Start();
 
@@ -42,10 +43,10 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                 {
                     var o = row[toClean];
 
-                    if(o == DBNull.Value || o == null)
+                    if (o == DBNull.Value || o == null)
                         continue;
 
-                    if(o is not string s)
+                    if (o is not string s)
                         throw new ArgumentException(
                             $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 
@@ -53,7 +54,8 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                 }
                 catch (ArgumentException e)
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,e.Message)); //column could not be found
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Warning, e.Message)); //column could not be found
                     columnsToClean.Remove(columnsToClean[i]);
                     goto StartAgain;
                 }
@@ -61,7 +63,9 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
 
                 //it is empty
                 if (string.IsNullOrWhiteSpace(val))
+                {
                     row[toClean] = DBNull.Value;
+                }
                 else
                 {
                     //trim it
@@ -72,11 +76,15 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                         row[toClean] = valAfterClean;
                 }
             }
+
             _rowsProcessed++;
         }
+
         timer.Stop();
 
-        job.OnProgress(this,new ProgressEventArgs(_taskDescription,new ProgressMeasurement(_rowsProcessed, ProgressType.Records),timer.Elapsed));
+        job.OnProgress(this,
+            new ProgressEventArgs(_taskDescription, new ProgressMeasurement(_rowsProcessed, ProgressType.Records),
+                timer.Elapsed));
 
         return toProcess;
     }
@@ -89,10 +97,9 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
 
     public void Abort(IDataLoadEventListener listener)
     {
-            
     }
 
-    public void PreInitialize(TableInfo target,IDataLoadEventListener listener)
+    public void PreInitialize(TableInfo target, IDataLoadEventListener listener)
     {
         if (target == null)
             throw new Exception("Without TableInfo we cannot figure out what columns to clean");
@@ -113,6 +120,5 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
 
     public void Check(ICheckNotifier notifier)
     {
-            
     }
 }

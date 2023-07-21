@@ -55,15 +55,13 @@ public partial class SimpleFilterUI : UserControl
                 btnDelete.Enabled = true;
                 lblFilterName.Enabled = true;
             }
-
-
         }
     }
 
-    private List<SimpleParameterUI>  parameterUis = new();
+    private List<SimpleParameterUI> parameterUis = new();
     private bool _mandatory;
 
-    public SimpleFilterUI(IActivateItems activator,ExtractionFilter filter)
+    public SimpleFilterUI(IActivateItems activator, ExtractionFilter filter)
     {
         _activator = activator;
         _filter = filter;
@@ -85,12 +83,12 @@ public partial class SimpleFilterUI : UserControl
                 Margin = Padding.Empty
             };
 
-            var p = new SimpleParameterUI(activator,parameters[i]);
+            var p = new SimpleParameterUI(activator, parameters[i]);
             currentRowPanel.Controls.Add(p);
             p.tbValue.TextChanged += (s, e) =>
             {
                 //we are here because user is selecting a value from the dropdown not because he is editting the text field manually
-                if(_settingAKnownGoodValue)
+                if (_settingAKnownGoodValue)
                     return;
 
                 //user is manually editting a Parameters so it no longer matches a Known value
@@ -98,16 +96,17 @@ public partial class SimpleFilterUI : UserControl
             };
             parameterUis.Add(p);
 
-            tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
+            tableLayoutPanel1.Controls.Add(currentRowPanel, 0, i + 1);
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
         }
 
-        Height = 50 + parameters.Length*rowHeight;
+        Height = 50 + parameters.Length * rowHeight;
     }
 
     private void SetupKnownGoodValues()
     {
-        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
+        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
 
         if (knownGoodValues.Any())
         {
@@ -126,15 +125,12 @@ public partial class SimpleFilterUI : UserControl
 
             pbKnownValueSets.Left = lblFilterName.Right;
             ddKnownGoodValues.Left = pbKnownValueSets.Right;
-
         }
         else
         {
             pbKnownValueSets.Visible = false;
             ddKnownGoodValues.Visible = false;
         }
-
-
     }
 
     private void btnDelete_Click(object sender, EventArgs e)
@@ -144,7 +140,6 @@ public partial class SimpleFilterUI : UserControl
 
     private void lblFilterName_Click(object sender, EventArgs e)
     {
-
     }
 
     private bool _settingAKnownGoodValue;
@@ -159,10 +154,10 @@ public partial class SimpleFilterUI : UserControl
         _settingAKnownGoodValue = false;
     }
 
-    public IFilter CreateFilter(IFilterFactory factory ,IContainer filterContainer, IFilter[] alreadyExisting)
+    public IFilter CreateFilter(IFilterFactory factory, IContainer filterContainer, IFilter[] alreadyExisting)
     {
         var importer = new FilterImporter(factory, null);
-        var newFilter = importer.ImportFilter(filterContainer,_filter, alreadyExisting);
+        var newFilter = importer.ImportFilter(filterContainer, _filter, alreadyExisting);
 
         foreach (var parameterUi in parameterUis)
             parameterUi.HandleSettingParameters(newFilter);

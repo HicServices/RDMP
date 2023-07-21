@@ -31,10 +31,12 @@ public class DataSource
     public string Source { get; set; }
     public string Archive { get; set; }
     public DateTime OriginDate { get; internal set; }
-    public bool UnknownOriginDate { get; internal set;}
+    public bool UnknownOriginDate { get; internal set; }
 
     private byte[] _md5;
-    public byte[] MD5 {
+
+    public byte[] MD5
+    {
         get => _md5;
         set => _md5 = value;
     }

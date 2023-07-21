@@ -25,7 +25,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-public class PayloadTest:DatabaseTests
+public class PayloadTest : DatabaseTests
 {
     public static object payload = new();
     public static bool Success = false;
@@ -33,13 +33,15 @@ public class PayloadTest:DatabaseTests
     [Test]
     public void TestPayloadInjection()
     {
-        var b = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),10);
+        var b = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 10);
         b.SetupTestData();
         b.ImportAsCatalogue();
 
         var lmd = new LoadMetadata(CatalogueRepository, "Loading")
         {
-            LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName
+            LocationOfFlatFiles = LoadDirectory
+                .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true)
+                .RootPath.FullName
         };
         lmd.SaveToDatabase();
 
@@ -54,7 +56,7 @@ public class PayloadTest:DatabaseTests
 
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting)
         {
-            Path = typeof (TestPayloadAttacher).FullName,
+            Path = typeof(TestPayloadAttacher).FullName,
             ProcessTaskType = ProcessTaskType.Attacher
         };
         pt.SaveToDatabase();
@@ -63,7 +65,8 @@ public class PayloadTest:DatabaseTests
         var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
         var execution = factory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm, ThrowImmediatelyDataLoadEventListener.Quiet, execution, config);
+        var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm,
+            ThrowImmediatelyDataLoadEventListener.Quiet, execution, config);
 
         proceedure.Run(new GracefulCancellationToken(), payload);
 
@@ -71,7 +74,7 @@ public class PayloadTest:DatabaseTests
     }
 
 
-    public class TestPayloadAttacher : Attacher,IPluginAttacher
+    public class TestPayloadAttacher : Attacher, IPluginAttacher
     {
         public TestPayloadAttacher() : base(false)
         {
@@ -79,7 +82,7 @@ public class PayloadTest:DatabaseTests
 
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
             Success = ReferenceEquals(payload, job.Payload);
 
             return ExitCodeType.OperationNotRequired;
@@ -87,12 +90,10 @@ public class PayloadTest:DatabaseTests
 
         public override void Check(ICheckNotifier notifier)
         {
-
         }
 
         public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
         {
-
         }
     }
 }

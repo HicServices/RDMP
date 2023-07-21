@@ -13,7 +13,6 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.SimpleDialogs;
 
 
-
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources;
 
 /// <summary>
@@ -66,10 +65,7 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
         SetUnderlyingObjectTo((ExplicitTypingCollection)value);
     }
 
-    public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
-    {
-        return GetToReturn();
-    }
+    public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject() => GetToReturn();
 
     private ExplicitTypingCollection GetToReturn()
     {
@@ -103,6 +99,7 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
             ExceptionViewer.Show(exception);
             return;
         }
+
         Close();
     }
 
@@ -110,12 +107,10 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
     {
         if (CatalogueRepository == null)
             return;
-            
-        if(DialogResult != DialogResult.OK)
+
+        if (DialogResult != DialogResult.OK)
             if (MessageBox.Show("Close without saving?", "Cancel Changes", MessageBoxButtons.YesNo) !=
                 DialogResult.Yes)
                 e.Cancel = true;
     }
-
-
 }

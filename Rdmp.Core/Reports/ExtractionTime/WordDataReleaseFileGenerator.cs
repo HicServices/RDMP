@@ -39,7 +39,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         if (Configuration.Cohort_ID == null)
             throw new NullReferenceException("Configuration has no Cohort");
 
-        Cohort = _repository.GetObjectByID<ExtractableCohort>((int) Configuration.Cohort_ID);
+        Cohort = _repository.GetObjectByID<ExtractableCohort>((int)Configuration.Cohort_ID);
 
         ExtractionResults =
             Configuration.CumulativeExtractionResults
@@ -50,23 +50,24 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
     public void GenerateWordFile(string saveAsFilename)
     {
-
         FileInfo f;
 
-        f = string.IsNullOrWhiteSpace(saveAsFilename) ? GetUniqueFilenameInWorkArea("ReleaseDocument") : new FileInfo(saveAsFilename);
+        f = string.IsNullOrWhiteSpace(saveAsFilename)
+            ? GetUniqueFilenameInWorkArea("ReleaseDocument")
+            : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
         using var document = GetNewDocFile(f);
         //actually changes it to landscape :)
         SetLandscape(document);
-                               
-        InsertHeader(document, $"Project:{Project.Name}",1);
-        InsertHeader(document, Configuration.Name,2);
-                
+
+        InsertHeader(document, $"Project:{Project.Name}", 1);
+        InsertHeader(document, Configuration.Name, 2);
+
         var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-        if(disclaimer != null)
-            InsertParagraph(document,disclaimer);
+        if (disclaimer != null)
+            InsertParagraph(document, disclaimer);
 
         CreateTopTable1(document);
 
@@ -74,10 +75,10 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         CreateCohortDetailsTable(document);
 
-        InsertParagraph(document,Environment.NewLine);
+        InsertParagraph(document, Environment.NewLine);
 
         CreateFileSummary(document);
-                                
+
         //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
         if (string.IsNullOrWhiteSpace(saveAsFilename))
             ShowFile(f);
@@ -98,20 +99,20 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         var table = InsertTable(document, requiredRows, 2);
 
-        if(hasTicket)
+        if (hasTicket)
         {
             SetTableCell(table, currentRow, 0, "Master Issue");
             SetTableCell(table, currentRow, 1, Project.MasterTicket);
             currentRow++;
         }
 
-        SetTableCell(table,currentRow, 0, "ReleaseIdentifier");
-        SetTableCell(table,currentRow, 1, Cohort.GetReleaseIdentifier(true));
+        SetTableCell(table, currentRow, 0, "ReleaseIdentifier");
+        SetTableCell(table, currentRow, 1, Cohort.GetReleaseIdentifier(true));
         currentRow++;
 
         if (hasProchi)
         {
-            SetTableCell(table,currentRow, 0,"Prefix");
+            SetTableCell(table, currentRow, 0, "Prefix");
             SetTableCell(table, currentRow, 1, GetFirstProCHIPrefix());
         }
     }
@@ -142,18 +143,23 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         var tableLine = 0;
 
-        SetTableCell(table,tableLine, 0, "Version");
-        SetTableCell(table,tableLine, 1, "Description");
-        SetTableCell(table,tableLine, 2, "Date Extracted");
-        SetTableCell(table,tableLine, 3, "Unique Individuals");
+        SetTableCell(table, tableLine, 0, "Version");
+        SetTableCell(table, tableLine, 1, "Description");
+        SetTableCell(table, tableLine, 2, "Date Extracted");
+        SetTableCell(table, tableLine, 3, "Unique Individuals");
         tableLine++;
 
-        SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
-        SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
+        SetTableCell(table, tableLine, 0,
+            Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
+        SetTableCell(table, tableLine, 1,
+            $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})"); //description fetched from remote table
 
-        var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString(CultureInfo.CurrentCulture) : "Never";
-        SetTableCell(table,tableLine, 2, lastExtracted);
-        SetTableCell(table,tableLine, 3, Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
+        var lastExtracted = ExtractionResults.Any()
+            ? ExtractionResults.Max(r => r.DateOfExtraction).ToString(CultureInfo.CurrentCulture)
+            : "Never";
+        SetTableCell(table, tableLine, 2, lastExtracted);
+        SetTableCell(table, tableLine, 3,
+            Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
     }
 
     private void CreateFileSummary(XWPFDocument document)
@@ -162,25 +168,25 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         var tableLine = 0;
 
-        SetTableCell(table,tableLine, 0, "Data Requirement");
-        SetTableCell(table,tableLine, 1, "Notes");
-        SetTableCell(table,tableLine, 2, "Filename");
-        SetTableCell(table,tableLine, 3, "Records");
-        SetTableCell(table,tableLine, 4, "Unique Individuals");
+        SetTableCell(table, tableLine, 0, "Data Requirement");
+        SetTableCell(table, tableLine, 1, "Notes");
+        SetTableCell(table, tableLine, 2, "Filename");
+        SetTableCell(table, tableLine, 3, "Records");
+        SetTableCell(table, tableLine, 4, "Unique Individuals");
         tableLine++;
 
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
 
-            SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
-            SetTableCell(table,tableLine, 1,result.FiltersUsed);
-            SetTableCell(table,tableLine, 2,filename);
-            SetTableCell(table,tableLine, 3,result.RecordsExtracted.ToString("N0"));
-            SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
+            SetTableCell(table, tableLine, 0,
+                _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
+            SetTableCell(table, tableLine, 1, result.FiltersUsed);
+            SetTableCell(table, tableLine, 2, filename);
+            SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));
+            SetTableCell(table, tableLine, 4, result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
-
     }
 
     private string GetFileName(ICumulativeExtractionResults result)

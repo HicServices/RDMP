@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-public abstract class RDMPCommandExecutionProposal<T>:ICommandExecutionProposal where T : class
+public abstract class RDMPCommandExecutionProposal<T> : ICommandExecutionProposal where T : class
 {
     protected readonly IActivateItems ItemActivator;
 
@@ -33,31 +33,22 @@ public abstract class RDMPCommandExecutionProposal<T>:ICommandExecutionProposal 
     /// <param name="target"> The object the cursor is currently hovering over </param>
     /// <param name="insertOption">Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it)</param>
     /// <returns></returns>
-    public abstract ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, T target, InsertOption insertOption = InsertOption.Default);
+    public abstract ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, T target,
+        InsertOption insertOption = InsertOption.Default);
 
-    public bool IsCompatibleTarget(object target)
-    {
-        return target is T target1 && IsCompatibleTargetImpl(target1);
-    }
+    public bool IsCompatibleTarget(object target) => target is T target1 && IsCompatibleTargetImpl(target1);
 
-    protected virtual bool IsCompatibleTargetImpl(T _)
-    {
-        return true;
-    }
+    protected virtual bool IsCompatibleTargetImpl(T _) => true;
 
-    public ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, object target,InsertOption insertOption = InsertOption.Default)
-    {
-        return IsCompatibleTarget(target) ? ProposeExecution(cmd,(T)target, insertOption) : null;
-    }
+    public ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, object target,
+        InsertOption insertOption = InsertOption.Default) =>
+        IsCompatibleTarget(target) ? ProposeExecution(cmd, (T)target, insertOption) : null;
 
     public void Activate(object target)
     {
         if (IsCompatibleTarget(target))
-            Activate((T) target);
+            Activate((T)target);
     }
 
-    public bool CanActivate(object target)
-    {
-        return IsCompatibleTarget(target) && CanActivate((T)target);
-    }
+    public bool CanActivate(object target) => IsCompatibleTarget(target) && CanActivate((T)target);
 }

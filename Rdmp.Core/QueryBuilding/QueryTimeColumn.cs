@@ -23,7 +23,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// Table, whether it maps to an underlying ColumnInfo etc.  These facts are used later on by QueryBuilder to decide which tables/joins are needed in the FROM
 /// section of the query etc
 /// </summary>
-public class QueryTimeColumn: IComparable
+public class QueryTimeColumn : IComparable
 {
     /// <summary>
     /// The <see cref="UnderlyingColumn"/> is from a <see cref="Lookup"/> and is a description column but there was no associated
@@ -75,10 +75,7 @@ public class QueryTimeColumn: IComparable
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        return IColumn == null ? -1 : IColumn.ID;
-    }
+    public override int GetHashCode() => IColumn == null ? -1 : IColumn.ID;
 
     /// <inheritdoc/>
     public override bool Equals(object obj)
@@ -92,13 +89,11 @@ public class QueryTimeColumn: IComparable
     }
 
     /// <inheritdoc/>
-    public int CompareTo(object obj)
-    {
-        return obj is QueryTimeColumn
+    public int CompareTo(object obj) =>
+        obj is QueryTimeColumn
             ? IColumn.Order -
-                   (obj as QueryTimeColumn).IColumn.Order
+              (obj as QueryTimeColumn).IColumn.Order
             : 0;
-    }
 
     /// <summary>
     /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the
@@ -108,7 +103,6 @@ public class QueryTimeColumn: IComparable
     /// <param name="tablesUsedInQuery"></param>
     public static void SetLookupStatus(QueryTimeColumn[] ColumnsInOrder, List<ITableInfo> tablesUsedInQuery)
     {
-
         ColumnInfo lastForeignKeyFound = null;
         var lookupTablesFound = 0;
 
@@ -116,7 +110,7 @@ public class QueryTimeColumn: IComparable
 
         var allAvailableLookups = Array.Empty<Lookup>();
 
-        if(firstTable != null)
+        if (firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
 
         for (var i = 0; i < ColumnsInOrder.Length; i++)
@@ -125,8 +119,10 @@ public class QueryTimeColumn: IComparable
             if (ColumnsInOrder[i].UnderlyingColumn == null)
                 continue;
 
-            var foreignKeyLookupInvolvement = allAvailableLookups.Where(l=>l.ForeignKey_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
-            var lookupDescriptionInvolvement = allAvailableLookups.Where(l=>l.Description_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
+            var foreignKeyLookupInvolvement = allAvailableLookups
+                .Where(l => l.ForeignKey_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
+            var lookupDescriptionInvolvement = allAvailableLookups
+                .Where(l => l.Description_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
 
             if (foreignKeyLookupInvolvement.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().Count() > 1)
                 throw new Exception(
@@ -157,18 +153,24 @@ public class QueryTimeColumn: IComparable
                         lookupDescriptionInvolvement.Where(
                             l => tablesUsedInQuery.Any(t => t.ID == l.ForeignKey.TableInfo_ID)).ToArray();
 
-                    if(potentialWinners.Length == 1)//or there are many options but only one which is in our existing table collection
+                    if (potentialWinners.Length ==
+                        1) //or there are many options but only one which is in our existing table collection
                     {
-                        lastForeignKeyFound = potentialWinners[0].ForeignKey;//use it there aren't multiple foreign keys to pick from (which would result in uncertainty)
+                        lastForeignKeyFound =
+                            potentialWinners[0]
+                                .ForeignKey; //use it there aren't multiple foreign keys to pick from (which would result in uncertainty)
                         lookupDescriptionIsIsolated = true;
                     }
                     else
                         //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
+                    {
                         throw new QueryBuildingException(
                             $"Found lookup description before encountering any lookup foreign keys (Description column was {ColumnsInOrder[i].UnderlyingColumn}) - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");
+                    }
                 }
 
-                var correctLookupDescriptionInvolvement = lookupDescriptionInvolvement.Where(lookup => lookup.ForeignKey.ID == lastForeignKeyFound.ID).ToArray();
+                var correctLookupDescriptionInvolvement = lookupDescriptionInvolvement
+                    .Where(lookup => lookup.ForeignKey.ID == lastForeignKeyFound.ID).ToArray();
 
                 if (correctLookupDescriptionInvolvement.Length == 0)
                 {
@@ -176,12 +178,13 @@ public class QueryTimeColumn: IComparable
 
                     //either way the last seen fk (or guessed fk) isn't right.  So what fks could potentially be used with the Column?
                     var probableCorrectColumn = lookupDescriptionInvolvement.Where(
-                        l =>
-                            //any lookup where there is...
-                            ColumnsInOrder.Any(
-                                qtc =>
-                                    //a column with an ID equal to the fk
-                                    qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID)).ToArray();
+                            l =>
+                                //any lookup where there is...
+                                ColumnsInOrder.Any(
+                                    qtc =>
+                                        //a column with an ID equal to the fk
+                                        qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID))
+                        .ToArray();
 
 
                     var suggestions = "";
@@ -200,7 +203,8 @@ public class QueryTimeColumn: IComparable
                 ColumnsInOrder[i].IsIsolatedLookupDescription = lookupDescriptionIsIsolated;
                 ColumnsInOrder[i].IsLookupForeignKey = false;
                 ColumnsInOrder[i].IsLookupDescription = true;
-                ColumnsInOrder[i].LookupTableAlias = lookupTablesFound; // must belong to same one as previously encountered foreign key
+                ColumnsInOrder[i].LookupTableAlias =
+                    lookupTablesFound; // must belong to same one as previously encountered foreign key
                 ColumnsInOrder[i].LookupTable = correctLookupDescriptionInvolvement[0];
 
                 //see if there are any supplemental joins to tables that are not involved in the query
@@ -223,7 +227,7 @@ public class QueryTimeColumn: IComparable
     /// <param name="salt"></param>
     /// <param name="syntaxHelper"></param>
     /// <returns></returns>
-    public string GetSelectSQL(string hashingPattern, string salt,IQuerySyntaxHelper syntaxHelper)
+    public string GetSelectSQL(string hashingPattern, string salt, IQuerySyntaxHelper syntaxHelper)
     {
         var toReturn = IColumn.SelectSQL;
 
@@ -235,8 +239,10 @@ public class QueryTimeColumn: IComparable
                     $"IExtractableColumn {IColumn} is missing an Alias (required for hashing)");
 
             //if there is no custom hashing pattern
-            toReturn = string.IsNullOrWhiteSpace(hashingPattern) ? syntaxHelper.HowDoWeAchieveMd5(toReturn) : //use the DBMS specific one
-                string.Format(hashingPattern,toReturn, salt); //otherwise use the custom one
+            toReturn = string.IsNullOrWhiteSpace(hashingPattern)
+                ? syntaxHelper.HowDoWeAchieveMd5(toReturn)
+                : //use the DBMS specific one
+                string.Format(hashingPattern, toReturn, salt); //otherwise use the custom one
         }
 
         // the SELECT SQL may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version
@@ -282,7 +288,6 @@ public class QueryTimeColumn: IComparable
 
             if (string.IsNullOrWhiteSpace(runtimeName))
                 throw new SyntaxErrorException("no runtime name");
-
         }
         catch (SyntaxErrorException exception)
         {

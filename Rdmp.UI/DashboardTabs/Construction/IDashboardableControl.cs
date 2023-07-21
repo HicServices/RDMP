@@ -34,7 +34,7 @@ namespace Rdmp.UI.DashboardTabs.Construction;
 /// GoodBadCataloguePieChartObjectCollection</para>
 /// 
 /// </summary>
-public interface IDashboardableControl:IObjectCollectionControl,INotifyMeOfEditState
+public interface IDashboardableControl : IObjectCollectionControl, INotifyMeOfEditState
 {
     /// <summary>
     /// unlike regular Dashboardable controls

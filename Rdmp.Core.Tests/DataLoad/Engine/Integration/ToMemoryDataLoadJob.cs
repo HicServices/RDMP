@@ -23,10 +23,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
 {
     private List<NotifyEventArgs> _crashAtEnd = new();
+
     /// <inheritdoc/>
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 
-    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true): base(throwOnErrorEvents)
+    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true) : base(throwOnErrorEvents)
     {
     }
 
@@ -65,10 +66,13 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
     }
+
     public ColumnInfo[] GetAllColumns()
     {
-        return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
     }
+
     /// <inheritdoc/>
     public void CrashAtEnd(NotifyEventArgs because)
     {

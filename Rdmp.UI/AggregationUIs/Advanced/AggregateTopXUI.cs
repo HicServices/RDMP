@@ -27,7 +27,7 @@ public partial class AggregateTopXUI : RDMPUserControl
     private AggregateTopX _topX;
     private AggregateConfiguration _aggregate;
 
-    private const string CountColumn  = "Count Column";
+    private const string CountColumn = "Count Column";
 
     public AggregateTopXUI()
     {
@@ -49,7 +49,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         _topX = aggregate.GetTopXIfAny();
 
         //if a TopX exists and control is disabled
-        if(!Enabled && _topX != null)
+        if (!Enabled && _topX != null)
         {
             _topX.DeleteInDatabase();
             _topX = null;
@@ -84,19 +84,20 @@ public partial class AggregateTopXUI : RDMPUserControl
             ddOrderByDimension.Enabled = false;
             ddAscOrDesc.Enabled = false;
         }
+
         bLoading = false;
     }
 
     private void tbTopX_TextChanged(object sender, EventArgs e)
     {
-        if(bLoading)
+        if (bLoading)
             return;
 
         //user is trying to delete an existing TopX
         if (_topX != null && string.IsNullOrWhiteSpace(tbTopX.Text))
         {
             _topX.DeleteInDatabase();
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
             return;
         }
 
@@ -119,13 +120,16 @@ public partial class AggregateTopXUI : RDMPUserControl
 
         //there isn't one yet
         if (_topX == null)
+        {
             _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueRepository, _aggregate, i);
+        }
         else
         {
             //there is one so change its topX
             _topX.TopX = i;
             _topX.SaveToDatabase();
         }
+
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
     }
 
@@ -134,7 +138,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         if (bLoading)
             return;
 
-        if(_topX == null || ddOrderByDimension.SelectedItem == null)
+        if (_topX == null || ddOrderByDimension.SelectedItem == null)
             return;
 
         if (ddOrderByDimension.SelectedItem is AggregateDimension dimension)
@@ -151,10 +155,10 @@ public partial class AggregateTopXUI : RDMPUserControl
         if (bLoading)
             return;
 
-        if(_topX == null || ddAscOrDesc.SelectedItem == null)
+        if (_topX == null || ddAscOrDesc.SelectedItem == null)
             return;
 
-        _topX.OrderByDirection = (AggregateTopXOrderByDirection) ddAscOrDesc.SelectedItem;
+        _topX.OrderByDirection = (AggregateTopXOrderByDirection)ddAscOrDesc.SelectedItem;
         _topX.SaveToDatabase();
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
     }

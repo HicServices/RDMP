@@ -57,7 +57,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         tcRelease.Title = "Release Ticket";
         tcRelease.TicketTextChanged += tcRelease_TicketTextChanged;
 
-        cbxCohortIdentificationConfiguration.PropertySelector = sel => sel.Cast<CohortIdentificationConfiguration>().Select(cic=> cic == null? "<<None>>":cic.Name);
+        cbxCohortIdentificationConfiguration.PropertySelector = sel =>
+            sel.Cast<CohortIdentificationConfiguration>().Select(cic => cic == null ? "<<None>>" : cic.Name);
         AssociatedCollection = RDMPCollection.DataExport;
     }
 
@@ -67,7 +68,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
             return;
 
         //don't change if it is already that
-        if (_extractionConfiguration.RequestTicket != null && _extractionConfiguration.RequestTicket.Equals(tcRequest.TicketText))
+        if (_extractionConfiguration.RequestTicket != null &&
+            _extractionConfiguration.RequestTicket.Equals(tcRequest.TicketText))
             return;
 
         _extractionConfiguration.RequestTicket = tcRequest.TicketText;
@@ -81,7 +83,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
             return;
 
         //don't change if it is already that
-        if (_extractionConfiguration.ReleaseTicket != null && _extractionConfiguration.ReleaseTicket.Equals(tcRelease.TicketText))
+        if (_extractionConfiguration.ReleaseTicket != null &&
+            _extractionConfiguration.ReleaseTicket.Equals(tcRelease.TicketText))
             return;
 
         _extractionConfiguration.ReleaseTicket = tcRelease.TicketText;
@@ -92,7 +95,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         _bLoading = true;
         _extractionConfiguration = databaseObject;
 
@@ -101,7 +104,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         SetupPipelineSelectionExtraction();
         SetupPipelineSelectionCohortRefresh();
 
-        pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link).ImageToBitmap();
+        pbCic.Image = activator.CoreIconProvider
+            .GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link).ImageToBitmap();
 
         tbCreated.Text = _extractionConfiguration.dtCreated.ToString();
         tcRelease.TicketText = _extractionConfiguration.ReleaseTicket;
@@ -115,8 +119,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         base.SetBindings(rules, databaseObject);
 
         Bind(tbUsername, "Text", "Username", c => c.Username);
-        Bind(tbID,"Text", "ID",c=>c.ID);
-        Bind(tbDescription,"Text","Description",c=>c.Description);
+        Bind(tbID, "Text", "ID", c => c.ID);
+        Bind(tbDescription, "Text", "Description", c => c.Description);
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -128,7 +132,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 
     private void SetupCohortIdentificationConfiguration()
     {
-        cbxCohortIdentificationConfiguration.DataSource = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+        cbxCohortIdentificationConfiguration.DataSource =
+            Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
         cbxCohortIdentificationConfiguration.SelectedItem = _extractionConfiguration.CohortIdentificationConfiguration;
     }
 
@@ -144,13 +149,17 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
             var useCase = new CohortCreationRequest(_extractionConfiguration);
 
             //the user is DefaultPipeline_ID field of ExtractionConfiguration
-            var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"), _extractionConfiguration);
+            var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"),
+                _extractionConfiguration);
 
             //create the UI for this situation
-            var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
-            _cohortRefreshingPipelineSelectionUI = factory.Create(Activator,"Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
+            var factory =
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
+            _cohortRefreshingPipelineSelectionUI = factory.Create(Activator, "Cohort Refresh Pipeline", DockStyle.Fill,
+                pChooseCohortRefreshPipeline);
             _cohortRefreshingPipelineSelectionUI.Pipeline = _extractionConfiguration.CohortRefreshPipeline;
-            _cohortRefreshingPipelineSelectionUI.PipelineChanged += _cohortRefreshingPipelineSelectionUI_PipelineChanged;
+            _cohortRefreshingPipelineSelectionUI.PipelineChanged +=
+                _cohortRefreshingPipelineSelectionUI_PipelineChanged;
             _cohortRefreshingPipelineSelectionUI.CollapseToSingleLineMode();
         }
         catch (Exception e)
@@ -164,7 +173,8 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         ragSmiley1Refresh.Reset();
         try
         {
-            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
+            new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,
+                ThrowImmediatelyDataLoadEventListener.Quiet);
         }
         catch (Exception ex)
         {
@@ -182,17 +192,19 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         var useCase = ExtractionPipelineUseCase.DesignTime();
 
         //the user is DefaultPipeline_ID field of ExtractionConfiguration
-        var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"), _extractionConfiguration);
+        var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),
+            _extractionConfiguration);
 
         //create the UI for this situation
         var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
-        _extractionPipelineSelectionUI = factory.Create(Activator,"Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
+        _extractionPipelineSelectionUI =
+            factory.Create(Activator, "Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
         _extractionPipelineSelectionUI.CollapseToSingleLineMode();
     }
 
     private void cbxCohortIdentificationConfiguration_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(_bLoading)
+        if (_bLoading)
             return;
 
         if (cbxCohortIdentificationConfiguration.SelectedItem is not CohortIdentificationConfiguration cic)
@@ -208,14 +220,10 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         cbxCohortIdentificationConfiguration.SelectedItem = null;
     }
 
-    public override string GetTabName()
-    {
-        return $"{_extractionConfiguration.GetProjectHint(true)} {base.GetTabName()}";
-    }
-    public override string GetTabToolTip()
-    {
-        return $"'{base.GetTabName()}' - {_extractionConfiguration.GetProjectHint(false)}";
-    }
+    public override string GetTabName() => $"{_extractionConfiguration.GetProjectHint(true)} {base.GetTabName()}";
+
+    public override string GetTabToolTip() =>
+        $"'{base.GetTabName()}' - {_extractionConfiguration.GetProjectHint(false)}";
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionConfigurationUI_Design, UserControl>))]

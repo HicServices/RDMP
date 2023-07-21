@@ -17,7 +17,6 @@ namespace Tests.Common.Helpers;
 /// </summary>
 public class TestDataPipelineAssembler
 {
-
     /// <summary>
     /// Blueprint for a <see cref="TestDataWriter"/>
     /// </summary>
@@ -27,16 +26,19 @@ public class TestDataPipelineAssembler
     /// Blueprint for a <see cref="TestDataInventor"/>
     /// </summary>
     public PipelineComponent Source { get; set; }
+
     public Pipeline Pipeline { get; set; }
 
     public TestDataPipelineAssembler(string pipeName, ICatalogueRepository catalogueRepository)
     {
         Pipeline = new Pipeline(catalogueRepository, pipeName);
-        Source = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataInventor), 1, "DataInventorSource");
-        Destination = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataWriter), 2, "DataInventorDestination");
+        Source = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataInventor), 1,
+            "DataInventorSource");
+        Destination = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataWriter), 2,
+            "DataInventorDestination");
 
         Destination.CreateArgumentsForClassIfNotExists<TestDataWriter>();
-            
+
         Pipeline.SourcePipelineComponent_ID = Source.ID;
         Pipeline.DestinationPipelineComponent_ID = Destination.ID;
         Pipeline.SaveToDatabase();

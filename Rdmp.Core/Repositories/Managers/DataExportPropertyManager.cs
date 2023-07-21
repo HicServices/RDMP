@@ -22,7 +22,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     private readonly bool _allowCaching;
     private readonly DataExportRepository _repository;
     private bool _cacheOutOfDate = true;
-    private readonly ConcurrentDictionary<string,string> _cacheDictionary = new();
+    private readonly ConcurrentDictionary<string, string> _cacheDictionary = new();
 
     /// <summary>
     /// Creates a new instance ready to read values out of the <paramref name="repository"/> database
@@ -43,7 +43,6 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     /// <exception cref="KeyNotFoundException"></exception>
     public string GetValue(string property)
     {
-
         //if we do not allow caching then we effectively pull all values every time.  We also pull every value if cache has not been built yet (is out of date)
         if (!_allowCaching || _cacheOutOfDate)
             RefreshCache();
@@ -52,10 +51,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     }
 
     /// <inheritdoc cref="GetValue(string)"/>
-    public string GetValue(DataExportProperty property)
-    {
-        return GetValue(property.ToString());
-    }
+    public string GetValue(DataExportProperty property) => GetValue(property.ToString());
 
 
     /// <summary>
@@ -70,7 +66,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
 
     private void SetValue(string property, string value)
     {
-        if(_cacheOutOfDate)
+        if (_cacheOutOfDate)
             RefreshCache();
 
         if (string.IsNullOrWhiteSpace(value))
@@ -80,7 +76,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
             IssueUpdateCommand(property, value);
         else
             IssueInsertCommand(property, value);
-            
+
         //a value has been set, reset cache (we could update cache manually in memory but a round trip to database is safer)
         _cacheOutOfDate = true;
     }
@@ -90,28 +86,24 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public int DeleteValue(string property)
-    {
-        return IssueDeleteCommand(property);
-    }
+    public int DeleteValue(string property) => IssueDeleteCommand(property);
 
     #region read/write to database
-    private int IssueDeleteCommand(string property)
-    {
-        return _repository.Delete("DELETE FROM [ConfigurationProperties] WHERE Property=@property",
+
+    private int IssueDeleteCommand(string property) =>
+        _repository.Delete("DELETE FROM [ConfigurationProperties] WHERE Property=@property",
             new Dictionary<string, object>
             {
-                {"property", property}
+                { "property", property }
             });
-    }
 
     private void IssueInsertCommand(string property, string value)
     {
         _repository.Insert("INSERT INTO [ConfigurationProperties](Property,Value) VALUES (@property,@value)",
             new Dictionary<string, object>
             {
-                {"value", value},
-                {"property", property}
+                { "value", value },
+                { "property", property }
             });
     }
 
@@ -120,8 +112,8 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         _repository.Update("UPDATE [ConfigurationProperties] set Value=@value where Property=@property",
             new Dictionary<string, object>
             {
-                {"value", value},
-                {"property", property}
+                { "value", value },
+                { "property", property }
             });
     }
 
@@ -131,7 +123,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         using (var con = repo.GetConnection())
         {
             using var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
-                       con.Connection, con.Transaction);
+                con.Connection, con.Transaction);
             using var reader = cmd.ExecuteReader();
             _cacheDictionary.Clear();
 
@@ -142,10 +134,10 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
                 _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
                     val, (k, o) => val);
             }
-
         }
 
         _cacheOutOfDate = false;
     }
+
     #endregion
 }

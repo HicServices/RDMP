@@ -23,7 +23,7 @@ public interface ITableInfoCredentialsManager
     /// <param name="credentials"></param>
     /// <param name="tableInfo"></param>
     /// <param name="context"></param>
-    void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,DataAccessContext context);
+    void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context);
 
     /// <summary>
     /// Removes the right to use passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/> under the <paramref name="context"/>
@@ -58,7 +58,7 @@ public interface ITableInfoCredentialsManager
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <returns></returns>
-    Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo);
+    Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo);
 
     /// <summary>
     /// Returns all credential usage permissions for the given set of <paramref name="allTableInfos"/> and <paramref name="allCredentials"/>
@@ -66,7 +66,8 @@ public interface ITableInfoCredentialsManager
     /// <param name="allCredentials"></param>
     /// <param name="allTableInfos"></param>
     /// <returns></returns>
-    Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos);
+    Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
+        DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos);
 
     /// <summary>
     /// Returns all the <see cref="TableInfo"/> that are allowed to use the given <paramref name="credentials"/>

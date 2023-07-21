@@ -20,11 +20,10 @@ namespace Rdmp.Core.ReusableLibraryCode.Performance;
 /// </summary>
 public class ComprehensiveQueryPerformanceCounter
 {
-    public readonly Dictionary<string,QueryPerformed> DictionaryOfQueries = new();
+    public readonly Dictionary<string, QueryPerformed> DictionaryOfQueries = new();
 
     public void AddAudit(DbCommand cmd, string environmentDotStackTrace)
     {
-            
         //is it a novel origin
         if (!DictionaryOfQueries.ContainsKey(environmentDotStackTrace))
             DictionaryOfQueries.Add(environmentDotStackTrace, new QueryPerformed(cmd.CommandText));

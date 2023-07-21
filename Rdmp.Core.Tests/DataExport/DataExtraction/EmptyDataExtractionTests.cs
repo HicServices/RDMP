@@ -19,16 +19,15 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-public class EmptyDataExtractionTests:TestsRequiringAnExtractionConfiguration
+public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
 {
-
     private void TruncateDataTable()
     {
         var server = Database.Server;
         using var con = server.GetConnection();
         con.Open();
 
-        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable",con);
+        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable", con);
         cmdTruncate.ExecuteNonQuery();
 
         con.Close();
@@ -40,28 +39,29 @@ public class EmptyDataExtractionTests:TestsRequiringAnExtractionConfiguration
     public void TestAllowingEmptyDatasets(bool allowEmptyDatasetExtractions)
     {
         var p = SetupPipeline();
-            
+
         TruncateDataTable();
 
-        var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),_request.Configuration.Project, _request, p, DataLoadInfo.Empty);
+        var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),
+            _request.Configuration.Project, _request, p, DataLoadInfo.Empty);
 
         var engine = host.GetEngine(p, ThrowImmediatelyDataLoadEventListener.Quiet);
         host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
 
         var token = new GracefulCancellationToken();
-            
-        if(allowEmptyDatasetExtractions)
-        {
 
+        if (allowEmptyDatasetExtractions)
+        {
             var dt = host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token);
             Assert.IsNull(host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
-            Assert.AreEqual(0,dt.Rows.Count);
+            Assert.AreEqual(0, dt.Rows.Count);
             Assert.AreEqual(3, dt.Columns.Count);
         }
         else
         {
-            var exception = Assert.Throws<Exception>(() => host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
+            var exception = Assert.Throws<Exception>(() =>
+                host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
             Assert.IsTrue(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
         }

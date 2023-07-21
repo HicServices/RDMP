@@ -28,20 +28,24 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
     /// </summary>
     private bool _userMustPick;
 
-    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration)
-        : this(activator,targetExtractionConfiguration)
+    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,
+        ExtractableDataSetCombineable sourceExtractableDataSetCombineable,
+        ExtractionConfiguration targetExtractionConfiguration)
+        : this(activator, targetExtractionConfiguration)
     {
-        SetExtractableDataSets(false,sourceExtractableDataSetCombineable.ExtractableDataSets);
+        SetExtractableDataSets(false, sourceExtractableDataSetCombineable.ExtractableDataSets);
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
-        : this(itemActivator,targetExtractionConfiguration)
+    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator,
+        ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
+        : this(itemActivator, targetExtractionConfiguration)
     {
         SetExtractableDataSets(false, extractableDataSet);
     }
 
-    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator, ExtractionConfiguration targetExtractionConfiguration):base(itemActivator)
+    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator,
+        ExtractionConfiguration targetExtractionConfiguration) : base(itemActivator)
     {
         _targetExtractionConfiguration = targetExtractionConfiguration;
 
@@ -53,41 +57,44 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
             {
                 //use the ones that are not already in the ExtractionConfiguration
-                var _datasets = childProvider.GetDatasets(targetExtractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
+                var _datasets = childProvider.GetDatasets(targetExtractionConfiguration)
+                    .Select(n => n.ExtractableDataSet).ToArray();
                 var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
 
                     //where it can be used in any Project OR this project only
-                    .Where(ds => ds.Project_ID == null || ds.Project_ID == targetExtractionConfiguration.Project_ID).ToArray();
+                    .Where(ds => ds.Project_ID == null || ds.Project_ID == targetExtractionConfiguration.Project_ID)
+                    .ToArray();
 
                 SetExtractableDataSets(true, _importableDataSets);
             }
             else
             {
                 SetImpossible("CoreChildProvider was not DataExportChildProvider");
-            }            
+            }
     }
 
-    private void SetExtractableDataSets(bool userMustPick,params IExtractableDataSet[] toAdd)
+    private void SetExtractableDataSets(bool userMustPick, params IExtractableDataSet[] toAdd)
     {
         _userMustPick = userMustPick;
         var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
         _toadd = toAdd.Except(alreadyInConfiguration).ToArray();
 
-        if(!_toadd.Any())
+        if (!_toadd.Any())
             SetImpossible("ExtractionConfiguration already contains this dataset(s)");
     }
 
     public override void Execute()
     {
         base.Execute();
-            
+
         if (_userMustPick)
         {
             if (!SelectMany(new DialogArgs
                 {
                     WindowTitle = "Select Datasets",
-                    TaskDescription = "Select the Datasets you would like to be exported as part of your Extraction Configuration."
-                }, _toadd.Cast<ExtractableDataSet>().ToArray(),out var selected))
+                    TaskDescription =
+                        "Select the Datasets you would like to be exported as part of your Extraction Configuration."
+                }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
                 return;
 
             foreach (var ds in selected)
@@ -102,8 +109,6 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         Publish(_targetExtractionConfiguration);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExtractableDataSet,OverlayKind.Import);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Import);
 }

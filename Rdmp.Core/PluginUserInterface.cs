@@ -30,10 +30,7 @@ public abstract class PluginUserInterface : IPluginUserInterface
         BasicActivator = itemActivator;
     }
 
-    public virtual object[] GetChildren(object model)
-    {
-        return null;
-    }
+    public virtual object[] GetChildren(object model) => null;
 
     /// <summary>
     /// Override to return a custom set of commands for some objects
@@ -46,13 +43,8 @@ public abstract class PluginUserInterface : IPluginUserInterface
         yield break;
     }
 
-    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
-    {
-        return null;
-    }
+    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None) => null;
+
     /// <inheritdoc/>
-    public virtual bool CustomActivate(IMapsDirectlyToDatabaseTable o)
-    {
-        return false;
-    }
+    public virtual bool CustomActivate(IMapsDirectlyToDatabaseTable o) => false;
 }

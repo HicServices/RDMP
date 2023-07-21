@@ -28,6 +28,7 @@ public class HelpStage
     /// surrounding available placement space on the host Form.
     /// </summary>
     public bool UseDefaultPosition { get; set; }
+
     public readonly Point HostLocationForStageBox;
 
     public string OptionButtonText;
@@ -45,7 +46,8 @@ public class HelpStage
         HandleParams(nextStagesInOrder);
     }
 
-    public HelpStage(Control highlightControl, string helpText, Point hostLocationForStageBox, params HelpStage[] nextStagesInOrder)
+    public HelpStage(Control highlightControl, string helpText, Point hostLocationForStageBox,
+        params HelpStage[] nextStagesInOrder)
     {
         HighlightControl = highlightControl;
         HelpText = helpText;
@@ -55,7 +57,9 @@ public class HelpStage
         HandleParams(nextStagesInOrder);
     }
 
-    public HelpStage(Control highlightControl, string helpText, Func<bool> moveOnWhenConditionMet,int pollMilliseconds = 300, params HelpStage[] nextStagesInOrder):this(highlightControl,helpText,nextStagesInOrder)
+    public HelpStage(Control highlightControl, string helpText, Func<bool> moveOnWhenConditionMet,
+        int pollMilliseconds = 300, params HelpStage[] nextStagesInOrder) : this(highlightControl, helpText,
+        nextStagesInOrder)
     {
         _moveOnWhenConditionMet = moveOnWhenConditionMet;
         _pollMilliseconds = pollMilliseconds;
@@ -69,11 +73,11 @@ public class HelpStage
     /// <returns></returns>
     public async Task<bool> Await(CancellationToken token)
     {
-        if(_moveOnWhenConditionMet == null)
+        if (_moveOnWhenConditionMet == null)
             return false;
 
         while (!token.IsCancellationRequested && !_moveOnWhenConditionMet())
-            await Task.Delay(_pollMilliseconds,token);
+            await Task.Delay(_pollMilliseconds, token);
 
         return !token.IsCancellationRequested;
     }

@@ -37,7 +37,7 @@ public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
         _bLoading = true;
         _args = args;
 
-        tbText.Text = args.InitialValue == null ? "":args.InitialValue.ToString();
+        tbText.Text = args.InitialValue == null ? "" : args.InitialValue.ToString();
 
         if (args.Type == typeof(DirectoryInfo))
         {
@@ -45,13 +45,13 @@ public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
             tbText.AutoCompleteSource = AutoCompleteSource.FileSystemDirectories;
         }
 
-        if(args.Type == typeof(CultureInfo))
+        if (args.Type == typeof(CultureInfo))
         {
             tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             tbText.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
             var collection = new AutoCompleteStringCollection();
-            collection.AddRange(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(c=>c.Name).ToArray());
+            collection.AddRange(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(c => c.Name).ToArray());
 
             tbText.AutoCompleteCustomSource = collection;
         }
@@ -74,7 +74,7 @@ public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
 
     private void tbText_TextChanged(object sender, System.EventArgs e)
     {
-        if(_bLoading)
+        if (_bLoading)
             return;
 
         _args.Setter(tbText.Text);

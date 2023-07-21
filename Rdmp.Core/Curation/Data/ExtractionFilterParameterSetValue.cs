@@ -20,9 +20,10 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// Stores a known specific useful value for a given ExtractionFilterParameter.  See <see cref="Data.ExtractionFilterParameterSet"/> for a use case for this.
 /// </summary>
-public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, IInjectKnown<ExtractionFilterParameter>
+public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, IInjectKnown<ExtractionFilterParameter>
 {
     #region Database Properties
+
     private string _value;
     private int _extractionFilterParameterSetID;
     private int _extractionFilterParameterID;
@@ -33,7 +34,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     public int ExtractionFilterParameterSet_ID
     {
         get => _extractionFilterParameterSetID;
-        set => SetField(ref _extractionFilterParameterSetID , value);
+        set => SetField(ref _extractionFilterParameterSetID, value);
     }
 
     /// <summary>
@@ -42,7 +43,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     public int ExtractionFilterParameter_ID
     {
         get => _extractionFilterParameterID;
-        set => SetField(ref _extractionFilterParameterID , value);
+        set => SetField(ref _extractionFilterParameterID, value);
     }
 
     /// <inheritdoc/>
@@ -52,6 +53,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
         get => _value;
         set => SetField(ref _value, value);
     }
+
     #endregion
 
     #region cached values stored so we can act like a readonly ISqlParameter but secretly only Value will actually be changeable
@@ -79,24 +81,23 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     public string Comment
     {
         get => _knownExtractionFilterParameter.Value.Comment;
-        set {  }
+        set { }
     }
 
     /// <summary>
     /// Returns the <see cref="ExtractionFilterParameterSet"/> this known good value belongs to
     /// </summary>
     /// <returns></returns>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
-        return ExtractionFilterParameterSet;
-    }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => ExtractionFilterParameterSet;
+
     #endregion
 
     #region Relationships
 
     /// <inheritdoc cref="ExtractionFilterParameterSet_ID"/>
     [NoMappingToDatabase]
-    public ExtractionFilterParameterSet ExtractionFilterParameterSet => Repository.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);
+    public ExtractionFilterParameterSet ExtractionFilterParameterSet =>
+        Repository.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);
 
     /// <inheritdoc cref="ExtractionFilterParameter_ID"/>
     [NoMappingToDatabase]
@@ -113,8 +114,8 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     internal ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        ExtractionFilterParameterSet_ID =   Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);
-        ExtractionFilterParameter_ID =      Convert.ToInt32(r["ExtractionFilterParameter_ID"]);
+        ExtractionFilterParameterSet_ID = Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);
+        ExtractionFilterParameter_ID = Convert.ToInt32(r["ExtractionFilterParameter_ID"]);
         Value = r["Value"] as string;
 
         ClearAllInjections();
@@ -131,22 +132,20 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="valueIsForParameter"></param>
-    public ExtractionFilterParameterSetValue(ICatalogueRepository repository, ExtractionFilterParameterSet parent, ExtractionFilterParameter valueIsForParameter)
+    public ExtractionFilterParameterSetValue(ICatalogueRepository repository, ExtractionFilterParameterSet parent,
+        ExtractionFilterParameter valueIsForParameter)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ExtractionFilterParameterSet_ID",parent.ID},
-            {"ExtractionFilterParameter_ID",valueIsForParameter.ID}
+            { "ExtractionFilterParameterSet_ID", parent.ID },
+            { "ExtractionFilterParameter_ID", valueIsForParameter.ID }
         });
 
         ClearAllInjections();
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return ExtractionFilterParameter.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ExtractionFilterParameter.GetQuerySyntaxHelper();
 
     /// <inheritdoc/>
     public void Check(ICheckNotifier notifier)
@@ -154,10 +153,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    public override string ToString() => $"{ParameterName} = {Value}";
 
     public void InjectKnown(ExtractionFilterParameter instance)
     {
@@ -166,6 +162,7 @@ public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, I
 
     public void ClearAllInjections()
     {
-        _knownExtractionFilterParameter = new Lazy<ExtractionFilterParameter>(() => Repository.GetObjectByID<ExtractionFilterParameter>(ExtractionFilterParameter_ID));
+        _knownExtractionFilterParameter = new Lazy<ExtractionFilterParameter>(() =>
+            Repository.GetObjectByID<ExtractionFilterParameter>(ExtractionFilterParameter_ID));
     }
 }

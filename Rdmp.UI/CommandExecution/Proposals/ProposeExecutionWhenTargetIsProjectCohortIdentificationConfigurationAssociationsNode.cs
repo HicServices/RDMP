@@ -12,27 +12,26 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
+internal class
+    ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<
+        ProjectCohortIdentificationConfigurationAssociationsNode>
 {
-    public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(IActivateItems itemActivator) : base(itemActivator)
+    public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(
+        IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ProjectCohortIdentificationConfigurationAssociationsNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(ProjectCohortIdentificationConfigurationAssociationsNode target) => false;
 
     public override void Activate(ProjectCohortIdentificationConfigurationAssociationsNode target)
     {
-            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return cmd is CohortIdentificationConfigurationCommand cicCommand
-            ? new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        ProjectCohortIdentificationConfigurationAssociationsNode target,
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is CohortIdentificationConfigurationCommand cicCommand
+            ? new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
+                .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project)
             : (ICommandExecution)null;
-    }
 }

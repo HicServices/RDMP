@@ -37,12 +37,11 @@ public partial class DividerLineControl : UserControl
     {
         base.OnPaintBackground(e);
 
-        e.Graphics.DrawRectangle(_pen, 2,2,Width -4,Height -4);
+        e.Graphics.DrawRectangle(_pen, 2, 2, Width - 4, Height - 4);
     }
 
     private void DividerLineControl_DragOver(object sender, DragEventArgs e)
     {
-
     }
 
     private void DividerLineControl_DragLeave(object sender, EventArgs e)
@@ -63,5 +62,4 @@ public partial class DividerLineControl : UserControl
 
         e.Effect = shouldAllow;
     }
-
 }

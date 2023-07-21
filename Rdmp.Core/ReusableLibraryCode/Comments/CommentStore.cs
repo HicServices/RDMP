@@ -22,9 +22,10 @@ namespace Rdmp.Core.ReusableLibraryCode.Comments;
 /// </summary>
 public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 {
-    private readonly Dictionary<string,string> _dictionary = new(StringComparer.CurrentCultureIgnoreCase);
+    private readonly Dictionary<string, string> _dictionary = new(StringComparer.CurrentCultureIgnoreCase);
 
-    private string[] _ignoreHelpFor = {
+    private string[] _ignoreHelpFor =
+    {
         "CsvHelper.xml",
         "Google.Protobuf.xml",
         "MySql.Data.xml",
@@ -45,15 +46,21 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             if (location is null)
                 continue;
             if (Directory.Exists(location))
-                foreach(var xml in Directory.EnumerateFiles(location,"*.xml",SearchOption.AllDirectories))
+                foreach (var xml in Directory.EnumerateFiles(location, "*.xml", SearchOption.AllDirectories))
                     using (var content = File.OpenRead(xml))
+                    {
                         ReadComments(content);
+                    }
             else if (File.Exists(location))
                 using (var zip = new LibArchiveReader(location))
-                    foreach(var xml in zip.Entries())
-                        if (xml.Name.EndsWith(".xml",true,CultureInfo.InvariantCulture))
-                            using (var content =xml.Stream)
+                {
+                    foreach (var xml in zip.Entries())
+                        if (xml.Name.EndsWith(".xml", true, CultureInfo.InvariantCulture))
+                            using (var content = xml.Stream)
+                            {
                                 ReadComments(content);
+                            }
+                }
         }
     }
 
@@ -62,7 +69,6 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         var doc = new XmlDocument();
         doc.Load(filename);
         doc.IterateThroughAllNodes(AddXmlDoc);
-
     }
 
     /// <summary>
@@ -71,19 +77,19 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <param name="obj"></param>
     public void AddXmlDoc(XmlNode obj)
     {
-        if(obj == null)
+        if (obj == null)
             return;
 
         if (obj.Name != "member" || obj.Attributes == null) return;
         var memberName = obj.Attributes["name"]?.Value;
         var summary = GetSummaryAsText(obj["summary"]);
 
-        if(memberName == null || string.IsNullOrWhiteSpace(summary))
+        if (memberName == null || string.IsNullOrWhiteSpace(summary))
             return;
 
         //it's a Property get Type.Property (not fully specified)
         if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
-            Add(GetLastTokens(memberName),summary.Trim());
+            Add(GetLastTokens(memberName), summary.Trim());
     }
 
     private static string GetSummaryAsText(XmlElement summaryTag)
@@ -102,7 +108,9 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
                         sb.Append($"{GetLastTokens(n.Attributes["cref"]?.Value)} "); // a <see cref="omg"> tag
                         break;
                     case "para":
-                        TrimEndSpace(sb).Append(Environment.NewLine + Environment.NewLine);  //open para tag (next tag is probably #text)
+                        TrimEndSpace(sb)
+                            .Append(Environment.NewLine +
+                                    Environment.NewLine); //open para tag (next tag is probably #text)
                         break;
                     default:
                     {
@@ -116,10 +124,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         return sb.ToString();
     }
 
-    private static string TrimSummary(string value)
-    {
-        return value == null ? null : Regex.Replace(value,@"\s+"," ").Trim();
-    }
+    private static string TrimSummary(string value) => value == null ? null : Regex.Replace(value, @"\s+", " ").Trim();
 
     /// <summary>
     /// Returns the last x parts from a string like M:Abc.Def.Geh.AAA(fff,mm).  In this case it would return AAA for 1, Geh.AAA for 2 etc.
@@ -172,37 +177,28 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     public void Add(string name, string summary)
     {
         //these are not helpful!
-        if(name == "C" || name == "R")
+        if (name == "C" || name == "R")
             return;
 
-        if(_dictionary.ContainsKey(name))
+        if (_dictionary.ContainsKey(name))
             return;
 
-        _dictionary.Add(name,summary);
-
+        _dictionary.Add(name, summary);
     }
 
-    public bool ContainsKey(string keyword)
-    {
-        return _dictionary.ContainsKey(keyword);
-    }
+    public bool ContainsKey(string keyword) => _dictionary.ContainsKey(keyword);
 
     /// <summary>
     /// Returns documentation for the keyword or null if no documentation exists
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index] => _dictionary.TryGetValue(index,out var value) ? value : null; // Indexer declaration
+    public string this[string index] =>
+        _dictionary.TryGetValue(index, out var value) ? value : null; // Indexer declaration
 
-    public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-    {
-        return _dictionary.GetEnumerator();
-    }
+    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _dictionary.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
     /// Returns documentation for the class specified up to maxLength characters (after which ... is appended).  Returns null if no documentation exists for the class
@@ -212,7 +208,8 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <param name="allowInterfaceInstead">If no docs are found for Type X then look for IX too</param>
     /// <param name="formatAsParagraphs"></param>
     /// <returns></returns>
-    public string GetTypeDocumentationIfExists(int maxLength, Type type, bool allowInterfaceInstead = true,bool formatAsParagraphs = false)
+    public string GetTypeDocumentationIfExists(int maxLength, Type type, bool allowInterfaceInstead = true,
+        bool formatAsParagraphs = false)
     {
         var docs = this[type.Name];
 
@@ -233,11 +230,11 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         return docs.Length <= maxLength ? docs : $"{docs[..maxLength]}...";
     }
+
     /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)"/>
-    public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true, bool formatAsParagraphs = false)
-    {
-        return GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead, formatAsParagraphs);
-    }
+    public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true,
+        bool formatAsParagraphs = false) =>
+        GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead, formatAsParagraphs);
 
     /// <summary>
     /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the documentation if found (or null)
@@ -248,7 +245,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public string GetDocumentationIfExists(string word, bool fuzzyMatch, bool formatAsParagraphs = false)
     {
-        var match = GetDocumentationKeywordIfExists(word,fuzzyMatch);
+        var match = GetDocumentationKeywordIfExists(word, fuzzyMatch);
 
         return match == null ? null : formatAsParagraphs ? FormatAsParagraphs(this[match]) : this[match];
     }
@@ -284,8 +281,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public static string FormatAsParagraphs(string message)
     {
-
-        message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
+        message = Regex.Replace(message, $"{Environment.NewLine}\\s*", Environment.NewLine + Environment.NewLine);
         message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", m => m.Groups[2].Value);
 
         return message;

@@ -21,26 +21,23 @@ namespace Rdmp.Core.DataLoad.Modules.FTP;
 /// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH.  In addition this
 /// class will not bother downloading any files that already exist in the forLoading directory (have the same name - file size is NOT checked)</para>
 /// </summary>
-public class SFTPDownloader:FTPDownloader
+public class SFTPDownloader : FTPDownloader
 {
-
     [DemandsInitialization("The keep-alive interval.  In milliseconds.  Requires KeepAlive to be set to take effect.")]
     public int KeepAliveIntervalMilliseconds { get; set; }
 
-    protected override void Download(string file, ILoadDirectory destination,IDataLoadEventListener job)
+    protected override void Download(string file, ILoadDirectory destination, IDataLoadEventListener job)
     {
         if (file.Contains('/') || file.Contains('\\'))
             throw new Exception("Was not expecting a relative path here");
 
         var s = new Stopwatch();
         s.Start();
-            
-        using(var sftp = new SftpClient(_host,_username,_password))
+
+        using (var sftp = new SftpClient(_host, _username, _password))
         {
             if (KeepAlive && KeepAliveIntervalMilliseconds > 0)
-            {
-                sftp.KeepAliveInterval =   TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
-            }
+                sftp.KeepAliveInterval = TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
 
             sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
             sftp.Connect();
@@ -51,7 +48,9 @@ public class SFTPDownloader:FTPDownloader
             var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events
-            void Callback(ulong totalBytes) => job.OnProgress(this, new ProgressEventArgs(destinationFilePath, new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
+            void Callback(ulong totalBytes) => job.OnProgress(this,
+                new ProgressEventArgs(destinationFilePath,
+                    new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
 
             using (var fs = new FileStream(destinationFilePath, FileMode.CreateNew))
             {
@@ -59,9 +58,10 @@ public class SFTPDownloader:FTPDownloader
                 sftp.DownloadFile(fullFilePath, fs, Callback);
                 fs.Close();
             }
-            _filesRetrieved.Add(fullFilePath);
 
+            _filesRetrieved.Add(fullFilePath);
         }
+
         s.Stop();
     }
 
@@ -72,7 +72,7 @@ public class SFTPDownloader:FTPDownloader
         using var sftp = new SftpClient(_host, _username, _password);
         sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
         sftp.Connect();
-                    
+
         foreach (var retrievedFiles in _filesRetrieved)
             try
             {
@@ -98,7 +98,7 @@ public class SFTPDownloader:FTPDownloader
 
         if (string.IsNullOrWhiteSpace(directory))
             directory = ".";
-                
-        return sftp.ListDirectory(directory).Select(d=>d.Name).ToArray();
+
+        return sftp.ListDirectory(directory).Select(d => d.Name).ToArray();
     }
 }

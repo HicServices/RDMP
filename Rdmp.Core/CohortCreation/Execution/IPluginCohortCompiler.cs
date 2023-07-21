@@ -42,7 +42,8 @@ public interface IPluginCohortCompiler
     /// <param name="ac"></param>
     /// <param name="cache"></param>
     /// <param name="cancellationToken"></param>
-    void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken cancellationToken);
+    void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Return true if the <paramref name="oldDescription"/> does not match the logic currently

@@ -27,7 +27,7 @@ internal class ThemeExtender
     {
         _xml = XDocument.Load(new StreamReader(new MemoryStream(bytes)));
         TextBoxBackground = ColorTranslatorFromHtml("CommonControls", "TextBoxBackground");
-            
+
         ComboBoxBackground = ColorTranslatorFromHtml(Env, "ComboBoxBackground");
         ComboBoxText = ColorTranslatorFromHtml(Env, "ComboBoxText");
     }
@@ -36,9 +36,11 @@ internal class ThemeExtender
     {
         string color = null;
 
-        var environmentElement = _xml.Root.Element("Theme").Elements("Category").FirstOrDefault(item => item.Attribute("Name").Value == category);
+        var environmentElement = _xml.Root.Element("Theme").Elements("Category")
+            .FirstOrDefault(item => item.Attribute("Name").Value == category);
 
-        var colourElement = environmentElement?.Elements("Color").FirstOrDefault(item => item.Attribute("Name").Value == name);
+        var colourElement = environmentElement?.Elements("Color")
+            .FirstOrDefault(item => item.Attribute("Name").Value == name);
 
         if (colourElement != null)
             color = colourElement.Element(foreground ? "Foreground" : "Background").Attribute("Source").Value;

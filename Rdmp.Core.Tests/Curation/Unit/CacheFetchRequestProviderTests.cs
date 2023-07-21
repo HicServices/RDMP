@@ -92,7 +92,7 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow==Mock.Of<IPermissionWindow>());
+        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
         request.RequestFailed(new Exception());
@@ -108,7 +108,7 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow==Mock.Of<IPermissionWindow>());
+        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
         request.RequestSucceeded();
@@ -118,10 +118,10 @@ public class CacheFetchRequestProviderTests
 
     private static Mock<ICacheFetchFailure> GetFailureMock()
     {
-        var failure = Mock.Of<ICacheFetchFailure>(f=>
+        var failure = Mock.Of<ICacheFetchFailure>(f =>
             f.FetchRequestEnd == DateTime.Now &&
             f.FetchRequestStart == DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
-            
+
         return Mock.Get(failure);
     }
 }

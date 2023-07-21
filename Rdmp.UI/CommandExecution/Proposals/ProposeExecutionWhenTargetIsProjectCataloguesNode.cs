@@ -20,22 +20,16 @@ internal class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandEx
         _projectFunctionality = new ProposeExecutionWhenTargetIsProject(itemActivator);
     }
 
-    public override bool CanActivate(ProjectCataloguesNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(ProjectCataloguesNode target) => false;
 
     public override void Activate(ProjectCataloguesNode target)
     {
-            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target, InsertOption insertOption = InsertOption.Default)
-    {
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target,
+        InsertOption insertOption = InsertOption.Default) =>
         //use the same drop options as Project except for this one
-
-        return cmd is CohortIdentificationConfigurationCommand
+        cmd is CohortIdentificationConfigurationCommand
             ? null
             : _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
-    }
 }

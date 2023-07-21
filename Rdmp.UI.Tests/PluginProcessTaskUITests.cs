@@ -18,15 +18,16 @@ namespace Rdmp.UI.Tests;
 
 internal class PluginProcessTaskUITests : UITests
 {
-
-    [Test,UITimeout(20000)]
+    [Test]
+    [UITimeout(20000)]
     public void PluginProcessTaskUI_NoClass()
     {
         AndLaunch<PluginProcessTaskUI>(WhenIHaveA<ProcessTask>());
-        AssertErrorWasShown(ExpectedErrorType.KilledForm,"No class has been specified");
+        AssertErrorWasShown(ExpectedErrorType.KilledForm, "No class has been specified");
     }
 
-    [Test,UITimeout(20000)]
+    [Test]
+    [UITimeout(20000)]
     public void PluginProcessTaskUI_ClassNotFound()
     {
         var pt = WhenIHaveA<ProcessTask>();
@@ -34,10 +35,11 @@ internal class PluginProcessTaskUITests : UITests
         pt.SaveToDatabase();
 
         AndLaunch<PluginProcessTaskUI>(pt);
-        AssertErrorWasShown(ExpectedErrorType.KilledForm,"Could not find Type 'ArmageddonAttacher' for ProcessTask ");
+        AssertErrorWasShown(ExpectedErrorType.KilledForm, "Could not find Type 'ArmageddonAttacher' for ProcessTask ");
     }
 
-    [Test,UITimeout(20000)]
+    [Test]
+    [UITimeout(20000)]
     public void PluginProcessTaskUI_ClassIsLegit()
     {
         var pt = WhenIHaveA<ProcessTask>();
@@ -48,7 +50,8 @@ internal class PluginProcessTaskUITests : UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test,UITimeout(20000)]
+    [Test]
+    [UITimeout(20000)]
     public void PluginProcessTaskUI_InvalidParameter_Date()
     {
         MEF.AddTypeToCatalogForTesting(typeof(OmgDates));
@@ -57,7 +60,7 @@ internal class PluginProcessTaskUITests : UITests
         var arg = pt.CreateArgumentsForClassIfNotExists<OmgDates>().Single();
 
         //set the argument value to 2001
-        arg.SetValue(new DateTime(2001,01,01));
+        arg.SetValue(new DateTime(2001, 01, 01));
         pt.SaveToDatabase();
 
         AndLaunch<PluginProcessTaskUI>(pt);
@@ -79,8 +82,6 @@ internal class PluginProcessTaskUITests : UITests
 
     private class OmgDates
     {
-        [DemandsInitialization("A Date")]
-        public DateTime MyDate { get; set; }
-
+        [DemandsInitialization("A Date")] public DateTime MyDate { get; set; }
     }
 }

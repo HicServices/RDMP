@@ -34,10 +34,10 @@ internal class ViewSourceCodeToolTip : ToolTip
 
     private void OnPopup(object sender, PopupEventArgs e)
     {
-        if(Screen.PrimaryScreen != null && Screen.PrimaryScreen.Bounds != Rectangle.Empty)
+        if (Screen.PrimaryScreen != null && Screen.PrimaryScreen.Bounds != Rectangle.Empty)
         {
             //use half the screen width or 600 if they are playing on a gameboy advanced
-            WIDTH = Math.Max(600,Screen.PrimaryScreen.Bounds.Width/2);
+            WIDTH = Math.Max(600, Screen.PrimaryScreen.Bounds.Width / 2);
             HEIGHT = Math.Max(450, Screen.PrimaryScreen.Bounds.Height / 2);
         }
 
@@ -50,35 +50,38 @@ internal class ViewSourceCodeToolTip : ToolTip
     {
         try
         {
-            var elements = e.ToolTipText.Split(new string[]{"|"}, StringSplitOptions.RemoveEmptyEntries);
+            var elements = e.ToolTipText.Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
             var filename = elements[0];
             var linenumber = int.Parse(elements[1]);
 
-            linenumber = Math.Max(0,linenumber-1);
+            linenumber = Math.Max(0, linenumber - 1);
 
-            var lines = ReadAllLinesCached(filename) ?? throw new FileNotFoundException($"Could not find source code for file:{Path.GetFileName(filename)}");
+            var lines = ReadAllLinesCached(filename) ??
+                        throw new FileNotFoundException(
+                            $"Could not find source code for file:{Path.GetFileName(filename)}");
 
             //get height of any given line
-            var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + LINE_PADDING*2f;
+            var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts", e.Font).Height +
+                                 LINE_PADDING * 2f;
 
-            var midpointY = HEIGHT/2;
+            var midpointY = HEIGHT / 2;
 
             //white background
             e.Graphics.FillRectangle(Brushes.White, 0, 0, WIDTH, HEIGHT);
 
             //the highlighted line
-            e.Graphics.FillRectangle(Brushes.LawnGreen, 0,midpointY - LINE_PADDING,WIDTH,coreLineHeight);
-            e.Graphics.DrawString(lines[linenumber],e.Font,Brushes.Black,0,midpointY);
+            e.Graphics.FillRectangle(Brushes.LawnGreen, 0, midpointY - LINE_PADDING, WIDTH, coreLineHeight);
+            e.Graphics.DrawString(lines[linenumber], e.Font, Brushes.Black, 0, midpointY);
 
             var index = linenumber - 1;
             var currentLineY = midpointY - coreLineHeight;
 
             //any other lines we can fit on above the current line
-            while(currentLineY > 0 && index >= 0)
+            while (currentLineY > 0 && index >= 0)
             {
-                e.Graphics.DrawString(lines[index],e.Font,Brushes.Black,0,currentLineY);
+                e.Graphics.DrawString(lines[index], e.Font, Brushes.Black, 0, currentLineY);
                 currentLineY -= coreLineHeight;
-                index --;
+                index--;
             }
 
             index = linenumber + 1;
@@ -93,26 +96,28 @@ internal class ViewSourceCodeToolTip : ToolTip
             }
 
             //draw the name of the file
-            e.Graphics.FillRectangle(Brushes.DarkBlue,0,0,WIDTH,coreLineHeight);
-            e.Graphics.DrawString(Path.GetFileName(filename) ,e.Font,Brushes.White,LINE_PADDING,LINE_PADDING);
+            e.Graphics.FillRectangle(Brushes.DarkBlue, 0, 0, WIDTH, coreLineHeight);
+            e.Graphics.DrawString(Path.GetFileName(filename), e.Font, Brushes.White, LINE_PADDING, LINE_PADDING);
         }
         catch (Exception exception)
         {
             //white background
             e.Graphics.FillRectangle(Brushes.White, 0, 0, WIDTH, HEIGHT);
-            e.Graphics.DrawString(exception.Message,e.Font,Brushes.Red,new RectangleF(0,0,WIDTH,HEIGHT));
+            e.Graphics.DrawString(exception.Message, e.Font, Brushes.Red, new RectangleF(0, 0, WIDTH, HEIGHT));
         }
     }
 
     private static string[] ReadAllLinesCached(string filename)
     {
-        if(!SourceFileCache.ContainsKey(filename))
+        if (!SourceFileCache.ContainsKey(filename))
         {
             string[] fileContents;
 
             //if you have the original file
             if (File.Exists(filename))
+            {
                 fileContents = File.ReadLines(filename).ToArray();
+            }
             //otherwise get it from SourceCodeForSelfAwareness.zip / Plugin zip source codes
             else
             {
@@ -122,10 +127,9 @@ internal class ViewSourceCodeToolTip : ToolTip
                     return null;
 
                 fileContents = contentsInOneLine.Split('\n');
-
             }
 
-            SourceFileCache.Add(filename,fileContents);
+            SourceFileCache.Add(filename, fileContents);
         }
 
         return SourceFileCache[filename];

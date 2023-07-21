@@ -43,12 +43,11 @@ public class JoinManager : IJoinManager
                     (idSet1.Contains(j.PrimaryKey_ID) && idSet2.Contains(j.ForeignKey_ID)))
                 .ToArray();
     }
-    public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2)
-    {
-        return GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
-    }
 
-    public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type)
+    public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2) =>
+        GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
+
+    public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo, JoinInfoType type)
     {
         var ids = new HashSet<int>(tableInfo.ColumnInfos.Select(c => c.ID));
 
@@ -66,5 +65,4 @@ public class JoinManager : IJoinManager
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
     }
-
 }

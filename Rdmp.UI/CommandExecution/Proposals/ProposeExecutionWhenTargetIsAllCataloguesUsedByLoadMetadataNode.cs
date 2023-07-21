@@ -13,23 +13,24 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
+internal class
+    ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<
+        AllCataloguesUsedByLoadMetadataNode>
 {
-    public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
+    public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(
+        itemActivator)
     {
     }
 
-    public override bool CanActivate(AllCataloguesUsedByLoadMetadataNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(AllCataloguesUsedByLoadMetadataNode target) => false;
 
     public override void Activate(AllCataloguesUsedByLoadMetadataNode target)
     {
         throw new NotSupportedException();
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        AllCataloguesUsedByLoadMetadataNode target, InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {

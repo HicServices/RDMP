@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class CommitInProgress : IDisposable
 {
-    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
+    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new();
 
     public CommitInProgressSettings Settings { get; }
 
@@ -34,6 +34,7 @@ public class CommitInProgress : IDisposable
     /// save suppression
     /// </summary>
     private bool _finishing;
+
     private bool _isDisposed;
 
     /// <summary>
@@ -41,32 +42,28 @@ public class CommitInProgress : IDisposable
     /// </summary>
     /// <param name="locator"></param>
     /// <param name="settings"></param>
-    public CommitInProgress(IRDMPPlatformRepositoryServiceLocator locator,CommitInProgressSettings settings)
+    public CommitInProgress(IRDMPPlatformRepositoryServiceLocator locator, CommitInProgressSettings settings)
     {
         Settings = settings;
 
         _locator = locator;
 
         _repositories = _locator.GetAllRepositories().ToList();
-        _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r=>r.GetCompatibleTypes()).Distinct()
+        _serializer = YamlRepository.CreateSerializer(_repositories.SelectMany(r => r.GetCompatibleTypes()).Distinct()
         );
 
-        foreach(var repo in _repositories)
+        foreach (var repo in _repositories)
         {
             repo.Deleting += Deleting;
             repo.Inserting += Inserting;
 
-            if(settings.UseTransactions)
-            {
+            if (settings.UseTransactions)
                 // these get cleaned up in Dispose or TryFinish
                 repo.BeginNewTransaction();
-            }
         }
 
-        foreach(var t in settings.ObjectsToTrack)
-        {
-            originalStates.Add(t, new MementoInProgress(t,_serializer.Serialize(t)));
-        }
+        foreach (var t in settings.ObjectsToTrack)
+            originalStates.Add(t, new MementoInProgress(t, _serializer.Serialize(t)));
     }
 
     private void Inserting(object sender, IMapsDirectlyToDatabaseTableEventArgs e)
@@ -76,25 +73,18 @@ public class CommitInProgress : IDisposable
 
         // if we are not in global mode with transactions then this is a long term
         // commit (e.g. user has tab open for half an hour).  Don't hoover up all created/deleted objects
-        if (!Settings.UseTransactions)
-        {
-            return;
-        }
+        if (!Settings.UseTransactions) return;
 
         // how can we be tracking an object that was not created yet?
         if (originalStates.TryGetValue(e.Object, out var state))
-        {
             // oh well just pretend it magicked into existence
             state.Type = MementoType.Add;
-        }
         else
-        {
             // legit new object we didn't know about before
             originalStates.Add(e.Object, new MementoInProgress(e.Object, null)
             {
                 Type = MementoType.Add
             });
-        }
     }
 
     private void Deleting(object sender, IMapsDirectlyToDatabaseTableEventArgs e)
@@ -104,27 +94,19 @@ public class CommitInProgress : IDisposable
 
         // if we are not in global mode with transactions then this is a long term
         // commit (e.g. user has tab open for half an hour).  Don't hoover up all created/deleted objects
-        if(!Settings.UseTransactions)
-        {
-            return;
-        }
+        if (!Settings.UseTransactions) return;
 
         // one of the objects we are tracking has been deleted
         if (originalStates.ContainsKey(e.Object))
         {
             // change our understanding of this object
 
-            if(originalStates[e.Object].Type == MementoType.Add)
-            {
+            if (originalStates[e.Object].Type == MementoType.Add)
                 // ok user created this object during the commit then deleted it again... odd but fair enough
-
                 // pretend it never existed
                 originalStates.Remove(e.Object);
-            }
             else
-            {
                 originalStates[e.Object].Type = MementoType.Delete;
-            }
         }
         else
         {
@@ -144,30 +126,27 @@ public class CommitInProgress : IDisposable
     public Commit TryFinish(IBasicActivateItems activator)
     {
         if (_finishing)
-            throw new ObjectDisposedException($"{nameof(CommitInProgress)} has already been successfully finished and shutdown",nameof(CommitInProgress));
+            throw new ObjectDisposedException(
+                $"{nameof(CommitInProgress)} has already been successfully finished and shutdown",
+                nameof(CommitInProgress));
 
         if (_isDisposed)
             throw new ObjectDisposedException(nameof(CommitInProgress));
 
-        var changes = new Dictionary<IMapsDirectlyToDatabaseTable, Tuple<MementoInProgress,string>>();
+        var changes = new Dictionary<IMapsDirectlyToDatabaseTable, Tuple<MementoInProgress, string>>();
 
         foreach (var t in originalStates)
         {
             // serialize the current state on finishing into yaml (or use null for deleted objects)
-            var newYaml = t.Value.Type == MementoType.Delete ? null :  _serializer.Serialize(t.Key);
+            var newYaml = t.Value.Type == MementoType.Delete ? null : _serializer.Serialize(t.Key);
 
             //something changed
-            if(newYaml != t.Value.OldYaml)
-            {
-                changes.Add(t.Key, Tuple.Create(t.Value, newYaml));
-            }
+            if (newYaml != t.Value.OldYaml) changes.Add(t.Key, Tuple.Create(t.Value, newYaml));
         }
 
-        if(!changes.Any())
-        {
+        if (!changes.Any())
             // no changes so no need for a Commit
             return null;
-        }
         var cataRepo = _locator.CatalogueRepository;
 
         var description = GetDescription(changes);
@@ -176,22 +155,18 @@ public class CommitInProgress : IDisposable
         if (activator.IsInteractive)
         {
             // object name or count of the number of objects
-            var collectionDescription = changes.Count == 1 ?
-                changes.Single().Key.ToString() : $"{changes.Count} object(s)";
+            var collectionDescription =
+                changes.Count == 1 ? changes.Single().Key.ToString() : $"{changes.Count} object(s)";
 
             if (activator.TypeText(new DialogArgs
                 {
                     WindowTitle = transaction.ToString(),
                     TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
                 }, int.MaxValue, description, out var newDescription, false))
-            {
                 description = newDescription;
-            }
             else
-            {
                 // user cancelled creating Commit
                 return null;
-            }
         }
 
         // We couldn't describe the changes, that's bad...
@@ -205,21 +180,15 @@ public class CommitInProgress : IDisposable
 
         var c = new Commit(cataRepo, transaction, description);
 
-        foreach(var m in changes.OrderBy(c => c.Value.Item1.Order))
-        {
-            _=new Memento(cataRepo, c, m.Value.Item1.Type, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
-        }
-            
+        foreach (var m in changes.OrderBy(c => c.Value.Item1.Order))
+            _ = new Memento(cataRepo, c, m.Value.Item1.Type, m.Key, m.Value.Item1.OldYaml, m.Value.Item2);
+
         // if we created a bunch of db transactions (one per database/server known about) for this commit
         // then we should be letting these changes go ahead
-        if(Settings.UseTransactions)
-        {
+        if (Settings.UseTransactions)
             foreach (var repo in _repositories)
-            {
                 repo.EndTransaction(true);
-            }
-        }
-            
+
         return c;
     }
 
@@ -229,23 +198,19 @@ public class CommitInProgress : IDisposable
         if (changes.Count == 0)
             return null;
 
-        if(Settings.Description != null)
-        {
-            return Settings.Description;
-        }
+        if (Settings.Description != null) return Settings.Description;
 
         // we can't summarise changes to multiple objects
-        if(changes.Count != 1)
-        {
-            return "TODO";
-        }
+        if (changes.Count != 1) return "TODO";
 
         var kv = changes.Single();
         var props = kv.Value.Item1.GetDiffProperties(kv.Key).ToArray();
 
         // no visible changes... but yaml is different which is odd.
         // Either way abandon this commit.
-        return !props.Any() ? null : $"Update {kv.Key.GetType().Name} {string.Join(", ",props.Select(p => p.Name).ToArray())}";
+        return !props.Any()
+            ? null
+            : $"Update {kv.Key.GetType().Name} {string.Join(", ", props.Select(p => p.Name).ToArray())}";
     }
 
     public void Dispose()
@@ -258,7 +223,6 @@ public class CommitInProgress : IDisposable
 
 
             if (Settings.UseTransactions && _finishing == false)
-            {
                 try
                 {
                     // Abandon transactions
@@ -268,7 +232,6 @@ public class CommitInProgress : IDisposable
                 {
                     // ok maybe someone else shut this down somehow... whatever
                 }
-            }
         }
 
         _isDisposed = true;

@@ -12,7 +12,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes;
 
-public class TableInfoServerNode:Node
+public class TableInfoServerNode : Node
 {
     public readonly DatabaseType DatabaseType;
     public string ServerName { get; }
@@ -27,35 +27,24 @@ public class TableInfoServerNode:Node
         Tables = tables.ToArray();
     }
 
-    public override string ToString()
-    {
-        return ServerName;
-    }
+    public override string ToString() => ServerName;
 
-    protected bool Equals(TableInfoServerNode other)
-    {
-        return DatabaseType == other.DatabaseType && string.Equals(ServerName, other.ServerName,StringComparison.CurrentCultureIgnoreCase);
-    }
+    protected bool Equals(TableInfoServerNode other) => DatabaseType == other.DatabaseType &&
+                                                        string.Equals(ServerName, other.ServerName,
+                                                            StringComparison.CurrentCultureIgnoreCase);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((TableInfoServerNode) obj);
+        return Equals((TableInfoServerNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(DatabaseType, ServerName);
-    }
+    public override int GetHashCode() => HashCode.Combine(DatabaseType, ServerName);
 
-    public bool IsSameServer(TableInfo tableInfo)
-    {
-        return
-            ServerName.Equals(tableInfo.Server ?? NullServerNode,StringComparison.CurrentCultureIgnoreCase)
-            &&
-            DatabaseType == tableInfo.DatabaseType;
-
-    }
+    public bool IsSameServer(TableInfo tableInfo) =>
+        ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)
+        &&
+        DatabaseType == tableInfo.DatabaseType;
 }

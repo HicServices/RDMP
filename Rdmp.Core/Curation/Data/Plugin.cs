@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data;
 /// stored in the RDMP platform databases and written to disk/loaded when executed by the RDMP client - this ensures that all users run the same
 /// version of the Plugin(s).
 /// </summary>
-public class Plugin : DatabaseEntity,INamed
+public class Plugin : DatabaseEntity, INamed
 {
     #region Database Properties
 
@@ -36,7 +36,7 @@ public class Plugin : DatabaseEntity,INamed
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -45,9 +45,8 @@ public class Plugin : DatabaseEntity,INamed
     public string UploadedFromDirectory
     {
         get => _uploadedFromDirectory;
-        set => SetField(ref  _uploadedFromDirectory, value);
+        set => SetField(ref _uploadedFromDirectory, value);
     }
-
 
 
     /// <summary>
@@ -60,7 +59,7 @@ public class Plugin : DatabaseEntity,INamed
     public string GetShortName()
     {
         var regexSuffix = new Regex(@"(\.\d*)*(\.nupkg)?$");
-        return regexSuffix.Replace(Name,"");
+        return regexSuffix.Replace(Name, "");
     }
 
     /// <summary>
@@ -70,7 +69,7 @@ public class Plugin : DatabaseEntity,INamed
     public Version PluginVersion
     {
         get => _pluginVersion;
-        set => SetField(ref  _pluginVersion, value);
+        set => SetField(ref _pluginVersion, value);
     }
 
     /// <summary>
@@ -80,14 +79,13 @@ public class Plugin : DatabaseEntity,INamed
     public Version RdmpVersion
     {
         get => _rdmpVersion;
-        set => SetField(ref  _rdmpVersion, value);
+        set => SetField(ref _rdmpVersion, value);
     }
 
     #endregion
 
     public Plugin()
     {
-
     }
 
     /// <summary>
@@ -101,12 +99,11 @@ public class Plugin : DatabaseEntity,INamed
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", pluginZipFile.Name},
-            {"UploadedFromDirectory", pluginZipFile.DirectoryName},
-            {"PluginVersion", pluginVersion ?? new Version(0,0,0,0)},
-            {"RdmpVersion", rdmpVersion ?? new Version(0,0,0,0)}
+            { "Name", pluginZipFile.Name },
+            { "UploadedFromDirectory", pluginZipFile.DirectoryName },
+            { "PluginVersion", pluginVersion ?? new Version(0, 0, 0, 0) },
+            { "RdmpVersion", rdmpVersion ?? new Version(0, 0, 0, 0) }
         });
-
     }
 
     internal Plugin(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
@@ -120,15 +117,20 @@ public class Plugin : DatabaseEntity,INamed
         }
         catch (ArgumentException)
         {
-            PluginVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
+            PluginVersion =
+                new Version(
+                    "0.0.0.0"); //user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
         }
+
         try
         {
             RdmpVersion = new Version((string)r["RdmpVersion"]);
         }
         catch (ArgumentException)
         {
-            RdmpVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
+            RdmpVersion =
+                new Version(
+                    "0.0.0.0"); //user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
         }
     }
 
@@ -138,10 +140,7 @@ public class Plugin : DatabaseEntity,INamed
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     #region Relationships
 
@@ -149,7 +148,8 @@ public class Plugin : DatabaseEntity,INamed
     /// Gets all the dlls and source code(if available) stored as <see cref="LoadModuleAssembly"/> in the catalogue database
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<LoadModuleAssembly> LoadModuleAssemblies => Repository.GetAllObjectsWithParent<LoadModuleAssembly>(this);
+    public IEnumerable<LoadModuleAssembly> LoadModuleAssemblies =>
+        Repository.GetAllObjectsWithParent<LoadModuleAssembly>(this);
 
     #endregion
 
@@ -165,6 +165,6 @@ public class Plugin : DatabaseEntity,INamed
 
         return string.IsNullOrWhiteSpace(pluginName)
             ? throw new Exception("Plugin doesn't have a valid name")
-            : Path.Combine(downloadDirectoryRoot.FullName ,pluginName);
+            : Path.Combine(downloadDirectoryRoot.FullName, pluginName);
     }
 }

@@ -12,13 +12,13 @@ namespace Rdmp.Core.CommandLine.Options;
 /// <summary>
 /// Describes a series of commands to run in sequence.
 /// </summary>
-public  class RdmpScript
+public class RdmpScript
 {
     /// <summary>
     /// Commands which should be run by a <see cref="ExecuteCommandRunner"/>
     /// </summary>
     /// <value></value>
-    public string[] Commands {get;set;}
+    public string[] Commands { get; set; }
 
     /// <summary>
     /// True (default) to use a <see cref="NewObjectPool"/> to track objects created as the script is run

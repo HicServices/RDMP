@@ -21,7 +21,7 @@ namespace Rdmp.Core.Validation.Dependency;
 /// Prevents deleting objects which are referenced in the ValidatorXML of Catalogues.  This is done by processing the ValidatorXML as a string for speed
 /// rather than deserializing every ValidationXml.
 /// </summary>
-public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
+public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 {
     /// <summary>
     /// This is a list of regex patterns for identifying xml serialized classes that implement IMapsDirectlyToDatabaseTable in Xml strings
@@ -51,8 +51,10 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
         foreach (var constraintType in MEF.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
         {
             //get all properties and fields which map to a database object
-            var props = constraintType.GetProperties().Where(p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.PropertyType)).ToList();
-            var fields = constraintType.GetFields().Where(f => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(f.FieldType)).ToList();
+            var props = constraintType.GetProperties()
+                .Where(p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.PropertyType)).ToList();
+            var fields = constraintType.GetFields()
+                .Where(f => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(f.FieldType)).ToList();
 
             //there are no suspect fields that could have hidden dependencies
             if (!props.Any() && !fields.Any())
@@ -79,15 +81,14 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        if(!initialized)
+        if (!initialized)
             Initialize();
 
-        ThrowIfDeleteDisallowed(oTableWrapperObject,0);
+        ThrowIfDeleteDisallowed(oTableWrapperObject, 0);
     }
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-
     }
 
     private void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject, int depth)
@@ -97,7 +98,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
         var repository = oTableWrapperObject.Repository;
 
-        if (depth >= 5)//it's fine
+        if (depth >= 5) //it's fine
             return;
 
         if (oTableWrapperObject is IHasDependencies treeObject)
@@ -129,7 +130,8 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
         var firstPassSuspects = new HashSet<Catalogue>();
 
         //get all catalogues with some validation XML and see if the checker matches any of them
-        foreach (var catalogue in repository.GetAllObjects<Catalogue>().Where(c => !string.IsNullOrWhiteSpace(c.ValidatorXML)))
+        foreach (var catalogue in repository.GetAllObjects<Catalogue>()
+                     .Where(c => !string.IsNullOrWhiteSpace(c.ValidatorXML)))
             if (checkers.Any(checker => checker.IsMatch(catalogue.ValidatorXML)))
                 firstPassSuspects.Add(catalogue);
 
@@ -139,17 +141,19 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
                     $"The ValidationXML of Catalogue {firstPassSuspect} contains a reference to the object you are trying to delete:{oTableWrapperObject}");
     }
 
-    private bool DeserializeToSeeIfThereIsADependency(IMapsDirectlyToDatabaseTable oTableWrapperObject, Catalogue firstPassSuspect)
+    private bool DeserializeToSeeIfThereIsADependency(IMapsDirectlyToDatabaseTable oTableWrapperObject,
+        Catalogue firstPassSuspect)
     {
         //we already forbidlisted this Catalogue because it has dodgy XML that cant be deserialized properly
         var forbidlisted = CataloguesWithBrokenValidationXml.SingleOrDefault(c => c.ID == firstPassSuspect.ID);
 
         //it was forbidlisted because it had dodgy XML, if the xml hasn't changed it will still be broken so give up
-        if(forbidlisted != null)
-            if(forbidlisted.ValidatorXML.Equals(firstPassSuspect.ValidatorXML))
+        if (forbidlisted != null)
+            if (forbidlisted.ValidatorXML.Equals(firstPassSuspect.ValidatorXML))
                 return false;
             else
-                CataloguesWithBrokenValidationXml.Remove(firstPassSuspect);//they have changed the ValidatorXML so maybe it is ok again
+                CataloguesWithBrokenValidationXml
+                    .Remove(firstPassSuspect); //they have changed the ValidatorXML so maybe it is ok again
 
         //deserialize the catalogues validation XML
         Validator validator;
@@ -165,7 +169,8 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
         }
 
         //get all constraints
-        IEnumerable<ISecondaryConstraint> constraints = validator.ItemValidators.SelectMany(iv => iv.SecondaryConstraints);
+        IEnumerable<ISecondaryConstraint> constraints =
+            validator.ItemValidators.SelectMany(iv => iv.SecondaryConstraints);
 
         //get those that are associated with the usual suspects
         foreach (var constraint in constraints)
@@ -182,7 +187,6 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
             foreach (var f in suspect.SuspectFields)
                 if (oTableWrapperObject.Equals(f.GetValue(constraint)))
                     return true;
-
         }
 
         return false;

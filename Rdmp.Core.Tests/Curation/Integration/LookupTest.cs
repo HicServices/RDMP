@@ -23,46 +23,44 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 public class LookupTest : DatabaseTests
 {
-
     [Test]
     public void Test_MultipleLookupReferences()
     {
         BlitzMainDataTables();
 
-        var tiHeader = new TableInfo(CatalogueRepository,"Head");
-        var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
+        var tiHeader = new TableInfo(CatalogueRepository, "Head");
+        var tiHeader_Code = new ColumnInfo(CatalogueRepository, "code", "", tiHeader);
 
-        var tiLookup = new TableInfo(CatalogueRepository,"z_HeadLookup");
-        var tiLookup_Code = new ColumnInfo(CatalogueRepository,"code","",tiLookup);
-        var tiLookup_Desc = new ColumnInfo(CatalogueRepository,"desc","",tiLookup);
+        var tiLookup = new TableInfo(CatalogueRepository, "z_HeadLookup");
+        var tiLookup_Code = new ColumnInfo(CatalogueRepository, "code", "", tiLookup);
+        var tiLookup_Desc = new ColumnInfo(CatalogueRepository, "desc", "", tiLookup);
 
-        var lookup = new Lookup(CatalogueRepository,tiLookup_Desc,tiHeader_Code,tiLookup_Code,ExtractionJoinType.Left,null);
+        var lookup = new Lookup(CatalogueRepository, tiLookup_Desc, tiHeader_Code, tiLookup_Code,
+            ExtractionJoinType.Left, null);
 
-        var cata1 = new Catalogue(CatalogueRepository,"Catalogue1");
-        var cata2 = new Catalogue(CatalogueRepository,"Catalogue2");
+        var cata1 = new Catalogue(CatalogueRepository, "Catalogue1");
+        var cata2 = new Catalogue(CatalogueRepository, "Catalogue2");
 
-        var cata1_code = new CatalogueItem(CatalogueRepository,cata1,"code");
-        var cata1_desc = new CatalogueItem(CatalogueRepository,cata1,"desc");
-        new ExtractionInformation(CatalogueRepository,cata1_code,tiHeader_Code,"[tbl]..[code]");
-        new ExtractionInformation(CatalogueRepository,cata1_desc,tiLookup_Desc,"[lookup]..[desc]");
+        var cata1_code = new CatalogueItem(CatalogueRepository, cata1, "code");
+        var cata1_desc = new CatalogueItem(CatalogueRepository, cata1, "desc");
+        new ExtractionInformation(CatalogueRepository, cata1_code, tiHeader_Code, "[tbl]..[code]");
+        new ExtractionInformation(CatalogueRepository, cata1_desc, tiLookup_Desc, "[lookup]..[desc]");
 
-        var cata2_code = new CatalogueItem(CatalogueRepository,cata2,"code");
-        var cata2_desc = new CatalogueItem(CatalogueRepository,cata2,"desc");
-        new ExtractionInformation(CatalogueRepository,cata2_code,tiHeader_Code,"[tbl]..[code]");
-        new ExtractionInformation(CatalogueRepository,cata2_desc,tiLookup_Desc,"[lookup]..[desc]");
-            
-        new CatalogueChildProvider(CatalogueRepository,null, ThrowImmediatelyCheckNotifier.QuietPicky,null);
-            
+        var cata2_code = new CatalogueItem(CatalogueRepository, cata2, "code");
+        var cata2_desc = new CatalogueItem(CatalogueRepository, cata2, "desc");
+        new ExtractionInformation(CatalogueRepository, cata2_code, tiHeader_Code, "[tbl]..[code]");
+        new ExtractionInformation(CatalogueRepository, cata2_desc, tiLookup_Desc, "[lookup]..[desc]");
+
+        new CatalogueChildProvider(CatalogueRepository, null, ThrowImmediatelyCheckNotifier.QuietPicky, null);
     }
 
     [Test]
     public void CreateLookup_linkWithSelfThrowsException()
     {
-
-        TableInfo parent=null;
-        ColumnInfo child=null;
-        ColumnInfo child2=null;
-        ColumnInfo child3=null;
+        TableInfo parent = null;
+        ColumnInfo child = null;
+        ColumnInfo child2 = null;
+        ColumnInfo child3 = null;
 
         try
         {
@@ -71,16 +69,43 @@ public class LookupTest : DatabaseTests
             child2 = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent);
             child3 = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent);
 
-            Assert.Throws<ArgumentException>(()=>new Lookup(CatalogueRepository, child, child2, child3, ExtractionJoinType.Left, null));
+            Assert.Throws<ArgumentException>(() =>
+                new Lookup(CatalogueRepository, child, child2, child3, ExtractionJoinType.Left, null));
         }
         finally
         {
             //cleanup
-            try{child.DeleteInDatabase();}catch (Exception){}
-            try{child2.DeleteInDatabase();}catch (Exception){}
-            try{child3.DeleteInDatabase();}catch (Exception){}
-            try{parent.DeleteInDatabase();}catch (Exception){}
+            try
+            {
+                child.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
 
+            try
+            {
+                child2.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                child3.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                parent.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 
@@ -88,7 +113,7 @@ public class LookupTest : DatabaseTests
     [TestCase(false)]
     public void CreateLookup_linkWithOtherTable(bool memoryRepo)
     {
-        var repo = memoryRepo? (ICatalogueRepository)new MemoryCatalogueRepository():CatalogueRepository;
+        var repo = memoryRepo ? (ICatalogueRepository)new MemoryCatalogueRepository() : CatalogueRepository;
 
         TableInfo parent = null;
         TableInfo parent2 = null;
@@ -120,20 +145,51 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            try { child.DeleteInDatabase(); }catch (Exception) { }
-            try { child2.DeleteInDatabase(); }catch (Exception) { }
-            try { child3.DeleteInDatabase(); }catch (Exception) { }
-            try { parent.DeleteInDatabase(); }catch (Exception) { }
-            try { parent2.DeleteInDatabase(); }catch (Exception) { }
+            try
+            {
+                child.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
 
+            try
+            {
+                child2.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                child3.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                parent.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                parent2.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 
     [Test]
     public void CompositeLookupTest()
     {
-           
-
         TableInfo fkTable = null;
         TableInfo pkTable = null;
         ColumnInfo desc = null;
@@ -144,11 +200,10 @@ public class LookupTest : DatabaseTests
         ColumnInfo pk2 = null;
 
         Lookup lookup = null;
-        LookupCompositeJoinInfo composite=null;
+        LookupCompositeJoinInfo composite = null;
 
         try
         {
-
             //table 1 - the dataset table, it has 2 foreign keys e.g. TestCode, Healthboard
             fkTable = new TableInfo(CatalogueRepository, "UnitTest_Biochemistry");
             fk = new ColumnInfo(CatalogueRepository, "UnitTest_BCTestCode", "int", fkTable);
@@ -184,7 +239,7 @@ public class LookupTest : DatabaseTests
             Assert.AreEqual(composite.ForeignKey.Name, fk2.Name);
 
             //get a fresh copy out of memory now that we have created the Lookup composite key, confirm the integrity of that relationship
-            Assert.AreEqual(lookup.GetSupplementalJoins().Count() , 1);
+            Assert.AreEqual(lookup.GetSupplementalJoins().Count(), 1);
             Assert.AreEqual(lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>().First().ID, composite.ID);
 
             composite.DeleteInDatabase();
@@ -218,7 +273,6 @@ public class LookupTest : DatabaseTests
     [Test]
     public void CompositeLookupTest_SQL()
     {
-             
         //this only works for MSSQL Servers
         if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
             Assert.Ignore("This test only targets Microsft SQL Servers");
@@ -237,7 +291,6 @@ public class LookupTest : DatabaseTests
 
         try
         {
-
             //table 1 - the dataset table, it has 2 foreign keys e.g. TestCode, Healthboard
             fkTable = new TableInfo(CatalogueRepository, "UnitTest_Biochemistry");
             fk = new ColumnInfo(CatalogueRepository, "UnitTest_BCTestCode", "int", fkTable);
@@ -252,14 +305,16 @@ public class LookupTest : DatabaseTests
 
             var joinSQL = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.AreEqual(joinSQL,"UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode");
+            Assert.AreEqual(joinSQL,
+                "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode");
 
             //Create the composite lookup
             composite = new LookupCompositeJoinInfo(CatalogueRepository, lookup, fk2, pk2);
 
             var joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.AreEqual(joinSQL_AfterAddingCompositeKey, "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode AND UnitTest_BCHealthBoard = UnitTest_Healthboard");
+            Assert.AreEqual(joinSQL_AfterAddingCompositeKey,
+                "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode AND UnitTest_BCHealthBoard = UnitTest_Healthboard");
         }
         catch (Exception ex)
         {
@@ -287,7 +342,6 @@ public class LookupTest : DatabaseTests
     [Test]
     public void LookupTest_CustomSql()
     {
-
         //this only works for MSSQL Servers
         if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
             Assert.Ignore("This test only targets Microsft SQL Servers");
@@ -305,7 +359,6 @@ public class LookupTest : DatabaseTests
 
         try
         {
-
             //table 1 - the dataset table, it has 2 foreign keys e.g. TestCode, Healthboard
             fkTable = new TableInfo(CatalogueRepository, "UnitTest_Biochemistry");
             fk = new ColumnInfo(CatalogueRepository, "One", "int", fkTable);
@@ -384,12 +437,17 @@ public class LookupTest : DatabaseTests
 
         var lookupCata = Import(lookuptbl);
 
-        var fkEi = mainCata.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "SendingLocation");
-        var fk = mainCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "SendingLocation");
-        var pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "LocationCode");
+        var fkEi = mainCata.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Single(n => n.GetRuntimeName() == "SendingLocation");
+        var fk = mainCata.GetTableInfoList(false).Single().ColumnInfos
+            .Single(n => n.GetRuntimeName() == "SendingLocation");
+        var pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos
+            .Single(n => n.GetRuntimeName() == "LocationCode");
 
-        var descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line1");
-        var descLine2 = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Line2");
+        var descLine1 = lookupCata.GetTableInfoList(false).Single().ColumnInfos
+            .Single(n => n.GetRuntimeName() == "Line1");
+        var descLine2 = lookupCata.GetTableInfoList(false).Single().ColumnInfos
+            .Single(n => n.GetRuntimeName() == "Line2");
 
         ExecuteCommandCreateLookup cmd = null;
 
@@ -398,14 +456,14 @@ public class LookupTest : DatabaseTests
         switch (testCase)
         {
             case LookupTestCase.SingleKeySingleDescriptionNoVirtualColumn:
-                cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk,null, false);
+                cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk, null, false);
                 cmd.Execute();
 
                 //sql should not have changed because we didn't create an new ExtractionInformation virtual column
                 Assert.AreEqual(sqlBefore, GetSql(mainCata));
                 break;
             case LookupTestCase.SingleKeySingleDescription:
-                cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk,null, true);
+                cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk, null, true);
                 cmd.Execute();
 
                 //should have the lookup join and the virtual column _Desc
@@ -416,7 +474,7 @@ public class LookupTest : DatabaseTests
             default:
                 throw new ArgumentOutOfRangeException(nameof(testCase));
         }
-            
+
         foreach (var d in CatalogueRepository.GetAllObjects<Lookup>())
             d.DeleteInDatabase();
         foreach (var d in CatalogueRepository.GetAllObjects<LookupCompositeJoinInfo>())

@@ -46,7 +46,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
 
         Assert.IsNotNull(cic2);
         Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
-        Assert.AreEqual(cic,cic2);
+        Assert.AreEqual(cic, cic2);
     }
 
     [Test]
@@ -72,6 +72,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == null);
         Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }
+
     [Test]
     public void AuditLogReFetch_WhenAuditLogIsRubbish()
     {

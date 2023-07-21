@@ -17,19 +17,20 @@ public class ExecuteCommandMoveFilterIntoContainer : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, IFilter toMove, IContainer into)
-        : this(activator,new FilterCombineable(toMove),into)
+        : this(activator, new FilterCombineable(toMove), into)
     {
-
     }
-    public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator,FilterCombineable filterCombineable, IContainer targetContainer) : base(activator)
+
+    public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, FilterCombineable filterCombineable,
+        IContainer targetContainer) : base(activator)
     {
         _filterCombineable = filterCombineable;
         _targetContainer = targetContainer;
 
-        if(!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
+        if (!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
             SetImpossible("Filters can only be moved within their own container tree");
 
-        if(targetContainer.ShouldBeReadOnly(out var reason))
+        if (targetContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -39,6 +40,6 @@ public class ExecuteCommandMoveFilterIntoContainer : BasicCommandExecution
 
         _filterCombineable.Filter.FilterContainer_ID = _targetContainer.ID;
         ((DatabaseEntity)_filterCombineable.Filter).SaveToDatabase();
-        Publish((DatabaseEntity) _targetContainer);
+        Publish((DatabaseEntity)_targetContainer);
     }
 }

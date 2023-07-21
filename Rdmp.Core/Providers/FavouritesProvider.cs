@@ -27,7 +27,8 @@ public class FavouritesProvider
     {
         _activator = activator;
         _catalogueRepository = _activator.RepositoryLocator.CatalogueRepository;
-        CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName).ToList();
+        CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName)
+            .ToList();
     }
 
     public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)
@@ -55,10 +56,7 @@ public class FavouritesProvider
         //it wasn't a favourite anyway
     }
 
-    public bool IsFavourite(IMapsDirectlyToDatabaseTable o)
-    {
-        return GetFavouriteIfAny(o) != null;
-    }
+    public bool IsFavourite(IMapsDirectlyToDatabaseTable o) => GetFavouriteIfAny(o) != null;
 
     public Favourite GetFavouriteIfAny(IMapsDirectlyToDatabaseTable o)
     {

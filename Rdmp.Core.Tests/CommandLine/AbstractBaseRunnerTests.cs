@@ -21,7 +21,6 @@ namespace Rdmp.Core.Tests.CommandLine;
 
 public class AbstractBaseRunnerTests : UnitTests
 {
-
     [SetUp]
     public void CleanRemnants()
     {
@@ -36,7 +35,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
-        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator,c.ID.ToString()));
+        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, c.ID.ToString()));
     }
 
     [Test]
@@ -125,7 +124,8 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
 
-        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator,$"{c.ID},{c2.ID}").ToArray();
+        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, $"{c.ID},{c2.ID}")
+            .ToArray();
 
         Assert.AreEqual(2, results.Length);
         Assert.AreSame(c, results[0]);
@@ -142,33 +142,28 @@ public class AbstractBaseRunnerTests : UnitTests
         var c2 = WhenIHaveA<Catalogue>();
         c2.Name = "go hard";
         c2.SaveToDatabase();
-            
+
         WhenIHaveA<Catalogue>();
 
         var r = new TestRunner();
-        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*").ToArray();
+        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*")
+            .ToArray();
 
         Assert.AreEqual(2, results.Length);
-        Assert.Contains(c,results);
+        Assert.Contains(c, results);
         Assert.Contains(c2, results);
     }
 
     private class TestRunner : Runner
     {
-        public new static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
-        {
-            return Runner.GetObjectFromCommandLineString<T>(locator, arg);
-        }
+        public new static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
+            where T : IMapsDirectlyToDatabaseTable => Runner.GetObjectFromCommandLineString<T>(locator, arg);
 
-        public new static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
-        {
-            return Runner.GetObjectsFromCommandLineString<T>(locator, arg);
-        }
+        public new static IEnumerable<T>
+            GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
+            where T : IMapsDirectlyToDatabaseTable => Runner.GetObjectsFromCommandLineString<T>(locator, arg);
 
-        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
-                
-            return 0;
-        }
+        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+            IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token) => 0;
     }
 }

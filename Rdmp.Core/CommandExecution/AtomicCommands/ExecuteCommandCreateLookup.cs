@@ -42,7 +42,9 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// <param name="collation"></param>
     /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
     /// the column(s) in the dataset (when the SELECT query is built)</param>
-    public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository, ExtractionInformation foreignKeyExtractionInformation, ColumnInfo[] lookupDescriptionColumns, List<Tuple<ColumnInfo, ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
+    public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository,
+        ExtractionInformation foreignKeyExtractionInformation, ColumnInfo[] lookupDescriptionColumns,
+        List<Tuple<ColumnInfo, ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
     {
         _catalogueRepository = catalogueRepository;
         _foreignKeyExtractionInformation = foreignKeyExtractionInformation;
@@ -58,7 +60,6 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
 
         if (_fkToPkTuples.Any(t => t.Item1 == null || t.Item2 == null))
             throw new Exception("Tuples list contained null entries");
-
     }
 
     /// <summary>
@@ -72,10 +73,14 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
     /// the columns in the dataset (when the SELECT query is built)</param>
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository, ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn, ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
-        : this(catalogueRepository, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn }, new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(foreignKeyExtractionInformation.ColumnInfo, lookupTablePrimaryKey) }, collation, alsoCreateExtractionInformations)
+    public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository,
+        ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn,
+        ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
+        : this(catalogueRepository, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn },
+            new List<Tuple<ColumnInfo, ColumnInfo>>
+                { Tuple.Create(foreignKeyExtractionInformation.ColumnInfo, lookupTablePrimaryKey) }, collation,
+            alsoCreateExtractionInformations)
     {
-
     }
 
     /// <inheritdoc/>
@@ -85,10 +90,12 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
 
         foreach (var descCol in _lookupDescriptionColumns)
         {
-            var lookup = new Lookup(_catalogueRepository, descCol, _fkToPkTuples.First().Item1, _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
+            var lookup = new Lookup(_catalogueRepository, descCol, _fkToPkTuples.First().Item1,
+                _fkToPkTuples.First().Item2, ExtractionJoinType.Left, _collation);
 
             foreach (var supplementalKeyPair in _fkToPkTuples.Skip(1))
-                new LookupCompositeJoinInfo(_catalogueRepository, lookup, supplementalKeyPair.Item1, supplementalKeyPair.Item2, _collation);
+                new LookupCompositeJoinInfo(_catalogueRepository, lookup, supplementalKeyPair.Item1,
+                    supplementalKeyPair.Item2, _collation);
 
             if (_alsoCreateExtractionInformations)
             {
@@ -100,13 +107,15 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
                 newCatalogueItem.SetColumnInfo(descCol);
 
                 //bump everyone down 1
-                foreach (var toBumpDown in _allExtractionInformations.Where(e => e.Order > _foreignKeyExtractionInformation.Order))
+                foreach (var toBumpDown in _allExtractionInformations.Where(e =>
+                             e.Order > _foreignKeyExtractionInformation.Order))
                 {
                     toBumpDown.Order++;
                     toBumpDown.SaveToDatabase();
                 }
 
-                var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString())
+                var newExtractionInformation =
+                    new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString())
                     {
                         ExtractionCategory = ExtractionCategory.Supplemental,
                         Alias = newCatalogueItem.Name,

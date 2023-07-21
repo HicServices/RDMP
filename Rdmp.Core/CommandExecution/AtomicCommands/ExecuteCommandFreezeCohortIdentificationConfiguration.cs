@@ -17,16 +17,14 @@ public class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicComman
     private readonly CohortIdentificationConfiguration _cic;
     private readonly bool _desiredFreezeState;
 
-    public ExecuteCommandFreezeCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, bool desiredFreezeState):base(activator)
+    public ExecuteCommandFreezeCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic, bool desiredFreezeState) : base(activator)
     {
         _cic = cic;
         _desiredFreezeState = desiredFreezeState;
     }
 
-    public override string GetCommandName()
-    {
-        return _desiredFreezeState ? "Freeze Configuration" : "Unfreeze Configuration";
-    }
+    public override string GetCommandName() => _desiredFreezeState ? "Freeze Configuration" : "Unfreeze Configuration";
 
     public override void Execute()
     {
@@ -40,8 +38,6 @@ public class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicComman
         Publish(_cic);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
 }

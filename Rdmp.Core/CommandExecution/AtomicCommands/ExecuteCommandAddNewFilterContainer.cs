@@ -23,17 +23,18 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
     internal const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
     private const float DefaultWeight = 1.1f;
 
-    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
+    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host) :
+        base(activator)
     {
         Weight = DefaultWeight;
         _host = host;
 
-        if(host.RootFilterContainer_ID != null)
+        if (host.RootFilterContainer_ID != null)
             SetImpossible("There is already a root filter container on this object");
 
         if (host is AggregateConfiguration ac)
         {
-            if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+            if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                 SetImpossible("Aggregate is set to use another's filter container tree");
 
             if (ac.Catalogue.IsApiCall())
@@ -43,9 +44,10 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
         SetImpossibleIfReadonly(host);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
 
-    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container):base(activator)
+    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container) : base(activator)
     {
         _container = container;
 
@@ -56,17 +58,18 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
     {
         base.Execute();
 
-        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ?? throw new Exception("Unable to determine FilterFactory, is host and container null?");
+        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ??
+                      throw new Exception("Unable to determine FilterFactory, is host and container null?");
         var newContainer = factory.CreateNewContainer();
 
-        if(_host != null)
+        if (_host != null)
         {
-            _host.RootFilterContainer_ID = newContainer .ID;
+            _host.RootFilterContainer_ID = newContainer.ID;
             _host.SaveToDatabase();
         }
         else
         {
-            if(_container == null)
+            if (_container == null)
                 throw new Exception("Command should take container or host but both were null");
 
             _container.AddChild(newContainer);

@@ -18,10 +18,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 {
     private IMapsDirectlyToDatabaseTable _objectToShow;
+
     /// <summary>
     /// Alternative to <see cref="_objectToShow"/> where there might be many objects and it could be expensive to fetch them so only do so when command is executed
     /// </summary>
     private Func<IEnumerable<IMapsDirectlyToDatabaseTable>> _getObjectsFunc;
+
     private IMapsDirectlyToDatabaseTable[] _objectsToPickFrom;
 
 
@@ -29,7 +31,8 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     public bool UseIconAndTypeName;
     private Type _objectType;
 
-    public ExecuteCommandShow(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
+    public ExecuteCommandShow(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow,
+        int expansionDepth, bool useIconAndTypeName = false) : base(activator)
     {
         _objectToShow = objectToShow;
         _objectType = _objectToShow?.GetType();
@@ -43,7 +46,9 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     }
 
 
-    public ExecuteCommandShow(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> objectsToPickFrom, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
+    public ExecuteCommandShow(IBasicActivateItems activator,
+        IEnumerable<IMapsDirectlyToDatabaseTable> objectsToPickFrom, int expansionDepth,
+        bool useIconAndTypeName = false) : base(activator)
     {
         if (objectsToPickFrom == null)
         {
@@ -82,33 +87,36 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="getObjectsFunc"></param>
-    public ExecuteCommandShow(IBasicActivateItems activator, Func<IEnumerable<IMapsDirectlyToDatabaseTable>> getObjectsFunc) : base(activator)
+    public ExecuteCommandShow(IBasicActivateItems activator,
+        Func<IEnumerable<IMapsDirectlyToDatabaseTable>> getObjectsFunc) : base(activator)
     {
         _getObjectsFunc = getObjectsFunc;
 
         Weight = 50.3f;
     }
 
-    public ExecuteCommandShow(IBasicActivateItems activator, int? foreignKey, Type typeToFetch):base(activator)
+    public ExecuteCommandShow(IBasicActivateItems activator, int? foreignKey, Type typeToFetch) : base(activator)
     {
-        if(!foreignKey.HasValue)
+        if (!foreignKey.HasValue)
             SetImpossible("No object exists");
 
-        _getObjectsFunc = ()=> foreignKey.HasValue ?
-            new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
-            Array.Empty<IMapsDirectlyToDatabaseTable>();
+        _getObjectsFunc = () =>
+            foreignKey.HasValue
+                ? new IMapsDirectlyToDatabaseTable[]
+                    { activator.RepositoryLocator.GetObjectByID(typeToFetch, foreignKey.Value) }
+                : Array.Empty<IMapsDirectlyToDatabaseTable>();
 
         OverrideCommandName = $"{typeToFetch.Name}(s)";
 
         Weight = 50.3f;
     }
 
-    public override string GetCommandName()
-    {
-        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+    public override string GetCommandName() =>
+        !string.IsNullOrWhiteSpace(OverrideCommandName)
             ? base.GetCommandName()
-            : UseIconAndTypeName && _objectType != null ? $"Show {_objectType.Name}(s)" : base.GetCommandName();
-    }
+            : UseIconAndTypeName && _objectType != null
+                ? $"Show {_objectType.Name}(s)"
+                : base.GetCommandName();
 
     public override void Execute()
     {
@@ -124,7 +132,8 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
             if (show == null)
                 return;
         }
-        BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(show, _expansionDepth));
+
+        BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(show, _expansionDepth));
     }
 
     /// <summary>
@@ -133,7 +142,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     public void FetchDestinationObjects()
     {
         // If we have a lazy func to call when only on command execution, nows the time
-        if(_getObjectsFunc != null && _objectsToPickFrom == null)
+        if (_getObjectsFunc != null && _objectsToPickFrom == null)
         {
             var pick = _getObjectsFunc()?.ToArray() ?? Array.Empty<IMapsDirectlyToDatabaseTable>();
 
@@ -142,7 +151,7 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
                 // base.Execute() will throw since the late load of objects returned nothing
                 SetImpossible("No objects found");
             }
-            else if(pick.Length == 1)
+            else if (pick.Length == 1)
             {
                 _objectToShow = pick[0];
             }
@@ -152,24 +161,20 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
                 _objectType = _objectsToPickFrom.First().GetType();
             }
         }
-
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Opens the containing toolbox collection and shows the object";
-    }
+    public override string GetCommandHelp() => "Opens the containing toolbox collection and shows the object";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return OverrideIcon != null
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        OverrideIcon != null
             ? base.GetImage(iconProvider)
             : UseIconAndTypeName &&
-               // if there is something to show
-               (_objectType != null || _objectToShow != null) ?
-            // return its icon
-            iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
-    }
+              // if there is something to show
+              (_objectType != null || _objectToShow != null)
+                ?
+                // return its icon
+                iconProvider.GetImage((object)_objectToShow ?? _objectType)
+                : null;
 
     /// <summary>
     /// Resolves any lamdas and returns what object(s) would be shown (if any)
@@ -179,6 +184,6 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
     {
         FetchDestinationObjects();
-        return new[] {_objectToShow};
+        return new[] { _objectToShow };
     }
 }

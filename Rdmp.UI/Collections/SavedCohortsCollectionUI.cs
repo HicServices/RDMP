@@ -30,21 +30,17 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         olvProjectNumber.IsEditable = false;
     }
 
-    private object AspectGetter_Version(object rowObject)
-    {
-        return rowObject is ExtractableCohort c ? c.ExternalVersion : null;
-    }
+    private object AspectGetter_Version(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalVersion : null;
 
-    private object AspectGetter_ProjectNumber(object rowObject)
-    {
-        return rowObject is ExtractableCohort c ? c.ExternalProjectNumber : null;
-    }
+    private object AspectGetter_ProjectNumber(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalProjectNumber : null;
 
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
 
-        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,Activator,olvName,olvName);
+        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts, Activator, olvName, olvName);
 
         tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 
@@ -52,9 +48,9 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-        CommonTreeFunctionality.SetupColumnTracking( olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
-        CommonTreeFunctionality.SetupColumnTracking( olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
-        CommonTreeFunctionality.SetupColumnTracking( olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
+        CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
+        CommonTreeFunctionality.SetupColumnTracking(olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
+        CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -65,12 +61,12 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     private void SetupToolStrip()
     {
         CommonFunctionality.ClearToolStrip();
-        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator,null),GlobalStrings.FromFile,null,"New...");
-        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),"From Query",null,"New...");
+        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator, null), GlobalStrings.FromFile,
+            null, "New...");
+        CommonFunctionality.Add(
+            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null),
+            "From Query", null, "New...");
     }
 
-    public static bool IsRootObject(object root)
-    {
-        return root is AllCohortsNode;
-    }
+    public static bool IsRootObject(object root) => root is AllCohortsNode;
 }

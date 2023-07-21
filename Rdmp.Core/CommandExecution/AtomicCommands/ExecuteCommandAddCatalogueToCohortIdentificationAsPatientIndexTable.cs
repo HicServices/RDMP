@@ -14,29 +14,30 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicCommandExecution, IAtomicCommand
 {
     private readonly CohortIdentificationConfiguration _configuration;
     private CatalogueCombineable _catalogue;
 
-    public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
+    public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,
+        CohortIdentificationConfiguration configuration) : base(activator)
     {
         _configuration = configuration;
 
         UseTripleDotSuffix = true;
     }
 
-    public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
+    public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,
+        CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration) : this(activator,
+        configuration)
     {
         _catalogue = catalogue;
-        if(!_catalogue.Catalogue.IsApiCall() && !_catalogue.ContainsAtLeastOneExtractionIdentifier)
+        if (!_catalogue.Catalogue.IsApiCall() && !_catalogue.ContainsAtLeastOneExtractionIdentifier)
             SetImpossible($"Catalogue {_catalogue.Catalogue} does not contain any IsExtractionIdentifier columns");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a new patient index table query that fetches a subset of data from the chosen dataset.  This query will be used as part of a cohort identification configuration";
-    }
+    public override string GetCommandHelp() =>
+        "Creates a new patient index table query that fetches a subset of data from the chosen dataset.  This query will be used as part of a cohort identification configuration";
 
     public override void Execute()
     {
@@ -44,20 +45,21 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
 
         if (_catalogue == null)
         {
-            if(!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var cata))
+            if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),
+                    out var cata))
                 return;
 
             _catalogue = new CatalogueCombineable(cata);
         }
 
-        var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator,_configuration);
+        var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator, _configuration);
 
-        var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand, _configuration);
+        var joinableCommandExecution =
+            new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand,
+                _configuration);
         joinableCommandExecution.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
 }

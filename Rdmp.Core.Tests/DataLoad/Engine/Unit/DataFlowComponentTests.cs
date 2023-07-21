@@ -31,7 +31,8 @@ internal class DataFlowComponentTests
         var toProcess = new DataTable();
         toProcess.Columns.Add("Column1");
 
-        var ex = Assert.Throws<InvalidOperationException>(() => renamer.ProcessPipelineData( toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
         Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
     }
 
@@ -48,7 +49,7 @@ internal class DataFlowComponentTests
         var toProcess = new DataTable();
         toProcess.Columns.Add("ToFind");
 
-        var processed = renamer.ProcessPipelineData( toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
+        var processed = renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
 
         Assert.AreEqual(1, processed.Columns.Count);
         Assert.AreEqual("ReplacementName", processed.Columns[0].ColumnName);
@@ -66,7 +67,8 @@ internal class DataFlowComponentTests
         var toProcess = new DataTable();
         toProcess.Columns.Add("Column1");
 
-        var ex = Assert.Throws<InvalidOperationException>(() => dropper.ProcessPipelineData( toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
         Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
     }
 
@@ -82,7 +84,7 @@ internal class DataFlowComponentTests
         var toProcess = new DataTable();
         toProcess.Columns.Add("ToDrop");
 
-        var processed = dropper.ProcessPipelineData( toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
+        var processed = dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
 
         Assert.AreEqual(0, processed.Columns.Count);
         Assert.AreEqual(false, processed.Columns.Contains("ToDrop"));
@@ -106,12 +108,12 @@ internal class ColumnforbidlistTests
         Assert.DoesNotThrow(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
         toProcess.Columns.Add("fish");
 
-        Assert.Throws<Exception>(()=>forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+        Assert.Throws<Exception>(() =>
+            forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
 
         forbidlister.Rationale = "kaleidoscope engage";
-        var ex = Assert.Throws<Exception>(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+        var ex = Assert.Throws<Exception>(() =>
+            forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
         Assert.IsTrue(ex.Message.Contains("kaleidoscope engage"));
-
-
     }
 }

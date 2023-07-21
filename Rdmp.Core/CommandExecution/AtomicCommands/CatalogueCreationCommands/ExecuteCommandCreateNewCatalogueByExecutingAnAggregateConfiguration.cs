@@ -26,28 +26,29 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     private ExtractableCohort _cohort;
     private DiscoveredTable _table;
 
-    public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator,AggregateConfiguration ac) : base(activator)
+    public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator,
+        AggregateConfiguration ac) : base(activator)
     {
         _aggregateConfiguration = ac;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
-    }
+    public override string GetCommandHelp() =>
+        "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
 
     public override void Execute()
     {
         base.Execute();
 
-        _aggregateConfiguration ??= SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _aggregateConfiguration ??=
+            SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if (_aggregateConfiguration == null)
             return;
 
         if (_aggregateConfiguration.IsJoinablePatientIndexTable())
         {
-            if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?", "Cohort Records Only", out var chosen))
+            if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?",
+                    "Cohort Records Only", out var chosen))
                 return;
 
             if (chosen)
@@ -62,7 +63,8 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
             if (externalData != null)
             {
                 var projNumber = externalData.ExternalProjectNumber;
-                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
+                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>()
+                    .Where(p => p.ProjectNumber == projNumber).ToArray();
                 if (projs.Length == 1)
                     ProjectSpecific = projs[0];
             }
@@ -75,11 +77,13 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
 
         var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
 
-        var runner = BasicActivator.GetPipelineRunner(new DialogArgs {
+        var runner = BasicActivator.GetPipelineRunner(new DialogArgs
+            {
                 WindowTitle = "Create Table from AggregateConfiguration",
-                TaskDescription = "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
+                TaskDescription =
+                    "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
             }
-            ,useCase, null /*TODO inject Pipeline in CLI constructor*/);
+            , useCase, null /*TODO inject Pipeline in CLI constructor*/);
 
         runner.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
 
@@ -92,17 +96,16 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
             throw new Exception($"Pipeline execute successfully but the expected table '{_table}' did not exist");
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
-        importer.DoImport(out var ti,out _);
+        importer.DoImport(out var ti, out _);
 
-        BasicActivator.CreateAndConfigureCatalogue(ti,null,
-            $"Execution of '{_aggregateConfiguration}' (AggregateConfiguration ID ={_aggregateConfiguration.ID})",ProjectSpecific,TargetFolder);
+        BasicActivator.CreateAndConfigureCatalogue(ti, null,
+            $"Execution of '{_aggregateConfiguration}' (AggregateConfiguration ID ={_aggregateConfiguration.ID})",
+            ProjectSpecific, TargetFolder);
     }
 
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

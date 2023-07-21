@@ -23,7 +23,7 @@ internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomic
     private readonly SelectedDataSets _selectedDataSet;
     private FlatFileReleasePotential _releasePotential;
 
-    public ExecuteCommandViewThenVsNowSql(IActivateItems activator, SelectedDataSets selectedDataSet):base(activator)
+    public ExecuteCommandViewThenVsNowSql(IActivateItems activator, SelectedDataSets selectedDataSet) : base(activator)
     {
         _selectedDataSet = selectedDataSet;
     }
@@ -38,11 +38,9 @@ internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomic
 
         if (string.IsNullOrWhiteSpace(rp.SqlCurrentConfiguration))
             Show("Could not generate Sql for dataset");
-        else
-        if(string.IsNullOrWhiteSpace(rp.SqlExtracted))
+        else if (string.IsNullOrWhiteSpace(rp.SqlExtracted))
             Show("Dataset has never been extracted");
-        else
-        if(rp.SqlCurrentConfiguration == rp.SqlExtracted)
+        else if (rp.SqlCurrentConfiguration == rp.SqlExtracted)
             Show("No differences");
         else
             _releasePotential = rp;
@@ -51,12 +49,11 @@ internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomic
             return;
 
 
-        var dialog = new SQLBeforeAndAfterViewer(_releasePotential.SqlCurrentConfiguration, _releasePotential.SqlExtracted, "Current Configuration", "Configuration when last run", "Sql Executed", MessageBoxButtons.OK);
+        var dialog = new SQLBeforeAndAfterViewer(_releasePotential.SqlCurrentConfiguration,
+            _releasePotential.SqlExtracted, "Current Configuration", "Configuration when last run", "Sql Executed",
+            MessageBoxButtons.OK);
         dialog.Show();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Diff);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Diff);
 }

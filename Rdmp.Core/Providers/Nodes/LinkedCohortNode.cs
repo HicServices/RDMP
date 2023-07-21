@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>
 /// </summary>
-public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
+public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
 {
     public IExtractionConfiguration Configuration { get; }
     public IExtractableCohort Cohort { get; }
@@ -24,33 +24,22 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
         Cohort = cohort;
     }
 
-    public override string ToString()
-    {
-        return Cohort.ToString();
-    }
+    public override string ToString() => Cohort.ToString();
 
-    public object MasqueradingAs()
-    {
-        return Cohort;
-    }
+    public object MasqueradingAs() => Cohort;
 
-    protected bool Equals(LinkedCohortNode other)
-    {
-        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
-    }
+    protected bool Equals(LinkedCohortNode other) =>
+        Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LinkedCohortNode) obj);
+        return Equals((LinkedCohortNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Configuration, Cohort);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Configuration, Cohort);
 
     public void DeleteInDatabase()
     {
@@ -58,14 +47,8 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
         Configuration.SaveToDatabase();
     }
 
-    public string GetDeleteMessage()
-    {
-        return $"remove cohort from ExtractionConfiguration '{Configuration}'";
-    }
+    public string GetDeleteMessage() => $"remove cohort from ExtractionConfiguration '{Configuration}'";
 
     /// <inheritdoc/>
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
+    public string GetDeleteVerb() => "Remove";
 }

@@ -22,33 +22,26 @@ public class ExecuteCommandSetExtractionPrimaryKeys : ExecuteCommandSetColumnSet
     public ExecuteCommandSetExtractionPrimaryKeys(IBasicActivateItems activator,
             [DemandsInitialization("The dataset you want to change the extraction primary keys for")]
             ICatalogue catalogue,
-
-            [DemandsInitialization("Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
+            [DemandsInitialization(
+                "Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
             IExtractionConfiguration inConfiguration,
-
-            [DemandsInitialization("Optional - The Column name(s) you want to select as the new extraction primary keys.  Comma separate multiple entries if needed")]
+            [DemandsInitialization(
+                "Optional - The Column name(s) you want to select as the new extraction primary keys.  Comma separate multiple entries if needed")]
             string column)
         // base class args
         : base(activator, catalogue, inConfiguration, column,
             "Set Extraction Primary Key",
             "Extraction Primary Key")
     {
-
-
-    }
-    public override string GetCommandHelp()
-    {
-        return "Change which column(s) should be marked as primary key if extracting to database";
     }
 
-    protected override bool IsValidSelection(ConcreteColumn[] selected)
-    {
-        return true;
-    }
-    protected override bool Getter(ConcreteColumn c)
-    {
-        return c.IsPrimaryKey;
-    }
+    public override string GetCommandHelp() =>
+        "Change which column(s) should be marked as primary key if extracting to database";
+
+    protected override bool IsValidSelection(ConcreteColumn[] selected) => true;
+
+    protected override bool Getter(ConcreteColumn c) => c.IsPrimaryKey;
+
     protected override void Setter(ConcreteColumn ec, bool newValue)
     {
         ec.IsPrimaryKey = newValue;

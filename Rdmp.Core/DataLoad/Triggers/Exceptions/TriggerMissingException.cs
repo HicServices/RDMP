@@ -12,8 +12,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Exceptions;
 /// </summary>
 public class TriggerMissingException : TriggerException
 {
-    public TriggerMissingException(string s):base(s)
+    public TriggerMissingException(string s) : base(s)
     {
-            
     }
 }

@@ -12,7 +12,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration"/>s in a given <see cref="Project"/>
 /// </summary>
-internal class FrozenExtractionConfigurationsNode:Node , IOrderable
+internal class FrozenExtractionConfigurationsNode : Node, IOrderable
 {
     public Project Project { get; }
 
@@ -21,29 +21,23 @@ internal class FrozenExtractionConfigurationsNode:Node , IOrderable
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Frozen Extraction Configurations";
-    }
+    public override string ToString() => "Frozen Extraction Configurations";
 
-    protected bool Equals(FrozenExtractionConfigurationsNode other)
-    {
-        return Equals(Project, other.Project);
-    }
+    protected bool Equals(FrozenExtractionConfigurationsNode other) => Equals(Project, other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((FrozenExtractionConfigurationsNode) obj);
+        return Equals((FrozenExtractionConfigurationsNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => System.HashCode.Combine(Project);
+
+    public int Order
     {
-        return System.HashCode.Combine(Project);
+        get => 6000;
+        set { }
     }
-
-    public int Order { get => 6000;
-        set{} }
 }

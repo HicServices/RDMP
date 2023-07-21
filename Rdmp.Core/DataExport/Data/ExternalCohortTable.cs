@@ -24,9 +24,10 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IExternalCohortTable"/>
-public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
+public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable, INamed
 {
     #region Database Properties
+
     private string _name;
 
     /// <summary>
@@ -42,27 +43,27 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
     #endregion
 
-    [NoMappingToDatabase]
-    private SelfCertifyingDataAccessPoint SelfCertifyingDataAccessPoint { get; set; }
+    [NoMappingToDatabase] private SelfCertifyingDataAccessPoint SelfCertifyingDataAccessPoint { get; set; }
 
     /// <inheritdoc/>
     public string DefinitionTableForeignKeyField
     {
         get => _definitionTableForeignKeyField;
-        set => SetField(ref _definitionTableForeignKeyField, Qualify(Database ?? string.Empty, TableName?? string.Empty, value));
+        set => SetField(ref _definitionTableForeignKeyField,
+            Qualify(Database ?? string.Empty, TableName ?? string.Empty, value));
     }
 
     /// <inheritdoc/>
     public string TableName
     {
         get => _tableName;
-        set => SetField(ref _tableName, Qualify(Database?? string.Empty, value?? string.Empty));
+        set => SetField(ref _tableName, Qualify(Database ?? string.Empty, value ?? string.Empty));
     }
 
     private string Qualify(string db, string tbl, string col = null)
     {
         //if we already have a value being set that is qualified don't mess it up!
-        if((col ?? tbl ?? string.Empty).Contains('.'))
+        if ((col ?? tbl ?? string.Empty).Contains('.'))
             return col ?? tbl;
 
         //they sent us something like "bob" for a table/column name, let's fully qualify it with the Database etc
@@ -74,24 +75,25 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                 null /*no schema*/,
                 syntax.GetRuntimeName(tbl ?? string.Empty))
             : syntax.EnsureFullyQualified(
-            syntax.GetRuntimeName(db ?? string.Empty),
-            null /*no schema*/,
-            syntax.GetRuntimeName(tbl ?? string.Empty),
-            syntax.GetRuntimeName(col));
+                syntax.GetRuntimeName(db ?? string.Empty),
+                null /*no schema*/,
+                syntax.GetRuntimeName(tbl ?? string.Empty),
+                syntax.GetRuntimeName(col));
     }
 
     /// <inheritdoc/>
     public string DefinitionTableName
     {
         get => _definitionTableName;
-        set => SetField(ref _definitionTableName, Qualify(Database?? string.Empty, value?? string.Empty));
+        set => SetField(ref _definitionTableName, Qualify(Database ?? string.Empty, value ?? string.Empty));
     }
 
     /// <inheritdoc/>
     public string PrivateIdentifierField
     {
         get => _privateIdentifierField;
-        set => SetField(ref _privateIdentifierField, Qualify(Database?? string.Empty,TableName, value?? string.Empty));
+        set => SetField(ref _privateIdentifierField,
+            Qualify(Database ?? string.Empty, TableName, value ?? string.Empty));
     }
 
     /// <inheritdoc/>
@@ -101,13 +103,15 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     public string ReleaseIdentifierField
     {
         get => _releaseIdentifierField;
-        set => SetField(ref _releaseIdentifierField, Qualify(Database?? string.Empty, TableName, value?? string.Empty));
+        set => SetField(ref _releaseIdentifierField,
+            Qualify(Database ?? string.Empty, TableName, value ?? string.Empty));
     }
 
     /// <summary>
     /// Fields expected to be part of any table referenced by the <see cref="DefinitionTableName"/> property
     /// </summary>
-    public static readonly string[] CohortDefinitionTable_RequiredFields = {
+    public static readonly string[] CohortDefinitionTable_RequiredFields =
+    {
         "id",
         // joins to CohortToDefinitionTableJoinColumn and is used as ID in all ExtractableCohort entities throughout DataExportManager
         "projectNumber",
@@ -126,15 +130,13 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// Returns <see cref="Name"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     public ExternalCohortTable()
     {
         SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint();
     }
+
     /// <summary>
     /// Creates a new blank pointer to a cohort database.
     /// </summary>
@@ -147,8 +149,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name ?? $"NewExternalSource{Guid.NewGuid()}" },
-            {"DatabaseType",databaseType.ToString()}
+            { "Name", name ?? $"NewExternalSource{Guid.NewGuid()}" },
+            { "DatabaseType", databaseType.ToString() }
         });
     }
 
@@ -163,33 +165,29 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         Name = r["Name"] as string;
         var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-        SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository,databaseType);
+        SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository, databaseType);
 
         Server = r["Server"] as string;
         Username = r["Username"] as string;
         Password = r["Password"] as string;
         Database = r["Database"] as string ?? string.Empty;
-            
-        TableName = Qualify(Database,  r["TableName"] as string ?? string.Empty);
-        DefinitionTableForeignKeyField = Qualify(Database, TableName, r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
+
+        TableName = Qualify(Database, r["TableName"] as string ?? string.Empty);
+        DefinitionTableForeignKeyField = Qualify(Database, TableName,
+            r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
 
         DefinitionTableName = Qualify(Database, r["DefinitionTableName"] as string ?? string.Empty);
-            
+
         PrivateIdentifierField = Qualify(Database, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
         ReleaseIdentifierField = Qualify(Database, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
+        new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
 
     /// <inheritdoc/>
-    public DiscoveredDatabase Discover()
-    {
-        return SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);
-    }
+    public DiscoveredDatabase Discover() => SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);
 
     /// <inheritdoc/>
     public DiscoveredTable DiscoverCohortTable()
@@ -205,25 +203,16 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     }
 
     /// <inheritdoc/>
-    public DiscoveredColumn DiscoverPrivateIdentifier()
-    {
-        return Discover(DiscoverCohortTable(), PrivateIdentifierField);
-    }
+    public DiscoveredColumn DiscoverPrivateIdentifier() => Discover(DiscoverCohortTable(), PrivateIdentifierField);
+
     /// <inheritdoc/>
-    public DiscoveredColumn DiscoverReleaseIdentifier()
-    {
-        return Discover(DiscoverCohortTable(), ReleaseIdentifierField);
-    }
+    public DiscoveredColumn DiscoverReleaseIdentifier() => Discover(DiscoverCohortTable(), ReleaseIdentifierField);
 
-    public DiscoveredColumn DiscoverDefinitionTableForeignKey()
-    {
-        return Discover(DiscoverCohortTable(), DefinitionTableForeignKeyField);
-    }
+    public DiscoveredColumn DiscoverDefinitionTableForeignKey() =>
+        Discover(DiscoverCohortTable(), DefinitionTableForeignKeyField);
 
-    private static DiscoveredColumn Discover(DiscoveredTable tbl, string column)
-    {
-        return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
-    }
+    private static DiscoveredColumn Discover(DiscoveredTable tbl, string column) =>
+        tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
 
 
     /// <summary>
@@ -233,9 +222,9 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     public void Check(ICheckNotifier notifier)
     {
         //make sure we can get to server
-        CheckCohortDatabaseAccessible( notifier);
+        CheckCohortDatabaseAccessible(notifier);
 
-        CheckCohortDatabaseHasCorrectTables( notifier);
+        CheckCohortDatabaseHasCorrectTables(notifier);
 
         if (string.Equals(PrivateIdentifierField, ReleaseIdentifierField))
             notifier.OnCheckPerformed(
@@ -262,9 +251,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         catch (Exception e)
         {
             throw new Exception(
-                $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})", e);
+                $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})",
+                e);
         }
     }
+
     private void CheckCohortDatabaseHasCorrectTables(ICheckNotifier notifier)
     {
         try
@@ -274,14 +265,18 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             var cohortTable = DiscoverCohortTable();
             if (cohortTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}",
+                    CheckResult.Success, null));
 
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
                 DiscoverDefinitionTableForeignKey();
             }
             else
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} in database {Database}", CheckResult.Fail, null));
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} in database {Database}",
+                    CheckResult.Fail, null));
+            }
 
             var foundCohortDefinitionTable = DiscoverDefinitionTable();
 
@@ -296,8 +291,10 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
             else
+            {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Could not find table {DefinitionTableName} in database {Database}", CheckResult.Fail, null));
+            }
         }
         catch (Exception e)
         {
@@ -312,31 +309,35 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         {
             DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success,
+                null));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to Cohort database called '{Name}'", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to Cohort database called '{Name}'",
+                CheckResult.Fail, e));
         }
     }
 
     /// <inheritdoc/>
-    public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
+    public void PushToServer(ICohortDefinition newCohortDefinition, IManagedConnection connection)
     {
         newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>
         {
-            {"projectNumber",newCohortDefinition.ProjectNumber},
-            {"version",newCohortDefinition.Version},
-            {"description",newCohortDefinition.Description}
-        },connection.ManagedTransaction);
+            { "projectNumber", newCohortDefinition.ProjectNumber },
+            { "version", newCohortDefinition.Version },
+            { "description", newCohortDefinition.Description }
+        }, connection.ManagedTransaction);
     }
+
     #endregion
 
-    private void ComplainIfColumnMissing(string tableNameFullyQualified, DiscoveredColumn[] columns, string colToFindCanBeFullyQualifiedIfYouLike, ICheckNotifier notifier)
+    private void ComplainIfColumnMissing(string tableNameFullyQualified, DiscoveredColumn[] columns,
+        string colToFindCanBeFullyQualifiedIfYouLike, ICheckNotifier notifier)
     {
         var tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
 
-        if (columns.Any(col=>col.GetRuntimeName().Equals(tofind,StringComparison.CurrentCultureIgnoreCase)))
+        if (columns.Any(col => col.GetRuntimeName().Equals(tofind, StringComparison.CurrentCultureIgnoreCase)))
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found required field {tofind} in table {tableNameFullyQualified}",
                 CheckResult.Success, null));
@@ -361,10 +362,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     }
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        return SelfCertifyingDataAccessPoint.GetDecryptedPassword()?? "";
-    }
+    public string GetDecryptedPassword() => SelfCertifyingDataAccessPoint.GetDecryptedPassword() ?? "";
 
     /// <inheritdoc/>
     public string Username
@@ -427,10 +425,9 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     }
 
     /// <inheritdoc/>
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
-        return SelfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
-    }
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+        SelfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
+
     #endregion
 
 
@@ -442,7 +439,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     public string GetCountsDataTableSql()
     {
         var syntax = GetQuerySyntaxHelper();
-            
+
 
         return $@"SELECT 
 id as OriginID,
@@ -462,7 +459,6 @@ description as {syntax.EnsureWrapped("Description")},
    version,
    description,
    {syntax.EnsureWrapped("dtCreated")}";
-
     }
 
     /// <summary>
@@ -482,17 +478,13 @@ description as {syntax.EnsureWrapped("Description")},
 {syntax.EnsureWrapped("dtCreated")}
   FROM
    {DefinitionTableName}";
-
     }
 
     /// <summary>
     /// Returns nothing
     /// </summary>
     /// <returns></returns>
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
 
     /// <summary>
     /// Returns all cohorts in the source
@@ -500,27 +492,24 @@ description as {syntax.EnsureWrapped("Description")},
     /// <returns></returns>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        return (IHasDependencies[])Repository.GetAllObjects<ExtractableCohort>().Where(c => c.ExternalCohortTable_ID == ID); 
+        return (IHasDependencies[])Repository.GetAllObjects<ExtractableCohort>()
+            .Where(c => c.ExternalCohortTable_ID == ID);
     }
 
     /// <summary>
     /// returns true if all the relevant fields are populated (table names, column names etc)
     /// </summary>
     /// <returns></returns>
-    public bool IsFullyPopulated()
-    {
-        return !
+    public bool IsFullyPopulated() =>
+        !
             (string.IsNullOrWhiteSpace(TableName) ||
              string.IsNullOrWhiteSpace(PrivateIdentifierField) ||
              string.IsNullOrWhiteSpace(ReleaseIdentifierField) ||
              string.IsNullOrWhiteSpace(DefinitionTableForeignKeyField) ||
              string.IsNullOrWhiteSpace(DefinitionTableName));
-    }
 
-    public bool DiscoverExistence(DataAccessContext context, out string reason)
-    {
-        return SelfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
-    }
+    public bool DiscoverExistence(DataAccessContext context, out string reason) =>
+        SelfCertifyingDataAccessPoint.DiscoverExistence(context, out reason);
 
     public void SetRepository(ICatalogueRepository repository)
     {

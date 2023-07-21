@@ -18,7 +18,8 @@ public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecuti
     public Catalogue ToPopulate { get; }
     public Catalogue Other { get; set; }
 
-    public ExecuteCommandImportCatalogueItemDescriptions(IBasicActivateItems activator, Catalogue toPopulate,Catalogue other) :base(activator)
+    public ExecuteCommandImportCatalogueItemDescriptions(IBasicActivateItems activator, Catalogue toPopulate,
+        Catalogue other) : base(activator)
     {
         ToPopulate = toPopulate;
         Other = other;
@@ -30,23 +31,20 @@ public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecuti
 
         var other = Other;
 
-        if(other == null)
+        if (other == null)
             if (!SelectOne(BasicActivator.CoreChildProvider.AllCatalogues, out other))
                 return;
 
         foreach (var ci in ToPopulate.CatalogueItems)
         {
-
             var match = other.CatalogueItems.FirstOrDefault(o =>
                 o.Name.Equals(ci.Name, StringComparison.CurrentCultureIgnoreCase) &&
                 !string.IsNullOrWhiteSpace(o.Description));
 
             if (match != null)
                 ExecuteCommandImportCatalogueItemDescription.CopyNonIDValuesAcross(match, ci, true);
-
         }
-            
+
         Publish(ToPopulate);
-            
     }
 }

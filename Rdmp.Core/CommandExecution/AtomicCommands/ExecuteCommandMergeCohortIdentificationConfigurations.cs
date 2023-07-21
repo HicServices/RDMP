@@ -13,7 +13,8 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
 {
     private CohortIdentificationConfiguration[] ToMerge { get; }
 
-    public ExecuteCommandMergeCohortIdentificationConfigurations(IBasicActivateItems activator,CohortIdentificationConfiguration[] toMerge):base(activator)
+    public ExecuteCommandMergeCohortIdentificationConfigurations(IBasicActivateItems activator,
+        CohortIdentificationConfiguration[] toMerge) : base(activator)
     {
         ToMerge = toMerge;
     }
@@ -29,14 +30,16 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
                 BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),
                 out toMerge)) return;
 
-        if(toMerge is not { Length: > 1 })
+        if (toMerge is not { Length: > 1 })
         {
             BasicActivator.Show("You must select at least 2 configurations to merge");
             return;
         }
 
-        var merger = new CohortIdentificationConfigurationMerger((CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
-        var result = merger.Merge(toMerge,SetOperation.UNION);
+        var merger =
+            new CohortIdentificationConfigurationMerger(
+                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+        var result = merger.Merge(toMerge, SetOperation.UNION);
 
         if (result == null) return;
 
@@ -44,5 +47,4 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
         Publish(result);
         Emphasise(result);
     }
-
 }

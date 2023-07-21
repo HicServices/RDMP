@@ -61,7 +61,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
 
-    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
+    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME, -500);
 
 
     private bool _isExecuting;
@@ -97,10 +97,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         tlvReleasePotentials.RefreshObjects(tlvReleasePotentials.Objects.Cast<object>().ToArray());
 
         if (_isExecuting && !checkAndExecuteUI1.IsExecuting)
-        {
             //if it was executing before and now no longer executing the status of the ExtractionConfigurations / Projects might have changed
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
-        }
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_project));
 
         _isExecuting = checkAndExecuteUI1.IsExecuting;
     }
@@ -122,13 +120,13 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         return checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner
             ? null
             : rowObject switch
-        {
-            IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
-            ISelectedDataSets sds => releaseRunner.GetState(sds),
-            SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
-            SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
-            _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
-        };
+            {
+                IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
+                ISelectedDataSets sds => releaseRunner.GetState(sds),
+                SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
+                SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
+                _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
+            };
     }
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
@@ -137,10 +135,14 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         {
             Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
             Configurations = ToIdList(
-                _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
+                _configurations
+                    .Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c))
+                    .Select(ec => ec.ID).ToArray()
             ),
             SelectedDataSets = ToIdList(
-                _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+                _selectedDataSets.All(tlvReleasePotentials.IsChecked)
+                    ? Array.Empty<int>()
+                    : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
             ),
             Command = activityRequested,
             ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode)
@@ -162,6 +164,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
             _ => Equals(model, _globalsNode) ? _globals : null
         };
     }
+
     private bool CanExpandGetter(object model)
     {
         var c = ChildrenGetter(model);
@@ -172,18 +175,20 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
-            
-        if(!_commonFunctionality.IsSetup)
+
+        if (!_commonFunctionality.IsSetup)
         {
-            _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
-            {
-                AddFavouriteColumn = false,
-                SuppressChildrenAdder = true,
-                AddCheckColumn = false
-            });
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    AddFavouriteColumn = false,
+                    SuppressChildrenAdder = true,
+                    AddCheckColumn = false
+                });
 
             _commonFunctionality.SetupColumnTracking(olvName, new Guid("2d09c1d2-b4a7-400f-9003-d23e43cd3d75"));
-            _commonFunctionality.SetupColumnTracking(olvReleaseability, new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
+            _commonFunctionality.SetupColumnTracking(olvReleaseability,
+                new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
         }
 
         _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
@@ -196,7 +201,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         if (_pipelineSelectionUI1 == null)
         {
             var context = ReleaseUseCase.DesignTime();
-            _pipelineSelectionUI1 = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(Activator,"Release", DockStyle.Fill);
+            _pipelineSelectionUI1 =
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(
+                    Activator, "Release", DockStyle.Fill);
             _pipelineSelectionUI1.CollapseToSingleLineMode();
             _pipelineSelectionUI1.Pipeline = null;
             _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
@@ -206,8 +213,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
         CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
         CommonFunctionality.Add(_pipelinePanel);
-        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
-            
+        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline",
+            "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
+
         checkAndExecuteUI1.SetItemActivator(activator);
 
         var checkedBefore = tlvReleasePotentials.CheckedObjects;
@@ -216,7 +224,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         tlvReleasePotentials.AddObject(_globalsNode);
         tlvReleasePotentials.AddObject(_project);
         tlvReleasePotentials.ExpandAll();
-            
+
         if (_isFirstTime)
             tlvReleasePotentials.CheckAll();
         else if (checkedBefore.Count > 0)
@@ -234,10 +242,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
 
-    public override string GetTabName()
-    {
-        return $"Release: {_project}";
-    }
+    public override string GetTabName() => $"Release: {_project}";
 
     public void TickAllFor(ExtractionConfiguration configuration)
     {
@@ -260,9 +265,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     }
 }
 
-
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
 public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
 {
-
 }

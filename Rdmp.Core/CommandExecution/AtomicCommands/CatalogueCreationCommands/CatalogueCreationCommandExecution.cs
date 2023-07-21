@@ -13,21 +13,25 @@ public abstract class CatalogueCreationCommandExecution : BasicCommandExecution,
 {
     protected IProject ProjectSpecific;
 
-    public string TargetFolder {get;set; }
+    public string TargetFolder { get; set; }
 
-    protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";
-    protected const string Desc_TargetFolder = "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
+    protected const string Desc_ProjectSpecificParameter =
+        "Optionally associate the Catalogue created with a specific Project, otherwise Null";
+
+    protected const string Desc_TargetFolder =
+        "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
+
     /// <summary>
     /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
     /// </summary>
     public bool PromptForProject { get; set; }
 
-    protected CatalogueCreationCommandExecution(IBasicActivateItems activator):this(activator,null,null)
+    protected CatalogueCreationCommandExecution(IBasicActivateItems activator) : this(activator, null, null)
     {
-
     }
 
-    protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific, string targetFolder) :base(activator)
+    protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific,
+        string targetFolder) : base(activator)
     {
         ProjectSpecific = projectSpecific;
         TargetFolder = targetFolder;

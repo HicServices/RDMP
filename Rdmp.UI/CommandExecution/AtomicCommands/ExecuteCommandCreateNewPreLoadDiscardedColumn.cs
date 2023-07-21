@@ -20,17 +20,19 @@ using TypeGuesser;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewPreLoadDiscardedColumn : BasicUICommandExecution, IAtomicCommand
 {
     private readonly TableInfo _tableInfo;
     private ColumnInfo[] _prototypes;
 
-    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator,TableInfo tableInfo) : base(activator)
+    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo) :
+        base(activator)
     {
         _tableInfo = tableInfo;
     }
 
-    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo, ColumnInfoCombineable sourceColumnInfoCombineable):this(activator,tableInfo)
+    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo,
+        ColumnInfoCombineable sourceColumnInfoCombineable) : this(activator, tableInfo)
     {
         _prototypes = sourceColumnInfoCombineable.ColumnInfos;
 
@@ -42,13 +44,10 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
             if (alreadyExists)
                 SetImpossible($"There is already a PreLoadDiscardedColumn called '{prototype.GetRuntimeName()}'");
         }
-          
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a virtual column that will be created in RAW during data load but not your LIVE database";
-    }
+    public override string GetCommandHelp() =>
+        "Creates a virtual column that will be created in RAW during data load but not your LIVE database";
 
     public override void Execute()
     {
@@ -93,20 +92,15 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
     private PreLoadDiscardedColumn Create(string name, string dataType)
     {
         var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name)
-            {
-                SqlDataType = dataType
-            };
+        {
+            SqlDataType = dataType
+        };
         discCol.SaveToDatabase();
         return discCol;
     }
 
-    public override string GetCommandName()
-    {
-        return "Add New Load Discarded Column";
-    }
+    public override string GetCommandName() => "Add New Load Discarded Column";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn, OverlayKind.Add);
 }

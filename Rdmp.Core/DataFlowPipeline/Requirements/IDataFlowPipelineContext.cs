@@ -36,7 +36,7 @@ public interface IDataFlowPipelineContext
     /// <param name="pipeline"></param>
     /// <param name="reason"></param>
     /// <returns></returns>
-    bool IsAllowable(IPipeline pipeline,out string reason);
+    bool IsAllowable(IPipeline pipeline, out string reason);
 
 
     /// <summary>
@@ -74,5 +74,5 @@ public interface IDataFlowPipelineContext
     /// <param name="listener"></param>
     /// <param name="component"></param>
     /// <param name="initializationObjects"></param>
-    void PreInitializeGeneric(IDataLoadEventListener listener, object component,params object[] initializationObjects);
+    void PreInitializeGeneric(IDataLoadEventListener listener, object component, params object[] initializationObjects);
 }

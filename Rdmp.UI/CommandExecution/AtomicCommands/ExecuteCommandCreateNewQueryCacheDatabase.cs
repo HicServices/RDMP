@@ -18,14 +18,15 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution, IAtomicCommand
 {
     private readonly CohortIdentificationConfiguration _cic;
 
-    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator, CohortIdentificationConfiguration configuration):base(activator)
+    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator,
+        CohortIdentificationConfiguration configuration) : base(activator)
     {
         _cic = configuration;
-        if(_cic.QueryCachingServer_ID != null)
+        if (_cic.QueryCachingServer_ID != null)
             SetImpossible("CohortIdentificationConfiguration already has a Query Cache configured");
     }
 
@@ -41,20 +42,19 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
         var db = createPlatform.DatabaseCreatedIfAny;
         if (db != null)
         {
-            var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
+            var newServer =
+                new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
             newServer.SetProperties(db);
 
             _cic.QueryCachingServer_ID = newServer.ID;
             _cic.SaveToDatabase();
 
-            SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
+            SetDefaultIfNotExists(newServer, PermissableDefaults.CohortIdentificationQueryCachingServer_ID, true);
 
             Publish(_cic);
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
 }

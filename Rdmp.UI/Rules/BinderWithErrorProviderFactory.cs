@@ -27,14 +27,15 @@ public class BinderWithErrorProviderFactory
         _activator = activator;
     }
 
-    public void Bind<T>(Control c, string propertyName, T databaseObject, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,Func<T,object> getter) where T:IMapsDirectlyToDatabaseTable
+    public void Bind<T>(Control c, string propertyName, T databaseObject, string dataMember, bool formattingEnabled,
+        DataSourceUpdateMode updateMode, Func<T, object> getter) where T : IMapsDirectlyToDatabaseTable
     {
         c.DataBindings.Clear();
         c.DataBindings.Add(propertyName, databaseObject, dataMember, formattingEnabled, updateMode);
 
         var property = databaseObject.GetType().GetProperty(dataMember);
 
-        if (property.GetCustomAttributes(typeof (UniqueAttribute), true).Any())
+        if (property.GetCustomAttributes(typeof(UniqueAttribute), true).Any())
             new UniqueRule<T>(_activator, databaseObject, getter, c, dataMember);
 
         if (property.GetCustomAttributes(typeof(NotNullAttribute), true).Any())
@@ -43,7 +44,7 @@ public class BinderWithErrorProviderFactory
         if (property.PropertyType == typeof(string))
             new MaxLengthRule<T>(_activator, databaseObject, getter, c, dataMember);
 
-        if(dataMember.Equals("Name") && databaseObject is INamed)
+        if (dataMember.Equals("Name") && databaseObject is INamed)
             new NoBadNamesRule<T>(_activator, databaseObject, getter, c, dataMember);
     }
 }

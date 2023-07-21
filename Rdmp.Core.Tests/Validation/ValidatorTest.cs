@@ -44,7 +44,7 @@ public class ValidatorTest
     public void PassValidatorArray_Passes()
     {
         var v = new Validator();
-        v.AddItemValidator(new ItemValidator(), "chi",null);
+        v.AddItemValidator(new ItemValidator(), "chi", null);
         v.ItemValidators[0].PrimaryConstraint = new Chi();
 
         var dt = new DataTable();
@@ -63,14 +63,15 @@ public class ValidatorTest
         var validator = new Validator();
         validator.AddItemValidator(new ItemValidator(), "foo", typeof(string));
 
-        Assert.Throws <ArgumentException>(()=>validator.AddItemValidator(new ItemValidator(), "foo", typeof(string)));
+        Assert.Throws<ArgumentException>(() => validator.AddItemValidator(new ItemValidator(), "foo", typeof(string)));
     }
 
     [Test]
     public void RemoveItemValidator_InitialisedState_BehavesAcceptably()
     {
         var validator = new Validator();
-        Assert.False(validator.RemoveItemValidator("non-existent"), "Expected removal of a non-existent ItemValidator to return false.");
+        Assert.False(validator.RemoveItemValidator("non-existent"),
+            "Expected removal of a non-existent ItemValidator to return false.");
     }
 
     [Test]
@@ -78,8 +79,8 @@ public class ValidatorTest
     {
         var validator = CreateValidatorForNonExistentProperty();
 
-        var ex = Assert.Throws<MissingFieldException>(()=>validator.Validate(_domainObjectWithValidChi));
-        Assert.AreEqual("Validation failed: Target field [non-existent] not found in domain object.",ex.Message);
+        var ex = Assert.Throws<MissingFieldException>(() => validator.Validate(_domainObjectWithValidChi));
+        Assert.AreEqual("Validation failed: Target field [non-existent] not found in domain object.", ex.Message);
     }
 
 
@@ -94,7 +95,6 @@ public class ValidatorTest
         }
         catch (MissingFieldException exception)
         {
-
             Assert.True(exception.Message.StartsWith("Validation failed"));
         }
     }
@@ -125,7 +125,7 @@ public class ValidatorTest
 
         Assert.IsNotNull(results);
 
-        Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong] , 1);
+        Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 1);
 
         //additive --give it same row again, expect the count of wrong ones to go SetUp by 1
         results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out _);
@@ -153,7 +153,7 @@ public class ValidatorTest
 
         var answer2 = v2.SaveToXml(false);
 
-        Assert.AreEqual(answer,answer2);
+        Assert.AreEqual(answer, answer2);
     }
 
 
@@ -169,7 +169,7 @@ public class ValidatorTest
     [TestCase("date", typeof(Date))]
     public void CreatePrimaryConstraint_All_IsOfExpectedType(string name, Type expected)
     {
-        var constraint = Validator.CreateConstraint(name,Consequence.Wrong);
+        var constraint = Validator.CreateConstraint(name, Consequence.Wrong);
 
         Assert.IsInstanceOf(typeof(IPrimaryConstraint), constraint);
         Assert.IsInstanceOf(expected, constraint);
@@ -181,7 +181,7 @@ public class ValidatorTest
     [TestCase("regularexpression", typeof(RegularExpression))]
     public void CreateSecondaryConstraint_All_IsOfExpectedType(string name, Type expected)
     {
-        var constraint = Validator.CreateConstraint(name,Consequence.Wrong);
+        var constraint = Validator.CreateConstraint(name, Consequence.Wrong);
 
         Assert.IsInstanceOf(typeof(ISecondaryConstraint), constraint);
         Assert.IsInstanceOf(expected, constraint);
@@ -191,7 +191,7 @@ public class ValidatorTest
     public void RenameColumn_ThreeColumns_HasCorrectName()
     {
         var v = new Validator();
-        v.AddItemValidator(new ItemValidator(),"OldCol2",typeof(string));
+        v.AddItemValidator(new ItemValidator(), "OldCol2", typeof(string));
 
 
         //this constraint ensures that OldCol2 is between OldCol1 and OldcCol3
@@ -216,7 +216,7 @@ public class ValidatorTest
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
 
         //now rename col 1
-        dictionary.Add("OldCol1","NewCol1");
+        dictionary.Add("OldCol1", "NewCol1");
         v.RenameColumns(dictionary);
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");
@@ -224,7 +224,8 @@ public class ValidatorTest
 
         //finally rename col 3
         dictionary.Add("OldCol3", "NewCol3");
-        v.RenameColumns(dictionary); //not strict because we will get not found otherwise since we already renamed the first one
+        v.RenameColumns(
+            dictionary); //not strict because we will get not found otherwise since we already renamed the first one
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "NewCol3");
@@ -242,7 +243,8 @@ public class ValidatorTest
         // 1. Create a new Validator, passing in the domain object to be validated (and its type)
         var validator = new Validator();
         // 2. Create a new ItemValidator (in this case, must be valid CHI)
-        var itemValidator = new ItemValidator { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong) };
+        var itemValidator = new ItemValidator
+            { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong) };
         itemValidator.PrimaryConstraint.Consequence = Consequence.Wrong;
 
         // 3. Add the ItemValidator, specifying the value in the domain object it should validate against
@@ -254,10 +256,11 @@ public class ValidatorTest
     private static Validator CreateChiAndAgeValidators()
     {
         var validator = new Validator();
-        var vChi = new ItemValidator { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong) };
+        var vChi = new ItemValidator
+            { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong) };
         var vAge = new ItemValidator();
-        var age = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
-        age.Lower=0;
+        var age = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
+        age.Lower = 0;
         age.Upper = 120;
         vAge.AddSecondaryConstraint(age);
 
@@ -270,9 +273,10 @@ public class ValidatorTest
     private static Validator CreateValidatorForNonExistentProperty()
     {
         var validator = new Validator();
-        var itemValidator = new ItemValidator { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong) };
+        var itemValidator = new ItemValidator
+            { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong) };
         validator.AddItemValidator(itemValidator, "non-existent", typeof(string));
-            
+
         return validator;
     }
 }

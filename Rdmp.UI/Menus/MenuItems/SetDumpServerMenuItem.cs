@@ -26,13 +26,14 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
     private readonly ITableInfo _tableInfo;
     private readonly ExternalDatabaseServer[] _availableServers;
 
-    public SetDumpServerMenuItem(IActivateItems activator, ITableInfo tableInfo): base(activator,"Add Dump Server")
+    public SetDumpServerMenuItem(IActivateItems activator, ITableInfo tableInfo) : base(activator, "Add Dump Server")
     {
         _tableInfo = tableInfo;
 
         //cannot set server if we already have one
         Enabled = tableInfo.IdentifierDumpServer_ID == null;
-        Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add).ImageToBitmap();
+        Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add)
+            .ImageToBitmap();
 
         var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
 
@@ -40,22 +41,24 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
-        var miUseExisting = new ToolStripMenuItem("Use Existing...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+        var miUseExisting = new ToolStripMenuItem("Use Existing...",
+            IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
         {
             Enabled = _availableServers.Any()
         };
 
         DropDownItems.Add(miUseExisting);
-        DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(), CreateNewIdentifierDumpServer);
-
+        DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
+            CreateNewIdentifierDumpServer);
     }
 
     private void UseExisting(object sender, EventArgs e)
     {
-        if(_activator.SelectObject(new DialogArgs
-           {
-               TaskDescription = "In which server should the table dump unloaded identifiable data during data loads.  This server must be already configured correctly to support identifier dumping (i.e. be an IdentifierDump)."
-           },_availableServers,out var selected))
+        if (_activator.SelectObject(new DialogArgs
+            {
+                TaskDescription =
+                    "In which server should the table dump unloaded identifiable data during data loads.  This server must be already configured correctly to support identifier dumping (i.e. be an IdentifierDump)."
+            }, _availableServers, out var selected))
         {
             _tableInfo.IdentifierDumpServer_ID = selected.ID;
             _tableInfo.SaveToDatabase();
@@ -66,7 +69,8 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
     private void CreateNewIdentifierDumpServer(object sender, EventArgs e)
     {
-        var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new IdentifierDumpDatabasePatcher(), PermissableDefaults.IdentifierDumpServer_ID);
+        var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new IdentifierDumpDatabasePatcher(),
+            PermissableDefaults.IdentifierDumpServer_ID);
         cmd.Execute();
 
         if (cmd.ServerCreatedIfAny != null)

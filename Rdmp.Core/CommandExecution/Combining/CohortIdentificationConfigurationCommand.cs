@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// <summary>
 /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
 /// </summary>
-public class CohortIdentificationConfigurationCommand:ICombineToMakeCommand, IHasFolderCombineable
+public class CohortIdentificationConfigurationCommand : ICombineToMakeCommand, IHasFolderCombineable
 {
     public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
 
@@ -23,8 +23,5 @@ public class CohortIdentificationConfigurationCommand:ICombineToMakeCommand, IHa
         CohortIdentificationConfiguration = cohortIdentificationConfiguration;
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

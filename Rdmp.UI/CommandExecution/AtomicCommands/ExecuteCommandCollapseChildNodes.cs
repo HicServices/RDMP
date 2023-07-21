@@ -15,21 +15,19 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution, IAtomicCommand
 {
     private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
     private readonly object _rootToCollapseTo;
 
-    public ExecuteCommandCollapseChildNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
+    public ExecuteCommandCollapseChildNodes(IActivateItems activator,
+        RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
     {
         _commonFunctionality = commonFunctionality;
         _rootToCollapseTo = rootToCollapseTo;
 
         // collapse all with no node selected collapses whole tree
-        if (_rootToCollapseTo is RDMPCollection)
-        {
-            return;
-        }
+        if (_rootToCollapseTo is RDMPCollection) return;
 
         if (!_commonFunctionality.Tree.IsExpanded(rootToCollapseTo))
             SetImpossible("Node is not expanded");
@@ -37,19 +35,18 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
         Weight = 100.4f;
     }
 
-    public override string GetCommandName()
-    {
-        return _rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName) ? "Collapse All" : base.GetCommandName();
-    }
+    public override string GetCommandName() =>
+        _rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? "Collapse All"
+            : base.GetCommandName();
 
     public override void Execute()
     {
         base.Execute();
-            
+
         _commonFunctionality.Tree.BeginUpdate();
         try
         {
-
             if (_rootToCollapseTo is RDMPCollection)
             {
                 _commonFunctionality.Tree.CollapseAll();
@@ -65,10 +62,10 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
             _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
 
             //then expand it to depth 1
-            _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
+            _commonFunctionality.ExpandToDepth(1, _rootToCollapseTo);
 
             var index = _commonFunctionality.Tree.IndexOf(_rootToCollapseTo);
-            if(index != -1)
+            if (index != -1)
                 _commonFunctionality.Tree.EnsureVisible(index);
         }
         finally
@@ -77,8 +74,6 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.collapseAllNodes);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(CatalogueIcons.collapseAllNodes);
 }

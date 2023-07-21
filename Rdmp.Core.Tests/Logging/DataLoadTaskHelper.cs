@@ -31,7 +31,7 @@ internal class DataLoadTaskHelper
 
     public void CreateDataLoadTask(string taskName)
     {
-        using var con =_loggingServer.GetConnection();
+        using var con = _loggingServer.GetConnection();
         con.Open();
 
         var datasetName = $"Test_{taskName}";

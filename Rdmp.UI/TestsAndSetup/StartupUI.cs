@@ -36,6 +36,7 @@ public partial class StartupUI : Form, ICheckNotifier
     public bool CouldNotReachTier1Database { get; private set; }
 
     private readonly Startup _startup;
+
     //Constructor
     public StartupUI(Startup startup)
     {
@@ -43,7 +44,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         InitializeComponent();
 
-        if(_startup == null)
+        if (_startup == null)
             return;
 
         Text = $"RDMP - v{GetVersion()}";
@@ -76,7 +77,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
     {
-        if(IsDisposed || !IsHandleCreated)
+        if (IsDisposed || !IsHandleCreated)
             return;
 
         if (InvokeRequired)
@@ -97,7 +98,7 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
         }
 
-        pbLoadProgress.Value = 800;//80% done
+        pbLoadProgress.Value = 800; //80% done
     }
 
     private bool escapePressed;
@@ -105,7 +106,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void StartupComplete()
     {
-        if(InvokeRequired)
+        if (InvokeRequired)
         {
             Invoke(new MethodInvoker(StartupComplete));
             return;
@@ -115,7 +116,7 @@ public partial class StartupUI : Form, ICheckNotifier
             WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
 
         //when things go badly leave the form
-        if(ragSmiley1.IsFatal() || CouldNotReachTier1Database)
+        if (ragSmiley1.IsFatal() || CouldNotReachTier1Database)
             return;
 
         var t = new Timer
@@ -130,15 +131,15 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void TimerTick(object sender, EventArgs e)
     {
-        var t = (Timer) sender;
+        var t = (Timer)sender;
 
-        if(escapePressed)
+        if (escapePressed)
         {
             t.Stop();
             return;
         }
 
-        countDownToClose --;
+        countDownToClose--;
 
         lblProgress.Text = $"Startup Complete... Closing in {countDownToClose}s (Esc to cancel)";
 
@@ -155,7 +156,6 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
 
         StartOrRestart(false);
-
     }
 
     private void StartOrRestart(bool forceClearRepositorySettings)
@@ -163,7 +163,6 @@ public partial class StartupUI : Form, ICheckNotifier
         pbLoadProgress.Maximum = 1000;
 
         if (_startup.RepositoryLocator == null || forceClearRepositorySettings)
-        {
             try
             {
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder";
@@ -175,7 +174,6 @@ public partial class StartupUI : Form, ICheckNotifier
                 lblProgress.Text = "Constructing UserSettingsRepositoryFinder Failed";
                 ragSmiley1.Fatal(ex);
             }
-        }
 
         escapePressed = false;
         countDownToClose = 5;
@@ -196,12 +194,11 @@ public partial class StartupUI : Form, ICheckNotifier
                 }
                 catch (Exception ex)
                 {
-                    if(IsDisposed || !IsHandleCreated)
+                    if (IsDisposed || !IsHandleCreated)
                         ExceptionViewer.Show(ex);
                     else
                         Invoke(new MethodInvoker(() => ragSmiley1.Fatal(ex)));
                 }
-
             }
         );
         t.Start();
@@ -214,11 +211,11 @@ public partial class StartupUI : Form, ICheckNotifier
     private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
     {
         //if status got worse
-        if (eventArgs.Status < lastStatus )
+        if (eventArgs.Status < lastStatus)
             lastStatus = eventArgs.Status;
 
         //if we are unable to reach a tier 1 database don't report anything else
-        if(CouldNotReachTier1Database)
+        if (CouldNotReachTier1Database)
             return;
 
         lblProgress.Text = $"{eventArgs.Patcher.Name} database status was {eventArgs.Status}";
@@ -231,25 +228,34 @@ public partial class StartupUI : Form, ICheckNotifier
                 {
                     pbDisconnected.Visible = true;
 
-                    lblProgress.Text = eventArgs.Repository == null ? "RDMP Platform Databases are not set" : $"Could not reach {eventArgs.Patcher.Name}";
+                    lblProgress.Text = eventArgs.Repository == null
+                        ? "RDMP Platform Databases are not set"
+                        : $"Could not reach {eventArgs.Patcher.Name}";
 
                     CouldNotReachTier1Database = true;
 
                     ragSmiley1.Fatal(new Exception(
-                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
+                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})",
+                        eventArgs.Exception));
                 }
                 else
+                {
                     ragSmiley1.Warning(new Exception(
-                        $"Tier {eventArgs.Patcher.Tier} Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
+                        $"Tier {eventArgs.Patcher.Tier} Database was {eventArgs.Status} ({eventArgs.Patcher.Name})",
+                        eventArgs.Exception));
+                }
+
                 break;
 
             case RDMPPlatformDatabaseStatus.Broken:
                 if (eventArgs.Patcher.Tier == 1)
                     ragSmiley1.Fatal(new Exception(
-                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
+                        $"Core Platform Database was {eventArgs.Status} ({eventArgs.Patcher.Name})",
+                        eventArgs.Exception));
                 else
                     ragSmiley1.Warning(new Exception(
-                        $"Tier {eventArgs.Patcher.Tier} Database was {eventArgs.Status} ({eventArgs.Patcher.Name})", eventArgs.Exception));
+                        $"Tier {eventArgs.Patcher.Tier} Database was {eventArgs.Status} ({eventArgs.Patcher.Name})",
+                        eventArgs.Exception));
                 break;
 
             case RDMPPlatformDatabaseStatus.RequiresPatching:
@@ -270,14 +276,16 @@ public partial class StartupUI : Form, ICheckNotifier
 
                 break;
             case RDMPPlatformDatabaseStatus.Healthy:
-                ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(),CheckResult.Success));
+                ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(), CheckResult.Success));
                 return;
             case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
-                if(!_haveWarnedAboutOutOfDate)
+                if (!_haveWarnedAboutOutOfDate)
                 {
-                    MessageBox.Show("The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
+                    MessageBox.Show(
+                        "The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
                     _haveWarnedAboutOutOfDate = true;
                 }
+
                 return;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -287,9 +295,8 @@ public partial class StartupUI : Form, ICheckNotifier
     //MEF only!
     public bool OnCheckPerformed(CheckEventArgs args)
     {
-        if(InvokeRequired)
+        if (InvokeRequired)
         {
-
             Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
             return false;
         }
@@ -301,7 +308,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if (match.Success)
         {
             var percent = float.Parse(match.Groups[1].Value);
-            pbLoadProgress.Value = (int) (500 + percent*2.5);//500-750
+            pbLoadProgress.Value = (int)(500 + percent * 2.5); //500-750
         }
 
         switch (args.Result)
@@ -315,8 +322,9 @@ public partial class StartupUI : Form, ICheckNotifier
                 args.Result = CheckResult.Warning;
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(args),$"Invalid result {args.Result}");
+                throw new ArgumentOutOfRangeException(nameof(args), $"Invalid result {args.Result}");
         }
+
         lblProgress.Text = args.Message;
 
         return ragSmiley1.OnCheckPerformed(args);
@@ -331,11 +339,11 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void StartupUIMainForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if(_choosePlatformsUI is { ChangesMade: true })
+        if (_choosePlatformsUI is { ChangesMade: true })
             DoNotContinue = true;
 
         if (e.CloseReason == CloseReason.UserClosing)
-            if ( ragSmiley1.IsFatal())
+            if (ragSmiley1.IsFatal())
                 DoNotContinue = true;
     }
 
@@ -343,7 +351,6 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);
         _choosePlatformsUI.ShowDialog();
-
     }
 
     private void pbDisconnected_Click(object sender, EventArgs e)

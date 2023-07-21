@@ -24,7 +24,8 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// want to create an aggregate configuration (when patients were admitted) over time.  However the class also allows you to specify new SelectSQL which can change how the field
 /// is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate"
 /// </summary>
-public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColumn, IHasDependencies, IInjectKnown<ExtractionInformation>
+public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColumn, IHasDependencies,
+    IInjectKnown<ExtractionInformation>
 {
     #region Database Properties
 
@@ -42,7 +43,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     public int AggregateConfiguration_ID
     {
         get => _aggregateConfigurationID;
-        set => SetField(ref  _aggregateConfigurationID, value);
+        set => SetField(ref _aggregateConfigurationID, value);
     }
 
     /// <summary>
@@ -55,7 +56,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     public int ExtractionInformation_ID
     {
         get => _extractionInformationID;
-        set => SetField(ref  _extractionInformationID, value);
+        set => SetField(ref _extractionInformationID, value);
     }
 
     /// <summary>
@@ -65,7 +66,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     public string Alias
     {
         get => _alias;
-        set => SetField(ref  _alias, value);
+        set => SetField(ref _alias, value);
     }
 
     /// <summary>
@@ -78,7 +79,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     public string SelectSQL
     {
         get => _selectSQL;
-        set => SetField(ref  _selectSQL, value);
+        set => SetField(ref _selectSQL, value);
     }
 
     /// <summary>
@@ -89,8 +90,9 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     public int Order
     {
         get => _order;
-        set => SetField(ref  _order, value);
+        set => SetField(ref _order, value);
     }
+
     #endregion
 
 
@@ -118,7 +120,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// </summary>
     /// <seealso cref="Aggregation.AggregateContinuousDateAxis.AggregateDimension_ID"/>
     [NoMappingToDatabase]
-    public AggregateContinuousDateAxis AggregateContinuousDateAxis => Repository.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
+    public AggregateContinuousDateAxis AggregateContinuousDateAxis =>
+        Repository.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
 
     /// <inheritdoc cref="ExtractionInformation_ID"/>
     [NoMappingToDatabase]
@@ -142,40 +145,41 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// <param name="repository"></param>
     /// <param name="basedOnColumn"></param>
     /// <param name="configuration"></param>
-    public AggregateDimension(ICatalogueRepository repository, ExtractionInformation basedOnColumn, AggregateConfiguration configuration)
+    public AggregateDimension(ICatalogueRepository repository, ExtractionInformation basedOnColumn,
+        AggregateConfiguration configuration)
     {
         object alias = DBNull.Value;
         if (basedOnColumn.Alias != null) alias = basedOnColumn.Alias;
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"AggregateConfiguration_ID", configuration.ID},
-            {"ExtractionInformation_ID", basedOnColumn.ID},
-            {"SelectSQL", basedOnColumn.SelectSQL},
-            {"Alias", alias},
-            {"Order", basedOnColumn.Order}
+            { "AggregateConfiguration_ID", configuration.ID },
+            { "ExtractionInformation_ID", basedOnColumn.ID },
+            { "SelectSQL", basedOnColumn.SelectSQL },
+            { "Alias", alias },
+            { "Order", basedOnColumn.Order }
         });
 
         ClearAllInjections();
     }
 
-    internal AggregateDimension(ICatalogueRepository repository,DbDataReader r) : base(repository,r)
+    internal AggregateDimension(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         AggregateConfiguration_ID = int.Parse(r["AggregateConfiguration_ID"].ToString());
         ExtractionInformation_ID = int.Parse(r["ExtractionInformation_ID"].ToString());
-            
+
         SelectSQL = r["SelectSQL"] as string;
         Alias = r["Alias"] as string;
 
         Order = int.Parse(r["Order"].ToString());
-            
+
         ClearAllInjections();
     }
 
     /// <inheritdoc/>
     public string GetRuntimeName()
     {
-        if(string.IsNullOrWhiteSpace(Alias))
+        if (string.IsNullOrWhiteSpace(Alias))
         {
             var syntax = _knownExtractionInformation.Value?.ColumnInfo?.GetQuerySyntaxHelper() ??
                          AggregateConfiguration.GetQuerySyntaxHelper();
@@ -202,8 +206,10 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
     public void ClearAllInjections()
     {
-        _knownExtractionInformation = new Lazy<ExtractionInformation>(() => Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID));
-        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(()=>Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
+        _knownExtractionInformation = new Lazy<ExtractionInformation>(() =>
+            Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID));
+        _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(() =>
+            Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
     }
 
     /// <inheritdoc/>
@@ -228,7 +234,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {ExtractionInformation};
+        return new[] { ExtractionInformation };
     }
 
     /// <inheritdoc/>
@@ -251,7 +257,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
         try
         {
-            return col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) == typeof(DateTime);
+            return col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) ==
+                   typeof(DateTime);
         }
         catch (Exception)
         {
@@ -271,25 +278,19 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         {
             // it's gone already, must be a bad reference
         }
-            
-        if(ac != null)
-        {
-            if(ac.PivotOnDimensionID == ID)
+
+        if (ac != null)
+            if (ac.PivotOnDimensionID == ID)
             {
                 ac.PivotOnDimensionID = null;
                 ac.SaveToDatabase();
-
             }
-        }
+
         var axis = ac?.GetAxisIfAny();
-            
-        if(axis != null && axis.AggregateDimension_ID == ID)
-        {
-            axis.DeleteInDatabase();
-        }
+
+        if (axis != null && axis.AggregateDimension_ID == ID) axis.DeleteInDatabase();
 
         //delete it in the database
         base.DeleteInDatabase();
     }
-
 }

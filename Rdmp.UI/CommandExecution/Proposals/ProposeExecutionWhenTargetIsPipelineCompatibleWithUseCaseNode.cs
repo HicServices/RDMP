@@ -11,25 +11,25 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode : RDMPCommandExecutionProposal<PipelineCompatibleWithUseCaseNode>
+internal class
+    ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode : RDMPCommandExecutionProposal<
+        PipelineCompatibleWithUseCaseNode>
 {
-    public ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode(IActivateItems itemActivator): base(itemActivator)
+    public ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode(IActivateItems itemActivator) : base(
+        itemActivator)
     {
     }
 
-    public override bool CanActivate(PipelineCompatibleWithUseCaseNode target)
-    {
-        return true;
-    }
+    public override bool CanActivate(PipelineCompatibleWithUseCaseNode target) => true;
 
     public override void Activate(PipelineCompatibleWithUseCaseNode target)
     {
-        var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator,target.Pipeline, target.UseCase);
+        var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator, target.Pipeline, target.UseCase);
         cmd.Execute();
     }
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineCompatibleWithUseCaseNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        PipelineCompatibleWithUseCaseNode target,
+        InsertOption insertOption = InsertOption.Default) =>
+        null;
 }

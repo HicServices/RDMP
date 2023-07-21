@@ -51,13 +51,13 @@ public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfi
             else
                 throw;
         }
+
         tbMaxBufferSize.Text = config.MaxBufferSize.ToString();
         tbMaxReceivedMessageSize.Text = config.MaxReceivedMessageSize.ToString();
     }
 
-    public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
-    {
-        return new WebServiceConfiguration(CatalogueRepository)
+    public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject() =>
+        new WebServiceConfiguration(CatalogueRepository)
         {
             Endpoint = tbEndpoint.Text,
             Username = tbUsername.Text,
@@ -65,7 +65,6 @@ public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfi
             MaxBufferSize = Convert.ToInt32(tbMaxBufferSize.Text),
             MaxReceivedMessageSize = Convert.ToInt32(tbMaxReceivedMessageSize.Text)
         };
-    }
 
     private void btnSave_Click(object sender, EventArgs e)
     {

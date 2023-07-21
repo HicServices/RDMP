@@ -19,7 +19,8 @@ internal class PropertyDemandNotMetException : Exception
     public IPipelineComponent PipelineComponent { get; private set; }
     public PropertyInfo PropertyInfo { get; private set; }
 
-    public PropertyDemandNotMetException(string message, IPipelineComponent pipelineComponent, PropertyInfo propertyInfo)
+    public PropertyDemandNotMetException(string message, IPipelineComponent pipelineComponent,
+        PropertyInfo propertyInfo)
         : base(message)
     {
         PipelineComponent = pipelineComponent;

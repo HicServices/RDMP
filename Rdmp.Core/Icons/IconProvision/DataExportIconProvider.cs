@@ -17,7 +17,8 @@ namespace Rdmp.Core.Icons.IconProvision;
 
 public class DataExportIconProvider : CatalogueIconProvider
 {
-    public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
+    public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
     {
         //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once
         StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(CatalogueStateBasedIconProvider));
@@ -32,17 +33,17 @@ public class DataExportIconProvider : CatalogueIconProvider
         return concept as Type == typeof(SelectedDataSets)
             ? base.GetImageImpl(RDMPConcept.ExtractableDataSet)
             : concept switch
-        {
-            SelectedDataSets sds => base.GetImageImpl(sds.ExtractableDataSet),
-            PackageContentNode pcn => base.GetImageImpl(pcn.DataSet),
-            ProjectCohortIdentificationConfigurationAssociation association =>
-                association.CohortIdentificationConfiguration != null
-                    ? GetImageImpl(association.CohortIdentificationConfiguration, OverlayKind.Link)
-                    :
-                    //it's an orphan or user cannot fetch the cic for some reason
-                    GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link),
-            _ => base.GetImageImpl(concept, kind)
-        };
+            {
+                SelectedDataSets sds => base.GetImageImpl(sds.ExtractableDataSet),
+                PackageContentNode pcn => base.GetImageImpl(pcn.DataSet),
+                ProjectCohortIdentificationConfigurationAssociation association =>
+                    association.CohortIdentificationConfiguration != null
+                        ? GetImageImpl(association.CohortIdentificationConfiguration, OverlayKind.Link)
+                        :
+                        //it's an orphan or user cannot fetch the cic for some reason
+                        GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link),
+                _ => base.GetImageImpl(concept, kind)
+            };
 
         //fallback on parent implementation if none of the above unique snowflake cases are met
     }

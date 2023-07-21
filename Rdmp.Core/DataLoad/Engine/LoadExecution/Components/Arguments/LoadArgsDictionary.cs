@@ -26,7 +26,7 @@ public class LoadArgsDictionary
 
     public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
     {
-        if(string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        if (string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
             throw new Exception(
                 $@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {loadMetadata.Name}");
 
@@ -35,9 +35,7 @@ public class LoadArgsDictionary
 
         LoadArgs = new Dictionary<LoadStage, IStageArgs>();
         foreach (LoadStage loadStage in Enum.GetValues(typeof(LoadStage)))
-        {
             LoadArgs.Add(loadStage, CreateLoadArgs(loadStage));
-        }
     }
 
     protected IStageArgs CreateLoadArgs(LoadStage loadStage)

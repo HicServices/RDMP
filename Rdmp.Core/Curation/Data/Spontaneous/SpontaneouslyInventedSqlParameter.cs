@@ -22,15 +22,14 @@ public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParamete
 {
     private readonly IQuerySyntaxHelper _syntaxHelper;
 
-    [Sql]
-    public string ParameterSQL { get; set; }
+    [Sql] public string ParameterSQL { get; set; }
 
-    [Sql]
-    public string Value { get; set; }
+    [Sql] public string Value { get; set; }
 
     public string Comment { get; set; }
 
-    public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper):base(repo)
+    public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment,
+        IQuerySyntaxHelper syntaxHelper) : base(repo)
     {
         _syntaxHelper = syntaxHelper;
         ParameterSQL = declarationSql;
@@ -40,16 +39,11 @@ public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParamete
 
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() =>
         //I am my own owner! mwahahaha
-        return this;
-    }
+        this;
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _syntaxHelper;
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _syntaxHelper;
 
     public void Check(ICheckNotifier notifier)
     {

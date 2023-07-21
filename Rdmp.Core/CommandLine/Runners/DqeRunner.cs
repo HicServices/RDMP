@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
-internal class DqeRunner:Runner
+internal class DqeRunner : Runner
 {
     private readonly DqeOptions _options;
 
@@ -25,11 +25,12 @@ internal class DqeRunner:Runner
         _options = options;
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier,GracefulCancellationToken token)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
-        var catalogue = GetObjectFromCommandLineString<Catalogue>(repositoryLocator,_options.Catalogue);
+        var catalogue = GetObjectFromCommandLineString<Catalogue>(repositoryLocator, _options.Catalogue);
         var report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
-            
+
         switch (_options.Command)
         {
             case CommandLineActivity.run:

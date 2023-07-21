@@ -38,9 +38,9 @@ public static class BackColorProvider
         var bmp = new Bitmap(size.Width, size.Height);
 
         using var g = Graphics.FromImage(bmp);
-        g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight, size.Width - 4, IndicatorBarSuggestedHeight);
+        g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight,
+            size.Width - 4, IndicatorBarSuggestedHeight);
 
         return bmp;
     }
-
 }

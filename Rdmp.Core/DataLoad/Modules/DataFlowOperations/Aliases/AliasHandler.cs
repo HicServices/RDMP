@@ -23,25 +23,34 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 /// </summary>
 public class AliasHandler : IPluginDataFlowComponent<DataTable>
 {
-    [DemandsInitialization("The server that will be connected to to fetch the alias resolution table", Mandatory = true)]
+    [DemandsInitialization("The server that will be connected to to fetch the alias resolution table",
+        Mandatory = true)]
     public ExternalDatabaseServer ServerToExecuteQueryOn { get; set; }
 
-    [DemandsInitialization("The context under which to connect to the server, if unsure just select DataAccessContext.DataLoad (this only matters if you have encrypted logon credentials configured on a per context level)", DemandType.Unspecified, DataAccessContext.DataLoad)]
+    [DemandsInitialization(
+        "The context under which to connect to the server, if unsure just select DataAccessContext.DataLoad (this only matters if you have encrypted logon credentials configured on a per context level)",
+        DemandType.Unspecified, DataAccessContext.DataLoad)]
     public DataAccessContext DataAccessContext { get; set; }
 
-    [DemandsInitialization("A fully specified SQL Select query to execute on ServerToExecuteQueryOn, this should result in the alias table.  The alias table must have only 2 columns.  The first column must match a column name in the input DataTable.  The second column must contain a known aliases which is different from the first column value.", DemandType.SQL, Mandatory = true)]
+    [DemandsInitialization(
+        "A fully specified SQL Select query to execute on ServerToExecuteQueryOn, this should result in the alias table.  The alias table must have only 2 columns.  The first column must match a column name in the input DataTable.  The second column must contain a known aliases which is different from the first column value.",
+        DemandType.SQL, Mandatory = true)]
     public string AliasTableSQL { get; set; }
 
-    [DemandsInitialization("Maximum amount of time in seconds to let the AliasTableSQL execute for before giving up",DemandType.Unspecified,120)]
+    [DemandsInitialization("Maximum amount of time in seconds to let the AliasTableSQL execute for before giving up",
+        DemandType.Unspecified, 120)]
     public int TimeoutForAssemblingAliasTable { get; set; }
 
     [DemandsInitialization("Strategy for dealing with aliases in DataTables")]
     public AliasResolutionStrategy ResolutionStrategy { get; set; }
 
-    [DemandsInitialization("The name of the input column name in pipeline data (which must exist!) which contains the aliasable values.  This is probably your patient identifier column.", Mandatory = true)]
+    [DemandsInitialization(
+        "The name of the input column name in pipeline data (which must exist!) which contains the aliasable values.  This is probably your patient identifier column.",
+        Mandatory = true)]
     public string AliasColumnInInputDataTables { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         var newRows = new List<object[]>();
 
@@ -49,7 +58,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
         var idx = toProcess.Columns.IndexOf(AliasColumnInInputDataTables);
 
-        if(idx == -1)
+        if (idx == -1)
             throw new KeyNotFoundException(
                 $"You asked to resolve aliases on a column called '{AliasColumnInInputDataTables}' but no column by that name appeared in the DataTable being processed.  Columns in that table were:{string.Join(",", toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
@@ -58,8 +67,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         var matchesFound = 0;
 
         foreach (DataRow r in toProcess.Rows)
-        {
-            if(_aliasDictionary.TryGetValue(r[AliasColumnInInputDataTables],out var aliases))
+            if (_aliasDictionary.TryGetValue(r[AliasColumnInInputDataTables], out var aliases))
             {
                 matchesFound++;
                 switch (ResolutionStrategy)
@@ -75,7 +83,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                         {
                             //Create a copy of the input row
                             var newRow = new object[elements];
-                            r.ItemArray.CopyTo(newRow,0);
+                            r.ItemArray.CopyTo(newRow, 0);
 
                             //Set the aliasable element to the alias
                             newRow[idx] = alias;
@@ -89,7 +97,6 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                         throw new ArgumentOutOfRangeException();
                 }
             }
-        }
 
         if (newRows.Any())
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -106,12 +113,11 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        _aliasDictionary?.Clear();//Free up memory
+        _aliasDictionary?.Clear(); //Free up memory
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public void Check(ICheckNotifier notifier)
@@ -120,21 +126,22 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         try
         {
             var result = GenerateAliasTable(timeout);
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found {result.Count} aliases",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found {result.Count} aliases", CheckResult.Success));
         }
         catch (Exception e)
         {
             var isTimeout = e.Message.ToLower().Contains("timeout");
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to generate alias table after {timeout}s",isTimeout ? CheckResult.Warning : CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to generate alias table after {timeout}s",
+                isTimeout ? CheckResult.Warning : CheckResult.Fail, e));
         }
-
     }
 
     private Dictionary<object, List<object>> _aliasDictionary;
 
     private Dictionary<object, List<object>> GenerateAliasTable(int timeoutInSeconds)
     {
-        const string expectation = "(expected the query to return 2 columns, the first one being the input column the second being known aliases)";
+        const string expectation =
+            "(expected the query to return 2 columns, the first one being the input column the second being known aliases)";
 
         var toReturn = new Dictionary<object, List<object>>();
 
@@ -165,17 +172,15 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                         $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
                 }
 
-                if(idx == -1)
-                {
+                if (idx == -1)
                     throw new AliasTableFetchException(
                         $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
-                }
 
-                if(idx != 0)
+                if (idx != 0)
                     throw new AliasTableFetchException(
                         $"Alias table DID contain column '{AliasColumnInInputDataTables}' but it was not the first column in the result set {expectation}");
 
-                if(r.FieldCount != 2)
+                if (r.FieldCount != 2)
                     throw new AliasTableFetchException(
                         $"Alias table SQL resulted in {r.FieldCount} fields being returned, we expect exactly 2 {expectation}");
 
@@ -185,11 +190,12 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
             var input = r[0];
             var alias = r[1];
 
-            if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
+            if (input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
                 throw new AliasTableFetchException("Alias table contained nulls");
 
-            if(input.Equals(alias))
-                throw new AliasTableFetchException("Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");
+            if (input.Equals(alias))
+                throw new AliasTableFetchException(
+                    "Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");
 
             if (!toReturn.ContainsKey(input))
                 toReturn.Add(input, new List<object>());
@@ -199,5 +205,4 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
         return toReturn;
     }
-
 }

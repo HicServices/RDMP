@@ -22,32 +22,20 @@ public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
         return x != null && y != null && x.FullName == y.FullName;
     }
 
-    public int GetHashCode(DirectoryInfo obj)
-    {
-        return obj.FullName.GetHashCode();
-    }
+    public int GetHashCode(DirectoryInfo obj) => obj.FullName.GetHashCode();
 }
 
 public static class DirectoryInfoExtensions
 {
     public static void CopyAll(this DirectoryInfo source, DirectoryInfo target)
     {
-        if (string.Equals(source.FullName, target.FullName, StringComparison.InvariantCultureIgnoreCase))
-        {
-            return;
-        }
+        if (string.Equals(source.FullName, target.FullName, StringComparison.InvariantCultureIgnoreCase)) return;
 
         // Check if the target directory exists, if not, create it.
-        if (Directory.Exists(target.FullName) == false)
-        {
-            Directory.CreateDirectory(target.FullName);
-        }
+        if (Directory.Exists(target.FullName) == false) Directory.CreateDirectory(target.FullName);
 
         // Copy each file into its new directory.
-        foreach (var fi in source.GetFiles())
-        {
-            fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
-        }
+        foreach (var fi in source.GetFiles()) fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
 
         // Copy each subdirectory using recursion.
         foreach (var diSourceSubDir in source.GetDirectories())

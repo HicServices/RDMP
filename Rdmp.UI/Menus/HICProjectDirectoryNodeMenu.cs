@@ -13,11 +13,11 @@ namespace Rdmp.UI.Menus;
 
 internal class LoadDirectoryNodeMenu : RDMPContextMenuStrip
 {
-    public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args,LoadDirectoryNode node) : base(args, node)
+    public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args, LoadDirectoryNode node) : base(args, node)
     {
         args.SkipCommand<ExecuteCommandCreateNewDataLoadDirectory>();
 
-        ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
+        ReBrandActivateAs("Open In Explorer", RDMPConcept.CatalogueFolder);
         Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
     }
 }

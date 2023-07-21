@@ -29,8 +29,8 @@ public class CatalogueTests : UnitTests
     [Test]
     public void SettingPropertyViaRelationshipDoesntSave_NoticeHowYouHaveToCacheThePropertyCatalogueToSetIt()
     {
-        var c = new Catalogue(Repository,"frank");
-        var ci = new CatalogueItem(Repository,c,"bob");
+        var c = new Catalogue(Repository, "frank");
+        var ci = new CatalogueItem(Repository, c, "bob");
 
 
         var cata = ci.Catalogue;
@@ -41,7 +41,7 @@ public class CatalogueTests : UnitTests
         //now thanks to lazy this works... but it's ambiguous (it works if the property is referenced via IInjectKnown<T>)
         ci.Catalogue.Name = "fish";
         ci.Catalogue.SaveToDatabase();
-        Assert.AreEqual("fish",ci.Catalogue.Name);
+        Assert.AreEqual("fish", ci.Catalogue.Name);
 
         c.DeleteInDatabase();
     }
@@ -58,25 +58,21 @@ public class CatalogueTests : UnitTests
         var catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catas)
-        {
             if (catalogue.ID == expectedID)
             {
                 catalogue.Name = "fish";
                 catalogue.SaveToDatabase();
             }
-        }
 
         //find it again and see if its name has changed - then delete it so we don't polute the db
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
-        {
             if (catalogue.ID == expectedID)
             {
                 Assert.AreEqual(catalogue.Name, "fish");
                 catalogue.DeleteInDatabase();
             }
-        }
     }
 
     [Test]
@@ -90,7 +86,6 @@ public class CatalogueTests : UnitTests
         var catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catas)
-        {
             if (catalogue.ID == expectedID)
             {
                 catalogue.Access_options = "backwards,frontwards";
@@ -109,7 +104,7 @@ public class CatalogueTests : UnitTests
                 catalogue.Background_summary = "£50 preferred";
                 catalogue.Periodicity = Catalogue.CataloguePeriodicity.Monthly;
                 catalogue.Query_tool_URL = new Uri("http://querier.html");
-                catalogue.Source_URL =  new Uri("http://blackholeSun.html");
+                catalogue.Source_URL = new Uri("http://blackholeSun.html");
                 catalogue.Time_coverage = "comprehensive";
                 catalogue.Search_keywords = "excitement,fishmongery";
                 catalogue.Type = Catalogue.CatalogueType.ResearchStudy;
@@ -129,56 +124,52 @@ public class CatalogueTests : UnitTests
 
                 catalogue.SaveToDatabase();
             }
-        }
-
 
 
         //find it again and see if it has changed - then delete it so we don't polute the db
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
         foreach (var catalogue in catasAfter)
-        {
             if (catalogue.ID == expectedID)
             {
-                Assert.AreEqual(catalogue.Access_options , "backwards,frontwards");
-                Assert.AreEqual(catalogue.API_access_URL , new Uri("http://API.html"));
-                Assert.AreEqual(catalogue.Acronym , "abc");
-                Assert.AreEqual(catalogue.Attribution_citation , "belongs to dave");
-                Assert.AreEqual(catalogue.Browse_URL , new Uri("http://browse.html"));
-                Assert.AreEqual(catalogue.Bulk_Download_URL , new Uri("http://bulk.html"));
-                Assert.AreEqual(catalogue.Contact_details , "thomasnind");
+                Assert.AreEqual(catalogue.Access_options, "backwards,frontwards");
+                Assert.AreEqual(catalogue.API_access_URL, new Uri("http://API.html"));
+                Assert.AreEqual(catalogue.Acronym, "abc");
+                Assert.AreEqual(catalogue.Attribution_citation, "belongs to dave");
+                Assert.AreEqual(catalogue.Browse_URL, new Uri("http://browse.html"));
+                Assert.AreEqual(catalogue.Bulk_Download_URL, new Uri("http://bulk.html"));
+                Assert.AreEqual(catalogue.Contact_details, "thomasnind");
                 Assert.AreEqual(catalogue.Geographical_coverage, "fullspectrum");
                 Assert.AreEqual(catalogue.Resource_owner, "blackhole");
-                Assert.AreEqual(catalogue.Description , "exciting stuff of great excitement");
-                Assert.AreEqual(catalogue.Detail_Page_URL , new Uri("http://detail.html"));
-                Assert.AreEqual(catalogue.Last_revision_date , DateTime.Parse("01/01/01"));
-                Assert.AreEqual(catalogue.Name , "kaptainshield");
+                Assert.AreEqual(catalogue.Description, "exciting stuff of great excitement");
+                Assert.AreEqual(catalogue.Detail_Page_URL, new Uri("http://detail.html"));
+                Assert.AreEqual(catalogue.Last_revision_date, DateTime.Parse("01/01/01"));
+                Assert.AreEqual(catalogue.Name, "kaptainshield");
                 Assert.AreEqual(catalogue.Background_summary, "£50 preferred");
-                Assert.AreEqual(catalogue.Periodicity , Catalogue.CataloguePeriodicity.Monthly);
-                Assert.AreEqual(catalogue.Query_tool_URL , new Uri("http://querier.html"));
-                Assert.AreEqual(catalogue.Source_URL , new Uri("http://blackholeSun.html"));
-                Assert.AreEqual(catalogue.Time_coverage , "comprehensive");
+                Assert.AreEqual(catalogue.Periodicity, Catalogue.CataloguePeriodicity.Monthly);
+                Assert.AreEqual(catalogue.Query_tool_URL, new Uri("http://querier.html"));
+                Assert.AreEqual(catalogue.Source_URL, new Uri("http://blackholeSun.html"));
+                Assert.AreEqual(catalogue.Time_coverage, "comprehensive");
                 Assert.AreEqual(catalogue.Search_keywords, "excitement,fishmongery");
-                Assert.AreEqual(catalogue.Type , Catalogue.CatalogueType.ResearchStudy);
-                Assert.AreEqual(catalogue.Update_freq , "Every darmn second!");
-                Assert.AreEqual(catalogue.Update_sched , "periodically on request");
+                Assert.AreEqual(catalogue.Type, Catalogue.CatalogueType.ResearchStudy);
+                Assert.AreEqual(catalogue.Update_freq, "Every darmn second!");
+                Assert.AreEqual(catalogue.Update_sched, "periodically on request");
 
 
-                Assert.AreEqual(catalogue.Country_of_origin , "United Kingdom");
-                Assert.AreEqual(catalogue.Data_standards , "Highly Standardised");
-                Assert.AreEqual(catalogue.Administrative_contact_address , "Candyland");
-                Assert.AreEqual(catalogue.Administrative_contact_email , "big@brother.com");
-                Assert.AreEqual(catalogue.Administrative_contact_name , "Uncle Sam");
-                Assert.AreEqual(catalogue.Administrative_contact_telephone , "12345 67890");
-                Assert.AreEqual(catalogue.Explicit_consent , true);
-                Assert.AreEqual(catalogue.Ethics_approver , "Tayside Supernatural Department");
-                Assert.AreEqual(catalogue.Source_of_data_collection , "Invented by Unit Test");
+                Assert.AreEqual(catalogue.Country_of_origin, "United Kingdom");
+                Assert.AreEqual(catalogue.Data_standards, "Highly Standardised");
+                Assert.AreEqual(catalogue.Administrative_contact_address, "Candyland");
+                Assert.AreEqual(catalogue.Administrative_contact_email, "big@brother.com");
+                Assert.AreEqual(catalogue.Administrative_contact_name, "Uncle Sam");
+                Assert.AreEqual(catalogue.Administrative_contact_telephone, "12345 67890");
+                Assert.AreEqual(catalogue.Explicit_consent, true);
+                Assert.AreEqual(catalogue.Ethics_approver, "Tayside Supernatural Department");
+                Assert.AreEqual(catalogue.Source_of_data_collection, "Invented by Unit Test");
                 Assert.AreEqual(catalogue.SubjectNumbers, "100,000,000");
 
 
                 catalogue.DeleteInDatabase();
             }
-        }
     }
 
     [Test]
@@ -199,13 +190,11 @@ public class CatalogueTests : UnitTests
 
         var numberDeleted = 0;
         foreach (var cata in catasAfter)
-        {
             if (cata.ID == expectedID)
             {
                 cata.DeleteInDatabase();
                 numberDeleted++;
             }
-        }
 
         Assert.AreEqual(numberDeleted, 1);
     }
@@ -223,7 +212,7 @@ public class CatalogueTests : UnitTests
 
         Assert.NotNull(c);
         Assert.True(c.Name == "TEST");
-            
+
         c.DeleteInDatabase();
     }
 
@@ -244,7 +233,7 @@ public class CatalogueTests : UnitTests
 
         //2 columns come from table 1
         var t1 = new TableInfo(Repository, "Table1");
-        var t1_c1 = new ColumnInfo(Repository, "Col1","varchar(10)",t1);
+        var t1_c1 = new ColumnInfo(Repository, "Col1", "varchar(10)", t1);
         var t1_c2 = new ColumnInfo(Repository, "Col2", "int", t1);
 
         //2 columns come from table 2
@@ -259,37 +248,37 @@ public class CatalogueTests : UnitTests
 
         //wire SetUp virtual columns to underlying columns
         ci1.SetColumnInfo(t1_c1);
-        ci2.SetColumnInfo( t1_c2);
-        ci3.SetColumnInfo( t2_c1);
-        ci4.SetColumnInfo( t2_c2);
-        ci5.SetColumnInfo( t3_c1);
-        ci6.SetColumnInfo( t3_c2);
+        ci2.SetColumnInfo(t1_c2);
+        ci3.SetColumnInfo(t2_c1);
+        ci4.SetColumnInfo(t2_c2);
+        ci5.SetColumnInfo(t3_c1);
+        ci6.SetColumnInfo(t3_c2);
 
         //configure the lookup relationship
-        var lookup = new Lookup(Repository, t3_c1, t1_c2, t3_c2,ExtractionJoinType.Left, "");
+        var lookup = new Lookup(Repository, t3_c1, t1_c2, t3_c2, ExtractionJoinType.Left, "");
         try
         {
             var allTables = cata.GetTableInfoList(true).ToArray();
-            Assert.Contains(t1,allTables);
+            Assert.Contains(t1, allTables);
             Assert.Contains(t2, allTables);
             Assert.Contains(t3, allTables);
 
             var normalTablesOnly = cata.GetTableInfoList(false).ToArray();
-            Assert.AreEqual(2,normalTablesOnly.Length);
-            Assert.Contains(t1,normalTablesOnly);
+            Assert.AreEqual(2, normalTablesOnly.Length);
+            Assert.Contains(t1, normalTablesOnly);
             Assert.Contains(t2, normalTablesOnly);
 
             var lookupTablesOnly = cata.GetLookupTableInfoList();
-            Assert.AreEqual(1,lookupTablesOnly.Length);
-            Assert.Contains(t3,lookupTablesOnly);
+            Assert.AreEqual(1, lookupTablesOnly.Length);
+            Assert.Contains(t3, lookupTablesOnly);
 
             cata.GetTableInfos(out var normalTables, out var lookupTables);
-            Assert.AreEqual(2,normalTables.Count);
+            Assert.AreEqual(2, normalTables.Count);
             Assert.AreEqual(1, lookupTables.Count);
 
-            Assert.Contains(t1,normalTables);
+            Assert.Contains(t1, normalTables);
             Assert.Contains(t2, normalTables);
-            Assert.Contains(t3,lookupTables);
+            Assert.Contains(t3, lookupTables);
         }
         finally
         {
@@ -309,17 +298,18 @@ public class CatalogueTests : UnitTests
         var c = new Catalogue(Repository, "bob");
         try
         {
-            Assert.AreEqual("\\",c.Folder);
+            Assert.AreEqual("\\", c.Folder);
         }
         finally
         {
             c.DeleteInDatabase();
         }
     }
+
     [Test]
     public void CatalogueFolder_ChangeAndSave()
     {
-        var c = new Catalogue(Repository, "bob"); 
+        var c = new Catalogue(Repository, "bob");
         try
         {
             c.Folder = "\\Research\\Important";
@@ -342,8 +332,8 @@ public class CatalogueTests : UnitTests
         var c = new Catalogue(Repository, "bob");
         try
         {
-            var ex = Assert.Throws<NotSupportedException>(()=>c.Folder = "fish");
-            Assert.AreEqual(@"All catalogue paths must start with \.  Invalid path was:fish",ex.Message);
+            var ex = Assert.Throws<NotSupportedException>(() => c.Folder = "fish");
+            Assert.AreEqual(@"All catalogue paths must start with \.  Invalid path was:fish", ex.Message);
         }
         finally
         {
@@ -357,8 +347,10 @@ public class CatalogueTests : UnitTests
         var c = new Catalogue(Repository, "bob");
         try
         {
-            var ex = Assert.Throws<NotSupportedException>(()=>c.Folder = null);
-            Assert.AreEqual(@"An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \ if you want the root", ex.Message);
+            var ex = Assert.Throws<NotSupportedException>(() => c.Folder = null);
+            Assert.AreEqual(
+                @"An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \ if you want the root",
+                ex.Message);
         }
         finally
         {
@@ -373,8 +365,9 @@ public class CatalogueTests : UnitTests
         try
         {
             //notice the @ symbol that makes the double slashes actual double slashes - common error we might make and what this test is designed to prevent
-            var ex = Assert.Throws<NotSupportedException>(()=>c.Folder = @"\\bob\\");
-            Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Invalid path was:\\bob\\", ex.Message);
+            var ex = Assert.Throws<NotSupportedException>(() => c.Folder = @"\\bob\\");
+            Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Invalid path was:\\bob\\",
+                ex.Message);
         }
         finally
         {
@@ -385,16 +378,15 @@ public class CatalogueTests : UnitTests
     [Test]
     public void RelatedCatalogueTest_NoCatalogues()
     {
-        var t = new TableInfo(Repository,"MyTable");
+        var t = new TableInfo(Repository, "MyTable");
         try
         {
-            Assert.AreEqual(0,t.GetAllRelatedCatalogues().Length);
+            Assert.AreEqual(0, t.GetAllRelatedCatalogues().Length);
         }
         finally
         {
             t.DeleteInDatabase();
         }
-            
     }
 
     [Test]
@@ -403,10 +395,10 @@ public class CatalogueTests : UnitTests
     public void RelatedCatalogueTest_OneCatalogue(bool createExtractionInformation)
     {
         var t = new TableInfo(Repository, "MyTable");
-        var c = new ColumnInfo(Repository,"MyCol","varchar(10)",t);
+        var c = new ColumnInfo(Repository, "MyCol", "varchar(10)", t);
 
-        var cata = new Catalogue(Repository,"MyCata");
-        var ci = new CatalogueItem(Repository,cata,"MyCataItem");
+        var cata = new Catalogue(Repository, "MyCata");
+        var ci = new CatalogueItem(Repository, cata, "MyCataItem");
 
         try
         {
@@ -417,7 +409,7 @@ public class CatalogueTests : UnitTests
 
             var catas = t.GetAllRelatedCatalogues();
             Assert.AreEqual(1, catas.Length);
-            Assert.AreEqual(cata,catas[0]);
+            Assert.AreEqual(cata, catas[0]);
         }
         finally
         {
@@ -458,9 +450,7 @@ public class CatalogueTests : UnitTests
                 ci1_2.SetColumnInfo(c2);
                 ci2_1.SetColumnInfo(c2);
                 ci2_2.SetColumnInfo(c1);
-
             }
-
 
 
             var catas = t.GetAllRelatedCatalogues();
@@ -474,14 +464,13 @@ public class CatalogueTests : UnitTests
             cata2.DeleteInDatabase();
             t.DeleteInDatabase();
         }
-
     }
 
 
-    [TestCase("\\","\\")]
+    [TestCase("\\", "\\")]
     [TestCase("\\fish", "fish")]
     [TestCase("\\fish\\dog\\cat", "cat")]
-    public void TestTreeNode_FullName_CleanPaths(string fullName,string expectedName)
+    public void TestTreeNode_FullName_CleanPaths(string fullName, string expectedName)
     {
         var r1 = WhenIHaveA<Catalogue>();
         r1.Folder = fullName;
@@ -489,11 +478,8 @@ public class CatalogueTests : UnitTests
         var tree = FolderHelper.BuildFolderTree(new[] { r1 });
 
         var bottomFolder = tree;
-                
-        while(bottomFolder.ChildFolders.Any())
-        {
-            bottomFolder = bottomFolder.ChildFolders.Single();
-        }
+
+        while (bottomFolder.ChildFolders.Any()) bottomFolder = bottomFolder.ChildFolders.Single();
 
         Assert.AreEqual(expectedName, bottomFolder.Name);
         Assert.AreEqual(fullName, bottomFolder.FullName);
@@ -527,7 +513,7 @@ public class CatalogueTests : UnitTests
 
         var objects = new IHasFolder[]
         {
-            r1,r2,cat,fun,morefun
+            r1, r2, cat, fun, morefun
         };
 
 
@@ -561,7 +547,7 @@ public class CatalogueTests : UnitTests
 
         var objects = new IHasFolder[]
         {
-            cata1,cata2
+            cata1, cata2
         };
 
         var tree = FolderHelper.BuildFolderTree(objects);

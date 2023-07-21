@@ -11,7 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.SimpleDialogs;
 
-internal class FindAndReplaceNode:IMasqueradeAs
+internal class FindAndReplaceNode : IMasqueradeAs
 {
     private object _currentValue;
     public IMapsDirectlyToDatabaseTable Instance { get; }
@@ -27,51 +27,42 @@ internal class FindAndReplaceNode:IMasqueradeAs
         _currentValue = Property.GetValue(Instance);
     }
 
-    public override string ToString()
-    {
-        return Instance.ToString();
-    }
+    public override string ToString() => Instance.ToString();
 
-    public object MasqueradingAs()
-    {
-        return Instance;
-    }
+    public object MasqueradingAs() => Instance;
 
-    public object GetCurrentValue()
-    {
-        return _currentValue;
-    }
+    public object GetCurrentValue() => _currentValue;
 
     public void SetValue(object newValue)
     {
-        Property.SetValue(Instance,newValue);
+        Property.SetValue(Instance, newValue);
         ((ISaveable)Instance).SaveToDatabase();
         _currentValue = newValue;
     }
 
     public void FindAndReplace(string find, string replace, bool ignoreCase)
     {
-        var current =_currentValue.ToString();
-        if(current?.Contains(find,ignoreCase?StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture)==true)
-            SetValue(current.Replace(find, replace,ignoreCase ? StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture));
+        var current = _currentValue.ToString();
+        if (current?.Contains(find,
+                ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture) == true)
+            SetValue(current.Replace(find, replace,
+                ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture));
     }
+
     #region Equality Members
-    protected bool Equals(FindAndReplaceNode other)
-    {
-        return Instance.Equals(other.Instance) && Property.Equals(other.Property);
-    }
+
+    protected bool Equals(FindAndReplaceNode other) =>
+        Instance.Equals(other.Instance) && Property.Equals(other.Property);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((FindAndReplaceNode) obj);
+        return Equals((FindAndReplaceNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Instance, Property);
-    }
+    public override int GetHashCode() => HashCode.Combine(Instance, Property);
+
     #endregion
 }

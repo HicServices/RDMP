@@ -32,7 +32,7 @@ public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue 
 /// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to
 /// the report (including heatmap if a dynamic pivot is included in the graph).
 /// </summary>
-public class MetadataReport:DocXHelper
+public class MetadataReport : DocXHelper
 {
     private readonly ICatalogueRepository _repository;
     private readonly MetadataReportArgs _args;
@@ -45,8 +45,7 @@ public class MetadataReport:DocXHelper
     private const int TextFontSize = 7;
 
 
-
-    public MetadataReport(ICatalogueRepository repository,MetadataReportArgs args)
+    public MetadataReport(ICatalogueRepository repository, MetadataReportArgs args)
     {
         _repository = repository;
         _args = args;
@@ -56,8 +55,7 @@ public class MetadataReport:DocXHelper
 
     public void GenerateWordFileAsync(IDataLoadEventListener listener, bool showFile)
     {
-
-        thread = new Thread(() => GenerateWordFile(listener,showFile));
+        thread = new Thread(() => GenerateWordFile(listener, showFile));
         thread.Start();
     }
 
@@ -78,9 +76,12 @@ public class MetadataReport:DocXHelper
                 var completed = 0;
 
 
-                foreach (var c in _args.Catalogues.OrderBy(c=>c.Name))
+                foreach (var c in _args.Catalogues.OrderBy(c => c.Name))
                 {
-                    listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
+                    listener.OnProgress(this,
+                        new ProgressEventArgs("Extracting",
+                            new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length),
+                            sw.Elapsed));
 
                     var recordCount = -1;
                     var distinctRecordCount = -1;
@@ -97,11 +98,11 @@ public class MetadataReport:DocXHelper
                     }
                     catch (Exception e)
                     {
-                        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,
-                            $"Error processing record count for Catalogue {c.Name}",e));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"Error processing record count for Catalogue {c.Name}", e));
                     }
 
-                    InsertHeader(document,c.Name);
+                    InsertHeader(document, c.Name);
 
                     //assume we don't know the age of the dataset
                     DateTime? accurateAsOf = null;
@@ -109,20 +110,21 @@ public class MetadataReport:DocXHelper
                     //get the age of the dataset if known and output it
                     if (_args.TimespanCalculator != null)
                     {
-                        var timespan = _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true,out accurateAsOf);
+                        var timespan =
+                            _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true, out accurateAsOf);
                         if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
-                            InsertParagraph(document,timespan + (accurateAsOf.HasValue ? "*" :""), TextFontSize);
+                            InsertParagraph(document, timespan + (accurateAsOf.HasValue ? "*" : ""), TextFontSize);
                     }
 
-                    InsertParagraph(document,c.Description, TextFontSize);
+                    InsertParagraph(document, c.Description, TextFontSize);
 
-                    if(accurateAsOf.HasValue)
-                        InsertParagraph(document, $"* Based on DQE run on {accurateAsOf.Value}", TextFontSize-2);
+                    if (accurateAsOf.HasValue)
+                        InsertParagraph(document, $"* Based on DQE run on {accurateAsOf.Value}", TextFontSize - 2);
 
                     if (gotRecordCount)
                     {
-                        InsertHeader(document,"Record Count", 3);
-                        CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
+                        InsertHeader(document, "Record Count", 3);
+                        CreateCountTable(document, recordCount, distinctRecordCount, identifierName);
                     }
 
                     if (!_args.SkipImages && RequestCatalogueImages != null)
@@ -131,31 +133,33 @@ public class MetadataReport:DocXHelper
 
                         if (onRequestCatalogueImages.Any())
                         {
-                            InsertHeader(document,"Aggregates",2);
-                            AddImages(document,onRequestCatalogueImages);
+                            InsertHeader(document, "Aggregates", 2);
+                            AddImages(document, onRequestCatalogueImages);
                         }
-
                     }
 
-                    CreateDescriptionsTable(document,c);
+                    CreateDescriptionsTable(document, c);
 
-                    if(_args.IncludeNonExtractableItems)
-                        CreateNonExtractableColumnsTable(document,c);
+                    if (_args.IncludeNonExtractableItems)
+                        CreateNonExtractableColumnsTable(document, c);
 
                     //if this is not the last Catalogue create a new page
                     if (completed != _args.Catalogues.Length)
                         InsertSectionPageBreak(document);
 
-                    listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
+                    listener.OnProgress(this,
+                        new ProgressEventArgs("Extracting",
+                            new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length),
+                            sw.Elapsed));
                 }
 
                 if (_lookupsEncounteredToAppearInAppendix.Any())
                     CreateLookupAppendix(document, listener);
 
-                if(showFile)
+                if (showFile)
                     ShowFile(document);
 
-                SetMargins(document,20);
+                SetMargins(document, 20);
 
                 AddFooter(document, $"Created on {DateTime.Now}", TextFontSize);
 
@@ -168,7 +172,8 @@ public class MetadataReport:DocXHelper
         }
         catch (Exception e)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Entire process failed, see Exception for details", e));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Entire process failed, see Exception for details", e));
         }
 
         return null;
@@ -177,7 +182,7 @@ public class MetadataReport:DocXHelper
     private void CreateLookupAppendix(XWPFDocument document, IDataLoadEventListener listener)
     {
         InsertSectionPageBreak(document);
-        InsertHeader(document,"Appendix 1 - Lookup Tables");
+        InsertHeader(document, "Appendix 1 - Lookup Tables");
 
         //foreach lookup
         foreach (var lookupTable in _lookupsEncounteredToAppearInAppendix)
@@ -190,25 +195,25 @@ public class MetadataReport:DocXHelper
             }
             catch (Exception e)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                     $"Failed to get the contents of loookup {lookupTable.Name}", e));
             }
 
-            if(dt == null)
+            if (dt == null)
                 continue;
 
             //if it has too many columns
             if (dt.Columns.Count > 5)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                     $"Lookup table {lookupTable.Name} has more than 5 columns so will not be processed"));
                 continue;
             }
 
             //write name of lookup
-            InsertHeader(document,lookupTable.Name);
+            InsertHeader(document, lookupTable.Name);
 
-            var table = InsertTable(document,Math.Min(dt.Rows.Count + 1, _args.MaxLookupRows + 2), dt.Columns.Count);
+            var table = InsertTable(document, Math.Min(dt.Rows.Count + 1, _args.MaxLookupRows + 2), dt.Columns.Count);
 
             var tableLine = 0;
 
@@ -219,13 +224,13 @@ public class MetadataReport:DocXHelper
             //move to next line
             tableLine++;
 
-            var maxLineCountDowner = _args.MaxLookupRows + 1;//1 for the headers and 1 for the ... row
+            var maxLineCountDowner = _args.MaxLookupRows + 1; //1 for the headers and 1 for the ... row
 
             //see if it has any lookups
             foreach (DataRow row in dt.Rows)
             {
                 for (var i = 0; i < dt.Columns.Count; i++)
-                    SetTableCell(table,tableLine, i, Convert.ToString(row[i]));
+                    SetTableCell(table, tableLine, i, Convert.ToString(row[i]));
 
                 //move to next line
                 tableLine++;
@@ -234,14 +239,14 @@ public class MetadataReport:DocXHelper
                 if (maxLineCountDowner == 1)
                 {
                     for (var i = 0; i < dt.Columns.Count; i++)
-                        SetTableCell(table,tableLine, i, "...");
+                        SetTableCell(table, tableLine, i, "...");
                     break;
                 }
             }
 
             AutoFit(table);
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Wrote out lookup table {lookupTable.Name} successfully"));
         }
     }
@@ -250,7 +255,8 @@ public class MetadataReport:DocXHelper
     private static DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
     {
         //get the contents of the lookup
-        using var con = DataAccessPortal.ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection();
+        using var con = DataAccessPortal.ExpectServer(lookupTable, DataAccessContext.InternalDataProcessing)
+            .GetConnection();
         con.Open();
 
         using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con);
@@ -265,13 +271,13 @@ public class MetadataReport:DocXHelper
     {
         foreach (var image in onRequestCatalogueImages)
         {
-            if(!string.IsNullOrWhiteSpace(image.Header))
-                InsertHeader(document,image.Header,3);
+            if (!string.IsNullOrWhiteSpace(image.Header))
+                InsertHeader(document, image.Header, 3);
 
             if (!string.IsNullOrWhiteSpace(image.Description))
                 InsertParagraph(document, image.Description);
 
-            GetPicture(document,image.Bitmap);
+            GetPicture(document, image.Bitmap);
         }
     }
 
@@ -300,7 +306,8 @@ public class MetadataReport:DocXHelper
         foreach (var information in extractionInformations)
         {
             SetTableCell(table, tableLine, 0, information.GetRuntimeName(), TextFontSize);
-            SetTableCell(table, tableLine, 1, information.ColumnInfo == null ? "ORPHAN":information.ColumnInfo.Data_type, TextFontSize);
+            SetTableCell(table, tableLine, 1,
+                information.ColumnInfo == null ? "ORPHAN" : information.ColumnInfo.Data_type, TextFontSize);
             var description = information.CatalogueItem.Description;
 
             //a field should only ever be a foreign key to one Lookup table
@@ -316,7 +323,6 @@ public class MetadataReport:DocXHelper
                 _lookupsEncounteredToAppearInAppendix.Add(lookupTable);
 
                 description += $"References Lookup Table {lookupTable.GetRuntimeName()}";
-
             }
 
             SetTableCell(table, tableLine, 2, description, TextFontSize);
@@ -327,6 +333,7 @@ public class MetadataReport:DocXHelper
 
         AutoFit(table);
     }
+
     private static void CreateNonExtractableColumnsTable(XWPFDocument document, Catalogue c)
     {
         var nonExtractableCatalogueItems = c.CatalogueItems.Where(ci => ci.ExtractionInformation == null).ToList();
@@ -382,20 +389,20 @@ public class MetadataReport:DocXHelper
 
     private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)
     {
-        var table = InsertTable(document,2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
+        var table = InsertTable(document, 2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
 
         var tableLine = 0;
 
-        SetTableCell(table,tableLine, 0, "Records",TextFontSize);
+        SetTableCell(table, tableLine, 0, "Records", TextFontSize);
 
         //only add column values if there is an IsExtractionIdentifier returned
         if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
-            SetTableCell(table,tableLine, 1, $"Distinct {identifierName}",TextFontSize);
+            SetTableCell(table, tableLine, 1, $"Distinct {identifierName}", TextFontSize);
 
         tableLine++;
 
 
-        SetTableCell(table,tableLine, 0,recordCount.ToString("N0"),TextFontSize);
+        SetTableCell(table, tableLine, 0, recordCount.ToString("N0"), TextFontSize);
 
         //only add column values if there is an IsExtractionIdentifier returned
         if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
@@ -406,7 +413,8 @@ public class MetadataReport:DocXHelper
     private void GetRecordCount(Catalogue c, out int count, out int distinct, out string identifierName)
     {
         //one of the fields will be marked IsExtractionIdentifier (e.g. CHI column)
-        var bestExtractionInformation = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();
+        var bestExtractionInformation = c.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Where(e => e.IsExtractionIdentifier).ToArray();
 
         TableInfo tableToQuery = null;
 
@@ -423,17 +431,21 @@ public class MetadataReport:DocXHelper
 
             //there is only one table that we can query
             if (tableInfos.Length == 1)
-                tableToQuery = tableInfos.Single();//query that one
-            else
-            if (tableInfos.Count(t => t.IsPrimaryExtractionTable) == 1)//there are multiple tables but there is only one IsPrimaryExtractionTable
+                tableToQuery = tableInfos.Single(); //query that one
+            else if
+                (tableInfos.Count(t => t.IsPrimaryExtractionTable) ==
+                 1) //there are multiple tables but there is only one IsPrimaryExtractionTable
                 tableToQuery = tableInfos.Single(t => t.IsPrimaryExtractionTable);
             else
                 throw new Exception(
-                    $"Did not know which table to query out of {string.Join(",", tableInfos.Select(t => t.GetRuntimeName()))} you can resolve this by marking one (AND ONLY ONE) of these tables as IsPrimaryExtractionTable=true");//there are multiple tables and multiple or no IsPrimaryExtractionTable
-
+                    $"Did not know which table to query out of {string.Join(",", tableInfos.Select(t => t.GetRuntimeName()))} you can resolve this by marking one (AND ONLY ONE) of these tables as IsPrimaryExtractionTable=true"); //there are multiple tables and multiple or no IsPrimaryExtractionTable
         }
         else
-            tableToQuery = bestExtractionInformation[0].ColumnInfo.TableInfo;//there is an extraction identifier so use its table to query
+        {
+            tableToQuery =
+                bestExtractionInformation[0].ColumnInfo
+                    .TableInfo; //there is an extraction identifier so use its table to query
+        }
 
         var hasExtractionIdentifier = bestExtractionInformation.Any();
 
@@ -452,7 +464,7 @@ public class MetadataReport:DocXHelper
         if (hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts)
             sql +=
                 $",\r\ncount(distinct {bestExtractionInformation[0].SelectSQL}) as recordCountDistinct{Environment.NewLine}";
-            
+
         sql += $" from {Environment.NewLine}";
         sql += tableToQuery.Name;
 
@@ -465,9 +477,11 @@ public class MetadataReport:DocXHelper
             using var r = cmd.ExecuteReader();
             r.Read();
             count = Convert.ToInt32(r["recordCount"]);
-            distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
+            distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts
+                ? Convert.ToInt32(r["recordCountDistinct"])
+                : -1;
         }
-                
+
         con.Close();
     }
 

@@ -13,23 +13,21 @@ using Rdmp.UI.ProjectUI.Datasets;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecutionProposal<SelectedDataSets>
+internal class ProposeExecutionWhenTargetIsSelectedDataSets : RDMPCommandExecutionProposal<SelectedDataSets>
 {
-    public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator): base(itemActivator)
+    public ProposeExecutionWhenTargetIsSelectedDataSets(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(SelectedDataSets target)
-    {
-        return true;
-    }
+    public override bool CanActivate(SelectedDataSets target) => true;
 
     public override void Activate(SelectedDataSets target)
     {
         ItemActivator.Activate<ConfigureDatasetUI, SelectedDataSets>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {

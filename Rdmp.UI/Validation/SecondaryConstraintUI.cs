@@ -56,9 +56,10 @@ public partial class SecondaryConstraintUI : UserControl
     internal event RequestDeletionHandler RequestDeletion;
 
 
-
     private bool loadingComplete;
-    public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
+
+    public SecondaryConstraintUI(ICatalogueRepository repository, SecondaryConstraint secondaryConstriant,
+        string[] otherColumns)
     {
         const int rowHeight = 30;
         //the amount of additional space required to accomodate description labels
@@ -85,13 +86,12 @@ public partial class SecondaryConstraintUI : UserControl
         //work out what properties can be set on this constraint and create the relevant controls using reflection
         _requiredProperties = secondaryConstriant.GetType().GetProperties().Where(p =>
             p.CanRead && p.CanWrite && p.GetSetMethod(true).IsPublic
-
-            && p.Name != "Name"//skip this one, it is Writeable in order to support XMLSerialization...
-            && p.Name != "Consequence"//skip this one because it is dealt with explicitly
-            && !p.IsDefined(typeof (HideOnValidationUI), true)
+            && p.Name != "Name" //skip this one, it is Writeable in order to support XMLSerialization...
+            && p.Name != "Consequence" //skip this one because it is dealt with explicitly
+            && !p.IsDefined(typeof(HideOnValidationUI), true)
         ).ToArray();
 
-        for (var i = 0; i < _requiredProperties.Length;i++ )
+        for (var i = 0; i < _requiredProperties.Length; i++)
         {
             var currentRowPanel = new Panel
             {
@@ -102,7 +102,7 @@ public partial class SecondaryConstraintUI : UserControl
 
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
 
-            tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
+            tableLayoutPanel1.Controls.Add(currentRowPanel, 0, i + 1);
 
 
             var lblName = new Label
@@ -124,11 +124,11 @@ public partial class SecondaryConstraintUI : UserControl
                     Checked = (bool)currentValue
                 };
 
-                boolControl.CheckStateChanged += (s, e) => _requiredProperties[(int) boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked,null);
+                boolControl.CheckStateChanged += (s, e) =>
+                    _requiredProperties[(int)boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked, null);
                 currentRowPanel.Controls.Add(boolControl);
             }
-            else
-            if (_requiredProperties[i].PropertyType == typeof(PredictionRule))//Hard Typed property PredictionRule
+            else if (_requiredProperties[i].PropertyType == typeof(PredictionRule)) //Hard Typed property PredictionRule
             {
                 //for prediction rules fields
                 var cbx = new ComboBox
@@ -140,7 +140,8 @@ public partial class SecondaryConstraintUI : UserControl
                 };
                 cbx.Items.AddRange(Validator.GetPredictionExtraTypes());
                 cbx.Items.Add("");
-                cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, cbx.SelectedItem is Type type ? Activator.CreateInstance(type) : null);
+                cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant,
+                    cbx.SelectedItem is Type type ? Activator.CreateInstance(type) : null);
 
                 //The dropdown box is a list of Types but we are actually instantiating a value when user selects it (for XML Serialization).  Consequently we must now get the Type for selection purposes
                 if (currentValue != null)
@@ -153,12 +154,11 @@ public partial class SecondaryConstraintUI : UserControl
             }
             else
             {
-
                 //it's a value control (basically anything that can be represented by text (i.e. not a boolean))
                 Control valueControl;
 
                 //if it is expects a column then create a dropdown box
-                if (_requiredProperties[i].IsDefined(typeof (ExpectsColumnNameAsInput), true))
+                if (_requiredProperties[i].IsDefined(typeof(ExpectsColumnNameAsInput), true))
                 {
                     //for column fields
                     var cbx = new ComboBox
@@ -169,13 +169,15 @@ public partial class SecondaryConstraintUI : UserControl
                     };
                     cbx.Items.AddRange(_otherColumns);
                     cbx.Items.Add("");
-                    cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType), null);
+                    cbx.SelectedIndexChanged += (s, e) =>
+                        _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant,
+                            UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType),
+                            null);
 
                     valueControl = cbx;
-
                 }
-                else
-                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i].PropertyType))//it is a Catalogue type
+                else if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i]
+                             .PropertyType)) //it is a Catalogue type
                 {
                     var dd = new ComboBox
                     {
@@ -189,27 +191,30 @@ public partial class SecondaryConstraintUI : UserControl
                     if (!entities.Any())
                     {
                         if (_requiredProperties[i].PropertyType == typeof(StandardRegex))
-                            MessageBox.Show("You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
+                            MessageBox.Show(
+                                "You currently do not have any standard regex concepts in your database.  These can be created from the Table(Advanced) collection.",
                                 "No StandardRegex configured in your Catalogue");
                         else
                             MessageBox.Show(
-                                $"You currently do not have any {_requiredProperties[i].PropertyType} in your database","Catalogue Entity Collection Empty");
+                                $"You currently do not have any {_requiredProperties[i].PropertyType} in your database",
+                                "Catalogue Entity Collection Empty");
                     }
                     else
                     {
                         dd.Items.Add("<<Clear>>");
                         dd.Items.AddRange(entities);
-                        dd.SelectedIndexChanged += (s, e) => _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant, dd.SelectedItem as IMapsDirectlyToDatabaseTable, null);
+                        dd.SelectedIndexChanged += (s, e) =>
+                            _requiredProperties[(int)dd.Tag].SetValue(SecondaryConstriant,
+                                dd.SelectedItem as IMapsDirectlyToDatabaseTable, null);
                     }
 
                     //See if it has a value
 
                     //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
-                    if(_requiredProperties[i].GetValue(SecondaryConstriant, null) is IRevertable v)
+                    if (_requiredProperties[i].GetValue(SecondaryConstriant, null) is IRevertable v)
                         v.RevertToDatabaseState();
 
                     valueControl = dd;
-
                 }
                 else //otherwise create a textbox
                 {
@@ -222,13 +227,13 @@ public partial class SecondaryConstraintUI : UserControl
                     };
                     valueControl.TextChanged += setTextOrParseableProperty;
 
-                    if (_requiredProperties[i].IsDefined(typeof (ExpectsLotsOfText), true))
+                    if (_requiredProperties[i].IsDefined(typeof(ExpectsLotsOfText), true))
                         valueControl.Width = 300;
-
                 }
 
                 if (currentValue != null)
-                    valueControl.Text = _requiredProperties[i].GetValue(SecondaryConstriant, null).ToString().Replace("00:00:00","");
+                    valueControl.Text = _requiredProperties[i].GetValue(SecondaryConstriant, null).ToString()
+                        .Replace("00:00:00", "");
 
                 currentRowPanel.Controls.Add(lblName);
 
@@ -246,10 +251,10 @@ public partial class SecondaryConstraintUI : UserControl
                     Text = desc.Description
                 };
 
-                lbl.Font = new Font(lbl.Font,FontStyle.Italic);
+                lbl.Font = new Font(lbl.Font, FontStyle.Italic);
 
                 //make some space for it
-                inflation += lbl.Height -7;
+                inflation += lbl.Height - 7;
                 lbl.Top = rowHeight - 7;
 
                 currentRowPanel.Controls.Add(lbl);
@@ -263,24 +268,25 @@ public partial class SecondaryConstraintUI : UserControl
         Height = _requiredProperties.Length * rowHeight + 45 + inflation;
 
         loadingComplete = true;
-
     }
 
     private void setTextOrParseableProperty(object sender, EventArgs e)
     {
-        var senderAsControl = (Control) sender;
-        var propertyIdx = (int) senderAsControl.Tag;
+        var senderAsControl = (Control)sender;
+        var propertyIdx = (int)senderAsControl.Tag;
 
         try
         {
             if (string.IsNullOrWhiteSpace(senderAsControl.Text))
+            {
                 _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, null, null);
+            }
             else
             {
                 var underlyingType = _requiredProperties[propertyIdx].PropertyType;
-                _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);
+                _requiredProperties[propertyIdx].SetValue(SecondaryConstriant,
+                    UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);
             }
-
 
 
             senderAsControl.ForeColor = Color.Black;
@@ -297,7 +303,7 @@ public partial class SecondaryConstraintUI : UserControl
             {
                 ex = ex.InnerException;
 
-                if(ex != null)
+                if (ex != null)
                     msg += $",{ex.Message}";
 
                 overflow++;
@@ -305,7 +311,6 @@ public partial class SecondaryConstraintUI : UserControl
 
             lblException.Text = msg.Trim(',');
         }
-
     }
 
     private void btnDelete_Click(object sender, EventArgs e)

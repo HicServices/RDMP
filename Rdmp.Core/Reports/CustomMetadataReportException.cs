@@ -23,14 +23,13 @@ public class CustomMetadataReportException : Exception
     /// </summary>
     /// <param name="msg"></param>
     /// <param name="lineNumber">The line number in the template that the error occurred (first line of file is 1)</param>
-    public CustomMetadataReportException(string msg,int lineNumber) : base(msg)
+    public CustomMetadataReportException(string msg, int lineNumber) : base(msg)
     {
         LineNumber = lineNumber;
     }
 
-    public CustomMetadataReportException(string msg, Exception inner,int lineNumber):base(msg,inner)
+    public CustomMetadataReportException(string msg, Exception inner, int lineNumber) : base(msg, inner)
     {
         LineNumber = lineNumber;
     }
-
 }

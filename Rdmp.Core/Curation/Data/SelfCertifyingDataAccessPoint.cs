@@ -28,7 +28,6 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
     /// </summary>
     public SelfCertifyingDataAccessPoint()
     {
-
     }
 
     /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
@@ -49,8 +48,10 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
 
     /// <inheritdoc/>
     public string Server { get; set; }
+
     /// <inheritdoc/>
     public string Database { get; set; }
+
     /// <inheritdoc/>
     public string Username { get; set; }
 
@@ -70,10 +71,7 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return new QuerySyntaxHelperFactory().Create(DatabaseType);
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => new QuerySyntaxHelperFactory().Create(DatabaseType);
 
     public bool DiscoverExistence(DataAccessContext context, out string reason)
     {
@@ -87,9 +85,9 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
             reason = ex.Message;
             return false;
         }
-            
 
-        if(!db.Exists())
+
+        if (!db.Exists())
         {
             reason = "database did not exist";
             return false;
@@ -99,8 +97,5 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
         return true;
     }
 
-    internal DiscoveredDatabase Discover(DataAccessContext context)
-    {
-        return DataAccessPortal.ExpectDatabase(this, context);
-    }
+    internal DiscoveredDatabase Discover(DataAccessContext context) => DataAccessPortal.ExpectDatabase(this, context);
 }

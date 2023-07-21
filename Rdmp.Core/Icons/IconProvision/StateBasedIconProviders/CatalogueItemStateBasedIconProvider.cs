@@ -24,7 +24,7 @@ public sealed class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconP
             return null;
 
         var ei = ci.ExtractionInformation;
-        var toReturn = ei?.IsProperTransform() ?? false ? TransformImage: BasicImage;
+        var toReturn = ei?.IsProperTransform() ?? false ? TransformImage : BasicImage;
 
         //it's not extractable:
         if (ei == null) return toReturn;
@@ -60,7 +60,6 @@ public sealed class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconP
             default:
                 throw new ArgumentOutOfRangeException(nameof(o));
         }
-
 
 
         return toReturn;

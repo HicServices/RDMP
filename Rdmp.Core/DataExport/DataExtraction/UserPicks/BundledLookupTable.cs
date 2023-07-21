@@ -23,16 +23,13 @@ public class BundledLookupTable : IBundledLookupTable
 
     public BundledLookupTable(ITableInfo tableInfo)
     {
-        if(!tableInfo.IsLookupTable())
+        if (!tableInfo.IsLookupTable())
             throw new Exception($"TableInfo {tableInfo} is not a lookup table");
 
         TableInfo = tableInfo;
     }
 
-    public override string ToString()
-    {
-        return TableInfo.ToString();
-    }
+    public override string ToString() => TableInfo.ToString();
 
     /// <summary>
     /// Reads lookup data from the <see cref="TableInfo"/> using <see cref="DataAccessContext.DataExport"/>
@@ -48,7 +45,7 @@ public class BundledLookupTable : IBundledLookupTable
         using var con = server.GetConnection();
         con.Open();
         using var da = server.GetDataAdapter(
-            server.GetCommand(GetDataTableFetchSql(),con));
+            server.GetCommand(GetDataTableFetchSql(), con));
         da.Fill(dt);
 
         return dt;
@@ -65,7 +62,7 @@ public class BundledLookupTable : IBundledLookupTable
 
             // Extract core columns only (and definetly not extraction identifiers)
             var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core)
-                .Where(e=>!e.IsExtractionIdentifier)
+                .Where(e => !e.IsExtractionIdentifier)
                 .ToArray();
 
             if (eis.Length > 0)
@@ -75,7 +72,8 @@ public class BundledLookupTable : IBundledLookupTable
                 return qb.SQL;
             }
 
-            throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
+            throw new QueryBuildingException(
+                $"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
         }
 
         return $"select * from {TableInfo.GetFullyQualifiedName()}";

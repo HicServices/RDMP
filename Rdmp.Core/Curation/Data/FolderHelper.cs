@@ -32,13 +32,9 @@ public static class FolderHelper
         candidate = candidate.ToLower();
         candidate = candidate.TrimEnd('\\');
 
-        if(string.IsNullOrWhiteSpace(candidate))
-        {
-            candidate = Root;
-        }
+        if (string.IsNullOrWhiteSpace(candidate)) candidate = Root;
 
         return candidate;
-
     }
 
     public static bool IsValidPath(string candidatePath, out string reason)
@@ -46,15 +42,13 @@ public static class FolderHelper
         reason = null;
 
         if (string.IsNullOrWhiteSpace(candidatePath))
-            reason = "An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
-        else
-        if (!candidatePath.StartsWith("\\"))
+            reason =
+                "An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
+        else if (!candidatePath.StartsWith("\\"))
             reason = $"All catalogue paths must start with \\.  Invalid path was:{candidatePath}";
-        else
-        if (candidatePath.Contains("\\\\"))//if it contains double slash
+        else if (candidatePath.Contains("\\\\")) //if it contains double slash
             reason = $"Catalogue paths cannot contain double slashes '\\\\', Invalid path was:{candidatePath}";
-        else
-        if (candidatePath.Contains('/'))//if it contains double slash
+        else if (candidatePath.Contains('/')) //if it contains double slash
             reason =
                 $"Catalogue paths must use backwards slashes not forward slashes, Invalid path was:{candidatePath}";
 
@@ -66,19 +60,16 @@ public static class FolderHelper
     /// </summary>
     /// <param name="candidatePath"></param>
     /// <returns></returns>
-    public static bool IsValidPath(string candidatePath)
-    {
-        return IsValidPath(candidatePath, out _);
-    }
+    public static bool IsValidPath(string candidatePath) => IsValidPath(candidatePath, out _);
 
-    public static FolderNode<T> BuildFolderTree<T>(T[] objects, FolderNode<T> currentBranch = null) where T: class, IHasFolder
+    public static FolderNode<T> BuildFolderTree<T>(T[] objects, FolderNode<T> currentBranch = null)
+        where T : class, IHasFolder
     {
         currentBranch ??= new FolderNode<T>(Root);
         var currentBranchFullName = currentBranch.FullName;
 
         foreach (var g in objects.GroupBy(g => g.Folder).ToArray())
-        {
-            if(g.Key.Equals(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase))
+            if (g.Key.Equals(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase))
             {
                 // all these are in the exact folder we are looking at, they are our children
                 currentBranch.ChildObjects.AddRange(g);
@@ -87,35 +78,35 @@ public static class FolderHelper
             {
                 // these objects are in a subdirectory of us.  Find the next subdirectory name
                 // bearing in mind we may be at '\' and be seing '\dog\cat\fish' as the next
-                var idx = g.Key.IndexOf(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase) + currentBranchFullName.Length;
+                var idx = g.Key.IndexOf(currentBranchFullName, StringComparison.CurrentCultureIgnoreCase) +
+                          currentBranchFullName.Length;
 
                 // if we have objects that do not live under this full path thats a problem
-
                 // or its also a problem if we found a full match to the end of the string
-
                 // this branch deals with sub folders and that would mean the current group
                 // are not in any subfolders
-                if (idx == -1 || idx == g.Key.Length -1)
-                {
-                    throw new Exception($"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
-                }
+                if (idx == -1 || idx == g.Key.Length - 1)
+                    throw new Exception(
+                        $"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
 
                 var subFolders = g.Key[idx..];
-                var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? throw new Exception($"Unable to build folder groups.  Current group had malformed Folder name.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
+                var nextFolder = subFolders.Split('\\', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ??
+                                 throw new Exception(
+                                     $"Unable to build folder groups.  Current group had malformed Folder name.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
 
                 // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we don't want multiple copies of \1 folder).
-                var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
+                var existing = currentBranch.ChildFolders.FirstOrDefault(f =>
+                    f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
 
-                if(existing == null)
+                if (existing == null)
                 {
                     // we don't have one already so create it
                     existing = new FolderNode<T>(nextFolder, currentBranch);
                     currentBranch.ChildFolders.Add(existing);
                 }
 
-                BuildFolderTree(g.ToArray(),existing);
+                BuildFolderTree(g.ToArray(), existing);
             }
-        }
 
         return currentBranch;
     }

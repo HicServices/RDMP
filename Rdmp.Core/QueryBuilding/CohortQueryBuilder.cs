@@ -74,20 +74,22 @@ public class CohortQueryBuilder
     public CohortQueryBuilderResult Results { get; private set; }
 
     #region constructors
+
     //Constructors - This one is the base one called by all others
     private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
         _globals = globals?.ToArray() ?? Array.Empty<ISqlParameter>();
         TopX = -1;
-            
+
         SQLOutOfDate = true;
 
         foreach (var parameter in _globals)
             ParameterManager.AddGlobalParameter(parameter);
     }
 
-    public CohortQueryBuilder(CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider):this(configuration.GetAllParameters(),childProvider)
+    public CohortQueryBuilder(CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider) : this(
+        configuration.GetAllParameters(), childProvider)
     {
         if (configuration == null)
             throw new QueryBuildingException("Configuration has not been set yet");
@@ -103,44 +105,49 @@ public class CohortQueryBuilder
         container = configuration.RootCohortAggregateContainer;
 
         SetChildProviderIfNull();
-            
     }
 
-    public CohortQueryBuilder(CohortAggregateContainer c,IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider): this(globals,childProvider)
+    public CohortQueryBuilder(CohortAggregateContainer c, IEnumerable<ISqlParameter> globals,
+        ICoreChildProvider childProvider) : this(globals, childProvider)
     {
         //set ourselves up to run with the root container
         container = c;
 
         SetChildProviderIfNull();
     }
-    public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider): this(globals,childProvider)
+
+    public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals,
+        ICoreChildProvider childProvider) : this(globals, childProvider)
     {
         //set ourselves up to run with the root container
         configuration = config;
 
         SetChildProviderIfNull();
     }
+
     private void SetChildProviderIfNull()
     {
         _childProvider ??= new CatalogueChildProvider(
-                configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null,null);
+            configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null, null);
     }
-
 
     #endregion
 
-    public string GetDatasetSampleSQL(int topX = 1000,ICoreChildProvider childProvider = null)
+    public string GetDatasetSampleSQL(int topX = 1000, ICoreChildProvider childProvider = null)
     {
-        if(configuration == null)
-            throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
+        if (configuration == null)
+            throw new NotSupportedException(
+                "Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
 
         //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
         var selectList =
-            string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
+            string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable()
+                ? "*"
+                : null;
 
-        RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX),CancellationToken.None);
+        RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX), CancellationToken.None);
 
-        Results.BuildFor(configuration,ParameterManager);
+        Results.BuildFor(configuration, ParameterManager);
 
         var sampleSQL = Results.Sql;
 
@@ -151,7 +158,6 @@ public class CohortQueryBuilder
 
         var parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
         return $"{parameterSql}{Environment.NewLine}{sampleSQL}";
-
     }
 
     public void RegenerateSQL()
@@ -161,23 +167,25 @@ public class CohortQueryBuilder
 
     public void RegenerateSQL(CancellationToken cancellationToken)
     {
-        RecreateHelpers(null,cancellationToken);
+        RecreateHelpers(null, cancellationToken);
 
         ParameterManager.ClearNonGlobals();
 
         Results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
 
         if (container != null)
-            Results.BuildFor(container,ParameterManager);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
+            Results.BuildFor(container,
+                ParameterManager); //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
         else
-            Results.BuildFor(configuration,ParameterManager);//user constructed us without a container, he only cares about 1 aggregate
+            Results.BuildFor(configuration,
+                ParameterManager); //user constructed us without a container, he only cares about 1 aggregate
 
         _sql = Results.Sql;
 
         //Still finalise the ParameterManager even if we are not writing out the parameters so that it is in the Finalized state
         var finalParameters = ParameterManager.GetFinalResolvedParametersList();
 
-        if(!DoNotWriteOutParameters)
+        if (!DoNotWriteOutParameters)
         {
             var parameterSql = "";
 
@@ -185,15 +193,16 @@ public class CohortQueryBuilder
             foreach (var param in finalParameters)
                 parameterSql += QueryBuilder.GetParameterDeclarationSQL(param);
 
-            _sql =  parameterSql + _sql;
+            _sql = parameterSql + _sql;
         }
+
         SQLOutOfDate = false;
     }
 
     private void RecreateHelpers(QueryBuilderCustomArgs customizations, CancellationToken cancellationToken)
     {
         helper = new CohortQueryBuilderHelper();
-        Results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations,cancellationToken);
+        Results = new CohortQueryBuilderResult(CacheServer, _childProvider, helper, customizations, cancellationToken);
     }
 
     /// <summary>

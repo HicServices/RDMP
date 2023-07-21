@@ -13,23 +13,19 @@ namespace Rdmp.UI.CommandExecution.Proposals;
 
 internal class ProposeExecutionWhenTargetIsExtractableCohort : RDMPCommandExecutionProposal<ExtractableCohort>
 {
-    public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator):base(activator)
+    public ProposeExecutionWhenTargetIsExtractableCohort(IActivateItems activator) : base(activator)
     {
     }
 
-    public override bool CanActivate(ExtractableCohort target)
-    {
-        return true;
-    }
+    public override bool CanActivate(ExtractableCohort target) => true;
 
     public override void Activate(ExtractableCohort target)
     {
         ItemActivator.Activate<ExtractableCohortUI, ExtractableCohort>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
-    {
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractableCohort target,
+        InsertOption insertOption = InsertOption.Default) =>
         //no command possible, dragged command must have been something else
-        return null;
-    }
+        null;
 }

@@ -32,17 +32,18 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
     public int Timeout { get; set; }
 
     #region Serialization
+
     public void RestoreStateFrom(string value)
     {
-        if(string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
             return;
 
-        var lines = value.Split(new []{'\n','\r'},StringSplitOptions.RemoveEmptyEntries);
+        var lines = value.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
         if (lines.Length > 0)
         {
             var fields = lines[0].Split(';');
-            if(fields.Length>0)
+            if (fields.Length > 0)
                 if (Enum.TryParse(fields[0], out DataLoadProgressUpdateStrategy strat))
                     Strategy = strat;
 
@@ -60,10 +61,11 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
     {
         var sb = new StringBuilder();
         sb.AppendLine($"{Strategy};{Timeout}");
-        sb.AppendLine(ExecuteScalarSQL??"");
-            
+        sb.AppendLine(ExecuteScalarSQL ?? "");
+
         return sb.ToString();
     }
+
     #endregion
 
 
@@ -89,7 +91,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
             case DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW:
                 try
                 {
-                    var dt = GetMaxDate(rawDatabase.Server,job);
+                    var dt = GetMaxDate(rawDatabase.Server, job);
                     added = new UpdateProgressToSpecificValueIfLoadsuccessful(job, dt);
                 }
                 catch (SqlException e)
@@ -97,6 +99,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
                     throw new DataLoadProgressUpdateException(
                         $"Failed to execute the following SQL in the RAW database:{ExecuteScalarSQL}", e);
                 }
+
                 break;
             case DataLoadProgressUpdateStrategy.DoNothing:
                 //Do not add any post load update i.e. do nothing
@@ -109,10 +112,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         return added;
     }
 
-    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job)
-    {
-        return DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
-    }
+    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job) =>
+        DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
     {
@@ -126,7 +127,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         var scalarValue = cmd.ExecuteScalar();
 
         if (scalarValue == null || scalarValue == DBNull.Value)
-            throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
+            throw new DataLoadProgressUpdateException(
+                "ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
 
         try
         {
@@ -135,13 +137,15 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         catch (Exception e)
         {
             throw new DataLoadProgressUpdateException(
-                $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}", e);
+                $"ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:{scalarValue}",
+                e);
         }
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        if(Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE  || Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW)
+        if (Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE ||
+            Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW)
             if (string.IsNullOrWhiteSpace(ExecuteScalarSQL))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
@@ -150,19 +154,20 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 
         // TODO: These checks are VERY Sql Server specific!
 
-        if(Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW)
-            if (ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") || ExecuteScalarSQL.Contains(".dbo."))
+        if (Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW)
+            if (ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") ||
+                ExecuteScalarSQL.Contains(".dbo."))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Strategy is {Strategy} but the SQL looks like it references explicit tables, In general RAW queries should use unqualified table names i.e. 'Select MAX(dt) FROM MyTable' NOT 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]'",
                         CheckResult.Warning));
 
         if (Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE)
-            if (!(ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") || ExecuteScalarSQL.Contains(".dbo.")))
+            if (!(ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") ||
+                  ExecuteScalarSQL.Contains(".dbo.")))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Strategy is {Strategy} but the SQL does not contain '..' or '.[dbo].' or '.dbo.', LIVE update queries should use fully table names i.e. 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]' NOT 'Select MAX(dt) FROM MyTable'",
                         CheckResult.Warning));
-                        
     }
 }

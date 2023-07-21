@@ -25,7 +25,7 @@ using Tests.Common.Helpers;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
+public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 {
     private CacheProgress _cp;
     private LoadProgress _lp;
@@ -59,8 +59,10 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
     [Test]
     public void CacheProvider_None()
     {
-        var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.IsTrue(ex.Message.StartsWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration does not have ANY process tasks of type ProcessTaskType.DataProvider"));
+        var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
+            _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
+        Assert.IsTrue(ex.Message.StartsWith(
+            "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration does not have ANY process tasks of type ProcessTaskType.DataProvider"));
     }
 
 
@@ -69,14 +71,16 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
     {
         var pt = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles)
         {
-            Path = typeof (DoNothingDataProvider).FullName,
+            Path = typeof(DoNothingDataProvider).FullName,
             ProcessTaskType = ProcessTaskType.DataProvider,
             Name = "DoNothing"
         };
         pt.SaveToDatabase();
 
-        var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.IsTrue(ex.Message.StartsWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
+        var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
+            _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
+        Assert.IsTrue(ex.Message.StartsWith(
+            "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
     }
 
 
@@ -99,8 +103,11 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         };
         pt2.SaveToDatabase();
 
-        var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.AreEqual("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has multiple cache DataProviders tasks (Cache1,Cache2), you are only allowed 1",ex.Message);
+        var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
+            _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
+        Assert.AreEqual(
+            "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has multiple cache DataProviders tasks (Cache1,Cache2), you are only allowed 1",
+            ex.Message);
     }
 
     [Test]
@@ -120,12 +127,14 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
 
         pt1.CreateArgumentsForClassIfNotExists<TestCachedFileRetriever>();
 
-        var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true);
+        var projDir =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
+                true);
         _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
         _lmd.SaveToDatabase();
         try
         {
-            var ex = Assert.Throws<Exception>(() => _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet));
+            var ex = Assert.Throws<Exception>(() => _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
             Assert.AreEqual("CacheProgress MyTestCp does not have a Pipeline configured on it", ex.Message);
         }
         finally
@@ -145,7 +154,9 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         };
         pt1.SaveToDatabase();
 
-        var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true);
+        var projDir =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
+                true);
         _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
         _lmd.SaveToDatabase();
 
@@ -154,9 +165,11 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
 
         try
         {
-            var ex = Assert.Throws<InvalidOperationException>(()=>_factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet));
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
             Assert.AreEqual(
-                $"Caching has not begun for this CacheProgress ({_cp.ID}), so there is nothing to load and this strategy should not be used.",ex.Message);
+                $"Caching has not begun for this CacheProgress ({_cp.ID}), so there is nothing to load and this strategy should not be used.",
+                ex.Message);
         }
         finally
         {
@@ -165,6 +178,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
             projDir.RootPath.Delete(true);
         }
     }
+
     [Test]
     public void CacheProvider_Normal()
     {
@@ -179,7 +193,9 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         _cp.CacheFillProgress = new DateTime(2010, 1, 1);
         _cp.SaveToDatabase();
 
-        var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true);
+        var projDir =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
+                true);
         _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
         _lmd.SaveToDatabase();
 
@@ -188,22 +204,23 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
 
         try
         {
-            var strategy = _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet);
+            var strategy = _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet);
             Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
 
             var dates = strategy.GetDates(10, false);
-            Assert.AreEqual(0,dates.Count); //zero dates to load because no files in cache
+            Assert.AreEqual(0, dates.Count); //zero dates to load because no files in cache
 
-            File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-02.zip"),"bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
-            File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-03.zip"), "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
-            File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-05.zip"), "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
+            File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-02.zip"),
+                "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
+            File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-03.zip"),
+                "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
+            File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-05.zip"),
+                "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
 
-            strategy = _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet);
+            strategy = _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet);
             Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
             dates = strategy.GetDates(10, false);
             Assert.AreEqual(3, dates.Count); //zero dates to load because no files in cache
-
-
         }
         finally
         {

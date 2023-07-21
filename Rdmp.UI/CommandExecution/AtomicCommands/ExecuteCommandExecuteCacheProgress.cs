@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicCommandWithTarget
+public class ExecuteCommandExecuteCacheProgress : BasicUICommandExecution, IAtomicCommandWithTarget
 {
     private CacheProgress _cp;
 
@@ -30,22 +30,17 @@ public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicC
     public ExecuteCommandExecuteCacheProgress(IActivateItems activator)
         : base(activator)
     {
-
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
-    }
+    public override string GetCommandHelp() =>
+        "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _cp = (CacheProgress) target;
+        _cp = (CacheProgress)target;
         return this;
     }
 
@@ -54,10 +49,10 @@ public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicC
         base.Execute();
 
         _cp ??= SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
-            
-        if(_cp == null)
+
+        if (_cp == null)
             return;
-            
+
         Activator.Activate<ExecuteCacheProgressUI, CacheProgress>(_cp);
     }
 }

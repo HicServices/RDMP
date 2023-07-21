@@ -118,23 +118,23 @@ public class HICPipelineTests : DatabaseTests
             // Not assigned to a variable as they will be magically available through the repository
             var processTaskArgs = new List<Tuple<string, string, Type>>
             {
-                new("FilePattern", "1.csv", typeof (string)),
-                new("TableName", "TestData", typeof (string)),
-                new("ForceHeaders", null, typeof (string)),
-                new("IgnoreQuotes", null, typeof (bool)),
-                new("IgnoreBlankLines", null, typeof (bool)),
-                new("ForceHeadersReplacesFirstLineInFile", null, typeof (bool)),
-                new("SendLoadNotRequiredIfFileNotFound", "false", typeof (bool)),
-                new("Separator", ",", typeof (string)),
-                new("TableToLoad", null, typeof (TableInfo)),
-                new("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(), typeof (BadDataHandlingStrategy)),
-                new("ThrowOnEmptyFiles", "true", typeof (bool)),
-                new("AttemptToResolveNewLinesInRecords", "true", typeof (bool)),
-                new("MaximumErrorsToReport", "0", typeof (int)),
-                new("IgnoreColumns", null, typeof (string)),
-                new("IgnoreBadReads", "false", typeof (bool)),
-                new("AddFilenameColumnNamed", null, typeof (string))
-
+                new("FilePattern", "1.csv", typeof(string)),
+                new("TableName", "TestData", typeof(string)),
+                new("ForceHeaders", null, typeof(string)),
+                new("IgnoreQuotes", null, typeof(bool)),
+                new("IgnoreBlankLines", null, typeof(bool)),
+                new("ForceHeadersReplacesFirstLineInFile", null, typeof(bool)),
+                new("SendLoadNotRequiredIfFileNotFound", "false", typeof(bool)),
+                new("Separator", ",", typeof(string)),
+                new("TableToLoad", null, typeof(TableInfo)),
+                new("BadDataHandlingStrategy", BadDataHandlingStrategy.ThrowException.ToString(),
+                    typeof(BadDataHandlingStrategy)),
+                new("ThrowOnEmptyFiles", "true", typeof(bool)),
+                new("AttemptToResolveNewLinesInRecords", "true", typeof(bool)),
+                new("MaximumErrorsToReport", "0", typeof(int)),
+                new("IgnoreColumns", null, typeof(string)),
+                new("IgnoreBadReads", "false", typeof(bool)),
+                new("AddFilenameColumnNamed", null, typeof(string))
             };
 
 
@@ -157,6 +157,7 @@ public class HICPipelineTests : DatabaseTests
 
 
         public DiscoveredDatabase DatabaseToLoad { get; private set; }
+
         public void SetUp(DiscoveredServer server)
         {
             _server = server;
@@ -176,11 +177,15 @@ public class HICPipelineTests : DatabaseTests
                     "CREATE TABLE TestData ([Col1] [int], [hic_dataLoadRunID] [int] NULL, [hic_validFrom] [datetime] NULL, CONSTRAINT [PK_TestData] PRIMARY KEY CLUSTERED ([Col1] ASC))";
                 const string addValidFromDefault =
                     "ALTER TABLE TestData ADD CONSTRAINT [DF_TestData__hic_validFrom]  DEFAULT (getdate()) FOR [hic_validFrom]";
-                using(var cmd = DatabaseCommandHelper.GetCommand(createDatasetTableQuery, con))
+                using (var cmd = DatabaseCommandHelper.GetCommand(createDatasetTableQuery, con))
+                {
                     cmd.ExecuteNonQuery();
+                }
 
-                using(var cmd = DatabaseCommandHelper.GetCommand(addValidFromDefault, con))
+                using (var cmd = DatabaseCommandHelper.GetCommand(addValidFromDefault, con))
+                {
                     cmd.ExecuteNonQuery();
+                }
             }
 
             // Ensure the dataset table has been created
@@ -237,7 +242,7 @@ public class HICPipelineTests : DatabaseTests
 
             if (overrideRAW)
             {
-                external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server",null);
+                external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server", null);
                 external.SetProperties(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("master"));
 
                 if (sendDodgyCredentials)
@@ -245,6 +250,7 @@ public class HICPipelineTests : DatabaseTests
                     external.Username = "IveGotaLovely";
                     external.Password = "BunchOfCoconuts";
                 }
+
                 external.SaveToDatabase();
 
                 defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, external);
@@ -257,29 +263,36 @@ public class HICPipelineTests : DatabaseTests
             };
 
             //run checks (with ignore errors if we are sending dodgy credentials)
-            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
-                sendDodgyCredentials?
-                    (ICheckNotifier) IgnoreAllErrorsCheckNotifier.Instance: new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options).Run(RepositoryLocator,
+                ThrowImmediatelyDataLoadEventListener.Quiet,
+                sendDodgyCredentials
+                    ? (ICheckNotifier)IgnoreAllErrorsCheckNotifier.Instance
+                    : new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
             //run load
             options.Command = CommandLineActivity.run;
-            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
+            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options);
 
 
             if (sendDodgyCredentials)
             {
-                var ex = Assert.Throws<Exception>(()=>runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken()));
-                Assert.IsTrue(ex.InnerException.Message.Contains("Login failed for user 'IveGotaLovely'"),"Error message did not contain expected text");
+                var ex = Assert.Throws<Exception>(() => runner.Run(RepositoryLocator,
+                    ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+                    new GracefulCancellationToken()));
+                Assert.IsTrue(ex.InnerException.Message.Contains("Login failed for user 'IveGotaLovely'"),
+                    "Error message did not contain expected text");
                 return;
             }
             else
-                runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+            {
+                runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+                    new GracefulCancellationToken());
+            }
 
 
-            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f=>f.FullName);
-            Assert.NotNull(archiveFile,"Archive file has not been created by the load.");
+            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f => f.FullName);
+            Assert.NotNull(archiveFile, "Archive file has not been created by the load.");
             Assert.IsFalse(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any());
-
         }
         finally
         {
@@ -300,7 +313,6 @@ public class TestCacheFileRetriever : CachedFileRetriever
 {
     public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-
     }
 
     public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)

@@ -86,14 +86,13 @@ public abstract class BasicCommandExecution : IAtomicCommand
 
     protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
     {
-        if (m?.ShouldBeReadOnly(out var reason)==true)
-        {
-            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
-        }
+        if (m?.ShouldBeReadOnly(out var reason) == true)
+            SetImpossible(
+                $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
     }
+
     public BasicCommandExecution()
     {
-
     }
 
     public BasicCommandExecution(IBasicActivateItems basicActivator)
@@ -126,7 +125,6 @@ public abstract class BasicCommandExecution : IAtomicCommand
             adjusted += "...";
 
         return UsefulStuff.PascalCaseStringToHumanReadable(adjusted);
-        
     }
 
     /// <summary>
@@ -134,29 +132,17 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// </summary>
     /// <param name="typeName"></param>
     /// <returns></returns>
-    public static string GetCommandName(string typeName)
-    {
-        return typeName.Replace(ExecuteCommandPrefix, "");
-    }
+    public static string GetCommandName(string typeName) => typeName.Replace(ExecuteCommandPrefix, "");
 
     /// <summary>
     /// Returns the name of the command in programmatic format e.g. no spaces no triple dot suffix etc.
     /// </summary>
     /// <returns></returns>
-    public static string GetCommandName<T>() where T : BasicCommandExecution
-    {
-        return GetCommandName(typeof(T).Name);
-    }
+    public static string GetCommandName<T>() where T : BasicCommandExecution => GetCommandName(typeof(T).Name);
 
-    public virtual string GetCommandHelp()
-    {
-        return string.Empty;
-    }
+    public virtual string GetCommandHelp() => string.Empty;
 
-    public virtual Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return OverrideIcon;
-    }
+    public virtual Image<Rgba32> GetImage(IIconProvider iconProvider) => OverrideIcon;
 
     /// <summary>
     /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programatically etc.
@@ -167,6 +153,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         IsImpossible = true;
         ReasonCommandImpossible = reason;
     }
+
     /// <summary>
     /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programatically etc.
     /// This overload calls string.Format with the <paramref name="objects"/>
@@ -176,7 +163,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     protected void SetImpossible(string reason, params object[] objects)
     {
         IsImpossible = true;
-        ReasonCommandImpossible = string.Format(reason,objects);
+        ReasonCommandImpossible = string.Format(reason, objects);
     }
 
     /// <summary>
@@ -194,18 +181,14 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="text">The question to pose</param>
     /// <param name="caption"></param>
     /// <returns></returns>
-    protected bool YesNo(string text,string caption)
-    {
-        return BasicActivator.YesNo(text,caption);
-    }
+    protected bool YesNo(string text, string caption) => BasicActivator.YesNo(text, caption);
 
     protected virtual void Publish(IMapsDirectlyToDatabaseTable o)
     {
-
         if (NoPublish)
             return;
 
-        if(o is DatabaseEntity d)
+        if (o is DatabaseEntity d)
             BasicActivator.Publish(d);
     }
 
@@ -218,7 +201,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     protected void GlobalError(string msg, Exception ex)
     {
         if (BasicActivator?.GlobalErrorCheckNotifier == null)
-            throw new Exception(msg,ex);
+            throw new Exception(msg, ex);
 
         BasicActivator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
     }
@@ -239,7 +222,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="message"></param>
     protected void Show(string title, string message)
     {
-        BasicActivator.Show(title,message);
+        BasicActivator.Show(title, message);
     }
 
     /// <summary>
@@ -249,7 +232,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
     protected void Show(string message, params object[] objects)
     {
-        BasicActivator.Show(string.Format(message,objects));
+        BasicActivator.Show(string.Format(message, objects));
     }
 
 
@@ -263,22 +246,20 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="text"></param>
     /// <param name="requireSaneHeaderText"></param>
     /// <returns></returns>
-    protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
-    {
-        return BasicActivator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
-    }
+    protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+        bool requireSaneHeaderText = false) =>
+        BasicActivator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
 
     /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
-    protected bool TypeText(string header, string prompt, out string text)
-    {
-        return TypeText(header, prompt, 500, null, out text);
-    }
+    protected bool TypeText(string header, string prompt, out string text) =>
+        TypeText(header, prompt, 500, null, out text);
 
     /// <inheritdoc cref="IBasicActivateItems.ShowException"/>
     protected void ShowException(string message, Exception exception)
     {
-        BasicActivator.ShowException(message,exception);
+        BasicActivator.ShowException(message, exception);
     }
+
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide
     /// </summary>
@@ -287,14 +268,15 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
-    {
-        return SelectOne(new DialogArgs {
+    protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
+        where T : DatabaseEntity =>
+        SelectOne(new DialogArgs
+        {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        },availableObjects, out var selected) ? selected : null;
-
-    }
+        }, availableObjects, out var selected)
+            ? selected
+            : null;
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide
@@ -303,10 +285,8 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="args"></param>
     /// <param name="availableObjects"></param>
     /// <returns></returns>
-    protected T SelectOne<T>(DialogArgs args, IList<T> availableObjects) where T : DatabaseEntity
-    {
-        return SelectOne(args, availableObjects, out var selected) ? selected : null;
-    }
+    protected T SelectOne<T>(DialogArgs args, IList<T> availableObjects) where T : DatabaseEntity =>
+        SelectOne(args, availableObjects, out var selected) ? selected : null;
 
     /// <summary>
     /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
@@ -316,13 +296,15 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
-    {
-        return SelectOne(new DialogArgs {
+    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false)
+        where T : DatabaseEntity =>
+        SelectOne(new DialogArgs
+        {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
-    }
+        }, repository.GetAllObjects<T>().ToList(), out var answer)
+            ? answer
+            : null;
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
@@ -333,14 +315,13 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
-    {
-        return SelectOne(new DialogArgs
+    protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null,
+        bool allowAutoSelect = false) where T : DatabaseEntity =>
+        SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        }, repository.GetAllObjects<T>().ToList(),out selected);
-    }
+        }, repository.GetAllObjects<T>().ToList(), out selected);
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
@@ -351,14 +332,13 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
-    {
-        return SelectOne(new DialogArgs
+    protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null,
+        bool allowAutoSelect = false) where T : DatabaseEntity =>
+        SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
-        },availableObjects,out selected);
-    }
+        }, availableObjects, out selected);
 
     /// <summary>
     /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
@@ -370,7 +350,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <returns></returns>
     protected bool SelectOne<T>(DialogArgs args, IList<T> availableObjects, out T selected) where T : DatabaseEntity
     {
-        selected = (T)BasicActivator.SelectOne(args,availableObjects.ToArray());
+        selected = (T)BasicActivator.SelectOne(args, availableObjects.ToArray());
         return selected != null;
     }
 
@@ -382,15 +362,17 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="repository"></param>
     /// <param name="selected"></param>
     /// <returns></returns>
-    protected bool SelectOne<T>(DialogArgs args,IRepository repository, out T selected) where T : DatabaseEntity
+    protected bool SelectOne<T>(DialogArgs args, IRepository repository, out T selected) where T : DatabaseEntity
     {
         selected = (T)BasicActivator.SelectOne(args, repository.GetAllObjects<T>().ToArray());
         return selected != null;
     }
 
-    protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
+    protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null)
+        where T : DatabaseEntity
     {
-        selected = BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText)?.Cast<T>()?.ToArray();
+        selected = BasicActivator.SelectMany("Select Objects", typeof(T), available, initialSearchText)?.Cast<T>()
+            ?.ToArray();
         return selected != null && selected.Any();
     }
 
@@ -402,22 +384,19 @@ public abstract class BasicCommandExecution : IAtomicCommand
 
     protected void Wait(string title, Task task, CancellationTokenSource cts)
     {
-        BasicActivator.Wait(title,task,cts);
+        BasicActivator.Wait(title, task, cts);
     }
+
     protected void Emphasise(object o, int expansionDepth = 0)
     {
         BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
     }
 
-    protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
-    {
-        return BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
-    }
+    protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription) =>
+        BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
 
-    protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
-    {
-        return BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
-    }
+    protected DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription) =>
+        BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
 
     protected virtual void Activate(DatabaseEntity o)
     {
@@ -436,7 +415,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
     {
         var invoker = new CommandInvoker(BasicActivator);
-            
+
         var constructor = constructorSelector();
 
         var constructorValues = new List<object>();
@@ -449,7 +428,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
             var parameterDelegate = invoker.GetDelegate(required);
 
             if (parameterDelegate.IsAuto)
+            {
                 constructorValues.Add(parameterDelegate.Run(required));
+            }
             else
             {
                 //it's not auto
@@ -457,16 +438,17 @@ public abstract class BasicCommandExecution : IAtomicCommand
                 {
                     pickerEnumerator.MoveNext();
 
-                    if(pickerEnumerator.Current == null)
-                        throw new ArgumentException($"Value needed for parameter '{required.Name}' (of type '{required.Type}')");
+                    if (pickerEnumerator.Current == null)
+                        throw new ArgumentException(
+                            $"Value needed for parameter '{required.Name}' (of type '{required.Type}')");
 
                     //construct with the picker arguments
-                    if(!pickerEnumerator.Current.HasValueOfType(required.Type))
-                        throw new NotSupportedException($"Argument '{pickerEnumerator.Current.RawValue}' could not be converted to required Type '{required.Type}' for argument {required.Name}");
+                    if (!pickerEnumerator.Current.HasValueOfType(required.Type))
+                        throw new NotSupportedException(
+                            $"Argument '{pickerEnumerator.Current.RawValue}' could not be converted to required Type '{required.Type}' for argument {required.Name}");
 
                     //it is a valid object yay!
                     constructorValues.Add(pickerEnumerator.Current.GetValueForParameterOfType(required.Type));
-
                 }
                 else
                 {
@@ -497,10 +479,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         }
     }
 
-    public override string ToString()
-    {
-        return GetCommandName();
-    }
+    public override string ToString() => GetCommandName();
 
     protected static CommentStore CreateCommentStore()
     {
@@ -516,12 +495,12 @@ public abstract class BasicCommandExecution : IAtomicCommand
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
         return
-            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase)
+            commandType.Name.Equals(ExecuteCommandPrefix + name, StringComparison.InvariantCultureIgnoreCase)
             ||
-            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase)
+            commandType.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
             ||
             commandType.GetCustomAttributes<AliasAttribute>(false)
-                .Any(a=>a.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
+                .Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
     }
 
 
@@ -538,9 +517,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="description"></param>
     /// <param name="trackObjects">Objects to do change tracking on within the transaction</param>
     /// <returns></returns>
-    protected bool ExecuteWithCommit(Action toRun, string description, params IMapsDirectlyToDatabaseTable[] trackObjects)
+    protected bool ExecuteWithCommit(Action toRun, string description,
+        params IMapsDirectlyToDatabaseTable[] trackObjects)
     {
-
         CommitInProgress commit = null;
         var revert = false;
 
@@ -556,28 +535,18 @@ public abstract class BasicCommandExecution : IAtomicCommand
             toRun();
 
             // if user cancells transaction
-            if (commit != null && commit.TryFinish(BasicActivator) == null)
-            {
-                revert = true;
-            }
+            if (commit != null && commit.TryFinish(BasicActivator) == null) revert = true;
         }
         finally
         {
             commit?.Dispose();
         }
 
-        if(revert)
-        {
+        if (revert)
             foreach (var o in trackObjects)
-            {
-                if(o is IRevertable re)
-                {
+                if (o is IRevertable re)
                     re.RevertToDatabaseState();
-                }
-            }
-        }
 
         return !revert;
     }
-
 }

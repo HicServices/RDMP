@@ -32,9 +32,9 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>ColumnInfo ensures a cached representation of the underlying database so that RDMP can rationalize and inform the system user of disappearing
 /// columns etc and let the user make decisions about how to resolve it.</para>
 /// </summary>
-public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
+public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable,
+    IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
 {
-
     #region Database Properties
 
     private int _tableInfoID;
@@ -61,7 +61,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public int TableInfo_ID
     {
         get => _tableInfoID;
-        private set => SetField(ref  _tableInfoID, value);
+        private set => SetField(ref _tableInfoID, value);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public int? ANOTable_ID
     {
         get => _anoTableID;
-        set => SetField(ref  _anoTableID, value);
+        set => SetField(ref _anoTableID, value);
     }
 
     /// <summary>
@@ -81,14 +81,14 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
     public string Data_type
     {
         get => _dataType;
-        set => SetField(ref  _dataType, value);
+        set => SetField(ref _dataType, value);
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string Format
     {
         get => _format;
-        set => SetField(ref  _format, value);
+        set => SetField(ref _format, value);
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string Digitisation_specs
     {
         get => _digitisationSpecs;
-        set => SetField(ref  _digitisationSpecs, value);
+        set => SetField(ref _digitisationSpecs, value);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string Source
     {
         get => _source;
-        set => SetField(ref  _source, value);
+        set => SetField(ref _source, value);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public ColumnStatus? Status
     {
         get => _status;
-        set => SetField(ref  _status, value);
+        set => SetField(ref _status, value);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string RegexPattern
     {
         get => _regexPattern;
-        set => SetField(ref  _regexPattern, value);
+        set => SetField(ref _regexPattern, value);
     }
 
     /// <summary>
@@ -154,28 +154,28 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public string ValidationRules
     {
         get => _validationRules;
-        set => SetField(ref  _validationRules, value);
+        set => SetField(ref _validationRules, value);
     }
 
     /// <inheritdoc/>
     public bool IsPrimaryKey
     {
         get => _isPrimaryKey;
-        set => SetField(ref  _isPrimaryKey, value);
+        set => SetField(ref _isPrimaryKey, value);
     }
 
     /// <inheritdoc/>
     public bool IsAutoIncrement
     {
         get => _isAutoIncrement;
-        set => SetField(ref  _isAutoIncrement, value);
+        set => SetField(ref _isAutoIncrement, value);
     }
 
     /// <inheritdoc/>
     public string Collation
     {
         get => _collation;
-        set => SetField(ref  _collation, value);
+        set => SetField(ref _collation, value);
     }
 
     /// <summary>
@@ -187,7 +187,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public int? DuplicateRecordResolutionOrder
     {
         get => _duplicateRecordResolutionOrder;
-        set => SetField(ref  _duplicateRecordResolutionOrder, value);
+        set => SetField(ref _duplicateRecordResolutionOrder, value);
     }
 
     /// <summary>
@@ -198,7 +198,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public bool DuplicateRecordResolutionIsAscending
     {
         get => _duplicateRecordResolutionIsAscending;
-        set => SetField(ref  _duplicateRecordResolutionIsAscending, value);
+        set => SetField(ref _duplicateRecordResolutionIsAscending, value);
     }
 
     /// <summary>
@@ -207,7 +207,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public bool IgnoreInLoads
     {
         get => _ignoreInLoads;
-        set => SetField(ref  _ignoreInLoads, value);
+        set => SetField(ref _ignoreInLoads, value);
     }
 
     #endregion
@@ -220,15 +220,16 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
     /// <inheritdoc cref="ANOTable_ID"/>
     [NoMappingToDatabase]
-    public ANOTable ANOTable => ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int) ANOTable_ID);
+    public ANOTable ANOTable => ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int)ANOTable_ID);
 
     /// <summary>
     /// Fetches all <see cref="ExtractionInformation"/> which draw on this <see cref="ColumnInfo"/>.  This could be none (if it is not extractable) or more than one
     /// (if there are multiple extraction transforms available for the column or if the column/table is part of multiple <see cref="Catalogue"/>)
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionInformation> ExtractionInformations {
-        get { return CatalogueItems.Select(e=>e.ExtractionInformation).Where(o=>o != null); }
+    public IEnumerable<ExtractionInformation> ExtractionInformations
+    {
+        get { return CatalogueItems.Select(e => e.ExtractionInformation).Where(o => o != null); }
     }
 
     /// <summary>
@@ -285,12 +286,12 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         //defaults
         DuplicateRecordResolutionIsAscending = true;
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name != null ? (object) name : DBNull.Value},
-            {"Data_type", type != null ? (object) type : DBNull.Value},
-            {"TableInfo_ID", parent.ID},
-            { "IgnoreInLoads",false}
+            { "Name", name != null ? (object)name : DBNull.Value },
+            { "Data_type", type != null ? (object)type : DBNull.Value },
+            { "TableInfo_ID", parent.ID },
+            { "IgnoreInLoads", false }
         });
 
         ClearAllInjections();
@@ -300,7 +301,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         : base(repository, r)
     {
         TableInfo_ID = int.Parse(r["TableInfo_ID"].ToString());
-        Name =r["Name"].ToString();
+        Name = r["Name"].ToString();
         Data_type = r["Data_type"].ToString();
         Format = r["Format"].ToString();
         Digitisation_specs = r["Digitisation_specs"].ToString();
@@ -337,10 +338,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     /// Returns the fully qualified <see cref="Name"/> of the <see cref="ColumnInfo"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Allows sorting by fully qualified <see cref="Name"/>.
@@ -354,20 +352,13 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
                 StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
-            
     }
 
     ///<inheritdoc/>
-    public string GetRuntimeName()
-    {
-        return Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
-    }
+    public string GetRuntimeName() => Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
 
     ///<inheritdoc/>
-    public string GetFullyQualifiedName()
-    {
-        return Name;
-    }
+    public string GetFullyQualifiedName() => Name;
 
     private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
     private Lazy<TableInfo> _knownTableInfo;
@@ -384,11 +375,9 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         var finalName = GetRuntimeName();
 
         if (stage <= LoadStage.AdjustRaw)
-        {
             //see if it has an ANO Transform on it
             if (ANOTable_ID != null && finalName.StartsWith("ANO"))
                 return finalName["ANO".Length..];
-        }
 
         //any other stage will be the regular final name
         return finalName;
@@ -407,10 +396,13 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //if it has an ANO transform
             if (ANOTable_ID != null)
-                return ANOTable.GetRuntimeDataType(loadStage);    //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
+                return
+                    ANOTable.GetRuntimeDataType(
+                        loadStage); //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
 
             //it doesn't have an ANOtransform but it might be the subject of dilution
-            var discard = TableInfo.PreLoadDiscardedColumns.SingleOrDefault(c=>c.GetRuntimeName().Equals(GetRuntimeName(),StringComparison.InvariantCultureIgnoreCase));
+            var discard = TableInfo.PreLoadDiscardedColumns.SingleOrDefault(c =>
+                c.GetRuntimeName().Equals(GetRuntimeName(), StringComparison.InvariantCultureIgnoreCase));
 
             //The column exists both in the live database and in the identifier dump.  This is because it goes through horrendous bitcrushing operations e.g. Load RAW with full
             //postcode varchar(8) and ship postcode off to identifier dump but also let it go through to live but only as the first 4 letters varchar(4).  so the datatype of the column
@@ -446,7 +438,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
         if (ANOTable_ID != null)
             iDependOn.Add(ANOTable);
-            
+
         return iDependOn.ToArray();
     }
 
@@ -455,10 +447,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         var dependantObjects = new List<IHasDependencies>();
-            
+
         //also any CatalogueItems that reference us
         dependantObjects.AddRange(CatalogueItems);
-            
+
         //also lookups are dependent on us
         dependantObjects.AddRange(GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey));
 
@@ -485,12 +477,16 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             //make sure it doesn't start with ANO (if it does it should have an ANOTable, maybe the user is calling his column ANOUNCEMENT or something (not permitted)
             if (GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"ColumnInfo {this} (ID={ID}) begins with {ANOTable.ANOPrefix} but does not have an ANOTable configured for it", CheckResult.Warning, null));
+                    $"ColumnInfo {this} (ID={ID}) begins with {ANOTable.ANOPrefix} but does not have an ANOTable configured for it",
+                    CheckResult.Warning, null));
         }
-        else//if it does have an ANO transform it must start with ANO
-        if(!GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
+        else //if it does have an ANO transform it must start with ANO
+        if (!GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
+        {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"ColumnInfo {this} (ID={ID}) has an ANOTable configured but does not start with {ANOTable.ANOPrefix} (All anonymised columns must start with {ANOTable.ANOPrefix})", CheckResult.Fail, null));
+                $"ColumnInfo {this} (ID={ID}) has an ANOTable configured but does not start with {ANOTable.ANOPrefix} (All anonymised columns must start with {ANOTable.ANOPrefix})",
+                CheckResult.Fail, null));
+        }
     }
 
     /// <summary>
@@ -503,11 +499,11 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         if (type == LookupType.Description)
             return Repository.GetAllObjectsWhere<Lookup>("Description_ID", ID);
         if (type == LookupType.AnyKey)
-            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID,ExpressionType.OrElse,"PrimaryKey_ID",ID);
+            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID, ExpressionType.OrElse, "PrimaryKey_ID",
+                ID);
         return type == LookupType.ForeignKey
             ? Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID)
-            :
-        throw new NotImplementedException($"Unrecognised LookupType {type}");
+            : throw new NotImplementedException($"Unrecognised LookupType {type}");
     }
 
     ///<inheritdoc/>
@@ -534,7 +530,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //is it numerical?
             var cSharpType = GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(Data_type);
-            return cSharpType == typeof (decimal) || cSharpType == typeof (int);
+            return cSharpType == typeof(decimal) || cSharpType == typeof(int);
         }
         catch (Exception)
         {

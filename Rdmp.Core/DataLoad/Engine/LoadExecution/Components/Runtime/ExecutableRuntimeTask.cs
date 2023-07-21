@@ -37,7 +37,8 @@ public class ExecutableRuntimeTask : RuntimeTask
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
 
         var info = new ProcessStartInfo
         {
@@ -52,8 +53,9 @@ public class ExecutableRuntimeTask : RuntimeTask
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Starting '{info.FileName}' with args '{info.Arguments}'"));
 
-        _currentProcess = new Process {StartInfo = info};
-        _currentProcess.OutputDataReceived += (sender, eventArgs) => job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, eventArgs.Data));
+        _currentProcess = new Process { StartInfo = info };
+        _currentProcess.OutputDataReceived += (sender, eventArgs) =>
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, eventArgs.Data));
 
         try
         {
@@ -67,7 +69,8 @@ public class ExecutableRuntimeTask : RuntimeTask
         _currentProcess.BeginOutputReadLine();
         var reader = _currentProcess.StandardError;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executable has been started successfully"));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, "Executable has been started successfully"));
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Waiting for executable to complete"));
 
         try
@@ -77,26 +80,27 @@ public class ExecutableRuntimeTask : RuntimeTask
         catch (Exception e)
         {
             ErrorText = reader.ReadToEnd();
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, e.ToString(),e));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.ToString(), e));
             throw new Exception($"Exception whilst waiting for the executable process to finish: {e}");
         }
 
         var exitCode = ParseExitCode(_currentProcess.ExitCode);
         job.OnNotify(this,
-            new NotifyEventArgs(exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
+            new NotifyEventArgs(
+                exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
                 $"Executable has exited with state '{exitCode}'"));
 
         if (exitCode == ExitCodeType.Error)
         {
             ErrorText = reader.ReadToEnd();
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, ErrorText));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, ErrorText));
             throw new Exception($"Executable process '{info.FileName} {info.Arguments}' failed: {ErrorText}");
         }
+
         _currentProcess = null;
 
         return exitCode;
     }
-
 
 
     public string CreateArgString()
@@ -104,7 +108,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         var args = new List<string>();
         RuntimeArguments.IterateAllArguments((name, value) =>
         {
-            if(value != null)
+            if (value != null)
                 args.Add(CommandLineHelper.CreateArgString(name, value));
             return true;
         });
@@ -117,10 +121,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         return !success ? throw new ArgumentException($"Could not parse exit code from value: {value}") : exitCode;
     }
 
-    public override bool Exists()
-    {
-        return File.Exists(ExeFilepath);
-    }
+    public override bool Exists() => File.Exists(ExeFilepath);
 
     public override void Abort(IDataLoadEventListener postDataLoadEventListener)
     {
@@ -137,9 +138,8 @@ public class ExecutableRuntimeTask : RuntimeTask
         }
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-            
     }
 
     public override void Check(ICheckNotifier notifier)
@@ -178,17 +178,12 @@ public class ExecutableRuntimeTask : RuntimeTask
         else
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Process Task called {ProcessTask.Name} references a file called {exeParsed[0]} which does not exist at this time.", CheckResult.Warning));
-
+                    $"Process Task called {ProcessTask.Name} references a file called {exeParsed[0]} which does not exist at this time.",
+                    CheckResult.Warning));
     }
 
-    public override string ToString()
-    {
-        return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
-    }
+    public override string ToString() =>
+        string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
 
-    public static XmlSchema GetSchema()
-    {
-        return null;
-    }
+    public static XmlSchema GetSchema() => null;
 }

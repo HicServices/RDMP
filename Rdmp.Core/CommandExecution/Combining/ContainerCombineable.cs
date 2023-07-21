@@ -37,8 +37,5 @@ public class ContainerCombineable : ICombineToMakeCommand
         AllContainersInEntireTreeFromRootDown.Add(root);
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

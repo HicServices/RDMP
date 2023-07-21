@@ -29,7 +29,7 @@ namespace Rdmp.Core.Curation.Data.Cohort;
 /// <para>EXCEPT - Take patients in the first child container/aggregate and discard any appearing in subsequent child containers/aggregates</para>
 /// 
 /// </summary>
-public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisableable, IMightBeReadOnly
+public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDisableable, IMightBeReadOnly
 {
     #region Database Properties
 
@@ -45,7 +45,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     public SetOperation Operation
     {
         get => _operation;
-        set => SetField(ref  _operation, value);
+        set => SetField(ref _operation, value);
     }
 
     /// <inheritdoc/>
@@ -56,7 +56,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -67,14 +67,14 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     public int Order
     {
         get => _order;
-        set => SetField(ref  _order, value);
+        set => SetField(ref _order, value);
     }
 
     /// <inheritdoc/>
     public bool IsDisabled
     {
         get => _isDisabled;
-        set => SetField(ref _isDisabled , value);
+        set => SetField(ref _isDisabled, value);
     }
 
     #endregion
@@ -82,7 +82,6 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
 
     public CohortAggregateContainer()
     {
-
     }
 
     internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
@@ -104,11 +103,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <param name="operation"></param>
     public CohortAggregateContainer(ICatalogueRepository repository, SetOperation operation)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Operation", operation.ToString()},
-            {"Order", 0},
-            {"Name", operation.ToString()}
+            { "Operation", operation.ToString() },
+            { "Order", 0 },
+            { "Name", operation.ToString() }
         });
     }
 
@@ -118,19 +117,15 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer[] GetSubContainers()
-    {
-        return CatalogueRepository.CohortContainerManager.GetChildren(this).OfType<CohortAggregateContainer>().ToArray();
-    }
+    public CohortAggregateContainer[] GetSubContainers() => CatalogueRepository.CohortContainerManager.GetChildren(this)
+        .OfType<CohortAggregateContainer>().ToArray();
 
     /// <summary>
     /// Gets the parent container of the current container (if it is not a root / orphan container)
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer GetParentContainerIfAny()
-    {
-        return CatalogueRepository.CohortContainerManager.GetParent(this);
-    }
+    public CohortAggregateContainer GetParentContainerIfAny() =>
+        CatalogueRepository.CohortContainerManager.GetParent(this);
 
     /// <summary>
     /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in
@@ -138,10 +133,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
     /// </summary>
     /// <returns></returns>
-    public AggregateConfiguration[] GetAggregateConfigurations()
-    {
-        return CatalogueRepository.CohortContainerManager.GetChildren(this).OfType<AggregateConfiguration>().ToArray();
-    }
+    public AggregateConfiguration[] GetAggregateConfigurations() => CatalogueRepository.CohortContainerManager
+        .GetChildren(this).OfType<AggregateConfiguration>().ToArray();
 
     /// <summary>
     /// Makes the configuration a member of this container.
@@ -150,7 +143,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <param name="order"></param>
     public void AddChild(AggregateConfiguration configuration, int order)
     {
-        CreateInsertionPointAtOrder(configuration,configuration.Order,true);
+        CreateInsertionPointAtOrder(configuration, configuration.Order, true);
         CatalogueRepository.CohortContainerManager.Add(this, configuration, order);
         configuration.ReFetchOrder();
     }
@@ -173,8 +166,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     public void MakeIntoAnOrphan()
     {
         var parent = GetParentContainerIfAny();
-        if(parent != null)
-            CatalogueRepository.CohortContainerManager.Remove(parent,this);
+        if (parent != null)
+            CatalogueRepository.CohortContainerManager.Remove(parent, this);
     }
 
 
@@ -184,11 +177,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <param name="child"></param>
     public void AddChild(CohortAggregateContainer child)
     {
-        if(child.IsRootContainer())
+        if (child.IsRootContainer())
             throw new InvalidOperationException("Root containers cannot be added as subcontainers");
 
-        CreateInsertionPointAtOrder(child,child.Order,true);
-        CatalogueRepository.CohortContainerManager.Add(this,child);
+        CreateInsertionPointAtOrder(child, child.Order, true);
+        CatalogueRepository.CohortContainerManager.Add(this, child);
     }
 
     /// <inheritdoc/>
@@ -208,10 +201,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -236,10 +226,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
         var foundChildThroughRecursion = false;
 
         //recurse into all children
-        foreach(var c in GetSubContainers())
-            if (c.HasChild(potentialChild))//ask children recursively the same question (see return statement for the question we are asking)
+        foreach (var c in GetSubContainers())
+            if (c.HasChild(
+                    potentialChild)) //ask children recursively the same question (see return statement for the question we are asking)
                 foundChildThroughRecursion = true;
-            
+
         //are we the one you are looking for or were any of our children
         return potentialChild.ID == ID || foundChildThroughRecursion;
     }
@@ -255,13 +246,14 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
 
         //recurse into all children
         foreach (var c in GetSubContainers())
-            if (c.HasChild(configuration))//ask children recursively the same question (see return statement for the question we are asking)
+            if (c.HasChild(
+                    configuration)) //ask children recursively the same question (see return statement for the question we are asking)
                 foundChildThroughRecursion = true;
 
         //are any of the configurations in this bucket the one you are looking for
         return
-            GetAggregateConfigurations().Any(c => c.ID == configuration.ID)//yes
-            || foundChildThroughRecursion;//no but a child had it
+            GetAggregateConfigurations().Any(c => c.ID == configuration.ID) //yes
+            || foundChildThroughRecursion; //no but a child had it
     }
 
     /// <summary>
@@ -299,7 +291,10 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     /// <param name="original"></param>
     /// <param name="clone"></param>
     /// <param name="parentToCloneJoinablesDictionary"></param>
-    public CohortAggregateContainer CloneEntireTreeRecursively(ICheckNotifier notifier, CohortIdentificationConfiguration original, CohortIdentificationConfiguration clone, Dictionary<JoinableCohortAggregateConfiguration, JoinableCohortAggregateConfiguration> parentToCloneJoinablesDictionary)
+    public CohortAggregateContainer CloneEntireTreeRecursively(ICheckNotifier notifier,
+        CohortIdentificationConfiguration original, CohortIdentificationConfiguration clone,
+        Dictionary<JoinableCohortAggregateConfiguration, JoinableCohortAggregateConfiguration>
+            parentToCloneJoinablesDictionary)
     {
         //what is in us?
         var contents = GetOrderedContents();
@@ -348,8 +343,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
                     //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any
                     //patient index columns anyway)
                     if (configClone.RootFilterContainer_ID != null)
-                    {
-                        foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(configClone.RootFilterContainer))
+                        foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(
+                                     configClone.RootFilterContainer))
                         {
                             var oldTableAlias = j.GetJoinTableAlias();
                             var newTableAlias = cloneJoinUse.GetJoinTableAlias();
@@ -357,18 +352,18 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
                             clonedFilter.WhereSQL = clonedFilter.WhereSQL.Replace(oldTableAlias, newTableAlias);
                             clonedFilter.SaveToDatabase();
                         }
-                    }
-
                 }
             }
 
             //its another container (a subcontainer), recursively call the clone operation on it and add that subtree to teh clone container
             if (content is CohortAggregateContainer container)
             {
-                var cloneSubContainer = container.CloneEntireTreeRecursively(notifier, original, clone,parentToCloneJoinablesDictionary);
+                var cloneSubContainer =
+                    container.CloneEntireTreeRecursively(notifier, original, clone, parentToCloneJoinablesDictionary);
 
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Created clone container {cloneSubContainer} with ID {cloneSubContainer.ID}", CheckResult.Success));
+                    $"Created clone container {cloneSubContainer} with ID {cloneSubContainer.ID}",
+                    CheckResult.Success));
                 cloneContainer.AddChild(cloneSubContainer);
             }
         }
@@ -447,7 +442,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
 
         foreach (var sub in subs)
             toReturn.AddRange(sub.GetAllSubContainersRecursively());
-            
+
         return toReturn;
     }
 

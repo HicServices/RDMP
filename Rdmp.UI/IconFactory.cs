@@ -19,10 +19,10 @@ public class IconFactory
     private readonly ConcurrentDictionary<Image<Rgba32>, Icon> _iconDictionary =
         new();
 
-    public static IconFactory Instance= new();
+    public static IconFactory Instance = new();
+
     private IconFactory()
     {
-
     }
 
     /// <summary>
@@ -31,10 +31,7 @@ public class IconFactory
     /// </summary>
     /// <param name="bmp"></param>
     /// <returns></returns>
-    public Icon GetIcon(Image<Rgba32> bmp)
-    {
-        return _iconDictionary.GetOrAdd(bmp, CreateIcon);
-    }
+    public Icon GetIcon(Image<Rgba32> bmp) => _iconDictionary.GetOrAdd(bmp, CreateIcon);
 
     private Icon CreateIcon(Image<Rgba32> bmp)
     {

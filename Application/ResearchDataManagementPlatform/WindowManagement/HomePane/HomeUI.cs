@@ -27,7 +27,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane;
 /// 
 /// <para>You can access the HomeUI at any time by clicking the home icon in the top left of the RDMP tool bar.</para>
 /// </summary>
-public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
+public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
 {
     private readonly IActivateItems _activator;
     private readonly AtomicCommandUIFactory _uiFactory;
@@ -41,7 +41,7 @@ public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
 
     private void BuildCommandLists()
     {
-        boxCatalogue.SetUp(Activator,"Catalogue",typeof(Catalogue),_uiFactory,
+        boxCatalogue.SetUp(Activator, "Catalogue", typeof(Catalogue), _uiFactory,
             new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {
                 OverrideCommandName = GlobalStrings.FromFile
@@ -50,27 +50,28 @@ public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
             {
                 OverrideCommandName = GlobalStrings.FromDatabase
             });
-        boxProject.SetUp(Activator,"Project",typeof(Project),_uiFactory, new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            
-        boxCohort.SetUp(Activator,"Cohort Builder", typeof(CohortIdentificationConfiguration),_uiFactory,
+        boxProject.SetUp(Activator, "Project", typeof(Project), _uiFactory,
+            new ExecuteCommandCreateNewDataExtractionProject(_activator));
+
+        boxCohort.SetUp(Activator, "Cohort Builder", typeof(CohortIdentificationConfiguration), _uiFactory,
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Cohort Builder Query",
                 PromptToPickAProject = true
-
             },
-            new ExecuteCommandCreateNewCohortFromFile(_activator,null,null)
+            new ExecuteCommandCreateNewCohortFromFile(_activator, null, null)
             {
                 OverrideCommandName = GlobalStrings.FromFile
             }
         );
-        boxDataLoad.SetUp(Activator,"Data Load",typeof(LoadMetadata),_uiFactory,new ExecuteCommandCreateNewLoadMetadata(_activator));
+        boxDataLoad.SetUp(Activator, "Data Load", typeof(LoadMetadata), _uiFactory,
+            new ExecuteCommandCreateNewLoadMetadata(_activator));
     }
 
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-            
+
         SetItemActivator(_activator);
 
         BuildCommandLists();

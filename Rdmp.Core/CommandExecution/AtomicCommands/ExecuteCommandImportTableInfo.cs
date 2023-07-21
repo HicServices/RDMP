@@ -22,7 +22,6 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
     private readonly bool _createCatalogue;
 
     public ExecuteCommandImportTableInfo(IBasicActivateItems activator,
-
         [DemandsInitialization("The table or view you want to reference from RDMP.  See PickTable for syntax")]
         DiscoveredTable table,
         [DemandsInitialization("True to create a Catalogue as well as a TableInfo")]
@@ -39,7 +38,7 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
         ICatalogue c = null;
         ITableInfoImporter importer;
 
-        var t = _table ?? SelectTable(false,"Select table to import");
+        var t = _table ?? SelectTable(false, "Select table to import");
 
         switch (t)
         {
@@ -47,7 +46,8 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
                 return;
             //if it isn't a table valued function
             case DiscoveredTableValuedFunction function:
-                importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, function);
+                importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository,
+                    function);
                 break;
             default:
                 importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
@@ -56,26 +56,21 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
 
         importer.DoImport(out var ti, out var cis);
 
-        BasicActivator.Show($"Successfully imported new TableInfo { ti.Name} with ID {ti.ID}");
+        BasicActivator.Show($"Successfully imported new TableInfo {ti.Name} with ID {ti.ID}");
 
         if (_createCatalogue)
         {
             var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
             forwardEngineer.ExecuteForwardEngineering(out c, out _, out _);
 
-            BasicActivator.Show($"Successfully imported new Catalogue { c.Name} with ID {c.ID}");
+            BasicActivator.Show($"Successfully imported new Catalogue {c.Name} with ID {c.ID}");
         }
 
         Publish((IMapsDirectlyToDatabaseTable)c ?? ti);
     }
 
-    public override string GetCommandName()
-    {
-        return "Import existing table (as new TableInfo)";
-    }
+    public override string GetCommandName() => "Import existing table (as new TableInfo)";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.TableInfo,OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add);
 }

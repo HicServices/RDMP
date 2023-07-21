@@ -15,11 +15,13 @@ internal class AutoComplete
         this.autocompletes = autocompletes?.ToArray() ?? Array.Empty<string>();
     }
 
-    public char[] Separators { get;set;} = { ','};
+    public char[] Separators { get; set; } = { ',' };
 
     public string[] GetSuggestions(string text, int _)
     {
         //they haven't typed anything yet
-        return string.IsNullOrWhiteSpace(text) ? autocompletes : autocompletes.Where(a=>a.StartsWith(text,StringComparison.CurrentCulture)).ToArray();
+        return string.IsNullOrWhiteSpace(text)
+            ? autocompletes
+            : autocompletes.Where(a => a.StartsWith(text, StringComparison.CurrentCulture)).ToArray();
     }
 }

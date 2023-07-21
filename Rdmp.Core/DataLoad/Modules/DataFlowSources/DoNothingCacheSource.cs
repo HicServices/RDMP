@@ -18,11 +18,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 /// you have some bespoke process for populating / updating the cache progress and you only want a caching pipeline to exist for validation reasons not to
 /// actually run it.
 /// </summary>
-public class DoNothingCacheSource:CacheSource<ICacheChunk>
+public class DoNothingCacheSource : CacheSource<ICacheChunk>
 {
     private int runs;
 
-    public override ICacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public override ICacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         //Data is never available for download
         if (runs < 10)
@@ -40,18 +41,13 @@ public class DoNothingCacheSource:CacheSource<ICacheChunk>
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-            
     }
 
     public override void Abort(IDataLoadEventListener listener)
     {
-            
     }
 
-    public override ICacheChunk TryGetPreview()
-    {
-        return null;
-    }
+    public override ICacheChunk TryGetPreview() => null;
 
     public override void Check(ICheckNotifier notifier)
     {

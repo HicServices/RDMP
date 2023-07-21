@@ -31,9 +31,10 @@ namespace Rdmp.Core.Curation.Data.Spontaneous;
 /// </summary>
 public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContainer
 {
-    public SpontaneouslyInventedFilterContainer(MemoryCatalogueRepository repo, IContainer[] subContainersIfAny, IFilter[] filtersIfAny, FilterContainerOperation operation):base(repo)
+    public SpontaneouslyInventedFilterContainer(MemoryCatalogueRepository repo, IContainer[] subContainersIfAny,
+        IFilter[] filtersIfAny, FilterContainerOperation operation) : base(repo)
     {
-        repo.InsertAndHydrate(this,new Dictionary<string, object>());
+        repo.InsertAndHydrate(this, new Dictionary<string, object>());
 
         if (subContainersIfAny != null)
             foreach (var container in subContainersIfAny)
@@ -51,10 +52,7 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
     }
 
 
-    public override Catalogue GetCatalogueIfAny()
-    {
-        return null;
-    }
+    public override Catalogue GetCatalogueIfAny() => null;
 
     public override bool ShouldBeReadOnly(out string reason)
     {
@@ -62,13 +60,9 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
         return false;
     }
 
-    public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
-    {
+    public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters() =>
         throw new NotSupportedException("Spontaneously invented filter containers cannot be cloned");
-    }
 
-    public override IFilterFactory GetFilterFactory()
-    {
+    public override IFilterFactory GetFilterFactory() =>
         throw new NotSupportedException("Spontaneously invented filters do not have a corresponding IFilterFactory");
-    }
 }

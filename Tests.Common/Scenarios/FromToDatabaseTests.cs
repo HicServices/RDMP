@@ -13,7 +13,7 @@ namespace Tests.Common.Scenarios;
 /// <summary>
 /// Tests which require two test databases and handles moving data from one to the other
 /// </summary>
-public class FromToDatabaseTests:DatabaseTests
+public class FromToDatabaseTests : DatabaseTests
 {
     private readonly string _suffix;
     protected DiscoveredDatabase From;
@@ -49,7 +49,7 @@ public class FromToDatabaseTests:DatabaseTests
         From = To.Server.ExpectDatabase(To.GetRuntimeName() + _suffix);
 
         // ensure the test staging and live databases are empty
-        if(!From.Exists())
+        if (!From.Exists())
             From.Create();
         else
             DeleteTables(From);

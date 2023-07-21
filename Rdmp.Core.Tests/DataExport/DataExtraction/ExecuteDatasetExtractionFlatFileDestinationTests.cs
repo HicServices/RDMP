@@ -33,12 +33,10 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
         lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
 
-        var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding", nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
+        var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding",
+            nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
 
-        if(_request.QueryBuilder == null)
-        {
-            _request.GenerateQueryBuilder();
-        }
+        if (_request.QueryBuilder == null) _request.GenerateQueryBuilder();
         dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
 
         dest.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -46,7 +44,7 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         Assert.IsNotNull(dest.OutputFile);
         FileAssert.Exists(dest.OutputFile);

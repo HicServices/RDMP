@@ -13,23 +13,21 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
+internal class
+    ProposeExecutionWhenTargetIsProjectSavedCohortsNode : RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
 {
     public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ProjectSavedCohortsNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(ProjectSavedCohortsNode target) => false;
 
     public override void Activate(ProjectSavedCohortsNode target)
     {
-            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {

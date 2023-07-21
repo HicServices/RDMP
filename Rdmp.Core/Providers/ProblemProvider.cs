@@ -14,23 +14,22 @@ using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Providers;
 
-public abstract class ProblemProvider:IProblemProvider
+public abstract class ProblemProvider : IProblemProvider
 {
-    public static HashSet<Type> IgnoreBadNamesFor = new(new[] { 
+    public static HashSet<Type> IgnoreBadNamesFor = new(new[]
+    {
         typeof(TableInfo),
         typeof(ColumnInfo),
         typeof(IFilter),
-        typeof(Pipeline)});
+        typeof(Pipeline)
+    });
 
     /// <inheritdoc/>
-    public bool HasProblem(object o)
-    {
-        return DescribeProblem(o) != null;
-    }
+    public bool HasProblem(object o) => DescribeProblem(o) != null;
 
     public string DescribeProblem(object o)
     {
-        return o is INamed n && !IgnoreBadNamesFor.Any(t=>t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name)
+        return o is INamed n && !IgnoreBadNamesFor.Any(t => t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name)
             ? "Name contains illegal characters"
             : DescribeProblemImpl(o);
     }

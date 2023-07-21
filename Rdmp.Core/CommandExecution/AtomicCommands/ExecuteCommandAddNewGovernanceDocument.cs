@@ -13,17 +13,19 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAtomicCommand
+public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAtomicCommand
 {
     private readonly GovernancePeriod _period;
     private readonly FileInfo _file;
 
-    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator,GovernancePeriod period) : base(activator)
+    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period) :
+        base(activator)
     {
         _period = period;
     }
 
-    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period,FileInfo file): this(activator,period)
+    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period, FileInfo file)
+        : this(activator, period)
     {
         _file = file;
     }
@@ -35,8 +37,7 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
         var p = _period;
         var f = _file;
 
-        if(p == null)
-        {
+        if (p == null)
             if (!BasicActivator.SelectObject(new DialogArgs
                     {
                         WindowTitle = "Add Governance Document",
@@ -45,10 +46,9 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
                     out p))
                 // user cancelled selecting a Catalogue
                 return;
-        }
 
         f ??= BasicActivator.SelectFile("Document to add");
-        if(f == null)
+        if (f == null)
             return;
 
         var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);
@@ -57,5 +57,6 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
         Activate(doc);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
 }

@@ -18,20 +18,20 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
     public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
     public Catalogue Catalogue { get; set; }
-    public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler ResolveMultipleExtractionIdentifiers { get; set; }
+
+    public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler
+        ResolveMultipleExtractionIdentifiers { get; set; }
 
     public IHasFolder Folderable => Catalogue;
 
     public CatalogueCombineable(Catalogue catalogue)
     {
         Catalogue = catalogue;
-        ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any(e => e.IsExtractionIdentifier);
+        ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Any(e => e.IsExtractionIdentifier);
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 
     /// <summary>
     /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an <see cref="AggregateConfigurationCombineable"/>, you should only use this method during EXECUTE as you do not
@@ -42,11 +42,13 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     /// <param name="importMandatoryFilters"></param>
     /// <param name="caller"></param>
     /// <returns></returns>
-    public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
+    public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
+        CohortAggregateContainer cohortAggregateContainer, bool importMandatoryFilters = true,
+        [CallerMemberName] string caller = null)
     {
         var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-        return cic == null ? null : GenerateAggregateConfigurationFor(activator,cic, importMandatoryFilters);
+        return cic == null ? null : GenerateAggregateConfigurationFor(activator, cic, importMandatoryFilters);
     }
 
     public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
@@ -55,7 +57,7 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     {
         var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue,
             ResolveMultipleExtractionIdentifiers ??
-            ((a,b)=> CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(activator,a, b)),
+            ((a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(activator, a, b)),
             importMandatoryFilters);
         return new AggregateConfigurationCombineable(newAggregate);
     }

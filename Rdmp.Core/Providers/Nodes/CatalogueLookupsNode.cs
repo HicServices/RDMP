@@ -11,7 +11,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Collection node for all <see cref="Lookup"/> that exist under a <see cref="Catalogue"/>
 /// </summary>
-public class CatalogueLookupsNode:Node
+public class CatalogueLookupsNode : Node
 {
     public Catalogue Catalogue { get; }
     public Lookup[] Lookups { get; set; }
@@ -22,15 +22,9 @@ public class CatalogueLookupsNode:Node
         Lookups = lookups;
     }
 
-    public override string ToString()
-    {
-        return "Lookups";
-    }
+    public override string ToString() => "Lookups";
 
-    protected bool Equals(CatalogueLookupsNode other)
-    {
-        return Equals(Catalogue, other.Catalogue);
-    }
+    protected bool Equals(CatalogueLookupsNode other) => Equals(Catalogue, other.Catalogue);
 
     public override bool Equals(object obj)
     {
@@ -39,8 +33,5 @@ public class CatalogueLookupsNode:Node
         return obj.GetType() == typeof(CatalogueLookupsNode) && Equals((CatalogueLookupsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Catalogue);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue);
 }

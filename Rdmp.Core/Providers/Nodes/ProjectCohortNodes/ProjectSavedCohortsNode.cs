@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 /// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are
 /// associated with the <see cref="Project"/> via the project number.
 /// </summary>
-public class ProjectSavedCohortsNode:Node,IOrderable
+public class ProjectSavedCohortsNode : Node, IOrderable
 {
     public Project Project { get; }
 
@@ -22,29 +22,23 @@ public class ProjectSavedCohortsNode:Node,IOrderable
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Saved Cohorts";
-    }
+    public override string ToString() => "Saved Cohorts";
 
-    protected bool Equals(ProjectSavedCohortsNode other)
-    {
-        return Equals(Project, other.Project);
-    }
+    protected bool Equals(ProjectSavedCohortsNode other) => Equals(Project, other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectSavedCohortsNode) obj);
+        return Equals((ProjectSavedCohortsNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => System.HashCode.Combine(Project);
+
+    public int Order
     {
-        return System.HashCode.Combine(Project);
+        get => 2;
+        set { }
     }
-
-    public int Order { get => 2;
-        set{}}
 }

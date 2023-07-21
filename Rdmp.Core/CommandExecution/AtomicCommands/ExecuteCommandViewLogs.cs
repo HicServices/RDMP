@@ -31,9 +31,9 @@ public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
         ParameterHelpBreakdown = @"root object to view logs for or logging server
 table? Only required if <root> is logging server, specifies the table to view e.g. DataLoadRun
 int? Optional, if <root> is logging server this can be a specific audit id to show")]
-    public ExecuteCommandViewLogs(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
+    public ExecuteCommandViewLogs(IBasicActivateItems activator, CommandLineObjectPicker picker) : base(activator)
     {
-        if(picker.Length == 0)
+        if (picker.Length == 0)
         {
             SetImpossible("Insufficient arguments supplied");
             return;
@@ -46,23 +46,25 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
             switch (obj)
             {
                 case ILoggedActivityRootObject root:
-                    RootObject =  root;
+                    RootObject = root;
                     break;
                 case ExternalDatabaseServer eds:
-                    _loggingServers = new ExternalDatabaseServer[]{eds};
+                    _loggingServers = new ExternalDatabaseServer[] { eds };
                     break;
                 default:
-                    throw new Exception($"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
+                    throw new Exception(
+                        $"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
             }
         }
 
         var table = LoggingTables.None;
 
         // Optional second argument: table to filter for
-        if(picker.Length >= 1 && Enum.TryParse(picker[1].RawValue, out table)) _filter = new LogViewerFilter(table);
+        if (picker.Length >= 1 && Enum.TryParse(picker[1].RawValue, out table)) _filter = new LogViewerFilter(table);
 
         // Optional third argument: foreign key ID to filter on
-        if(picker.Length >= 2 && int.TryParse(picker[2].RawValue, out var id)) _filter = new LogViewerFilter(table, id);
+        if (picker.Length >= 2 && int.TryParse(picker[2].RawValue, out var id))
+            _filter = new LogViewerFilter(table, id);
     }
 
     [UseWithObjectConstructor]
@@ -71,55 +73,53 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         RootObject = rootObject;
     }
 
-    public ExecuteCommandViewLogs(IBasicActivateItems activator) : this(activator,new LogViewerFilter(LoggingTables.DataLoadTask))
+    public ExecuteCommandViewLogs(IBasicActivateItems activator) : this(activator,
+        new LogViewerFilter(LoggingTables.DataLoadTask))
     {
-
     }
 
-    public ExecuteCommandViewLogs(IBasicActivateItems activator, ExternalDatabaseServer loggingServer,LogViewerFilter filter) : base(activator)
+    public ExecuteCommandViewLogs(IBasicActivateItems activator, ExternalDatabaseServer loggingServer,
+        LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers = new ExternalDatabaseServer[]{ loggingServer};
+        _loggingServers = new ExternalDatabaseServer[] { loggingServer };
     }
 
     public ExecuteCommandViewLogs(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+        _loggingServers =
+            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
-        if(!_loggingServers.Any())
+        if (!_loggingServers.Any())
             SetImpossible("There are no logging servers");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "View the hierarchical audit log of all data flows through RDMP (data load, extraction, dqe runs etc) including progress, errors etc";
-    }
+    public override string GetCommandHelp() =>
+        "View the hierarchical audit log of all data flows through RDMP (data load, extraction, dqe runs etc) including progress, errors etc";
 
     public override void Execute()
     {
         base.Execute();
 
 
-        if(RootObject != null)
+        if (RootObject != null)
         {
             BasicActivator.ShowLogs(RootObject);
         }
         else
         {
-            var server = SelectOne(_loggingServers,null,true);
-            BasicActivator.ShowLogs(server,_filter?? new LogViewerFilter(LoggingTables.DataLoadRun));
+            var server = SelectOne(_loggingServers, null, true);
+            BasicActivator.ShowLogs(server, _filter ?? new LogViewerFilter(LoggingTables.DataLoadRun));
         }
     }
 
-    public override string GetCommandName()
-    {
-        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+    public override string GetCommandName() =>
+        !string.IsNullOrWhiteSpace(OverrideCommandName)
             ? OverrideCommandName
-            : _filter != null ?
-                UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
+            : _filter != null
+                ? UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
                 : base.GetCommandName();
-    }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Logging);
 }

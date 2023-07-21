@@ -36,12 +36,12 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
     [UseWithObjectConstructor]
     public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,
-
         [DemandsInitialization("The container you want to add the set into")]
         CohortAggregateContainer targetCohortAggregateContainer,
         [DemandsInitialization("The dataset to add, must have an extraction identifier declared on it")]
         Catalogue catalogue,
-        [DemandsInitialization("Typically optional.  But if Catalogue has multiple columns marked IsExtractionIdentifier then you must indicate which to use here.")]
+        [DemandsInitialization(
+            "Typically optional.  But if Catalogue has multiple columns marked IsExtractionIdentifier then you must indicate which to use here.")]
         ExtractionInformation identifierColumn = null
     ) : base(activator)
     {
@@ -52,20 +52,23 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
 
-        if(catalogue != null)
+        if (catalogue != null)
         {
             _catalogueCombineable = new CatalogueCombineable(catalogue);
 
             if (identifierColumn != null)
             {
-                if(!identifierColumn.IsExtractionIdentifier)
+                if (!identifierColumn.IsExtractionIdentifier)
                 {
-                    SetImpossible($"Column '{identifierColumn}' is not marked {nameof(ConcreteColumn.IsExtractionIdentifier)}");
+                    SetImpossible(
+                        $"Column '{identifierColumn}' is not marked {nameof(ConcreteColumn.IsExtractionIdentifier)}");
                     return;
                 }
-                if(identifierColumn.CatalogueItem_ID != catalogue.ID)
+
+                if (identifierColumn.CatalogueItem_ID != catalogue.ID)
                 {
-                    SetImpossible($"Column '{identifierColumn}'(ID={identifierColumn.ID}) is not from the same Catalogue as '{catalogue}'(ID={catalogue.ID})");
+                    SetImpossible(
+                        $"Column '{identifierColumn}'(ID={identifierColumn.ID}) is not from the same Catalogue as '{catalogue}'(ID={catalogue.ID})");
                     return;
                 }
 
@@ -79,56 +82,52 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         UseTripleDotSuffix = true;
     }
 
-    public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator, CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(activator, targetCohortAggregateContainer,null)
+    public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,
+        CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(
+        activator, targetCohortAggregateContainer, null)
     {
         _catalogueCombineable = catalogueCombineable;
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
         UpdateIsImpossibleFor(catalogueCombineable);
     }
+
     private void UpdateIsImpossibleFor(CatalogueCombineable catalogueCombineable)
     {
-        if(catalogueCombineable.Catalogue.IsApiCall())
-        {
-            return;
-        }
+        if (catalogueCombineable.Catalogue.IsApiCall()) return;
 
         if (!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
             SetImpossible(
                 $"Catalogue {catalogueCombineable.Catalogue} does not contain any IsExtractionIdentifier columns");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
 
     public override void Execute()
     {
         base.Execute();
 
         // if user hasn't picked a Catalogue yet
-        if(_catalogueCombineable == null)
+        if (_catalogueCombineable == null)
         {
-            if(!BasicActivator.SelectObjects(new DialogArgs
-               {
-                   WindowTitle = "Add Catalogue(s) to Container",
-                   TaskDescription = $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-               },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-            {
+            if (!BasicActivator.SelectObjects(new DialogArgs
+                {
+                    WindowTitle = "Add Catalogue(s) to Container",
+                    TaskDescription =
+                        $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 // user didn't pick one
                 return;
-            }
 
             // for each catalogue they picked
             foreach (var catalogue in selected)
             {
-
                 var combineable = new CatalogueCombineable(catalogue);
 
                 UpdateIsImpossibleFor(combineable);
 
-                if(IsImpossible)
+                if (IsImpossible)
                     throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
                 // add it to the cic container
@@ -137,18 +136,19 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         }
         else
         {
-            Execute(_catalogueCombineable,true);
+            Execute(_catalogueCombineable, true);
         }
-
     }
 
     private void Execute(CatalogueCombineable catalogueCombineable, bool publish)
     {
-        var cmd = catalogueCombineable.GenerateAggregateConfigurationFor(BasicActivator, _targetCohortAggregateContainer, !SkipMandatoryFilterCreation);
+        var cmd = catalogueCombineable.GenerateAggregateConfigurationFor(BasicActivator,
+            _targetCohortAggregateContainer, !SkipMandatoryFilterCreation);
         if (cmd != null)
         {
             _postImportCommand =
-                new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(BasicActivator, cmd, _targetCohortAggregateContainer)
+                new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(BasicActivator, cmd,
+                    _targetCohortAggregateContainer)
                 {
                     DoNotClone = true,
                     NoPublish = !publish

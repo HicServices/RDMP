@@ -34,9 +34,8 @@ public enum FilterContainerOperation
 /// ('result is clinically significant').  Each subcontainer / IFilter are seperated with the Operation (See FilterContainerOperation) when building SQL
 /// (See SqlQueryBuilderHelper).
 /// </summary>
-public interface IContainer: IRevertable,IMightBeReadOnly
+public interface IContainer : IRevertable, IMightBeReadOnly
 {
-
     /// <summary>
     /// Defines the boolean operation (AND / OR) to separate contained lines of WHERE Sql (See <see cref="IFilter"/>).  If the container has only one IFilter
     /// then no operation is used, if there are 2+ then the resultant SQL built will be each filter's WhereSQL separated by the AND/OR.  This also applies to

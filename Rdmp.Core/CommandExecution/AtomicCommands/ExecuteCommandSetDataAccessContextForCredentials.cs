@@ -16,33 +16,30 @@ public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExec
     private DataAccessCredentialUsageNode _node;
     private readonly DataAccessContext _newContext;
 
-    public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator, DataAccessCredentialUsageNode node, DataAccessContext newContext, Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials): base(activator)
+    public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator,
+        DataAccessCredentialUsageNode node, DataAccessContext newContext,
+        Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials) : base(activator)
     {
         _node = node;
         _newContext = newContext;
 
         //if context is same as before
-        if(newContext == node.Context)
+        if (newContext == node.Context)
         {
             SetImpossible("This is the current usage context declared");
             return;
         }
-            
+
         //if there's already another credential for that context (other than this one)
         if (existingCredentials.TryGetValue(newContext, out var existingCredential))
             SetImpossible(
                 $"DataAccessCredentials '{existingCredential}' are used for accessing table under context {newContext}");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Changes which contexts the credentials can be used under e.g. DataLoad only";
-    }
+    public override string GetCommandHelp() =>
+        "Changes which contexts the credentials can be used under e.g. DataLoad only";
 
-    public override string GetCommandName()
-    {
-        return _newContext.ToString();
-    }
+    public override string GetCommandName() => _newContext.ToString();
 
     public override void Execute()
     {

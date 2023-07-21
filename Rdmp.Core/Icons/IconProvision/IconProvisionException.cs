@@ -12,7 +12,7 @@ namespace Rdmp.Core.Icons.IconProvision;
 /// Exception thrown when an icon cannot be properly provided for an object or setting up an icon
 /// cache fails
 /// </summary>
-public class IconProvisionException:Exception
+public class IconProvisionException : Exception
 {
     /// <summary>
     /// Creates a new instance with the given message
@@ -20,15 +20,14 @@ public class IconProvisionException:Exception
     /// <param name="msg">Text of the error</param>
     public IconProvisionException(string msg) : base(msg)
     {
-            
     }
+
     /// <summary>
     /// Creates a new instance with the given message and inner exception
     /// </summary>
     /// <param name="msg">Text of the error</param>
     /// <param name="ex">Inner exception triggering the situation</param>
-    public IconProvisionException(string msg, Exception ex):base(msg,ex)
+    public IconProvisionException(string msg, Exception ex) : base(msg, ex)
     {
-            
     }
 }

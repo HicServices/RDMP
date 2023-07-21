@@ -20,7 +20,8 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
     private readonly AggregateConfiguration _aggregate;
     private readonly FileInfo _toFile;
 
-    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate, FileInfo toFile=null) : base(activator)
+    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate,
+        FileInfo toFile = null) : base(activator)
     {
         _aggregate = aggregate;
         _toFile = toFile;
@@ -32,19 +33,16 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Assembles and runs the graph query and renders the results as a graph";
-    }
+    public override string GetCommandHelp() => "Assembles and runs the graph query and renders the results as a graph";
 
     public override void Execute()
     {
         base.Execute();
 
-        if(_toFile != null)
+        if (_toFile != null)
         {
             var collection = new ViewAggregateExtractUICollection(_aggregate);
-            ExtractTableVerbatim.ExtractDataToFile(collection,_toFile);
+            ExtractTableVerbatim.ExtractDataToFile(collection, _toFile);
         }
         else
         {
@@ -52,8 +50,5 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.Graph);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Graph);
 }

@@ -20,48 +20,47 @@ public class Prediction : SecondaryConstraint
     [ExpectsColumnNameAsInput]
     public string TargetColumn { get; set; }
 
-    [Description("The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
+    [Description(
+        "The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
     public PredictionRule Rule { get; set; }
 
     //blank constructor required for XMLSerialization
     public Prediction()
     {
-            
     }
 
     public Prediction(PredictionRule rule, string targetColumn)
     {
-        Rule = rule ?? throw new ArgumentException("You must specify a PredictionRule to follow",nameof(rule));
+        Rule = rule ?? throw new ArgumentException("You must specify a PredictionRule to follow", nameof(rule));
         TargetColumn = targetColumn;
     }
 
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        if(Rule == null )
+        if (Rule == null)
             throw new InvalidOperationException("PredictionRule has not been set yet");
 
-        if(TargetColumn == null)
+        if (TargetColumn == null)
             throw new InvalidOperationException("TargetColumn has not been set yet");
 
-        if(OtherFieldInfoIsNotProvided(otherColumns, otherColumnNames))
+        if (OtherFieldInfoIsNotProvided(otherColumns, otherColumnNames))
             throw new ArgumentException("Could not make prediction because no other fields were passed");
 
         if (otherColumns.Length != otherColumnNames.Length)
-            throw new Exception("Could not make prediction because of mismatch between column values and column names array sizes");
+            throw new Exception(
+                "Could not make prediction because of mismatch between column values and column names array sizes");
 
-        var i = Array.IndexOf(otherColumnNames,TargetColumn);
+        var i = Array.IndexOf(otherColumnNames, TargetColumn);
 
         return i == -1
             ? throw new MissingFieldException(
                 $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})")
-            : Rule.Predict(this,value,otherColumns[i]);
+            : Rule.Predict(this, value, otherColumns[i]);
     }
 
 
-    private static bool OtherFieldInfoIsNotProvided(object[] otherColumns, string[] otherColumnNames)
-    {
-        return otherColumns == null || otherColumns.Length < 1 || otherColumnNames == null || otherColumnNames.Length < 1;
-    }
+    private static bool OtherFieldInfoIsNotProvided(object[] otherColumns, string[] otherColumnNames) =>
+        otherColumns == null || otherColumns.Length < 1 || otherColumnNames == null || otherColumnNames.Length < 1;
 
 
     public override void RenameColumn(string originalName, string newName)
@@ -70,10 +69,8 @@ public class Prediction : SecondaryConstraint
             TargetColumn = newName;
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return Rule == null
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        Rule == null
             ? "Normally checks input against prediction rule but no rule has yet been configured"
             : $"Checks that input follows its prediction rule: '{Rule.GetType().Name}'";
-    }
 }

@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests;
 
-public class AggregationTests :DatabaseTests
+public class AggregationTests : DatabaseTests
 {
     private TestableTableValuedFunction _function;
 
@@ -30,7 +30,7 @@ public class AggregationTests :DatabaseTests
         CreateFunction(CatalogueRepository);
 
         //do a count * on the query builder
-        var queryBuilder = new AggregateBuilder("", "count(*)", null,new[] { _function.TableInfoCreated });
+        var queryBuilder = new AggregateBuilder("", "count(*)", null, new[] { _function.TableInfoCreated });
 
         Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
         Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
@@ -38,7 +38,8 @@ public class AggregationTests :DatabaseTests
         Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
         Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='fish';"));
 
-        Assert.IsTrue(queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+        Assert.IsTrue(
+            queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
         Console.WriteLine(queryBuilder.SQL);
     }
@@ -47,11 +48,11 @@ public class AggregationTests :DatabaseTests
     [TestCase(true)]
     public void GenerateAggregateViaAggregateConfigurationTest(bool memoryRepo)
     {
-        var repo = memoryRepo ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+        var repo = memoryRepo ? (ICatalogueRepository)new MemoryCatalogueRepository() : CatalogueRepository;
         CreateFunction(repo);
 
         var agg = new AggregateConfiguration(repo, _function.Cata, "MyExcitingAggregate");
-            
+
         try
         {
             agg.HavingSQL = "count(*)>1";
@@ -76,7 +77,6 @@ FROM
 [{TestDatabaseNames.Prefix}ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 HAVING
 count(*)>1", queryBuilder.SQL);
-
         }
         finally
         {
@@ -94,9 +94,9 @@ count(*)>1", queryBuilder.SQL);
         try
         {
             var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50);")
- {
-     Value = "'lobster'"
- };
+            {
+                Value = "'lobster'"
+            };
             param.SaveToDatabase();
 
             var aggregateForcedJoin = new AggregateForcedJoin(CatalogueTableRepository);
@@ -115,7 +115,8 @@ count(*)>1", queryBuilder.SQL);
             //isntead of this verison of things
             Assert.IsFalse(queryBuilder.SQL.Contains(@"SET @name='fish';"));
 
-            Assert.IsTrue(queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+            Assert.IsTrue(
+                queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
             Console.WriteLine(queryBuilder.SQL);
         }

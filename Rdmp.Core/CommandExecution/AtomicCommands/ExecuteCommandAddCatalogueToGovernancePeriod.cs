@@ -11,21 +11,23 @@ using Rdmp.Core.Curation.Data.Governance;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public sealed class ExecuteCommandAddCatalogueToGovernancePeriod:BasicCommandExecution
+public sealed class ExecuteCommandAddCatalogueToGovernancePeriod : BasicCommandExecution
 {
     private readonly GovernancePeriod _governancePeriod;
     private readonly ICatalogue[] _catalogues;
 
-    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue c) : this(activator, governancePeriod, new[]{c})
+    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator,
+        GovernancePeriod governancePeriod, ICatalogue c) : this(activator, governancePeriod, new[] { c })
     {
     }
 
-    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, IEnumerable<ICatalogue> catalogues):base(activator)
+    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator,
+        GovernancePeriod governancePeriod, IEnumerable<ICatalogue> catalogues) : base(activator)
     {
         _governancePeriod = governancePeriod;
         _catalogues = catalogues.Except(_governancePeriod.GovernedCatalogues).ToArray();
 
-        if(!_catalogues.Any())
+        if (!_catalogues.Any())
             SetImpossible("All Catalogues are already in the Governance Period");
     }
 
@@ -33,8 +35,8 @@ public sealed class ExecuteCommandAddCatalogueToGovernancePeriod:BasicCommandExe
     {
         base.Execute();
 
-        foreach(var catalogue in _catalogues)
-            BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod,catalogue);
+        foreach (var catalogue in _catalogues)
+            BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod, catalogue);
 
         Publish(_governancePeriod);
     }

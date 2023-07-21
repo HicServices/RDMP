@@ -18,7 +18,7 @@ public class NotNull : SecondaryConstraint
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
         if (value == null || value == DBNull.Value)
-            return new ValidationFailure("Value cannot be null",this);
+            return new ValidationFailure("Value cannot be null", this);
 
         return value is string && string.IsNullOrWhiteSpace(value.ToString())
             ? new ValidationFailure("Value cannot be whitespace only", this)
@@ -27,12 +27,7 @@ public class NotNull : SecondaryConstraint
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return "not null";
-    }
-
+    public override string GetHumanReadableDescriptionOfValidation() => "not null";
 }

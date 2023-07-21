@@ -27,7 +27,8 @@ public class PlatformDatabaseFoundEventArgs
     public RDMPPlatformDatabaseStatus Status { get; set; }
     public Exception Exception { get; set; }
 
-    public PlatformDatabaseFoundEventArgs(ITableRepository repository, IPatcher patcher, RDMPPlatformDatabaseStatus status, Exception exception=null)
+    public PlatformDatabaseFoundEventArgs(ITableRepository repository, IPatcher patcher,
+        RDMPPlatformDatabaseStatus status, Exception exception = null)
     {
         Repository = repository;
         Patcher = patcher;
@@ -35,9 +36,6 @@ public class PlatformDatabaseFoundEventArgs
         Exception = exception;
     }
 
-    public string SummariseAsString()
-    {
-        return
-            $"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : Repository.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
-    }
+    public string SummariseAsString() =>
+        $"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : Repository.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
 }

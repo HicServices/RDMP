@@ -26,7 +26,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests;
 
-public class AggregateDataBasedTests:DatabaseTests
+public class AggregateDataBasedTests : DatabaseTests
 {
     private static DataTable GetTestDataTable()
     {
@@ -47,14 +47,15 @@ public class AggregateDataBasedTests:DatabaseTests
         dt.Rows.Add("2002-03-02", "T", "17");
         dt.Rows.Add("2003-01-01", "T", "19");
         dt.Rows.Add("2003-04-02", "T", "23");
-            
+
 
         dt.Rows.Add("2002-01-01", "F", "29");
         dt.Rows.Add("2002-01-01", "F", "31");
 
         dt.Rows.Add("2001-01-01", "E&, %a' mp;E", "37");
         dt.Rows.Add("2002-01-01", "E&, %a' mp;E", "41");
-        dt.Rows.Add("2005-01-01", "E&, %a' mp;E", "59");  //note there are no records in 2004 it is important for axis tests (axis involves you having to build a calendar table)
+        dt.Rows.Add("2005-01-01", "E&, %a' mp;E",
+            "59"); //note there are no records in 2004 it is important for axis tests (axis involves you having to build a calendar table)
 
         dt.Rows.Add(null, "G", "47");
         dt.Rows.Add("2001-01-01", "G", "53");
@@ -64,10 +65,11 @@ public class AggregateDataBasedTests:DatabaseTests
 
     #region Helper methods
 
-    private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue, out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
+    private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue,
+        out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
     {
         var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
-            
+
         var db = GetCleanedServer(type);
 
         var data = GetTestDataTable();
@@ -80,10 +82,11 @@ public class AggregateDataBasedTests:DatabaseTests
 
         Assert.IsTrue(tbl.Exists());
 
-        catalogue = Import(tbl,out tableinfo,out _,out _, out extractionInformations);
+        catalogue = Import(tbl, out tableinfo, out _, out _, out extractionInformations);
 
         return tbl;
     }
+
     private static void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
     {
         tbl.Drop();
@@ -112,13 +115,14 @@ public class AggregateDataBasedTests:DatabaseTests
 
         var repo = new MemoryCatalogueRepository();
 
-        var ORContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.OR);
+        var ORContainer = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.OR);
         var constParam = new ConstantParameter(declaration, "'T'", "T Category Only", syntaxHelper);
 
         //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
-        var filter1 = new SpontaneouslyInventedFilter(repo,ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
+        var filter1 = new SpontaneouslyInventedFilter(repo, ORContainer, "(Category=@category OR Category = 'T')",
+            "Category Is @category",
             "ensures the records belong to the category @category", new ISqlParameter[] { constParam });
-        var filter2 = new SpontaneouslyInventedFilter(repo,ORContainer, "NumberInTrouble > 42",
+        var filter2 = new SpontaneouslyInventedFilter(repo, ORContainer, "NumberInTrouble > 42",
             "number in trouble greater than 42", "See above", null);
 
         ORContainer.AddChild(filter1);
@@ -127,7 +131,8 @@ public class AggregateDataBasedTests:DatabaseTests
         builder.RootFilterContainer = ORContainer;
     }
 
-    private AggregateConfiguration SetupAggregateWithAxis(DatabaseType type, ExtractionInformation[] extractionInformations,
+    private AggregateConfiguration SetupAggregateWithAxis(DatabaseType type,
+        ExtractionInformation[] extractionInformations,
         ICatalogue catalogue, out AggregateDimension axisDimension)
     {
         var dateDimension =
@@ -145,7 +150,8 @@ public class AggregateDataBasedTests:DatabaseTests
         return configuration;
     }
 
-    private AggregateConfiguration SetupAggregateWithPivot(DatabaseType type, ExtractionInformation[] extractionInformations,
+    private AggregateConfiguration SetupAggregateWithPivot(DatabaseType type,
+        ExtractionInformation[] extractionInformations,
         ICatalogue catalogue, out AggregateDimension axisDimension, out AggregateDimension pivotDimension)
     {
         var axisCol =
@@ -177,9 +183,10 @@ public class AggregateDataBasedTests:DatabaseTests
     //[TestCase(DatabaseType.Oracle)]// doesn't quite work yet :) needs full implementation of database abstraction layer for Oracle to work
     public void Count_CorrectNumberOfRowsCalculated(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type,out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
-        var builder = new AggregateBuilder(null, "count(*)", null,new []{tableInfo});
+        var builder = new AggregateBuilder(null, "count(*)", null, new[] { tableInfo });
         var resultTable = GetResultForBuilder(builder, tbl);
         try
         {
@@ -197,11 +204,13 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_CategoryWithCount_Correct(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate
-        var categoryDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
-        var configuration  = new AggregateConfiguration(CatalogueRepository,catalogue,"GroupBy_Category");
+        var categoryDimension = extractionInformations.Single(e =>
+            e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
+        var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
         var dimension = new AggregateDimension(CatalogueRepository, categoryDimension, configuration);
 
         try
@@ -227,10 +236,12 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_CategoryWithSum_Correct(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate
-        var categoryDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
+        var categoryDimension = extractionInformations.Single(e =>
+            e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
         var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
         var dimension = new AggregateDimension(CatalogueRepository, categoryDimension, configuration);
 
@@ -247,7 +258,7 @@ public class AggregateDataBasedTests:DatabaseTests
             VerifyRowExist(resultTable, "F", 60);
             VerifyRowExist(resultTable, "E&, %a' mp;E", 137);
             VerifyRowExist(resultTable, "G", 100);
-            Assert.AreEqual(4,resultTable.Rows.Count);
+            Assert.AreEqual(4, resultTable.Rows.Count);
         }
         finally
         {
@@ -260,10 +271,12 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_CategoryWithSum_WHEREStatement(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate
-        var categoryDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
+        var categoryDimension = extractionInformations.Single(e =>
+            e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
         var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
         var dimension = new AggregateDimension(CatalogueRepository, categoryDimension, configuration);
 
@@ -276,7 +289,7 @@ public class AggregateDataBasedTests:DatabaseTests
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder, type);
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
@@ -292,12 +305,14 @@ public class AggregateDataBasedTests:DatabaseTests
             Destroy(tbl, configuration, catalogue, tableInfo);
         }
     }
+
     [Test]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_AxisWithSum_Correct(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate with axis
         var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
@@ -314,9 +329,10 @@ public class AggregateDataBasedTests:DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals( "2000",resultTable.Rows[0][0]));
+            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            VerifyRowExist(resultTable, "2000", null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
+            VerifyRowExist(resultTable, "2000",
+                null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
             VerifyRowExist(resultTable, "2001", 157);
             VerifyRowExist(resultTable, "2002", 131);
             VerifyRowExist(resultTable, "2003", 42);
@@ -329,14 +345,15 @@ public class AggregateDataBasedTests:DatabaseTests
         {
             Destroy(tbl, configuration, catalogue, tableInfo);
         }
-            
     }
+
     [Test]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_AxisWithCount_HAVING(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate with axis
         var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
@@ -356,7 +373,8 @@ public class AggregateDataBasedTests:DatabaseTests
             //axis is ordered ascending by date starting in 2000 so that row should come first
             Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            VerifyRowExist(resultTable, "2000", null); //records only showing where there are more than 3 records (HAVING refers to the year since there's no pivot)
+            VerifyRowExist(resultTable, "2000",
+                null); //records only showing where there are more than 3 records (HAVING refers to the year since there's no pivot)
             VerifyRowExist(resultTable, "2001", 5);
             VerifyRowExist(resultTable, "2002", 5);
             VerifyRowExist(resultTable, "2003", null);
@@ -369,7 +387,6 @@ public class AggregateDataBasedTests:DatabaseTests
         {
             Destroy(tbl, configuration, catalogue, tableInfo);
         }
-
     }
 
 
@@ -378,7 +395,8 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_AxisWithCount_WHERECorrect(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate with axis
         var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
@@ -391,7 +409,7 @@ public class AggregateDataBasedTests:DatabaseTests
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder, type);
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
@@ -414,10 +432,12 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_PivotWithSum_Correct(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -436,18 +456,19 @@ public class AggregateDataBasedTests:DatabaseTests
             //axis is ordered ascending by date starting in 2000 so that row should come first
             Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
+            Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
             Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
             Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
             Assert.AreEqual("G", resultTable.Columns[4].ColumnName);
 
             //T,E,F,G
-            VerifyRowExist(resultTable, "2000", null, null, null, null);//no records in 2000 but it is important it appears still because that is what the axis says
+            VerifyRowExist(resultTable, "2000", null, null, null,
+                null); //no records in 2000 but it is important it appears still because that is what the axis says
             VerifyRowExist(resultTable, "2001", 67, 37, null, 53);
             VerifyRowExist(resultTable, "2002", 30, 41, 60, null);
             VerifyRowExist(resultTable, "2003", 42, null, null, null);
             VerifyRowExist(resultTable, "2004", null, null, null, null);
-            VerifyRowExist(resultTable, "2005", null, 59,null , null);
+            VerifyRowExist(resultTable, "2005", null, 59, null, null);
             VerifyRowExist(resultTable, "2006", null, null, null, null);
             VerifyRowExist(resultTable, "2007", null, null, null, null);
         }
@@ -455,7 +476,6 @@ public class AggregateDataBasedTests:DatabaseTests
         {
             Destroy(tbl, configuration, catalogue, tableInfo);
         }
-            
     }
 
 
@@ -464,10 +484,12 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_PivotWithSum_WHEREStatement(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -481,7 +503,7 @@ public class AggregateDataBasedTests:DatabaseTests
             builder.AddColumn(pivotDimension);
             builder.SetPivotToDimensionID(pivotDimension);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder, type);
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
@@ -493,14 +515,15 @@ public class AggregateDataBasedTests:DatabaseTests
             Assert.AreEqual("G", resultTable.Columns[3].ColumnName);
 
             //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
-            VerifyRowExist(resultTable, "2000", null, null, null); //no records in 2000 but it is important it appears still because that is what the axis says
+            VerifyRowExist(resultTable, "2000", null, null,
+                null); //no records in 2000 but it is important it appears still because that is what the axis says
             VerifyRowExist(resultTable, "2001", 67, null, 53);
             VerifyRowExist(resultTable, "2002", 30, null, null);
             VerifyRowExist(resultTable, "2003", 42, null, null);
             VerifyRowExist(resultTable, "2004", null, null, null);
-            VerifyRowExist(resultTable, "2005", null, 59,  null);
+            VerifyRowExist(resultTable, "2005", null, 59, null);
             VerifyRowExist(resultTable, "2006", null, null, null);
-            VerifyRowExist(resultTable, "2007", null, null,  null);
+            VerifyRowExist(resultTable, "2007", null, null, null);
         }
         finally
         {
@@ -519,10 +542,12 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_PivotWithSum_Top2BasedonCountColumnDesc(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -552,7 +577,8 @@ public class AggregateDataBasedTests:DatabaseTests
             Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
 
             //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
-            VerifyRowExist(resultTable, "2000", null, null); //no records in 2000 but it is important it appears still because that is what the axis says
+            VerifyRowExist(resultTable, "2000", null,
+                null); //no records in 2000 but it is important it appears still because that is what the axis says
             VerifyRowExist(resultTable, "2001", 67, 37);
             VerifyRowExist(resultTable, "2002", 30, 41);
             VerifyRowExist(resultTable, "2003", 42, null);
@@ -577,15 +603,17 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_PivotWithSum_Top2AlphabeticalAsc_WHEREStatement(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
         configuration.SaveToDatabase();
-            
+
         var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
         {
             OrderByDirection = AggregateTopXOrderByDirection.Descending,
@@ -602,7 +630,7 @@ public class AggregateDataBasedTests:DatabaseTests
             builder.AddColumn(pivotDimension);
             builder.SetPivotToDimensionID(pivotDimension);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder, type);
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
@@ -614,7 +642,8 @@ public class AggregateDataBasedTests:DatabaseTests
             Assert.AreEqual("G", resultTable.Columns[2].ColumnName);
 
             //E,G (note that only 1 value appears for E because WHERE throws out rest).  Also note the two columns are E and G because that is Top 2 when alphabetically sorted of the pivot values (E,F,G,T) that match the filter (F doesn't)
-            VerifyRowExist(resultTable, "2000", null, null); //no records in 2000 but it is important it appears still because that is what the axis says
+            VerifyRowExist(resultTable, "2000", null,
+                null); //no records in 2000 but it is important it appears still because that is what the axis says
             VerifyRowExist(resultTable, "2001", null, 53);
             VerifyRowExist(resultTable, "2002", null, null);
             VerifyRowExist(resultTable, "2003", null, null);
@@ -638,10 +667,12 @@ public class AggregateDataBasedTests:DatabaseTests
     [TestCase(DatabaseType.MySql)]
     public void GroupBy_PivotWithSum_HAVING_Top1_WHERE(DatabaseType type)
     {
-        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
+        var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations,
+            out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+            out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -664,7 +695,7 @@ public class AggregateDataBasedTests:DatabaseTests
             builder.AddColumn(pivotDimension);
             builder.SetPivotToDimensionID(pivotDimension);
 
-            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder,type);
+            AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(builder, type);
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
@@ -675,7 +706,8 @@ public class AggregateDataBasedTests:DatabaseTests
             Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[1].ColumnName);
 
             //Only E appears because of Top 1 pivot statement
-            VerifyRowExist(resultTable, "2000", null); //all E records are discarded except 59 because that is the WHERE logic
+            VerifyRowExist(resultTable, "2000",
+                null); //all E records are discarded except 59 because that is the WHERE logic
             VerifyRowExist(resultTable, "2001", null);
             VerifyRowExist(resultTable, "2002", null);
             VerifyRowExist(resultTable, "2003", null);

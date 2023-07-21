@@ -14,18 +14,20 @@ namespace Rdmp.Core.CommandLine.Options;
 /// Options for the Extraction Engine which performs cohort linkage against datasets and extracts anonymous datasets
 /// </summary>
 [Verb("extract", HelpText = "Runs the Data Extraction Engine")]
-public class ExtractionOptions:ConcurrentRDMPCommandLineOptions
+public class ExtractionOptions : ConcurrentRDMPCommandLineOptions
 {
-    [Option('g',"Globals", HelpText = "Include extraction of globals (global SupportingDocuments etc")]
+    [Option('g', "Globals", HelpText = "Include extraction of globals (global SupportingDocuments etc")]
     public bool ExtractGlobals { get; set; }
 
-    [Option('e',"ExtractionConfiguration",HelpText = "The ExtractionConfiguration ID to extract",Required = true)]
+    [Option('e', "ExtractionConfiguration", HelpText = "The ExtractionConfiguration ID to extract", Required = true)]
     public string ExtractionConfiguration { get; set; }
 
     [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use", Required = true)]
     public string Pipeline { get; set; }
 
-    [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration)")]
+    [Option('s', "Datasets",
+        HelpText =
+            "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration)")]
     public string Datasets { get; set; }
 
     [Usage]
@@ -37,13 +39,11 @@ public class ExtractionOptions:ConcurrentRDMPCommandLineOptions
                 new ExtractionOptions
                 {
                     Command = CommandLineActivity.check,
-                    ExtractionConfiguration =  "32",
-                    Pipeline =  "2",
+                    ExtractionConfiguration = "32",
+                    Pipeline = "2",
                     Datasets = "123,124"
                 }
             );
-                
         }
     }
-
 }

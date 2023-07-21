@@ -34,10 +34,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
         // start bucket if DNE
         if (!Ignores.ContainsKey(type)) Ignores[type] = new HashSet<string>();
 
-        foreach (var prop in propertyName)
-        {
-            Ignores[type].Add(prop);
-        }
+        foreach (var prop in propertyName) Ignores[type].Add(prop);
     }
 
     /// <summary>
@@ -66,10 +63,9 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
 
         if (IsIgnored(property.DeclaringType, property.PropertyName)
             // need to check basetype as well for EF -- @per comment by user576838 - LT: but it can be null, so check that too!
-            || (property.DeclaringType?.BaseType != null && IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
-        {
+            || (property.DeclaringType?.BaseType != null &&
+                IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
             property.ShouldSerialize = _ => false;
-        }
 
         return property;
     }

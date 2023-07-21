@@ -9,7 +9,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
-public class ProjectCohortsNode:Node,IOrderable
+public class ProjectCohortsNode : Node, IOrderable
 {
     public Project Project { get; set; }
 
@@ -18,39 +18,27 @@ public class ProjectCohortsNode:Node,IOrderable
         Project = project;
     }
 
-    public override string ToString()
+    public override string ToString() => "Project Cohorts";
+
+    public int Order
     {
-        return "Project Cohorts";
+        get => 1;
+        set { }
     }
 
-    public int Order { get => 1;
-        set { } }
-
-    protected bool Equals(ProjectCohortsNode other)
-    {
-        return Project.Equals(other.Project);
-    }
+    protected bool Equals(ProjectCohortsNode other) => Project.Equals(other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCohortsNode) obj);
+        return Equals((ProjectCohortsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return Project.GetHashCode();
-    }
+    public override int GetHashCode() => Project.GetHashCode();
 
-    public static bool operator ==(ProjectCohortsNode left, ProjectCohortsNode right)
-    {
-        return Equals(left, right);
-    }
+    public static bool operator ==(ProjectCohortsNode left, ProjectCohortsNode right) => Equals(left, right);
 
-    public static bool operator !=(ProjectCohortsNode left, ProjectCohortsNode right)
-    {
-        return !Equals(left, right);
-    }
+    public static bool operator !=(ProjectCohortsNode left, ProjectCohortsNode right) => !Equals(left, right);
 }

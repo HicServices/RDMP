@@ -48,13 +48,14 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void SetCohorts()
     {
-        if(_project?.ProjectNumber == null)
+        if (_project?.ProjectNumber == null)
             return;
 
-        if(Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
+        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
             return;
 
-        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts.Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
+        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts
+            .Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
     }
 
     //menu item setup
@@ -65,7 +66,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     /// Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems
     /// </summary>
     private int _rightClickedRowExtractionConfigurationID = -1;
-
 
 
     public ProjectUI()
@@ -80,7 +80,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         AssociatedCollection = RDMPCollection.DataExport;
     }
-
 
 
     public void RefreshLists()
@@ -99,7 +98,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         //now load the UI form
         _project = databaseObject;
 
@@ -181,8 +180,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
 
             r["Datasets"] =
-                string.Join(",",configuration.GetAllExtractableDataSets().Select(ds=>ds.ToString()));
-
+                string.Join(",", configuration.GetAllExtractableDataSets().Select(ds => ds.ToString()));
         }
 
         return dtToReturn;
@@ -194,12 +192,15 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void mi_SetDescription_Click(object sender, EventArgs e)
     {
-        var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+        var toSetDescriptionOn =
+            Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+                _rightClickedRowExtractionConfigurationID);
 
         if (toSetDescriptionOn.IsReleased)
             return;
 
-        var dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000, toSetDescriptionOn.Description);
+        var dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000,
+            toSetDescriptionOn.Description);
 
         dialog.ShowDialog(this);
 
@@ -213,12 +214,15 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
     {
-        var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+        var toSetDescriptionOn =
+            Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+                _rightClickedRowExtractionConfigurationID);
 
         if (toSetDescriptionOn.IsReleased)
             return;
 
-        var dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator",3,toSetDescriptionOn.Separator);
+        var dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator", 3,
+            toSetDescriptionOn.Separator);
 
         dialog.ShowDialog(this);
 
@@ -237,18 +241,19 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
     {
-
         //note that this only deals with clicking cells, to see what happens hwen user clicks in blank area of datagrid see dataGridView1_MouseClick
         if (e.RowIndex >= 0)
             if (e.Button == MouseButtons.Right)
             {
-
                 menu.Items.Clear();
 
 
-                _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+                _rightClickedRowExtractionConfigurationID =
+                    int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
-                var selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+                var selectedExtractionConfiguration =
+                    Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
+                        _rightClickedRowExtractionConfigurationID);
 
                 menu.Items.Clear();
 
@@ -256,14 +261,10 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
                     menu.Items.Add(mi_SetDescription);
 
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
-
             }
     }
 
-
-
     #endregion
-
 
     #endregion
 
@@ -286,7 +287,9 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         try
         {
             if (!tbExtractionDirectory.Text.StartsWith("\\") && !Directory.Exists(tbExtractionDirectory.Text))
+            {
                 tbExtractionDirectory.ForeColor = Color.Red;
+            }
             else
             {
                 _project.ExtractionDirectory = tbExtractionDirectory.Text;
@@ -295,37 +298,34 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         }
         catch (Exception)
         {
-
             tbExtractionDirectory.ForeColor = Color.Red;
         }
-
     }
 
     private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
     {
-        if(e.ColumnIndex == -1 || e.RowIndex == -1)
+        if (e.ColumnIndex == -1 || e.RowIndex == -1)
             return;
 
         if (dataGridView1.Columns[e.ColumnIndex].Name == "Description")
         {
             //simulate a right click by setting the ID and calling the handler directly
-            _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+            _rightClickedRowExtractionConfigurationID =
+                int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
             mi_SetDescription_Click(null, null);
         }
 
         if (dataGridView1.Columns[e.ColumnIndex].Name == "Separator")
         {
             //simulate a right click by setting the ID and calling the handler directly
-            _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+            _rightClickedRowExtractionConfigurationID =
+                int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
             mi_ChooseFileSeparator_Click(null, null);
         }
-
-
     }
 
     private void tbProjectNumber_TextChanged(object sender, EventArgs e)
     {
-
         if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
         {
             _project.ProjectNumber = null;
@@ -338,11 +338,10 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
             tbProjectNumber.ForeColor = Color.Black;
             _project.SaveToDatabase();
         }
-        catch (Exception )
+        catch (Exception)
         {
             tbProjectNumber.ForeColor = Color.Red;
         }
-
     }
 
     private void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
@@ -367,6 +366,6 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ProjectUI_Design, UserControl>))]
-public abstract class ProjectUI_Design:RDMPSingleDatabaseObjectControl<Project>
+public abstract class ProjectUI_Design : RDMPSingleDatabaseObjectControl<Project>
 {
 }

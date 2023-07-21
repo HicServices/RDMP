@@ -32,49 +32,48 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     public int CacheProgress_ID
     {
         get => _cacheProgressID;
-        set => SetField(ref  _cacheProgressID, value);
+        set => SetField(ref _cacheProgressID, value);
     }
 
     /// <inheritdoc/>
     public DateTime FetchRequestStart
     {
         get => _fetchRequestStart;
-        set => SetField(ref  _fetchRequestStart, value);
+        set => SetField(ref _fetchRequestStart, value);
     }
 
     /// <inheritdoc cref="ICacheFetchFailure.FetchRequestStart"/>
     public DateTime FetchRequestEnd
     {
         get => _fetchRequestEnd;
-        set => SetField(ref  _fetchRequestEnd, value);
+        set => SetField(ref _fetchRequestEnd, value);
     }
 
     /// <inheritdoc/>
     public string ExceptionText
     {
         get => _exceptionText;
-        set => SetField(ref  _exceptionText, value);
+        set => SetField(ref _exceptionText, value);
     }
 
     /// <inheritdoc/>
     public DateTime LastAttempt
     {
         get => _lastAttempt;
-        set => SetField(ref  _lastAttempt, value);
+        set => SetField(ref _lastAttempt, value);
     }
 
     /// <inheritdoc/>
     public DateTime? ResolvedOn
     {
         get => _resolvedOn;
-        set => SetField(ref  _resolvedOn, value);
+        set => SetField(ref _resolvedOn, value);
     }
 
     #endregion
 
     public CacheFetchFailure()
     {
-
     }
 
     /// <summary>
@@ -85,16 +84,17 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <param name="e"></param>
-    public CacheFetchFailure(ICatalogueRepository repository, ICacheProgress cacheProgress, DateTime start, DateTime end, Exception e)
+    public CacheFetchFailure(ICatalogueRepository repository, ICacheProgress cacheProgress, DateTime start,
+        DateTime end, Exception e)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"CacheProgress_ID", cacheProgress.ID},
-            {"FetchRequestStart", start},
-            {"FetchRequestEnd", end},
-            {"ExceptionText", ExceptionHelper.ExceptionToListOfInnerMessages(e,true)},
-            {"LastAttempt", DateTime.Now},
-            {"ResolvedOn", DBNull.Value}
+            { "CacheProgress_ID", cacheProgress.ID },
+            { "FetchRequestStart", start },
+            { "FetchRequestEnd", end },
+            { "ExceptionText", ExceptionHelper.ExceptionToListOfInnerMessages(e, true) },
+            { "LastAttempt", DateTime.Now },
+            { "ResolvedOn", DBNull.Value }
         });
     }
 

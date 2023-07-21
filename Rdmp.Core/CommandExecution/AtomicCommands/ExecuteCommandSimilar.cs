@@ -30,13 +30,13 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
     private readonly Type[] _diffSupportedTypes = { typeof(ColumnInfo) };
 
     private IReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
+
     /// <summary>
     /// The objects matched by the command (similar or different objects)
     /// </summary>
-    public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched {
-        get {
-            return _matched ??= FetchMatches();
-        }
+    public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched
+    {
+        get { return _matched ??= FetchMatches(); }
     }
 
     /// <summary>
@@ -47,16 +47,15 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
     public ExecuteCommandSimilar(IBasicActivateItems activator,
         [DemandsInitialization("An object for which you want to find similar objects")]
         IMapsDirectlyToDatabaseTable to,
-        [DemandsInitialization("True to show only objects that are similar (e.g. same name) but different (e.g. different data type)")]
-        bool butDifferent):base(activator)
+        [DemandsInitialization(
+            "True to show only objects that are similar (e.g. same name) but different (e.g. different data type)")]
+        bool butDifferent) : base(activator)
     {
         _to = to;
         _butDifferent = butDifferent;
 
-        if(_butDifferent && !_diffSupportedTypes.Contains(_to.GetType()))
-        {
+        if (_butDifferent && !_diffSupportedTypes.Contains(_to.GetType()))
             SetImpossible($"Differencing is not supported on {_to.GetType().Name}");
-        }
 
         Weight = 50.3f;
     }
@@ -72,39 +71,36 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
         }
 
         if (!BasicActivator.IsInteractive && GoTo)
-        {
-            throw new Exception($"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
-        }
+            throw new Exception(
+                $"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
 
-        if(GoTo)
+        if (GoTo)
         {
             var selected = BasicActivator.SelectOne("Similar Objects", Matched.ToArray(), null, true);
-            if(selected != null)
-            {
-                Emphasise(selected);
-            }
+            if (selected != null) Emphasise(selected);
         }
         else
         {
-            BasicActivator.Show(string.Join(Environment.NewLine, Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
+            BasicActivator.Show(string.Join(Environment.NewLine,
+                Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
         }
     }
 
     private static readonly IReadOnlyCollection<IMapsDirectlyToDatabaseTable> Empty =
         Enumerable.Empty<IMapsDirectlyToDatabaseTable>().ToList().AsReadOnly();
+
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> FetchMatches()
     {
         if (_matched is not null) return _matched;
 
         try
         {
-            var others = BasicActivator.CoreChildProvider.GetAllObjects(_to.GetType(), true).Where(IsSimilar).Where(Include).ToList().AsReadOnly();
+            var others = BasicActivator.CoreChildProvider.GetAllObjects(_to.GetType(), true).Where(IsSimilar)
+                .Where(Include).ToList().AsReadOnly();
             if (others.Count == 0)
-            {
                 SetImpossible(_butDifferent
                     ? "There are no alternate column specifications of this column"
                     : "There are no Similar objects");
-            }
             return others;
         }
         catch (Exception ex)
@@ -114,12 +110,10 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
         }
     }
 
-    public override string GetCommandHelp()
-    {
-        return _butDifferent
+    public override string GetCommandHelp() =>
+        _butDifferent
             ? "Find objects with the same name but different implementation (e.g. different column data type)"
             : "Find other objects with the same or similar name to this";
-    }
 
     private bool IsSimilar(IMapsDirectlyToDatabaseTable other)
     {
@@ -137,13 +131,11 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
 
     private static readonly char[] TrimChars = { ' ', '[', ']', '\'', '"', '`' };
 
-    private static bool SimilarWord(string name1, string name2, StringComparison comparisonType)
-    {
-        return !string.IsNullOrWhiteSpace(name1) && !string.IsNullOrWhiteSpace(name2) && string.Equals(
-            name1[Math.Max(0,name1.LastIndexOf('.'))..].Trim(TrimChars),
-            name2[Math.Max(0,name2.LastIndexOf('.'))..].Trim(TrimChars),
+    private static bool SimilarWord(string name1, string name2, StringComparison comparisonType) =>
+        !string.IsNullOrWhiteSpace(name1) && !string.IsNullOrWhiteSpace(name2) && string.Equals(
+            name1[Math.Max(0, name1.LastIndexOf('.'))..].Trim(TrimChars),
+            name2[Math.Max(0, name2.LastIndexOf('.'))..].Trim(TrimChars),
             comparisonType);
-    }
 
     private bool Include(IMapsDirectlyToDatabaseTable arg)
     {
@@ -152,15 +144,12 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
             return true;
 
         // or they are different
-        if(_to is ColumnInfo col && arg is ColumnInfo otherCol)
-        {
+        if (_to is ColumnInfo col && arg is ColumnInfo otherCol)
             return
                 !string.Equals(col.Data_type, otherCol.Data_type) || !string.Equals(col.Collation, otherCol.Collation);
-        }
 
         // WHEN ADDING NEW TYPES add the Type to _diffSupportedTypes
 
         return false;
     }
-
 }

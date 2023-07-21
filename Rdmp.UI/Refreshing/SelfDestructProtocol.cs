@@ -17,16 +17,19 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
     public RDMPSingleDatabaseObjectControl<T> User { get; private set; }
     public T OriginalObject { get; set; }
 
-    public SelfDestructProtocol(RDMPSingleDatabaseObjectControl<T> user,IActivateItems activator, T originalObject)
+    public SelfDestructProtocol(RDMPSingleDatabaseObjectControl<T> user, IActivateItems activator, T originalObject)
     {
         _activator = activator;
         User = user;
-        OriginalObject = originalObject ?? throw new System.Exception($"Could not construct tab for a null object. Control was '{User?.GetType()}'");
+        OriginalObject = originalObject ??
+                         throw new System.Exception(
+                             $"Could not construct tab for a null object. Control was '{User?.GetType()}'");
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        var descendancy = e.DeletedObjectDescendancy ?? _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+        var descendancy = e.DeletedObjectDescendancy ??
+                          _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
         //implementation of the anoymous callback
         var o = e.Object as T;
@@ -36,21 +39,21 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
             o = (T)descendancy.Parents.LastOrDefault(p => p is T);
 
         //don't respond to events raised by the user themself!
-        if(sender == User)
+        if (sender == User)
             return;
 
         //if the original object does not exist anymore (could be a CASCADE event so we do have to check it every time regardless of what object type is refreshing)
-        if (!OriginalObject.Exists())//object no longer exists!
+        if (!OriginalObject.Exists()) //object no longer exists!
         {
             var parent = User.ParentForm;
             if (parent is { IsDisposed: false })
-                parent.Close();//self destruct because object was deleted
+                parent.Close(); //self destruct because object was deleted
 
             return;
         }
 
-        if (o != null && o.ID == OriginalObject.ID && o.GetType() == OriginalObject.GetType())//object was refreshed, probably an update to some fields in it
+        if (o != null && o.ID == OriginalObject.ID &&
+            o.GetType() == OriginalObject.GetType()) //object was refreshed, probably an update to some fields in it
             User.SetDatabaseObject(_activator, o); //give it the new object
     }
-
 }

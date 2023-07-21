@@ -31,8 +31,10 @@ internal class SearchablesMatchScorerTests : UnitTests
 
         var scorer = new SearchablesMatchScorer();
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "FF", new List<Type>(), CancellationToken.None);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "FF", new List<Type>(),
+            CancellationToken.None);
 
         var cataScore = scores.Single(d => Equals(d.Key.Key, cata));
         var projScore = scores.Single(d => Equals(d.Key.Key, proj));
@@ -62,9 +64,11 @@ internal class SearchablesMatchScorerTests : UnitTests
         var scorer = new SearchablesMatchScorer();
         scorer.TypeNames.Add("CohortAggregateContainer");
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(),"", new List<Type> { typeof(CohortAggregateContainer)}, CancellationToken.None);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "",
+            new List<Type> { typeof(CohortAggregateContainer) }, CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, container));
         Assert.Greater(score.Value, 0);
@@ -87,37 +91,34 @@ internal class SearchablesMatchScorerTests : UnitTests
         var scorer = new SearchablesMatchScorer();
         scorer.TypeNames.Add("CohortAggregateContainer");
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         // user is searching for the text 'troll'
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "troll", new List<Type>(), CancellationToken.None);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "troll", new List<Type>(),
+            CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, container));
 
-        if(userSetting)
-        {
+        if (userSetting)
             // although the text appears in the search they are not doing it by exact type name and their settings
             // mean they don't want to see these objects by default.
             Assert.AreEqual(0, score.Value);
-        }
         else
-        {
             Assert.Greater(score.Value, 0);
-        }
-            
     }
 
-    [TestCase(true,true,true)]
+    [TestCase(true, true, true)]
     [TestCase(true, false, false)]
     [TestCase(false, true, true)]
     [TestCase(false, false, true)]
     public void TestScoringCatalogueFlag_IsDeprecated(bool hasFlag, bool shouldShow, bool expectedResult)
     {
-        TestScoringFlag((c,eds)=>
+        TestScoringFlag((c, eds) =>
         {
             c.IsDeprecated = hasFlag;
             UserSettings.ShowDeprecatedCatalogues = shouldShow;
-        },expectedResult);
+        }, expectedResult);
     }
 
     [TestCase(true, true, true)]
@@ -139,7 +140,7 @@ internal class SearchablesMatchScorerTests : UnitTests
     [TestCase(false, false, true)]
     public void TestScoringCatalogueFlag_IsInternalDataset(bool hasFlag, bool shouldShow, bool expectedResult)
     {
-        TestScoringFlag((c,eds) =>
+        TestScoringFlag((c, eds) =>
         {
             c.IsInternalDataset = hasFlag;
             UserSettings.ShowInternalCatalogues = shouldShow;
@@ -152,12 +153,9 @@ internal class SearchablesMatchScorerTests : UnitTests
     [TestCase(false, false, true)]
     public void TestScoringCatalogueFlag_IsExtractable(bool notExtractable, bool shouldShow, bool expectedResult)
     {
-        TestScoringFlag((c,eds) =>
+        TestScoringFlag((c, eds) =>
         {
-            if(notExtractable)
-            {
-                eds.DeleteInDatabase();
-            }
+            if (notExtractable) eds.DeleteInDatabase();
 
             UserSettings.ShowNonExtractableCatalogues = shouldShow;
         }, expectedResult);
@@ -169,7 +167,7 @@ internal class SearchablesMatchScorerTests : UnitTests
     [TestCase(false, false, true)]
     public void TestScoringCatalogueFlag_IsProjectSpecific(bool projectSpecific, bool shouldShow, bool expectedResult)
     {
-        TestScoringFlag((c,eds) =>
+        TestScoringFlag((c, eds) =>
         {
             if (projectSpecific)
             {
@@ -177,9 +175,11 @@ internal class SearchablesMatchScorerTests : UnitTests
                 eds.Project_ID = 5135;
                 eds.SaveToDatabase();
             }
+
             UserSettings.ShowProjectSpecificCatalogues = shouldShow;
         }, expectedResult);
     }
+
     private void TestScoringFlag(Action<Catalogue, ExtractableDataSet> setter, bool expectedResult)
     {
         // Filter is hungry and eager to please.  If you want to see ProjectSpecific Catalogues then
@@ -201,7 +201,7 @@ internal class SearchablesMatchScorerTests : UnitTests
         var eds = new ExtractableDataSet(Repository, c);
         eds.SaveToDatabase();
 
-        setter(c,eds);
+        setter(c, eds);
         c.SaveToDatabase();
 
 
@@ -210,31 +210,23 @@ internal class SearchablesMatchScorerTests : UnitTests
             RespectUserSettings = true
         };
 
-        var childProvider = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
+        var childProvider =
+            new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
 
         // user is searching for the text 'troll'
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "Bunny", new List<Type>(), CancellationToken.None);
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "Bunny", new List<Type>(),
+            CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, c));
 
         if (expectedResult)
-        {
-            Assert.Greater(score.Value,0);
-        }
+            Assert.Greater(score.Value, 0);
         else
-        {
             // score 0 and don't be included in results
-            Assert.AreEqual(0,score.Value);
-        }
+            Assert.AreEqual(0, score.Value);
 
         // Cleanup test
-        foreach(var d in Repository.GetAllObjects<ExtractableDataSet>())
-        {
-            d.DeleteInDatabase();
-        }
-        foreach (var cat in Repository.GetAllObjects<Catalogue>())
-        {
-            cat.DeleteInDatabase();
-        }
+        foreach (var d in Repository.GetAllObjects<ExtractableDataSet>()) d.DeleteInDatabase();
+        foreach (var cat in Repository.GetAllObjects<Catalogue>()) cat.DeleteInDatabase();
     }
 }

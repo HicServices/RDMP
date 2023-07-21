@@ -28,12 +28,14 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 /// <para>This serialization includes the allocation of SharingUIDs to allow for later updates and to prevent duplicate loading in the destination.  In addition it handles
 /// system boundaries e.g. it doesn't serialize <see cref="LoadMetadata"/> of the <see cref="Catalogue"/> or other deployment specific objects</para>
 /// </summary>
-public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>, IPipelineRequirement<IBasicActivateItems>
+public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>,
+    IPipelineRequirement<IBasicActivateItems>
 {
     private ReleaseData _releaseData;
     private IBasicActivateItems _activator;
 
-    public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         var allCatalogues =
             _releaseData.SelectedDatasets.Values.SelectMany(sd => sd.ToList())
@@ -41,19 +43,22 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
                 .Distinct()
                 .Cast<IMapsDirectlyToDatabaseTable>()
                 .ToArray();
-            
-        if(!allCatalogues.Any())
+
+        if (!allCatalogues.Any())
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "No Catalogues are selected for release"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning, "No Catalogues are selected for release"));
             return toProcess;
         }
 
-        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent ?? throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
+        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent ??
+                           throw new Exception(
+                               "Could not find Source Folder. DOes the project have an Extraction Directory defined?");
         var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
 
         var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);
         cmd.Execute();
-            
+
         return toProcess;
     }
 

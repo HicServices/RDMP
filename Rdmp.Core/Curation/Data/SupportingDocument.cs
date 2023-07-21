@@ -25,9 +25,10 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// <para>Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.</para>
 /// </summary>
-public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
+public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
 {
     #region Database Properties
+
     private string _name;
     private Uri _uRL;
     private string _description;
@@ -98,15 +99,15 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     public int Catalogue_ID
     {
         get => _catalogueID;
-        set => SetField(ref _catalogueID , value);
+        set => SetField(ref _catalogueID, value);
     }
 
     #endregion
 
     public SupportingDocument()
     {
-
     }
+
     /// <summary>
     /// Creates a new supporting document for helping understand the dataset <paramref name="parent"/>
     /// </summary>
@@ -115,17 +116,19 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     /// <param name="name"></param>
     public SupportingDocument(ICatalogueRepository repository, ICatalogue parent, string name)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"Catalogue_ID", parent.ID}
+            { "Name", name },
+            { "Catalogue_ID", parent.ID }
         });
     }
 
     internal SupportingDocument(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString()); //gets around decimals and other random crud number field types that sql returns
+        Catalogue_ID =
+            int.Parse(r["Catalogue_ID"]
+                .ToString()); //gets around decimals and other random crud number field types that sql returns
         Name = r["Name"].ToString();
         URL = ParseUrl(r, "URL");
         Description = r["Description"].ToString();
@@ -135,10 +138,7 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Returns true if <see cref="Extractable"/> and has a valid <see cref="URL"/>

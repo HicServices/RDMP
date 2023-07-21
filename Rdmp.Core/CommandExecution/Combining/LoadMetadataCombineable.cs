@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// </summary>
 public class LoadMetadataCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
-    public LoadMetadata LoadMetadata { get;}
+    public LoadMetadata LoadMetadata { get; }
 
     public IHasFolder Folderable => LoadMetadata;
 
@@ -25,8 +25,5 @@ public class LoadMetadataCombineable : ICombineToMakeCommand, IHasFolderCombinea
         LoadMetadata = lmd;
     }
 
-    public string GetSqlString()
-    {
-        return "";
-    }
+    public string GetSqlString() => "";
 }

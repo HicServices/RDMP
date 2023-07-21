@@ -18,7 +18,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 public static class ExceptionHelper
 {
     [Pure]
-    public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace=false)
+    public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace = false)
     {
         var message = new StringBuilder(e.Message);
         if (includeStackTrace)
@@ -26,7 +26,8 @@ public static class ExceptionHelper
 
         if (e is ReflectionTypeLoadException exception)
             foreach (var loaderException in exception.LoaderExceptions)
-                message.Append(Environment.NewLine + ExceptionToListOfInnerMessages(loaderException, includeStackTrace));
+                message.Append(Environment.NewLine +
+                               ExceptionToListOfInnerMessages(loaderException, includeStackTrace));
 
         if (e.InnerException != null)
             message.Append(Environment.NewLine + ExceptionToListOfInnerMessages(e.InnerException, includeStackTrace));
@@ -41,10 +42,8 @@ public static class ExceptionHelper
     /// <param name="e"></param>
     /// <returns></returns>
     [Pure]
-    public static T GetExceptionIfExists<T>(this AggregateException e) where T:Exception
-    {
-        return e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
-    }
+    public static T GetExceptionIfExists<T>(this AggregateException e) where T : Exception =>
+        e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
 
     /// <summary>
     /// Returns the first InnerException of type T in the Exception or null.

@@ -17,8 +17,8 @@ internal class ArchivalDataLoadInfoTests
     {
         var adi = new ArchivalDataLoadInfo
         {
-            StartTime = new DateTime(2010, 1, 1,12,0,0),
-            EndTime = new DateTime(2010, 1, 3,13,20,23)
+            StartTime = new DateTime(2010, 1, 1, 12, 0, 0),
+            EndTime = new DateTime(2010, 1, 3, 13, 20, 23)
         };
 
         // This dle took 2 days, 1 hour, 20 mins and 23 seconds

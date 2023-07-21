@@ -37,7 +37,7 @@ public class ExtractionTimeValidator
     public ExtractionTimeValidator(ICatalogue catalogue, List<IColumn> columnsToExtract)
     {
         _columnsToExtract = columnsToExtract;
-            
+
         Validator = Validator.LoadFromXml(catalogue.ValidatorXML);
 
         if (string.IsNullOrWhiteSpace(catalogue.ValidatorXML))
@@ -46,7 +46,7 @@ public class ExtractionTimeValidator
         IgnoredBecauseColumnHashed = new List<ItemValidator>();
     }
 
-    public void Validate(DataTable dt,string validationColumnToPopulateIfAny)
+    public void Validate(DataTable dt, string validationColumnToPopulateIfAny)
     {
         if (!_initialized)
             Initialize(dt);
@@ -61,7 +61,6 @@ public class ExtractionTimeValidator
             if (validationColumnToPopulateIfAny != null)
                 r[validationColumnToPopulateIfAny] = consequenceOnLastRowProcessed;
         }
-
     }
 
     private void Initialize(DataTable dt)
@@ -70,8 +69,10 @@ public class ExtractionTimeValidator
 
         //discard any item validators that don't exist in our colmn collection (from schema) - These are likely just columns that are not used during validation
         foreach (var iv in Validator.ItemValidators)
-            if (!dt.Columns.Contains(iv.TargetProperty))  //if target property is not in the column collection
+            if (!dt.Columns.Contains(iv.TargetProperty)) //if target property is not in the column collection
+            {
                 toDiscard.Add(iv);
+            }
             else
             {
                 //also discard any that have an underlying column that is Hashed as they will not match validation constraints post hash (hashing is done in SQL so we will never see original value)
@@ -90,13 +91,11 @@ public class ExtractionTimeValidator
                     IgnoredBecauseColumnHashed.Add(iv);
                     toDiscard.Add(iv);
                 }
-
             }
 
         foreach (var itemValidator in toDiscard)
             Validator.ItemValidators.Remove(itemValidator);
 
         _initialized = true;
-
     }
 }

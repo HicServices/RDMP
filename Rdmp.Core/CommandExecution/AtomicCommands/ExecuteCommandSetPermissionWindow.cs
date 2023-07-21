@@ -14,24 +14,22 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCommandWithTarget
+public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicCommandWithTarget
 {
     private readonly CacheProgress _cacheProgress;
     private PermissionWindow _window;
 
-    public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) : base(activator)
+    public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) :
+        base(activator)
     {
         _cacheProgress = cacheProgress;
         _window = null;
 
-        if(!activator.CoreChildProvider.AllPermissionWindows.Any())
+        if (!activator.CoreChildProvider.AllPermissionWindows.Any())
             SetImpossible("There are no PermissionWindows created yet");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Restrict caching execution to the given time period";
-    }
+    public override string GetCommandHelp() => "Restrict caching execution to the given time period";
 
     public override void Execute()
     {
@@ -39,7 +37,7 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCo
 
         _window ??= SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-        if(_window == null)
+        if (_window == null)
             return;
 
         _cacheProgress.PermissionWindow_ID = _window.ID;
@@ -48,10 +46,8 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCo
         Publish(_cacheProgress);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

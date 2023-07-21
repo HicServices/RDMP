@@ -20,8 +20,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
 /// the top log entry is failing or if there are no log entries within the expected time span.
 /// </summary>
-public class ExecuteCommandConfirmLogs : BasicCommandExecution {
-
+public class ExecuteCommandConfirmLogs : BasicCommandExecution
+{
     /// <summary>
     /// Optional time period in which to expect successful logs
     /// </summary>
@@ -48,15 +48,12 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <param name="withinTime"></param>
     /// <param name="requireLoadedRows"></param>
     public ExecuteCommandConfirmLogs(IBasicActivateItems activator,
-
         [DemandsInitialization("The object you want to confirm passing log entries for")]
         ILoggedActivityRootObject obj,
-
         [DemandsInitialization("Optional time period in which to expect successful logs e.g. 24:00:00 (24 hours)")]
         string withinTime = null,
-
         [DemandsInitialization("Optional.  Pass true to require rows to be loaded if obj is a LoadMetadata")]
-        bool requireLoadedRows=false):base(activator)
+        bool requireLoadedRows = false) : base(activator)
     {
         LogRootObject = obj;
         RequireLoadedRows = requireLoadedRows;
@@ -78,11 +75,9 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
         // e.g. no runs or latest run was a failure etc
         ThrowIfNoEntries(logManager, false);
 
-        if(LogRootObject is ILoadMetadata && RequireLoadedRows)
-        {
+        if (LogRootObject is ILoadMetadata && RequireLoadedRows)
             // run again but only consider loads where rows were loaded
             ThrowIfNoEntries(logManager, true);
-        }
     }
 
     private void ThrowIfNoEntries(LogManager logManager, bool checkInclusionCriteria)
@@ -97,9 +92,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
 
         // if no logs
         if (latest == null)
-        {
             throw new LogsNotConfirmedException($"There are no log entries for {LogRootObject}{messageClarification}");
-        }
 
         // we have logs but are they in the time period we are interested in
         if (WithinTime.HasValue)
@@ -109,22 +102,19 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
 
             // if the latest log entry is older than the time period the user indicated
             if (startTime < thresholdDate)
-            {
-                throw new LogsNotConfirmedException($"Latest logged activity for {LogRootObject}{messageClarification} is {startTime}.  This is older than the requested date threshold:{thresholdDate}");
-            }
+                throw new LogsNotConfirmedException(
+                    $"Latest logged activity for {LogRootObject}{messageClarification} is {startTime}.  This is older than the requested date threshold:{thresholdDate}");
         }
 
         // we have an acceptably recent log entry
         if (latest.HasErrors)
-        {
-            throw new LogsNotConfirmedException($"Latest logs for {LogRootObject}{messageClarification} ({latest.StartTime}) indicate that it failed");
-        }
+            throw new LogsNotConfirmedException(
+                $"Latest logs for {LogRootObject}{messageClarification} ({latest.StartTime}) indicate that it failed");
 
         // most recent log entry did not complete
         if (!latest.EndTime.HasValue)
-        {
-            throw new LogsNotConfirmedException($"Latest logs for {LogRootObject}{messageClarification} ({latest.StartTime}) indicate that it did not complete");
-        }
+            throw new LogsNotConfirmedException(
+                $"Latest logs for {LogRootObject}{messageClarification} ({latest.StartTime}) indicate that it did not complete");
         // latest log entry is passing yay!
     }
 
@@ -142,13 +132,14 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
 
         var liveTableNames = lmd.GetAllCatalogues()
             .SelectMany(c => c.GetTableInfoList(true))
-            .Select(t=> new Regex($"\\b{Regex.Escape(t.GetRuntimeName())}\\b"))
+            .Select(t => new Regex($"\\b{Regex.Escape(t.GetRuntimeName())}\\b"))
             .Distinct();
 
         // tables where there was at least 1 insert or update and it wasn't in a RAW or STAGING table
         var loadedTables = arg.TableLoadInfos
             .Where(l => l.Inserts > 0 || l.Updates > 0)
-            .Where(l => !l.TargetTable.Contains("_RAW",StringComparison.Ordinal) && !l.TargetTable.Contains("_STAGING",StringComparison.Ordinal));
+            .Where(l => !l.TargetTable.Contains("_RAW", StringComparison.Ordinal) &&
+                        !l.TargetTable.Contains("_STAGING", StringComparison.Ordinal));
 
         // of those they must match the live table name
         return loadedTables.Any(l =>

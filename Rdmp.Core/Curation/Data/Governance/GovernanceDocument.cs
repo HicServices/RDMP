@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data.Governance;
 /// datasets for a given period of time.  Also includes a name (which should really match the file name) and a description which should be a plain summary of what is in the document
 /// such that lay users can appreciate what the document contains/means for the system.
 /// </summary>
-public class GovernanceDocument : DatabaseEntity,INamed
+public class GovernanceDocument : DatabaseEntity, INamed
 {
     #region Database Properties
 
@@ -37,7 +37,7 @@ public class GovernanceDocument : DatabaseEntity,INamed
     public int GovernancePeriod_ID
     {
         get => _governancePeriodID;
-        private set => SetField(ref  _governancePeriodID, value);
+        private set => SetField(ref _governancePeriodID, value);
     } //every document belongs to only one period of governance knoweldge (via fk relationship)
 
     /// <inheritdoc/>
@@ -45,7 +45,7 @@ public class GovernanceDocument : DatabaseEntity,INamed
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class GovernanceDocument : DatabaseEntity,INamed
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -64,14 +64,13 @@ public class GovernanceDocument : DatabaseEntity,INamed
     public string URL
     {
         get => _url;
-        set => SetField(ref  _url, value);
+        set => SetField(ref _url, value);
     }
 
     #endregion
 
     public GovernanceDocument()
     {
-
     }
 
     /// <summary>
@@ -82,11 +81,11 @@ public class GovernanceDocument : DatabaseEntity,INamed
     /// <param name="file"></param>
     public GovernanceDocument(ICatalogueRepository repository, GovernancePeriod parent, FileInfo file)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"GovernancePeriod_ID", parent.ID},
-            {"URL", file.FullName},
-            {"Name", file.Name}
+            { "GovernancePeriod_ID", parent.ID },
+            { "URL", file.FullName },
+            { "Name", file.Name }
         });
     }
 
@@ -105,10 +104,7 @@ public class GovernanceDocument : DatabaseEntity,INamed
 
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Checks that the file exists
@@ -116,7 +112,6 @@ public class GovernanceDocument : DatabaseEntity,INamed
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-
         try
         {
             var fileInfo = new FileInfo(URL);
@@ -124,17 +119,20 @@ public class GovernanceDocument : DatabaseEntity,INamed
             if (fileInfo.Exists)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Found intact attachment file {fileInfo} with length {UsefulStuff.GetHumanReadableByteSize(fileInfo.Length)}", CheckResult.Success));
+                        $"Found intact attachment file {fileInfo} with length {UsefulStuff.GetHumanReadableByteSize(fileInfo.Length)}",
+                        CheckResult.Success));
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"File {fileInfo.FullName} does not exist (for GovernanceDocument '{this}' (ID={ID})", CheckResult.Fail));
+                        $"File {fileInfo.FullName} does not exist (for GovernanceDocument '{this}' (ID={ID})",
+                        CheckResult.Fail));
         }
         catch (Exception ex)
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Failed to check for existence of the file described by GovernanceDocument '{this}' (ID={ID})", CheckResult.Fail,ex));
+                    $"Failed to check for existence of the file described by GovernanceDocument '{this}' (ID={ID})",
+                    CheckResult.Fail, ex));
         }
     }
 
@@ -142,8 +140,5 @@ public class GovernanceDocument : DatabaseEntity,INamed
     /// Returns the name of the file (See also <see cref="URL"/>)
     /// </summary>
     /// <returns></returns>
-    public string GetFilenameOnly()
-    {
-        return Path.GetFileName(URL);
-    }
+    public string GetFilenameOnly() => Path.GetFileName(URL);
 }

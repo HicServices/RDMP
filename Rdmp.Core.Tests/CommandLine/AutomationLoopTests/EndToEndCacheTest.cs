@@ -27,7 +27,6 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
 
 public class EndToEndCacheTest : DatabaseTests
 {
-
     private Catalogue _cata;
     private LoadMetadata _lmd;
     private LoadProgress _lp;
@@ -46,7 +45,9 @@ public class EndToEndCacheTest : DatabaseTests
         MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
-        _LoadDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), @"EndToEndCacheTest", true);
+        _LoadDirectory =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                @"EndToEndCacheTest", true);
         _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
         _lmd.SaveToDatabase();
 
@@ -61,10 +62,11 @@ public class EndToEndCacheTest : DatabaseTests
         _lp = new LoadProgress(CatalogueRepository, _lmd);
         _cp = new CacheProgress(CatalogueRepository, _lp);
 
-        _lp.OriginDate = new DateTime(2001,1,1);
+        _lp.OriginDate = new DateTime(2001, 1, 1);
         _lp.SaveToDatabase();
 
-        _testPipeline = new TestDataPipelineAssembler($"EndToEndCacheTestPipeline{Guid.NewGuid()}",CatalogueRepository);
+        _testPipeline =
+            new TestDataPipelineAssembler($"EndToEndCacheTestPipeline{Guid.NewGuid()}", CatalogueRepository);
         _testPipeline.ConfigureCacheProgressToUseThePipeline(_cp);
 
         _cp.CacheFillProgress = DateTime.Now.AddDays(-NumDaysToCache);
@@ -106,8 +108,10 @@ public class EndToEndCacheTest : DatabaseTests
         {
             Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
-            var auto = new CacheRunner(new CacheOptions {CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
-            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
+            var auto = new CacheRunner(new CacheOptions
+                { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
+            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
         });
 
         Assert.True(t.Wait(60000));

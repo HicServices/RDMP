@@ -36,18 +36,13 @@ public static partial class UsefulStuff
 
     private static readonly Regex NullWithSpaces = NullInSpace();
 
-    public static bool IsBasicallyNull(this string result)
-    {
-        return string.IsNullOrWhiteSpace(result) ||
-               // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
-               // but not the same as task cancellation
-               NullWithSpaces.IsMatch(result);
-    }
+    public static bool IsBasicallyNull(this string result) =>
+        string.IsNullOrWhiteSpace(result) ||
+        // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
+        // but not the same as task cancellation
+        NullWithSpaces.IsMatch(result);
 
-    public static bool IsBadName(string name)
-    {
-        return name?.Any(Path.GetInvalidFileNameChars().Contains) == true;
-    }
+    public static bool IsBadName(string name) => name?.Any(Path.GetInvalidFileNameChars().Contains) == true;
 
     public static void OpenUrl(string url)
     {
@@ -106,7 +101,6 @@ public static partial class UsefulStuff
             catch (Exception)
             {
                 throw new Exception($"Cannot recognise date format :{iO}");
-
             }
         }
 
@@ -123,7 +117,6 @@ public static partial class UsefulStuff
 
     public static IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
     {
-
         if (string.IsNullOrWhiteSpace(text))
             yield break;
 
@@ -180,11 +173,9 @@ public static partial class UsefulStuff
         }
     }
 
-    public static bool CHIisOK(string sCHI)
-    {
-        return long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) && sCHI.Length == 10 &&
-               DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
-    }
+    public static bool CHIisOK(string sCHI) =>
+        long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) && sCHI.Length == 10 &&
+        DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
 
     private static char GetCHICheckDigit(string sCHI)
     {
@@ -201,13 +192,10 @@ public static partial class UsefulStuff
         if (c == 11) c = 0;
 
         return (char)(c + '0');
-
     }
 
-    public static DirectoryInfo GetExecutableDirectory()
-    {
-        return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory ?? throw new Exception("BaseDirectory was null?!"));
-    }
+    public static DirectoryInfo GetExecutableDirectory() =>
+        new(AppDomain.CurrentDomain.BaseDirectory ?? throw new Exception("BaseDirectory was null?!"));
 
     public static string HashFile(string filename, int retryCount = 6)
     {
@@ -226,8 +214,6 @@ public static partial class UsefulStuff
                 return HashFile(filename, retryCount); //try it again (recursively)
             throw;
         }
-
-
     }
 
     public static bool RequiresLength(string columnType)
@@ -291,7 +277,6 @@ public static partial class UsefulStuff
 
         if (conn.State != ConnectionState.Open)
         {
-
             conn.Open();
             hadToOpen = true;
         }
@@ -395,11 +380,7 @@ public static partial class UsefulStuff
         return task.Wait(timeout) && task.Result;
     }
 
-    public static bool VerifyFileExists(Uri uri, int timeout)
-    {
-        return VerifyFileExists(uri.LocalPath, timeout);
-
-    }
+    public static bool VerifyFileExists(Uri uri, int timeout) => VerifyFileExists(uri.LocalPath, timeout);
 
     public static string DataTableToHtmlDataTable(DataTable dt)
     {
@@ -519,7 +500,6 @@ public static partial class UsefulStuff
     /// <returns></returns>
     public static string SplitByLength(string input, int maxLen, string newline = null)
     {
-
         return
             string.Join(newline ?? Environment.NewLine,
                 Regex.Split(input, $@"(.{{1,{maxLen}}})(?:\s|$)")
@@ -593,8 +573,10 @@ public static partial class UsefulStuff
 
     [GeneratedRegex("[^0-9A-Za-z]+", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex NonAlphaNumeric();
+
     [GeneratedRegex("[^0-9A-Za-z_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex NonAlphaNumericUnderscore();
+
     [GeneratedRegex("^\\s*null\\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex NullInSpace();
 }

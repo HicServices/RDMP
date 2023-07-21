@@ -9,14 +9,17 @@ using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class LoadStageNode : Node,IOrderable
+public class LoadStageNode : Node, IOrderable
 {
     public LoadMetadata LoadMetadata { get; }
     public LoadStage LoadStage { get; }
 
     //prevent reordering
-    public int Order { get => (int)LoadStage;
-        set { } }
+    public int Order
+    {
+        get => (int)LoadStage;
+        set { }
+    }
 
     public LoadStageNode(LoadMetadata loadMetadata, LoadStage loadStage)
     {
@@ -24,26 +27,18 @@ public class LoadStageNode : Node,IOrderable
         LoadStage = loadStage;
     }
 
-    public override string ToString()
-    {
-        return LoadStage.ToString();
-    }
+    public override string ToString() => LoadStage.ToString();
 
-    protected bool Equals(LoadStageNode other)
-    {
-        return Equals(LoadMetadata, other.LoadMetadata) && LoadStage == other.LoadStage;
-    }
+    protected bool Equals(LoadStageNode other) =>
+        Equals(LoadMetadata, other.LoadMetadata) && LoadStage == other.LoadStage;
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadStageNode) obj);
+        return Equals((LoadStageNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(LoadMetadata, LoadStage);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(LoadMetadata, LoadStage);
 }

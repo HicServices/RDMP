@@ -15,8 +15,7 @@ namespace Rdmp.UI.PluginManagement.CodeGeneration;
 /// </summary>
 public class CodeGenerationException : Exception
 {
-    public CodeGenerationException(string message):base(message)
+    public CodeGenerationException(string message) : base(message)
     {
-
     }
 }

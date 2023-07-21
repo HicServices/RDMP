@@ -57,42 +57,42 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     public int? PermissionWindow_ID
     {
         get => _permissionWindowID;
-        set => SetField(ref  _permissionWindowID, value);
+        set => SetField(ref _permissionWindowID, value);
     }
 
     /// <inheritdoc/>
     public DateTime? CacheFillProgress
     {
         get => _cacheFillProgress;
-        set => SetField(ref  _cacheFillProgress, value);
+        set => SetField(ref _cacheFillProgress, value);
     }
 
     ///<inheritdoc/>
     public string CacheLagPeriod
     {
         get => _cacheLagPeriod;
-        set => SetField(ref  _cacheLagPeriod, value);
+        set => SetField(ref _cacheLagPeriod, value);
     } // stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod
 
     ///<inheritdoc/>
     public int? Pipeline_ID
     {
         get => _pipelineID;
-        set => SetField(ref  _pipelineID, value);
+        set => SetField(ref _pipelineID, value);
     }
 
     ///<inheritdoc/>
     public TimeSpan ChunkPeriod
     {
         get => _chunkPeriod;
-        set => SetField(ref  _chunkPeriod, value);
+        set => SetField(ref _chunkPeriod, value);
     }
 
     ///<inheritdoc/>
     public string CacheLagPeriodLoadDelay
     {
         get => _cacheLagPeriodLoadDelay;
-        set => SetField(ref  _cacheLagPeriodLoadDelay, value);
+        set => SetField(ref _cacheLagPeriodLoadDelay, value);
     }
 
     #endregion
@@ -101,7 +101,8 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
     ///<inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ICacheFetchFailure> CacheFetchFailures => Repository.GetAllObjectsWithParent<CacheFetchFailure>(this);
+    public IEnumerable<ICacheFetchFailure> CacheFetchFailures =>
+        Repository.GetAllObjectsWithParent<CacheFetchFailure>(this);
 
     /// <inheritdoc cref="ICacheProgress.LoadProgress_ID"/>
     [NoMappingToDatabase]
@@ -116,20 +117,18 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     public IPermissionWindow PermissionWindow =>
         PermissionWindow_ID == null
             ? null
-            : Repository.GetObjectByID<PermissionWindow>((int) PermissionWindow_ID);
+            : Repository.GetObjectByID<PermissionWindow>((int)PermissionWindow_ID);
 
     #endregion
+
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
-    public CacheLagPeriod GetCacheLagPeriod()
-    {
-        return string.IsNullOrWhiteSpace(CacheLagPeriod) ? null : new CacheLagPeriod(CacheLagPeriod);
-    }
+    public CacheLagPeriod GetCacheLagPeriod() =>
+        string.IsNullOrWhiteSpace(CacheLagPeriod) ? null : new CacheLagPeriod(CacheLagPeriod);
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
-    public CacheLagPeriod GetCacheLagPeriodLoadDelay()
-    {
-        return string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay) ? Cache.CacheLagPeriod.Zero : new CacheLagPeriod(CacheLagPeriodLoadDelay);
-    }
+    public CacheLagPeriod GetCacheLagPeriodLoadDelay() => string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay)
+        ? Cache.CacheLagPeriod.Zero
+        : new CacheLagPeriod(CacheLagPeriodLoadDelay);
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
     public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
@@ -145,7 +144,6 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
     public CacheProgress()
     {
-
     }
 
     /// <summary>
@@ -156,10 +154,10 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     /// <param name="loadProgress"></param>
     public CacheProgress(ICatalogueRepository repository, ILoadProgress loadProgress)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"LoadProgress_ID", loadProgress.ID},
-            {"Name", $"New CacheProgress {Guid.NewGuid()}" }
+            { "LoadProgress_ID", loadProgress.ID },
+            { "Name", $"New CacheProgress {Guid.NewGuid()}" }
         });
     }
 
@@ -184,7 +182,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
         using (var conn = ((CatalogueRepository)Repository).GetConnection())
         {
             using var cmd =
-                  DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
+                DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
 WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
 ORDER BY FetchRequestStart
 OFFSET {start} ROWS
@@ -207,7 +205,9 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
 
         TimeSpan shortfall;
         if (CacheFillProgress != null)
+        {
             shortfall = lastExpectedCacheDate.Subtract(CacheFillProgress.Value);
+        }
         else
         {
             var load = LoadProgress;
@@ -223,10 +223,7 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Returns all the Catalogues in this caches LoadMetadata OR if it has a PermissionWindow then ALL the unique catalogues across ALL the LoadMetadatas of ANY cache that uses the same permission window
@@ -236,17 +233,16 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
     {
         return PermissionWindow_ID == null
             ? LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray()
-            : PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
+            : PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues())
+                .Cast<Catalogue>().Distinct().ToArray();
     }
 
     /// <summary>
     /// Returns
     /// </summary>
     /// <returns></returns>
-    public DiscoveredServer GetDistinctLoggingDatabase()
-    {
-        return CatalogueRepository.GetDefaultLogManager()?.Server ?? throw new Exception("No default logging server configured");
-    }
+    public DiscoveredServer GetDistinctLoggingDatabase() => CatalogueRepository.GetDefaultLogManager()?.Server ??
+                                                            throw new Exception("No default logging server configured");
 
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
     {
@@ -258,16 +254,10 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
     /// Returns the unique logging name for <see cref="ArchivalDataLoadInfo"/> runs of this cache
     /// </summary>
     /// <returns></returns>
-    public string GetLoggingRunName()
-    {
-        return $"Caching {Name}";
-    }
+    public string GetLoggingRunName() => $"Caching {Name}";
 
 
-    public string GetDistinctLoggingTask()
-    {
-        return "caching";
-    }
+    public string GetDistinctLoggingTask() => "caching";
 
     public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
     {

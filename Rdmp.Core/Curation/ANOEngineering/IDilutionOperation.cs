@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.ANOEngineering;
 /// Describes a way of anonymising a field (ColumnToDilute) by dilution (making data less granular) e.g. rounding dates to the nearest quarter.  Implementation
 /// must be based on running an SQL query in AdjustStaging.  See Dilution for more information.
 /// </summary>
-public interface IDilutionOperation:ICheckable
+public interface IDilutionOperation : ICheckable
 {
     IPreLoadDiscardedColumn ColumnToDilute { set; }
     string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer);

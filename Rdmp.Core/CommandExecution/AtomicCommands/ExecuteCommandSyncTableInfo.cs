@@ -30,36 +30,32 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
     public ExecuteCommandSyncTableInfo(IBasicActivateItems activator,
         [DemandsInitialization("The RDMP metadata object to synchronize with the underlying database state")]
         ITableInfo table,
-        [DemandsInitialization("True to also synchronize any ANOTables (anonymisation tables) associated with the TableInfo")]
+        [DemandsInitialization(
+            "True to also synchronize any ANOTables (anonymisation tables) associated with the TableInfo")]
         bool alsoSyncAno,
         [DemandsInitialization("True to accept all changes without prompting")]
-        bool autoYes):base(activator)
+        bool autoYes) : base(activator)
     {
         _tableInfo = table;
         _alsoSyncAno = alsoSyncAno;
         _autoYes = autoYes;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.Sync);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Sync);
 
-    public override string GetCommandName()
-    {
-        return _alsoSyncAno ? "Sync TableInfo and ANO Configuration" : "Sync TableInfo";
-    }
+    public override string GetCommandName() => _alsoSyncAno ? "Sync TableInfo and ANO Configuration" : "Sync TableInfo";
 
     public override void Execute()
     {
         base.Execute();
 
         var syncher = new TableInfoSynchronizer(_tableInfo);
-        var listener = _autoYes ? new AcceptAllCheckNotifier() :(ICheckNotifier) new FromActivateItemsToCheckNotifier(BasicActivator);
+        var listener = _autoYes
+            ? new AcceptAllCheckNotifier()
+            : (ICheckNotifier)new FromActivateItemsToCheckNotifier(BasicActivator);
 
         try
         {
-
             var wasSynchedsuccessfully = syncher.Synchronize(listener);
 
             BasicActivator.Show(wasSynchedsuccessfully
@@ -68,10 +64,10 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
         }
         catch (Exception exception)
         {
-            BasicActivator.ShowException("Failed to sync",exception);
+            BasicActivator.ShowException("Failed to sync", exception);
         }
 
-        if(_alsoSyncAno)
+        if (_alsoSyncAno)
         {
             var ANOSynchronizer = new ANOTableInfoSynchronizer(_tableInfo);
 
@@ -83,11 +79,12 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
             }
             catch (ANOConfigurationException e)
             {
-                BasicActivator.ShowException("Anonymisation configuration error",e);
+                BasicActivator.ShowException("Anonymisation configuration error", e);
             }
             catch (Exception exception)
             {
-                BasicActivator.ShowException($"Fatal error while attempting to synchronize ({exception.Message})", exception);
+                BasicActivator.ShowException($"Fatal error while attempting to synchronize ({exception.Message})",
+                    exception);
             }
         }
 

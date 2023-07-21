@@ -32,9 +32,10 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
         var stageArgs = args.StageSpecificArguments ?? throw new NullReferenceException("Stage args was null");
         if (stageArgs.DbInfo == null)
-            throw new NullReferenceException("Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
+            throw new NullReferenceException(
+                "Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
 
-        if(string.IsNullOrWhiteSpace(task.Path))
+        if (string.IsNullOrWhiteSpace(task.Path))
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IMutilateDataTables)}");
 
@@ -44,10 +45,10 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     }
 
 
-
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Mutilate class is{MutilateDataTables.GetType().FullName}"));
 
@@ -58,16 +59,13 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
         catch (Exception e)
         {
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                $"Mutilate failed on job {job} Mutilator was of type {MutilateDataTables.GetType().Name} see InnerException for specifics", e));
+                $"Mutilate failed on job {job} Mutilator was of type {MutilateDataTables.GetType().Name} see InnerException for specifics",
+                e));
             return ExitCodeType.Error;
         }
-
     }
 
-    public override bool Exists()
-    {
-        return true;
-    }
+    public override bool Exists() => true;
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
@@ -85,6 +83,4 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         MutilateDataTables.LoadCompletedSoDispose(exitCode, postDataLoadEventListener);
     }
-
-
 }

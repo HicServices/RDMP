@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAtomicCommand
 {
     private readonly FileCollectionCombineable _fileCollectionCombineable;
     private readonly Catalogue _targetCatalogue;
@@ -28,7 +28,9 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
     {
         _targetCatalogue = catalogue;
     }
-    public ExecuteCommandAddNewSupportingDocument(IBasicActivateItems activator, FileCollectionCombineable fileCollectionCombineable, Catalogue targetCatalogue): base(activator)
+
+    public ExecuteCommandAddNewSupportingDocument(IBasicActivateItems activator,
+        FileCollectionCombineable fileCollectionCombineable, Catalogue targetCatalogue) : base(activator)
     {
         _fileCollectionCombineable = fileCollectionCombineable;
         _targetCatalogue = targetCatalogue;
@@ -38,20 +40,19 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
         {
             var filename = doc.GetFileName();
 
-            if(filename == null)
+            if (filename == null)
                 continue;
 
-            var collisions = _fileCollectionCombineable.Files.FirstOrDefault(f => f.FullName.Equals(filename.FullName,StringComparison.CurrentCultureIgnoreCase));
+            var collisions = _fileCollectionCombineable.Files.FirstOrDefault(f =>
+                f.FullName.Equals(filename.FullName, StringComparison.CurrentCultureIgnoreCase));
 
-            if(collisions != null)
+            if (collisions != null)
                 SetImpossible($"File '{collisions.Name}' is already a SupportingDocument (ID={doc.ID} - '{doc.Name}')");
         }
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Marks a file on disk as useful for understanding the dataset and (optionally) copies into project extractions";
-    }
+    public override string GetCommandHelp() =>
+        "Marks a file on disk as useful for understanding the dataset and (optionally) copies into project extractions";
 
     public override void Execute()
     {
@@ -65,21 +66,18 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
                 {
                     WindowTitle = "Add SupportingDocument",
                     TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
-
                 }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-            {
                 c = selected;
-            }
             else
-            {
                 // user cancelled selecting a Catalogue
                 return;
-            }
         }
 
-        var files = _fileCollectionCombineable != null ? _fileCollectionCombineable.Files : new[] {BasicActivator.SelectFile("File to add")};
+        var files = _fileCollectionCombineable != null
+            ? _fileCollectionCombineable.Files
+            : new[] { BasicActivator.SelectFile("File to add") };
 
-        if(files == null || files.All(f=>f == null))
+        if (files == null || files.All(f => f == null))
             return;
 
         var created = new List<SupportingDocument>();
@@ -96,12 +94,11 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
         Publish(c);
 
         Emphasise(created.Last());
-            
+
         foreach (var doc in created)
             Activate(doc);
     }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
-    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
 }

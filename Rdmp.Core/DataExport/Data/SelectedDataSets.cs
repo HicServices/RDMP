@@ -17,7 +17,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="ISelectedDataSets"/>
-public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDataSetsForcedJoin[]>,IDeletableWithCustomMessage
+public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>,
+    IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDataSetsForcedJoin[]>, IDeletableWithCustomMessage
 {
     #region Database Properties
 
@@ -35,6 +36,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         get => _extractionConfiguration_ID;
         set => SetField(ref _extractionConfiguration_ID, value);
     }
+
     /// <inheritdoc/>
     public int ExtractableDataSet_ID
     {
@@ -45,13 +47,13 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
             SetField(ref _extractableDataSet_ID, value);
         }
     }
+
     /// <inheritdoc/>
     public int? RootFilterContainer_ID
     {
         get => _rootFilterContainer_ID;
         set => SetField(ref _rootFilterContainer_ID, value);
     }
-
 
     #endregion
 
@@ -79,7 +81,8 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IExtractionProgress ExtractionProgressIfAny => DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
+    public IExtractionProgress ExtractionProgressIfAny =>
+        DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
 
     #endregion
 
@@ -103,13 +106,14 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <param name="configuration"></param>
     /// <param name="dataSet"></param>
     /// <param name="rootContainerIfAny">Adds the restriction that the extraction SQL should include the WHERE logic in this container</param>
-    public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration, IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
+    public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration,
+        IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ExtractionConfiguration_ID",configuration.ID},
-            {"ExtractableDataSet_ID",dataSet.ID},
-            {"RootFilterContainer_ID",rootContainerIfAny != null?(object) rootContainerIfAny.ID:DBNull.Value}
+            { "ExtractionConfiguration_ID", configuration.ID },
+            { "ExtractableDataSet_ID", dataSet.ID },
+            { "RootFilterContainer_ID", rootContainerIfAny != null ? (object)rootContainerIfAny.ID : DBNull.Value }
         });
 
         ClearAllInjections();
@@ -120,33 +124,23 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// Returns the <see cref="ExtractableDataSet"/> name
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return ExtractableDataSet.ToString();
-    }
+    public override string ToString() => ExtractableDataSet.ToString();
 
-    public bool ShouldBeReadOnly(out string reason)
-    {
-        return ExtractionConfiguration.ShouldBeReadOnly(out reason);
-    }
+    public bool ShouldBeReadOnly(out string reason) => ExtractionConfiguration.ShouldBeReadOnly(out reason);
 
     /// <inheritdoc/>
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
+    public string GetDeleteVerb() => "Remove";
 
     /// <inheritdoc/>
-    public string GetDeleteMessage()
-    {
-        return $"remove '{ExtractableDataSet}' from ExtractionConfiguration '{ExtractionConfiguration}'";
-    }
+    public string GetDeleteMessage() =>
+        $"remove '{ExtractableDataSet}' from ExtractionConfiguration '{ExtractionConfiguration}'";
 
     /// <inheritdoc/>
     public void InjectKnown(IExtractableDataSet instance)
     {
-        if(instance.ID != ExtractableDataSet_ID)
-            throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}",nameof(instance));
+        if (instance.ID != ExtractableDataSet_ID)
+            throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}",
+                nameof(instance));
 
         _extractableDataSet = new Lazy<IExtractableDataSet>(instance);
     }
@@ -157,15 +151,15 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
     }
 
-    private IExtractionConfiguration FetchExtractionConfiguration()
-    {
-        return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
-    }
+    private IExtractionConfiguration FetchExtractionConfiguration() =>
+        Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+
     /// <inheritdoc/>
     public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
     {
         _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(instances);
     }
+
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
@@ -174,20 +168,13 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         _extractableDataSet = new Lazy<IExtractableDataSet>(FetchExtractableDataset);
     }
 
-    private ISelectedDataSetsForcedJoin[] FetchForcedJoins()
-    {
-        return Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
-    }
+    private ISelectedDataSetsForcedJoin[] FetchForcedJoins() =>
+        Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
 
-    public ICatalogue GetCatalogue()
-    {
-        return ExtractableDataSet.Catalogue;
-    }
+    public ICatalogue GetCatalogue() => ExtractableDataSet.Catalogue;
 
-    private IExtractableDataSet FetchExtractableDataset()
-    {
-        return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
-    }
+    private IExtractableDataSet FetchExtractableDataset() =>
+        Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
 
     /// <inheritdoc/>
     public ICumulativeExtractionResults GetCumulativeExtractionResultsIfAny()
@@ -203,10 +190,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         SaveToDatabase();
     }
 
-    public IFilterFactory GetFilterFactory()
-    {
-        return new DeployedExtractionFilterFactory(DataExportRepository);
-    }
+    public IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);
 
     public override void DeleteInDatabase()
     {
@@ -215,12 +199,8 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         ExtractionProgressIfAny?.DeleteInDatabase();
         base.DeleteInDatabase();
 
-        foreach(var col in cols)
-        {
-            if(col.Exists())
-            {
+        foreach (var col in cols)
+            if (col.Exists())
                 col.DeleteInDatabase();
-            }
-        }
     }
 }

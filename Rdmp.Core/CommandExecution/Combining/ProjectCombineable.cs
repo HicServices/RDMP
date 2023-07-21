@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// </summary>
 public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
-    public Project  Project { get; private set; }
+    public Project Project { get; private set; }
 
     public IHasFolder Folderable => Project;
 
@@ -25,8 +25,5 @@ public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
         Project = project;
     }
 
-    public string GetSqlString()
-    {
-        return "";
-    }
+    public string GetSqlString() => "";
 }

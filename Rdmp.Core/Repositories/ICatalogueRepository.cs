@@ -114,6 +114,7 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// </summary>
     /// <returns></returns>
     bool IsLookupTable(ITableInfo tableInfo);
+
     void SetEncryptionKeyPath(string fullName);
 
     /// <summary>
@@ -129,6 +130,7 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     ExternalDatabaseServer[] GetAllDatabases<T>() where T : IPatcher, new();
+
     void DeleteEncryptionKeyPath();
 
     /// <summary>

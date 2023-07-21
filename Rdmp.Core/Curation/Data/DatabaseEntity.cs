@@ -87,17 +87,15 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             throw new InvalidOperationException(
                 $"The DataReader passed to this type ({GetType().Name}) does not contain an 'ID' column. This is a requirement for all IMapsDirectlyToDatabaseTable implementing classes.");
 
-        ID = int.Parse(r["ID"].ToString()); // gets around decimals and other random crud number field types that sql returns
-
+        ID = int.Parse(r["ID"]
+            .ToString()); // gets around decimals and other random crud number field types that sql returns
     }
 
     private static bool HasColumn(IDataRecord reader, string columnName)
     {
         for (var i = 0; i < reader.FieldCount; i++)
-        {
             if (reader.GetName(i).Equals(columnName, StringComparison.InvariantCultureIgnoreCase))
                 return true;
-        }
 
         return false;
     }
@@ -112,20 +110,16 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     {
         var uri = r[fieldName];
 
-        return uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()) ? null : new Uri(uri.ToString());
+        return uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString())
+            ? null
+            : new Uri(uri.ToString());
     }
 
     /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
-    public override int GetHashCode()
-    {
-        return Repository.GetHashCode(this);
-    }
+    public override int GetHashCode() => Repository.GetHashCode(this);
 
     /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)"/>
-    public override bool Equals(object obj)
-    {
-        return Repository.AreEqual(this, obj);
-    }
+    public override bool Equals(object obj) => Repository.AreEqual(this, obj);
 
     /// <inheritdoc/>
     public virtual void SaveToDatabase()
@@ -149,46 +143,34 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     }
 
     /// <inheritdoc/>
-    public RevertableObjectReport HasLocalChanges()
-    {
-        return Repository.HasLocalChanges(this);
-    }
+    public RevertableObjectReport HasLocalChanges() => Repository.HasLocalChanges(this);
 
     /// <inheritdoc/>
-    public virtual bool Exists()
-    {
-        return Repository.StillExists(this);
-    }
+    public virtual bool Exists() => Repository.StillExists(this);
 
     /// <summary>
     /// Converts the supplied object to a <see cref="DateTime"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static DateTime? ObjectToNullableDateTime(object o)
-    {
-        return o == null || o == DBNull.Value ? null : (DateTime)o;
-    }
+    protected static DateTime? ObjectToNullableDateTime(object o) =>
+        o == null || o == DBNull.Value ? null : (DateTime)o;
 
     /// <summary>
     /// Converts the supplied object to a <see cref="int"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static int? ObjectToNullableInt(object o)
-    {
-        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
-    }
+    protected static int? ObjectToNullableInt(object o) =>
+        o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
 
     /// <summary>
     /// Converts the supplied object to a <see cref="bool"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static bool? ObjectToNullableBool(object o)
-    {
-        return o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
-    }
+    protected static bool? ObjectToNullableBool(object o) =>
+        o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
 
     /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
     public event PropertyChangedEventHandler PropertyChanged;
@@ -200,9 +182,10 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <param name="newValue"></param>
     /// <param name="propertyName"></param>
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
+    protected virtual void OnPropertyChanged(object oldValue, object newValue,
+        [CallerMemberName] string propertyName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName,oldValue,newValue));
+        PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName, oldValue, newValue));
     }
 
     /// <summary>
@@ -219,7 +202,8 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
         if (EqualityComparer<T>.Default.Equals(field, value)) return false;
 
         //treat null and "" as the same
-        if (typeof(T) == typeof(string) && string.IsNullOrWhiteSpace(field as string) && string.IsNullOrWhiteSpace(value as string))
+        if (typeof(T) == typeof(string) && string.IsNullOrWhiteSpace(field as string) &&
+            string.IsNullOrWhiteSpace(value as string))
             return false;
 
         if (_readonly)
@@ -246,7 +230,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <param name="to"></param>
     /// <param name="copyName"></param>
     /// <param name="save"></param>
-    protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
+    protected void CopyShallowValuesTo(DatabaseEntity to, bool copyName = false, bool save = true)
     {
         if (GetType() != to.GetType())
             throw new NotSupportedException(
@@ -263,31 +247,26 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             if (p.Name.Equals("Name") && !copyName)
                 continue;
 
-            if(noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
+            if (noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
                 continue;
 
             p.SetValue(to, p.GetValue(this));
         }
 
-        if(save)
+        if (save)
             to.SaveToDatabase();
     }
 
     /// <inheritdoc/>
     public virtual string GetSummary(bool includeName, bool includeID)
     {
-
         var sbPart1 = new StringBuilder();
-        foreach (var prop in GetType().GetProperties().Where(p=>p.Name.Contains("Description")))
-        {
+        foreach (var prop in GetType().GetProperties().Where(p => p.Name.Contains("Description")))
             AppendPropertyToSummary(sbPart1, prop, includeName, includeID, false);
-        }
 
         var sbPart2 = new StringBuilder();
         foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
-        {
             AppendPropertyToSummary(sbPart2, prop, includeName, includeID);
-        }
 
         if (sbPart1.Length > 0 && sbPart2.Length > 0)
             sbPart1.AppendLine(SUMMARY_LINE_DIVIDER);
@@ -296,7 +275,8 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
         return sbPart1.ToString();
     }
 
-    protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID, bool includePropertyName = true)
+    protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID,
+        bool includePropertyName = true)
     {
         // don't show Name if we are being told not to
         if (!includeName && prop.Name.EndsWith("Name"))
@@ -323,10 +303,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
         }
         catch (TargetInvocationException ex)
         {
-            if(ex.InnerException is NotSupportedException)
-            {
-                return;
-            }
+            if (ex.InnerException is NotSupportedException) return;
 
             throw;
         }
@@ -341,17 +318,13 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             if (val is Enum e && Convert.ToInt32(e) == 0 && val is not DatabaseType)
                 return;
 
-            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
+            var representation =
+                $"{(includePropertyName ? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
-            {
                 representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
-            }
 
-            if (representation.Contains('\n'))
-            {
-                representation = Regex.Replace(representation, @"\r?\n", " ");
-            }
+            if (representation.Contains('\n')) representation = Regex.Replace(representation, @"\r?\n", " ");
 
             sb.AppendLine(representation);
         }
@@ -362,18 +335,13 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// </summary>
     /// <param name="prop"></param>
     /// <returns></returns>
-    protected virtual string FormatPropertyNameForSummary(PropertyInfo prop)
-    {
-        return UsefulStuff.PascalCaseStringToHumanReadable(prop.Name);
-    }
+    protected virtual string FormatPropertyNameForSummary(PropertyInfo prop) =>
+        UsefulStuff.PascalCaseStringToHumanReadable(prop.Name);
 
     /// <summary>
     /// Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)"/>
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
-    protected static string FormatForSummary(object val)
-    {
-        return val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
-    }
+    protected static string FormatForSummary(object val) => val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
 }

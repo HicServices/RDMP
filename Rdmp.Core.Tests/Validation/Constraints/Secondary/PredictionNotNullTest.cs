@@ -12,11 +12,9 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 [Category("Unit")]
 internal class PredictionNotNullTest
 {
-
     [Test]
     public void Validate_ValueNotNullAndRelatedValueNotNull_Succeeds()
     {
-
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
@@ -38,7 +36,8 @@ internal class PredictionNotNullTest
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
-        StringAssert.StartsWith("Nullity did not match, when one value is null, the other mus", p.Validate(null, otherCols, otherColsNames)?.Message);
+        StringAssert.StartsWith("Nullity did not match, when one value is null, the other mus",
+            p.Validate(null, otherCols, otherColsNames)?.Message);
     }
 
     [Test]
@@ -49,5 +48,4 @@ internal class PredictionNotNullTest
         var otherColsNames = new string[] { "someColumn" };
         Assert.IsNull(p.Validate(null, otherCols, otherColsNames));
     }
-
 }

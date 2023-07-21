@@ -20,7 +20,6 @@ public partial class ConsequenceBar : UserControl
     public ConsequenceBar()
     {
         InitializeComponent();
-
     }
 
     public static Color CorrectColor = Color.Green;
@@ -65,44 +64,46 @@ public partial class ConsequenceBar : UserControl
 
         var totalRecords = Correct + Missing + Invalid + Wrong;
 
-        var heightOfNullsBarStart = (int) (Height * 0.8);
-        var heightOfNullsBar = (int) (Height/5.0);
+        var heightOfNullsBarStart = (int)(Height * 0.8);
+        var heightOfNullsBar = (int)(Height / 5.0);
 
 
         //draw the nulls bar
         var valuesRatio = 1 - DBNull / totalRecords;
-        var midPointOfNullsBar = (int) (valuesRatio*Width);
+        var midPointOfNullsBar = (int)(valuesRatio * Width);
 
         //values
-        e.Graphics.FillRectangle(bValues,new Rectangle(0,heightOfNullsBarStart,midPointOfNullsBar,heightOfNullsBar));
-        e.Graphics.FillRectangle(bNulls,new Rectangle(midPointOfNullsBar,heightOfNullsBarStart,Width-midPointOfNullsBar,heightOfNullsBar));
+        e.Graphics.FillRectangle(bValues,
+            new Rectangle(0, heightOfNullsBarStart, midPointOfNullsBar, heightOfNullsBar));
+        e.Graphics.FillRectangle(bNulls,
+            new Rectangle(midPointOfNullsBar, heightOfNullsBarStart, Width - midPointOfNullsBar, heightOfNullsBar));
 
 
         //draw the main bar
-        var correctRightPoint = (int) (Correct/totalRecords*Width);
+        var correctRightPoint = (int)(Correct / totalRecords * Width);
 
-        var missingWidth = (int) (Missing/totalRecords*Width);
+        var missingWidth = (int)(Missing / totalRecords * Width);
         var missingRightPoint = correctRightPoint + missingWidth;
 
-        var wrongWidth = (int) (Wrong/totalRecords*Width);
-        var wrongRightPoint =  missingRightPoint + wrongWidth;
+        var wrongWidth = (int)(Wrong / totalRecords * Width);
+        var wrongRightPoint = missingRightPoint + wrongWidth;
 
         var invalidWidth = (int)(Invalid / totalRecords * Width);
-            
-        e.Graphics.FillRectangle(bCorrect,new Rectangle(0,0,correctRightPoint,heightOfNullsBarStart));
+
+        e.Graphics.FillRectangle(bCorrect, new Rectangle(0, 0, correctRightPoint, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bMissing, new Rectangle(correctRightPoint, 0, missingWidth, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bWrong, new Rectangle(missingRightPoint, 0, wrongWidth, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bInvalid, new Rectangle(wrongRightPoint, 0, invalidWidth, heightOfNullsBarStart));
 
-        if(!string.IsNullOrWhiteSpace(Label))
+        if (!string.IsNullOrWhiteSpace(Label))
         {
             var rect = e.Graphics.MeasureString(Label, Font);
 
             var textX = 0;
             var textY = 2;
 
-            e.Graphics.FillRectangle(Brushes.LightGray,textX,textY,rect.Width,rect.Height);
-            e.Graphics.DrawString(Label,Font,Brushes.Black,textX,textY);
+            e.Graphics.FillRectangle(Brushes.LightGray, textX, textY, rect.Width, rect.Height);
+            e.Graphics.DrawString(Label, Font, Brushes.Black, textX, textY);
         }
     }
 

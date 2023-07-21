@@ -10,17 +10,14 @@ using Rdmp.UI.LocationsMenu;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandConfigureDefaultServers : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandConfigureDefaultServers : BasicUICommandExecution, IAtomicCommand
 {
     public ExecuteCommandConfigureDefaultServers(IActivateItems activator) : base(activator)
     {
-
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Change which server is the default for a given use case e.g. Logging, DQE etc";
-    }
+    public override string GetCommandHelp() =>
+        "Change which server is the default for a given use case e.g. Logging, DQE etc";
 
     public override void Execute()
     {

@@ -13,7 +13,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// of new messages/objects e.g. TableLoadInfo and fetching archival history objects of old runs logged in the past ArchivalTableLoadInfo.  All archival
 /// history objects are immutable (cannot be edited) and inherit from IArchivalLoggingRecordOfPastEvent
 /// </summary>
-public interface IArchivalLoggingRecordOfPastEvent: IComparable
+public interface IArchivalLoggingRecordOfPastEvent : IComparable
 {
     int ID { get; }
 }

@@ -15,8 +15,7 @@ public class ExtractionArbitraryFolderNode : ArbitraryFolderNode
 {
     public ExtractionConfiguration Configuration { get; set; }
 
-    public ExtractionArbitraryFolderNode(string caption, int order) : base(caption,order)
+    public ExtractionArbitraryFolderNode(string caption, int order) : base(caption, order)
     {
-
     }
 }

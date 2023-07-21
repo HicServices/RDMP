@@ -14,23 +14,21 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExecutionProposal<AggregateConfiguration>
+internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandExecutionProposal<AggregateConfiguration>
 {
     public ProposeExecutionWhenTargetIsAggregateConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(AggregateConfiguration target)
-    {
-        return true;
-    }
+    public override bool CanActivate(AggregateConfiguration target) => true;
 
     public override void Activate(AggregateConfiguration target)
     {
         ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {

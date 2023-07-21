@@ -39,7 +39,8 @@ public class RequiredPropertyInfo
     /// <param name="demand"></param>
     /// <param name="propertyInfo"></param>
     /// <param name="parentPropertyInfo"></param>
-    public RequiredPropertyInfo(DemandsInitializationAttribute demand, PropertyInfo propertyInfo, PropertyInfo parentPropertyInfo = null)
+    public RequiredPropertyInfo(DemandsInitializationAttribute demand, PropertyInfo propertyInfo,
+        PropertyInfo parentPropertyInfo = null)
     {
         Demand = demand;
         ParentPropertyInfo = parentPropertyInfo;
@@ -49,5 +50,6 @@ public class RequiredPropertyInfo
     /// <summary>
     /// The property name.  If the property is a nested one (i.e. DemandsNestedInitialization) then returns the full expression parent.property
     /// </summary>
-    public string Name => ParentPropertyInfo == null ? PropertyInfo.Name : $"{ParentPropertyInfo.Name}.{PropertyInfo.Name}";
+    public string Name =>
+        ParentPropertyInfo == null ? PropertyInfo.Name : $"{ParentPropertyInfo.Name}.{PropertyInfo.Name}";
 }

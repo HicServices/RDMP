@@ -11,38 +11,30 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables
 /// </summary>
-public class DocumentationNode:Node
+public class DocumentationNode : Node
 {
     public Catalogue Catalogue { get; }
     public SupportingDocument[] SupportingDocuments { get; set; }
     public SupportingSQLTable[] SupportingSQLTables { get; set; }
 
-    public DocumentationNode(Catalogue catalogue, SupportingDocument[] supportingDocuments, SupportingSQLTable[] supportingSQLTables)
+    public DocumentationNode(Catalogue catalogue, SupportingDocument[] supportingDocuments,
+        SupportingSQLTable[] supportingSQLTables)
     {
         Catalogue = catalogue;
         SupportingDocuments = supportingDocuments;
         SupportingSQLTables = supportingSQLTables;
     }
 
-    public override string ToString()
-    {
-        return "Documentation";
-    }
+    public override string ToString() => "Documentation";
 
-    protected bool Equals(DocumentationNode other)
-    {
-        return Equals(Catalogue, other.Catalogue);
-    }
+    protected bool Equals(DocumentationNode other) => Equals(Catalogue, other.Catalogue);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == typeof (DocumentationNode) && Equals((DocumentationNode) obj);
+        return obj.GetType() == typeof(DocumentationNode) && Equals((DocumentationNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Catalogue);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue);
 }

@@ -24,7 +24,7 @@ public class ColumnSyntaxChecker : SyntaxChecker
     /// Prepares the checker to check the IColumn supplied
     /// </summary>
     /// <param name="column"></param>
-    public  ColumnSyntaxChecker(IColumn column)
+    public ColumnSyntaxChecker(IColumn column)
     {
         _column = column;
     }
@@ -46,8 +46,7 @@ public class ColumnSyntaxChecker : SyntaxChecker
             //alias is NOT wrapped
             if (_column.Alias.Any(invalidColumnValues.Contains)) //there are invalid characters
                 throw new SyntaxErrorException($"Invalid characters found in Alias \"{_column.Alias}\"");
-            else
-            if (_column.Alias.Any(whiteSpace.Contains))
+            else if (_column.Alias.Any(whiteSpace.Contains))
                 throw new SyntaxErrorException($"Whitespace found in unwrapped Alias \"{_column.Alias}\"");
 
         ParityCheckCharacterPairs(openingCharacters, closingCharacters, _column.SelectSQL);

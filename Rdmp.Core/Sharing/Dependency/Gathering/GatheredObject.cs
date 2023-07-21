@@ -51,7 +51,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     /// <param name="shareManager"></param>
     /// <param name="branchParents"></param>
     /// <returns></returns>
-    public ShareDefinition ToShareDefinition(ShareManager shareManager,List<ShareDefinition> branchParents)
+    public ShareDefinition ToShareDefinition(ShareManager shareManager, List<ShareDefinition> branchParents)
     {
         var export = shareManager.GetNewOrExistingExportFor(Object);
 
@@ -66,11 +66,11 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         foreach (var property in Object.GetType().GetProperties())
         {
             //if it's the ID column skip it
-            if(property.Name == "ID")
+            if (property.Name == "ID")
                 continue;
 
             //skip [NoMapping] columns
-            if(noMappingFinder.GetAttribute(property) != null)
+            if (noMappingFinder.GetAttribute(property) != null)
                 continue;
 
             //skip IRepositories (these tell you where the object came from)
@@ -88,21 +88,26 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
                 var parent = branchParents.SingleOrDefault(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
 
                 //if the parent is not being shared along with us
-                if(parent == null)
+                if (parent == null)
                 {
                     //if a reference is required (i.e. not optional)
-                    if(attribute.Type != RelationshipType.OptionalSharedObject)
+                    if (attribute.Type != RelationshipType.OptionalSharedObject)
                         throw new SharingException(
                             $"Property {property} on Type {Object.GetType()} is marked [Relationship] but we found no ShareDefinition amongst the current objects parents to satisfy this property");
                 }
                 else
+                {
                     relationshipProperties.Add(attribute, parent.SharingGuid);
+                }
             }
             else
+            {
                 properties.Add(property.Name, property.GetValue(Object));
+            }
         }
 
-        return new ShareDefinition(export.SharingUIDAsGuid,Object.ID,Object.GetType(),properties,relationshipProperties);
+        return new ShareDefinition(export.SharingUIDAsGuid, Object.ID, Object.GetType(), properties,
+            relationshipProperties);
     }
 
     /// <summary>
@@ -111,12 +116,11 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     /// </summary>
     /// <param name="shareManager"></param>
     /// <returns></returns>
-    public List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager)
-    {
-        return ToShareDefinitionWithChildren(shareManager, new List<ShareDefinition>());
-    }
+    public List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager) =>
+        ToShareDefinitionWithChildren(shareManager, new List<ShareDefinition>());
 
-    private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager, List<ShareDefinition> branchParents)
+    private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager,
+        List<ShareDefinition> branchParents)
     {
         var me = ToShareDefinition(shareManager, branchParents);
 
@@ -134,47 +138,28 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     }
 
     #region Equality
-    protected bool Equals(GatheredObject other)
-    {
-        return Equals(Object, other.Object);
-    }
+
+    protected bool Equals(GatheredObject other) => Equals(Object, other.Object);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((GatheredObject) obj);
+        return Equals((GatheredObject)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Object);
-    }
+    public override int GetHashCode() => HashCode.Combine(Object);
 
-    public object MasqueradingAs()
-    {
-        return Object;
-    }
+    public object MasqueradingAs() => Object;
 
-    public static bool operator ==(GatheredObject left, GatheredObject right)
-    {
-        return Equals(left, right);
-    }
+    public static bool operator ==(GatheredObject left, GatheredObject right) => Equals(left, right);
 
-    public static bool operator !=(GatheredObject left, GatheredObject right)
-    {
-        return !Equals(left, right);
-    }
+    public static bool operator !=(GatheredObject left, GatheredObject right) => !Equals(left, right);
+
     #endregion
 
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
 
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Children.ToArray();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => Children.ToArray();
 }

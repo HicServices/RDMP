@@ -41,12 +41,13 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
     private Catalogue _catalogue;
     private ToolStripButton rbCore = new("Core");
-    private ToolStripButton rbSupplemental = new("Supplemental"){Checked = true};
+    private ToolStripButton rbSupplemental = new("Supplemental") { Checked = true };
     private ToolStripButton rbSpecialApproval = new("Special Approval");
     private ToolStripButton rbInternal = new("Internal");
-    private ToolStripButton btnRun = new("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
+    private ToolStripButton btnRun = new("Run", CatalogueIcons.ExecuteArrow.ImageToBitmap());
 
     private Scintilla QueryPreview;
+
     public ViewExtractionSqlUI()
     {
         InitializeComponent();
@@ -76,16 +77,13 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     private void rb_Click(object sender, EventArgs e)
     {
         //treat as radio button
-        foreach (var item in new[] {rbCore, rbSupplemental, rbSpecialApproval, rbInternal})
+        foreach (var item in new[] { rbCore, rbSupplemental, rbSpecialApproval, rbInternal })
             item.Checked = item == sender;
 
         RefreshUIFromDatabase();
     }
 
-    private Bitmap ImageGetter(object rowObject)
-    {
-        return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
-    }
+    private Bitmap ImageGetter(object rowObject) => Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
 
     private bool bLoading;
 
@@ -119,14 +117,13 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         }
         catch (Exception ex)
         {
-            CommonFunctionality.ScintillaGoRed(QueryPreview,ex);
-            CommonFunctionality.Fatal(ex.Message,ex);
+            CommonFunctionality.ScintillaGoRed(QueryPreview, ex);
+            CommonFunctionality.Fatal(ex.Message, ex);
         }
         finally
         {
             bLoading = false;
         }
-
     }
 
     private void SetupAvailableFilters(List<ExtractionInformation> extractionInformations)
@@ -159,16 +156,17 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
 
             if (rbSupplemental.Checked || rbSpecialApproval.Checked)
-                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
+                extractionInformations.AddRange(
+                    _catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
 
             if (rbSpecialApproval.Checked)
-                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
-
+                extractionInformations.AddRange(
+                    _catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
         }
 
         //sort by Default Order
         extractionInformations.Sort();
-                
+
         //add to listbox
         olvExtractionInformations.ClearObjects();
         olvExtractionInformations.AddObjects(extractionInformations.ToArray());
@@ -193,14 +191,16 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
         RefreshUIFromDatabase();
 
         rbCore.Image = CatalogueIcons.ExtractionInformation.ImageToBitmap();
         rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ImageToBitmap();
         rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ImageToBitmap();
-        rbInternal.Image = activator.CoreIconProvider.GetImage(SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ImageToBitmap();
+        rbInternal.Image = activator.CoreIconProvider
+            .GetImage(SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval),
+                OverlayKind.Internal).ImageToBitmap();
 
         CommonFunctionality.Add(rbCore);
         CommonFunctionality.Add(rbSupplemental);
@@ -209,18 +209,14 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         CommonFunctionality.Add(btnRun);
 
         CommonFunctionality.AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
-            
     }
 
-    public override string GetTabName()
-    {
-        return $"{base.GetTabName()}(SQL)";
-    }
+    public override string GetTabName() => $"{base.GetTabName()}(SQL)";
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
-        if(((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+        if (((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o) { ExpansionDepth = 1 });
     }
 
     private void olvFilters_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -228,6 +224,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         RefreshUIFromDatabase();
     }
 }
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewExtractionSql_Design, UserControl>))]
 public abstract class ViewExtractionSql_Design : RDMPSingleDatabaseObjectControl<Catalogue>
 {

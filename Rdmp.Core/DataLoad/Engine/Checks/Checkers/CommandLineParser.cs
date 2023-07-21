@@ -33,7 +33,7 @@ internal class CommandLineParser
         {
             var ch = cmd[i];
 
-            if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
+            if (char.IsWhiteSpace(ch)) throw new InvalidOperationException();
 
             switch (ch)
             {
@@ -65,7 +65,6 @@ internal class CommandLineParser
     /// </summary>
     private void ParseQuotedWord()
     {
-
         // scan over the lead-in quotation mark w/o adding it to the buffer
         ++i;
 
@@ -73,15 +72,19 @@ internal class CommandLineParser
         while (i < cmd.Length && cmd[i] != '"')
         {
             var ch = cmd[i];
-            if (ch == '\\') { ParseEscapeSequence(); }
-            else { buf.Append(ch); ++i; }
+            if (ch == '\\')
+            {
+                ParseEscapeSequence();
+            }
+            else
+            {
+                buf.Append(ch);
+                ++i;
+            }
         }
 
         // scan over the lead-out quotation mark w/o adding it to the buffer
-        if (i < cmd.Length)
-        {
-            ++i;
-        }
+        if (i < cmd.Length) ++i;
         return;
     }
 
@@ -154,6 +157,7 @@ internal class CommandLineParser
                 ++i;
             }
         }
+
         return;
     }
 
@@ -162,10 +166,7 @@ internal class CommandLineParser
     /// </summary>
     private void ConsumeWhitespace()
     {
-        while (i < cmd.Length && char.IsWhiteSpace(cmd[i]))
-        {
-            ++i;
-        }
+        while (i < cmd.Length && char.IsWhiteSpace(cmd[i])) ++i;
         return;
     }
 }

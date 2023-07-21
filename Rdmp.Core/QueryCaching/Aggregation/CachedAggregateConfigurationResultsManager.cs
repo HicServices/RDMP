@@ -55,11 +55,11 @@ public partial class CachedAggregateConfigurationResultsManager
 
     public const string CachingPrefix = "/*Cached:";
 
-    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration, AggregateOperation operation)
-    {
-        return GetLatestResultsTableUnsafe(configuration, operation, out _);
-    }
-    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation, out string sql)
+    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
+        AggregateOperation operation) => GetLatestResultsTableUnsafe(configuration, operation, out _);
+
+    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
+        AggregateOperation operation, out string sql)
     {
         var syntax = _database.Server.GetQuerySyntaxHelper();
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -68,7 +68,7 @@ public partial class CachedAggregateConfigurationResultsManager
         {
             con.Open();
             using var cmd = DatabaseCommandHelper.GetCommand(
-                       $@"Select 
+                $@"Select 
 {syntax.EnsureWrapped("TableName")},
 {syntax.EnsureWrapped("SqlExecuted")} from {mgrTable.GetFullyQualifiedName()}
 WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
@@ -80,7 +80,6 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con);
                 sql = r["SqlExecuted"] as string;
                 return _database.ExpectTable(tableName);
             }
-
         }
 
         sql = null;
@@ -96,7 +95,8 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con);
     /// <param name="operation"></param>
     /// <param name="currentSql"></param>
     /// <returns></returns>
-    public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
+    public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration,
+        AggregateOperation operation, string currentSql)
     {
         var syntax = _database.Server.GetQuerySyntaxHelper();
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -130,7 +130,7 @@ WHERE
     private bool IsMatchOnSqlExecuted(DbDataReader r, string currentSql)
     {
         //replace all white space with single space
-        var standardisedDatabaseSql = Spaces().Replace(r["SqlExecuted"].ToString(),  " ");
+        var standardisedDatabaseSql = Spaces().Replace(r["SqlExecuted"].ToString(), " ");
         var standardisedUsersSql = Spaces().Replace(currentSql, " ");
 
         var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
@@ -157,7 +157,7 @@ WHERE
 
         using var con = _server.GetConnection();
         con.Open();
-                
+
         var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
 
         //either it has no name or it already has name we want so its ok
@@ -165,7 +165,7 @@ WHERE
 
         //add explicit types
         var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
-        if(tbl.Exists())
+        if (tbl.Exists())
             tbl.Drop();
 
         tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
@@ -177,11 +177,11 @@ WHERE
 
         mgrTable.Insert(new Dictionary<string, object>
         {
-            { "Committer", Environment.UserName},
-            { "AggregateConfiguration_ID", configuration.ID},
-            { "SqlExecuted", arguments.SQL.Trim()},
-            { "Operation", operation.ToString()},
-            { "TableName", tbl.GetRuntimeName()}
+            { "Committer", Environment.UserName },
+            { "AggregateConfiguration_ID", configuration.ID },
+            { "SqlExecuted", arguments.SQL.Trim() },
+            { "Operation", operation.ToString() },
+            { "TableName", tbl.GetRuntimeName() }
         });
 
         arguments.CommitTableDataCompleted(tbl);
@@ -209,7 +209,8 @@ WHERE
 
             //delete the record!
             using var cmd = DatabaseCommandHelper.GetCommand(
-                $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'", con);
+                $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'",
+                con);
             var deletedRows = cmd.ExecuteNonQuery();
             return deletedRows != 1
                 ? throw new Exception(

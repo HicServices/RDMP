@@ -21,17 +21,16 @@ public class CohortCreationOptions : RDMPCommandLineOptions
     // Other Options:
     /*
      * External Cohort Table
-     * 
+     *
      * Project (only existing?)
-     * 
+     *
      * New Cohort / Revision?
-     * 
+     *
      * Name (or existing cohort name/id?)
-     * 
+     *
      * Pipeline
-     * 
+     *
      * Description
-     * 
+     *
      */
-
 }

@@ -17,11 +17,10 @@ public class ExpectedIdenticalStringsException : Exception
     public string Actual { get; set; }
 
     public ExpectedIdenticalStringsException(string message, string expected, string actual)
-        : base(AssembleMessage(message,expected,actual))
+        : base(AssembleMessage(message, expected, actual))
     {
         Expected = expected;
         Actual = actual;
-            
     }
 
     private static string AssembleMessage(string message, string expected, string actual)
@@ -41,7 +40,6 @@ public class ExpectedIdenticalStringsException : Exception
             //give them a preview of the location of the difference
             if (!expected[i].Equals(actual[i]))
             {
-
                 message = $"{message}{Environment.NewLine}Strings differ at index {i}";
                 message += GetPreviewsAround(i, expected, actual);
 
@@ -56,10 +54,9 @@ public class ExpectedIdenticalStringsException : Exception
 
     private static string GetPreviewsAround(int i, string expected, string actual)
     {
-
         var toReturn = "";
 
-        var previewExpected = GetPreviewAround(i,expected,out var iIsAtCharacterPosition);
+        var previewExpected = GetPreviewAround(i, expected, out var iIsAtCharacterPosition);
         var previewActual = GetPreviewAround(i, actual, out iIsAtCharacterPosition);
 
         var differencePointer = "";
@@ -83,20 +80,21 @@ public class ExpectedIdenticalStringsException : Exception
 
         //Do not start preview before the beginning of the string e.g. if difference is at index 3 then start at 0 not -17
         var startSubstringAt = Math.Max(0, i - charsBefore);
-        iIsAtCharacterPosition = i - startSubstringAt;  //if difference is at index 350 then return 350 - (350-20) i.e. 20 but if difference is at index 3 then return 3 - 0 (see Math.Max on line above)
+        iIsAtCharacterPosition =
+            i - startSubstringAt; //if difference is at index 350 then return 350 - (350-20) i.e. 20 but if difference is at index 3 then return 3 - 0 (see Math.Max on line above)
 
-        var lengthWeWantToTake = i - startSubstringAt + charsAfter;//usually the full amount unless charsBefore is truncated due to the start of the string (when difference is early in the string)
+        var lengthWeWantToTake =
+            i - startSubstringAt +
+            charsAfter; //usually the full amount unless charsBefore is truncated due to the start of the string (when difference is early in the string)
         var lengthAvailable = str.Length - startSubstringAt;
         var lengthWeWillActuallyTake = Math.Min(lengthWeWantToTake, lengthAvailable);
 
-            
 
         //if there is more available in the string put a ... so user knows it
-        if(lengthAvailable > lengthWeWillActuallyTake )
-            return $"{str.Substring(startSubstringAt, lengthWeWillActuallyTake)}..."; 
-            
+        if (lengthAvailable > lengthWeWillActuallyTake)
+            return $"{str.Substring(startSubstringAt, lengthWeWillActuallyTake)}...";
+
         //We ran out of characters at the end of the string so don't add ....
         return str.Substring(startSubstringAt, lengthWeWillActuallyTake);
-
     }
 }

@@ -20,7 +20,7 @@ public class HideOnValidationUI : System.Attribute
 /// Attribute for <see cref="IConstraint"/> properties which should store a column name
 /// </summary>
 [System.AttributeUsage(System.AttributeTargets.Property)]
-public class ExpectsColumnNameAsInput: System.Attribute
+public class ExpectsColumnNameAsInput : System.Attribute
 {
 }
 

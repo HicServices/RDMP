@@ -20,8 +20,5 @@ public class CacheProgressCombineable : ICombineToMakeCommand
         CacheProgress = cacheProgress;
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

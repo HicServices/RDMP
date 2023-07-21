@@ -24,7 +24,8 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
     public PipelineUseCase UseCase { get; }
     private readonly Type _useCaseType;
 
-    public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase):base(null)
+    public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase) :
+        base(null)
     {
         Pipeline = pipeline;
         UseCase = useCase;
@@ -32,43 +33,31 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
         _useCaseType = UseCase.GetType();
     }
 
-    public object MasqueradingAs()
-    {
-        return Pipeline;
-    }
+    public object MasqueradingAs() => Pipeline;
 
-    public override string ToString()
-    {
-        return Pipeline.Name;
-    }
+    public override string ToString() => Pipeline.Name;
 
     public override void DeleteInDatabase()
     {
         Pipeline.DeleteInDatabase();
     }
 
-    public override bool Exists()
-    {
-        return Pipeline.Exists();
-    }
+    public override bool Exists() => Pipeline.Exists();
 
     #region Equality
-    protected bool Equals(PipelineCompatibleWithUseCaseNode other)
-    {
-        return _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
-    }
+
+    protected bool Equals(PipelineCompatibleWithUseCaseNode other) =>
+        _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PipelineCompatibleWithUseCaseNode) obj);
+        return Equals((PipelineCompatibleWithUseCaseNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_useCaseType, Pipeline);
-    }
+    public override int GetHashCode() => HashCode.Combine(_useCaseType, Pipeline);
+
     #endregion
 }

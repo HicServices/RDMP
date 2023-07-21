@@ -44,33 +44,31 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     /// </summary>
     public ViewCatalogueDataCollection()
     {
-
     }
 
     private void BuildBuilder()
     {
-        if(builder != null)
+        if (builder != null)
             return;
 
-        builder = new QueryBuilder(null,null);
-            
-        if(TopX.HasValue)
+        builder = new QueryBuilder(null, null);
+
+        if (TopX.HasValue)
             builder.TopX = TopX.Value;
 
         var cols = ExtractionInformations;
 
         // if there are no explicit columns use all
         if (!cols.Any())
-        {
             cols =
                 Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
                     .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
                     .ToArray();
-        }
 
         builder.AddColumnRange(cols);
 
-        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,Filters,FilterContainerOperation.AND);
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+            Filters, FilterContainerOperation.AND);
         builder.RegenerateSQL();
     }
 
@@ -78,7 +76,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     {
         BuildBuilder();
 
-        foreach(var t in builder.TablesUsedInQuery)
+        foreach (var t in builder.TablesUsedInQuery)
             autoComplete.Add(t);
     }
 
@@ -100,10 +98,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
         return builder.SQL;
     }
 
-    public string GetTabName()
-    {
-        return Catalogue.Name;
-    }
+    public string GetTabName() => Catalogue.Name;
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

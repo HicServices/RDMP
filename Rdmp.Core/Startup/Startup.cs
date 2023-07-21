@@ -53,7 +53,8 @@ public class Startup
     private readonly PatcherManager _patcherManager = new();
 
     #region Constructors
-    public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator):this()
+
+    public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator) : this()
     {
         RepositoryLocator = repositoryLocator;
     }
@@ -62,14 +63,16 @@ public class Startup
     {
         TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
     }
+
     #endregion
 
     #region Database Discovery
+
     public void DoStartup(ICheckNotifier notifier)
     {
         var foundCatalogue = false;
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies", CheckResult.Success));
 
         DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
 
@@ -77,11 +80,12 @@ public class Startup
 
         try
         {
-            foundCatalogue = Find(RepositoryLocator.CatalogueRepository,cataloguePatcher,notifier);
+            foundCatalogue = Find(RepositoryLocator.CatalogueRepository, cataloguePatcher, notifier);
         }
         catch (Exception e)
         {
-            DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,cataloguePatcher, RDMPPlatformDatabaseStatus.Broken,e));
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(null, cataloguePatcher, RDMPPlatformDatabaseStatus.Broken, e));
         }
 
         if (foundCatalogue)
@@ -98,13 +102,14 @@ public class Startup
                         continue;
 
                     //pass it into the system wide static keyword collection for use with all databases of this type all the time (that includes Microsoft Sql Server btw which means those options will happen for DataExport too!)
-                    DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value, ConnectionStringKeywordPriority.SystemDefaultMedium);
+                    DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value,
+                        ConnectionStringKeywordPriority.SystemDefaultMedium);
                 }
-
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",CheckResult.Fail, ex));
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",
+                    CheckResult.Fail, ex));
             }
 
 
@@ -136,18 +141,19 @@ public class Startup
         FindTier3Databases(RepositoryLocator.CatalogueRepository, notifier);
     }
 
-    private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
+    private void FindTier3Databases(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
         foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
-            FindWithPatcher(patcher,notifier);
+            FindWithPatcher(patcher, notifier);
     }
 
-    private bool Find(IRepository repository, IPatcher patcher,ICheckNotifier notifier)
+    private bool Find(IRepository repository, IPatcher patcher, ICheckNotifier notifier)
     {
         //if it's not configured
         if (repository == null)
         {
-            DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
             return false;
         }
 
@@ -157,7 +163,8 @@ public class Startup
 
         //check we can reach it
         var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
-        notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",
+            CheckResult.Success));
 
         //is it reachable
         try
@@ -167,7 +174,9 @@ public class Startup
         catch (Exception ex)
         {
             //no
-            DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable, ex));
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable,
+                    ex));
             return false;
         }
 
@@ -181,7 +190,9 @@ public class Startup
                 new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
                 {
                     Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
-                    Patch.PatchingState.Required => SkipPatching ? RDMPPlatformDatabaseStatus.Healthy : RDMPPlatformDatabaseStatus.RequiresPatching,
+                    Patch.PatchingState.Required => SkipPatching
+                        ? RDMPPlatformDatabaseStatus.Healthy
+                        : RDMPPlatformDatabaseStatus.RequiresPatching,
                     Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
                     _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
                 }));
@@ -189,37 +200,40 @@ public class Startup
         catch (Exception e)
         {
             //database is broken (maybe the version of the db is ahead of the host assembly?)
-            DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
             return false;
         }
 
         return true;
     }
 
-    private void FindWithPatcher(IPatcher patcher,ICheckNotifier notifier)
+    private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
-        var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.WasCreatedBy(patcher));
+        var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            .Where(eds => eds.WasCreatedBy(patcher));
 
         foreach (IExternalDatabaseServer server in dbs)
-        {
             try
             {
                 var builder = DataAccessPortal
                     .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                     .Builder;
 
-                Find(new CatalogueRepository(builder), patcher,notifier);
+                Find(new CatalogueRepository(builder), patcher, notifier);
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",CheckResult.Warning,e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",
+                    CheckResult.Warning, e));
             }
-        }
     }
+
     #endregion
 
 
     #region MEF
+
     /// <summary>
     /// Load the plugins from the platform DB
     /// </summary>
@@ -230,8 +244,9 @@ public class Startup
         /*foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
                      .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))*/
         // Ignore tiny nupkg files from  old 'unit test'
-        foreach(var (name,body) in  Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory,"*.nupkg").Where(path=>new FileInfo(path).Length>100).Select(File.OpenRead).SelectMany(LoadModuleAssembly.GetContents))
-        {
+        foreach (var (name, body) in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg")
+                     .Where(path => new FileInfo(path).Length > 100).Select(File.OpenRead)
+                     .SelectMany(LoadModuleAssembly.GetContents))
             try
             {
                 AssemblyLoadContext.Default.LoadFromStream(body);
@@ -240,23 +255,22 @@ public class Startup
             {
                 var msg = $"Could not load plugin component {name} due to {e.Message}";
                 Console.Error.WriteLine(msg);
-                notifier.OnCheckPerformed(new CheckEventArgs(msg,CheckResult.Warning,e));
+                notifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Warning, e));
             }
             finally
             {
                 body.Dispose();
             }
-        }
 
         if (CatalogueRepository.SuppressHelpLoading) return;
 
         notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
         var sw = Stopwatch.StartNew();
-        catalogueRepository.CommentStore.ReadComments( "SourceCodeForSelfAwareness.zip");
+        catalogueRepository.CommentStore.ReadComments("SourceCodeForSelfAwareness.zip");
         sw.Stop();
         notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
-
     }
+
     #endregion
 
     /// <summary>

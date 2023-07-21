@@ -24,14 +24,13 @@ internal class ConsoleGuiRunner : IRunner
     {
         this.options = options;
     }
-    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+
+    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         Program.DisableConsoleLogging();
 
-        if (options.UseSystemConsole)
-        {
-            Application.UseSystemConsole = true;
-        }
+        if (options.UseSystemConsole) Application.UseSystemConsole = true;
 
         Application.Init();
 
@@ -52,7 +51,7 @@ internal class ConsoleGuiRunner : IRunner
             Application.Shutdown();
             return -2;
         }
-            
+
         try
         {
             Application.Run();
@@ -70,5 +69,4 @@ internal class ConsoleGuiRunner : IRunner
 
         return 0;
     }
-
 }

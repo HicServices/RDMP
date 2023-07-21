@@ -36,7 +36,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
         if (releaseTypes.Count == 0)
             throw new Exception("How did you manage to have multiple ZERO types in the extraction?");
 
-        if (releaseTypes.Count(t => t != typeof (NoReleasePotential)) > 1)
+        if (releaseTypes.Count(t => t != typeof(NoReleasePotential)) > 1)
             throw new Exception(
                 $"You cannot release multiple configurations which have been extracted in multiple ways; e.g. one to DB and one to disk.  Your datasets have been extracted in the following ways:{Environment.NewLine}{string.Join($",{Environment.NewLine}", releaseTypes.Select(t => t.Name))}");
 
@@ -44,12 +44,14 @@ public sealed class ReleaseUseCase : PipelineUseCase
             releasePotentials.FirstOrDefault(rp => rp.DatasetExtractionResult != null);
 
         if (releasePotentialWithKnownDestination == null)
+        {
             ExplicitSource = new NullReleaseSource();
+        }
         else
         {
             var destinationType = MEF.GetType(
-                    releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
-                    typeof (IExecuteDatasetExtractionDestination));
+                releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
+                typeof(IExecuteDatasetExtractionDestination));
             var destinationUsedAtExtraction =
                 (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
 
@@ -80,18 +82,16 @@ public sealed class ReleaseUseCase : PipelineUseCase
     /// <summary>
     /// Design time constructor
     /// </summary>
-    public ReleaseUseCase():base(new []
+    public ReleaseUseCase() : base(new[]
     {
         typeof(Project),
         typeof(ReleaseData),
-        typeof(CatalogueRepository)})
+        typeof(CatalogueRepository)
+    })
     {
         ExplicitSource = new NullReleaseSource();
         GenerateContext();
     }
 
-    public static ReleaseUseCase DesignTime()
-    {
-        return new ReleaseUseCase();
-    }
+    public static ReleaseUseCase DesignTime() => new();
 }

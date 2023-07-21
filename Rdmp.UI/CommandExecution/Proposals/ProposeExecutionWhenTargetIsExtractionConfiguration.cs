@@ -15,16 +15,14 @@ using Rdmp.UI.ProjectUI;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandExecutionProposal<ExtractionConfiguration>
+internal class
+    ProposeExecutionWhenTargetIsExtractionConfiguration : RDMPCommandExecutionProposal<ExtractionConfiguration>
 {
     public ProposeExecutionWhenTargetIsExtractionConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ExtractionConfiguration target)
-    {
-        return !target.IsReleased;
-    }
+    public override bool CanActivate(ExtractionConfiguration target) => !target.IsReleased;
 
     public override void Activate(ExtractionConfiguration target)
     {
@@ -32,7 +30,8 @@ internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandEx
             ItemActivator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
     {
         switch (cmd)
         {
@@ -40,17 +39,20 @@ internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandEx
             case CatalogueCombineable sourceCatalogueCombineable:
             {
                 var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
-                var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
+                var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds =>
+                    ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
 
-                    return eds == null
+                return eds == null
                     ? new ImpossibleCommand("Catalogue is not Extractable")
-                    : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds,targetExtractionConfiguration);
-                }
+                    : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds, targetExtractionConfiguration);
+            }
             case ExtractableCohortCombineable sourceExtractableCohortCombineable:
-                return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortCombineable, targetExtractionConfiguration);
+                return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator,
+                    sourceExtractableCohortCombineable, targetExtractionConfiguration);
             //user is trying to add datasets to a configuration
             case ExtractableDataSetCombineable sourceExtractableDataSetCommand:
-                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand, targetExtractionConfiguration);
+                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand,
+                    targetExtractionConfiguration);
             default:
                 return null;
         }

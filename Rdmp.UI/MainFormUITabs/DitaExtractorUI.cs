@@ -33,7 +33,7 @@ public partial class DitaExtractorUI : RDMPUserControl
     private void btnBrowse_Click(object sender, EventArgs e)
     {
         using var ofd = new FolderBrowserDialog();
-        
+
         if (ofd.ShowDialog() is DialogResult.OK or DialogResult.Yes)
             tbExtractionDirectory.Text = ofd.SelectedPath;
     }
@@ -44,11 +44,10 @@ public partial class DitaExtractorUI : RDMPUserControl
         {
             var outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
 
-            if (outputPath.GetFiles("*.dita*").Any() && Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
-            {
+            if (outputPath.GetFiles("*.dita*").Any() && Activator.YesNo(
+                    "There are files already in this directory, do you want to delete them?", "Clear Directory?"))
                 foreach (var file in outputPath.GetFiles("*.dita*"))
                     file.Delete();
-            }
 
             var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
             extractor.Extract(progressBarsUI1);
@@ -57,12 +56,11 @@ public partial class DitaExtractorUI : RDMPUserControl
         {
             MessageBox.Show(ex.Message);
         }
-            
     }
 
     private void btnShowDirectory_Click(object sender, EventArgs e)
     {
-        if(string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
+        if (string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
             return;
 
         var d = new DirectoryInfo(tbExtractionDirectory.Text);
@@ -71,7 +69,7 @@ public partial class DitaExtractorUI : RDMPUserControl
 
     private void btnCheck_Click(object sender, EventArgs e)
     {
-        var popup = new PopupChecksUI("Checking Dita extraction",false);
+        var popup = new PopupChecksUI("Checking Dita extraction", false);
 
         var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
         popup.StartChecking(extractor);

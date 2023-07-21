@@ -24,7 +24,7 @@ public class StageArgs : IStageArgs
     //Mandatory
     public LoadStage LoadStage { get; private set; }
 
-    public StageArgs(LoadStage loadStage,DiscoveredDatabase database, ILoadDirectory projectDirectory)
+    public StageArgs(LoadStage loadStage, DiscoveredDatabase database, ILoadDirectory projectDirectory)
     {
         LoadStage = loadStage;
         DbInfo = database;

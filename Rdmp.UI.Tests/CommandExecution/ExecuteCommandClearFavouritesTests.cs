@@ -13,31 +13,33 @@ namespace Rdmp.UI.Tests.CommandExecution;
 
 internal class ExecuteCommandClearFavouritesTests : UITests
 {
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_NoFavourites()
     {
         var cmd = new ExecuteCommandClearFavourites(ItemActivator);
 
         Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.AreEqualIgnoringCase("You do not have any Favourites",cmd.ReasonCommandImpossible);
+        StringAssert.AreEqualIgnoringCase("You do not have any Favourites", cmd.ReasonCommandImpossible);
 
         var myFavCatalogue = WhenIHaveA<Catalogue>();
 
-        ItemActivator.FavouritesProvider.AddFavourite(this,myFavCatalogue);
+        ItemActivator.FavouritesProvider.AddFavourite(this, myFavCatalogue);
 
         cmd = new ExecuteCommandClearFavourites(ItemActivator);
         Assert.IsFalse(cmd.IsImpossible);
     }
 
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_ClearFavourites()
     {
         var myFavCatalogue = WhenIHaveA<Catalogue>();
         var mProject = WhenIHaveA<Project>();
 
-        ItemActivator.FavouritesProvider.AddFavourite(this,myFavCatalogue);
-        ItemActivator.FavouritesProvider.AddFavourite(this,mProject);
+        ItemActivator.FavouritesProvider.AddFavourite(this, myFavCatalogue);
+        ItemActivator.FavouritesProvider.AddFavourite(this, mProject);
 
         Assert.AreEqual(2, ItemActivator.FavouritesProvider.CurrentFavourites.Count);
 
@@ -57,5 +59,4 @@ internal class ExecuteCommandClearFavouritesTests : UITests
         //they should not be deleted
         Assert.IsEmpty(ItemActivator.FavouritesProvider.CurrentFavourites);
     }
-
 }

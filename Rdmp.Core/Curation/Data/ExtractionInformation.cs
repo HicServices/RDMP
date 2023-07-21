@@ -35,9 +35,9 @@ namespace Rdmp.Core.Curation.Data;
 /// This is the column(s) which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify
 /// people in your datasets (e.g. Community Health Index or NHS Number).</para>
 /// </summary>
-public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
+public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,
+    IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
 {
-
     #region Properties
 
     private int _catalogueItemID;
@@ -49,7 +49,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     public int CatalogueItem_ID
     {
         get => _catalogueItemID;
-        set => SetField(ref _catalogueItemID , value);
+        set => SetField(ref _catalogueItemID, value);
     }
 
     /// <summary>
@@ -61,7 +61,8 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         set
         {
             if (value == ExtractionCategory.Any)
-                throw new ArgumentException("Any is only usable as an extraction argument and cannot be assigned to an ExtractionInformation");
+                throw new ArgumentException(
+                    "Any is only usable as an extraction argument and cannot be assigned to an ExtractionInformation");
 
             SetField(ref _extractionCategory, value);
         }
@@ -70,6 +71,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     #endregion
 
     #region Relationships
+
     //These fields are fetched (cached version) from lookup link table - ExtractionInformation can only exist where there is a relationship between a CatalogueItem and a ColumnInfo
     /// <inheritdoc cref="CatalogueItem_ID"/>
     [NoMappingToDatabase]
@@ -94,7 +96,8 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// filters (<see cref="ExtractionFilter"/>) and act as templates that can be imported/cloned into other use cases (e.g. cohort identification, extraction etc).
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionFilter> ExtractionFilters => Repository.GetAllObjectsWithParent<ExtractionFilter>(this);
+    public IEnumerable<ExtractionFilter> ExtractionFilters =>
+        Repository.GetAllObjectsWithParent<ExtractionFilter>(this);
 
     #endregion
 
@@ -111,22 +114,22 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <param name="catalogueItem">The virtual column to make extractable (could be a transform e.g. YearOfBirth)</param>
     /// <param name="column">The column underlying the virtual column (e.g. `MyTable`.`DateOfBirth`)</param>
     /// <param name="selectSQL">The fully specified column name or transform SQL to execute as a line of SELECT Sql </param>
-    public ExtractionInformation(ICatalogueRepository repository, CatalogueItem catalogueItem, ColumnInfo column, string selectSQL)
+    public ExtractionInformation(ICatalogueRepository repository, CatalogueItem catalogueItem, ColumnInfo column,
+        string selectSQL)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? column.Name : selectSQL},
-            {"Order", GetMaxOrder(catalogueItem)},
-            {"ExtractionCategory", ExtractionCategory.Core.ToString()},
-            {"CatalogueItem_ID",catalogueItem.ID}
+            { "SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? column.Name : selectSQL },
+            { "Order", GetMaxOrder(catalogueItem) },
+            { "ExtractionCategory", ExtractionCategory.Core.ToString() },
+            { "CatalogueItem_ID", catalogueItem.ID }
         });
 
         catalogueItem.ClearAllInjections();
 
         if (catalogueItem.ColumnInfo_ID == null)
             repository.SaveSpecificPropertyOnlyToDatabase(catalogueItem, "ColumnInfo_ID", column.ID);
-        else
-        if (catalogueItem.ColumnInfo_ID != column.ID)
+        else if (catalogueItem.ColumnInfo_ID != column.ID)
             throw new ArgumentException(
                 $"Cannot create an ExtractionInformation for CatalogueItem {catalogueItem} with ColumnInfo {column} because the CatalogueItem is already associated with a different ColumnInfo: {catalogueItem.ColumnInfo}");
         ClearAllInjections();
@@ -154,7 +157,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         }
     }
 
-    internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         SelectSQL = r["SelectSQL"].ToString();
 
@@ -168,9 +171,9 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         Alias = r["Alias"] as string;
 
         HashOnDataRelease = (bool)r["HashOnDataRelease"];
-        IsExtractionIdentifier = (bool) r["IsExtractionIdentifier"];
-        IsPrimaryKey = (bool) r["IsPrimaryKey"];
-        CatalogueItem_ID = (int) r["CatalogueItem_ID"];
+        IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
+        IsPrimaryKey = (bool)r["IsPrimaryKey"];
+        CatalogueItem_ID = (int)r["CatalogueItem_ID"];
 
         ClearAllInjections();
     }
@@ -181,7 +184,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
-        _knownColumninfo = new Lazy<ColumnInfo>(()=>CatalogueItem.ColumnInfo);
+        _knownColumninfo = new Lazy<ColumnInfo>(() => CatalogueItem.ColumnInfo);
         _knownCatalogueItem = new Lazy<CatalogueItem>(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
     }
 
@@ -190,11 +193,13 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     {
         _knownColumninfo = new Lazy<ColumnInfo>(instance);
     }
+
     /// <inheritdoc/>
     public void InjectKnown(CatalogueItem instance)
     {
         _knownCatalogueItem = new Lazy<CatalogueItem>(instance);
     }
+
     /// <inheritdoc/>
     public override string ToString()
     {
@@ -210,15 +215,14 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
             return $"BROKEN ExtractionInformation:{SelectSQL}";
         }
     }
+
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        return ID.GetHashCode();
-    }
+    public override int GetHashCode() => ID.GetHashCode();
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return ColumnInfo != null? new IHasDependencies[] {ColumnInfo}: Array.Empty<IHasDependencies>();
+        return ColumnInfo != null ? new IHasDependencies[] { ColumnInfo } : Array.Empty<IHasDependencies>();
     }
 
     /// <inheritdoc/>
@@ -254,10 +258,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return ColumnInfo?.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ColumnInfo?.GetQuerySyntaxHelper();
 
     public override string GetSummary(bool includeName, bool includeID)
     {
@@ -269,9 +270,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         return sb.ToString();
     }
 
-    protected override string FormatPropertyNameForSummary(PropertyInfo prop)
-    {
+    protected override string FormatPropertyNameForSummary(PropertyInfo prop) =>
         // rebrand this property so it is clearer to the user that it applies only on extraction
-        return prop.Name == nameof(IsPrimaryKey) ? "Is Extraction Primary Key" : base.FormatPropertyNameForSummary(prop);
-    }
+        prop.Name == nameof(IsPrimaryKey) ? "Is Extraction Primary Key" : base.FormatPropertyNameForSummary(prop);
 }

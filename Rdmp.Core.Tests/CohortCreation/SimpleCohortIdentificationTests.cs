@@ -11,17 +11,17 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 
-public class SimpleCohortIdentificationTests:DatabaseTests
+public class SimpleCohortIdentificationTests : DatabaseTests
 {
     [Test]
     public void CreateNewCohortIdentificationConfiguration_SaveAndReload()
     {
         var config = new CohortIdentificationConfiguration(CatalogueRepository, "franky");
-            
+
         try
         {
             Assert.IsTrue(config.Exists());
-            Assert.AreEqual("franky",config.Name);
+            Assert.AreEqual("franky", config.Name);
 
             config.Description = "Hi there";
             config.SaveToDatabase();
@@ -40,11 +40,11 @@ public class SimpleCohortIdentificationTests:DatabaseTests
     [Test]
     public void ContainerCreate()
     {
-        var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
+        var container = new CohortAggregateContainer(CatalogueRepository, SetOperation.UNION);
 
         try
         {
-            Assert.AreEqual(SetOperation.UNION,container.Operation);
+            Assert.AreEqual(SetOperation.UNION, container.Operation);
 
             container.Operation = SetOperation.INTERSECT;
             container.SaveToDatabase();
@@ -62,9 +62,9 @@ public class SimpleCohortIdentificationTests:DatabaseTests
     [Test]
     public void Container_Subcontainering()
     {
-        var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
+        var container = new CohortAggregateContainer(CatalogueRepository, SetOperation.UNION);
 
-        var container2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
+        var container2 = new CohortAggregateContainer(CatalogueRepository, SetOperation.INTERSECT);
         try
         {
             Assert.AreEqual(0, container.GetSubContainers().Length);

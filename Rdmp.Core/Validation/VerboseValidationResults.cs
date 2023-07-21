@@ -34,7 +34,7 @@ public class VerboseValidationResults
     /// <summary>
     /// A count of the rows Invalidated due to dodgy data - failed Validations with Consequence.InvalidatesRow
     /// </summary>
-    public int CountOfRowsInvalidated {get; set; }
+    public int CountOfRowsInvalidated { get; set; }
 
     public VerboseValidationResults(ItemValidator[] validators)
     {
@@ -44,7 +44,7 @@ public class VerboseValidationResults
 
         foreach (var iv in validators)
         {
-            DictionaryOfFailure.Add(iv.TargetProperty,null);
+            DictionaryOfFailure.Add(iv.TargetProperty, null);
             DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>
             {
                 { Consequence.Missing, 0 },
@@ -76,7 +76,7 @@ public class VerboseValidationResults
                         ReasonsRowsInvalidated.Add(
                             $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
-                if (worstConsequences.TryGetValue(subException.SourceItemValidator,out var oldConsequence))
+                if (worstConsequences.TryGetValue(subException.SourceItemValidator, out var oldConsequence))
                 {
                     //see if situation got worse
                     var newConsequence = subException.SourceConstraint.Consequence.Value;
@@ -87,7 +87,8 @@ public class VerboseValidationResults
                 else
                 {
                     //new validation error for this column
-                    worstConsequences.Add(subException.SourceItemValidator, (Consequence)subException.SourceConstraint.Consequence);
+                    worstConsequences.Add(subException.SourceItemValidator,
+                        (Consequence)subException.SourceConstraint.Consequence);
                 }
             }
 

@@ -50,7 +50,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     public HelpWorkflow HelpWorkflow { get; set; }
     public string TargetFolder { get; set; }
 
-    public CreateNewCatalogueByImportingFileUI(IActivateItems activator, ExecuteCommandCreateNewCatalogueByImportingFile command):base(activator)
+    public CreateNewCatalogueByImportingFileUI(IActivateItems activator,
+        ExecuteCommandCreateNewCatalogueByImportingFile command) : base(activator)
     {
         _command = command;
         InitializeComponent();
@@ -85,8 +86,9 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                                                   "A Table with the same name will be created in the database selected above.\r\n" +
                                                   "Please note that the chosen pipeline can alter the created Table name. If a table with the same name already exists " +
                                                   "in the selected Database, the execution may fail.");
-        var pickPipeline = new HelpStage(gbPickPipeline, "4. Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
-                                                         "If you are not sure, ask the admin which one to use.");
+        var pickPipeline = new HelpStage(gbPickPipeline,
+            "4. Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
+            "If you are not sure, ask the admin which one to use.");
         var execute = new HelpStage(gbExecute, "5. Click Preview to peek at what data is in the selected file.\r\n" +
                                                "Click Execute to run the process and import your file.");
 
@@ -220,12 +222,14 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 SetupState(State.DatabaseSelected);
             }
             else
+            {
                 serverDatabaseTableSelector1.SetExplicitServer(s.ServerName);
+            }
         }
-        else if(servers.Length > 1)
+        else if (servers.Length > 1)
         {
             serverDatabaseTableSelector1.SetDefaultServers(
-                servers.Select(s=>s.ServerName).ToArray()
+                servers.Select(s => s.ServerName).ToArray()
             );
         }
     }
@@ -244,25 +248,18 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         _context.MustHaveDestination = typeof(DataTableUploadDestination);
 
         if (cbOther.Checked)
-        {
             _context.MustHaveSource = typeof(IDataFlowSource<DataTable>);
-        }
-        else
-        if (_selectedFile.Extension == ".csv" || _selectedFile.Extension == ".txt")
-        {
+        else if (_selectedFile.Extension == ".csv" || _selectedFile.Extension == ".txt")
             _context.MustHaveSource = typeof(DelimitedFlatFileDataFlowSource);
-        }
-        else
-        if (_selectedFile.Extension.StartsWith(".xls"))
-        {
-            _context.MustHaveSource = typeof(ExcelDataFlowSource);
-        }
+        else if (_selectedFile.Extension.StartsWith(".xls")) _context.MustHaveSource = typeof(ExcelDataFlowSource);
 
-        var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().Where(_context.IsAllowable).ToArray();
+        var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()
+            .Where(_context.IsAllowable).ToArray();
 
         if (compatiblePipelines.Length == 0)
         {
-            ragSmileyFile.OnCheckPerformed(new CheckEventArgs("No Pipelines are compatible with the selected file",CheckResult.Fail));
+            ragSmileyFile.OnCheckPerformed(new CheckEventArgs("No Pipelines are compatible with the selected file",
+                CheckResult.Fail));
             return;
         }
 
@@ -279,16 +276,16 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void ddPipeline_SelectedIndexChanged(object sender, EventArgs e)
     {
-
         var factory = GetFactory();
 
-        if(ddPipeline.SelectedItem is not Pipeline p)
+        if (ddPipeline.SelectedItem is not Pipeline p)
             return;
         try
         {
             var source = DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
-            ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
-            ((ICheckable) source).Check(ragSmileyFile);
+            ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),
+                new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
+            ((ICheckable)source).Check(ragSmileyFile);
         }
         catch (Exception exception)
         {
@@ -303,13 +300,16 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
         if (db == null)
+        {
             MessageBox.Show("You must select a Database");
-        else
-        if(db.Exists())
+        }
+        else if (db.Exists())
+        {
             SetupState(State.DatabaseSelected);
+        }
         else
         {
-            if(Activator.YesNo($"Create Database '{db.GetRuntimeName()}'","Create Database"))
+            if (Activator.YesNo($"Create Database '{db.GetRuntimeName()}'", "Create Database"))
             {
                 db.Server.CreateDatabase(db.GetRuntimeName());
                 SetupState(State.DatabaseSelected);
@@ -327,28 +327,24 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
         var source = (IDataFlowSource<DataTable>)DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
 
-        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile), new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
+        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),
+            new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
 
         Cursor.Current = Cursors.WaitCursor;
         var preview = source.TryGetPreview();
         Cursor.Current = Cursors.Default;
 
-        if(preview != null)
+        if (preview != null)
         {
-            var dtv = new DataTableViewerUI(preview,"Preview");
+            var dtv = new DataTableViewerUI(preview, "Preview");
             SingleControlForm.ShowDialog(dtv);
         }
     }
 
-    private UploadFileUseCase GetUseCase()
-    {
-        return new UploadFileUseCase(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(),Activator);
-    }
+    private UploadFileUseCase GetUseCase() =>
+        new(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(), Activator);
 
-    private DataFlowPipelineEngineFactory GetFactory()
-    {
-        return new DataFlowPipelineEngineFactory(GetUseCase());
-    }
+    private DataFlowPipelineEngineFactory GetFactory() => new(GetUseCase());
 
     private void btnExecute_Click(object sender, EventArgs e)
     {
@@ -358,7 +354,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             return;
         }
 
-        if(string.IsNullOrWhiteSpace(tbTableName.Text))
+        if (string.IsNullOrWhiteSpace(tbTableName.Text))
         {
             MessageBox.Show("Enter Catalogue name");
             return;
@@ -369,45 +365,45 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
             var engine = GetFactory().Create(p, new FromCheckNotifierToDataLoadEventListener(ragSmileyExecute));
-            engine.Initialize(new FlatFileToLoad(_selectedFile), db,Activator);
+            engine.Initialize(new FlatFileToLoad(_selectedFile), db, Activator);
 
             var crashed = false;
 
-            var dest = (DataTableUploadDestination) engine.DestinationObject;
+            var dest = (DataTableUploadDestination)engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
 
             using var cts = new CancellationTokenSource();
-            var t =Task.Run(() =>
+            var t = Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
-                    }
-                    catch (PipelineCrashedException ex)
-                    {
-                        Activator.ShowException("Error uploading",ex.InnerException ?? ex);
-                        if (dest.CreatedTable)
-                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
-                        crashed = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Activator.ShowException("Error uploading",ex);
-                        if (dest.CreatedTable)
-                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
-                        crashed = true;
-                    }
-                }, cts.Token);
+                    engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
+                }
+                catch (PipelineCrashedException ex)
+                {
+                    Activator.ShowException("Error uploading", ex.InnerException ?? ex);
+                    if (dest.CreatedTable)
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                    crashed = true;
+                }
+                catch (Exception ex)
+                {
+                    Activator.ShowException("Error uploading", ex);
+                    if (dest.CreatedTable)
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                    crashed = true;
+                }
+            }, cts.Token);
 
-            Activator.Wait("Uploading Table...",t,cts);
+            Activator.Wait("Uploading Table...", t, cts);
 
-            if(crashed)
+            if (crashed)
                 return;
 
             if (t.IsFaulted)
-                throw t.Exception?? new Exception("Task Failed");
+                throw t.Exception ?? new Exception("Task Failed");
 
-            if(t.IsCanceled || cts.IsCancellationRequested)
+            if (t.IsCanceled || cts.IsCancellationRequested)
                 return;
 
             ForwardEngineer(db.ExpectTable(dest.TargetTableName));
@@ -432,7 +428,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void ForwardEngineer(DiscoveredTable targetTableName)
     {
-        var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName),
+        var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator,
+            new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName),
             $"File '{_selectedFile.FullName}'", _projectSpecific)
         {
             TargetFolder = TargetFolder,
@@ -449,17 +446,18 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 $"Successfully imported new Dataset '{catalogue}'.\r\nThe edit functionality will now open.");
 
             Activator.WindowArranger.SetupEditAnything(this, catalogue);
-
         }
+
         if (cbAutoClose.Checked)
             Close();
         else
-            MessageBox.Show("Creation completed successfully, close the Form when you are finished reviewing the output");
+            MessageBox.Show(
+                "Creation completed successfully, close the Form when you are finished reviewing the output");
     }
 
     private void pbHelp_Click(object sender, EventArgs e)
     {
-        HelpWorkflow.Start(force: true);
+        HelpWorkflow.Start(true);
     }
 
     public void SetProjectSpecific(IProject project)
@@ -469,10 +467,12 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void tbTableName_TextChanged(object sender, EventArgs e)
     {
-        if(!string.IsNullOrWhiteSpace(tbTableName.Text))
+        if (!string.IsNullOrWhiteSpace(tbTableName.Text))
             //if the sane name doesn't match the
             tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
-                StringComparison.CurrentCultureIgnoreCase) ? Color.Red : Color.Black;
+                StringComparison.CurrentCultureIgnoreCase)
+                ? Color.Red
+                : Color.Black;
     }
 
     private void cbOther_CheckedChanged(object sender, EventArgs e)

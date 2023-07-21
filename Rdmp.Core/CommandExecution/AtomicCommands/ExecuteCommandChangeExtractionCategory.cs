@@ -22,7 +22,8 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
     private readonly ExtractionCategory? _category;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,ExtractionInformation[] eis, ExtractionCategory? category = null) : base(activator)
+    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator, ExtractionInformation[] eis,
+        ExtractionCategory? category = null) : base(activator)
     {
         eis = eis?.Where(static e => e != null).ToArray() ?? Array.Empty<ExtractionInformation>();
 
@@ -36,34 +37,27 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
 
         var cata = _extractionInformations.Select(static ei => ei.CatalogueItem.Catalogue).Distinct().ToArray();
         if (cata.Length == 1)
-        {
             _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
-        }
 
         // if project specific only let them set to project specific
         if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
         {
             // user is trying to set to Core
             if (_category == ExtractionCategory.Core)
-            {
                 // surely they meant project specific!
                 _category = ExtractionCategory.ProjectSpecific;
-            }
             else
-            {
                 SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
-            }
         }
     }
 
-    public override string GetCommandName()
-    {
-        return _extractionInformations is not { Length: > 1 }
+    public override string GetCommandName() =>
+        _extractionInformations is not { Length: > 1 }
             ? "Set ExtractionCategory"
             : "Set ALL to ExtractionCategory";
-    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractionInformation);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionInformation);
 
     public override void Execute()
     {
@@ -71,7 +65,8 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
 
         var c = _category;
 
-        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out var category))
+        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory),
+                ExtractionCategory.Core, out var category))
             c = (ExtractionCategory)category;
 
         if (c == null)
@@ -79,15 +74,12 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
 
         // if project specific only let them set to project specific
         if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
-        {
-            throw new Exception("All CatalogueItems in ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
-        }
+            throw new Exception(
+                "All CatalogueItems in ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
 
-        if(ExecuteWithCommit(()=>ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
-        {
+        if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue
             Publish(_extractionInformations.First());
-        }
     }
 
     private void ExecuteImpl(ExtractionCategory category)

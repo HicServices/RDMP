@@ -46,9 +46,11 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
             throw new InvalidOperationException("Could not find TimePeriodicity column");
         var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, From, To);
 
-        var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t=>t.GetRuntimeName().Equals("Headers"));
-        var tiSamples = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Samples"));
-        var tiResults = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Results"));
+        var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Headers"));
+        var tiSamples = CatalogueRepository.GetAllObjects<TableInfo>()
+            .Single(t => t.GetRuntimeName().Equals("Samples"));
+        var tiResults = CatalogueRepository.GetAllObjects<TableInfo>()
+            .Single(t => t.GetRuntimeName().Equals("Results"));
 
         var joinInfos = CatalogueRepository.GetAllObjects<JoinInfo>();
         var joinPath = new List<JoinInfo>
@@ -57,8 +59,8 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
             joinInfos.Single(info => info.PrimaryKey.TableInfo_ID == tiSamples.ID)
         };
 
-        var sql = sqlHelper.CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiResults, "TimePeriodicityTable", From, joinPath);
-
+        var sql = sqlHelper.CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiResults, "TimePeriodicityTable",
+            From, joinPath);
 
 
         Assert.AreEqual(string.Format(@"SELECT CurrentTable.*, TimePeriodicityTable.HeaderDate AS TimePeriodicityField 
@@ -71,8 +73,10 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
     private void ThreeTableSetupWhereTimePeriodIsGrandparent()
     {
         CreateTables("Headers", "ID int NOT NULL, HeaderDate DATETIME, Discipline varchar(32)", "ID");
-        CreateTables("Samples", "ID int NOT NULL, HeaderID int NOT NULL, SampleType varchar(32)", "ID", "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
-        CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
+        CreateTables("Samples", "ID int NOT NULL, HeaderID int NOT NULL, SampleType varchar(32)", "ID",
+            "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
+        CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID",
+            "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
         // Set SetUp catalogue entities
 
@@ -89,17 +93,18 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
-        new JoinInfo(CatalogueRepository,ciSamples.Single(ci => ci.GetRuntimeName().Equals("HeaderID")),
+        new JoinInfo(CatalogueRepository, ciSamples.Single(ci => ci.GetRuntimeName().Equals("HeaderID")),
             ciHeaders.Single(ci => ci.GetRuntimeName().Equals("ID")),
             ExtractionJoinType.Left, "");
 
         // Samples (1:M) Results join
-        new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
+        new JoinInfo(CatalogueRepository, ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
             ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
             ExtractionJoinType.Left, "");
     }
 
-    private void CreateTables(string tableName, string columnDefinitions, string pkColumn, string fkConstraintString = null)
+    private void CreateTables(string tableName, string columnDefinitions, string pkColumn,
+        string fkConstraintString = null)
     {
         // todo: doesn't do combo primary keys yet
 
@@ -117,13 +122,15 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
             liveTableDefinition += $", {fkConstraintString}";
         }
 
-        CreateTableWithColumnDefinitions(From,tableName, stagingTableDefinition);
-        CreateTableWithColumnDefinitions(To,tableName, liveTableDefinition);
+        CreateTableWithColumnDefinitions(From, tableName, stagingTableDefinition);
+        CreateTableWithColumnDefinitions(To, tableName, liveTableDefinition);
     }
 
-    private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
+    private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName,
+        out ColumnInfo[] ciList, bool createCatalogue = false)
     {
-        var expectedTable = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
+        var expectedTable = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName)
+            .ExpectTable(tableName);
 
         var resultsImporter = new TableInfoImporter(CatalogueRepository, expectedTable);
 
@@ -135,23 +142,23 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
 
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
-        {
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
-        }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
 
         return ti;
     }
 
-    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions)
+    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
+        string columnDefinitions)
     {
         using var conn = db.Server.GetConnection();
         conn.Open();
-        CreateTableWithColumnDefinitions(db,tableName, columnDefinitions, conn);
+        CreateTableWithColumnDefinitions(db, tableName, columnDefinitions, conn);
     }
 
-    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
+    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
+        string columnDefinitions, DbConnection conn)
     {
         var sql = $"CREATE TABLE {tableName} ({columnDefinitions})";
         db.Server.GetCommand(sql, conn).ExecuteNonQuery();

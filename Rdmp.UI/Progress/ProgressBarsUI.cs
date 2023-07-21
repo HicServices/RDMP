@@ -18,9 +18,9 @@ namespace Rdmp.UI.Progress;
 /// it will be a Marquee bar (one with a moving unknown progress animation).  All Notify events are displayed under the smiley face (or frowning if the process
 /// has crashed)
 /// </summary>
-public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
+public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 {
-    private readonly Dictionary<string,ProgressBar> _progressBars = new();
+    private readonly Dictionary<string, ProgressBar> _progressBars = new();
     private readonly ToolTip _tt = new();
 
     public float EmSize = 9f;
@@ -29,7 +29,8 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
     {
         InitializeComponent();
     }
-    public ProgressBarsUI(string caption,bool showClose = false)
+
+    public ProgressBarsUI(string caption, bool showClose = false)
     {
         InitializeComponent();
         btnClose.Visible = showClose;
@@ -62,7 +63,9 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
         }
 
         if (_progressBars.TryGetValue(e.TaskDescription, out var bar))
+        {
             UpdateProgressBar(bar, e);
+        }
         else
         {
             var y = GetRowYForNewProgressBar();
@@ -83,9 +86,9 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
             };
             Controls.Add(pb);
 
-            UpdateProgressBar(pb,e);
+            UpdateProgressBar(pb, e);
 
-            _progressBars.Add(e.TaskDescription,pb);
+            _progressBars.Add(e.TaskDescription, pb);
         }
     }
 
@@ -98,21 +101,23 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
     {
         var text = $"{progressEventArgs.Progress.Value} {progressEventArgs.Progress.UnitOfMeasurement}";
 
-        _tt.SetToolTip(progressBar,text);
+        _tt.SetToolTip(progressBar, text);
 
         if (progressEventArgs.Progress.KnownTargetValue != 0)
         {
             progressBar.Maximum = progressEventArgs.Progress.KnownTargetValue;
-            progressBar.Value = Math.Min(progressBar.Maximum,progressEventArgs.Progress.Value);
+            progressBar.Value = Math.Min(progressBar.Maximum, progressEventArgs.Progress.Value);
             progressBar.Style = ProgressBarStyle.Continuous;
         }
         else
+        {
             progressBar.Style = ProgressBarStyle.Marquee;
+        }
     }
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-        if(ParentForm is { IsHandleCreated: true })
+        if (ParentForm is { IsHandleCreated: true })
             ParentForm.Close();
     }
 

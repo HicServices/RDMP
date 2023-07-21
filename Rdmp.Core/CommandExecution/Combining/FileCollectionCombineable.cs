@@ -33,12 +33,8 @@ public class FileCollectionCombineable : ICombineToMakeCommand
     {
         Files = files;
         IsShareDefinition = files.Length == 1 && files[0].Extension == ".sd";
-
     }
 
     /// <inheritdoc/>
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

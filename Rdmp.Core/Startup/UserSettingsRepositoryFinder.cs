@@ -27,11 +27,12 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
     {
         get
         {
-            if(_linkedRepositoryProvider == null)
+            if (_linkedRepositoryProvider == null)
                 RefreshRepositoriesFromUserSettings();
 
             return _linkedRepositoryProvider == null
-                ? throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                ? throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
                 : _linkedRepositoryProvider.CatalogueRepository;
         }
     }
@@ -44,20 +45,18 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                 RefreshRepositoriesFromUserSettings();
 
             return _linkedRepositoryProvider == null
-                ? throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                ? throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
                 : _linkedRepositoryProvider.DataExportRepository;
         }
     }
 
-    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-    {
-        return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,objectID);
-    }
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
+        string databaseObjectTypeName, int objectID) =>
+        _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName, objectID);
 
-    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-    {
-        return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
-    }
+    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID) =>
+        _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
 
     public void RefreshRepositoriesFromUserSettings()
     {
@@ -81,33 +80,25 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         }
         catch (Exception ex)
         {
-            throw new CorruptRepositoryConnectionDetailsException($"Unable to create {nameof(LinkedRepositoryProvider)}",ex);
+            throw new CorruptRepositoryConnectionDetailsException(
+                $"Unable to create {nameof(LinkedRepositoryProvider)}", ex);
         }
 
         //preserve the currently loaded MEF assemblies
 
         //if we have a new repo
         if (newrepo.CatalogueRepository != null)
-        {
             newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
-        }
 
 
         _linkedRepositoryProvider = newrepo;
     }
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
-    {
-        return _linkedRepositoryProvider.GetObjectByID<T>(value);
-    }
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable =>
+        _linkedRepositoryProvider.GetObjectByID<T>(value);
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
-    {
-        return _linkedRepositoryProvider.GetObjectByID(t,value);
-    }
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value) =>
+        _linkedRepositoryProvider.GetObjectByID(t, value);
 
-    public IEnumerable<IRepository> GetAllRepositories()
-    {
-        return _linkedRepositoryProvider.GetAllRepositories();
-    }
+    public IEnumerable<IRepository> GetAllRepositories() => _linkedRepositoryProvider.GetAllRepositories();
 }

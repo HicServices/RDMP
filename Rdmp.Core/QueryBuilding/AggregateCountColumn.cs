@@ -17,7 +17,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// <summary>
 /// The count(*) column in an AggregateConfiguration, this is used by AggregateBuilder.  This can be any aggregate function such as 'sum', 'avg' etc.
 /// </summary>
-public class AggregateCountColumn:SpontaneousObject,IColumn
+public class AggregateCountColumn : SpontaneousObject, IColumn
 {
     private IQuerySyntaxHelper _syntaxHelper;
     private readonly string _sql;
@@ -32,7 +32,7 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     /// <para>Can include aliases e.g. count(*) as MyCount</para>
     /// </summary>
     /// <param name="sql"></param>
-    public AggregateCountColumn(string sql): base(new MemoryRepository())
+    public AggregateCountColumn(string sql) : base(new MemoryRepository())
     {
         _sql = sql;
     }
@@ -51,27 +51,26 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
         if (_syntaxHelper.SplitLineIntoSelectSQLAndAlias(_sql, out var select, out var alias))
             Alias = alias; //use the users explicit alias
         else
-            Alias = ensureAliasExists ? DefaultAliasName : null;//set an alias of MyCount
+            Alias = ensureAliasExists ? DefaultAliasName : null; //set an alias of MyCount
 
         SelectSQL = select;
+    }
 
-    }
     /// <inheritdoc/>
-    public string GetRuntimeName()
-    {
-        return _syntaxHelper == null
+    public string GetRuntimeName() =>
+        _syntaxHelper == null
             ? throw new System.Exception("SyntaxHelper is null, call SetQuerySyntaxHelper first")
-            : string.IsNullOrWhiteSpace(Alias)?_syntaxHelper.GetRuntimeName(SelectSQL):Alias;
-    }
+            : string.IsNullOrWhiteSpace(Alias)
+                ? _syntaxHelper.GetRuntimeName(SelectSQL)
+                : Alias;
 
     /// <summary>
     /// Combines the <see cref="SelectSQL"/> with the <see cref="Alias"/> for use in SELECT Sql
     /// </summary>
     /// <returns></returns>
-    public string GetFullSelectLineStringForSavingIntoAnAggregate()
-    {
-        return string.IsNullOrWhiteSpace(Alias) ? SelectSQL : SelectSQL + _syntaxHelper.AliasPrefix + Alias;
-    }
+    public string GetFullSelectLineStringForSavingIntoAnAggregate() => string.IsNullOrWhiteSpace(Alias)
+        ? SelectSQL
+        : SelectSQL + _syntaxHelper.AliasPrefix + Alias;
 
     /// <inheritdoc/>
     public ColumnInfo ColumnInfo => null;
@@ -84,7 +83,7 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     public string SelectSQL { get; set; }
 
     /// <inheritdoc/>
-    public string Alias{get; private set; }
+    public string Alias { get; private set; }
 
     /// <inheritdoc/>
     public bool HashOnDataRelease => false;

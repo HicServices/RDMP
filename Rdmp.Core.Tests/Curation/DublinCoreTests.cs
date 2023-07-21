@@ -21,21 +21,23 @@ internal class DublinCoreTests
     {
         var def = new DublinCoreDefinition
         {
-            Title =  "ssssshh",
-            Alternative =  "O'Rly",
+            Title = "ssssshh",
+            Alternative = "O'Rly",
             Description = "Description of stuff",
             Format = "text/html",
             Identifier = new Uri("http://foo.com"),
             Publisher = "University of Dundee",
             IsPartOf = new Uri("http://foo2.com"),
-            Modified = new DateTime(2001,1,1),
+            Modified = new DateTime(2001, 1, 1),
             Subject = "Interesting, PayAttention, HighPriority, Omg"
         };
 
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTest.xml"));
 
-        using(var fw = f.OpenWrite())
+        using (var fw = f.OpenWrite())
+        {
             def.WriteXml(fw);
+        }
 
         var contents = File.ReadAllText(f.FullName);
         StringAssert.Contains(def.Title, contents);
@@ -62,8 +64,6 @@ internal class DublinCoreTests
         Assert.AreEqual(def.Modified, def2.Modified);
         Assert.AreEqual(def.IsPartOf.ToString(), def2.IsPartOf.ToString());
         Assert.AreEqual(def.Identifier.ToString(), def2.Identifier.ToString());
-
-
     }
 
     [Test]
@@ -125,7 +125,7 @@ internal class DublinCoreTests
 </metadata>";
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTestReading.xml"));
-        File.WriteAllText(fi.FullName,xml);
+        File.WriteAllText(fi.FullName, xml);
 
         var doc = XDocument.Load(fi.FullName);
 
@@ -133,8 +133,9 @@ internal class DublinCoreTests
 
         def.LoadFrom(doc.Root);
 
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN",def.Title));
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UK Office for Library and Information Networking", def.Alternative));
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN", def.Title));
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UK Office for Library and Information Networking",
+            def.Alternative));
         Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"national centre, network information support, library
     community, awareness, research, information services,public
     library networking, bibliographic management, distributed
@@ -149,7 +150,7 @@ internal class DublinCoreTests
         Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN, University of Bath", def.Publisher));
         StringAssert.AreEqualIgnoringCase("http://www.bath.ac.uk/", def.IsPartOf.AbsoluteUri);
         StringAssert.AreEqualIgnoringCase("http://www.ukoln.ac.uk/", def.Identifier.AbsoluteUri);
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(new DateTime(2001,07,18),def.Modified));
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(new DateTime(2001, 07, 18), def.Modified));
     }
 
     /// <summary>
@@ -160,21 +161,23 @@ internal class DublinCoreTests
     {
         var def1 = new DublinCoreDefinition
         {
-            Title =  "ssssshh",
-            Alternative =  "O'Rly",
+            Title = "ssssshh",
+            Alternative = "O'Rly",
             Description = "Description of stuff",
             Format = "text/html",
             Identifier = new Uri("http://foo.com"),
             Publisher = "University of Dundee",
             IsPartOf = new Uri("http://foo2.com"),
-            Modified = new DateTime(2001,1,1),
+            Modified = new DateTime(2001, 1, 1),
             Subject = "Interesting, PayAttention, HighPriority, Omg"
         };
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "dublin.xml"));
 
-        using(var outStream = fi.OpenWrite())
+        using (var outStream = fi.OpenWrite())
+        {
             def1.WriteXml(outStream);
+        }
 
         using var inStream = fi.OpenRead();
         var def2 = new DublinCoreDefinition();

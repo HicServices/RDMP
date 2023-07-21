@@ -77,34 +77,34 @@ GO";
         using (var con = server.GetConnection())
         {
             con.Open();
-            UsefulStuff.ExecuteBatchNonQuery(sql,con);
+            UsefulStuff.ExecuteBatchNonQuery(sql, con);
         }
 
         var importer1 = new TableInfoImporter(CatalogueRepository, From.ExpectTable("Tests"));
         var importer2 = new TableInfoImporter(CatalogueRepository, From.ExpectTable("Results"));
 
-        importer1.DoImport(out t1,out c1);
-            
+        importer1.DoImport(out t1, out c1);
+
         importer2.DoImport(out t2, out c2);
 
         var engineer1 = new ForwardEngineerCatalogue(t1, c1);
         var engineer2 = new ForwardEngineerCatalogue(t2, c2);
 
-        engineer1.ExecuteForwardEngineering(out cata1,out cataItems1,out eis1);
+        engineer1.ExecuteForwardEngineering(out cata1, out cataItems1, out eis1);
         engineer2.ExecuteForwardEngineering(out cata2, out cataItems2, out eis2);
 
         new JoinInfo(CatalogueRepository,
             c1.Single(e => e.GetRuntimeName().Equals("TestId")),
             c2.Single(e => e.GetRuntimeName().Equals("TestId")),
-            ExtractionJoinType.Left,null);
+            ExtractionJoinType.Left, null);
 
         _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T")
-            {
-                NumberOfCharactersToUseInAnonymousRepresentation = 10
-            };
+        {
+            NumberOfCharactersToUseInAnonymousRepresentation = 10
+        };
         _anoTable.SaveToDatabase();
-        _anoTable.PushToANOServerAsNewTable("int",ThrowImmediatelyCheckNotifier.Quiet);
-            
+        _anoTable.PushToANOServerAsNewTable("int", ThrowImmediatelyCheckNotifier.Quiet);
+
         _comboCata = new Catalogue(CatalogueRepository, "Combo Catalogue");
 
         //pk
@@ -119,7 +119,7 @@ GO";
         var colMeasure = c2.Single(c => c.GetRuntimeName().Equals("Measure"));
         ciMeasure.ColumnInfo_ID = colMeasure.ID;
         ciMeasure.SaveToDatabase();
-        var eiMeasure = new ExtractionInformation(CatalogueRepository, ciMeasure,colMeasure, colMeasure.Name);
+        var eiMeasure = new ExtractionInformation(CatalogueRepository, ciMeasure, colMeasure, colMeasure.Name);
 
         //Date
         var ciDate = new CatalogueItem(CatalogueRepository, _comboCata, "Dat");
@@ -146,29 +146,31 @@ GO";
         testIdHeadPlan.ANOTable = _anoTable;
 
         plan1.Check(ThrowImmediatelyCheckNotifier.Quiet);
-            
+
         var engine1 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan1);
         engine1.Execute();
 
-        var plan1ExtractionInformationsAtDestination = engine1.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        var plan1ExtractionInformationsAtDestination =
+            engine1.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         var ei1 = plan1ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
         Assert.IsTrue(ei1.Exists());
 
         //Now create a plan for the combo Catalogue which contains references to both tables (Tests and Results).  Remember Tests has already been migrated as part of plan1
         var plan2 = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, _comboCata);
-            
+
         //tell it to skip table 1 (Tests) and only anonymise Results
         plan2.SkippedTables.Add(t1);
         plan2.TargetDatabase = _destinationDatabase;
         plan2.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         //Run the anonymisation
-        var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator,plan2);
+        var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan2);
         engine2.Execute();
 
         //Did it successfully pick SetUp the correct ANO column
-        var plan2ExtractionInformationsAtDestination = engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        var plan2ExtractionInformationsAtDestination =
+            engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
         Assert.IsTrue(ei2.Exists());
@@ -183,13 +185,13 @@ GO";
 
             var cmd = _destinationDatabase.Server.GetCommand(qb.SQL, con);
 
-            Assert.DoesNotThrow(()=>cmd.ExecuteNonQuery());
+            Assert.DoesNotThrow(() => cmd.ExecuteNonQuery());
         }
 
         Console.WriteLine($"Final migrated combo dataset SQL was:{qb.SQL}");
 
         Assert.IsTrue(_comboCata.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")));
-        Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),"ANO Catalogue did not respect the original CatalogueItem Name"); 
+        Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),
+            "ANO Catalogue did not respect the original CatalogueItem Name");
     }
-
 }

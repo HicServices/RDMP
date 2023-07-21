@@ -18,13 +18,14 @@ internal class TestsExecuteCommandList : CommandCliTests
     [Test]
     public void Test_ExecuteCommandList_NoCataloguesParsing()
     {
-        foreach(var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             cat.DeleteInDatabase();
 
-        Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),"Failed to clear CatalogueRepository");
+        Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),
+            "Failed to clear CatalogueRepository");
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
-            new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
+            new CommandLineObjectPicker(new string[] { "Catalogue" }, GetActivator()));
     }
 
     [Test]
@@ -33,10 +34,11 @@ internal class TestsExecuteCommandList : CommandCliTests
         var c = WhenIHaveA<Catalogue>();
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
-            new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
-            
+            new CommandLineObjectPicker(new string[] { "Catalogue" }, GetActivator()));
+
         c.DeleteInDatabase();
     }
+
     [Test]
     public void Test_ExecuteCommandList_OneCatalogue()
     {
@@ -46,8 +48,8 @@ internal class TestsExecuteCommandList : CommandCliTests
 
         var mock = GetMockActivator();
 
-        var cmd = new ExecuteCommandList(mock.Object,new []{c});
-        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        var cmd = new ExecuteCommandList(mock.Object, new[] { c });
+        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 

@@ -15,7 +15,6 @@ namespace Rdmp.UI.Tests.CommandExecution;
 
 internal class ExecuteCommandDeleteTests : UITests
 {
-
     [Test]
     public void Delete_IsSupportedCommand()
     {
@@ -27,7 +26,8 @@ internal class ExecuteCommandDeleteTests : UITests
     /// RDMPDEV-1551 Tests system behaviour when user selects a <see cref="CatalogueItem"/> and the <see cref="ExtractionInformation"/>
     /// that is the immediate child of it and issues a multi delete.  The first delete will also CASCADE delete the other
     /// </summary>
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void TestDeleteMultiple_OneObjectInheritsAnother()
     {
         var ei = WhenIHaveA<ExtractionInformation>();
@@ -48,37 +48,38 @@ internal class ExecuteCommandDeleteTests : UITests
         Assert.IsFalse(ei.Exists());
     }
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_DeleteRootContainer_IsImpossible()
     {
         var container = WhenIHaveA<CohortAggregateContainer>();
         Assert.IsNotNull(container);
-        Assert.IsTrue(container.IsRootContainer(),"expected it to be a root container");
+        Assert.IsTrue(container.IsRootContainer(), "expected it to be a root container");
 
         var cmd = new ExecuteCommandDelete(ItemActivator, container);
 
-        Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
-        StringAssert.Contains("root container",cmd.ReasonCommandImpossible);
-
+        Assert.IsTrue(cmd.IsImpossible, "expected command to be impossible");
+        StringAssert.Contains("root container", cmd.ReasonCommandImpossible);
     }
 
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_Delete2RootContainers_IsImpossible()
     {
         var container1 = WhenIHaveA<CohortAggregateContainer>();
 
-        var container2= WhenIHaveA<CohortAggregateContainer>();
+        var container2 = WhenIHaveA<CohortAggregateContainer>();
 
-        var cmd = new ExecuteCommandDelete(ItemActivator, new IDeleteable[]{container1,container2});
+        var cmd = new ExecuteCommandDelete(ItemActivator, new IDeleteable[] { container1, container2 });
 
-        Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
-        StringAssert.Contains("root container",cmd.ReasonCommandImpossible);
-
+        Assert.IsTrue(cmd.IsImpossible, "expected command to be impossible");
+        StringAssert.Contains("root container", cmd.ReasonCommandImpossible);
     }
 
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_DeleteNonRootContainer_Possible()
     {
         var container = WhenIHaveA<CohortAggregateContainer>();
@@ -89,11 +90,9 @@ internal class ExecuteCommandDeleteTests : UITests
         cic.SaveToDatabase();
 
         container.AddChild(subcontainer);
-        Assert.IsFalse(subcontainer.IsRootContainer(),"expected it not to be a root container");
+        Assert.IsFalse(subcontainer.IsRootContainer(), "expected it not to be a root container");
         var cmd = new ExecuteCommandDelete(ItemActivator, subcontainer);
 
-        Assert.IsFalse(cmd.IsImpossible,"expected command to be possible");
-
+        Assert.IsFalse(cmd.IsImpossible, "expected command to be possible");
     }
-
 }

@@ -50,14 +50,16 @@ public class PatcherManager
             {
                 instance = (PluginPatcher)ObjectConstructor.Construct(patcherType);
 
-                events?.Invoke(this, new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
+                events?.Invoke(this,
+                    new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
             }
             catch (Exception e)
             {
-                events?.Invoke(this, new PluginPatcherFoundEventArgs(patcherType, null, PluginPatcherStatus.CouldNotConstruct, e));
+                events?.Invoke(this,
+                    new PluginPatcherFoundEventArgs(patcherType, null, PluginPatcherStatus.CouldNotConstruct, e));
             }
 
-            if(instance != null)
+            if (instance != null)
                 yield return instance;
         }
     }
@@ -66,8 +68,5 @@ public class PatcherManager
     /// Returns all Tier 2 and 3 patchers (that could be constructed)
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IPatcher> GetAllPatchers()
-    {
-        return Tier2Patchers.Union(GetTier3Patchers(null));
-    }
+    public IEnumerable<IPatcher> GetAllPatchers() => Tier2Patchers.Union(GetTier3Patchers(null));
 }

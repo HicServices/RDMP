@@ -21,7 +21,8 @@ public class ParameterEditorScintillaSection
     private readonly ParameterRefactorer _refactorer;
     private IQuerySyntaxHelper _querySyntaxHelper;
 
-    public ParameterEditorScintillaSection( ParameterRefactorer refactorer, int lineStart, int lineEnd, ISqlParameter parameter, bool editable, string originalText)
+    public ParameterEditorScintillaSection(ParameterRefactorer refactorer, int lineStart, int lineEnd,
+        ISqlParameter parameter, bool editable, string originalText)
     {
         _refactorer = refactorer;
         LineStart = lineStart;
@@ -31,7 +32,7 @@ public class ParameterEditorScintillaSection
         _querySyntaxHelper = parameter.GetQuerySyntaxHelper();
 
         var prototype = ConstantParameter.Parse(originalText, _querySyntaxHelper);
-        if(prototype.Value != parameter.Value)
+        if (prototype.Value != parameter.Value)
             throw new ArgumentException(
                 $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Values");
 
@@ -42,7 +43,6 @@ public class ParameterEditorScintillaSection
         if (prototype.Comment != parameter.Comment)
             throw new ArgumentException(
                 $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Comment");
-
     }
 
     public int LineStart { get; private set; }
@@ -51,10 +51,7 @@ public class ParameterEditorScintillaSection
     public ISqlParameter Parameter { get; private set; }
     public bool Editable { get; private set; }
 
-    public bool IncludesLine(int lineNumber)
-    {
-        return lineNumber >= LineStart && lineNumber <= LineEnd;
-    }
+    public bool IncludesLine(int lineNumber) => lineNumber >= LineStart && lineNumber <= LineEnd;
 
     public FreeTextParameterChangeResult CheckForChanges(string sql)
     {
@@ -64,7 +61,7 @@ public class ParameterEditorScintillaSection
 
             var newPrototype = ConstantParameter.Parse(sql, _querySyntaxHelper);
 
-            if (string.Equals(newPrototype.Comment, Parameter.Comment)//can be null you see
+            if (string.Equals(newPrototype.Comment, Parameter.Comment) //can be null you see
                 &&
                 string.Equals(newPrototype.Value, Parameter.Value)
                 &&
@@ -80,7 +77,6 @@ public class ParameterEditorScintillaSection
 
 
             return FreeTextParameterChangeResult.ChangeAccepted;
-
         }
         catch (Exception)
         {

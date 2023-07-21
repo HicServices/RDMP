@@ -17,16 +17,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 [Alias("lc")]
 [Alias("ListCommands")]
-internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
+internal class ExecuteCommandListSupportedCommands : BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _verbose;
 
     public ExecuteCommandListSupportedCommands(IBasicActivateItems basicActivator,
-        [DemandsInitialization("Optional. A term to look for in command names.  Supports wildcards e.g. new*cata.  If not supplied then all will be shown")]
-        string pattern=null,
-        [DemandsInitialization("Optional. Set to true to display information about the command.  If specified with pattern then pattern will also search the description")]
-        bool verbose = false):base(basicActivator)
+        [DemandsInitialization(
+            "Optional. A term to look for in command names.  Supports wildcards e.g. new*cata.  If not supplied then all will be shown")]
+        string pattern = null,
+        [DemandsInitialization(
+            "Optional. Set to true to display information about the command.  If specified with pattern then pattern will also search the description")]
+        bool verbose = false) : base(basicActivator)
     {
         _pattern = pattern;
         _verbose = verbose;
@@ -38,14 +40,14 @@ internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
 
 
         var commands = commandCaller.GetSupportedCommands().ToArray();
-        var names = commands.Select(c=>GetCommandName(c.Name)).ToArray();
+        var names = commands.Select(c => GetCommandName(c.Name)).ToArray();
         string[] descriptions;
-            
-             
-        if(_verbose)
+
+
+        if (_verbose)
         {
             var help = BasicActivator.CommentStore ?? CreateCommentStore();
-            descriptions = commands.Select(c=>help.GetTypeDocumentationIfExists(c)).ToArray();
+            descriptions = commands.Select(c => help.GetTypeDocumentationIfExists(c)).ToArray();
         }
         else
         {
@@ -54,45 +56,42 @@ internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
 
         var onlyShowIndexes = new HashSet<int>();
 
-        if(!string.IsNullOrWhiteSpace(_pattern))
+        if (!string.IsNullOrWhiteSpace(_pattern))
         {
-            var tokens = _pattern.Split('*',StringSplitOptions.RemoveEmptyEntries);
+            var tokens = _pattern.Split('*', StringSplitOptions.RemoveEmptyEntries);
 
-            for(var i =0;i<commands.Length;i++)
+            for (var i = 0; i < commands.Length; i++)
             {
-                if(tokens.All(t=>names[i].Contains(t,StringComparison.InvariantCultureIgnoreCase)))
-                {
+                if (tokens.All(t => names[i].Contains(t, StringComparison.InvariantCultureIgnoreCase)))
                     onlyShowIndexes.Add(i);
-                }
-                if(tokens.All(t=>descriptions[i]?.Contains(t,StringComparison.InvariantCultureIgnoreCase) ?? false))
-                {
+                if (tokens.All(t => descriptions[i]?.Contains(t, StringComparison.InvariantCultureIgnoreCase) ?? false))
                     onlyShowIndexes.Add(i);
-                }
             }
 
             // Nothing matches pattern
-            if(!onlyShowIndexes.Any())
+            if (!onlyShowIndexes.Any())
             {
-                BasicActivator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("No commands matched supplied pattern",CheckResult.Warning));
+                BasicActivator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs("No commands matched supplied pattern", CheckResult.Warning));
                 return;
             }
         }
 
         var showAll = onlyShowIndexes.Count == 0;
-        var outputCommandDictionary = new Dictionary<string,string>();
+        var outputCommandDictionary = new Dictionary<string, string>();
 
-        for(var i =0;i<commands.Length;i++)
-        {
-            if(showAll || onlyShowIndexes.Contains(i))
+        for (var i = 0; i < commands.Length; i++)
+            if (showAll || onlyShowIndexes.Contains(i))
             {
-                var desc = string.IsNullOrWhiteSpace(descriptions[i]) ? "" : $"{Environment.NewLine}{descriptions[i]}{Environment.NewLine}";
-                outputCommandDictionary.Add(names[i],desc);
+                var desc = string.IsNullOrWhiteSpace(descriptions[i])
+                    ? ""
+                    : $"{Environment.NewLine}{descriptions[i]}{Environment.NewLine}";
+                outputCommandDictionary.Add(names[i], desc);
             }
-        }
 
         var output = string.Join(Environment.NewLine,
-            outputCommandDictionary.Select(kvp => kvp.Key+kvp.Value)
-                .OrderBy(s=>s));
+            outputCommandDictionary.Select(kvp => kvp.Key + kvp.Value)
+                .OrderBy(s => s));
 
         BasicActivator.Show(output);
 

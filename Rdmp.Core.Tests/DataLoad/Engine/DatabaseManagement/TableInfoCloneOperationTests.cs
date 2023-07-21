@@ -23,15 +23,17 @@ internal class TableInfoCloneOperationTests : DatabaseTests
         dt.Columns.Add("FF");
 
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        var tbl = db.CreateTable("MyTable",dt);
+        var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl,out var ti, out _);
+        Import(tbl, out var ti, out _);
 
         var config = new HICDatabaseConfiguration(tbl.Database.Server);
 
         //create a RAW table schema called TableName_Isolation
-        var cloner = new TableInfoCloneOperation(config,(TableInfo)ti,LoadBubble.Live,ThrowImmediatelyDataLoadEventListener.Quiet);
-        cloner.CloneTable(tbl.Database, tbl.Database,tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true, ti.PreLoadDiscardedColumns);
+        var cloner = new TableInfoCloneOperation(config, (TableInfo)ti, LoadBubble.Live,
+            ThrowImmediatelyDataLoadEventListener.Quiet);
+        cloner.CloneTable(tbl.Database, tbl.Database, tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true,
+            ti.PreLoadDiscardedColumns);
 
         var tbl2 = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_copy");
 

@@ -23,7 +23,8 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 /// <para>PipelineComponent is the Design time class (where it appears in Pipeline, what argument values it should be hydrated with etc) while IDataFlowComponent is
 /// the runtime instance of the configuration. </para>
 /// </summary>
-public interface IPipelineComponent : IArgumentHost, ISaveable, IMapsDirectlyToDatabaseTable,IHasDependencies,IOrderable
+public interface IPipelineComponent : IArgumentHost, ISaveable, IMapsDirectlyToDatabaseTable, IHasDependencies,
+    IOrderable
 {
     /// <summary>
     /// The human readable name for the pipeline component (currently this is the same as the <see cref="Class"/>).

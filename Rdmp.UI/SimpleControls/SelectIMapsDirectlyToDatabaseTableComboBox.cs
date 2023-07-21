@@ -33,14 +33,14 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
             }
 
             //avoids circular event calls
-            if(!Equals(suggestComboBox1.SelectedItem,value))
+            if (!Equals(suggestComboBox1.SelectedItem, value))
             {
                 if (value != null)
                     suggestComboBox1.SelectedItem = value;
                 else
                     suggestComboBox1.SelectedIndex = -1;
 
-                suggestComboBox1_SelectedIndexChanged(this,EventArgs.Empty);
+                suggestComboBox1_SelectedIndexChanged(this, EventArgs.Empty);
             }
         }
     }
@@ -54,7 +54,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     {
         InitializeComponent();
 
-        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>": o.ToString());
+        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>" : o.ToString());
         suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
     }
 
@@ -74,7 +74,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
             suggestComboBox1.DataSource = available;
 
             //if it was clear before don't take item 0
-            if(before == -1)
+            if (before == -1)
                 suggestComboBox1.SelectedIndex = -1;
         }
         finally
@@ -85,21 +85,16 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     private void lPick_Click(object sender, EventArgs e)
     {
-        if(_activator.SelectObject(new DialogArgs
-           {
-               WindowTitle = "Select New Value"
-           }, _available.ToArray(),out var selected))
-        {
+        if (_activator.SelectObject(new DialogArgs
+            {
+                WindowTitle = "Select New Value"
+            }, _available.ToArray(), out var selected))
             suggestComboBox1.SelectedItem = selected;
-        }
     }
 
     private void suggestComboBox1_TextUpdate(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(suggestComboBox1.Text))
             suggestComboBox1.SelectedIndex = -1;
-
     }
-
-
 }

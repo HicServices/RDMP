@@ -33,15 +33,13 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
         checkAndExecuteUI1.CommandGetter += CommandGetter;
     }
 
-    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
-    {
-        return new CacheOptions
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) =>
+        new CacheOptions
         {
             CacheProgress = _cacheProgress.ID.ToString(),
             Command = commandLineActivity,
             RetryMode = cbFailures.Checked
         };
-    }
 
     public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)
     {
@@ -50,13 +48,15 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
         _cacheProgress = databaseObject;
 
         CommonFunctionality.AddToMenu(new ExecuteCommandEditCacheProgress(activator, databaseObject), "Edit");
-        CommonFunctionality.AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject), "View Cache Failures");
+        CommonFunctionality.AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject),
+            "View Cache Failures");
 
         var failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
         cbFailures.Enabled = failures;
-            
+
         checkAndExecuteUI1.SetItemActivator(activator);
     }
+
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
         base.ConsultAboutClosing(sender, e);
@@ -67,5 +67,4 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
 public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
 {
-
 }

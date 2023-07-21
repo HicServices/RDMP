@@ -68,9 +68,9 @@ public class ExtractableCohortDescription
             Exception = e;
             throw;
         }
+
         OriginID = cohort.OriginID;
 
-            
 
         try
         {
@@ -96,7 +96,6 @@ public class ExtractableCohortDescription
         CreationDate = externalData.ExternalCohortCreationDate;
         ProjectNumber = externalData.ExternalProjectNumber;
         Description = externalData.ExternalDescription;
-
     }
 
 
@@ -117,7 +116,7 @@ public class ExtractableCohortDescription
         Count = -1;
         CountDistinct = -1;
         SourceName = fetch.Source.Name;
-            
+
         try
         {
             ReleaseIdentifier = cohort.GetReleaseIdentifier(true);
@@ -126,7 +125,7 @@ public class ExtractableCohortDescription
         {
             ReleaseIdentifier = "Unknown";
         }
-            
+
         try
         {
             PrivateIdentifier = cohort.GetPrivateIdentifier(true);
@@ -135,7 +134,7 @@ public class ExtractableCohortDescription
         {
             PrivateIdentifier = "Unknown";
         }
-            
+
         ProjectNumber = -1;
         Version = -1;
         Description = "Loading...";
@@ -148,21 +147,21 @@ public class ExtractableCohortDescription
     }
 
 
-
     private void FetchOnFinished()
     {
         try
         {
             if (Fetch.Task.IsFaulted)
                 throw new Exception(
-                    $"Fetch cohort data failed for source {Fetch.Source} see inner Exception for details",Fetch.Task.Exception);
+                    $"Fetch cohort data failed for source {Fetch.Source} see inner Exception for details",
+                    Fetch.Task.Exception);
 
             if (Fetch.DataTable == null)
                 throw new Exception($"IsFaulted was false but DataTable was not populated for fetch {Fetch.Source}");
 
-            var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
-                    $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
-
+            var row = Fetch.DataTable.Rows.Cast<DataRow>()
+                .FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
+                $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
 
             //it's overriden ugh, got to go the slow way
@@ -176,12 +175,11 @@ public class ExtractableCohortDescription
                 //it's a proper not overriden release identifier so we can use the DataTable value
                 Count = Convert.ToInt32(row["Count"]);
                 CountDistinct = Convert.ToInt32(row["CountDistinct"]);
-
             }
 
             ProjectNumber = Convert.ToInt32(row["ProjectNumber"]);
             Version = Convert.ToInt32(row["Version"]);
-            Description =  row["Description"] as string;
+            Description = row["Description"] as string;
             CreationDate = ObjectToNullableDateTime(row["dtCreated"]);
         }
         catch (Exception e)
@@ -191,14 +189,7 @@ public class ExtractableCohortDescription
     }
 
 
-    public override string ToString()
-    {
-        return Cohort.ToString();
-    }
+    public override string ToString() => Cohort.ToString();
 
-    private static DateTime? ObjectToNullableDateTime(object o)
-    {
-        return o == null || o == DBNull.Value ? null : (DateTime)o;
-    }
-
+    private static DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
 }

@@ -44,5 +44,6 @@ public abstract class Bundle
         //tell child to remove the object too
         OnDropContent(toDrop);
     }
+
     protected abstract void OnDropContent(object toDrop);
 }

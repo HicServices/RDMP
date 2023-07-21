@@ -50,10 +50,10 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         var dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
         var db = GetCleanedServer(dbtype);
 
-        using(var con = db.Server.GetConnection())
+        using (var con = db.Server.GetConnection())
         {
             con.Open();
-            db.Server.GetCommand(sql,con).ExecuteNonQuery();
+            db.Server.GetCommand(sql, con).ExecuteNonQuery();
         }
 
         var tbl = db.ExpectTable("Employee");
@@ -63,7 +63,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         var logManager = new LogManager(logServer);
 
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
-        if(raw.Exists())
+        if (raw.Exists())
             raw.Drop();
 
         //define a new load configuration
@@ -73,12 +73,12 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         };
         lmd.SaveToDatabase();
 
-        var ti = Import(tbl, lmd,logManager);
+        var ti = Import(tbl, lmd, logManager);
 
         var projectDirectory = SetupLoadDirectory(lmd);
 
-        CreateCSVProcessTask(lmd,ti,"*.csv");
-            
+        CreateCSVProcessTask(lmd, ti, "*.csv");
+
         //create a text file to load where we update Frank's favourite colour (it's a pk field) and we insert a new record (MrMurder)
         File.WriteAllText(
             Path.Combine(projectDirectory.ForLoading.FullName, "LoadMe.csv"),
@@ -90,10 +90,11 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+        var checker =
+            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
-        if(ignoreWithGlobalPattern)
+        if (ignoreWithGlobalPattern)
         {
             var regex = new StandardRegex(RepositoryLocator.CatalogueRepository)
             {
@@ -105,16 +106,16 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         }
         else
         {
-            var col = ti.ColumnInfos.Single(c=>c.GetRuntimeName().Equals("ValidFrom"));
+            var col = ti.ColumnInfos.Single(c => c.GetRuntimeName().Equals("ValidFrom"));
             col.IgnoreInLoads = true;
             col.SaveToDatabase();
 
-            col = ti.ColumnInfos.Single(c=>c.GetRuntimeName().Equals("ValidTo"));
+            col = ti.ColumnInfos.Single(c => c.GetRuntimeName().Equals("ValidTo"));
             col.IgnoreInLoads = true;
             col.SaveToDatabase();
         }
 
-        var dbConfig = new HICDatabaseConfiguration(lmd,null);
+        var dbConfig = new HICDatabaseConfiguration(lmd, null);
 
         var loadFactory = new HICDataLoadFactory(
             lmd,
@@ -125,19 +126,20 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         );
 
         var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
-            
+
         var exitCode = exe.Run(
-            new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,ThrowImmediatelyDataLoadEventListener.Quiet,dbConfig),
+            new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
+                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig),
             new GracefulCancellationToken());
 
-        Assert.AreEqual(ExitCodeType.Success,exitCode);
+        Assert.AreEqual(ExitCodeType.Success, exitCode);
 
         //frank should be updated to his new departement and role
-        Assert.AreEqual(2,tbl.GetRowCount());
+        Assert.AreEqual(2, tbl.GetRowCount());
         var result = tbl.GetDataTable();
-        var frank = result.Rows.Cast<DataRow>().Single(r => (string) r["Name"] == "Frank");
-        Assert.AreEqual("Department of F'Tang",frank["Department"]);
-        Assert.AreEqual("Boss",frank["Position"]);
+        var frank = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+        Assert.AreEqual("Department of F'Tang", frank["Department"]);
+        Assert.AreEqual("Boss", frank["Position"]);
 
         //post test cleanup
         foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())

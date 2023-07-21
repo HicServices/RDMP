@@ -16,7 +16,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class PrimaryKeyCollisionResolverTests : DatabaseTests
 {
-
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_Passes()
     {
@@ -40,7 +39,6 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.SaveToDatabase();
 
             Assert.DoesNotThrow(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
-
         }
         finally
         {
@@ -52,7 +50,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNoColumnOrderConfigured()
     {
-        SetupTableInfos(out var t, out _, out _,out _);
+        SetupTableInfos(out var t, out _, out _, out _);
         try
         {
             var mutilation = new PrimaryKeyCollisionResolverMutilation
@@ -61,14 +59,16 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             };
             try
             {
-
                 mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet);
                 Assert.Fail("Should have crashed before here");
             }
             catch (Exception e)
             {
-                Assert.AreEqual("Failed to check PrimaryKeyCollisionResolver on PrimaryKeyCollisionResolverTests", e.Message);
-                Assert.AreEqual("TableInfo PrimaryKeyCollisionResolverTests does not have any primary keys defined so cannot resolve primary key collisions",e.InnerException.Message);
+                Assert.AreEqual("Failed to check PrimaryKeyCollisionResolver on PrimaryKeyCollisionResolverTests",
+                    e.Message);
+                Assert.AreEqual(
+                    "TableInfo PrimaryKeyCollisionResolverTests does not have any primary keys defined so cannot resolve primary key collisions",
+                    e.InnerException.Message);
             }
         }
         finally
@@ -81,9 +81,11 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNotInitialized()
     {
         var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            
-        var ex = Assert.Throws<Exception>(()=>mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",ex.Message);
+
+        var ex = Assert.Throws<Exception>(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        StringAssert.Contains(
+            "Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",
+            ex.Message);
     }
 
     [Test]
@@ -133,8 +135,10 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c1.SaveToDatabase();
 
             var resolver = new PrimaryKeyCollisionResolver(t);
-            var ex = Assert.Throws<Exception>(()=>Console.WriteLine(resolver.GenerateSQL()));
-            StringAssert.Contains("The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.",ex.Message);
+            var ex = Assert.Throws<Exception>(() => Console.WriteLine(resolver.GenerateSQL()));
+            StringAssert.Contains(
+                "The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.",
+                ex.Message);
         }
         finally
         {
@@ -145,13 +149,14 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoPrimaryKeys_ThrowsException()
     {
-        SetupTableInfos(out var t, out _, out _,out _);
-           
+        SetupTableInfos(out var t, out _, out _, out _);
+
         try
         {
             var resolver = new PrimaryKeyCollisionResolver(t);
-            var ex = Assert.Throws<Exception>(()=>Console.WriteLine(resolver.GenerateSQL()));
-            StringAssert.Contains("does not have any primary keys defined so cannot resolve primary key collisions",ex.Message);
+            var ex = Assert.Throws<Exception>(() => Console.WriteLine(resolver.GenerateSQL()));
+            StringAssert.Contains("does not have any primary keys defined so cannot resolve primary key collisions",
+                ex.Message);
         }
         finally
         {

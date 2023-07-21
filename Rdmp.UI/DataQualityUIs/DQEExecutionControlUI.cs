@@ -32,7 +32,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
     public DQEExecutionControlUI()
     {
         InitializeComponent();
-            
+
         AssociatedCollection = RDMPCollection.Catalogue;
         checkAndExecuteUI1.CommandGetter += CommandGetter;
         checkAndExecuteUI1.ExecutionFinished += checkAndExecuteUI1_ExecutionFinished;
@@ -41,13 +41,11 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
     private void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
     {
         //refresh
-        SetDatabaseObject(Activator,_catalogue);
+        SetDatabaseObject(Activator, _catalogue);
     }
 
-    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
-    {
-        return new DqeOptions { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
-    }
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) => new DqeOptions
+        { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
@@ -55,20 +53,19 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         _catalogue = databaseObject;
         checkAndExecuteUI1.SetItemActivator(activator);
 
-        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
-        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
+        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue),
+            "Validation Rules...");
+        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator)
+            { OverrideCommandName = "View Results..." }.SetTarget(databaseObject));
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
-        base.ConsultAboutClosing(sender,e);
-        checkAndExecuteUI1.ConsultAboutClosing(sender,e);
+        base.ConsultAboutClosing(sender, e);
+        checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
 
-    public override string GetTabName()
-    {
-        return $"DQE Execution:{base.GetTabName()}";
-    }
+    public override string GetTabName() => $"DQE Execution:{base.GetTabName()}";
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DQEExecutionControl_Design, UserControl>))]

@@ -21,7 +21,8 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex?.Message);
         }
         else
@@ -38,14 +39,15 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
      
     ");
 
-        if(throwOnEmpty)
+        if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
             StringAssert.StartsWith("File DelimitedFileSourceTests.txt is empty", ex?.Message);
         }
         else
         {
-            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException,false));
+            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException, false));
         }
     }
 
@@ -62,12 +64,12 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, s=>s.ThrowOnEmptyFiles = true));
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, s => s.ThrowOnEmptyFiles = true));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
         }
         else
         {
-            Assert.IsNull(RunGetChunk(file,s => s.ThrowOnEmptyFiles = false));
+            Assert.IsNull(RunGetChunk(file, s => s.ThrowOnEmptyFiles = false));
         }
     }
 
@@ -80,17 +82,27 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
  
      
     ");
-            
+
         if (throwOnEmpty)
         {
             var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file,
-                s =>{ s.ThrowOnEmptyFiles = true; s.ForceHeaders="Name,Address"; s.ForceHeadersReplacesFirstLineInFile = true;}));
+                s =>
+                {
+                    s.ThrowOnEmptyFiles = true;
+                    s.ForceHeaders = "Name,Address";
+                    s.ForceHeadersReplacesFirstLineInFile = true;
+                }));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
         }
         else
         {
             Assert.IsNull(RunGetChunk(file,
-                s =>{ s.ThrowOnEmptyFiles = false; s.ForceHeaders="Name,Address"; s.ForceHeadersReplacesFirstLineInFile = true;}));
+                s =>
+                {
+                    s.ThrowOnEmptyFiles = false;
+                    s.ForceHeaders = "Name,Address";
+                    s.ForceHeadersReplacesFirstLineInFile = true;
+                }));
         }
     }
 
@@ -113,11 +125,11 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
                 var dt = RunGetChunk(file, strategy, true);
-                Assert.AreEqual(2,dt.Rows.Count);
+                Assert.AreEqual(2, dt.Rows.Count);
                 break;
             case BadDataHandlingStrategy.DivertRows:
                 var dt2 = RunGetChunk(file, strategy, true);
-                Assert.AreEqual(2,dt2.Rows.Count);
+                Assert.AreEqual(2, dt2.Rows.Count);
 
                 AssertDivertFileIsExactly(
                     $"Bob,He's also dynamite, seen him do a lot of good work,30{Environment.NewLine}");
@@ -149,11 +161,11 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
                 var dt = RunGetChunk(file, strategy, true);
-                Assert.AreEqual(2,dt.Rows.Count);
+                Assert.AreEqual(2, dt.Rows.Count);
                 break;
             case BadDataHandlingStrategy.DivertRows:
                 var dt2 = RunGetChunk(file, strategy, true);
-                Assert.AreEqual(2,dt2.Rows.Count);
+                Assert.AreEqual(2, dt2.Rows.Count);
 
                 AssertDivertFileIsExactly(
                     $"Frank,Is the greatest,100,Frank,Is the greatest,100{Environment.NewLine}Bob,He's also dynamite, seen him do a lot of good work,30{Environment.NewLine}Bob2,He's also dynamite2, seen him do a lot of good work2,30{Environment.NewLine}");
@@ -164,11 +176,11 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
         }
     }
 
-    [TestCase(BadDataHandlingStrategy.DivertRows,true)]
-    [TestCase(BadDataHandlingStrategy.ThrowException,false)]
-    [TestCase(BadDataHandlingStrategy.ThrowException,true)]
-    [TestCase(BadDataHandlingStrategy.IgnoreRows,false)]
-    public void BadCSV_TooFewCellsInRow(BadDataHandlingStrategy strategy,bool tryToResolve)
+    [TestCase(BadDataHandlingStrategy.DivertRows, true)]
+    [TestCase(BadDataHandlingStrategy.ThrowException, false)]
+    [TestCase(BadDataHandlingStrategy.ThrowException, true)]
+    [TestCase(BadDataHandlingStrategy.IgnoreRows, false)]
+    public void BadCSV_TooFewCellsInRow(BadDataHandlingStrategy strategy, bool tryToResolve)
     {
         var file = CreateTestFile(
             "Name,Description,Age",
@@ -258,7 +270,7 @@ not too bad
 to be honest,20",
             "Dennis,Hes ok,35");
 
-        var dt = RunGetChunk(file,s=> { s.AttemptToResolveNewLinesInRecords = true; });
+        var dt = RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; });
         Assert.AreEqual(3, dt.Rows.Count);
         Assert.AreEqual($"He's{Environment.NewLine}not too bad{Environment.NewLine}to be honest", dt.Rows[1][1]);
     }
@@ -274,11 +286,16 @@ not too bad
 to be honest,Bob,20",
             "Hes ok,Dennis,35");
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=> RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
-        Assert.AreEqual("Bad data found on line 3",ex.Message);
+        var ex = Assert.Throws<FlatFileLoadException>(() =>
+            RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
+        Assert.AreEqual("Bad data found on line 3", ex.Message);
 
         //looks like a good record followed by 2 bad records
-        var dt = RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
+        var dt = RunGetChunk(file, s =>
+        {
+            s.AttemptToResolveNewLinesInRecords = true;
+            s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows;
+        });
         Assert.AreEqual(3, dt.Rows.Count);
         Assert.AreEqual("to be honest", dt.Rows[1][0]);
         Assert.AreEqual("Bob", dt.Rows[1][1]);
@@ -296,15 +313,18 @@ not too bad
 to be honest",
             "Dennis,35,Hes ok");
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=> RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
-        Assert.AreEqual("Bad data found on line 4",ex.Message);
+        var ex = Assert.Throws<FlatFileLoadException>(() =>
+            RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
+        Assert.AreEqual("Bad data found on line 4", ex.Message);
 
         //looks like a good record followed by 2 bad records
-        var dt = RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true;s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows; });
-        Assert.AreEqual(3,dt.Rows.Count);
+        var dt = RunGetChunk(file, s =>
+        {
+            s.AttemptToResolveNewLinesInRecords = true;
+            s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows;
+        });
+        Assert.AreEqual(3, dt.Rows.Count);
         Assert.AreEqual("He's", dt.Rows[1][2]);
-
-
     }
 
     [Test]
@@ -315,7 +335,8 @@ to be honest",
             "Thomas,100",
             "Frank,300");
 
-        var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = false; }));
+        var ex = Assert.Throws<FlatFileLoadException>(() =>
+            RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = false; }));
         Assert.AreEqual("Bad data found on line 2", ex.Message);
 
 
@@ -326,11 +347,10 @@ to be honest",
             s.ForceHeadersReplacesFirstLineInFile = true;
         });
 
-        Assert.AreEqual(2,dt.Rows.Count);
+        Assert.AreEqual(2, dt.Rows.Count);
         Assert.AreEqual(2, dt.Columns.Count);
         Assert.AreEqual("Thomas", dt.Rows[0]["Name"]);
         Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
-
     }
 
     [Test]
@@ -346,11 +366,9 @@ to be honest",
             s.ForceHeaders = "Name,BloodGlucose";
         });
 
-        Assert.AreEqual(2,dt.Rows.Count);
+        Assert.AreEqual(2, dt.Rows.Count);
         Assert.AreEqual(2, dt.Columns.Count);
         Assert.AreEqual("Thomas", dt.Rows[0]["Name"]);
         Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
-
     }
-
 }

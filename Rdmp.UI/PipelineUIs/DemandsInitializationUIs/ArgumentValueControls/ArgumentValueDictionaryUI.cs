@@ -14,7 +14,6 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 
-
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
@@ -40,27 +39,27 @@ public partial class ArgumentValueDictionaryUI : UserControl, IArgumentValueUI
         _factory = new ArgumentValueUIFactory();
     }
 
-    public void SetUp(IActivateItems activator,ArgumentValueUIArgs args)
+    public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
     {
         _activator = activator;
         _args = args;
         var concreteType = args.Type;
 
         //get an IDictionary either from the object or a new empty one (e.g. if Value is null)
-        _dictionary = (IDictionary)(args.InitialValue??Activator.CreateInstance(concreteType));
+        _dictionary = (IDictionary)(args.InitialValue ?? Activator.CreateInstance(concreteType));
 
         _kType = concreteType.GenericTypeArguments[0];
         _vType = concreteType.GenericTypeArguments[1];
 
         foreach (DictionaryEntry kvp in _dictionary)
-            AddRow(kvp.Key,kvp.Value);
+            AddRow(kvp.Key, kvp.Value);
 
         btnSave.Enabled = false;
     }
 
     private List<object> keys = new();
     private List<object> values = new();
-    private Stack<Tuple<Control,Control>> controls = new();
+    private Stack<Tuple<Control, Control>> controls = new();
 
 
     private void btnAdd_Click(object sender, EventArgs e)
@@ -155,5 +154,4 @@ public partial class ArgumentValueDictionaryUI : UserControl, IArgumentValueUI
         btnRemove.Enabled = keys.Any();
         btnSave.Enabled = true;
     }
-
 }

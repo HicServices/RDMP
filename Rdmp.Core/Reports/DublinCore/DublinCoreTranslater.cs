@@ -22,24 +22,26 @@ public class DublinCoreTranslater
     /// <typeparam name="T"></typeparam>
     /// <param name="toFill"></param>
     /// <param name="fillWith"></param>
-    public static void Fill<T>(T toFill,DublinCoreDefinition fillWith)
+    public static void Fill<T>(T toFill, DublinCoreDefinition fillWith)
     {
         if (toFill is Catalogue c)
         {
             //only overwritte name if Catalogue has default blank name
-            if (c.Name != null && c.Name.StartsWith("New Catalogue ",StringComparison.CurrentCultureIgnoreCase))
+            if (c.Name != null && c.Name.StartsWith("New Catalogue ", StringComparison.CurrentCultureIgnoreCase))
                 c.Name = fillWith.Title;
 
             c.Description = fillWith.Description;
             c.Search_keywords = fillWith.Subject;
 
             //only change Acronym if it was null before
-            if(string.IsNullOrWhiteSpace(c.Acronym))
+            if (string.IsNullOrWhiteSpace(c.Acronym))
                 c.Acronym = fillWith.Alternative;
         }
         else
+        {
             throw new NotSupportedException(
                 $"Did not know how to hydrate the Type {typeof(T)} from a DublinCoreDefinition");
+        }
     }
 
     /// <summary>
@@ -63,8 +65,10 @@ public class DublinCoreTranslater
             toReturn.Alternative = c.Acronym;
         }
         else
+        {
             throw new NotSupportedException(
                 $"Did not know how to extracta a DublinCoreDefinition from the Type {typeof(T)}");
+        }
 
         return toReturn;
     }

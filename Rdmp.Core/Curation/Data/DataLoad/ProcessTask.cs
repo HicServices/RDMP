@@ -32,7 +32,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
 /// to write plugin classes to easily handle proprietary/bespoke source file types or complex data load requirements.</para>
 /// </summary>
-public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, ICheckable
+public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICheckable
 {
     #region Database Properties
 
@@ -48,25 +48,27 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <summary>
     /// The load the process task exists as part of
     /// </summary>
-    [Relationship(typeof(LoadMetadata),RelationshipType.SharedObject)]
+    [Relationship(typeof(LoadMetadata), RelationshipType.SharedObject)]
     public int LoadMetadata_ID
     {
         get => _loadMetadataID;
-        set => SetField(ref  _loadMetadataID, value);
+        set => SetField(ref _loadMetadataID, value);
     }
+
     /// <inheritdoc/>
-    [Obsolete("Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
+    [Obsolete(
+        "Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
     public int? RelatesSolelyToCatalogue_ID
     {
         get => _relatesSolelyToCatalogueID;
-        set => SetField(ref  _relatesSolelyToCatalogueID, value);
+        set => SetField(ref _relatesSolelyToCatalogueID, value);
     }
 
     /// <inheritdoc/>
     public int Order
     {
         get => _order;
-        set => SetField(ref  _order, value);
+        set => SetField(ref _order, value);
     }
 
     /// <inheritdoc/>
@@ -74,7 +76,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     public string Path
     {
         get => _path;
-        set => SetField(ref  _path, value);
+        set => SetField(ref _path, value);
     }
 
     /// <inheritdoc cref="IProcessTask.Name"/>
@@ -82,36 +84,42 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
+
     /// <inheritdoc/>
     public LoadStage LoadStage
     {
         get => _loadStage;
-        set => SetField(ref  _loadStage, value);
+        set => SetField(ref _loadStage, value);
     }
+
     /// <inheritdoc/>
     public ProcessTaskType ProcessTaskType
     {
         get => _processTaskType;
-        set => SetField(ref  _processTaskType, value);
+        set => SetField(ref _processTaskType, value);
     }
+
     /// <inheritdoc/>
     public bool IsDisabled
     {
         get => _isDisabled;
-        set => SetField(ref  _isDisabled, value);
+        set => SetField(ref _isDisabled, value);
     }
 
     #endregion
+
     #region Relationships
+
     /// <inheritdoc cref="LoadMetadata_ID"/>
     [NoMappingToDatabase]
     public LoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ProcessTaskArgument> ProcessTaskArguments => Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);
+    public IEnumerable<ProcessTaskArgument> ProcessTaskArguments =>
+        Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);
 
     /// <summary>
     /// All <see cref="ILoadProgress"/> (if any) that can be advanced by executing this load.  This allows batch execution of large loads
@@ -123,7 +131,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
     public ProcessTask()
     {
-
     }
 
     /// <summary>
@@ -134,15 +141,16 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <param name="stage"></param>
     public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
     {
-        var order = repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+        var order =
+            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"LoadMetadata_ID", parent.ID},
-            {"ProcessTaskType", ProcessTaskType.Executable.ToString()},
-            {"LoadStage", stage},
-            {"Name", $"New Process{Guid.NewGuid()}" },
-            {"Order", order}
+            { "LoadMetadata_ID", parent.ID },
+            { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
+            { "LoadStage", stage },
+            { "Name", $"New Process{Guid.NewGuid()}" },
+            { "Order", order }
         });
     }
 
@@ -173,14 +181,11 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
     internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
     {
-        shareManager.UpsertAndHydrate(this,shareDefinition);
+        shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <inheritdoc/>
     public void Check(ICheckNotifier notifier)
@@ -215,25 +220,29 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             //let's check for any SQL that indicates user is trying to modify a STAGING table in a RAW script (for example)
             foreach (var tableInfo in LoadMetadata.GetDistinctTableInfoList(false))
                 //for each stage get all the object names that are in that stage
-            foreach (var stage in new[]{LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad})
+            foreach (var stage in new[] { LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad })
             {
                 //process task belongs in that stage anyway so nothing is prohibited
-                if (stage == (LoadStage == LoadStage.Mounting? LoadStage.AdjustRaw:LoadStage))
+                if (stage == (LoadStage == LoadStage.Mounting ? LoadStage.AdjustRaw : LoadStage))
                     continue;
 
                 //figure out what is prohibited
-                var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
+                var prohibitedSql = tableInfo.GetQuerySyntaxHelper()
+                    .EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage), null,
+                        tableInfo.GetRuntimeName(stage));
 
                 //if we reference it, complain
                 if (sql.Contains(prohibitedSql))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}", CheckResult.Warning));
+                            $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}",
+                            CheckResult.Warning));
             }
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to check the contents of the SQL file '{Path}'", CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to check the contents of the SQL file '{Path}'",
+                CheckResult.Fail, e));
         }
     }
 
@@ -241,7 +250,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     {
         if (string.IsNullOrWhiteSpace(Path))
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"No Path specified for ProcessTask '{Name}'",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"No Path specified for ProcessTask '{Name}'",
+                CheckResult.Fail));
             return;
         }
 
@@ -251,53 +261,41 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
 
         var matchingPaths = Repository.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));
-        foreach (var duplicate in matchingPaths.Except(new[] {this}))
+        foreach (var duplicate in matchingPaths.Except(new[] { this }))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"ProcessTask '{duplicate}' (ID={duplicate.ID}) also uses file '{System.IO.Path.GetFileName(Path)}'", CheckResult.Warning));
+                    $"ProcessTask '{duplicate}' (ID={duplicate.ID}) also uses file '{System.IO.Path.GetFileName(Path)}'",
+                    CheckResult.Warning));
 
         //conflicting tokens in Name string
         foreach (Match match in Regex.Matches(Name, @"'.*((\.exe')|(\.sql'))"))
-        {
             if (match.Success)
             {
-
                 var referencedFile = System.IO.Path.GetFileName(match.Value.Trim('\''));
                 var actualFile = System.IO.Path.GetFileName(Path);
 
                 if (referencedFile != actualFile)
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'", CheckResult.Fail));
+                            $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'",
+                            CheckResult.Fail));
             }
-
-        }
     }
 
     /// <summary>
     /// Returns all tables loaded by the parent <see cref="LoadMetadata"/>
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<TableInfo> GetTableInfos()
-    {
-        return LoadMetadata.GetDistinctTableInfoList(true);
-    }
+    public IEnumerable<TableInfo> GetTableInfos() => LoadMetadata.GetDistinctTableInfoList(true);
 
     /// <inheritdoc/>
-    public IEnumerable<IArgument> GetAllArguments()
-    {
-        return ProcessTaskArguments;
-    }
+    public IEnumerable<IArgument> GetAllArguments() => ProcessTaskArguments;
+
     /// <inheritdoc/>
-    public IArgument CreateNewArgument()
-    {
-        return new ProcessTaskArgument((ICatalogueRepository) Repository,this);
-    }
+    public IArgument CreateNewArgument() => new ProcessTaskArgument((ICatalogueRepository)Repository, this);
+
     /// <inheritdoc/>
-    public string GetClassNameWhoArgumentsAreFor()
-    {
-        return Path;
-    }
+    public string GetClassNameWhoArgumentsAreFor() => Path;
 
     /// <summary>
     /// Creates a new copy of the processTask and all its arguments in the database, this clone is then hooked up to the
@@ -308,7 +306,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <returns>the new ProcessTask (the clone has a different ID to the parent)</returns>
     public ProcessTask CloneToNewLoadMetadataStage(LoadMetadata loadMetadata, LoadStage loadStage)
     {
-        var cataRepository = (ICatalogueRepository) Repository;
+        var cataRepository = (ICatalogueRepository)Repository;
 
         //clone only accepts sql connections so make sure we aren't in mysql land or something
         using (cataRepository.BeginNewTransaction())
@@ -319,15 +317,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                 var toCloneArguments = ProcessTaskArguments.ToArray();
 
                 //create a new transaction for all the cloning - note that once all objects are cloned the transaction is committed then all the objects are adjusted outside the transaction
-                var clone = new ProcessTask(CatalogueRepository,LoadMetadata,loadStage);
+                var clone = new ProcessTask(CatalogueRepository, LoadMetadata, loadStage);
                 CopyShallowValuesTo(clone);
 
                 //foreach of our child arguments
                 foreach (var argument in toCloneArguments)
-                {
                     //clone it but rewire it to the proper ProcessTask parent (the clone)
                     argument.ShallowClone(clone);
-                }
 
                 //the values passed into parameter
                 clone.LoadMetadata_ID = loadMetadata.ID;
@@ -340,7 +336,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                 //return the clone
                 return clone;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 cataRepository.EndTransaction(false);
                 throw;
@@ -366,12 +362,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     }
 
 
-
     /// <inheritdoc/>
-    public IArgument[] CreateArgumentsForClassIfNotExists<T>()
-    {
-        return CreateArgumentsForClassIfNotExists(typeof(T));
-    }
+    public IArgument[] CreateArgumentsForClassIfNotExists<T>() => CreateArgumentsForClassIfNotExists(typeof(T));
 
     /// <summary>
     /// Returns true if the <see cref="ProcessTaskType"/> is allowed to happen during the given <see cref="LoadStage"/>  (e.g. you can't use an IAttacher to
@@ -397,10 +389,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// True if <see cref="Path"/> is the name of a C# class (as opposed to the path to an executable or SQL file etc)
     /// </summary>
     /// <returns></returns>
-    public bool IsPluginType()
-    {
-        return ProcessTaskType == ProcessTaskType.Attacher || ProcessTaskType == ProcessTaskType.MutilateDataTable || ProcessTaskType == ProcessTaskType.DataProvider;
-    }
+    public bool IsPluginType() => ProcessTaskType == ProcessTaskType.Attacher ||
+                                  ProcessTaskType == ProcessTaskType.MutilateDataTable ||
+                                  ProcessTaskType == ProcessTaskType.DataProvider;
 
     /// <summary>
     /// Sets the value of the corresponding <see cref="IArgument"/> (which must already exist) to the given value.  If your argument doesn't exist yet you
@@ -410,8 +401,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <param name="o"></param>
     public void SetArgumentValue(string parameterName, object o)
     {
-        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ?? throw new Exception(
-                $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
+        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ??
+                               throw new Exception(
+                                   $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();
     }

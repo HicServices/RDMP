@@ -22,8 +22,5 @@ public class AlwaysShowListOnlyFilter : IModelFilter
         AlwaysShowList = new HashSet<object>(alwaysShowList);
     }
 
-    public bool Filter(object modelObject)
-    {
-        return AlwaysShowList.Contains(modelObject);
-    }
+    public bool Filter(object modelObject) => AlwaysShowList.Contains(modelObject);
 }

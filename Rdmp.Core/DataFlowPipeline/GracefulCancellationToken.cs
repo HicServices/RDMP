@@ -68,6 +68,7 @@ public class GracefulCancellationToken
         ThrowIfAbortRequested();
         ThrowIfStopRequested();
     }
+
     /// <summary>
     /// Throws OperationCanceledException if <see cref="AbortToken"/> has been set
     /// </summary>
@@ -88,8 +89,6 @@ public class GracefulCancellationToken
     /// Creates a single CancellationTokenSource which will be triggered if either <see cref="StopToken"/> or <see cref="AbortToken"/> is set
     /// </summary>
     /// <returns></returns>
-    public CancellationTokenSource CreateLinkedSource()
-    {
-        return CancellationTokenSource.CreateLinkedTokenSource(StopToken, AbortToken);
-    }
+    public CancellationTokenSource CreateLinkedSource() =>
+        CancellationTokenSource.CreateLinkedTokenSource(StopToken, AbortToken);
 }

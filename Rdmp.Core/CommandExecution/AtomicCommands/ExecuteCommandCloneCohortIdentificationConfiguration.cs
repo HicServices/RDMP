@@ -27,25 +27,22 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration cic)
+    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic)
         : base(activator)
     {
         _cic = cic;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
-    }
+    public override string GetCommandHelp() =>
+        "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
 
     public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
     {
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -68,7 +65,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
         _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-        if(_cic == null)
+        if (_cic == null)
             return;
 
         // Confirm creating yes/no (assuming activator is interactive)
@@ -78,7 +75,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
         if (_project != null) // clone the association
-            _=new ProjectCohortIdentificationConfigurationAssociation(
+            _ = new ProjectCohortIdentificationConfigurationAssociation(
                 BasicActivator.RepositoryLocator.DataExportRepository,
                 _project,
                 CloneCreatedIfAny);

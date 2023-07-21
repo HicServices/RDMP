@@ -20,8 +20,6 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-
-
 namespace Rdmp.UI.MainFormUITabs.SubComponents;
 
 /// <summary>
@@ -81,6 +79,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
         _tableInfo.IsPrimaryExtractionTable = cbIsPrimaryExtractionTable.Checked;
         _tableInfo.SaveToDatabase();
     }
+
     private void cbIsView_CheckedChanged(object sender, EventArgs e)
     {
         _tableInfo.IsView = cbIsView.Checked;
@@ -99,9 +98,11 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
 
             var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
 
-            if (oldName != newName && Activator.YesNo("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?"))
+            if (oldName != newName &&
+                Activator.YesNo(
+                    "You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?",
+                    "Apply Code Refactoring?"))
                 DoRefactoring(oldName, newName);
-
         }
         catch (Exception)
         {
@@ -109,12 +110,13 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
             // just give up on trying to be helpful
             return true;
         }
-            
+
         return true;
     }
+
     private void DoRefactoring(string toReplace, string toReplaceWith)
     {
-        var updatesMade = SelectSQLRefactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
+        var updatesMade = SelectSQLRefactorer.RefactorTableName(_tableInfo, toReplace, toReplaceWith);
 
         MessageBox.Show($"Made {updatesMade} replacements in ExtractionInformation/ColumnInfos.");
     }
@@ -131,24 +133,25 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
 
     private void tbTableInfoDatabaseName_TextChanged(object sender, EventArgs e)
     {
-        _tableInfo.Database = ((TextBox) sender).Text;
+        _tableInfo.Database = ((TextBox)sender).Text;
     }
 
     private void tbSchema_TextChanged(object sender, EventArgs e)
     {
-        _tableInfo.Schema = ((TextBox) sender).Text;
+        _tableInfo.Schema = ((TextBox)sender).Text;
     }
 
     private void btnParameters_Click(object sender, EventArgs e)
     {
-        ParameterCollectionUI.ShowAsDialog(Activator,ParameterCollectionUIOptionsFactory.Create(_tableInfo));
+        ParameterCollectionUI.ShowAsDialog(Activator, ParameterCollectionUIOptionsFactory.Create(_tableInfo));
     }
 
     private void btnSynchronize_Click(object sender, EventArgs e)
     {
         try
         {
-            var isSync = new TableInfoSynchronizer(_tableInfo).Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
+            var isSync =
+                new TableInfoSynchronizer(_tableInfo).Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
 
             if (isSync)
                 MessageBox.Show("TableInfo is synchronized");
@@ -158,11 +161,9 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
             ExceptionViewer.Show(exception);
         }
     }
-
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<TableInfoUI_Design, UserControl>))]
 public abstract class TableInfoUI_Design : RDMPSingleDatabaseObjectControl<TableInfo>
 {
-
 }

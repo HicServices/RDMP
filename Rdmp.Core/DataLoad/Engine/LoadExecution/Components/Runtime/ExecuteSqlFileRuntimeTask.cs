@@ -50,10 +50,12 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
                 var value = kvp.Value;
 
                 if (value.Contains("<DatabaseServer>"))
-                    value = value.Replace("<DatabaseServer>", RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name);
+                    value = value.Replace("<DatabaseServer>",
+                        RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name);
 
                 if (value.Contains("<DatabaseName>"))
-                    value = value.Replace("<DatabaseName>", RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
+                    value = value.Replace("<DatabaseName>",
+                        RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
 
                 commandText = commandText.Replace($"##{kvp.Key}##", value);
             }
@@ -62,27 +64,22 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
         {
             throw new Exception($"Could not read the sql file at {Filepath}: {e}");
         }
-            
+
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Executing script {Filepath} ( against {db})"));
-        var executer = new ExecuteSqlInDleStage(job,_loadStage);
-        return executer.Execute(commandText,db);
+        var executer = new ExecuteSqlInDleStage(job, _loadStage);
+        return executer.Execute(commandText, db);
     }
 
 
-
-    public override bool Exists()
-    {
-        return File.Exists(Filepath);
-    }
+    public override bool Exists() => File.Exists(Filepath);
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-            
     }
 
     public override void Check(ICheckNotifier notifier)
@@ -94,7 +91,7 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
                     CheckResult.Fail));
             return;
         }
-            
+
         if (!File.Exists(Filepath))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(

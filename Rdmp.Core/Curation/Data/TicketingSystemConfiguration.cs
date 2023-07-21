@@ -33,6 +33,7 @@ namespace Rdmp.Core.Curation.Data;
 public class TicketingSystemConfiguration : DatabaseEntity, INamed
 {
     #region Database Properties
+
     private bool _isActive;
     private string _url;
     private string _type;
@@ -99,29 +100,28 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     public DataAccessCredentials DataAccessCredentials =>
         DataAccessCredentials_ID == null
             ? null
-            : Repository.GetObjectByID<DataAccessCredentials>((int) DataAccessCredentials_ID);
+            : Repository.GetObjectByID<DataAccessCredentials>((int)DataAccessCredentials_ID);
 
     #endregion
 
     public TicketingSystemConfiguration()
     {
-
     }
 
     /// <inheritdoc/>
-    public TicketingSystemConfiguration(ICatalogueRepository repository, string name):base()
+    public TicketingSystemConfiguration(ICatalogueRepository repository, string name) : base()
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name != null ? (object) name : DBNull.Value},
-            {"IsActive", true}
+            { "Name", name != null ? (object)name : DBNull.Value },
+            { "IsActive", true }
         });
     }
 
     /// <inheritdoc/>
-    internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
-        IsActive = (bool) r["IsActive"];
+        IsActive = (bool)r["IsActive"];
         Url = r["Url"] as string;
         Type = r["Type"] as string;
         Name = r["Name"] as string;

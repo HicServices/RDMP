@@ -17,7 +17,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the
 /// identifiers themselves (once complete), cancellation token etc.
 /// </summary>
-public sealed class CohortIdentificationTaskExecution: IDisposable
+public sealed class CohortIdentificationTaskExecution : IDisposable
 {
     internal readonly int SubQueries;
     public readonly int SubqueriesCached;
@@ -36,7 +36,9 @@ public sealed class CohortIdentificationTaskExecution: IDisposable
     /// </summary>
     public string CountSQL { get; set; }
 
-    internal CohortIdentificationTaskExecution(string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
+    internal CohortIdentificationTaskExecution(string countSQL, string cumulativeSQL,
+        CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached,
+        bool isResultsForRootContainer, DiscoveredServer target)
     {
         SubQueries = subQueries;
         SubqueriesCached = subqueriesCached;
@@ -55,7 +57,7 @@ public sealed class CohortIdentificationTaskExecution: IDisposable
 
     internal void GetCohortAsync(int commandTimeout)
     {
-        if(Identifiers != null)
+        if (Identifiers != null)
             throw new Exception("GetCohortAsync has already been called for this object");
 
         Identifiers = new DataTable();

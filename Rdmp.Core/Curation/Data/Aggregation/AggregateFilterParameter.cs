@@ -24,6 +24,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 {
     #region Database Properties
+
     private int _aggregateFilterID;
     private string _parameterSQL;
     private string _value;
@@ -33,11 +34,11 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
     /// in its WhereSQL.
     /// </summary>
-    [Relationship(typeof(AggregateFilter),RelationshipType.SharedObject)]
+    [Relationship(typeof(AggregateFilter), RelationshipType.SharedObject)]
     public int AggregateFilter_ID
     {
         get => _aggregateFilterID;
-        set => SetField(ref  _aggregateFilterID, value);
+        set => SetField(ref _aggregateFilterID, value);
     } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
 
@@ -46,7 +47,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     public string ParameterSQL
     {
         get => _parameterSQL;
-        set => SetField(ref  _parameterSQL, value);
+        set => SetField(ref _parameterSQL, value);
     }
 
     /// <inheritdoc/>
@@ -54,14 +55,14 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     public string Value
     {
         get => _value;
-        set => SetField(ref  _value, value);
+        set => SetField(ref _value, value);
     }
 
     /// <inheritdoc/>
     public string Comment
     {
         get => _comment;
-        set => SetField(ref  _comment, value);
+        set => SetField(ref _comment, value);
     }
 
     #endregion
@@ -82,7 +83,6 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 
     public AggregateFilterParameter()
     {
-
     }
 
     /// <summary>
@@ -94,15 +94,15 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     /// <param name="parent"></param>
     internal AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, AggregateFilter parent)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ParameterSQL", parameterSQL},
-            {"AggregateFilter_ID", parent.ID}
+            { "ParameterSQL", parameterSQL },
+            { "AggregateFilter_ID", parent.ID }
         });
     }
 
 
-    internal AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    internal AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         AggregateFilter_ID = int.Parse(r["AggregateFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;
@@ -111,10 +111,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    public override string ToString() => $"{ParameterName} = {Value}";
 
     /// <inheritdoc cref="ParameterSyntaxChecker"/>
     public void Check(ICheckNotifier notifier)
@@ -123,16 +120,10 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return AggregateFilter.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateFilter.GetQuerySyntaxHelper();
 
     /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
-        return AggregateFilter;
-    }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => AggregateFilter;
 
 
     public AggregateFilterParameter ShallowClone(AggregateFilter into)

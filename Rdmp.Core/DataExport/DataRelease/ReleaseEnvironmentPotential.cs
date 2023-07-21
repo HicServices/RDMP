@@ -41,7 +41,8 @@ public class ReleaseEnvironmentPotential : ICheckable
     {
         Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-        var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
+        var configuration = _repository.CatalogueRepository
+            .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
         if (configuration == null) return;
 
         var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
@@ -58,7 +59,7 @@ public class ReleaseEnvironmentPotential : ICheckable
             Exception = e;
             return;
         }
-            
+
         if (ticketingSystem == null)
             return;
 

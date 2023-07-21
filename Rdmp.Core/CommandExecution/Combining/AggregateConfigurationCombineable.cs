@@ -70,25 +70,26 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
         Aggregate = aggregate;
 
         IsPatientIndexTable = Aggregate.IsJoinablePatientIndexTable();
-            
-        IsTemplate = aggregate.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,aggregate).Any(p=> Equals(p.Value, "true"));
+
+        IsTemplate = aggregate.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate, aggregate)
+            .Any(p => Equals(p.Value, "true"));
 
         //is the aggregate part of cohort identification
         CohortIdentificationConfigurationIfAny = Aggregate.GetCohortIdentificationConfigurationIfAny();
-            
+
         //assume no join users
         JoinableUsersIfAny = Array.Empty<AggregateConfiguration>();
 
         //unless there's a cic
-        if(CohortIdentificationConfigurationIfAny != null)
+        if (CohortIdentificationConfigurationIfAny != null)
         {
             //with this aggregate as a joinable
-            JoinableDeclarationIfAny = CohortIdentificationConfigurationIfAny.GetAllJoinables().SingleOrDefault(j=>j.AggregateConfiguration_ID == Aggregate.ID);
+            JoinableDeclarationIfAny = CohortIdentificationConfigurationIfAny.GetAllJoinables()
+                .SingleOrDefault(j => j.AggregateConfiguration_ID == Aggregate.ID);
 
             //then get the joinable users if any and use that array
             if (JoinableDeclarationIfAny != null)
                 JoinableUsersIfAny = JoinableDeclarationIfAny.Users.Select(u => u.AggregateConfiguration).ToArray();
-
         }
 
         //if so we should find out all the containers in the tree (Containers are INTERSECT\EXCEPT\UNION)
@@ -102,12 +103,9 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
             AllContainersInTreeIfPartOfOne.Add(root);
             AllContainersInTreeIfPartOfOne.AddRange(root.GetAllSubContainersRecursively());
         }
-            
+
         ContainerIfAny = Aggregate.GetCohortAggregateContainerIfAny();
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

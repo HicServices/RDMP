@@ -19,22 +19,22 @@ namespace Rdmp.Core.ReusableLibraryCode.DataAccess;
 /// <para>IDataAccessCredentials can include Encrypted passwords which the current user may or may not have access to decrypt.  Where no credentials are
 /// available it is assumed that the connection should be made using Integrated Security (Windows Security).</para>
 /// </summary>
-public interface IDataAccessPoint:IHasQuerySyntaxHelper
+public interface IDataAccessPoint : IHasQuerySyntaxHelper
 {
     /// <summary>
     /// The name of the server e.g. localhost\sqlexpress
     /// </summary>
-    string Server { get; set;}
+    string Server { get; set; }
 
     /// <summary>
     /// The name of the database to connect to e.g. master, tempdb, MyCoolDb etc
     /// </summary>
-    string Database { get; set;}
+    string Database { get; set; }
 
     /// <summary>
     /// The DBMS type of the server e.g. Sql Server / MySql / Oracle
     /// </summary>
-    DatabaseType DatabaseType { get; set;}
+    DatabaseType DatabaseType { get; set; }
 
     /// <summary>
     /// The username/password to use when connecting to the server (otherwise integrated security is used)
@@ -44,7 +44,6 @@ public interface IDataAccessPoint:IHasQuerySyntaxHelper
     IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context);
 
 
-
     /// <summary>
     /// Attempts to connect to the server using the provided <paramref name="context"/>.  If the object is not properly setup for a valid reference e.g.
     /// <see cref="Server"/> is missing or the referenced database/server could not be connected to then the method returns false
@@ -52,5 +51,5 @@ public interface IDataAccessPoint:IHasQuerySyntaxHelper
     /// <param name="context"></param>
     /// <param name="reason"></param>
     /// <returns></returns>
-    bool DiscoverExistence(DataAccessContext context,out string reason);
+    bool DiscoverExistence(DataAccessContext context, out string reason);
 }

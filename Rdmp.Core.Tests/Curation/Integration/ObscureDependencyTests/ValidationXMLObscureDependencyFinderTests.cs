@@ -20,13 +20,13 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests;
 
-public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
+public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
 {
     [Test]
     public void TestGettingTheUsualSuspects()
     {
-        var finder = new ValidationXMLObscureDependencyFinder( RepositoryLocator);
-            
+        var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
+
         //forces call to initialize
         finder.ThrowIfDeleteDisallowed(null);
 
@@ -77,10 +77,11 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
             //and explode
             Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
 
-            Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
+            Assert.AreEqual(0, finder.CataloguesWithBrokenValidationXml.Count);
 
             //now clear the validation XML
-            testData.catalogue.ValidatorXML = testData.catalogue.ValidatorXML.Insert(100,"I've got a lovely bunch of coconuts!");
+            testData.catalogue.ValidatorXML =
+                testData.catalogue.ValidatorXML.Insert(100, "I've got a lovely bunch of coconuts!");
             testData.catalogue.SaveToDatabase();
 
             //column info should be deleteable but only because we got ourselves onto the forbidlist
@@ -110,7 +111,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         try
         {
             //should fail because of the validation constraint being dependent on it
-            Assert.Throws<ValidationXmlDependencyException>(()=>l2ColumnInfo.DeleteInDatabase());
+            Assert.Throws<ValidationXmlDependencyException>(() => l2ColumnInfo.DeleteInDatabase());
         }
         finally
         {
@@ -124,7 +125,6 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void TestRunningSetupMultipleTimes()
     {
-
         var startup = new Startup.Startup(RepositoryLocator);
         try
         {
@@ -132,11 +132,12 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         }
         catch (InvalidPatchException patchException)
         {
-            throw new Exception($"Problem in patch {patchException.ScriptName}",patchException);
+            throw new Exception($"Problem in patch {patchException.ScriptName}", patchException);
         }
+
         //there should be all the obscure dependencies we need done with only the first call to this function
         var numberAfterFirstRun =
-            ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
+            ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count;
 
         startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
@@ -145,10 +146,8 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 
         //there should not be any replication! and doubling SetUp!
         Assert.AreEqual(numberAfterFirstRun,
-            ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
+            ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count);
-            
-            
     }
 
     #region setup test data with some validation rule
@@ -185,5 +184,6 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 
         return testData;
     }
+
     #endregion
 }

@@ -19,7 +19,7 @@ using Color = SixLabors.ImageSharp.Color;
 
 namespace Rdmp.Core.Tests.Reports;
 
-internal class DocumentationReportDatabaseEntitiesTests:UnitTests
+internal class DocumentationReportDatabaseEntitiesTests : UnitTests
 {
     [Test]
     public void Test_DocumentationReportDatabaseEntities_Normal()
@@ -30,12 +30,10 @@ internal class DocumentationReportDatabaseEntitiesTests:UnitTests
         var reporter = new DocumentationReportDatabaseEntities();
 
         Image img = new Image<Rgba32>(19, 19);
-        img.Mutate(x=>x.Fill(Color.DarkMagenta));
+        img.Mutate(x => x.Fill(Color.DarkMagenta));
 
-        var iconProvider = Mock.Of<IIconProvider>(m=>m.GetImage(It.IsAny<object>(),It.IsAny<OverlayKind>()) == img);
+        var iconProvider = Mock.Of<IIconProvider>(m => m.GetImage(It.IsAny<object>(), It.IsAny<OverlayKind>()) == img);
 
-        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider,false);
-
-
+        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
     }
 }

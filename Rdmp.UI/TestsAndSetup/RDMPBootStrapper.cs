@@ -25,16 +25,18 @@ public class RDMPBootStrapper
     /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
     /// </summary>
     public static ResearchDataManagementPlatformOptions ApplicationArguments;
-    private readonly Func<IRDMPPlatformRepositoryServiceLocator,RDMPForm> _formConstructor;
 
-    public RDMPBootStrapper(ResearchDataManagementPlatformOptions args, Func<IRDMPPlatformRepositoryServiceLocator,RDMPForm> constructor)
+    private readonly Func<IRDMPPlatformRepositoryServiceLocator, RDMPForm> _formConstructor;
+
+    public RDMPBootStrapper(ResearchDataManagementPlatformOptions args,
+        Func<IRDMPPlatformRepositoryServiceLocator, RDMPForm> constructor)
     {
         ApplicationArguments = args;
         _formConstructor = constructor;
     }
 
-    private static readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){
-
+    private static readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase)
+    {
         // This error seems to come from ObjectTreeView but seems harmless
         "Value cannot be null. (Parameter 'owningItem')"
     };
@@ -45,7 +47,8 @@ public class RDMPBootStrapper
         Application.SetCompatibleTextRenderingDefault(false);
 
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
-        Application.ThreadException += (s,e)=>{
+        Application.ThreadException += (s, e) =>
+        {
             if (!IgnoreExceptions.Contains(e.Exception?.Message)) GlobalExceptionHandler.Instance.Handle(s, e);
         };
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -59,13 +62,18 @@ public class RDMPBootStrapper
         }
         catch (Exception ex)
         {
-            if(!string.IsNullOrWhiteSpace(ApplicationArguments.ConnectionStringsFile))
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.ConnectionStringsFile))
             {
-                var viewer = new ExceptionViewer("Failed to get connection strings", $"ConnectionStringsFile was '{ApplicationArguments.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}", ex);
+                var viewer = new ExceptionViewer("Failed to get connection strings",
+                    $"ConnectionStringsFile was '{ApplicationArguments.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}",
+                    ex);
                 viewer.ShowDialog();
             }
             else
+            {
                 ExceptionViewer.Show("Failed to get connection strings", ex);
+            }
+
             return;
         }
 
@@ -74,12 +82,12 @@ public class RDMPBootStrapper
             //show the startup dialog
             var startup = new Startup { SkipPatching = ApplicationArguments.SkipPatching };
 
-            if(!string.IsNullOrWhiteSpace(ApplicationArguments.Dir))
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.Dir))
             {
                 startup.RepositoryLocator = ApplicationArguments.GetRepositoryLocator();
             }
-            else
-            if (!string.IsNullOrWhiteSpace(_catalogueConnection) && !string.IsNullOrWhiteSpace(_dataExportConnection))
+            else if (!string.IsNullOrWhiteSpace(_catalogueConnection) &&
+                     !string.IsNullOrWhiteSpace(_dataExportConnection))
             {
                 startup.RepositoryLocator = new LinkedRepositoryProvider(_catalogueConnection, _dataExportConnection);
                 startup.RepositoryLocator.CatalogueRepository.TestConnection();

@@ -19,7 +19,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public static class AssemblyResolver
 {
-    private static Dictionary<string,Assembly> assemblyResolveAttempts = new();
+    private static Dictionary<string, Assembly> assemblyResolveAttempts = new();
 
     public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
     {
@@ -33,12 +33,12 @@ public static class AssemblyResolver
                 return expression;
 
             //start out assuming we cannot load it
-            assemblyResolveAttempts.Add(assemblyInfo,null);
+            assemblyResolveAttempts.Add(assemblyInfo, null);
 
-            foreach(var dir in dirs)
+            foreach (var dir in dirs)
             {
                 var dll = dir.EnumerateFiles($"{name}.dll").SingleOrDefault();
-                if(dll != null)
+                if (dll != null)
                     return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
 
@@ -60,22 +60,15 @@ public static class AssemblyResolver
         try
         {
             return F1(f);
-
-        }catch(FileLoadException)
+        }
+        catch (FileLoadException)
         {
             //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
             return F2(f);
         }
     }
 
-    private static Assembly F2(FileInfo f)
-    {
-        return Assembly.LoadFile(f.FullName);
-    }
+    private static Assembly F2(FileInfo f) => Assembly.LoadFile(f.FullName);
 
-    private static Assembly F1(FileInfo f)
-    {
-        return AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
-    }
-
+    private static Assembly F1(FileInfo f) => AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
 }

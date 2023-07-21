@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class GovernanceTests:DatabaseTests
+public class GovernanceTests : DatabaseTests
 {
     [OneTimeTearDown]
     protected void OneTimeTearDown()
@@ -41,8 +41,9 @@ public class GovernanceTests:DatabaseTests
         var gov = GetGov();
 
         Assert.NotNull(gov);
-        Assert.AreEqual(gov.StartDate,DateTime.Now.Date);
+        Assert.AreEqual(gov.StartDate, DateTime.Now.Date);
     }
+
     [Test]
     public void TestCreatingGovernance_ChangeName()
     {
@@ -52,20 +53,19 @@ public class GovernanceTests:DatabaseTests
         var gov = GetGov();
         gov.Name = "Fish";
         var freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
-            
+
         //local change not applied yet
-        Assert.AreNotEqual(gov.Name,freshCopy.Name);
-            
+        Assert.AreNotEqual(gov.Name, freshCopy.Name);
+
         //comitted change to database
         gov.SaveToDatabase();
-            
+
         //notice that this fresh copy is still desynced
-        Assert.AreNotEqual(gov.Name,freshCopy.Name);
-            
+        Assert.AreNotEqual(gov.Name, freshCopy.Name);
+
         //sync it
         freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
-        Assert.AreEqual(gov.Name ,freshCopy.Name);
-
+        Assert.AreEqual(gov.Name, freshCopy.Name);
     }
 
     [Test]
@@ -79,12 +79,13 @@ public class GovernanceTests:DatabaseTests
 
         gov2.Name = "HiDuplicate";
 
-        if(CatalogueRepository is TableRepository)
+        if (CatalogueRepository is TableRepository)
         {
             var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
-            StringAssert.StartsWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)", ex?.Message);
+            StringAssert.StartsWith(
+                "Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",
+                ex?.Message);
         }
-
     }
 
     [Test]
@@ -97,7 +98,9 @@ public class GovernanceTests:DatabaseTests
         gov.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         gov.EndDate = DateTime.MinValue;
-        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.Quiet));//no longer valid - notice there is no SaveToDatabase because we can shouldn't be going back to db anyway
+        var ex = Assert.Throws<Exception>(() =>
+            gov.Check(ThrowImmediatelyCheckNotifier
+                .Quiet)); //no longer valid - notice there is no SaveToDatabase because we can shouldn't be going back to db anyway
         Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex?.Message);
     }
 
@@ -108,16 +111,15 @@ public class GovernanceTests:DatabaseTests
         gov.Name = "NeverExpires";
 
         //valid to start with
-        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex?.Message);
-
+        var ex = Assert.Throws<Exception>(() => gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
+        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires", ex?.Message);
     }
 
     [TestCase(true)]
     [TestCase(false)]
     public void GovernsCatalogue(bool memoryRepository)
     {
-        var repo = memoryRepository ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+        var repo = memoryRepository ? (ICatalogueRepository)new MemoryCatalogueRepository() : CatalogueRepository;
 
         var gov = GetGov(repo);
         var c = new Catalogue(repo, "GovernedCatalogue");
@@ -147,16 +149,18 @@ public class GovernanceTests:DatabaseTests
         var c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
 
         var gov = GetGov();
-        Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
+        Assert.AreEqual(gov.GovernedCatalogues.Count(),
+            0); //should be no governanced catalogues for this governancer yet
 
         gov.CreateGovernanceRelationshipTo(c);
-        gov.CreateGovernanceRelationshipTo(c);            
+        gov.CreateGovernanceRelationshipTo(c);
     }
 
     private List<GovernancePeriod> toCleanup = new();
+
     private GovernancePeriod GetGov(ICatalogueRepository repo = null)
     {
-        var gov = new GovernancePeriod(repo??CatalogueRepository);
+        var gov = new GovernancePeriod(repo ?? CatalogueRepository);
         toCleanup.Add(gov);
 
         return gov;

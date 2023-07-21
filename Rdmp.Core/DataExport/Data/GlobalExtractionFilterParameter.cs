@@ -33,6 +33,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Database Properties
+
     private string _parameterSQL;
     private string _value;
     private string _comment;
@@ -76,7 +77,8 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
 
     /// <inheritdoc cref="ExtractionConfiguration_ID"/>
     [NoMappingToDatabase]
-    public ExtractionConfiguration ExtractionConfiguration => Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+    public ExtractionConfiguration ExtractionConfiguration =>
+        Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
     #endregion
 
@@ -91,14 +93,15 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     /// <param name="repository"></param>
     /// <param name="configuration"></param>
     /// <param name="parameterSQL"></param>
-    public GlobalExtractionFilterParameter(IDataExportRepository repository, ExtractionConfiguration configuration, string parameterSQL)
+    public GlobalExtractionFilterParameter(IDataExportRepository repository, ExtractionConfiguration configuration,
+        string parameterSQL)
     {
         Repository = repository;
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ParameterSQL", parameterSQL},
-            {"ExtractionConfiguration_ID", configuration.ID}
+            { "ParameterSQL", parameterSQL },
+            { "ExtractionConfiguration_ID", configuration.ID }
         });
     }
 
@@ -121,10 +124,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     /// Returns <see cref="ParameterName"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    public override string ToString() => $"{ParameterName} = {Value}";
 
 
     /// <inheritdoc/>
@@ -134,16 +134,12 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _syntaxHelper ?? throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _syntaxHelper ??
+                                                        throw new NotSupportedException(
+                                                            "Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
 
     /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
-        return ExtractionConfiguration;
-    }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => ExtractionConfiguration;
 
     private IQuerySyntaxHelper _syntaxHelper;
 

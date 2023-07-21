@@ -33,6 +33,7 @@ public class SaveMenuItem : ToolStripMenuItem
     {
         ShortcutKeys = Keys.Control | Keys.S;
     }
+
     public SaveMenuItem(ISaveableUI saveable) : this()
     {
         Saveable = saveable;

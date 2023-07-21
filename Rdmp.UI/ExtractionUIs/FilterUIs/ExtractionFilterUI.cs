@@ -22,8 +22,6 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
-
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
@@ -46,7 +44,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 /// <para>If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
 /// and save. This will automatically create an empty parameter (See ParameterCollectionUI).</para>
 /// </summary>
-public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
+public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
 {
     private IFilter _extractionFilter;
 
@@ -75,19 +73,17 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
     private void FigureOutGlobalsAndAutoComplete()
     {
-
         var factory = new FilterUIOptionsFactory();
         var options = FilterUIOptionsFactory.Create(_extractionFilter);
         GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
 
-        if (QueryEditor != null)
-        {
-            return;
-        }
+        if (QueryEditor != null) return;
 
         var querySyntaxHelper = _extractionFilter.GetQuerySyntaxHelper();
 
-        QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+        QueryEditor =
+            new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL,
+                querySyntaxHelper);
         QueryEditor.TextChanged += QueryEditor_TextChanged;
         pQueryEditor.Controls.Add(QueryEditor);
         QueryEditor.Dock = DockStyle.Fill;
@@ -122,14 +118,14 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
     private void OfferWrappingIfUserIncludesANDOrOR()
     {
-
         if (QueryEditor.Text.ToLower().Contains(" and ") || QueryEditor.Text.ToLower().Contains(" or "))
         {
             //user is creating a filter with boolean logic in it! better wrap their function if it isn't already
-            if(QueryEditor.Text.Trim().StartsWith("("))//it already does so no worries
+            if (QueryEditor.Text.Trim().StartsWith("(")) //it already does so no worries
                 return;
 
-            MessageBox.Show("Your Filter SQL has an AND / OR in it, so we are going to wrap it in brackets for you", "Filter contains AND/OR");
+            MessageBox.Show("Your Filter SQL has an AND / OR in it, so we are going to wrap it in brackets for you",
+                "Filter contains AND/OR");
 
             QueryEditor.Text = $"({QueryEditor.Text})";
         }
@@ -144,10 +140,12 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         // \s* = don't capture whitespace before or after the comment so we can consistently add a single space front and back for the block comment
         // .*? = lazy capture of comment text, so we don't eat repeated whitespace at the end of the comment (matched by the second \s* outside the capture group)
         var commentRegex = new Regex($@"--\s*(?<comment>.*?)\s*{Environment.NewLine}");
-            
+
         if (commentRegex.Matches(QueryEditor.Text).Count > 0)
         {
-            MessageBox.Show("Line comments are not allowed in the filter query, these will be automatically converted to block comments.", "Line comments");
+            MessageBox.Show(
+                "Line comments are not allowed in the filter query, these will be automatically converted to block comments.",
+                "Line comments");
             QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, $"/* ${{comment}} */{Environment.NewLine}");
         }
     }
@@ -156,7 +154,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
     public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
     {
         _loading = true;
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         Catalogue = databaseObject.GetCatalogue();
         _extractionFilter = databaseObject;
 
@@ -164,27 +162,31 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         try
         {
             var factory = new ParameterCollectionUIOptionsFactory();
-            options = factory.Create(databaseObject,activator.CoreChildProvider);
+            options = factory.Create(databaseObject, activator.CoreChildProvider);
         }
         catch (Exception e)
         {
-            Activator.KillForm(ParentForm,e);
+            Activator.KillForm(ParentForm, e);
             return;
         }
 
         //collapse panel 1 unless there are parameters
-        splitContainer1.Panel1Collapsed = !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());
+        splitContainer1.Panel1Collapsed =
+            !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());
 
-        parameterCollectionUI1.SetUp(options,Activator);
+        parameterCollectionUI1.SetUp(options, Activator);
 
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
         CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
         CommonFunctionality.AddToMenu(new ExecuteCommandBrowseLookup(Activator, databaseObject));
-        CommonFunctionality.AddToMenu(new ExecuteCommandPublishFilter(Activator, databaseObject, databaseObject.GetCatalogue()));
+        CommonFunctionality.AddToMenu(new ExecuteCommandPublishFilter(Activator, databaseObject,
+            databaseObject.GetCatalogue()));
 
         FigureOutGlobalsAndAutoComplete();
-            
+
         QueryEditor.Text = _extractionFilter.WhereSQL;
 
         CommonFunctionality.AddChecks(databaseObject);
@@ -202,7 +204,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbFilterName,"Text","Name",f=>f.Name);
+        Bind(tbFilterName, "Text", "Name", f => f.Name);
         Bind(tbFilterDescription, "Text", "Description", f => f.Description);
         Bind(cbIsMandatory, "Checked", "IsMandatory", f => f.IsMandatory);
     }
@@ -214,7 +216,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if(e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
+        if (e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
             return;
 
         if (!filter.Exists()) //it's deleted

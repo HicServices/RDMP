@@ -60,12 +60,14 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator, string name): this(activator)
+    public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator, string name) :
+        this(activator)
     {
         _name = name;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -79,19 +81,18 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
         var proj = _associateWithProject;
 
-        if(proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
+        if (proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
         {
             var projects = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
-            if(projects.Any())
-            {
+            if (projects.Any())
                 proj = (Project)BasicActivator.SelectOne(new DialogArgs
                 {
                     WindowTitle = "Associate with Project",
-                    TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
+                    TaskDescription =
+                        "Do you want to associate this new query with a Project? if not select Null or Cancel.",
                     AllowSelectingNull = true
                 }, projects);
-            }
         }
 
         CohortIdentificationConfiguration cic;
@@ -100,11 +101,9 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         if (UserSettings.ShowCohortWizard && string.IsNullOrWhiteSpace(_name))
         {
             //try showing wizard if we can't
-            if(!BasicActivator.ShowCohortWizard( out cic))
-            {
+            if (!BasicActivator.ShowCohortWizard(out cic))
                 // No wizards are available, just generate a basic one
                 cic = GenerateBasicCohortIdentificationConfiguration();
-            }
         }
         else
         {
@@ -123,7 +122,6 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
             var assoc = proj.AssociateWithCohortIdentification(cic);
             Publish(assoc);
             Emphasise(assoc, int.MaxValue);
-
         }
         else
         {
@@ -134,17 +132,17 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         Activate(cic);
     }
 
-    private CohortIdentificationConfiguration  GenerateBasicCohortIdentificationConfiguration()
+    private CohortIdentificationConfiguration GenerateBasicCohortIdentificationConfiguration()
     {
         var name = _name;
 
-        if(name == null)
+        if (name == null)
             if (!BasicActivator.TypeText(new DialogArgs
                 {
                     WindowTitle = "New Cohort Builder Query",
                     TaskDescription = "Enter a name for the Cohort Builder Query.",
                     EntryLabel = "Name"
-                },255,null, out name,false))
+                }, 255, null, out name, false))
                 return null;
 
         var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
@@ -154,14 +152,16 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         root.Operation = SetOperation.EXCEPT;
         root.SaveToDatabase();
 
-        var inclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
+        var inclusion =
+            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
             {
                 Name = InclusionCriteriaName,
                 Order = 0
             };
         inclusion.SaveToDatabase();
 
-        var exclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
+        var exclusion =
+            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION)
             {
                 Name = ExclusionCriteriaName,
                 Order = 1
@@ -174,9 +174,6 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         return cic;
     }
 
-    public override string GetCommandHelp()
-    {
-        return
-            "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
-    }
+    public override string GetCommandHelp() =>
+        "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
 }

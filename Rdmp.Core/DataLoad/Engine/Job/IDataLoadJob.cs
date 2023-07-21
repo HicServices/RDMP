@@ -41,6 +41,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     /// returned (but otherwise the load will complete normally).
     /// </summary>
     IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages { get; }
+
     List<ITableInfo> RegularTablesToLoad { get; }
     List<ITableInfo> LookupTablesToLoad { get; }
 
@@ -62,7 +63,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     /// </summary>
     /// <param name="cloner"></param>
     /// <param name="stage"></param>
-    void CreateTablesInStage(DatabaseCloner cloner,LoadBubble stage);
+    void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage);
 
     void PushForDisposal(IDisposeAfterDataLoad disposeable);
 

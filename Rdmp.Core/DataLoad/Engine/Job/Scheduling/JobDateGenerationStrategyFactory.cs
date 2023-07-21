@@ -29,9 +29,11 @@ public class JobDateGenerationStrategyFactory
 
     {
         _typeToCreate =
-            strategy.GetAllLoadProgresses().Any(p => p.CacheProgress != null)//if any of the strategies you plan to use (without locking btw) have a cache progress
-                ? typeof (SingleScheduleCacheDateTrackingStrategy) //then we should use a cache progress based strategy
-                : typeof (SingleScheduleConsecutiveDateStrategy);//otherwise we should probably use consecutive days strategy;
+            strategy.GetAllLoadProgresses()
+                .Any(p => p.CacheProgress !=
+                          null) //if any of the strategies you plan to use (without locking btw) have a cache progress
+                ? typeof(SingleScheduleCacheDateTrackingStrategy) //then we should use a cache progress based strategy
+                : typeof(SingleScheduleConsecutiveDateStrategy); //otherwise we should probably use consecutive days strategy;
     }
 
     public IJobDateGenerationStrategy Create(ILoadProgress loadProgress, IDataLoadEventListener listener)
@@ -42,7 +44,8 @@ public class JobDateGenerationStrategyFactory
         var loadMetadata = loadProgress.LoadMetadata;
 
         return _typeToCreate == typeof(SingleScheduleCacheDateTrackingStrategy)
-            ? (IJobDateGenerationStrategy)new SingleScheduleCacheDateTrackingStrategy(CacheLayoutFactory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress,listener)
+            ? (IJobDateGenerationStrategy)new SingleScheduleCacheDateTrackingStrategy(
+                CacheLayoutFactory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress, listener)
             : throw new Exception("Factory has been configured to supply an unknown type");
     }
 }

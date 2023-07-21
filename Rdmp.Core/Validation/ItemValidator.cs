@@ -24,8 +24,7 @@ public class ItemValidator
     public PrimaryConstraint PrimaryConstraint { get; set; }
     public string TargetProperty { get; set; }
 
-    [XmlIgnore]
-    public Type ExpectedType { get; set; }
+    [XmlIgnore] public Type ExpectedType { get; set; }
 
     [XmlArray]
     [XmlArrayItem("SecondaryConstraint", typeof(SecondaryConstraint))]
@@ -42,12 +41,11 @@ public class ItemValidator
         TargetProperty = targetProperty;
         PrimaryConstraint = null;
         SecondaryConstraints = new List<SecondaryConstraint>();
-
     }
 
     public ValidationFailure ValidateAll(object columnValue, object[] otherColumns, string[] otherColumnNames)
     {
-        if(otherColumns == null)
+        if (otherColumns == null)
             throw new Exception("we were not passed any otherColumns");
 
         if (otherColumns.Length != otherColumnNames.Length)
@@ -69,15 +67,16 @@ public class ItemValidator
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+            throw new Exception(
+                $"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",
+                ex);
         }
     }
 
-    private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns, string[] otherColumnNames)
+    private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns,
+        string[] otherColumnNames)
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
-        {
-
             try
             {
                 var result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
@@ -87,9 +86,10 @@ public class ItemValidator
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+                throw new InvalidOperationException(
+                    $"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",
+                    ex);
             }
-        }
 
         return null;
     }
@@ -99,16 +99,13 @@ public class ItemValidator
         SecondaryConstraints.Add(c);
     }
 
-    public override string ToString()
-    {
-        return TargetProperty;
-    }
+    public override string ToString() => TargetProperty;
 
     #region Fluent API experiment
 
     public void As(string constraintType)
     {
-        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType,Consequence.Wrong);
+        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType, Consequence.Wrong);
     }
 
     public ItemValidator OfType(Type type)
@@ -119,7 +116,7 @@ public class ItemValidator
 
     public void OccursAfter(string comparatorFieldName)
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Inclusive = false;
         b.LowerFieldName = comparatorFieldName;
         b.Upper = DateTime.MaxValue;
@@ -129,7 +126,7 @@ public class ItemValidator
 
     public void OccursBefore(string comparatorFieldName)
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = comparatorFieldName;
 
@@ -138,7 +135,7 @@ public class ItemValidator
 
     public ItemValidator IsLessThan(string comparatorFieldName)
     {
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
         b.UpperFieldName = comparatorFieldName;
         b.Lower = double.MinValue;
         AddSecondaryConstraint(b);
@@ -148,7 +145,7 @@ public class ItemValidator
 
     public ItemValidator IsGreaterThan(string comparatorFieldName)
     {
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
         b.LowerFieldName = comparatorFieldName;
         b.Upper = double.MaxValue;
         AddSecondaryConstraint(b);
@@ -158,17 +155,14 @@ public class ItemValidator
 
     public BoundDouble IsBetween(int lower)
     {
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
         b.Lower = lower;
         AddSecondaryConstraint(b);
 
         return b;
     }
 
-    public ItemValidator And()
-    {
-        return this;
-    }
+    public ItemValidator And() => this;
 
     #endregion
 
@@ -186,9 +180,10 @@ public class ItemValidator
         var sb = new StringBuilder();
 
         using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
+        {
             _serializer.Serialize(sw, this);
+        }
 
         return sb.ToString();
-        
     }
 }

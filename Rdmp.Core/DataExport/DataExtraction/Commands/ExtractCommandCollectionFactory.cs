@@ -17,7 +17,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 /// </summary>
 public class ExtractCommandCollectionFactory
 {
-    public static ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration)
+    public static ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ExtractionConfiguration configuration)
     {
         var cohort = configuration.Cohort;
         var datasets = configuration.GetAllExtractableDataSets();
@@ -27,7 +28,8 @@ public class ExtractCommandCollectionFactory
         return new ExtractCommandCollection(datasetBundles);
     }
 
-    private static ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, IExtractionConfiguration configuration)
+    private static ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IExtractableDataSet dataset, IExtractionConfiguration configuration)
     {
         var catalogue = dataset.Catalogue;
 
@@ -40,16 +42,15 @@ public class ExtractCommandCollectionFactory
 
         //bundle consists of:
         var bundle = new ExtractableDatasetBundle(
-            dataset,//the dataset
-            docs,//all non global extractable docs (SupportingDocuments)
-            sqls.Where(sql => sql.IsGlobal == false).ToArray(),//all non global extractable sql (SupportingSQL)
-            lookupsFound.ToArray());//all lookups associated with the Catalogue (the one behind the ExtractableDataset)
+            dataset, //the dataset
+            docs, //all non global extractable docs (SupportingDocuments)
+            sqls.Where(sql => sql.IsGlobal == false).ToArray(), //all non global extractable sql (SupportingSQL)
+            lookupsFound.ToArray()); //all lookups associated with the Catalogue (the one behind the ExtractableDataset)
 
         return new ExtractDatasetCommand(configuration, bundle);
     }
 
-    public static ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)
-    {
-        return CreateDatasetCommand(repositoryLocator, selectedDataSets.ExtractableDataSet,selectedDataSets.ExtractionConfiguration);
-    }
+    public static ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSets) => CreateDatasetCommand(repositoryLocator,
+        selectedDataSets.ExtractableDataSet, selectedDataSets.ExtractionConfiguration);
 }

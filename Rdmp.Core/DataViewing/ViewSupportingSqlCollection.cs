@@ -15,7 +15,6 @@ namespace Rdmp.Core.DataViewing;
 
 internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-
     public SupportingSQLTable SupportingSQLTable => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault();
 
     public ViewSupportingSqlCollection(SupportingSQLTable supportingSql)
@@ -28,17 +27,13 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
     /// </summary>
     public ViewSupportingSqlCollection()
     {
-
     }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
     }
 
-    public IDataAccessPoint GetDataAccessPoint()
-    {
-        return SupportingSQLTable.ExternalDatabaseServer;
-    }
+    public IDataAccessPoint GetDataAccessPoint() => SupportingSQLTable.ExternalDatabaseServer;
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
@@ -46,15 +41,9 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
         return new QuerySyntaxHelperFactory().Create(syntax);
     }
 
-    public string GetSql()
-    {
-        return SupportingSQLTable.SQL;
-    }
+    public string GetSql() => SupportingSQLTable.SQL;
 
-    public string GetTabName()
-    {
-        return SupportingSQLTable.Name;
-    }
+    public string GetTabName() => SupportingSQLTable.Name;
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

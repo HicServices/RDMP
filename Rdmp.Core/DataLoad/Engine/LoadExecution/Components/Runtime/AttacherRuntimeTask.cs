@@ -30,7 +30,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
         : base(task, args)
     {
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
-        var mountingStageArgs = args.StageSpecificArguments ;
+        var mountingStageArgs = args.StageSpecificArguments;
         if (mountingStageArgs.LoadStage != LoadStage.Mounting)
             throw new Exception("AttacherRuntimeTask can only be called as a Mounting stage process");
 
@@ -46,14 +46,14 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-
         var beforeServer = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name;
-        var beforeDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
+        var beforeDatabase =
+            RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
         var beforeDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to run Task '{ProcessTask.Name}'"));
-        job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Attacher class is:{Attacher.GetType().FullName}"));
 
         try
@@ -63,25 +63,27 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
         catch (Exception e)
         {
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                $"Attach failed on job {job} Attacher was of type {Attacher.GetType().Name} see InnerException for specifics",e));
+                $"Attach failed on job {job} Attacher was of type {Attacher.GetType().Name} see InnerException for specifics",
+                e));
             return ExitCodeType.Error;
         }
         finally
         {
             var afterServer = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name;
-            var afterDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
+            var afterDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase()
+                .GetRuntimeName();
             var afterDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
 
-            if(!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) && beforeDatabaseType == afterDatabaseType))
+            if (!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) &&
+                  beforeDatabaseType == afterDatabaseType))
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                     $"Attacher {Attacher.GetType().Name} modified the ConnectionString during attaching"));
-
         }
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        Attacher.LoadCompletedSoDispose(exitCode,postLoadEventListener);
+        Attacher.LoadCompletedSoDispose(exitCode, postLoadEventListener);
     }
 
 
@@ -101,7 +103,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
-        LoadCompletedSoDispose(ExitCodeType.Abort,postLoadEventListener);
+        LoadCompletedSoDispose(ExitCodeType.Abort, postLoadEventListener);
     }
 
     public override void Check(ICheckNotifier checker)

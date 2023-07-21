@@ -19,7 +19,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 /// <summary>
 /// Depicts a server in a given DLE <see cref="LoadBubble"/> (e.g. the RAW server or the STAGING/LIVE server).
 /// </summary>
-public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
+public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderable
 {
     private readonly LoadBubble _bubble;
     private readonly DiscoveredDatabase _database;
@@ -31,8 +31,9 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     public readonly List<LoadDiagramDatabaseNode> Children = new();
 
-    public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
-        :base(database.Server.Name,database.Server.DatabaseType, loadTables)
+    public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables,
+        HICDatabaseConfiguration config)
+        : base(database.Server.Name, database.Server.DatabaseType, loadTables)
     {
         _bubble = bubble;
         _database = database;
@@ -63,50 +64,44 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
             foreach (var dbname in databases)
-                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
+                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),
+                    loadTables.Where(t =>
+                            t.GetDatabaseRuntimeName().Equals(dbname, StringComparison.CurrentCultureIgnoreCase))
+                        .ToArray());
         }
 
         //if it is live yield all the lookups
-        if(_bubble == LoadBubble.Live)
+        if (_bubble == LoadBubble.Live)
             foreach (var kvp in _liveDatabaseDictionary)
-                Children.Add(new LoadDiagramDatabaseNode(_bubble,kvp.Key,kvp.Value,config1));
+                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, config1));
         else
-            Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,loadTables,config1));
+            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, loadTables, config1));
     }
 
-    public IEnumerable<LoadDiagramDatabaseNode> GetChildren()
-    {
-        return Children;
-    }
+    public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;
 
-    public override string ToString()
-    {
-        return _description;
-    }
+    public override string ToString() => _description;
 
     public void DiscoverState()
     {
         foreach (var db in Children)
             db.DiscoverState();
     }
+
     #region equality
-    protected bool Equals(LoadDiagramServerNode other)
-    {
-        return base.Equals(other) && _bubble == other._bubble && Equals(_database, other._database);
-    }
+
+    protected bool Equals(LoadDiagramServerNode other) =>
+        base.Equals(other) && _bubble == other._bubble && Equals(_database, other._database);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramServerNode) obj);
+        return Equals((LoadDiagramServerNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(base.GetHashCode(), _bubble, _database);
-    }
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), _bubble, _database);
 
     public string WhatIsThis()
     {
@@ -126,6 +121,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     public int Order
     {
-        get => (int) _bubble;
-        set{} }
+        get => (int)_bubble;
+        set { }
+    }
 }

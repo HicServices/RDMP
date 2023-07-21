@@ -26,7 +26,7 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
     private readonly IAtomicCommand _command;
     private readonly IActivateItems _activator;
 
-    public AtomicCommandMenuItem(IAtomicCommand command,IActivateItems activator)
+    public AtomicCommandMenuItem(IAtomicCommand command, IActivateItems activator)
     {
         _command = command;
         _activator = activator;
@@ -38,7 +38,9 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
         //disable if impossible command
         Enabled = !command.IsImpossible;
 
-        ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
+        ToolTipText = command.IsImpossible
+            ? command.ReasonCommandImpossible
+            : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
     }
 
     protected override void OnClick(EventArgs e)
@@ -68,7 +70,8 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
                     if (helpDict != null && helpDict.ContainsKey(match.Value))
                     {
                         ExceptionViewer.Show(
-                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",ex);
+                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",
+                            ex);
                         return;
                     }
                 }

@@ -17,12 +17,14 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
     private readonly CohortAggregateContainer _target;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) :
-        this(activator,cic?.RootCohortAggregateContainer)
+    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic) :
+        this(activator, cic?.RootCohortAggregateContainer)
     {
     }
 
-    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,CohortAggregateContainer container): base(activator)
+    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortAggregateContainer container) : base(activator)
     {
         _target = container;
         Weight = 0.3f;
@@ -33,19 +35,19 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
             return;
         }
 
-        if(!_target.IsRootContainer())
+        if (!_target.IsRootContainer())
         {
             SetImpossible("Only root containers can be unmerged");
             return;
         }
 
-        if(_target.GetAggregateConfigurations().Any())
+        if (_target.GetAggregateConfigurations().Any())
         {
             SetImpossible("Container must contain only subcontainers (i.e. no aggregate sets)");
             return;
         }
 
-        if(_target.GetSubContainers().Length <= 1)
+        if (_target.GetSubContainers().Length <= 1)
         {
             SetImpossible("Container must have 2 or more immediate subcontainers for unmerging");
             return;
@@ -56,17 +58,18 @@ public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : Bas
     {
         base.Execute();
 
-        if(!BasicActivator.Confirm("Generate new Cohort Identification Configurations for each container?", "Confirm UnMerge"))
-        {
-            return;
-        }
+        if (!BasicActivator.Confirm("Generate new Cohort Identification Configurations for each container?",
+                "Confirm UnMerge")) return;
 
-        var merger = new CohortIdentificationConfigurationMerger((CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+        var merger =
+            new CohortIdentificationConfigurationMerger(
+                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
         var results = merger.UnMerge(_target);
 
-        if(results?.Any() == true)
+        if (results?.Any() == true)
         {
-            BasicActivator.Show($"Created {results.Length} new configurations:{Environment.NewLine} {string.Join(Environment.NewLine,results.Select(r=>r.Name))}");
+            BasicActivator.Show(
+                $"Created {results.Length} new configurations:{Environment.NewLine} {string.Join(Environment.NewLine, results.Select(r => r.Name))}");
             Publish(results.First());
             Emphasise(results.First());
         }

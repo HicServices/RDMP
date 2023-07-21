@@ -17,8 +17,6 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 using Rdmp.UI.SimpleDialogs;
-
-
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines;
@@ -38,7 +36,8 @@ public partial class PipelineWorkAreaUI : UserControl
     private readonly ICatalogueRepository _catalogueRepository;
 
 
-    public PipelineWorkAreaUI(IActivateItems activator,IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository catalogueRepository)
+    public PipelineWorkAreaUI(IActivateItems activator, IPipeline pipeline, IPipelineUseCase useCase,
+        ICatalogueRepository catalogueRepository)
     {
         _activator = activator;
         _useCase = useCase;
@@ -65,35 +64,42 @@ public partial class PipelineWorkAreaUI : UserControl
         };
         gbArguments.Controls.Add(_arumentsCollection1);
 
-        olvComponents.RowFormatter+= RowFormatter;
+        olvComponents.RowFormatter += RowFormatter;
         var context = _useCase.GetContext();
 
         try
         {
             //middle and destination components
-            var allComponentTypes = MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
+            var allComponentTypes = MEF.GetGenericTypes(typeof(IDataFlowComponent<>), context.GetFlowType());
 
             //source components (list of all types with MEF exports of )
             var allSourceTypes = MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
             _allComponents = new List<AdvertisedPipelineComponentTypeUnderContext>();
 
-            _allComponents.AddRange(allComponentTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());
-            _allComponents.AddRange(allSourceTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase)).ToArray());
+            _allComponents.AddRange(allComponentTypes
+                .Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());
+            _allComponents.AddRange(allSourceTypes
+                .Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase)).ToArray());
 
             RefreshComponentList();
         }
         catch (Exception exception)
         {
-            ExceptionViewer.Show("Failed to get list of supported MEF components that could be added to the pipeline ", exception);
+            ExceptionViewer.Show("Failed to get list of supported MEF components that could be added to the pipeline ",
+                exception);
         }
 
         gbArguments.Enabled = false;
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvCompatible, new Guid("1b8737cb-75d6-401b-b8a2-441e3e4322ac"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvNamespace, new Guid("35c0497e-3c04-46be-a6d6-eb02111aadb3"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvRole, new Guid("fb1205f3-049e-4fe3-89c5-d07b55fa2e17"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvName, new Guid("b7e797e8-ef6a-45d9-b51d-c2f12dbacead"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvCompatible,
+            new Guid("1b8737cb-75d6-401b-b8a2-441e3e4322ac"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvNamespace,
+            new Guid("35c0497e-3c04-46be-a6d6-eb02111aadb3"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvRole,
+            new Guid("fb1205f3-049e-4fe3-89c5-d07b55fa2e17"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvName,
+            new Guid("b7e797e8-ef6a-45d9-b51d-c2f12dbacead"));
     }
 
     /// <summary>
@@ -111,7 +117,7 @@ public partial class PipelineWorkAreaUI : UserControl
         gbArguments.Enabled = true;
 
         if (selected == null)
-            _arumentsCollection1.Setup(_activator, null, null,_catalogueRepository);
+            _arumentsCollection1.Setup(_activator, null, null, _catalogueRepository);
         else
             _arumentsCollection1.Setup(_activator, selected, selected.GetClassAsSystemType(), _catalogueRepository);
     }
@@ -124,9 +130,9 @@ public partial class PipelineWorkAreaUI : UserControl
             olvItem.ForeColor = Color.Red;
     }
 
-    public void SetTo(IPipeline pipeline,IPipelineUseCase useCase)
+    public void SetTo(IPipeline pipeline, IPipelineUseCase useCase)
     {
-        _pipelineDiagram.SetTo(pipeline,useCase);
+        _pipelineDiagram.SetTo(pipeline, useCase);
     }
 
 
@@ -137,15 +143,14 @@ public partial class PipelineWorkAreaUI : UserControl
         var RightClickMenu = new ContextMenuStrip();
 
         if (model != null)
-        {
-            if(!model.IsCompatible())
-                RightClickMenu.Items.Add("Component incompatible",null, (s,v) => WideMessageBox.Show(model.ToString(),model.GetReasonIncompatible(),WideMessageBoxTheme.Help));
-        }
+            if (!model.IsCompatible())
+                RightClickMenu.Items.Add("Component incompatible", null,
+                    (s, v) => WideMessageBox.Show(model.ToString(), model.GetReasonIncompatible(),
+                        WideMessageBoxTheme.Help));
 
         //show it
-        if(RightClickMenu.Items.Count != 0)
+        if (RightClickMenu.Items.Count != 0)
             RightClickMenu.Show(this, e.Location);
-
     }
 
     private void btnReRunChecks_Click(object sender, EventArgs e)
@@ -155,7 +160,8 @@ public partial class PipelineWorkAreaUI : UserControl
 
     private void tbSearchComponents_TextChanged(object sender, EventArgs e)
     {
-        olvComponents.ModelFilter = new TextMatchFilter(olvComponents, tbSearchComponents.Text, StringComparison.CurrentCultureIgnoreCase);
+        olvComponents.ModelFilter = new TextMatchFilter(olvComponents, tbSearchComponents.Text,
+            StringComparison.CurrentCultureIgnoreCase);
         olvComponents.UseFiltering = !string.IsNullOrWhiteSpace(tbSearchComponents.Text);
     }
 

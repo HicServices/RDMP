@@ -30,15 +30,16 @@ public class CacheRunner : Runner
         _options = options;
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
-
-
-        var cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator,_options.CacheProgress);
+        var cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator, _options.CacheProgress);
         var dataLoadTask = cp.GetDistinctLoggingTask();
 
         var defaults = repositoryLocator.CatalogueRepository;
-        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) ?? throw new NotSupportedException("No default logging server specified, you must specify one in ");
+        var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) ??
+                            throw new NotSupportedException(
+                                "No default logging server specified, you must specify one in ");
         var logManager = new LogManager(loggingServer);
 
         logManager.CreateNewLoggingTaskIfNotExists(dataLoadTask);
@@ -48,7 +49,8 @@ public class CacheRunner : Runner
             case CommandLineActivity.run:
 
                 //Setup dual listeners for the Cache process, one ticks the lifeline one very message and one logs to the logging db
-                var toLog = new ToLoggingDatabaseDataLoadEventListener(this, logManager, dataLoadTask, cp.GetLoggingRunName());
+                var toLog = new ToLoggingDatabaseDataLoadEventListener(this, logManager, dataLoadTask,
+                    cp.GetLoggingRunName());
                 var forkListener = new ForkDataLoadEventListener(toLog, listener);
                 try
                 {
@@ -76,7 +78,7 @@ public class CacheRunner : Runner
             default:
                 throw new ArgumentOutOfRangeException();
         }
-            
+
         return 0;
     }
 }

@@ -20,7 +20,6 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 /// </summary>
 public static class PersistStringHelper
 {
-
     /// <summary>
     /// The string to use to divide objects declared within a collection e.g. ',' in [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
     /// </summary>
@@ -66,7 +65,7 @@ public static class PersistStringHelper
     /// <returns></returns>
     public static Dictionary<string, string> LoadDictionaryFromString(string str)
     {
-        if(string.IsNullOrWhiteSpace(str))
+        if (string.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
 
         var rootElement = XElement.Parse(str);
@@ -95,22 +94,25 @@ public static class PersistStringHelper
     /// <returns></returns>
     public static string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
     {
-
         var sb = new StringBuilder();
 
         //output [obj1,obj2,obj3]
         sb.Append(CollectionStartDelimiter);
 
         //where obj is <RepositoryType>:<DatabaseObjectType>:<ObjectID>
-        sb.Append(string.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
-            
+        sb.Append(string.Join(CollectionObjectSeparator,
+            objects.Select(o =>
+                o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
+
         //ending bracket for the object collection
         sb.Append(CollectionEndDelimiter);
 
         return sb.ToString();
     }
 
-    private static readonly Regex CollectionPattern = new($"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}",RegexOptions.CultureInvariant);
+    private static readonly Regex CollectionPattern =
+        new($"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}",
+            RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Returns the object list section of any <paramref name="persistenceString"/>. This string must take the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
@@ -125,7 +127,7 @@ public static class PersistStringHelper
         {
             //match the starting delimiter
             var pattern =
-                $"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}";//then the ending delimiter
+                $"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}"; //then the ending delimiter
 
             return Regex.Match(persistenceString, pattern).Groups[1].Value;
         }
@@ -143,13 +145,15 @@ public static class PersistStringHelper
     /// <param name="allObjectsString">A string with a list of objects ID's, should have the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
         allObjectsString = allObjectsString.Trim(CollectionStartDelimiter, CollectionEndDelimiter);
 
-        var objectStrings = allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
+        var objectStrings =
+            allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var objectString in objectStrings)
         {
@@ -159,7 +163,8 @@ public static class PersistStringHelper
                 throw new PersistenceException(
                     $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
 
-            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], int.Parse(objectTokens[2]));
+            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1],
+                int.Parse(objectTokens[2]));
 
             if (dbObj != null)
                 toReturn.Add(dbObj);
@@ -176,10 +181,9 @@ public static class PersistStringHelper
     /// </summary>
     /// <param name="persistString"></param>
     /// <returns></returns>
-    public static string GetExtraText(string persistString)
-    {
-        return !persistString.Contains(ExtraText) ? null : persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
-    }
+    public static string GetExtraText(string persistString) => !persistString.Contains(ExtraText)
+        ? null
+        : persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
 
 
     /// <summary>
@@ -190,9 +194,6 @@ public static class PersistStringHelper
     /// <param name="key"></param>
     /// <param name="valueIfMissing"></param>
     /// <returns></returns>
-    public static bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing)
-    {
-        return dict == null || !dict.ContainsKey(key) ? valueIfMissing : bool.Parse(dict[key]);
-    }
-
+    public static bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing) =>
+        dict == null || !dict.ContainsKey(key) ? valueIfMissing : bool.Parse(dict[key]);
 }

@@ -14,7 +14,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// <summary>
 /// Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past / readonly event).
 /// </summary>
-public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
+public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
 {
     public int ID { get; private set; }
     public DateTime Date { get; internal set; }
@@ -30,16 +30,18 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
         Description = r["description"] as string;
         Explanation = r["explanation"] as string;
     }
+
     public string ToShortString()
     {
         var s = ToString();
-        return s.Length > ArchivalDataLoadInfo.MaxDescriptionLength ? $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}..." : s;
+        return s.Length > ArchivalDataLoadInfo.MaxDescriptionLength
+            ? $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}..."
+            : s;
     }
-    public override string ToString()
-    {
-        return
-            $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
-    }
+
+    public override string ToString() =>
+        $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
+
     public int CompareTo(object obj)
     {
         if (obj is ArchivalFatalError other)
@@ -47,6 +49,7 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
+
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
         title = $"{Source} ({Date})";

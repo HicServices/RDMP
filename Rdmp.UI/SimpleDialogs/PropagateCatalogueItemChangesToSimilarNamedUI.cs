@@ -44,7 +44,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private Scintilla previewOldValue;
     private Scintilla previewNewValue;
 
-    public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
+    public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator,
+        CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed) : base(activator)
     {
         _catalogueItemBeingSaved = catalogueItemBeingSaved;
         InitializeComponent();
@@ -57,7 +58,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
         olvCatalogueItemName.AspectGetter = CatalogueItemName_AspectGetter;
         olvCatalogueItemState.AspectGetter = CatalogueItemState_AspectGetter;
-        olvCatalogueItemName.ImageGetter += ci=>activator.CoreIconProvider.GetImage(ci).ImageToBitmap();
+        olvCatalogueItemName.ImageGetter += ci => activator.CoreIconProvider.GetImage(ci).ImageToBitmap();
 
         var changedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
 
@@ -72,7 +73,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         if (!changedProperties.Any())
             shouldDialogBeDisplayed = false;
 
-        if(!shouldDialogBeDisplayed)
+        if (!shouldDialogBeDisplayed)
             return;
 
         previewOldValue = new ScintillaTextEditorFactory().Create();
@@ -101,18 +102,21 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
         olvCatalogues.CellRightClick += olvCatalogues_CellRightClick;
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemName, new Guid("c5741da2-07d9-4bfb-952d-8b6df77271bf"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemState, new Guid("fd7ad4a8-7448-4fff-8059-3759fe0c4d87"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemName,
+            new Guid("c5741da2-07d9-4bfb-952d-8b6df77271bf"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemState,
+            new Guid("fd7ad4a8-7448-4fff-8059-3759fe0c4d87"));
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName, new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName,
+            new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
     }
 
     private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        if(olvCatalogues.SelectedObject is not CatalogueItem ci)
+        if (olvCatalogues.SelectedObject is not CatalogueItem ci)
             return;
 
-        var menu =  new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
+        var menu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
         menu.Show(Cursor.Position);
     }
 
@@ -148,8 +152,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
     {
         return Activator.CoreChildProvider.AllCatalogueItems
-            .Where(ci=>
-                ci.Name.Equals(catalogueItemBeingSaved.Name,StringComparison.CurrentCultureIgnoreCase)
+            .Where(ci =>
+                ci.Name.Equals(catalogueItemBeingSaved.Name, StringComparison.CurrentCultureIgnoreCase)
                 && ci.ID != catalogueItemBeingSaved.ID)
             .ToArray();
     }
@@ -162,12 +166,10 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private void clbChangedProperties_SelectedIndexChanged(object sender, EventArgs e)
     {
         displayPreview();
-
     }
 
     public void displayPreview()
     {
-
         var pi = olvProperties.SelectedObject as PropertyInfo;
 
         if (pi != null && olvCatalogues.SelectedObject is CatalogueItem ci)
@@ -181,13 +183,12 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
             previewNewValue.ReadOnly = true;
 
             highlightDifferencesBetweenPreviewPanes();
-
         }
     }
 
     private void cbSelectAllCatalogues_CheckedChanged(object sender, EventArgs e)
     {
-        if(cbSelectAllCatalogues.Checked)
+        if (cbSelectAllCatalogues.Checked)
             olvCatalogues.CheckAll();
         else
             olvCatalogues.UncheckAll();
@@ -214,14 +215,12 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         var diff = new Diff();
         foreach (var item in Diff.DiffText(sOld, sNew))
         {
-
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue, i, Color.Pink);
 
             //if it is single line change
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(previewNewValue, i, Color.LawnGreen);
-
         }
     }
 
@@ -254,14 +253,12 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         DialogResult = DialogResult.Cancel;
         Close();
-
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
         var olv = (ObjectListView)sender;
-        if(olv.SelectedObject != null)
+        if (olv.SelectedObject != null)
             olv.ToggleCheckObject(olv.SelectedObject);
     }
-
 }

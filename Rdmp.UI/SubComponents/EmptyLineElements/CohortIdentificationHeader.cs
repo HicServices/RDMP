@@ -11,41 +11,20 @@ namespace Rdmp.UI.SubComponents.EmptyLineElements;
 
 internal class CohortIdentificationHeader
 {
-    public static string GetCatalogueName()
-    {
-        return "";
-    }
+    public static string GetCatalogueName() => "";
 
     public static IMapsDirectlyToDatabaseTable Child => null;
 
-    public static IDataAccessPoint[] GetDataAccessPoints()
-    {
-        return null;
-    }
+    public static IDataAccessPoint[] GetDataAccessPoints() => null;
 
-    public override string ToString()
-    {
-        return "Cohort Query Results (Counts are unique people)";
-    }
+    public override string ToString() => "Cohort Query Results (Counts are unique people)";
 
-    public static string FinalRowCount()
-    {
-        return "";
-    }
+    public static string FinalRowCount() => "";
     public int? CumulativeRowCount { set; get; }
 
-    public static string GetStateDescription()
-    {
-        return "";
-    }
+    public static string GetStateDescription() => "";
 
-    public static string Order()
-    {
-        return "";
-    }
+    public static string Order() => "";
 
-    public static string GetCachedQueryUseCount()
-    {
-        return "";
-    }
+    public static string GetCachedQueryUseCount() => "";
 }

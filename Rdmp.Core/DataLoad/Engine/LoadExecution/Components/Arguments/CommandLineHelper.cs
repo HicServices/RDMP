@@ -42,12 +42,10 @@ public class CommandLineHelper
         };
     }
 
-    public static string ConvertArgNameToString(string name)
-    {
+    public static string ConvertArgNameToString(string name) =>
         // Will split on capitals without breaking up capital sequences
         // e.g. 'TestArg' => 'test-arg' and 'TestTLAArg' => 'test-tla-arg'
-        return Regex.Replace(name, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @"-$1").ToLower();
-    }
+        Regex.Replace(name, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @"-$1").ToLower();
 
     public static string GetValueString(object value)
     {

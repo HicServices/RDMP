@@ -24,16 +24,16 @@ public partial class DatabaseTypeUI : UserControl
         {
             _databaseType = value;
 
-            if(bLoading)
+            if (bLoading)
                 return;
 
             ddDatabaseType.SelectedItem = value;
             pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ImageToBitmap();
-
         }
     }
 
     private bool bLoading = true;
+
     public DatabaseTypeUI()
     {
         InitializeComponent();
@@ -43,7 +43,6 @@ public partial class DatabaseTypeUI : UserControl
         pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType.MicrosoftSQLServer).ImageToBitmap();
 
         bLoading = false;
-
     }
 
     public void LockDatabaseType(DatabaseType databaseType)
@@ -53,16 +52,17 @@ public partial class DatabaseTypeUI : UserControl
     }
 
     private bool changing;
+
     private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(changing )
+        if (changing)
             return;
 
         changing = true;
 
         DatabaseType = (DatabaseType)ddDatabaseType.SelectedItem;
 
-        DatabaseTypeChanged?.Invoke(this,EventArgs.Empty);
+        DatabaseTypeChanged?.Invoke(this, EventArgs.Empty);
 
         changing = false;
     }

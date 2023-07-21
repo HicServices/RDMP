@@ -23,7 +23,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects;
 /// itself is stored as a reusable resource in the Catalogue Database. </para>
 /// </summary>
 [TechnicalUI]
-internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
+internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
 {
     private bool _isSelected;
 
@@ -40,7 +40,7 @@ internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
         set
         {
             _isSelected = value;
-            _fullPen = value ? new Pen(new SolidBrush(Color.FromArgb(0,99,177)), 7.0f) : _origFullPen;
+            _fullPen = value ? new Pen(new SolidBrush(Color.FromArgb(0, 99, 177)), 7.0f) : _origFullPen;
             Invalidate(true);
         }
     }
@@ -53,18 +53,22 @@ internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
             _exInitialization = value;
 
             if (value != null)
-                ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not initialize object", CheckResult.Fail,_exInitialization));
+                ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not initialize object", CheckResult.Fail,
+                    _exInitialization));
         }
     }
 
 
-    public PipelineComponentVisualisation(IPipelineComponent component, PipelineComponentRole role, object valueOrNullIfBroken, Exception constructionExceptionIfAny, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
+    public PipelineComponentVisualisation(IPipelineComponent component, PipelineComponentRole role,
+        object valueOrNullIfBroken, Exception constructionExceptionIfAny,
+        Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
         : base(role, valueOrNullIfBroken, shouldAllowDrop)
     {
         PipelineComponent = component;
 
         if (constructionExceptionIfAny != null)
-            ragSmiley1.OnCheckPerformed(new CheckEventArgs("Failed to construct component", CheckResult.Fail,constructionExceptionIfAny));
+            ragSmiley1.OnCheckPerformed(new CheckEventArgs("Failed to construct component", CheckResult.Fail,
+                constructionExceptionIfAny));
 
         _origFullPen = _fullPen;
 
@@ -94,7 +98,7 @@ internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
 
     private void Anywhere_MouseDown(object sender, MouseEventArgs e)
     {
-        if(e.Button != MouseButtons.Left)
+        if (e.Button != MouseButtons.Left)
             return;
 
         if (AllowSelection)
@@ -103,10 +107,6 @@ internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
             ComponentSelected(this, PipelineComponent);
         }
 
-        if (AllowDrag)
-        {
-            DoDragDrop(this, DragDropEffects.Move);
-        }
+        if (AllowDrag) DoDragDrop(this, DragDropEffects.Move);
     }
-
 }

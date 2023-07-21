@@ -85,10 +85,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var args = RDMPBootStrapper.ApplicationArguments;
 
         // somehow app was launched without populating the load args
-        if (args == null)
-        {
-            return;
-        }
+        if (args == null) return;
 
         var origYamlFile = args.ConnectionStringsFileLoaded;
 
@@ -107,13 +104,11 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         // also add yaml files from wherever they got their original yaml file
         if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
-        {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
-        }
-
     }
 
-    private void AddMenuItemsForSwitchingToInstancesInYamlFilesOf(ConnectionStringsYamlFile origYamlFile, DirectoryInfo dir)
+    private void AddMenuItemsForSwitchingToInstancesInYamlFilesOf(ConnectionStringsYamlFile origYamlFile,
+        DirectoryInfo dir)
     {
         foreach (var yaml in dir.GetFiles("*.yaml"))
         {
@@ -121,15 +116,18 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
                 continue;
 
-            var isSameAsCurrent = origYamlFile?.FileLoaded != null && yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+            var isSameAsCurrent = origYamlFile?.FileLoaded != null &&
+                                  yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
-            var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (_, _) => { LaunchNew(connectionStrings); })
+            var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
+                (_, _) => { LaunchNew(connectionStrings); })
             {
                 Checked = isSameAsCurrent,
                 ToolTipText = connectionStrings.Description ?? yaml.FullName
             };
 
-            var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (_, _) => { SwitchTo(connectionStrings); })
+            var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
+                (_, _) => { SwitchTo(connectionStrings); })
             {
                 Enabled = !isSameAsCurrent,
                 Checked = isSameAsCurrent,
@@ -138,7 +136,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
             launchAnotherInstanceToolStripMenuItem.DropDownItems.Add(launchNew);
             switchToInstanceToolStripMenuItem.DropDownItems.Add(switchTo);
-
         }
     }
 
@@ -151,15 +148,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private static void LaunchNew(ConnectionStringsYamlFile yaml)
     {
-        var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, Process.GetCurrentProcess().ProcessName);
-        if(yaml == null)
-        {
+        var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName,
+            Process.GetCurrentProcess().ProcessName);
+        if (yaml == null)
             Process.Start(exeName);
-        }
         else
-        {
-            Process.Start(exeName, $"--{nameof(RDMPCommandLineOptions.ConnectionStringsFile)} \"{yaml.FileLoaded.FullName}\"");
-        }
+            Process.Start(exeName,
+                $"--{nameof(RDMPCommandLineOptions.ConnectionStringsFile)} \"{yaml.FileLoaded.FullName}\"");
     }
 
     private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -176,9 +171,11 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var generator = new GovernanceReport(new DatasetTimespanCalculator(), Activator.RepositoryLocator.CatalogueRepository);
+        var generator = new GovernanceReport(new DatasetTimespanCalculator(),
+            Activator.RepositoryLocator.CatalogueRepository);
         generator.GenerateReport();
     }
+
     private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
@@ -219,7 +216,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void openExeDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
     {
-
         try
         {
             UsefulStuff.ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
@@ -253,7 +249,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if(_windowManager.Navigation.Current is RDMPSingleControlTab t)
+        if (_windowManager.Navigation.Current is RDMPSingleControlTab t)
             t.ShowHelp(Activator);
     }
 
@@ -273,14 +269,15 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             Name = "saveToolStripMenuItem",
             Size = new System.Drawing.Size(214, 22)
         };
-        fileToolStripMenuItem.DropDownItems.Insert(3,_saveToolStripMenuItem);
+        fileToolStripMenuItem.DropDownItems.Insert(3, _saveToolStripMenuItem);
 
         _windowManager.TabChanged += WindowFactory_TabChanged;
-        _windowManager.Navigation.Changed += (s,e)=>UpdateForwardBackEnabled();
+        _windowManager.Navigation.Changed += (s, e) => UpdateForwardBackEnabled();
 
         var tracker = new TutorialTracker(Activator);
         foreach (var t in tracker.TutorialsAvailable)
-            tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, Activator, t, tracker));
+            tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem,
+                Activator, t, tracker));
 
         tutorialsToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
@@ -293,7 +290,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         // Location menu
         instancesToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(
-            new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator) { OverrideCommandName = "Change Default Instance" }));
+            new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)
+                { OverrideCommandName = "Change Default Instance" }));
 
         Activator.Theme.ApplyTo(menuStrip1);
 
@@ -307,17 +305,20 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
                 new CheckEventArgs("Failed to BuildSwitchInstanceMenuItems", CheckResult.Fail, ex));
         }
 
-        launchAnotherInstanceToolStripMenuItem.ToolTipText = "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
+        launchAnotherInstanceToolStripMenuItem.ToolTipText =
+            "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
 
-        if(switchToInstanceToolStripMenuItem.DropDownItems.Count > 1)
+        if (switchToInstanceToolStripMenuItem.DropDownItems.Count > 1)
         {
             switchToInstanceToolStripMenuItem.Enabled = true;
-            switchToInstanceToolStripMenuItem.ToolTipText = "Close the application and start another copy of the RDMP process targetting another RDMP platform database";
+            switchToInstanceToolStripMenuItem.ToolTipText =
+                "Close the application and start another copy of the RDMP process targetting another RDMP platform database";
         }
         else
         {
             switchToInstanceToolStripMenuItem.Enabled = false;
-            switchToInstanceToolStripMenuItem.ToolTipText = "There are no other RDMP platform databases configured, create a .yaml file with connection strings to enable this feature";
+            switchToInstanceToolStripMenuItem.ToolTipText =
+                "There are no other RDMP platform databases configured, create a .yaml file with connection strings to enable this feature";
         }
     }
 
@@ -329,15 +330,15 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         {
             new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),
             new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
-            new ExecuteCommandImportTableInfo(Activator,null,false),
+            new ExecuteCommandImportTableInfo(Activator, null, false),
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),
             new ExecuteCommandCreateNewLoadMetadata(Activator),
             new ExecuteCommandCreateNewStandardRegex(Activator),
             new ExecuteCommandCreateNewCohortDatabaseUsingWizard(Activator),
-            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),
-            new ExecuteCommandCreateNewCohortFromFile(Activator,null),
+            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null),
+            new ExecuteCommandCreateNewCohortFromFile(Activator, null),
             new ExecuteCommandCreateNewCohortFromCatalogue(Activator),
-            new ExecuteCommandCreateNewCohortFromTable(Activator,null),
+            new ExecuteCommandCreateNewCohortFromTable(Activator, null),
             new ExecuteCommandCreateNewExtractableDataSetPackage(Activator),
             new ExecuteCommandCreateNewDataExtractionProject(Activator),
             new ExecuteCommandRelease(Activator) { OverrideCommandName = "New Release..." },
@@ -359,18 +360,19 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var saveable = singleObjectControlTab.Control as ISaveableUI;
 
         //if user wants to emphasise on tab change and there's an object we can emphasise associated with the control
-        if (singleObjectControlTab.Control is IRDMPSingleDatabaseObjectControl singleObject && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
+        if (singleObjectControlTab.Control is IRDMPSingleDatabaseObjectControl singleObject &&
+            UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
         {
-            var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);
+            var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)
+                ?.Parents?.Any(p => p is CohortIdentificationConfiguration);
 
             //don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
-            if(isCicChild == false)
+            if (isCicChild == false)
             {
                 _windowManager.Navigation.Suspend();
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
                 _windowManager.Navigation.Resume();
             }
-
         }
 
 
@@ -432,7 +434,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             InitialSearchTextGuid = new Guid("00a0733b-848f-4bf3-bcde-7028fe159050"),
             IsFind = true,
             TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
-
         }, o => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
     }
 
@@ -443,7 +444,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        Activator.ShowWindow(new FindAndReplaceUI(Activator),true);
+        Activator.ShowWindow(new FindAndReplaceUI(Activator), true);
     }
 
     private void navigateBackwardToolStripMenuItem_Click(object sender, EventArgs e)
@@ -465,7 +466,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var url = "https://raw.githubusercontent.com/HicServices/RDMP/main/rdmp-client.xml";
 
         // Give user a chance to change the URL that is updating from
-        if(!Activator.TypeText("Update Location","Url:",int.MaxValue,url,out url,false))
+        if (!Activator.TypeText("Update Location", "Url:", int.MaxValue, url, out url, false))
             return;
 
         try
@@ -482,7 +483,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var file = new FileInfo(Path.GetTempFileName());
-        File.WriteAllLines(file.FullName, Rdmp.Core.Repositories.MEF.GetAllTypes().Select(t=>t.FullName));
+        File.WriteAllLines(file.FullName, Rdmp.Core.Repositories.MEF.GetAllTypes().Select(t => t.FullName));
         UsefulStuff.ShowPathInWindowsExplorer(file);
     }
 
@@ -492,7 +493,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         {
             WindowTitle = "Create New",
             TaskDescription = "What do you want to create?"
-        },Activator,GetNewCommands(),false);
+        }, Activator, GetNewCommands(), false);
 
         if (dlg.ShowDialog() == DialogResult.OK)
         {
@@ -508,7 +509,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var cmd = new ExecuteCommandStartSession(Activator,null,null);
+        var cmd = new ExecuteCommandStartSession(Activator, null, null);
         cmd.Execute();
     }
 
@@ -532,15 +533,17 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         if (cmd.IsImpossible)
         {
-            Activator.Show("Cannot Query Database",cmd.ReasonCommandImpossible);
+            Activator.Show("Cannot Query Database", cmd.ReasonCommandImpossible);
             return;
         }
+
         cmd.Execute();
     }
 
     private void restartApplicationToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (UserSettings.ConfirmApplicationExiting && Activator.Confirm("Restart Application?", "Confirm Restart") == false)
+        if (UserSettings.ConfirmApplicationExiting &&
+            Activator.Confirm("Restart Application?", "Confirm Restart") == false)
             return;
 
 
@@ -565,10 +568,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void terminateProcessToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if(Activator.YesNo("Terminate the process without saving?","Terminate"))
-        {
-            Process.GetCurrentProcess().Kill();
-        }
+        if (Activator.YesNo("Terminate the process without saving?", "Terminate")) Process.GetCurrentProcess().Kill();
     }
 
     private void findMultipleToolStripMenuItem_Click(object sender, EventArgs e)

@@ -19,29 +19,24 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
     public ExecuteCommandDeprecate(IBasicActivateItems itemActivator,
         [DemandsInitialization("The object you want to deprecate/undeprecate")]
         IMightBeDeprecated[] o,
-        [DemandsInitialization("True to deprecate.  False to undeprecate",DefaultValue = true)]
+        [DemandsInitialization("True to deprecate.  False to undeprecate", DefaultValue = true)]
         bool desiredState = true) : base(itemActivator)
     {
         _o = o;
         _desiredState = desiredState;
     }
 
-    public override string GetCommandName()
-    {
-        return !string.IsNullOrEmpty(OverrideCommandName) ? OverrideCommandName : _desiredState ? "Deprecate" : "Undeprecate";
-    }
+    public override string GetCommandName() => !string.IsNullOrEmpty(OverrideCommandName) ? OverrideCommandName :
+        _desiredState ? "Deprecate" : "Undeprecate";
 
     public override void Execute()
     {
         base.Execute();
 
-        if(_o == null || _o.Length == 0)
+        if (_o == null || _o.Length == 0)
             return;
 
-        if(ExecuteWithCommit(ExecuteImpl, GetDescription(),_o))
-        {
-            Publish((DatabaseEntity)_o[0]);
-        }
+        if (ExecuteWithCommit(ExecuteImpl, GetDescription(), _o)) Publish((DatabaseEntity)_o[0]);
     }
 
     private void ExecuteImpl()

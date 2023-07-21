@@ -13,26 +13,22 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCatalogueItem:RDMPCommandExecutionProposal<CatalogueItem>
+internal class ProposeExecutionWhenTargetIsCatalogueItem : RDMPCommandExecutionProposal<CatalogueItem>
 {
     public ProposeExecutionWhenTargetIsCatalogueItem(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(CatalogueItem target)
-    {
-        return true;
-    }
+    public override bool CanActivate(CatalogueItem target) => true;
 
     public override void Activate(CatalogueItem target)
     {
         ItemActivator.Activate<CatalogueItemUI, CatalogueItem>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)
-    {
-        return cmd is ColumnInfoCombineable sourceColumnInfo
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target,
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is ColumnInfoCombineable sourceColumnInfo
             ? new ExecuteCommandLinkCatalogueItemToColumnInfo(ItemActivator, sourceColumnInfo, target)
             : (ICommandExecution)null;
-    }
 }

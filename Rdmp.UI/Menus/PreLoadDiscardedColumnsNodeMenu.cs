@@ -12,14 +12,15 @@ namespace Rdmp.UI.Menus;
 [System.ComponentModel.DesignerCategory("")]
 internal class PreLoadDiscardedColumnsNodeMenu : RDMPContextMenuStrip
 {
-    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, PreLoadDiscardedColumnsNode discardNode): base(args, discardNode)
+    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, PreLoadDiscardedColumnsNode discardNode) :
+        base(args, discardNode)
     {
         Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardNode.TableInfo));
     }
 
-    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, IdentifierDumpServerUsageNode discardUsageNode): base(args, discardUsageNode)
+    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args,
+        IdentifierDumpServerUsageNode discardUsageNode) : base(args, discardUsageNode)
     {
         Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardUsageNode.TableInfo));
     }
-
 }

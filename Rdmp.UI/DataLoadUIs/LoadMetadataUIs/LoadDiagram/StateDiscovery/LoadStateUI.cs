@@ -23,6 +23,7 @@ public partial class LoadStateUI : UserControl
     private Bitmap _noLoadUnderway;
     private Bitmap _executingOrCrashed;
     public LoadState State { get; private set; }
+
     public LoadStateUI()
     {
         InitializeComponent();

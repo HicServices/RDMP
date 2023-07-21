@@ -30,7 +30,7 @@ public class DataAccessPointCollection
     /// </summary>
     public IReadOnlyCollection<IDataAccessPoint> Points => _points;
 
-    public DataAccessContext DataAccessContext { get;}
+    public DataAccessContext DataAccessContext { get; }
 
     private HashSet<IDataAccessPoint> _points = new();
 
@@ -40,7 +40,8 @@ public class DataAccessPointCollection
     /// </summary>
     /// <param name="singleServer">True to require all <see cref="Points"/> to be on the same server (and type).</param>
     /// <param name="context"></param>
-    public DataAccessPointCollection(bool singleServer,DataAccessContext context = DataAccessContext.InternalDataProcessing)
+    public DataAccessPointCollection(bool singleServer,
+        DataAccessContext context = DataAccessContext.InternalDataProcessing)
     {
         SingleServer = singleServer;
         DataAccessContext = context;
@@ -64,7 +65,7 @@ public class DataAccessPointCollection
     /// <returns></returns>
     public bool TryAdd(IDataAccessPoint point)
     {
-        return TryAddRange(new []{ point});
+        return TryAddRange(new[] { point });
     }
 
     /// <summary>
@@ -97,7 +98,7 @@ public class DataAccessPointCollection
     public void AddRange(IDataAccessPoint[] points)
     {
         //if we already have all the points then don't bother checking
-        if(points.All(p=>_points.Contains(p)))
+        if (points.All(p => _points.Contains(p)))
             return;
 
         if (SingleServer)
@@ -122,12 +123,13 @@ public class DataAccessPointCollection
                     throw;
 
                 throw new InvalidOperationException(
-                    $"Could not identify single set of server/credentials to use with points:{string.Join(Environment.NewLine, tempList)}", e);
+                    $"Could not identify single set of server/credentials to use with points:{string.Join(Environment.NewLine, tempList)}",
+                    e);
             }
         }
         else
         {
-            foreach(var p in points)
+            foreach (var p in points)
                 _points.Add(p);
         }
     }
@@ -146,7 +148,7 @@ public class DataAccessPointCollection
     /// <returns></returns>
     public override string ToString()
     {
-        return string.Join(",", Points.Select(p=>p.ToString()));
+        return string.Join(",", Points.Select(p => p.ToString()));
     }
 
     /// <summary>
@@ -157,7 +159,7 @@ public class DataAccessPointCollection
     /// <returns></returns>
     public DiscoveredServer GetDistinctServer()
     {
-        if(!SingleServer)
+        if (!SingleServer)
             throw new NotSupportedException("Only valid when SingleServer flag is set");
 
         //they all have to be in the same server but do they also reside in the same database?
@@ -173,12 +175,11 @@ public class DataAccessPointCollection
     /// <returns></returns>
     public DataAccessPointCollection Clone()
     {
-        var col = new DataAccessPointCollection(SingleServer,DataAccessContext)
+        var col = new DataAccessPointCollection(SingleServer, DataAccessContext)
         {
             _points = new HashSet<IDataAccessPoint>(_points)
         };
         return col;
-
     }
 
     /// <summary>
@@ -187,8 +188,5 @@ public class DataAccessPointCollection
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public bool AddWouldBePossible(IDataAccessPoint point)
-    {
-        return Clone().TryAdd(point);
-    }
+    public bool AddWouldBePossible(IDataAccessPoint point) => Clone().TryAdd(point);
 }

@@ -53,18 +53,19 @@ public class ShareDefinition
     public Dictionary<RelationshipAttribute, Guid> RelationshipProperties = new();
 
     /// <inheritdoc cref="ShareDefinition"/>
-    public ShareDefinition(Guid sharingGuid, int id, Type type, Dictionary<string, object> properties, Dictionary<RelationshipAttribute, Guid> relationshipProperties)
+    public ShareDefinition(Guid sharingGuid, int id, Type type, Dictionary<string, object> properties,
+        Dictionary<RelationshipAttribute, Guid> relationshipProperties)
     {
         if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
             throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable", nameof(type));
-            
+
         SharingGuid = sharingGuid;
         ID = id;
         Type = type;
         Properties = properties;
-            
+
         RelationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
-            
+
         foreach (var kvp in relationshipProperties)
             RelationshipProperties.Add(kvp.Key, kvp.Value);
     }
@@ -79,10 +80,8 @@ public class ShareDefinition
 
         //remove null arguments they won't help us here
         foreach (var key in newDictionary.Keys.ToArray())
-        {
             if (newDictionary[key] == null)
                 newDictionary.Remove(key);
-        }
 
         return newDictionary;
     }

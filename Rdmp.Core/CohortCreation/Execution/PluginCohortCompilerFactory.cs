@@ -13,10 +13,8 @@ namespace Rdmp.Core.CohortCreation.Execution;
 
 internal static class PluginCohortCompilerFactory
 {
-    internal static IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
-    {
-        return MEF.GetTypes<IPluginCohortCompiler>()
+    internal static IReadOnlyCollection<IPluginCohortCompiler> CreateAll() =>
+        MEF.GetTypes<IPluginCohortCompiler>()
             .Select(Activator.CreateInstance)
             .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
-    }
 }

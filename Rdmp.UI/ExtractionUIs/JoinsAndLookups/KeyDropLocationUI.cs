@@ -59,9 +59,9 @@ public partial class KeyDropLocationUI : UserControl
         if (col == null)
             return;
 
-        if(IsValidGetter != null && !IsValidGetter(col))
+        if (IsValidGetter != null && !IsValidGetter(col))
             return;
-            
+
         e.Effect = DragDropEffects.Copy;
     }
 
@@ -99,6 +99,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumnChanged?.Invoke();
     }
 }
+
 public enum JoinKeyType
 {
     PrimaryKey,

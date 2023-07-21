@@ -56,14 +56,14 @@ public partial class PreLoadDiscardedColumnUI : PreLoadDiscardedColumnUI_Design,
     public PreLoadDiscardedColumnUI()
     {
         InitializeComponent();
-        ddDestination.DataSource = Enum.GetValues(typeof (DiscardedColumnDestination));
+        ddDestination.DataSource = Enum.GetValues(typeof(DiscardedColumnDestination));
         AssociatedCollection = RDMPCollection.Tables;
     }
 
     public override void SetDatabaseObject(IActivateItems activator, PreLoadDiscardedColumn databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
-            
+
         CommonFunctionality.AddChecks(databaseObject);
         CommonFunctionality.StartChecking();
         CommonFunctionality.AddToMenu(new SetDumpServerMenuItem(Activator, databaseObject.TableInfo));
@@ -73,15 +73,14 @@ public partial class PreLoadDiscardedColumnUI : PreLoadDiscardedColumnUI_Design,
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text", "ID",p=>p.ID);
-        Bind(tbRuntimeColumnName,"Text","RuntimeColumnName",p=>p.RuntimeColumnName);
-        Bind(tbSqlDataType,"Text","SqlDataType", p=>p.SqlDataType);
-        Bind(ddDestination,"SelectedItem", "Destination",p=>p.Destination);
+        Bind(tbID, "Text", "ID", p => p.ID);
+        Bind(tbRuntimeColumnName, "Text", "RuntimeColumnName", p => p.RuntimeColumnName);
+        Bind(tbSqlDataType, "Text", "SqlDataType", p => p.SqlDataType);
+        Bind(ddDestination, "SelectedItem", "Destination", p => p.Destination);
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PreLoadDiscardedColumnUI_Design, UserControl>))]
 public abstract class PreLoadDiscardedColumnUI_Design : RDMPSingleDatabaseObjectControl<PreLoadDiscardedColumn>
 {
-
 }

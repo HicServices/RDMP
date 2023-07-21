@@ -44,7 +44,8 @@ public class CohortDefinition : ICohortDefinition
     /// <param name="version">The version number where there are multiple revisions to a cohort over time (these must share the same <paramref name="description"/>)</param>
     /// <param name="projectNumber">The <see cref="IProject.ProjectNumber"/> that the cohort can be used with</param>
     /// <param name="locationOfCohort">The database where the row will be written to (or read from)</param>
-    public CohortDefinition(int? id, string description, int version, int projectNumber, IExternalCohortTable locationOfCohort)
+    public CohortDefinition(int? id, string description, int version, int projectNumber,
+        IExternalCohortTable locationOfCohort)
     {
         ID = id;
         Description = description;
@@ -64,7 +65,8 @@ public class CohortDefinition : ICohortDefinition
     {
         //if there is an ID
         if (ID != null)
-            if (ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable) LocationOfCohort).Any(t => t.ID == ID))
+            if (ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort)
+                .Any(t => t.ID == ID))
                 //the same ID already exists
             {
                 matchDescription = $"Found a cohort in {LocationOfCohort} with the ID {ID}";
@@ -74,8 +76,12 @@ public class CohortDefinition : ICohortDefinition
 
         try
         {
-            var foundSimilar = ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
-                .Any(t => t.Description.Equals(Description) && t.Version.Equals(Version)); //and description (it might have a different ID but it is still against the rules)
+            var foundSimilar = ExtractableCohort
+                .GetImportableCohortDefinitions(
+                    (ExternalCohortTable)LocationOfCohort) //see if there is one with the same name
+                .Any(t => t.Description.Equals(Description) &&
+                          t.Version.Equals(
+                              Version)); //and description (it might have a different ID but it is still against the rules)
             if (foundSimilar)
             {
                 matchDescription =
@@ -100,8 +106,5 @@ public class CohortDefinition : ICohortDefinition
     /// Returns the <see cref="Description"/>, <see cref="Version"/> and <see cref="ID"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return $"{Description}(Version {Version}, ID={ID})";
-    }
+    public override string ToString() => $"{Description}(Version {Version}, ID={ID})";
 }

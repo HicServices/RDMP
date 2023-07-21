@@ -16,11 +16,11 @@ internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTa
 {
     private readonly string _problemDescription;
 
-    public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
+    public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control,
+        string propertyToCheckName)
         : base(activator, toTest, propertyToCheck, control, propertyToCheckName)
     {
         _problemDescription = $"Must be unique amongst all {toTest.GetType().Name}s";
-
     }
 
     protected override string IsValid(object currentValue, Type typeToTest)
@@ -38,10 +38,8 @@ internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTa
             : null;
     }
 
-    private bool AreEqual(T arg, object currentValue)
-    {
-        return currentValue is string s
+    private bool AreEqual(T arg, object currentValue) =>
+        currentValue is string s
             ? string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase)
             : Equals(currentValue, PropertyToCheck(arg));
-    }
 }

@@ -24,7 +24,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
     private readonly DiscoveredTable _importTable;
 
 
-    public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : this(activator,null,null,null)
+    public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : this(activator,
+        null, null, null)
     {
         UseTripleDotSuffix = true;
     }
@@ -35,9 +36,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         DiscoveredTable existingTable,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         IProject projectSpecific,
-
-        [DemandsInitialization(Desc_TargetFolder,DefaultValue = "\\")]
-        string targetFolder = "\\") : base(activator,projectSpecific, targetFolder)
+        [DemandsInitialization(Desc_TargetFolder, DefaultValue = "\\")]
+        string targetFolder = "\\") : base(activator, projectSpecific, targetFolder)
     {
         _importTable = existingTable;
     }
@@ -46,28 +46,30 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
     {
         base.Execute();
 
-        var tbl = _importTable ?? BasicActivator.SelectTable(false,"Table to import");
+        var tbl = _importTable ?? BasicActivator.SelectTable(false, "Table to import");
 
-        if(tbl == null)
+        if (tbl == null)
             return;
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
-        importer.DoImport(out var ti,out _);
+        importer.DoImport(out var ti, out _);
 
-        var c = BasicActivator.CreateAndConfigureCatalogue(ti,null,"Existing table",ProjectSpecific,TargetFolder);
+        var c = BasicActivator.CreateAndConfigureCatalogue(ti, null, "Existing table", ProjectSpecific, TargetFolder);
 
         if (c?.Exists() == true) return;
-        if(BasicActivator.IsInteractive
-           && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out var chosen)
-           && chosen)
-        {
+        if (BasicActivator.IsInteractive
+            && BasicActivator.YesNo(
+                "You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?",
+                "Delete TableInfo", out var chosen)
+            && chosen)
             ti.DeleteInDatabase();
-        }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
 
     public override string GetCommandHelp() => GlobalStrings.CreateNewCatalogueByImportingExistingDataTableHelp;
 
-    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
+    public override string GetCommandName() =>
+        OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
 }

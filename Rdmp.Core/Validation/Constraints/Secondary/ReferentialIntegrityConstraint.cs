@@ -30,7 +30,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     [Description("When ticked, the current value MUST NOT appear in the OtherColumnInfo")]
     public bool InvertLogic { get; set; }
 
-    private int _otherColumnInfoID ;
+    private int _otherColumnInfoID;
 
     //this is the only value that actually needs to be serialized!
     [HideOnValidationUI]
@@ -41,12 +41,13 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         {
             _otherColumnInfoID = value;
 
-            if(value >0)
+            if (value > 0)
                 OtherColumnInfo = _repository.GetObjectByID<ColumnInfo>(value);
         }
     }
 
-    [Description("The current value MUST appear in the SET OF ALL VALUES stored in the this column.  The ColumnInfo you choose does not have to be stored on the same server/database as your dataset")]
+    [Description(
+        "The current value MUST appear in the SET OF ALL VALUES stored in the this column.  The ColumnInfo you choose does not have to be stored on the same server/database as your dataset")]
     [XmlIgnore]
     public ColumnInfo OtherColumnInfo
     {
@@ -66,7 +67,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     public ReferentialIntegrityConstraint()
     {
         if (Validator.LocatorForXMLDeserialization == null)
-            throw new Exception("Cannot deserialize/construct this class because the static LocatorForXMLDeserialization field has not been set");
+            throw new Exception(
+                "Cannot deserialize/construct this class because the static LocatorForXMLDeserialization field has not been set");
 
         _repository = Validator.LocatorForXMLDeserialization.CatalogueRepository;
     }
@@ -82,7 +84,6 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
     public override void RenameColumn(string originalName, string newName)
     {
-
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
@@ -120,12 +121,13 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
         //it is in the hashset
         if (contained)
-            if(!InvertLogic)//the logic is not inverted (expected behaviour)
+            if (!InvertLogic) //the logic is not inverted (expected behaviour)
                 return null;
             else
                 //the logic is inverted!
                 return new ValidationFailure(
-                    $"Value '{value}' was found in row and also in the column {OtherColumnInfo} (InvertLogic was set to true meaning that OtherColumnInfo is an exclusion list)", this);
+                    $"Value '{value}' was found in row and also in the column {OtherColumnInfo} (InvertLogic was set to true meaning that OtherColumnInfo is an exclusion list)",
+                    this);
 
         //it was not contained in the hashset
 
@@ -136,9 +138,9 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         //it is not contained and we have not inverted the logic so this is a validation failure, the value was not found in the referential integrity column OtherColumnInfo
         return
             new ValidationFailure(
-                $"Value '{value}' was found in row but not in corresponding referential integrity column {OtherColumnInfo}", this);
+                $"Value '{value}' was found in row but not in corresponding referential integrity column {OtherColumnInfo}",
+                this);
     }
-
 
 
     public void Check(ICheckNotifier checker)
@@ -180,7 +182,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
         if (itemToValidate == null)
         {
-            checker.OnCheckPerformed(new CheckEventArgs($"No validation items were found in {OtherColumnInfo}", CheckResult.Fail));
+            checker.OnCheckPerformed(new CheckEventArgs($"No validation items were found in {OtherColumnInfo}",
+                CheckResult.Fail));
             return;
         }
 
@@ -200,8 +203,9 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     /// </summary>
     private void GetUniqueValues()
     {
-        if(OtherColumnInfo == null)
-            throw new NotSupportedException("No ColumnInfo has been selected yet! unable to populate constraint HashSet");
+        if (OtherColumnInfo == null)
+            throw new NotSupportedException(
+                "No ColumnInfo has been selected yet! unable to populate constraint HashSet");
 
 
         //Get the values off the server
@@ -222,10 +226,10 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             while (reader.Read())
             {
                 var obj = reader[runtimeName];
-                if(obj != null && obj != DBNull.Value)
+                if (obj != null && obj != DBNull.Value)
                 {
                     var strValue = obj.ToString();
-                    if(!string.IsNullOrWhiteSpace(strValue))
+                    if (!string.IsNullOrWhiteSpace(strValue))
                         _uniqueValues.Add(strValue);
                 }
             }
@@ -233,14 +237,13 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         catch (Exception e)
         {
             throw new Exception(
-                $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",e);
+                $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",
+                e);
         }
     }
 
-    private static DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo)
-    {
-        return DataAccessPortal
+    private static DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo) =>
+        DataAccessPortal
             .ExpectServer(tableInfo, DataAccessContext.InternalDataProcessing)
             .GetConnection();
-    }
 }

@@ -16,10 +16,11 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <inheritdoc/>
-internal class MySqlTriggerImplementer:TriggerImplementer
+internal class MySqlTriggerImplementer : TriggerImplementer
 {
     /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
+    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
+        createDataLoadRunIDAlso)
     {
     }
 
@@ -33,7 +34,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
             using var con = _server.GetConnection();
             con.Open();
 
-            using(var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
+            using (var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
@@ -88,7 +89,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         if (string.IsNullOrWhiteSpace(version))
             return false;
 
-        var match = Regex.Match(version,@"(\d+)\.(\d+)");
+        var match = Regex.Match(version, @"(\d+)\.(\d+)");
 
         //If the version string doesn't start with numbers we have bigger problems than creating a default constraint
         if (!match.Success)
@@ -103,7 +104,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     protected virtual string CreateTriggerBody()
     {
         var syntax = _server.GetQuerySyntaxHelper();
-            
+
         return $@"BEGIN
     INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
         $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
@@ -112,10 +113,8 @@ internal class MySqlTriggerImplementer:TriggerImplementer
   END";
     }
 
-    public override TriggerStatus GetTriggerStatus()
-    {
-        return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
-    }
+    public override TriggerStatus GetTriggerStatus() =>
+        string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
 
     protected virtual string GetTriggerBody()
     {
@@ -125,18 +124,14 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         using var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con);
         using var r = cmd.ExecuteReader();
         while (r.Read())
-        {
             if (r["Trigger"].Equals(GetTriggerName()))
-                return (string) r["Statement"];
-        }
+                return (string)r["Statement"];
 
         return null;
     }
 
-    protected virtual object GetTriggerName()
-    {
-        return $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_onupdate";
-    }
+    protected virtual object GetTriggerName() =>
+        $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_onupdate";
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
     {
@@ -146,14 +141,15 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         var sqlThen = GetTriggerBody();
         var sqlNow = CreateTriggerBody();
 
-        AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
+        AssertTriggerBodiesAreEqual(sqlThen, sqlNow);
 
         return true;
     }
 
     protected virtual void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if(!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlNow,sqlThen);
+        if (!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql", sqlNow,
+                sqlThen);
     }
 }

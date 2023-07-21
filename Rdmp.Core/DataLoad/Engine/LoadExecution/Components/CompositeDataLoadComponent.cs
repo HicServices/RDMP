@@ -16,11 +16,11 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 /// </summary>
 public class CompositeDataLoadComponent : DataLoadComponent
 {
-    public IList<IDataLoadComponent> Components {get;private set;}
+    public IList<IDataLoadComponent> Components { get; private set; }
 
     public CompositeDataLoadComponent(IList<IDataLoadComponent> components)
     {
-        Components = components?? new List<IDataLoadComponent>();
+        Components = components ?? new List<IDataLoadComponent>();
     }
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)

@@ -15,7 +15,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 /// <summary>
 /// Turns an IDemandToUseAPipeline plugin class into an IPipelineUser and IPipelineUseCase (both) for use with PipelineSelectionUIFactory
 /// </summary>
-public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
+public sealed class PluginPipelineUser : PipelineUseCase, IPipelineUser
 {
     private IPipelineUseCase _useCase;
     public PipelineGetter Getter { get; private set; }
@@ -30,7 +30,7 @@ public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
             return p;
         };
 
-        Setter = v =>args.Setter(v);
+        Setter = v => args.Setter(v);
 
         if (demanderInstance is not IDemandToUseAPipeline pipeDemander)
             throw new NotSupportedException(
@@ -46,8 +46,5 @@ public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
         GenerateContext();
     }
 
-    protected override IDataFlowPipelineContext GenerateContextImpl()
-    {
-        return _useCase.GetContext();
-    }
+    protected override IDataFlowPipelineContext GenerateContextImpl() => _useCase.GetContext();
 }

@@ -17,9 +17,8 @@ namespace Rdmp.Core.DataExport.Data;
 /// 
 /// <para>A <see cref="JoinInfo"/> must still exist to tell <see cref="QueryBuilding.QueryBuilder"/> how to write the Join section of the query.</para>
 /// </summary>
-public interface ISelectedDataSetsForcedJoin:IMapsDirectlyToDatabaseTable
+public interface ISelectedDataSetsForcedJoin : IMapsDirectlyToDatabaseTable
 {
-
     /// <summary>
     /// The dataset in an <see cref="IExtractionConfiguration"/> which should always be joined against the refered <see cref="TableInfo_ID"/>
     /// </summary>
@@ -31,5 +30,5 @@ public interface ISelectedDataSetsForcedJoin:IMapsDirectlyToDatabaseTable
     int TableInfo_ID { get; }
 
     /// <inheritdoc cref="TableInfo_ID"/>
-    TableInfo TableInfo { get;}
+    TableInfo TableInfo { get; }
 }

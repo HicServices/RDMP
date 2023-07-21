@@ -29,31 +29,17 @@ public class DeployedExtractionFilterFactory : IFilterFactory
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name)
-    {
-        return new DeployedExtractionFilter(_repository,name,null);
-    }
+    public IFilter CreateNewFilter(string name) => new DeployedExtractionFilter(_repository, name, null);
 
     /// <inheritdoc/>
-    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
-    {
-        return new DeployedExtractionFilterParameter(_repository,parameterSQL,filter);
-    }
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
+        new DeployedExtractionFilterParameter(_repository, parameterSQL, filter);
 
     /// <inheritdoc/>
-    public Type GetRootOwnerType()
-    {
-        return typeof (SelectedDataSets);
-    }
+    public Type GetRootOwnerType() => typeof(SelectedDataSets);
 
     /// <inheritdoc/>
-    public Type GetIContainerTypeIfAny()
-    {
-        return typeof (FilterContainer);
-    }
+    public Type GetIContainerTypeIfAny() => typeof(FilterContainer);
 
-    public IContainer CreateNewContainer()
-    {
-        return new FilterContainer(_repository);
-    }
+    public IContainer CreateNewContainer() => new FilterContainer(_repository);
 }

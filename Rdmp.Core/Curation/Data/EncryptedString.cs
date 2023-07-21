@@ -21,10 +21,7 @@ public class EncryptedString : IEncryptedString
     private string _value;
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Value;
-    }
+    public override string ToString() => Value;
 
     /// <inheritdoc/>
     public string Value
@@ -34,26 +31,25 @@ public class EncryptedString : IEncryptedString
             _value;
         set
         {
-
-            if (string.IsNullOrWhiteSpace(value))//if it is null
+            if (string.IsNullOrWhiteSpace(value)) //if it is null
                 _value = null;
-            else
-            if (!_encrypter.IsStringEncrypted(value))//it is not null, is it already encrypted?
+            else if (!_encrypter.IsStringEncrypted(value)) //it is not null, is it already encrypted?
                 try
                 {
-                    _value = _encrypter.Encrypt(value);//not yet encrypted so encrypt it
+                    _value = _encrypter.Encrypt(value); //not yet encrypted so encrypt it
                 }
                 catch (Exception e)
                 {
                     if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
                         throw new InvalidOperationException(
-                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})", e);
+                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
+                            e);
 
                     //it's some other exception
                     throw;
                 }
             else
-                _value = value;//it is encrypted already so just store in normally
+                _value = value; //it is encrypted already so just store in normally
         }
     }
 
@@ -63,7 +59,7 @@ public class EncryptedString : IEncryptedString
     /// <param name="repository"></param>
     public EncryptedString(ICatalogueRepository repository)
     {
-        _encrypter =  repository.EncryptionManager.GetEncrypter();
+        _encrypter = repository.EncryptionManager.GetEncrypter();
     }
 
     /// <inheritdoc/>
@@ -80,8 +76,5 @@ public class EncryptedString : IEncryptedString
     }
 
     /// <inheritdoc/>
-    public bool IsStringEncrypted(string value)
-    {
-        return _encrypter.IsStringEncrypted(value);
-    }
+    public bool IsStringEncrypted(string value) => _encrypter.IsStringEncrypted(value);
 }

@@ -18,18 +18,13 @@ internal class ProposeExecutionWhenTargetIsPreLoadDiscardedColumn : RDMPCommandE
     {
     }
 
-    public override bool CanActivate(PreLoadDiscardedColumn target)
-    {
-        return true;
-    }
+    public override bool CanActivate(PreLoadDiscardedColumn target) => true;
 
     public override void Activate(PreLoadDiscardedColumn target)
     {
         ItemActivator.Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PreLoadDiscardedColumn target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PreLoadDiscardedColumn target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

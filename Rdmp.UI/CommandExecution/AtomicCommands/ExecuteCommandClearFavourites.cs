@@ -13,7 +13,7 @@ public class ExecuteCommandClearFavourites : BasicUICommandExecution
 {
     public ExecuteCommandClearFavourites(IActivateItems activator) : base(activator)
     {
-        if(!Activator.FavouritesProvider.CurrentFavourites.Any())
+        if (!Activator.FavouritesProvider.CurrentFavourites.Any())
             SetImpossible("You do not have any Favourites");
     }
 
@@ -35,7 +35,6 @@ public class ExecuteCommandClearFavourites : BasicUICommandExecution
             Activator.FavouritesProvider.CurrentFavourites.Clear();
 
             Publish(first);
-
         }
     }
 }

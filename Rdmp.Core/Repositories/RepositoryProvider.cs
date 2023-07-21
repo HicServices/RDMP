@@ -35,10 +35,10 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 
     protected RepositoryProvider()
     {
-
     }
 
-    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
+        string databaseObjectTypeName, int objectId)
     {
         var repository = GetRepository(repositoryTypeName);
         var objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
@@ -68,38 +68,39 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         return typeof(IDataExportRepository).IsAssignableFrom(repoType)
             ? (IRepository)DataExportRepository
             : throw new NotSupportedException(
-            $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
+                $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
     }
 
-    private static Type GetTypeByName(string s, Type expectedBaseClassType)
-    {
-        return MEF.GetType(s, expectedBaseClassType) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
-    }
+    private static Type GetTypeByName(string s, Type expectedBaseClassType) => MEF.GetType(s, expectedBaseClassType) ??
+                                                                               throw new TypeLoadException(
+                                                                                   $"Could not find Type called '{s}'");
 
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
     {
-        if(CatalogueRepository.SupportsObjectType(typeof(T)))
+        if (CatalogueRepository.SupportsObjectType(typeof(T)))
             return CatalogueRepository.GetObjectByID<T>(value);
         return DataExportRepository.SupportsObjectType(typeof(T))
             ? (IMapsDirectlyToDatabaseTable)DataExportRepository.GetObjectByID<T>(value)
-            : throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
+            : throw new ArgumentException(
+                $"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
     }
 
     /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t,int value)
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
     {
-        if(CatalogueRepository.SupportsObjectType(t))
-            return CatalogueRepository.GetObjectByID(t,value);
+        if (CatalogueRepository.SupportsObjectType(t))
+            return CatalogueRepository.GetObjectByID(t, value);
         return DataExportRepository.SupportsObjectType(t)
-            ? DataExportRepository.GetObjectByID(t,value)
+            ? DataExportRepository.GetObjectByID(t, value)
             : throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
     }
+
     public virtual IEnumerable<IRepository> GetAllRepositories()
     {
         yield return CatalogueRepository;
 
-        if(DataExportRepository != null)
+        if (DataExportRepository != null)
             yield return DataExportRepository;
     }
 }

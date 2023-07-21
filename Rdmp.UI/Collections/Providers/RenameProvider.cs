@@ -25,13 +25,16 @@ public class RenameProvider
     private readonly ObjectListView _olv;
     private readonly OLVColumn _columnThatSupportsRenaming;
 
-    public bool AllowRenaming {
+    public bool AllowRenaming
+    {
         get => _columnThatSupportsRenaming.IsEditable;
         set
         {
-            _olv.CellEditActivation = value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;
+            _olv.CellEditActivation =
+                value ? ObjectListView.CellEditActivateMode.SingleClick : ObjectListView.CellEditActivateMode.None;
             _columnThatSupportsRenaming.IsEditable = value;
-        } }
+        }
+    }
 
     public RenameProvider(IActivateItems activator, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
     {
@@ -49,8 +52,8 @@ public class RenameProvider
         _columnThatSupportsRenaming.AutoCompleteEditorMode = AutoCompleteMode.None;
 
         AllowRenaming = true;
-
     }
+
     private void OlvOnCellEditStarting(object sender, CellEditEventArgs e)
     {
         //it's not for our name column
@@ -63,14 +66,14 @@ public class RenameProvider
 
     private void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
     {
-        if(e.RowObject == null)
+        if (e.RowObject == null)
             return;
-            
-        if(e.Column != _columnThatSupportsRenaming)
+
+        if (e.Column != _columnThatSupportsRenaming)
             return;
 
         //don't let them rename things to blank names
-        if (string.IsNullOrWhiteSpace((string) e.NewValue))
+        if (string.IsNullOrWhiteSpace((string)e.NewValue))
         {
             e.Cancel = true;
             return;
@@ -82,14 +85,13 @@ public class RenameProvider
         {
             if (name != null)
             {
-                var cmd = new ExecuteCommandRename(_activator, name, (string) e.NewValue);
+                var cmd = new ExecuteCommandRename(_activator, name, (string)e.NewValue);
 
-                if(cmd.IsImpossible)
+                if (cmd.IsImpossible)
                     MessageBox.Show(cmd.ReasonCommandImpossible);
                 else
                     cmd.Execute();
             }
-
         }
         catch (Exception exception)
         {
@@ -101,5 +103,4 @@ public class RenameProvider
                 name.Name = (string)e.Value;
         }
     }
-
 }

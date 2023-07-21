@@ -21,14 +21,14 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 {
     private FileInfo[] _files;
 
-    public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator):base(itemActivator)
+    public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator) : base(itemActivator)
     {
-
     }
 
-    public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable):base(itemActivator)
+    public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable) :
+        base(itemActivator)
     {
-        if(fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
+        if (fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
         {
             SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}");
             return;
@@ -38,42 +38,40 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         _files = fileCombineable.Files;
 
-        var collision = existing.FirstOrDefault(p=>_files.Any(f=>f.Name.Equals(p.Name)));
-        if(collision != null)
+        var collision = existing.FirstOrDefault(p => _files.Any(f => f.Name.Equals(p.Name)));
+        if (collision != null)
             SetImpossible($"There is already a plugin called '{collision}'");
-
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        if(_files == null)
+        if (_files == null)
         {
-
             var f = BasicActivator.SelectFile("Plugin to add",
                 $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
-            if(f != null)
-                _files = new FileInfo[]{ f };
+            if (f != null)
+                _files = new FileInfo[] { f };
             else return;
         }
 
 
-        foreach(var f in _files)
+        foreach (var f in _files)
         {
-            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions {File = f.FullName});
-            runner.Run(BasicActivator.RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet,ThrowImmediatelyCheckNotifier.Quiet,new DataFlowPipeline.GracefulCancellationToken());
+            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions { File = f.FullName });
+            runner.Run(BasicActivator.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new DataFlowPipeline.GracefulCancellationToken());
         }
-                
+
         Show("Changes will take effect on restart");
-        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Plugin>().FirstOrDefault();
-            
-        if(p!= null)
+        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>()
+            .FirstOrDefault();
+
+        if (p != null)
             Publish(p);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Plugin,OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Add);
 }

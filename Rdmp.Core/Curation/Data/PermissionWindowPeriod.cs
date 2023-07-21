@@ -84,17 +84,14 @@ public class PermissionWindowPeriod
     /// <returns></returns>
     public bool Contains(DateTime timeToTest, bool testToNearestSecond = false)
     {
-        if ((int) timeToTest.DayOfWeek != DayOfWeek)
+        if ((int)timeToTest.DayOfWeek != DayOfWeek)
             return false;
 
         // If we are not testing to the nearest second, set the seconds var in the test to 0 so any Start and Ends defined without seconds are compared correctly
-        var testTime = new TimeSpan(timeToTest.Hour, timeToTest.Minute, testToNearestSecond? timeToTest.Second : 0);
+        var testTime = new TimeSpan(timeToTest.Hour, timeToTest.Minute, testToNearestSecond ? timeToTest.Second : 0);
         return testTime >= Start && testTime <= End;
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{Start:hh':'mm}-{End:hh':'mm}";
-    }
+    public override string ToString() => $"{Start:hh':'mm}-{End:hh':'mm}";
 }

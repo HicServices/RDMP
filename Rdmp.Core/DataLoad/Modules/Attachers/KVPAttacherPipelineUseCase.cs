@@ -17,11 +17,11 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// </summary>
 public sealed class KVPAttacherPipelineUseCase : PipelineUseCase
 {
-    public KVPAttacherPipelineUseCase(KVPAttacher kvpAttacher,FlatFileToLoad file)
+    public KVPAttacherPipelineUseCase(KVPAttacher kvpAttacher, FlatFileToLoad file)
     {
         ExplicitDestination = kvpAttacher;
         AddInitializationObject(file);
-            
+
         GenerateContext();
     }
 

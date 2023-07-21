@@ -25,7 +25,7 @@ public interface ICacheLayout
     CacheFileGranularity CacheFileGranularity { get; }
 
     //Consider taking these as parameters to your constructor - see CacheLayout abstract class for how you should probably implement this interface
-    ILoadCachePathResolver Resolver {  get; }
+    ILoadCachePathResolver Resolver { get; }
     DirectoryInfo RootDirectory { get; }
 
     // some interface for looking up filename
@@ -39,5 +39,4 @@ public interface ICacheLayout
     // requested by DLE
     Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener);
     bool CheckCacheFilesAvailability(IDataLoadEventListener listener);
-
 }

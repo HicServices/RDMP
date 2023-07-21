@@ -20,7 +20,8 @@ public class LaunchTutorialMenuItem : ToolStripMenuItem
     private readonly Tutorial _tutorial;
     private readonly TutorialTracker _tracker;
 
-    public LaunchTutorialMenuItem(ToolStripMenuItem parent,IActivateItems activator, Tutorial tutorial, TutorialTracker tracker)
+    public LaunchTutorialMenuItem(ToolStripMenuItem parent, IActivateItems activator, Tutorial tutorial,
+        TutorialTracker tracker)
     {
         parent.DropDownOpening += parent_DropDownOpening;
         _tutorial = tutorial;

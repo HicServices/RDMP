@@ -12,13 +12,12 @@ namespace Rdmp.UI.Tests.Curation.Integration;
 
 internal class ExtractionFilterUITests : UITests
 {
-
     [Test]
     public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_Interactive()
     {
         var filter = WhenIHaveA<ExtractionFilter>();
 
-        var set = new ExtractionFilterParameterSet(Repository,filter,"fff");
+        var set = new ExtractionFilterParameterSet(Repository, filter, "fff");
 
         Assert.IsTrue(filter.Exists());
         Assert.IsTrue(set.Exists());
@@ -35,5 +34,4 @@ internal class ExtractionFilterUITests : UITests
         Assert.IsFalse(filter.Exists());
         Assert.IsFalse(set.Exists());
     }
-
 }

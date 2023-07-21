@@ -19,13 +19,12 @@ internal class FatalErrorLoggingTest : DatabaseTests
     [TestCase]
     public void CreateNewDataLoadTask()
     {
-
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
-            
+
         lm.CreateNewLoggingTaskIfNotExists("Fish");
 
-        Assert.Contains("Fish",lm.ListDataTasks());
-        Assert.Contains("Fish",lm.ListDataSets());
+        Assert.Contains("Fish", lm.ListDataTasks());
+        Assert.Contains("Fish", lm.ListDataSets());
 
         lm.CreateNewLoggingTaskIfNotExists("Fish");
         lm.CreateNewLoggingTaskIfNotExists("Fish");
@@ -39,15 +38,14 @@ internal class FatalErrorLoggingTest : DatabaseTests
             "Test case for fatal error generation",
             "No rollback is possible/required as no database rows are actually inserted",
             true, new DiscoveredServer(UnitTestLoggingConnectionString));
-           
-        var ds = new DataSource[]{ new("nothing",DateTime.Now)};
 
+        var ds = new DataSource[] { new("nothing", DateTime.Now) };
 
 
         var t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
         t.Inserts += 3; //simulate that it crashed after 3
 
-        d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest","Some terrible event happened");
+        d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest", "Some terrible event happened");
 
         Assert.IsTrue(d.IsClosed);
     }
@@ -87,6 +85,4 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         d.CloseAndMarkComplete();
     }
-
-
 }

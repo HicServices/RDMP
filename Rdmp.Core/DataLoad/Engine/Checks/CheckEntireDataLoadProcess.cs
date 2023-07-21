@@ -17,23 +17,24 @@ namespace Rdmp.Core.DataLoad.Engine.Checks;
 /// <summary>
 /// Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).
 /// </summary>
-public class CheckEntireDataLoadProcess :  ICheckable
+public class CheckEntireDataLoadProcess : ICheckable
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
     public ILoadMetadata LoadMetadata { get; set; }
 
-    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
+    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+        HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
         LoadMetadata = loadMetadata;
-
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        var catalogueLoadChecks = new CatalogueLoadChecks(LoadMetadata, _loadConfigurationFlags, _databaseConfiguration);
+        var catalogueLoadChecks =
+            new CatalogueLoadChecks(LoadMetadata, _loadConfigurationFlags, _databaseConfiguration);
         var metadataLoggingConfigurationChecks = new MetadataLoggingConfigurationChecks(LoadMetadata);
         var processTaskChecks = new ProcessTaskChecks(LoadMetadata);
         var preExecutionChecks = new PreExecutionChecker(LoadMetadata, _databaseConfiguration);
@@ -44,39 +45,37 @@ public class CheckEntireDataLoadProcess :  ICheckable
             loadProgress.Check(notifier);
 
             var cp = loadProgress.CacheProgress;
-            if(cp != null)
-            {
+            if (cp != null)
                 try
                 {
                     var f = new CacheLayoutFactory();
-                    CacheLayoutFactory.CreateCacheLayout(loadProgress,LoadMetadata);
+                    CacheLayoutFactory.CreateCacheLayout(loadProgress, LoadMetadata);
                 }
                 catch (Exception e)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Load contains a CacheProgress '{cp}' but we were unable to generate an ICacheLayout, see Inner Exception for details",CheckResult.Fail,e));
+                        $"Load contains a CacheProgress '{cp}' but we were unable to generate an ICacheLayout, see Inner Exception for details",
+                        CheckResult.Fail, e));
                 }
-            }
         }
 
         //Make sure there are some load tasks and they are valid
         processTaskChecks.Check(notifier);
-            
-            
+
+
         try
         {
             metadataLoggingConfigurationChecks.Check(notifier);
 
             preExecutionChecks.Check(notifier);
 
-            if(!preExecutionChecks.HardFail)
+            if (!preExecutionChecks.HardFail)
                 catalogueLoadChecks.Check(notifier);
-
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Entire check process crashed in an unexpected way", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Entire check process crashed in an unexpected way",
+                CheckResult.Fail, e));
         }
-
     }
 }

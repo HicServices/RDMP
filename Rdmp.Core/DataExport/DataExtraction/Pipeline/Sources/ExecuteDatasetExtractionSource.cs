@@ -54,30 +54,37 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     public ExtractionTimeTimeCoverageAggregator ExtractionTimeTimeCoverageAggregator { get; set; }
 
-    [DemandsInitialization("Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
+    [DemandsInitialization(
+        "Determines the systems behaviour when an extraction query returns 0 rows.  Default (false) is that an error is reported.  If set to true (ticked) then instead a DataTable with 0 rows but all the correct headers will be generated usually resulting in a headers only 0 line/empty extract file")]
     public bool AllowEmptyExtractions { get; set; }
 
-    [DemandsInitialization("Batch size, number of records to read from source before releasing it into the extraction pipeline", DefaultValue = 10000, Mandatory = true)]
+    [DemandsInitialization(
+        "Batch size, number of records to read from source before releasing it into the extraction pipeline",
+        DefaultValue = 10000, Mandatory = true)]
     public int BatchSize { get; set; }
 
-    [DemandsInitialization("In seconds. Overrides the global timeout for SQL query execution. Use 0 for infinite timeout.", DefaultValue = 50000, Mandatory = true)]
+    [DemandsInitialization(
+        "In seconds. Overrides the global timeout for SQL query execution. Use 0 for infinite timeout.",
+        DefaultValue = 50000, Mandatory = true)]
     public int ExecutionTimeout { get; set; }
 
     [DemandsInitialization(@"Determines how the system achieves DISTINCT on extraction.  These include:
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
-        ,DefaultValue = DistinctStrategy.SqlDistinct)]
+        , DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
 
     [DemandsInitialization("When DBMS is SqlServer then HASH JOIN should be used instead of regular JOINs")]
     public bool UseHashJoins { get; set; }
 
-    [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
+    [DemandsInitialization(
+        "When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
     public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
-    [DemandsInitialization("Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.  Being on this list takes precedence for a Catalogue even if it is on UseHashJoinsForCatalogues.")]
+    [DemandsInitialization(
+        "Exclusion list.  A collection of Catalogues which will never be considered for HASH JOIN even when UseHashJoins is enabled.  Being on this list takes precedence for a Catalogue even if it is on UseHashJoinsForCatalogues.")]
     public Catalogue[] DoNotUseHashJoinsForCatalogues { get; set; }
 
 
@@ -88,6 +95,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     /// a recommended SqlDbType is passed back.
     /// </summary>
     public Dictionary<ExtractableColumn, ExtractTimeTransformationObserved> ExtractTimeTransformationsObserved;
+
     private DbDataCommandDataFlowSource _hostedSource;
 
     protected virtual void Initialize(ExtractDatasetCommand request)
@@ -101,10 +109,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentCalculatingDISTINCT = new Stopwatch();
         _timeSpentBuckettingDates = new Stopwatch();
 
-        Request.ColumnsToExtract.Sort();//ensure they are in the right order so we can record the release identifiers
+        Request.ColumnsToExtract.Sort(); //ensure they are in the right order so we can record the release identifiers
 
         //if we have a cached builder already
-        if(request.QueryBuilder == null)
+        if (request.QueryBuilder == null)
             request.GenerateQueryBuilder();
 
         foreach (var substitution in Request.ReleaseIdentifierSubstitutions)
@@ -118,8 +126,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             ExtractionTimeValidator = new ExtractionTimeValidator(_catalogue, request.ColumnsToExtract);
 
         //if there is a time periodicity ExtractionInformation (AND! it is among the columns the user selected to be extracted)
-        if (_catalogue.TimeCoverage_ExtractionInformation_ID != null && request.ColumnsToExtract.Cast<ExtractableColumn>().Any(c => c.CatalogueExtractionInformation_ID == _catalogue.TimeCoverage_ExtractionInformation_ID))
-            ExtractionTimeTimeCoverageAggregator = new ExtractionTimeTimeCoverageAggregator(_catalogue, request.ExtractableCohort);
+        if (_catalogue.TimeCoverage_ExtractionInformation_ID != null && request.ColumnsToExtract
+                .Cast<ExtractableColumn>().Any(c =>
+                    c.CatalogueExtractionInformation_ID == _catalogue.TimeCoverage_ExtractionInformation_ID))
+            ExtractionTimeTimeCoverageAggregator =
+                new ExtractionTimeTimeCoverageAggregator(_catalogue, request.ExtractableCohort);
         else
             ExtractionTimeTimeCoverageAggregator = null;
     }
@@ -168,14 +179,14 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
 
-        if(_cancel)
+        if (_cancel)
             throw new Exception("User cancelled data extraction");
 
         if (_hostedSource == null)
         {
             StartAudit(Request.QueryBuilder.SQL);
 
-            if(Request.DatasetBundle.DataSet.DisableExtraction)
+            if (Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
@@ -201,15 +212,15 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             //if we are trying to distinct the records in memory based on release id
             if (DistinctStrategy == DistinctStrategy.OrderByAndDistinctInMemory)
             {
-                var releaseIdentifierColumn =  Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
+                var releaseIdentifierColumn = Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
 
-                if(chunk is { Rows.Count: > 0 })
+                if (chunk is { Rows.Count: > 0 })
                 {
                     //last release id in the current chunk
                     var lastReleaseId = chunk.Rows[^1][releaseIdentifierColumn];
 
-                    _peeker.AddWhile(_hostedSource,r=>Equals(r[releaseIdentifierColumn], lastReleaseId),chunk);
-                    chunk = MakeDistinct(chunk,listener,cancellationToken);
+                    _peeker.AddWhile(_hostedSource, r => Equals(r[releaseIdentifierColumn], lastReleaseId), chunk);
+                    chunk = MakeDistinct(chunk, listener, cancellationToken);
                 }
             }
         }
@@ -222,10 +233,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         }
         catch (Exception e)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Read from source failed",e));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Read from source failed", e));
         }
 
-        if(cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             throw new Exception("Data read cancelled because our cancellationToken was set, aborting data reading");
 
         //if the first chunk is null
@@ -239,16 +250,17 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         //data exhausted
         if (chunk == null)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Data exhausted after reading {_rowsRead} rows of data ({UniqueReleaseIdentifiersEncountered.Count} unique release identifiers seen)"));
             if (Request != null)
-                Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
+                Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered =
+                    Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
             return null;
         }
 
         _rowsRead += chunk.Rows.Count;
         //chunk will have datatypes for all the things in the buffer so we can populate our dictionary of facts about what columns/catalogue items have spontaneously changed name/type etc
-        if(ExtractTimeTransformationsObserved == null)
+        if (ExtractTimeTransformationsObserved == null)
             GenerateExtractionTransformObservations(chunk);
 
 
@@ -270,14 +282,18 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 ExtractionTimeValidator.Validate(chunk, ValidationColumnName);
 
                 _rowsValidated += chunk.Rows.Count;
-                listener.OnProgress(this,new ProgressEventArgs("Validation",new ProgressMeasurement(_rowsValidated,ProgressType.Records), _timeSpentValidating.Elapsed));
+                listener.OnProgress(this,
+                    new ProgressEventArgs("Validation", new ProgressMeasurement(_rowsValidated, ProgressType.Records),
+                        _timeSpentValidating.Elapsed));
             }
             catch (Exception ex)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Could not validate data chunk",ex));
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Error, "Could not validate data chunk", ex));
                 ValidationFailureException = ex;
                 ExtractionTimeValidator = null;
             }
+
         _timeSpentValidating.Stop();
 
         _timeSpentBuckettingDates.Start();
@@ -288,8 +304,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             foreach (DataRow row in chunk.Rows)
                 ExtractionTimeTimeCoverageAggregator.ProcessRow(row);
 
-            listener.OnProgress(this, new ProgressEventArgs("Bucketting Dates",new ProgressMeasurement(_rowsBucketted,ProgressType.Records),_timeSpentCalculatingDISTINCT.Elapsed ));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Bucketting Dates", new ProgressMeasurement(_rowsBucketted, ProgressType.Records),
+                    _timeSpentCalculatingDISTINCT.Elapsed));
         }
+
         _timeSpentBuckettingDates.Stop();
 
         _timeSpentCalculatingDISTINCT.Start();
@@ -309,8 +328,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                     UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
 
-                listener.OnProgress(this,new ProgressEventArgs("Calculating Distinct Release Identifiers",new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),_timeSpentCalculatingDISTINCT.Elapsed ));
+                listener.OnProgress(this,
+                    new ProgressEventArgs("Calculating Distinct Release Identifiers",
+                        new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),
+                        _timeSpentCalculatingDISTINCT.Elapsed));
             }
+
         _timeSpentCalculatingDISTINCT.Stop();
 
         return chunk;
@@ -323,9 +346,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    private static DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    private static DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
-        var removeDuplicates = new RemoveDuplicates {NoLogging=true};
+        var removeDuplicates = new RemoveDuplicates { NoLogging = true };
         return removeDuplicates.ProcessPipelineData(chunk, listener, cancellationToken);
     }
 
@@ -356,7 +380,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                         chunk.Columns[column.GetRuntimeName()].DataType;
                 }
                 else
+                {
                     ExtractTimeTransformationsObserved[column].FoundAtExtractTime = false;
+                }
             }
         }
     }
@@ -382,13 +408,13 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 ((QueryBuilder)Request.QueryBuilder).SetLimitationSQL("");
 
                 //find the release identifier substitution (e.g. chi for PROCHI)
-                var substitution =  Request.ReleaseIdentifierSubstitutions.First();
+                var substitution = Request.ReleaseIdentifierSubstitutions.First();
 
                 //add a line at the end of the query to ORDER BY the ReleaseId column (e.g. PROCHI)
                 var orderBySql = $"ORDER BY {substitution.SelectSQL}";
 
                 // don't add the line if it is already there (e.g. because of Retry)
-                if(!Request.QueryBuilder.CustomLines.Any(l=>string.Equals(l.Text,orderBySql)))
+                if (!Request.QueryBuilder.CustomLines.Any(l => string.Equals(l.Text, orderBySql)))
                     Request.QueryBuilder.AddCustomLine(orderBySql, QueryComponent.Postfix);
 
                 break;
@@ -398,12 +424,13 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         var sql = Request.QueryBuilder.SQL;
 
-        sql = HackExtractionSQL(sql,listener);
+        sql = HackExtractionSQL(sql, listener);
 
         if (ShouldUseHashedJoins())
         {
             //use hash joins!
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Substituting JOIN for HASH JOIN"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information, "Substituting JOIN for HASH JOIN"));
             sql = sql.Replace(" JOIN ", " HASH JOIN ");
         }
 
@@ -435,21 +462,21 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         return false;
     }
 
-    public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener)
-    {
-        return sql;
-
-    }
+    public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener) => sql;
 
     private void StartAudit(string sql)
     {
         var dataExportRepo = Request.DataExportRepository;
 
-        var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
+        var previousAudit = dataExportRepo
+            .GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 
         if (Request.IsBatchResume)
         {
-            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ?? throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
+            var match =
+                previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ??
+                throw new Exception(
+                    $"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
             Request.CumulativeExtractionResults = match;
         }
         else
@@ -458,9 +485,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             foreach (var audit in previousAudit)
                 audit.DeleteInDatabase();
 
-            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
+            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration,
+                Request.DatasetBundle.DataSet, sql);
 
-            var filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
+            var filterDescriptions =
+                RecursivelyListAllFilterNames(
+                    Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
 
             extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
             extractionResults.SaveToDatabase();
@@ -473,7 +503,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     {
         var repo = GlobalsRequest.RepositoryLocator.DataExportRepository;
 
-        var previousAudit = repo.GetAllObjectsWhere<SupplementalExtractionResults>("ExtractionConfiguration_ID", GlobalsRequest.Configuration.ID)
+        var previousAudit = repo
+            .GetAllObjectsWhere<SupplementalExtractionResults>("ExtractionConfiguration_ID",
+                GlobalsRequest.Configuration.ID)
             .Where(c => c.CumulativeExtractionResults_ID == null);
 
         //delete old audit records
@@ -492,30 +524,29 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             foreach (var subContainer in filterContainer.GetSubContainers())
                 toReturn += RecursivelyListAllFilterNames(subContainer);
 
-        if(filterContainer.GetFilters() != null)
+        if (filterContainer.GetFilters() != null)
             foreach (var f in filterContainer.GetFilters())
                 toReturn += $"{f.Name},";
 
         return toReturn;
     }
+
     public virtual void Dispose(IDataLoadEventListener job, Exception pipelineFailureExceptionIfAny)
     {
-
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public virtual DataTable TryGetPreview()
     {
-        if(Request == ExtractDatasetCommand.EmptyCommand)
+        if (Request == ExtractDatasetCommand.EmptyCommand)
             return new DataTable();
 
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
-        var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport,false);
+        var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
         using var con = server.GetConnection();
         con.Open();
@@ -543,13 +574,16 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     {
         if (Request == ExtractDatasetCommand.EmptyCommand)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",
+                CheckResult.Warning));
             return;
         }
 
         if (GlobalsRequest != null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Request is for Globals, checking will not be carried out at source", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Request is for Globals, checking will not be carried out at source", CheckResult.Success));
             return;
         }
 

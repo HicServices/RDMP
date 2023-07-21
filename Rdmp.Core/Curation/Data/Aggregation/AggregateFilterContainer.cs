@@ -40,7 +40,6 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
 
     public AggregateFilterContainer()
     {
-
     }
 
     /// <summary>
@@ -48,22 +47,21 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
-    public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
+    public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation) : base(
+        repository.FilterManager)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object> {{"Operation" ,operation.ToString()}});
+        repository.InsertAndHydrate(this, new Dictionary<string, object> { { "Operation", operation.ToString() } });
     }
 
 
-    internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterManager,repository, r)
+    internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r) : base(repository.FilterManager,
+        repository, r)
     {
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Operation.ToString();
-    }
+    public override string ToString() => Operation.ToString();
 
 
     /// <inheritdoc/>
@@ -140,7 +138,8 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     /// <returns></returns>
     public AggregateConfiguration GetAggregate()
     {
-        var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID",ID).SingleOrDefault();
+        var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID", ID)
+            .SingleOrDefault();
 
         if (aggregateConfiguration != null)
             return aggregateConfiguration;
@@ -150,16 +149,14 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
         return ((AggregateFilterContainer)parentContainer)?.GetAggregate();
     }
 
-    public override IFilterFactory GetFilterFactory()
-    {
-        return new AggregateFilterFactory(CatalogueRepository);
-    }
+    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueRepository);
 
     public override void DeleteInDatabase()
     {
         base.DeleteInDatabase();
 
-        foreach(var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(nameof(AggregateConfiguration.RootFilterContainer_ID),ID))
+        foreach (var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(
+                     nameof(AggregateConfiguration.RootFilterContainer_ID), ID))
         {
             ac.RootFilterContainer_ID = null;
             ac.SaveToDatabase();

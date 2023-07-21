@@ -15,5 +15,4 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// </summary>
 public interface IPluginCohortDestination : ICohortPipelineDestination, IPluginDataFlowComponent<DataTable>
 {
-
 }

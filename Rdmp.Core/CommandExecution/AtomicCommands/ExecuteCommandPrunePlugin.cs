@@ -40,9 +40,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
     /// <param name="activator"></param>
     public ExecuteCommandPrunePlugin(IBasicActivateItems activator) : base(activator)
     {
-
     }
-
 
 
     public override void Execute()
@@ -52,7 +50,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
         // make runtime decision about the file to run on
         _file ??= BasicActivator?.SelectFile("Select plugin to prune")?.FullName;
 
-        if(_file == null)
+        if (_file == null)
             return;
 
         var logger = LogManager.GetCurrentClassLogger();
@@ -60,7 +58,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
         var main = MainRegex();
         var windows = WinRegex();
         var keep = KeepRegex();
-        AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
+        AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin), true);
         using (var zf = ZipFile.Open(_file, ZipArchiveMode.Update))
         {
             var rdmpCoreFiles = UsefulStuff.GetExecutableDirectory().GetFiles("*.dll");
@@ -82,7 +80,8 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
                     continue;
 
                 Assembly assembly;
-                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) || rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
+                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) ||
+                    rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                 {
                     logger.Info($"Deleting '{e.FullName}' (static)");
                     e.Delete();
@@ -96,7 +95,8 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
                 catch (Exception exception)
                 {
-                    logger.Info(exception,$"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    logger.Info(exception,
+                        $"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
                     e.Delete();
                     continue;
                 }
@@ -109,17 +109,11 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
 
                 if (main.IsMatch(e.FullName))
-                {
                     inMain.Add(e.Name);
-                }
                 else if (windows.IsMatch(e.FullName))
-                {
                     inWindows.Add(e);
-                }
                 else
-                {
                     logger.Warn($"Unclassified plugin component {e.FullName}");
-                }
             }
 
             foreach (var dup in inWindows.Where(e => inMain.Contains(e.Name)))
@@ -127,6 +121,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
                 logger.Info($"Deleting '{dup.FullName}' because it is already in 'main' subdir");
                 dup.Delete();
             }
+
             context.Unload();
         }
 
@@ -135,8 +130,10 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 
     [GeneratedRegex("/main/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex MainRegex();
+
     [GeneratedRegex("/windows/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex WinRegex();
-    [GeneratedRegex("(.nuspec|.dll|.rdmp|/)$",RegexOptions.CultureInvariant)]
+
+    [GeneratedRegex("(.nuspec|.dll|.rdmp|/)$", RegexOptions.CultureInvariant)]
     private static partial Regex KeepRegex();
 }

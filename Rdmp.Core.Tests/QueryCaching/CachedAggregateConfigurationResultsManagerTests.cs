@@ -23,7 +23,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
     private Catalogue _cata;
     private AggregateConfiguration _config;
     private CachedAggregateConfigurationResultsManager _manager;
-    private DatabaseColumnRequest _myColSpecification = new("MyCol","varchar(10)");
+    private DatabaseColumnRequest _myColSpecification = new("MyCol", "varchar(10)");
 
 
     [SetUp]
@@ -32,14 +32,13 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         base.SetUp();
 
         _cata =
-            new Catalogue(CatalogueRepository,"CachedAggregateConfigurationResultsManagerTests");
+            new Catalogue(CatalogueRepository, "CachedAggregateConfigurationResultsManagerTests");
 
         _config
             =
-            new AggregateConfiguration(CatalogueRepository,_cata, "CachedAggregateConfigurationResultsManagerTests");
+            new AggregateConfiguration(CatalogueRepository, _cata, "CachedAggregateConfigurationResultsManagerTests");
 
         _manager = new CachedAggregateConfigurationResultsManager(QueryCachingDatabaseServer);
-
     }
 
 
@@ -54,14 +53,19 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         dt.Rows.Add("0101310101");
 
         //commit it 3 times, should just overwrite
-        _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification, 30));
-        _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification, 30));
-        _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification, 30));
+        _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification,
+            30));
+        _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification,
+            30));
+        _manager.CommitResults(new CacheCommitIdentifierList(_config, SomeComplexBitOfSqlCode, dt, _myColSpecification,
+            30));
 
-        var resultsTableName = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.IndexedExtractionIdentifierList);
+        var resultsTableName =
+            _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.IndexedExtractionIdentifierList);
 
 
-        Assert.AreEqual($"IndexedExtractionIdentifierList_AggregateConfiguration{_config.ID}", resultsTableName.GetRuntimeName());
+        Assert.AreEqual($"IndexedExtractionIdentifierList_AggregateConfiguration{_config.ID}",
+            resultsTableName.GetRuntimeName());
 
         var table = DataAccessPortal
             .ExpectDatabase(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
@@ -71,23 +75,27 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         var col = table.DiscoverColumn("MyCol");
 
         Assert.IsNotNull(col);
-        Assert.AreEqual("varchar(10)",col.DataType.SQLType);
+        Assert.AreEqual("varchar(10)", col.DataType.SQLType);
 
-        using (var con = DataAccessPortal.ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
+        using (var con = DataAccessPortal
+                   .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
         {
             con.Open();
 
             var dt2 = new DataTable();
-            var da = new SqlDataAdapter($"Select * from {resultsTableName.GetFullyQualifiedName()}",(SqlConnection)con);
+            var da = new SqlDataAdapter($"Select * from {resultsTableName.GetFullyQualifiedName()}",
+                (SqlConnection)con);
             da.Fill(dt2);
 
-            Assert.AreEqual(dt.Rows.Count,dt2.Rows.Count);
+            Assert.AreEqual(dt.Rows.Count, dt2.Rows.Count);
 
             con.Close();
         }
 
-        Assert.IsNotNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, SomeComplexBitOfSqlCode));
-        Assert.IsNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, "select name,height,scalecount from fish"));
+        Assert.IsNotNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
+            SomeComplexBitOfSqlCode));
+        Assert.IsNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
+            "select name,height,scalecount from fish"));
     }
 
 
@@ -99,7 +107,9 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         dt.Rows.Add("0101010101");
         dt.Rows.Add("0101010101");
 
-        var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30)));
+        var ex = Assert.Throws<Exception>(() =>
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification,
+                30)));
         Assert.IsTrue(ex.Message.Contains("primary key"));
     }
 
@@ -117,10 +127,9 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         var sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
 	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]";
 
-        var ex = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
+        var ex = Assert.Throws<NotSupportedException>(() =>
+            _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
         Assert.IsTrue(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
-
-
     }
 
     [Test]
@@ -132,25 +141,27 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         dt.Rows.Add(DBNull.Value);
         dt.Rows.Add("0101010102");
 
-        _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30));
+        _manager.CommitResults(
+            new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30));
 
-        var resultTable =_manager.GetLatestResultsTable(_config,AggregateOperation.IndexedExtractionIdentifierList, "select * from fish");
+        var resultTable = _manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
+            "select * from fish");
 
         var dt2 = new DataTable();
 
-        using (var con = DataAccessPortal.ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
+        using (var con = DataAccessPortal
+                   .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
         {
             con.Open();
 
             var da = new SqlDataAdapter($"Select * from {resultTable.GetFullyQualifiedName()}",
-                (SqlConnection) con);
+                (SqlConnection)con);
             da.Fill(dt2);
         }
 
-        Assert.AreEqual(2,dt2.Rows.Count);
+        Assert.AreEqual(2, dt2.Rows.Count);
         Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010101"));
         Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010102"));
-
     }
 
     private const string SomeComplexBitOfSqlCode =

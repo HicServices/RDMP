@@ -45,10 +45,10 @@ public partial class DataTableViewerUI : UserControl
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",e);
+            ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",
+                e);
         }
 
         Text = caption;
     }
-
 }

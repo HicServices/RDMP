@@ -42,7 +42,7 @@ public class LoggingTabUI : LoggingTab_Design
     private ToolStripLabel label1 = new("Filter:");
     private ToolStripLabel label2 = new("Top:");
     private ToolStripTextBox tbTop = new() { Text = "10000" };
-    private ToolStripButton cbPreferNewer = new("Newest"){CheckOnClick =true,Checked = true};
+    private ToolStripButton cbPreferNewer = new("Newest") { CheckOnClick = true, Checked = true };
 
     private Label lblCurrentFilter;
     private PictureBox pbRemoveFilter;
@@ -116,7 +116,8 @@ public class LoggingTabUI : LoggingTab_Design
             if (menu.Items.Count != 0)
                 menu.Items.Add(new ToolStripSeparator());
 
-            menu.Items.Add("View as text", null, (s, ex) => WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]));
+            menu.Items.Add("View as text", null,
+                (s, ex) => WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]));
 
             menu.Show(Cursor.Position.X, Cursor.Position.Y);
         }
@@ -143,20 +144,25 @@ public class LoggingTabUI : LoggingTab_Design
         {
             case LoggingTables.DataLoadRun:
 
-                yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
-                yield return new ExecuteCommandViewLogs(Activator,  new LogViewerFilter(LoggingTables.FatalError) { Run = rowId });
-                yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.TableLoadRun) { Run = rowId });
+                yield return new ExecuteCommandViewLogs(Activator,
+                    new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
+                yield return new ExecuteCommandViewLogs(Activator,
+                    new LogViewerFilter(LoggingTables.FatalError) { Run = rowId });
+                yield return new ExecuteCommandViewLogs(Activator,
+                    new LogViewerFilter(LoggingTables.TableLoadRun) { Run = rowId });
 
-                yield return new ExecuteCommandExportLoggedDataToCsv(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
+                yield return new ExecuteCommandExportLoggedDataToCsv(Activator,
+                    new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
                 break;
             case LoggingTables.DataLoadTask:
-                yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadRun) { Task = rowId });
+                yield return new ExecuteCommandViewLogs(Activator,
+                    new LogViewerFilter(LoggingTables.DataLoadRun) { Task = rowId });
                 break;
 
             case LoggingTables.TableLoadRun:
-                yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataSource) { Table = rowId });
+                yield return new ExecuteCommandViewLogs(Activator,
+                    new LogViewerFilter(LoggingTables.DataSource) { Table = rowId });
                 break;
-
         }
     }
 
@@ -171,10 +177,13 @@ public class LoggingTabUI : LoggingTab_Design
                 sb.Append(dataRow[i]);
                 sb.Append('\t');
             }
+
             dataRow[dcRowString] = sb.ToString();
         }
     }
+
     #region InitializeComponent
+
     private void InitializeComponent()
     {
         var resources = new ComponentResourceManager(typeof(LoggingTabUI));
@@ -221,7 +230,7 @@ public class LoggingTabUI : LoggingTab_Design
         // lblCurrentFilter
         // 
         lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left
-                                                                           | AnchorStyles.Right);
+                                                                  | AnchorStyles.Right);
         lblCurrentFilter.BackColor = Color.Goldenrod;
         lblCurrentFilter.ForeColor = SystemColors.ControlLightLight;
         lblCurrentFilter.Location = new Point(3, 3);
@@ -261,8 +270,8 @@ public class LoggingTabUI : LoggingTab_Design
         pFilter.ResumeLayout(false);
         panel1.ResumeLayout(false);
         ResumeLayout(false);
-
     }
+
     #endregion
 
     private void LoadDataTable(DataTable dt)
@@ -283,22 +292,26 @@ public class LoggingTabUI : LoggingTab_Design
 
     public void SetFilter(LogViewerFilter filter)
     {
-        if(
+        if (
             _navigationTrack is { Current: not null } //there is a back navigation stack setup
             && filter != _navigationTrack.Current //we are not doing a Back operation
         )
-            _navigationTrack.Current.Tag = tbContentFilter.Text; //Since user is making a new navigation to a new location, record the current text filter to preserve it for Back operations.
-                        
+            _navigationTrack.Current.Tag =
+                tbContentFilter
+                    .Text; //Since user is making a new navigation to a new location, record the current text filter to preserve it for Back operations.
+
 
         Filter = filter;
-            
+
         //push the old filter
         _navigationTrack?.Append(Filter);
-        if(_back != null)
+        if (_back != null)
             _back.Enabled = _navigationTrack.CanBack();
 
         if (filter.IsEmpty)
+        {
             panel1.Controls.Remove(pFilter);
+        }
         else
         {
             panel1.Controls.Add(pFilter);
@@ -309,7 +322,7 @@ public class LoggingTabUI : LoggingTab_Design
         FetchDataTable();
 
         //clear/restore the current user entered text filter
-        tbContentFilter.Text = filter.Tag as string ?? "";            
+        tbContentFilter.Text = filter.Tag as string ?? "";
     }
 
     private void RegenerateFilters()
@@ -321,23 +334,24 @@ public class LoggingTabUI : LoggingTab_Design
     {
         base.SetDatabaseObject(activator, databaseObject);
 
-        if(_navigationTrack == null)
+        if (_navigationTrack == null)
         {
             //what happens when user clicks back/forward
-            _navigationTrack = new NavigationTrack<LogViewerFilter>(f=>true,f=>
+            _navigationTrack = new NavigationTrack<LogViewerFilter>(f => true, f =>
             {
-                if(f.LoggingTable != LoggingTables.None)
+                if (f.LoggingTable != LoggingTables.None)
                 {
-                    var cmd = new ExecuteCommandViewLogs(activator,f);
+                    var cmd = new ExecuteCommandViewLogs(activator, f);
                     cmd.Execute();
                 }
             });
 
             //set the initial filter
             _navigationTrack.Append(Filter);
-            _back = new ToolStripButton("Back",FamFamFamIcons.Back.ImageToBitmap(),(s,e)=>_navigationTrack.Back(true)){DisplayStyle = ToolStripItemDisplayStyle.Image };
+            _back = new ToolStripButton("Back", FamFamFamIcons.Back.ImageToBitmap(),
+                (s, e) => _navigationTrack.Back(true)) { DisplayStyle = ToolStripItemDisplayStyle.Image };
         }
-            
+
         CommonFunctionality.Add(_back);
 
         CommonFunctionality.Add(label1);
@@ -348,12 +362,24 @@ public class LoggingTabUI : LoggingTab_Design
 
         CommonFunctionality.Add(cbPreferNewer);
 
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadTask)) { OverrideCommandName = "All Tasks" });
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadRun)) { OverrideCommandName = "All Runs" });
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.FatalError)) { OverrideCommandName = "All Errors" });
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.TableLoadRun)) { OverrideCommandName = "All Tables Loaded" });
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataSource)) { OverrideCommandName = "All Data Sources" });
-        CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.ProgressLog)) { OverrideCommandName = "All Progress Logs" });
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadTask))
+                { OverrideCommandName = "All Tasks" });
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadRun))
+                { OverrideCommandName = "All Runs" });
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.FatalError))
+                { OverrideCommandName = "All Errors" });
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.TableLoadRun))
+                { OverrideCommandName = "All Tables Loaded" });
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataSource))
+                { OverrideCommandName = "All Data Sources" });
+        CommonFunctionality.AddToMenu(
+            new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.ProgressLog))
+                { OverrideCommandName = "All Progress Logs" });
 
 
         if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out var reason))
@@ -366,10 +392,7 @@ public class LoggingTabUI : LoggingTab_Design
         FetchDataTable();
     }
 
-    public override string GetTabName()
-    {
-        return "Log Viewer";
-    }
+    public override string GetTabName() => "Log Viewer";
 
     private void FetchDataTable()
     {
@@ -381,7 +404,6 @@ public class LoggingTabUI : LoggingTab_Design
     {
         dataGridView1.ClearSelection();
         foreach (DataGridViewRow row in dataGridView1.Rows)
-        {
             if (Convert.ToInt32(row.Cells["ID"].Value) == rowIDToSelect)
             {
                 //scroll to it
@@ -394,7 +416,6 @@ public class LoggingTabUI : LoggingTab_Design
 
                 break;
             }
-        }
     }
 
     private void pbRemoveFilter_Click(object sender, EventArgs e)
@@ -418,5 +439,4 @@ public class LoggingTabUI : LoggingTab_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoggingTab_Design, UserControl>))]
 public abstract class LoggingTab_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
 {
-
 }

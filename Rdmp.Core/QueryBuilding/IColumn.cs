@@ -19,7 +19,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// 
 /// <para>Note that many properties can be null including ColumnInfo and Alias etc.</para>
 /// </summary>
-public interface IColumn : IHasRuntimeName,ICheckable, IOrderable,IMapsDirectlyToDatabaseTable
+public interface IColumn : IHasRuntimeName, ICheckable, IOrderable, IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// Gets the underlying <see cref="ColumnInfo"/> behind this line of SELECT SQL.
@@ -58,5 +58,4 @@ public interface IColumn : IHasRuntimeName,ICheckable, IOrderable,IMapsDirectlyT
     /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
     /// </summary>
     bool IsPrimaryKey { get; }
-
 }

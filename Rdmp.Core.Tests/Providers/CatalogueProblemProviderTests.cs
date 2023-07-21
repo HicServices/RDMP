@@ -19,13 +19,14 @@ namespace Rdmp.Core.Tests.Providers;
 internal class CatalogueProblemProviderTests : UnitTests
 {
     #region ROOT CONTAINERS
+
     [Test]
     public void TestRootOrderCohortContainer_IsProblem()
     {
         var container = WhenIHaveA<CohortAggregateContainer>();
         var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
         var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
-            
+
         container.Operation = SetOperation.UNION;
         container.AddChild(childAggregateConfiguration, 1);
         container.AddChild(childAggregateConfiguration2, 1);
@@ -65,7 +66,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -80,7 +83,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -131,7 +136,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -166,7 +173,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(container);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -186,9 +195,11 @@ internal class CatalogueProblemProviderTests : UnitTests
 
         Assert.IsNull(problem);
     }
+
     #endregion
 
     #region SET containers
+
     [Test]
     public void TestSetContainerUNION_IsProblem()
     {
@@ -202,7 +213,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -220,7 +233,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -255,7 +270,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -273,7 +290,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -308,7 +327,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -326,7 +347,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(childContainer);
 
         Assert.IsNotNull(problem);
-        Assert.AreEqual("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
+        Assert.AreEqual(
+            "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required",
+            problem);
     }
 
     [Test]
@@ -348,7 +371,6 @@ internal class CatalogueProblemProviderTests : UnitTests
         Assert.IsNull(problem);
     }
 
-
     #endregion
 
 
@@ -360,7 +382,7 @@ internal class CatalogueProblemProviderTests : UnitTests
 
         var ci2 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
 
-        _=new JoinInfo((ICatalogueRepository)ci1.Repository,
+        _ = new JoinInfo((ICatalogueRepository)ci1.Repository,
             ci2.ColumnInfo,
             ci1.ColumnInfo,
             ExtractionJoinType.Right,
@@ -369,7 +391,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         var pp = new CatalogueProblemProvider();
         var childProvider = GetActivator().CoreChildProvider;
 
-        Assert.IsFalse(pp.HasProblem(ci1),"Should not be problem because no collations are declared");
+        Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because no collations are declared");
         pp.RefreshProblems(childProvider);
 
         Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because no collations are declared");
@@ -386,7 +408,8 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(childProvider);
 
         Assert.IsTrue(pp.HasProblem(ci1));
-        Assert.AreEqual("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)", pp.DescribeProblem(ci1));
+        Assert.AreEqual("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)",
+            pp.DescribeProblem(ci1));
     }
 
     [Test]
@@ -414,13 +437,15 @@ internal class CatalogueProblemProviderTests : UnitTests
         ci2.ColumnInfo.Collation = "splishy";
         pp.RefreshProblems(childProvider);
 
-        Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because JoinInfo explicitly states a resolution collation");
-
+        Assert.IsFalse(pp.HasProblem(ci1),
+            "Should not be problem because JoinInfo explicitly states a resolution collation");
     }
+
     #region Parameters
 
     [TestCase("2001/01/01", true)]
-    [TestCase("'2001/01/01", false)] // This is currently fine, we are only detecting bad dates.  SQL syntax will pick this up for them anyway
+    [TestCase("'2001/01/01",
+        false)] // This is currently fine, we are only detecting bad dates.  SQL syntax will pick this up for them anyway
     [TestCase("'2001/01/01'", false)]
     [TestCase("\"2001/01/01\"", false)]
     public void TestParameterIsDate(string val, bool expectProblem)
@@ -433,15 +458,10 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(param);
 
-        if(expectProblem)
-        {
+        if (expectProblem)
             Assert.AreEqual("Parameter value looks like a date but is not surrounded by quotes", problem);
-        }
         else
-        {
             Assert.IsNull(problem);
-        }
-
     }
 
     #endregion

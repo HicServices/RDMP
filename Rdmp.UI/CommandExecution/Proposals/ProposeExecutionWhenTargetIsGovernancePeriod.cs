@@ -13,7 +13,7 @@ using Rdmp.UI.SimpleDialogs.Governance;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsGovernancePeriod:RDMPCommandExecutionProposal<GovernancePeriod>
+internal class ProposeExecutionWhenTargetIsGovernancePeriod : RDMPCommandExecutionProposal<GovernancePeriod>
 {
     public ProposeExecutionWhenTargetIsGovernancePeriod(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -26,7 +26,8 @@ internal class ProposeExecutionWhenTargetIsGovernancePeriod:RDMPCommandExecution
         ItemActivator.Activate<GovernancePeriodUI, GovernancePeriod>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernancePeriod target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernancePeriod target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return cmd switch
         {

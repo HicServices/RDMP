@@ -27,22 +27,23 @@ public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvide
         _failed = Image.Load<Rgba32>(CatalogueIcons.Failed);
         _tick = Image.Load<Rgba32>(CatalogueIcons.Tick);
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         return o is not ExtractCommandState ecs
             ? null
             : ecs switch
-        {
-            ExtractCommandState.NotLaunched => _waiting,
-            ExtractCommandState.WaitingForSQLServer => _waiting,
-            ExtractCommandState.WritingToFile => _writing,
-            ExtractCommandState.Crashed => _failed,
-            ExtractCommandState.UserAborted => _failed,
-            ExtractCommandState.Completed => _tick,
-            ExtractCommandState.Warning => _warning,
-            ExtractCommandState.WritingMetadata => _writing,
-            ExtractCommandState.WaitingToExecute => _waiting,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            {
+                ExtractCommandState.NotLaunched => _waiting,
+                ExtractCommandState.WaitingForSQLServer => _waiting,
+                ExtractCommandState.WritingToFile => _writing,
+                ExtractCommandState.Crashed => _failed,
+                ExtractCommandState.UserAborted => _failed,
+                ExtractCommandState.Completed => _tick,
+                ExtractCommandState.Warning => _warning,
+                ExtractCommandState.WritingMetadata => _writing,
+                ExtractCommandState.WaitingToExecute => _waiting,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

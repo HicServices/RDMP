@@ -17,7 +17,6 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 {
-
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.PostgreSql)]
@@ -35,11 +34,12 @@ internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var tblInfo,out _);
+        Import(tbl, out var tblInfo, out _);
 
         Assert.AreEqual(5, tbl.GetRowCount());
 
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+            { DisallowInput = true };
 
         var cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
 
@@ -48,12 +48,12 @@ internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
         cmd.Execute();
 
         Assert.AreEqual(2, tbl.GetRowCount());
-            
+
         tbl.CreatePrimaryKey(tbl.DiscoverColumn("fff"));
 
         cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
 
-        var ex = Assert.Throws<Exception>(()=>cmd.Execute());
+        var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
         Assert.AreEqual("Table 'MyTable' has primary key columns so cannot contain duplication", ex.Message);
     }

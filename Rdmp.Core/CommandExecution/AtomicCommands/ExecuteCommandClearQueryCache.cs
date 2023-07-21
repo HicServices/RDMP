@@ -31,26 +31,25 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
     /// <param name="cic"></param>
     public ExecuteCommandClearQueryCache(IBasicActivateItems activator,
         [DemandsInitialization("The Cohort Builder query for which you want to invalidate all cache entries")]
-        CohortIdentificationConfiguration cic) :base(activator)
+        CohortIdentificationConfiguration cic) : base(activator)
     {
         _cic = cic;
 
-        if(cic.QueryCachingServer_ID == null)
+        if (cic.QueryCachingServer_ID == null)
         {
             SetImpossible($"CohortIdentificationConfiguration {cic} does not have a query cache configured");
             return;
         }
-        if(cic.RootCohortAggregateContainer_ID == null)
+
+        if (cic.RootCohortAggregateContainer_ID == null)
         {
             SetImpossible($"CohortIdentificationConfiguration {cic} has no root container");
             return;
         }
 
-        if(GetCacheCount() == 0)
-        {
-            SetImpossible($"There are no cache entries for {cic}");
-        }
+        if (GetCacheCount() == 0) SetImpossible($"There are no cache entries for {cic}");
     }
+
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         IconOverlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
             OverlayKind.Delete);
@@ -62,17 +61,26 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
         var cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
         var deleted = 0;
 
-        foreach(var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
+        foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {
             // just in case they changed the role or something weird we should nuke all its roles
-            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
-            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery) ? 1:0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList)
+                ? 1
+                : 0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery) ? 1 : 0;
         }
-        foreach(var joinable in _cic.GetAllJoinables())
+
+        foreach (var joinable in _cic.GetAllJoinables())
         {
             // just in case they changed the role or something weird we should nuke all its roles
-            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
-            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) ? 1 : 0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration,
+                AggregateOperation.IndexedExtractionIdentifierList)
+                ? 1
+                : 0;
+            deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration,
+                AggregateOperation.JoinableInceptionQuery)
+                ? 1
+                : 0;
         }
 
         Show("Cache Entries Cleared", $"Deleted {deleted} cache entries");
@@ -87,17 +95,28 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
         foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {
             // just incase they changed the role or something wierd we should nuke all its roles
-            found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.IndexedExtractionIdentifierList) != null ? 1 : 0;
-            found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.JoinableInceptionQuery) != null ? 1 : 0;
+            found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.IndexedExtractionIdentifierList) !=
+                     null
+                ? 1
+                : 0;
+            found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.JoinableInceptionQuery) != null
+                ? 1
+                : 0;
         }
+
         foreach (var joinable in _cic.GetAllJoinables())
         {
             // just incase they changed the role or something wierd we should nuke all its roles
-            found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) != null ? 1 : 0;
-            found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) != null ? 1 : 0;
+            found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration,
+                AggregateOperation.IndexedExtractionIdentifierList) != null
+                ? 1
+                : 0;
+            found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration,
+                AggregateOperation.JoinableInceptionQuery) != null
+                ? 1
+                : 0;
         }
 
         return found;
     }
-
 }

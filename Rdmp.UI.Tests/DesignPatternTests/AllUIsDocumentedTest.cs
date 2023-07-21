@@ -35,13 +35,13 @@ public class AllUIsDocumentedTest : UnitTests
             "CommandExecution",
             "CommandExecution.AtomicCommands",
             "CommandExecution.AtomicCommands.PluginCommands",
-            "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
+            "CommandExecution.AtomicCommands.WindowArranging")); //legal namespaces
 
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand),
             "CommandExecution",
             "CommandExecution.AtomicCommands",
             "CommandExecution.AtomicCommands.PluginCommands",
-            "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
+            "CommandExecution.AtomicCommands.WindowArranging")); //legal namespaces
 
         //proposals
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecutionProposal), "CommandExecution.Proposals"));
@@ -53,10 +53,11 @@ public class AllUIsDocumentedTest : UnitTests
         foreach (var error in Errors)
             Console.WriteLine($"FATAL NAMESPACE ERROR FAILURE:{error}");
 
-        Assert.AreEqual(Errors.Count,0);
+        Assert.AreEqual(Errors.Count, 0);
     }
 
-    private string[] _exemptNamespaces = {
+    private string[] _exemptNamespaces =
+    {
         "System.ComponentModel.Design",
         "System.Windows.Forms",
         "Rdmp.UI.ScintillaHelper"
@@ -66,7 +67,9 @@ public class AllUIsDocumentedTest : UnitTests
     {
         return Core.Repositories.MEF.GetAllTypes()
             .Where(InterfaceType.IsAssignableFrom)
-            .Where(type => type.Namespace?.Contains(".Tests") == false && !_exemptNamespaces.Any(e => type.Namespace.Contains(e))&& !legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
+            .Where(type => type.Namespace?.Contains(".Tests") == false &&
+                           !_exemptNamespaces.Any(e => type.Namespace.Contains(e)) &&
+                           !legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
             .Select(type =>
                 $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'");
     }

@@ -29,7 +29,7 @@ namespace Rdmp.Core.Curation.Data.Governance;
 /// <para>The correct usage of GovernancePeriods is to never delete them e.g. your dataset MyDataset1 would have Governacne 2001-2002 (with attachment
 /// letters of approval) and another one for 2003-2004 and another from 2005 onwards etc.</para>
 /// </summary>
-public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
+public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
 {
     private IGovernanceManager _manager;
 
@@ -48,7 +48,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public DateTime StartDate
     {
         get => _startDate;
-        set => SetField(ref  _startDate, value);
+        set => SetField(ref _startDate, value);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public DateTime? EndDate
     {
         get => _endDate;
-        set => SetField(ref  _endDate, value);
+        set => SetField(ref _endDate, value);
     }
 
     /// <inheritdoc/>
@@ -66,7 +66,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public string Ticket
     {
         get => _ticket;
-        set => SetField(ref  _ticket, value);
+        set => SetField(ref _ticket, value);
     }
 
     #endregion
@@ -96,7 +96,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// <see cref="GovernancePeriod"/>
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<GovernanceDocument> GovernanceDocuments => Repository.GetAllObjectsWithParent<GovernanceDocument>(this);
+    public IEnumerable<GovernanceDocument> GovernanceDocuments =>
+        Repository.GetAllObjectsWithParent<GovernanceDocument>(this);
 
     /// <summary>
     /// All datasets to which this governance grants permission to hold
@@ -108,7 +109,6 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
 
     public GovernancePeriod()
     {
-
     }
 
     /// <summary>
@@ -120,8 +120,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name ?? $"GovernancePeriod{Guid.NewGuid()}" },
-            {"StartDate",DateTime.Now.Date}
+            { "Name", name ?? $"GovernancePeriod{Guid.NewGuid()}" },
+            { "StartDate", DateTime.Now.Date }
         });
 
         _manager = CatalogueRepository.GovernanceManager;
@@ -143,10 +143,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Checks that the governance has not expired before it began etc
@@ -155,12 +152,14 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     public void Check(ICheckNotifier notifier)
     {
         if (EndDate == null)
-            notifier.OnCheckPerformed(new CheckEventArgs($"There is no end date for GovernancePeriod {Name}",CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs($"There is no end date for GovernancePeriod {Name}",
+                CheckResult.Warning));
+        else if (EndDate <= StartDate)
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!",
+                CheckResult.Fail));
         else
-        if (EndDate <= StartDate)
-            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date",
+                CheckResult.Success));
 
         foreach (var doc in GovernanceDocuments)
             doc.Check(notifier);
@@ -192,9 +191,5 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
     /// True if the current date is after the <see cref="EndDate"/> (if there is one)
     /// </summary>
     /// <returns></returns>
-    public bool IsExpired()
-    {
-        return EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
-    }
-
+    public bool IsExpired() => EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
 }

@@ -21,7 +21,8 @@ public class DictionaryAsArrayResolver : DefaultContractResolver
     protected override JsonContract CreateContract(Type objectType)
     {
         return objectType.GetInterfaces().Any(i => i == typeof(IDictionary) ||
-                                                (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                                                   (i.IsGenericType && i.GetGenericTypeDefinition() ==
+                                                       typeof(IDictionary<,>)))
             ? base.CreateArrayContract(objectType)
             : base.CreateContract(objectType);
     }

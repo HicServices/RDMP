@@ -40,12 +40,11 @@ public class ColumnInfoToANOTableConverter
 
     public bool ConvertEmptyColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
     {
-
         var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
 
         var rowcount = tbl.GetRowCount();
 
-        if(rowcount>0)
+        if (rowcount > 0)
             throw new NotSupportedException(
                 $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
@@ -59,7 +58,7 @@ public class ColumnInfoToANOTableConverter
 
         AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-        DropOldColumn(shouldApplySql, con,null);
+        DropOldColumn(shouldApplySql, con, null);
 
 
         //synchronize again
@@ -67,6 +66,7 @@ public class ColumnInfoToANOTableConverter
 
         return true;
     }
+
     public bool ConvertFullColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
     {
         var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
@@ -81,9 +81,9 @@ public class ColumnInfoToANOTableConverter
 
         AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-        MigrateExistingData(shouldApplySql,con, notifier,tbl);
+        MigrateExistingData(shouldApplySql, con, notifier, tbl);
 
-        DropOldColumn(shouldApplySql, con,null);
+        DropOldColumn(shouldApplySql, con, null);
 
         //synchronize again
         new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
@@ -102,7 +102,8 @@ public class ColumnInfoToANOTableConverter
                 $"Table {_tableInfo} has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
     }
 
-    private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier,DiscoveredTable tbl)
+    private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier,
+        DiscoveredTable tbl)
     {
         var from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
         var to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
@@ -113,7 +114,7 @@ public class ColumnInfoToANOTableConverter
                    $"SELECT top 0 {from},{to} into TempANOMap from {tbl.GetFullyQualifiedName()}",
                    con))
         {
-            if(!shouldApplySql(cmdCreateTempMap.CommandText))
+            if (!shouldApplySql(cmdCreateTempMap.CommandText))
                 throw new Exception("User decided not to create the TempANOMap table");
 
             cmdCreateTempMap.ExecuteNonQuery();
@@ -125,13 +126,14 @@ public class ColumnInfoToANOTableConverter
             {
                 //get the existing data
                 using var cmdGetExistingData =
-                       DatabaseCommandHelper.GetCommand(
-                           $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con);
+                    DatabaseCommandHelper.GetCommand(
+                        $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con);
                 using var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData);
-                da.Fill(dt);//into memory
+                da.Fill(dt); //into memory
 
                 //transform it in memory
-                var transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                var transformer =
+                    new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
                 transformer.Transform(dt, dt.Columns[0], dt.Columns[1]);
 
                 var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
@@ -143,13 +145,12 @@ public class ColumnInfoToANOTableConverter
 
             //create an empty table for the anonymised data
             using var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
-                       string.Format(
-                           "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
-                           from, to, tbl.GetFullyQualifiedName()), con);
+                string.Format(
+                    "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
+                    from, to, tbl.GetFullyQualifiedName()), con);
             if (!shouldApplySql(cmdUpdateMainTable.CommandText))
                 throw new Exception("User decided not to perform update on table");
             cmdUpdateMainTable.ExecuteNonQuery();
-
         }
         finally
         {
@@ -160,14 +161,13 @@ public class ColumnInfoToANOTableConverter
     }
 
 
-
     private void DropOldColumn(Func<string, bool> shouldApplySql, DbConnection con, DbTransaction transaction)
     {
         var alterSql = $"ALTER TABLE {_tableInfo.Name} Drop column {_colToNuke.GetRuntimeName(LoadStage.PostLoad)}";
 
         if (shouldApplySql(alterSql))
         {
-            using var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction);
+            using var cmd = DatabaseCommandHelper.GetCommand(alterSql, con, transaction);
             cmd.ExecuteNonQuery();
         }
         else
@@ -211,8 +211,10 @@ public class ColumnInfoToANOTableConverter
 
         if (shouldApplySql(alterSql))
         {
-            using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con))
+            using (var cmd = DatabaseCommandHelper.GetCommand(alterSql, con))
+            {
                 cmd.ExecuteNonQuery();
+            }
 
             var synchronizer = new TableInfoSynchronizer(_tableInfo);
             synchronizer.Synchronize(notifier);
@@ -223,8 +225,8 @@ public class ColumnInfoToANOTableConverter
             _newANOColumnInfo.SaveToDatabase();
         }
         else
+        {
             throw new Exception("User chose not to apply part of the operation");
-
-
+        }
     }
 }

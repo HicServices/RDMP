@@ -16,10 +16,10 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// Any ICompileable which can be cached once finished.  Typically any ICompileable in a CohortCompiler can be cached unless it is composed of multiple discrete
 /// sub queries (i.e. an AggregationContainerTask.)
 /// </summary>
-public interface ICacheableTask:ICompileable
+public interface ICacheableTask : ICompileable
 {
     AggregateConfiguration GetAggregateConfiguration();
-    CacheCommitArguments GetCacheArguments(string sql, DataTable results,DatabaseColumnRequest[] explicitTypes);
+    CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes);
     void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager);
 
     bool IsCacheableWhenFinished();

@@ -41,10 +41,8 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         ViewType = viewType;
     }
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { "ViewType", ViewType.ToString() } });
 
     public override void LoadExtraText(string s)
     {
@@ -61,16 +59,14 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
     {
         return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
     }
+
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
         if (GetFilterIfAny() is ConcreteFilter filter)
             yield return filter;
     }
 
-    public IDataAccessPoint GetDataAccessPoint()
-    {
-        return TableInfo;
-    }
+    public IDataAccessPoint GetDataAccessPoint() => TableInfo;
 
     public string GetSql()
     {
@@ -85,7 +81,8 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
         var filter = GetFilterIfAny();
         if (filter != null)
-            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter }, FilterContainerOperation.AND);
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter },
+                FilterContainerOperation.AND);
 
         var sql = qb.SQL;
 
@@ -94,10 +91,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
             : sql;
     }
 
-    public string GetTabName()
-    {
-        return $"{TableInfo}({ViewType})";
-    }
+    public string GetTabName() => $"{TableInfo}({ViewType})";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {

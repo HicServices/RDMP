@@ -34,7 +34,7 @@ public class UITests : UnitTests
 
     protected Control LastUserInterfaceLaunched { get; set; }
 
-    protected TestActivateItems ItemActivator => _itemActivator?? InitializeItemActivator();
+    protected TestActivateItems ItemActivator => _itemActivator ?? InitializeItemActivator();
 
     /// <summary>
     /// Generates the <see cref="ItemActivator"/> (if it hasn't already been initialized).  This is normally done automatically
@@ -42,7 +42,7 @@ public class UITests : UnitTests
     /// </summary>
     private TestActivateItems InitializeItemActivator()
     {
-        _itemActivator = new TestActivateItems(this,Repository);
+        _itemActivator = new TestActivateItems(this, Repository);
         _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
         return _itemActivator;
     }
@@ -59,23 +59,25 @@ public class UITests : UnitTests
     /// will have to call it yourself</param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
-    public T AndLaunch<T>(DatabaseEntity o,bool setDatabaseObject=true) where T : Control, IRDMPSingleDatabaseObjectControl, new()
+    public T AndLaunch<T>(DatabaseEntity o, bool setDatabaseObject = true)
+        where T : Control, IRDMPSingleDatabaseObjectControl, new()
     {
         var ui = new T();
         AndLaunch(ui);
-        if(setDatabaseObject)
+        if (setDatabaseObject)
             ui.SetDatabaseObject(ItemActivator, o);
         return ui;
     }
 
 
-    public T AndLaunch<T>() where T : RDMPCollectionUI,new()
+    public T AndLaunch<T>() where T : RDMPCollectionUI, new()
     {
         var ui = new T();
         AndLaunch(ui);
         ui.SetItemActivator(ItemActivator);
         return ui;
     }
+
     public void AndLaunch(Control ui)
     {
         //clear the old results
@@ -86,7 +88,7 @@ public class UITests : UnitTests
         f.Controls.Add(ui);
         CreateControls(ui);
 
-        if(ui is IRDMPControl rdmpUi)
+        if (ui is IRDMPControl rdmpUi)
         {
             rdmpUi.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
             rdmpUi.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
@@ -108,6 +110,7 @@ public class UITests : UnitTests
 
         LastUserInterfaceLaunched = null;
     }
+
     /// <summary>
     /// Asserts that the given command is impossible for the <paramref name="expectedReason"/>
     /// </summary>
@@ -118,6 +121,7 @@ public class UITests : UnitTests
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
     }
+
     /// <summary>
     /// Asserts that the given command is not marked IsImpossible
     /// </summary>
@@ -125,10 +129,10 @@ public class UITests : UnitTests
     protected static void AssertCommandIsPossible(IAtomicCommand cmd)
     {
         //if it isn't marked impossible
-        if(!cmd.IsImpossible)
+        if (!cmd.IsImpossible)
             return;
 
-        if(string.IsNullOrWhiteSpace(cmd.ReasonCommandImpossible))
+        if (string.IsNullOrWhiteSpace(cmd.ReasonCommandImpossible))
             Assert.Fail("Command was impossible but no reason was given!!!");
 
         Assert.Fail($"Command was Impossible because:{cmd.ReasonCommandImpossible}");
@@ -137,7 +141,7 @@ public class UITests : UnitTests
     private void CommonFunctionalityOnBeforeChecking(object sender, EventArgs eventArgs)
     {
         //intercept checking and replace with our own in memory checks
-        var e = (BeforeCheckingEventArgs) eventArgs;
+        var e = (BeforeCheckingEventArgs)eventArgs;
 
         _checkResults = new ToMemoryCheckNotifier();
         try
@@ -148,6 +152,7 @@ public class UITests : UnitTests
         {
             _checkResults.OnCheckPerformed(new CheckEventArgs("Checks threw exception", CheckResult.Fail, ex));
         }
+
         e.Cancel = true;
     }
 
@@ -212,7 +217,10 @@ public class UITests : UnitTests
         switch (expectedErrorLevel)
         {
             case ExpectedErrorType.KilledForm:
-                Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)),"Failed to find expected Exception, Exceptions were:\r\n" +string.Join(Environment.NewLine,ItemActivator.Results.KilledForms.Values.Select(v=>v.ToString())) );
+                Assert.IsTrue(
+                    ItemActivator.Results.KilledForms.Values.Any(v => v.Message.Contains(expectedContainsText)),
+                    "Failed to find expected Exception, Exceptions were:\r\n" + string.Join(Environment.NewLine,
+                        ItemActivator.Results.KilledForms.Values.Select(v => v.ToString())));
                 break;
             case ExpectedErrorType.Fatal:
                 Assert.IsTrue(ItemActivator.Results.FatalCalls.Any(c => c.Message.Contains(expectedContainsText)));
@@ -220,9 +228,10 @@ public class UITests : UnitTests
             case ExpectedErrorType.FailedCheck:
 
                 if (_checkResults == null)
-                    throw new Exception("Could not check for Checks error because control did not register an ICheckable");
+                    throw new Exception(
+                        "Could not check for Checks error because control did not register an ICheckable");
 
-                AssertFailedCheck(_checkResults,expectedContainsText);
+                AssertFailedCheck(_checkResults, expectedContainsText);
 
                 break;
             case ExpectedErrorType.GlobalErrorCheckNotifier:
@@ -239,7 +248,7 @@ public class UITests : UnitTests
         }
     }
 
-    private static void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
+    private static void AssertFailedCheck(ToMemoryCheckNotifier checkResults, string expectedContainsText)
     {
         //there must have been something checked that failed with the provided message
         Assert.IsTrue(checkResults.Messages.Any(m =>
@@ -253,19 +262,21 @@ public class UITests : UnitTests
         var controls = GetControl<Control>().ToArray();
         var providers = controls.SelectMany(GetErrorProviders)
             .Union(ItemActivator.Results.RegisteredRules.Select(static r => r.ErrorProvider)).Distinct();
-        var errors=providers.Where(static ep=>ep.HasErrors)
-            .SelectMany(ep => controls.Select(ep.GetError)).Where(static s=>!string.IsNullOrWhiteSpace(s));
+        var errors = providers.Where(static ep => ep.HasErrors)
+            .SelectMany(ep => controls.Select(ep.GetError)).Where(static s => !string.IsNullOrWhiteSpace(s));
         return errors.ToList();
     }
 
-    private static readonly ConcurrentDictionary<Type, FieldInfo[]>  ErrorProviderFieldCache =new();
+    private static readonly ConcurrentDictionary<Type, FieldInfo[]> ErrorProviderFieldCache = new();
+
     private static IEnumerable<ErrorProvider> GetErrorProviders(Control arg)
     {
         var t = arg.GetType();
         var errorProviderFields = ErrorProviderFieldCache.GetOrAdd(t, static t => t
             .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
             .Where(static f => f.FieldType == typeof(ErrorProvider)).ToArray());
-        return errorProviderFields.Select(f => f.GetValue(arg)).Where(static instance => instance != null).Cast<ErrorProvider>();
+        return errorProviderFields.Select(f => f.GetValue(arg)).Where(static instance => instance != null)
+            .Cast<ErrorProvider>();
     }
 
     /// <summary>
@@ -274,14 +285,11 @@ public class UITests : UnitTests
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    protected List<T> GetControl<T>() where T:Control
-    {
-        return GetControl(LastUserInterfaceLaunched, new List<T>());
-    }
+    protected List<T> GetControl<T>() where T : Control => GetControl(LastUserInterfaceLaunched, new List<T>());
 
-    private static List<T> GetControl<T>(Control c, List<T> list) where T:Control
+    private static List<T> GetControl<T>(Control c, List<T> list) where T : Control
     {
-        if(c is T control)
+        if (c is T control)
             list.Add(control);
 
         foreach (Control child in c.Controls)
@@ -302,11 +310,9 @@ public class UITests : UnitTests
     private static void CreateControls(Control control)
     {
         CreateControl(control);
-        foreach (Control subcontrol in control.Controls)
-        {
-            CreateControl(subcontrol);
-        }
+        foreach (Control subcontrol in control.Controls) CreateControl(subcontrol);
     }
+
     private static void CreateControl(Control control)
     {
         var method = control.GetType().GetMethod("CreateControl", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -327,15 +333,16 @@ public class UITests : UnitTests
     protected void ForEachUI(Action<IRDMPSingleDatabaseObjectControl> action)
     {
         var types = typeof(Catalogue).Assembly.GetTypes()
-            .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            .Where(t => t != null && typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+            .ToArray();
 
         var uiTypes = typeof(CatalogueUI).Assembly.GetTypes()
-            .Where(t=>t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
-                                && !t.IsAbstract && !t.IsInterface
-                                && t.BaseType?.BaseType != null
-                                && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
+            .Where(t => t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
+                                  && !t.IsAbstract && !t.IsInterface
+                                  && t.BaseType?.BaseType != null
+                                  && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
 
-        var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var methods = typeof(UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
         var objectsToTest = types
@@ -345,38 +352,39 @@ public class UITests : UnitTests
             .Select(genericWhenIHaveA => (DatabaseEntity)genericWhenIHaveA.Invoke(this, null)).ToList();
 
         //sets up all the child providers etc
-        _itemActivator=InitializeItemActivator();
+        _itemActivator = InitializeItemActivator();
 
-        foreach(var o in objectsToTest)
-        {
+        foreach (var o in objectsToTest)
             //foreach compatible UI
-            foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
+        foreach (var uiType in uiTypes.Where(a => a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
+        {
+            //todo
+            var methodAndLaunch = methods.Single(m =>
+                m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 &&
+                m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
+
+            //ensure that the method supports the Type
+            var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
+
+            IRDMPSingleDatabaseObjectControl ui;
+
+            try
             {
-                //todo
-                var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
+                ui = (IRDMPSingleDatabaseObjectControl)genericAndLaunch.Invoke(this, new object[] { o, true });
 
-                //ensure that the method supports the Type
-                var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
-
-                IRDMPSingleDatabaseObjectControl ui;
-
-                try
-                {
-                    ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
-
-                    if(ui is IDisposable d)
-                        d.Dispose();
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception(
-                        $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",ex);
-                }
-
-
-                action(ui);
-                ClearResults();
+                if (ui is IDisposable d)
+                    d.Dispose();
             }
+            catch (Exception ex)
+            {
+                throw new Exception(
+                    $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",
+                    ex);
+            }
+
+
+            action(ui);
+            ClearResults();
         }
     }
 

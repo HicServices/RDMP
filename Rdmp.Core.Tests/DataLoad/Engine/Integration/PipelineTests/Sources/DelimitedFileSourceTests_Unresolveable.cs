@@ -11,9 +11,8 @@ using Rdmp.Core.DataLoad.Modules.Exceptions;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
 
-internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
+internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTestsBase
 {
-
     [TestCase(BadDataHandlingStrategy.DivertRows)]
     [TestCase(BadDataHandlingStrategy.ThrowException)]
     [TestCase(BadDataHandlingStrategy.IgnoreRows)]
@@ -44,14 +43,15 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
                 var dt = RunGetChunk(file, Adjust);
-                Assert.AreEqual(2, dt.Rows.Count);  //reads first 2 rows and chucks the rest!
+                Assert.AreEqual(2, dt.Rows.Count); //reads first 2 rows and chucks the rest!
                 break;
             case BadDataHandlingStrategy.DivertRows:
 
                 //read 2 rows and rejected the rest
                 var dt2 = RunGetChunk(file, Adjust);
                 Assert.AreEqual(2, dt2.Rows.Count);
-                AssertDivertFileIsExactly($"Frank,\"Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}");
+                AssertDivertFileIsExactly(
+                    $"Frank,\"Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}");
 
                 break;
             default:

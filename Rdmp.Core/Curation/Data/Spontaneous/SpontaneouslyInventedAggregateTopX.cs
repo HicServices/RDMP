@@ -31,7 +31,8 @@ public class SpontaneouslyInventedAggregateTopX : SpontaneousObject, IAggregateT
     /// <param name="topX"></param>
     /// <param name="orderByDirection"></param>
     /// <param name="orderByColumn"></param>
-    public SpontaneouslyInventedAggregateTopX(MemoryRepository repo,int topX, AggregateTopXOrderByDirection orderByDirection, IColumn orderByColumn):base(repo)
+    public SpontaneouslyInventedAggregateTopX(MemoryRepository repo, int topX,
+        AggregateTopXOrderByDirection orderByDirection, IColumn orderByColumn) : base(repo)
     {
         TopX = topX;
         OrderByDirection = orderByDirection;

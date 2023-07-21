@@ -28,8 +28,5 @@ public class TableInfoCombineable : ICombineToMakeCommand
     }
 
     /// <inheritdoc/>
-    public string GetSqlString()
-    {
-        return TableInfo.Name;
-    }
+    public string GetSqlString() => TableInfo.Name;
 }

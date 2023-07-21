@@ -19,7 +19,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
-public class ProcessTaskArgumentTests:DatabaseTests
+public class ProcessTaskArgumentTests : DatabaseTests
 {
     [Test]
     [TestCase(true)]
@@ -28,7 +28,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+            .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
 
@@ -49,12 +50,12 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
                 var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
 
-                Assert.AreEqual(newInstanceOfPTA.Value,pta.Value);
+                Assert.AreEqual(newInstanceOfPTA.Value, pta.Value);
 
-                var t1 = (TableInfo) pta.GetValueAsSystemType();
+                var t1 = (TableInfo)pta.GetValueAsSystemType();
                 var t2 = (TableInfo)newInstanceOfPTA.GetValueAsSystemType();
 
-                Assert.AreEqual(t1.ID,t2.ID);
+                Assert.AreEqual(t1.ID, t2.ID);
             }
             finally
             {
@@ -66,6 +67,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             loadMetadata.DeleteInDatabase();
         }
     }
+
     [Test]
     public void TypeOfPreLoadDiscardedColumn()
     {
@@ -73,10 +75,11 @@ public class ProcessTaskArgumentTests:DatabaseTests
         var tableInfoName = $"TableInfoFor_{methodName}";
         var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+            .SingleOrDefault(t => t.Name.Equals(tableInfoName));
         var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
-            
+
         //must delete pre load discarded first
         toCleanupCol?.DeleteInDatabase();
 
@@ -93,7 +96,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
             var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
 
-            var preloadDiscardedColumn = new PreLoadDiscardedColumn(CatalogueRepository, tableInfo, preLoadDiscardedColumnName);
+            var preloadDiscardedColumn =
+                new PreLoadDiscardedColumn(CatalogueRepository, tableInfo, preLoadDiscardedColumnName);
             try
             {
                 pta.SetValue(preloadDiscardedColumn);
@@ -124,7 +128,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+            .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
 
@@ -165,7 +170,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
     {
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
-        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
+        var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>()
+            .SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
         toCleanup?.DeleteInDatabase();
 
@@ -181,9 +187,10 @@ public class ProcessTaskArgumentTests:DatabaseTests
                 //tell it that we are going to give it a PreLoadDiscardedColumn
                 pta.SetType(typeof(PreLoadDiscardedColumn));
                 //then surprise! heres a TableInfo!
-                var ex = Assert.Throws<Exception>(()=>pta.SetValue(tableInfo));
-                StringAssert.Contains("has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)",ex.Message);
-
+                var ex = Assert.Throws<Exception>(() => pta.SetValue(tableInfo));
+                StringAssert.Contains(
+                    "has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)",
+                    ex.Message);
             }
             finally
             {
@@ -192,7 +199,6 @@ public class ProcessTaskArgumentTests:DatabaseTests
         }
         finally
         {
-
             lmd.DeleteInDatabase();
         }
     }
@@ -238,8 +244,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
     [Test]
     public void TestArgumentCreation()
     {
-
-        var lmd = new LoadMetadata(CatalogueRepository,"TestArgumentCreation");
+        var lmd = new LoadMetadata(CatalogueRepository, "TestArgumentCreation");
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustRaw);
         pt.CreateArgumentsForClassIfNotExists<TestArgumentedClass>();
         try
@@ -249,9 +254,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
             Assert.AreEqual("MyBool", arg.Name);
             Assert.AreEqual("System.Boolean", arg.Type);
             Assert.AreEqual("Fishes", arg.Description);
-            Assert.AreEqual("True",arg.Value);
+            Assert.AreEqual("True", arg.Value);
             Assert.AreEqual(true, arg.GetValueAsSystemType());
-
         }
         finally
         {
@@ -264,7 +268,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
     public void TestNestedDemandsGetPutIntoDatabaseAndCanBeBroughtBack()
     {
         var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
-        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicDataReleaseDestination), -1,
+        var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicDataReleaseDestination), -1,
             "Coconuts");
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -272,7 +276,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
         var f = new ArgumentFactory();
         Assert.True(
-            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
+            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
+                .Any(r => r.ParentPropertyInfo != null));
 
         //new pc should have no arguments
         Assert.That(pc.GetAllArguments(), Is.Empty);
@@ -303,7 +308,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             "c");
 
         var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-            
+
         try
         {
             arg.SetType(typeof(ExitCodeType));
@@ -334,21 +339,21 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         var arg = new PipelineComponentArgument(CatalogueRepository, pc);
 
-        var server = new ExternalDatabaseServer(CatalogueRepository, "fish",null);
+        var server = new ExternalDatabaseServer(CatalogueRepository, "fish", null);
 
         try
         {
-            arg.SetType(useInterfaceDeclaration ? typeof (IExternalDatabaseServer) : typeof (ExternalDatabaseServer));
+            arg.SetType(useInterfaceDeclaration ? typeof(IExternalDatabaseServer) : typeof(ExternalDatabaseServer));
 
             arg.SetValue(server);
 
             //should have set Value string to the ID of the object
-            Assert.AreEqual(arg.Value,server.ID.ToString());
+            Assert.AreEqual(arg.Value, server.ID.ToString());
 
             arg.SaveToDatabase();
 
             //but as system Type should return the server
-            Assert.AreEqual(arg.GetValueAsSystemType(),server);
+            Assert.AreEqual(arg.GetValueAsSystemType(), server);
         }
         finally
         {
@@ -370,7 +375,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             {
                 Name = "MyNames"
             };
-            arg.SetType(typeof(Dictionary<TableInfo,string>));
+            arg.SetType(typeof(Dictionary<TableInfo, string>));
             arg.SaveToDatabase();
 
             Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
@@ -388,8 +393,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
             arg.SaveToDatabase();
 
-            var val2 = (Dictionary<TableInfo, string>) arg.GetValueAsSystemType();
-            Assert.AreEqual(2,val2.Count);
+            var val2 = (Dictionary<TableInfo, string>)arg.GetValueAsSystemType();
+            Assert.AreEqual(2, val2.Count);
             Assert.AreEqual("Fish", val2[ti1]);
             Assert.AreEqual("Fish", val2[ti2]);
         }
@@ -398,5 +403,4 @@ public class ProcessTaskArgumentTests:DatabaseTests
             pipe.DeleteInDatabase();
         }
     }
-
 }

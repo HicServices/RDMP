@@ -12,7 +12,9 @@ namespace Tests.Common;
 public class TestDatabasesSettings
 {
 #pragma warning disable CA1822 // Mark members as static - that upsets the YAML hack used for loading settings
-    public string Prefix { get => TestDatabaseNames.Prefix;
+    public string Prefix
+    {
+        get => TestDatabaseNames.Prefix;
         set => TestDatabaseNames.Prefix = value;
     }
 #pragma warning restore CA1822 // Mark members as static
@@ -50,7 +52,6 @@ public class TestDatabasesSettings
             _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
         };
     }
-
 
 
     public string GetLowPrivilegePassword(DatabaseType databaseType)

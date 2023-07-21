@@ -41,6 +41,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private FileInfo _cohortFile;
     private ExtractionConfiguration _configuration;
     private ExtractableCohort _cohortCreated;
+
     /// <summary>
     /// Datasets that should be added to the <see cref="Project"/> when executed
     /// </summary>
@@ -51,7 +52,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
     public Project ProjectCreatedIfAny { get; private set; }
 
-    public CreateNewDataExtractionProjectUI(IActivateItems activator):base(activator)
+    public CreateNewDataExtractionProjectUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
 
@@ -60,7 +61,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
         tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
 
-        pbCohort.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration).ImageToBitmap();
+        pbCohort.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration)
+            .ImageToBitmap();
         pbCohortFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File).ImageToBitmap();
         pbCohortSources.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable).ImageToBitmap();
 
@@ -68,23 +70,31 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
         IdentifyCompatibleCohortSources();
 
-        cbxDatasets.Items.AddRange(activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>());
+        cbxDatasets.Items.AddRange(activator.RepositoryLocator.DataExportRepository
+            .GetAllObjects<ExtractableDataSet>());
         btnPackage.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage).ImageToBitmap();
         btnPackage.Enabled =
             activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>().Any();
 
-        cbxCohort.DataSource = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
-        cbxCohort.PropertySelector = collection => collection.Cast<CohortIdentificationConfiguration>().Select(c => c.ToString());
+        cbxCohort.DataSource = activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjects<CohortIdentificationConfiguration>();
+        cbxCohort.PropertySelector = collection =>
+            collection.Cast<CohortIdentificationConfiguration>().Select(c => c.ToString());
         ClearCic();
 
-        hlpDatasets.SetHelpText("Datasets","Pick which datasets should be extracted when this Project ExtractionConfiguration is run.  You can always change this later on.");
-        hlpDefineCohortAndDatasets.SetHelpText("Define Cohort and Datasets", "If you have a cohort (list of identifiers to extract) in a file or defined in an RDMP CohortIdentificationConfiguration you can commit this to the Project here.  You can always commit the cohort later on and/or update the cohort etc.");
-        hlpExtractionPipeline.SetHelpText("Extraction Pipeline", "Choose the default pipeline that should be used to extract the data.  This determines what the output format is e.g. CSV / to database.  If unsure you can leave this blank and choose it later on");
-        hlpIdentifierAllocation.SetHelpText("Identifier Allocation","Choose where to store the cohort (if you have multiple cohort databases) and the name.");
+        hlpDatasets.SetHelpText("Datasets",
+            "Pick which datasets should be extracted when this Project ExtractionConfiguration is run.  You can always change this later on.");
+        hlpDefineCohortAndDatasets.SetHelpText("Define Cohort and Datasets",
+            "If you have a cohort (list of identifiers to extract) in a file or defined in an RDMP CohortIdentificationConfiguration you can commit this to the Project here.  You can always commit the cohort later on and/or update the cohort etc.");
+        hlpExtractionPipeline.SetHelpText("Extraction Pipeline",
+            "Choose the default pipeline that should be used to extract the data.  This determines what the output format is e.g. CSV / to database.  If unsure you can leave this blank and choose it later on");
+        hlpIdentifierAllocation.SetHelpText("Identifier Allocation",
+            "Choose where to store the cohort (if you have multiple cohort databases) and the name.");
 
-        hlpCicPipe.SetHelpText("Pipeline","Choose which Pipeline to use to read the RDMP CohortIdentificationConfiguration and commit it to your cohort database.  Pipeline selection affects which operations are run including which identifier allocation method is used to allocate release identifiers");
-        hlpFlatFilePipe.SetHelpText("Pipeline","Choose which Pipeline to use to read the cohort flat file and commit it to your cohort database.  Pipeline selection must be for a source compatible with the file type e.g. CSV / fixed width.  Selection also affects which operations are run including which identifier allocation method is used to allocate release identifiers");
-
+        hlpCicPipe.SetHelpText("Pipeline",
+            "Choose which Pipeline to use to read the RDMP CohortIdentificationConfiguration and commit it to your cohort database.  Pipeline selection affects which operations are run including which identifier allocation method is used to allocate release identifiers");
+        hlpFlatFilePipe.SetHelpText("Pipeline",
+            "Choose which Pipeline to use to read the cohort flat file and commit it to your cohort database.  Pipeline selection must be for a source compatible with the file type e.g. CSV / fixed width.  Selection also affects which operations are run including which identifier allocation method is used to allocate release identifiers");
     }
 
     private void IdentifyCompatibleCohortSources()
@@ -100,7 +110,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         btnCreateNewCohortSource.Enabled = sources.Length == 0;
-
     }
 
     private void IdentifyCompatiblePipelines()
@@ -114,18 +123,18 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
 
             //pipeline doesn't have a source / destination
-            if(source == null || destination == null)
+            if (source == null || destination == null)
                 continue;
 
             //source defines use case
             var sourceType = source.GetClassAsSystemType();
             var destinationType = destination.GetClassAsSystemType();
 
-            if (typeof (ExecuteDatasetExtractionSource).IsAssignableFrom(sourceType))
+            if (typeof(ExecuteDatasetExtractionSource).IsAssignableFrom(sourceType))
                 ddExtractionPipeline.Items.Add(pipeline);
 
             //destination is not a cohort destination
-            if(!typeof(ICohortPipelineDestination).IsAssignableFrom(destinationType))
+            if (!typeof(ICohortPipelineDestination).IsAssignableFrom(destinationType))
                 continue;
 
             //cic
@@ -138,12 +147,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         //for each dropdown if there's only one option
-        foreach (var dd in new ComboBox[]{ddCicPipeline,ddExtractionPipeline,ddFilePipeline})
-        {
+        foreach (var dd in new ComboBox[] { ddCicPipeline, ddExtractionPipeline, ddFilePipeline })
             if (dd.Items.Count == 1)
                 dd.SelectedItem = dd.Items[0]; //select it
-        }
-
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)
@@ -155,7 +161,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void CreateNewDataExtractionProjectUI_Load(object sender, EventArgs e)
     {
-
     }
 
     private void tbProjectNumber_TextChanged(object sender, EventArgs e)
@@ -163,7 +168,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         ragProjectNumber.Reset();
 
         //if there is no project number
-        if(string.IsNullOrWhiteSpace(tbProjectNumber.Text))
+        if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
         {
             ragProjectNumber.Warning(new Exception("Project Number is required"));
             _projectNumber = -1;
@@ -175,7 +180,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             _projectNumber = int.Parse(tbProjectNumber.Text);
 
             var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
-            if(collisionProject != null)
+            if (collisionProject != null)
                 ragProjectNumber.Warning(new Exception(
                     $"There is already an existing Project ('{collisionProject}') with ProjectNumber {_projectNumber}"));
         }
@@ -210,7 +215,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
         lblCohortFile.Text = "Cohort File...";
         btnSelectClearCohortFile.Text = "Browse...";
-        btnSelectClearCohortFile.Left = Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
+        btnSelectClearCohortFile.Left =
+            Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
     }
 
     private void SelectFile(FileInfo fileInfo)
@@ -222,15 +228,15 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
         lblCohortFile.Text = _cohortFile.Name;
         btnSelectClearCohortFile.Text = "Clear";
-        btnSelectClearCohortFile.Left = Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
-
+        btnSelectClearCohortFile.Left =
+            Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
     }
 
     private void cbxCohort_SelectionChangeCommitted(object sender, EventArgs e)
     {
         var cic = cbxCohort.SelectedItem as CohortIdentificationConfiguration;
 
-        if(cic != null)
+        if (cic != null)
         {
             Cursor.Current = Cursors.WaitCursor;
             try
@@ -243,11 +249,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 {
                     Timeout = 5
                 };
-                source.PreInitialize(cic,ThrowImmediatelyDataLoadEventListener.Quiet);
+                source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
                 source.Check(ragCic);
 
                 ClearFile();
-
             }
             finally
             {
@@ -256,7 +261,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         gbFile.Enabled = cic == null;
-
     }
 
     private void btnClearCohort_Click(object sender, EventArgs e)
@@ -314,8 +318,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
             if (_cohortCreated == null && cbDefineCohort.Checked)
             {
-                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, ProjectCreatedIfAny.ProjectNumber.Value,
-                    (ExternalCohortTable) ddCohortSources.SelectedItem);
+                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1,
+                    ProjectCreatedIfAny.ProjectNumber.Value,
+                    (ExternalCohortTable)ddCohortSources.SelectedItem);
 
                 //execute the cohort creation bit
                 var cohortRequest = new CohortCreationRequest(ProjectCreatedIfAny, cohortDefinition,
@@ -332,21 +337,23 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 {
                     //execute cohort creation from cic
                     cohortRequest.CohortIdentificationConfiguration =
-                        (CohortIdentificationConfiguration) cbxCohort.SelectedItem;
+                        (CohortIdentificationConfiguration)cbxCohort.SelectedItem;
                     dd = ddCicPipeline;
 
 
                     //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
-                    cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
-                        ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
+                    cmdAssociateCicWithProject =
+                        new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
+                            ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                 }
 
-                var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,ThrowImmediatelyDataLoadEventListener.Quiet);
+                var engine = cohortRequest.GetEngine((Pipeline)dd.SelectedItem,
+                    ThrowImmediatelyDataLoadEventListener.Quiet);
                 engine.ExecutePipeline(new GracefulCancellationToken());
                 _cohortCreated = cohortRequest.CohortCreatedIfAny;
             }
 
-            if(cbDefineCohort.Checked)
+            if (cbDefineCohort.Checked)
             {
                 //associate the configuration with the cohort
                 _configuration.Cohort_ID = _cohortCreated.ID;
@@ -379,7 +386,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         {
             Cursor = Cursors.Default;
         }
-
     }
 
     private string AllRequiredDataPresent()
@@ -414,10 +420,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if (ddExtractionPipeline.SelectedItem == null)
             return "You must select an extraction pipeline";
 
-        if(ddCohortSources.SelectedItem == null)
+        if (ddCohortSources.SelectedItem == null)
             return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
 
-        if(cbxCohort.SelectedItem == null && _cohortFile == null)
+        if (cbxCohort.SelectedItem == null && _cohortFile == null)
             return "You must choose either a file or a cohort identification query to build the cohort from";
 
         //no problems
@@ -430,7 +436,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         wizard.SetItemActivator(Activator);
         SingleControlForm.ShowDialog(wizard);
         IdentifyCompatibleCohortSources();
-
     }
 
     private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
@@ -441,20 +446,21 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(_bLoading)
+        if (_bLoading)
             return;
 
-        _selectedDatasets = cbxDatasets.SelectedItem != null ? new[] {(IExtractableDataSet) cbxDatasets.SelectedItem} : Array.Empty<IExtractableDataSet>();
+        _selectedDatasets = cbxDatasets.SelectedItem != null
+            ? new[] { (IExtractableDataSet)cbxDatasets.SelectedItem }
+            : Array.Empty<IExtractableDataSet>();
     }
 
     private void btnPick_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObjects(new DialogArgs
-           {
-               InitialObjectSelection = _selectedDatasets,
-               TaskDescription = "Which datasets should be extracted in this Project?"
-
-           }, cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), out var selected))
+        if (Activator.SelectObjects(new DialogArgs
+            {
+                InitialObjectSelection = _selectedDatasets,
+                TaskDescription = "Which datasets should be extracted in this Project?"
+            }, cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), out var selected))
         {
             _selectedDatasets = selected;
             UpdateDatasetControlVisibility();
@@ -464,10 +470,12 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void btnPackage_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObjects(new DialogArgs
-           {
-               TaskDescription = "Which Package(s) should be added to the Project.  Datasets in all packages chosen will be added to the Project"
-           }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(), out var selected))
+        if (Activator.SelectObjects(new DialogArgs
+                {
+                    TaskDescription =
+                        "Which Package(s) should be added to the Project.  Datasets in all packages chosen will be added to the Project"
+                }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(),
+                out var selected))
         {
             _selectedDatasets = selected
                 .SelectMany(p =>
@@ -478,7 +486,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
             UpdateDatasetControlVisibility();
         }
-
     }
 
     /// <summary>

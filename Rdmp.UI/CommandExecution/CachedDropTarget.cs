@@ -19,21 +19,16 @@ internal class CachedDropTarget
         RelativeLocation = relativeLocation;
     }
 
-    protected bool Equals(CachedDropTarget other)
-    {
-        return Equals(Target, other.Target) && RelativeLocation == other.RelativeLocation;
-    }
+    protected bool Equals(CachedDropTarget other) =>
+        Equals(Target, other.Target) && RelativeLocation == other.RelativeLocation;
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((CachedDropTarget) obj);
+        return Equals((CachedDropTarget)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Target, RelativeLocation);
-    }
+    public override int GetHashCode() => HashCode.Combine(Target, RelativeLocation);
 }

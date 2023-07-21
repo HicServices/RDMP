@@ -13,16 +13,16 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode : RDMPCommandExecutionProposal<PermissionWindowUsedByCacheProgressNode>
+internal class
+    ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode : RDMPCommandExecutionProposal<
+        PermissionWindowUsedByCacheProgressNode>
 {
-    public ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode(IActivateItems itemActivator) : base(itemActivator)
+    public ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode(IActivateItems itemActivator) :
+        base(itemActivator)
     {
     }
 
-    public override bool CanActivate(PermissionWindowUsedByCacheProgressNode target)
-    {
-        return true;
-    }
+    public override bool CanActivate(PermissionWindowUsedByCacheProgressNode target) => true;
 
     public override void Activate(PermissionWindowUsedByCacheProgressNode target)
     {
@@ -32,9 +32,8 @@ internal class ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNo
             ItemActivator.Activate<CacheProgressUI, CacheProgress>(target.CacheProgress);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindowUsedByCacheProgressNode target,InsertOption insertOption = InsertOption.Default)
-    {
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        PermissionWindowUsedByCacheProgressNode target, InsertOption insertOption = InsertOption.Default) =>
         //no drag and drop
-        return null;
-    }
+        null;
 }

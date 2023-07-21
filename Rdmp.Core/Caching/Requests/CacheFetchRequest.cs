@@ -18,8 +18,7 @@ namespace Rdmp.Core.Caching.Requests;
 /// </summary>
 public class CacheFetchRequest : ICacheFetchRequest
 {
-    [NoMappingToDatabase]
-    public IRepository Repository { get; set; }
+    [NoMappingToDatabase] public IRepository Repository { get; set; }
 
     public DateTime Start { get; set; }
     public DateTime End => Start.Add(ChunkPeriod);
@@ -41,7 +40,7 @@ public class CacheFetchRequest : ICacheFetchRequest
         PreviousFailure = null;
     }
 
-    public CacheFetchRequest(IRepository repository): this(repository,DateTime.MinValue)
+    public CacheFetchRequest(IRepository repository) : this(repository, DateTime.MinValue)
     {
     }
 
@@ -74,7 +73,7 @@ public class CacheFetchRequest : ICacheFetchRequest
         }
         else
         {
-            _=new CacheFetchFailure((ICatalogueRepository) Repository, CacheProgress,Start,End, e);
+            _ = new CacheFetchFailure((ICatalogueRepository)Repository, CacheProgress, Start, End, e);
         }
     }
 

@@ -50,23 +50,23 @@ public class CommandLineObjectPicker
     /// <param name="pickers"></param>
     public CommandLineObjectPicker(string[] args, IEnumerable<PickObjectBase> pickers)
     {
-        foreach(var p in pickers)
+        foreach (var p in pickers)
             _pickers.Add(p);
 
         Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
     }
 
-    private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
+    private CommandLineObjectPickerArgumentValue ParseValue(string arg, int idx)
     {
         //find a picker that recognizes the format
         var pickers = _pickers.Where(p => p.IsMatch(arg, idx)).ToArray();
 
         if (pickers.Any())
-            return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p=>p.Parse(arg,idx)));
-            
+            return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p => p.Parse(arg, idx)));
+
         //nobody recognized it, use the raw value (maybe it's just a regular string, int etc).  Delay hard typing it till we know
         //what constructor we are trying to match it to.
-        return new CommandLineObjectPickerArgumentValue(arg,idx);
+        return new CommandLineObjectPickerArgumentValue(arg, idx);
     }
 
     /// <summary>
@@ -75,9 +75,7 @@ public class CommandLineObjectPicker
     /// <param name="idx"></param>
     /// <param name="paramType"></param>
     /// <returns></returns>
-    public bool HasArgumentOfType(int idx, Type paramType)
-    {
+    public bool HasArgumentOfType(int idx, Type paramType) =>
         //if the index is greater than the number of arguments we have
-        return idx < Arguments.Count && Arguments.ElementAt(idx).HasValueOfType(paramType);
-    }
+        idx < Arguments.Count && Arguments.ElementAt(idx).HasValueOfType(paramType);
 }

@@ -20,8 +20,8 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-public partial class ConsoleGuiServerDatabaseTableSelector {
-
+public partial class ConsoleGuiServerDatabaseTableSelector
+{
     private readonly IBasicActivateItems _activator;
     public string Username => tbUsername.Text.ToString();
 
@@ -36,8 +36,9 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
     /// Returns the DatabaseType that is selected in the dropdown or
     /// <see cref="DatabaseType.MicrosoftSQLServer"/> if none selected
     /// </summary>
-    public DatabaseType DatabaseType => cbxDatabaseType.SelectedItem < 0 ? DatabaseType.MicrosoftSQLServer :
-        (DatabaseType)cbxDatabaseType.Source.ToList()[cbxDatabaseType.SelectedItem];
+    public DatabaseType DatabaseType => cbxDatabaseType.SelectedItem < 0
+        ? DatabaseType.MicrosoftSQLServer
+        : (DatabaseType)cbxDatabaseType.Source.ToList()[cbxDatabaseType.SelectedItem];
 
     /// <summary>
     /// Returns the table type selected in the radio group or <see cref="TableType.Table"/> if none selected
@@ -54,7 +55,8 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
     public bool OkClicked { get; private set; }
 
 
-    public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator, string prompt, string okText, bool showTableComponents)
+    public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator, string prompt, string okText,
+        bool showTableComponents)
     {
         _activator = activator;
 
@@ -76,8 +78,9 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
 
         // Same guid as used by the windows client but probably the apps have different UserSettings files
         // so sadly won't share one anothers recent histories
-        tbServer.Autocomplete.AllSuggestions = UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
-            .Where(e=>!string.IsNullOrWhiteSpace(e))
+        tbServer.Autocomplete.AllSuggestions = UserSettings
+            .GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
+            .Where(e => !string.IsNullOrWhiteSpace(e))
             .ToList();
 
         cbxDatabaseType.SelectedItem = cbxDatabaseType.Source.ToList().IndexOf(DatabaseType.MicrosoftSQLServer);
@@ -120,7 +123,8 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             HostControl = tb;
             PopupInsideContainer = false;
         }
-        public override void GenerateSuggestions(int columnOffset=0)
+
+        public override void GenerateSuggestions(int columnOffset = 0)
         {
             // if there is something to pick
             if (AllSuggestions.Count > 0)
@@ -152,15 +156,14 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         var open = new LoadingDialog("Fetching Tables...");
         List<string> tables = null;
 
-        Task.Run(() => {
-
+        Task.Run(() =>
+        {
             var db = new DiscoveredServer(GetBuilder()).ExpectDatabase(Database);
             tables = db.DiscoverTables(true).Union(db.DiscoverTableValuedFunctions())
                 .Select(t => t.GetRuntimeName())
                 .ToList();
         }).ContinueWith((t, o) =>
         {
-
             // no longer loading
             Application.MainLoop.Invoke(() => Application.RequestStop());
 
@@ -173,10 +176,8 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
 
             // if loaded correctly then
             if (tables != null)
-            {
                 Application.MainLoop.Invoke(() =>
                     tbTable.Autocomplete.AllSuggestions = tables);
-            }
         }, TaskScheduler.FromCurrentSynchronizationContext());
 
         Application.Run(open, ConsoleMainWindow.ExceptionPopup);
@@ -187,15 +188,14 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         var open = new LoadingDialog("Fetching Databases...");
         List<string> databases = null;
 
-        Task.Run(() => {
-
+        Task.Run(() =>
+        {
             var server = new DiscoveredServer(GetBuilder());
             databases = server.DiscoverDatabases()
                 .Select(d => d.GetRuntimeName())
                 .ToList();
         }).ContinueWith((t, o) =>
         {
-
             // no longer loading
             Application.MainLoop.Invoke(() => Application.RequestStop());
 
@@ -208,11 +208,9 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
 
             // if loaded correctly then
             if (databases != null)
-            {
                 Application.MainLoop.Invoke(() =>
                     tbDatabase.Autocomplete.AllSuggestions = databases
                 );
-            }
         }, TaskScheduler.FromCurrentSynchronizationContext());
 
         Application.Run(open, ConsoleMainWindow.ExceptionPopup);
@@ -243,10 +241,12 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         var open = new LoadingDialog($"Creating Database '{db}'");
         string message = null;
 
-        Task.Run(() => {
-
+        Task.Run(() =>
+        {
             if (db.Exists())
+            {
                 message = "Database already exists";
+            }
             else
             {
                 db.Create();
@@ -266,10 +266,8 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
 
             // if loaded correctly then
             if (message != null)
-            {
                 Application.MainLoop.Invoke(() =>
-                    _activator.Show("Create Database",message));
-            }
+                    _activator.Show("Create Database", message));
         }, TaskScheduler.FromCurrentSynchronizationContext());
 
         Application.Run(open, ConsoleMainWindow.ExceptionPopup);
@@ -302,17 +300,16 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             return null;
 
         return TableType == TableType.TableValuedFunction
-            ? new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database).ExpectTableValuedFunction(Table, Schema)
-            : new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database).ExpectTable(Table, Schema, TableType);
+            ? new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
+                .ExpectTableValuedFunction(Table, Schema)
+            : new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
+                .ExpectTable(Table, Schema, TableType);
     }
 
 
     private void BtnPickCredentials_Clicked()
     {
-        if (_activator == null)
-        {
-            return;
-        }
+        if (_activator == null) return;
 
         var creds = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
 
@@ -324,7 +321,6 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
 
         var cred = (DataAccessCredentials)_activator.SelectOne("Select Credentials", creds);
         if (cred != null)
-        {
             try
             {
                 tbUsername.Text = cred.Username;
@@ -334,6 +330,5 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             {
                 _activator.ShowException("Error decrypting password", ex);
             }
-        }
     }
 }

@@ -16,7 +16,7 @@ public class CohortAggregateContainerCombineable : ICombineToMakeCommand
 {
     public CohortAggregateContainer ParentContainerIfAny { get; private set; }
     public CohortAggregateContainer AggregateContainer { get; private set; }
-    public List<CohortAggregateContainer> AllSubContainersRecursively  { get; private set; }
+    public List<CohortAggregateContainer> AllSubContainersRecursively { get; private set; }
 
     public CohortAggregateContainerCombineable(CohortAggregateContainer aggregateContainer)
     {
@@ -27,9 +27,5 @@ public class CohortAggregateContainerCombineable : ICombineToMakeCommand
     }
 
 
-
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

@@ -47,10 +47,12 @@ public class ConsoleInputManager : BasicActivateItems
     /// </summary>
     /// <param name="repositoryLocator">The databases to connect to</param>
     /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
-    public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
+    public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
     {
     }
-    public override void Show(string title,string message)
+
+    public override void Show(string title, string message)
     {
         Console.WriteLine(message);
     }
@@ -63,11 +65,9 @@ public class ConsoleInputManager : BasicActivateItems
                 .AllowEmpty()
         );
 
-        if(string.Equals(text , "Cancel",StringComparison.CurrentCultureIgnoreCase))
-        {
+        if (string.Equals(text, "Cancel", StringComparison.CurrentCultureIgnoreCase))
             // user does not want to type any text
             return false;
-        }
 
         // user typed "null" or some spaces or something
         if (text.IsBasicallyNull())
@@ -82,7 +82,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
-        var value = ReadLineWithAuto(new DialogArgs { WindowTitle = taskDescription}, new PickDatabase());
+        var value = ReadLineWithAuto(new DialogArgs { WindowTitle = taskDescription }, new PickDatabase());
         return value.Database;
     }
 
@@ -91,7 +91,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
-        var value = ReadLineWithAuto(new DialogArgs { WindowTitle = taskDescription },new PickTable());
+        var value = ReadLineWithAuto(new DialogArgs { WindowTitle = taskDescription }, new PickTable());
         return value.Table;
     }
 
@@ -112,19 +112,20 @@ public class ConsoleInputManager : BasicActivateItems
         }
         catch (Exception)
         {
-            Console.WriteLine($"Could not parse value.  Valid Enum values are:{Environment.NewLine}{string.Join(Environment.NewLine,Enum.GetNames(enumType))}" );
+            Console.WriteLine(
+                $"Could not parse value.  Valid Enum values are:{Environment.NewLine}{string.Join(Environment.NewLine, Enum.GetNames(enumType))}");
             throw;
         }
 
         return true;
     }
 
-    public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
+    public override bool SelectType(DialogArgs args, Type[] available, out Type chosen)
     {
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{args}'");
 
-        var chosenStr = GetString(args, available.Select(t=>t.Name).ToList());
+        var chosenStr = GetString(args, available.Select(t => t.Name).ToList());
 
         if (string.IsNullOrWhiteSpace(chosenStr))
         {
@@ -141,8 +142,8 @@ public class ConsoleInputManager : BasicActivateItems
     public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
         IMapsDirectlyToDatabaseTable[] availableObjects)
     {
-        var value = ReadLineWithAuto(args,new PickObjectBase[]
-            {new PickObjectByID(this), new PickObjectByName(this)});
+        var value = ReadLineWithAuto(args, new PickObjectBase[]
+            { new PickObjectByID(this), new PickObjectByName(this) });
 
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
@@ -170,16 +171,11 @@ public class ConsoleInputManager : BasicActivateItems
         {
             sb.Append(Markup.Escape(args.WindowTitle));
 
-            if(entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
-            {
-                sb.Append(" - ");
-            }
+            if (entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel)) sb.Append(" - ");
         }
 
         if (entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
-        {
             sb.Append($"[green]{Markup.Escape(args.EntryLabel)}[/]");
-        }
 
         if (!string.IsNullOrWhiteSpace(args.TaskDescription))
         {
@@ -187,14 +183,13 @@ public class ConsoleInputManager : BasicActivateItems
             sb.Append($"[grey]{Markup.Escape(args.TaskDescription)}[/]");
         }
 
-        foreach(var picker in pickers)
+        foreach (var picker in pickers)
         {
             sb.AppendLine();
             sb.Append($"Format:[grey]{Markup.Escape(picker.Format)}[/]");
 
-            if(picker.Examples.Any())
+            if (picker.Examples.Any())
             {
-
                 sb.AppendLine();
                 sb.Append($"Examples:");
                 foreach (var example in picker.Examples)
@@ -203,6 +198,7 @@ public class ConsoleInputManager : BasicActivateItems
                     sb.Append($"[grey]{Markup.Escape(example)}[/]");
                 }
             }
+
             sb.AppendLine();
             sb.Append(':');
         }
@@ -210,14 +206,13 @@ public class ConsoleInputManager : BasicActivateItems
         return sb.ToString();
     }
 
-    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
+    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args,
+        IMapsDirectlyToDatabaseTable[] availableObjects)
     {
         if (DisallowInput)
-        {
             return args.AllowAutoSelect && availableObjects.Length == 1
                 ? availableObjects[0]
                 : throw new InputDisallowedException($"Value required for '{args}'");
-        }
 
         if (availableObjects.Length == 0)
             throw new Exception("No available objects found");
@@ -231,7 +226,7 @@ public class ConsoleInputManager : BasicActivateItems
         Console.Write(args.EntryLabel);
 
         var value = ReadLineWithAuto(args, new PickObjectBase[]
-            {new PickObjectByID(this), new PickObjectByName(this)});
+            { new PickObjectByID(this), new PickObjectByName(this) });
 
         var chosen = value.DatabaseEntities?.SingleOrDefault();
 
@@ -245,23 +240,18 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
     {
-        for(var i =0;i<available.Length;i++)
-        {
-            Console.WriteLine($"{i}:{available[i]}");
-        }
+        for (var i = 0; i < available.Length; i++) Console.WriteLine($"{i}:{available[i]}");
 
         Console.Write(args.EntryLabel);
 
         var result = Console.ReadLine();
 
-        if(int.TryParse(result, out var idx))
-        {
-            if(idx >= 0 && idx < available.Length)
+        if (int.TryParse(result, out var idx))
+            if (idx >= 0 && idx < available.Length)
             {
                 selected = available[idx];
                 return true;
             }
-        }
 
         selected = default;
         return false;
@@ -274,7 +264,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         var line = AnsiConsole.Prompt(
             new TextPrompt<string>(
-                GetPromptFor(args,true, pickers).Trim()));
+                GetPromptFor(args, true, pickers).Trim()));
 
 
         var cli = new CommandLineObjectPicker(new[] { line }, pickers);
@@ -298,10 +288,9 @@ public class ConsoleInputManager : BasicActivateItems
         return result.IsBasicallyNull() ? null : new DirectoryInfo(result);
     }
 
-    public override FileInfo SelectFile(string prompt)
-    {
-        return DisallowInput ? throw new InputDisallowedException($"Value required for '{prompt}'") : SelectFile(prompt, null, null);
-    }
+    public override FileInfo SelectFile(string prompt) => DisallowInput
+        ? throw new InputDisallowedException($"Value required for '{prompt}'")
+        : SelectFile(prompt, null, null);
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
@@ -340,14 +329,15 @@ public class ConsoleInputManager : BasicActivateItems
 
         var asteriskIdx = file.IndexOf('*');
 
-        if(asteriskIdx != -1)
+        if (asteriskIdx != -1)
         {
-            var idxLastSlash = file.LastIndexOfAny(new []{ Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
+            var idxLastSlash =
+                file.LastIndexOfAny(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
 
-            if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
+            if (idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
 
-            var searchPattern = file[(idxLastSlash+1)..];
+            var searchPattern = file[(idxLastSlash + 1)..];
             var dirStr = file[..idxLastSlash];
 
             var dir = new DirectoryInfo(dirStr);
@@ -357,12 +347,11 @@ public class ConsoleInputManager : BasicActivateItems
                 : dir.GetFiles(searchPattern).ToArray();
         }
 
-        return new[]{ new FileInfo(file) };
-
+        return new[] { new FileInfo(file) };
     }
 
 
-    protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
+    protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
     {
         chosen = UsefulStuff.ChangeType(AnsiConsole.Ask<string>(GetPromptFor(args)), paramType);
         return true;
@@ -370,7 +359,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
-        var result = GetString(args, new List<string> { "Yes","No","Cancel"});
+        var result = GetString(args, new List<string> { "Yes", "No", "Cancel" });
         chosen = result == "Yes";
         //user made a non-cancel decision?
         return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
@@ -391,27 +380,27 @@ public class ConsoleInputManager : BasicActivateItems
     public override void ShowData(IViewSQLAndResultsCollection collection)
     {
         var point = collection.GetDataAccessPoint();
-        var db = DataAccessPortal.ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(point, DataAccessContext.InternalDataProcessing);
 
         var sql = collection.GetSql();
 
         var logger = NLog.LogManager.GetCurrentClassLogger();
         logger.Trace($"About to ShowData from Query:{Environment.NewLine}{sql}");
 
-        var toRun = new ExtractTableVerbatim(db.Server,sql,Console.OpenStandardOutput(),",",null);
+        var toRun = new ExtractTableVerbatim(db.Server, sql, Console.OpenStandardOutput(), ",", null);
         toRun.DoExtraction();
     }
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
-        foreach(var load in GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
+        foreach (var load in GetLogs(rootObject).OrderByDescending(l => l.StartTime))
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
 
             Console.WriteLine($"Errors:{load.Errors.Count}");
 
-            foreach(var error in load.Errors)
+            foreach (var error in load.Errors)
             {
                 error.GetSummary(out var title, out var body, out _, out _);
 
@@ -421,20 +410,17 @@ public class ConsoleInputManager : BasicActivateItems
 
             Console.WriteLine("Tables Loaded:");
 
-            foreach(var t in load.TableLoadInfos)
+            foreach (var t in load.TableLoadInfos)
             {
                 Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
 
-                foreach(var source in t.DataSources)
+                foreach (var source in t.DataSources)
                     Console.WriteLine($"\t\tSource:{source.Source}");
             }
 
             Console.WriteLine("Progress:");
 
-            foreach(var p in load.Progress)
-            {
-                Console.WriteLine($"\t{p.Date} {p.Description}");
-            }
+            foreach (var p in load.Progress) Console.WriteLine($"\t{p.Date} {p.Description}");
         }
     }
 
@@ -445,16 +431,13 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
     {
-        if(available.Length == 0)
+        if (available.Length == 0)
         {
             selected = Array.Empty<T>();
             return true;
         }
 
-        for(var i =0;i < available.Length; i++)
-        {
-            Console.WriteLine($"{i}:{available[i]}");
-        }
+        for (var i = 0; i < available.Length; i++) Console.WriteLine($"{i}:{available[i]}");
 
         var result = Console.ReadLine();
 
@@ -465,7 +448,7 @@ public class ConsoleInputManager : BasicActivateItems
             return true;
         }
 
-        var selectIdx = result.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+        var selectIdx = result.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
 
         selected = available.Where((e, idx) => selectIdx.Contains(idx)).ToArray();
         return true;
@@ -489,15 +472,9 @@ public class ConsoleInputManager : BasicActivateItems
     {
         var tbl = new Table();
 
-        foreach(DataColumn c in collection.Columns)
-        {
-            tbl.AddColumn(c.ColumnName);
-        }
+        foreach (DataColumn c in collection.Columns) tbl.AddColumn(c.ColumnName);
 
-        foreach(DataRow row in collection.Rows)
-        {
-            tbl.AddRow(row.ItemArray.Select(i => i.ToString()).ToArray());
-        }
+        foreach (DataRow row in collection.Rows) tbl.AddRow(row.ItemArray.Select(i => i.ToString()).ToArray());
         AnsiConsole.Write(tbl);
     }
 }

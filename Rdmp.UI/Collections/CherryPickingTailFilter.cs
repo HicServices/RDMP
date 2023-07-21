@@ -24,7 +24,7 @@ internal class CherryPickingTailFilter : IListFilter
     /// </summary>
     /// <param name="numberOfObjects">The maximum number of objects to return (can be exceeded if there are <see cref="TextMatchFilterWithAlwaysShowList.AlwaysShow"/> objects)</param>
     /// <param name="modelFilter">The optional search/alwaysShowList filter from which objects should be returned from first</param>
-    public CherryPickingTailFilter(int numberOfObjects,TextMatchFilterWithAlwaysShowList modelFilter)
+    public CherryPickingTailFilter(int numberOfObjects, TextMatchFilterWithAlwaysShowList modelFilter)
     {
         _numberOfObjects = numberOfObjects;
         _modelFilter = modelFilter;
@@ -48,8 +48,10 @@ internal class CherryPickingTailFilter : IListFilter
         var available = modelObjects.Cast<object>().ToList();
 
         //We will return the alwaysShowList objects for sure
-        var toReturn = hasAlwaysShowlist ? new HashSet<object>(available.Intersect(_modelFilter.AlwaysShow)) : new HashSet<object>();
-            
+        var toReturn = hasAlwaysShowlist
+            ? new HashSet<object>(available.Intersect(_modelFilter.AlwaysShow))
+            : new HashSet<object>();
+
         //but let's also take up to _numberOfObjects other objects that match the filter (if any)
         foreach (var a in available.Where(o => !hasSearchTokens || _modelFilter.Filter(o)))
         {

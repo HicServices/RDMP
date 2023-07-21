@@ -29,25 +29,21 @@ internal class LinkerTests : DatabaseTests
 
             //now you can add as many links as you want, it just skips them
             lazor.SetColumnInfo(velocityColumn);
-            Assert.AreEqual(lazor.ColumnInfo,velocityColumn);
-
+            Assert.AreEqual(lazor.ColumnInfo, velocityColumn);
         }
         finally
         {
             lazor.DeleteInDatabase(); //delete child
             predator.DeleteInDatabase(); //delete parent
 
-            velocityColumn.DeleteInDatabase();//delete child
-            highEnergyTable.DeleteInDatabase();//delete parent
+            velocityColumn.DeleteInDatabase(); //delete child
+            highEnergyTable.DeleteInDatabase(); //delete parent
         }
-          
-         
     }
 
     [Test]
     public void AddLinkBetween_createNewLink_pass()
     {
-
         ///////////////Create the things that we are going to create relationships between /////////////////
         var predator = new Catalogue(CatalogueRepository, "Predator");
         var lazor = new CatalogueItem(CatalogueRepository, predator, "QuadlzorVelocity");
@@ -68,11 +64,12 @@ internal class LinkerTests : DatabaseTests
         Assert.IsTrue(lazor.ColumnInfo.ID == velocityColumn.ID);
 
         ////////////////cleanup ---- Delete everything that we created -------- //////////////
-        velocityColumn.DeleteInDatabase(); //delete causes CASCADE: CatalogueItem no longer associated with ColumnInfo because ColumnInfo died
+        velocityColumn
+            .DeleteInDatabase(); //delete causes CASCADE: CatalogueItem no longer associated with ColumnInfo because ColumnInfo died
 
         lazor.RevertToDatabaseState();
 
-        Assert.IsNull(lazor.ColumnInfo);//involves a database query so won't actually invalidate the below
+        Assert.IsNull(lazor.ColumnInfo); //involves a database query so won't actually invalidate the below
 
         predator.DeleteInDatabase();
 

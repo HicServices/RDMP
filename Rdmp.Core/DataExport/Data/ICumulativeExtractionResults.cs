@@ -73,7 +73,8 @@ public interface ICumulativeExtractionResults : IExtractionResults, IRevertable
     /// <param name="sqlExecuted"></param>
     /// <param name="extractedObject"></param>
     /// <returns></returns>
-    ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject);
+    ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted,
+        IMapsDirectlyToDatabaseTable extractedObject);
 
     /// <summary>
     /// Returns true if the audit described by this class is for the given <see cref="ISelectedDataSets"/>
@@ -81,5 +82,4 @@ public interface ICumulativeExtractionResults : IExtractionResults, IRevertable
     /// <param name="selectedDataSet"></param>
     /// <returns></returns>
     bool IsFor(ISelectedDataSets selectedDataSet);
-
 }

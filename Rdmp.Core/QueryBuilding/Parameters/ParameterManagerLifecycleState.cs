@@ -29,5 +29,4 @@ public enum ParameterManagerLifecycleState
     /// The final parameter list has been generated and no more parameters can be added
     /// </summary>
     Finalized
-
 }

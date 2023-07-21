@@ -44,7 +44,7 @@ public class ExcelConversionTest
 
     private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
     {
-        var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);
+        var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName, true);
         _dirsToCleanUp.Push(loadDirectory.RootPath);
         return loadDirectory;
     }
@@ -87,12 +87,13 @@ public class ExcelConversionTest
 
         fi.CopyTo(targetFile, true);
 
-        var ex = Assert.Throws<Exception>(()=> TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
+        var ex = Assert.Throws<Exception>(() => TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
         Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
 
-    private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
+    private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets,
+        LoadDirectory directory)
     {
         var f = new FileInfo(targetFile);
 
@@ -104,16 +105,16 @@ public class ExcelConversionTest
             var converter = new ExcelToCSVFilesConverter();
 
             var job = new ThrowImmediatelyDataLoadJob(ThrowImmediatelyDataLoadEventListener.QuietPicky)
-                {
-                    LoadDirectory = directory
-                };
+            {
+                LoadDirectory = directory
+            };
 
             converter.ExcelFilePattern = fileExtensionToConvert;
             converter.Fetch(job, new GracefulCancellationToken());
 
             var filesCreated = directory.ForLoading.GetFiles("*.csv");
 
-            Assert.AreEqual(expectedNumberOfSheets,filesCreated.Length);
+            Assert.AreEqual(expectedNumberOfSheets, filesCreated.Length);
 
             foreach (var fileCreated in filesCreated)
             {

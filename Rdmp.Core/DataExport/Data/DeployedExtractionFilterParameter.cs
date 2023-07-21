@@ -20,9 +20,10 @@ namespace Rdmp.Core.DataExport.Data;
 /// <summary>
 /// Stores parameter values for a DeployedExtractionFilter e.g. @healthboard = 'T'
 /// </summary>
-public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
+public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
 {
     #region Database Properties
+
     private int _extractionFilter_ID;
     private string _parameterSQL;
     private string _value;
@@ -32,7 +33,7 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     /// The <see cref="ExtractionFilter"/> against which the parameter is declared.  The WHERE Sql of the filter should
     /// reference this parameter (e.g. "[mydb]..[mytbl].[hb_extract] = @healthboard").
     /// </summary>
-    [Relationship(typeof(DeployedExtractionFilter),RelationshipType.SharedObject)]
+    [Relationship(typeof(DeployedExtractionFilter), RelationshipType.SharedObject)]
     public int ExtractionFilter_ID
     {
         get => _extractionFilter_ID;
@@ -61,6 +62,7 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
         get => _comment;
         set => SetField(ref _comment, value);
     }
+
     #endregion
 
     /// <inheritdoc/>
@@ -68,14 +70,15 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Relationships
+
     [NoMappingToDatabase]
-    public DeployedExtractionFilter ExtractionFilter => Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
+    public DeployedExtractionFilter ExtractionFilter =>
+        Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
 
     #endregion
 
     public DeployedExtractionFilterParameter()
     {
-
     }
 
     /// <summary>
@@ -90,8 +93,8 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ParameterSQL", parameterSQL},
-            {"ExtractionFilter_ID", parent.ID}
+            { "ParameterSQL", parameterSQL },
+            { "ExtractionFilter_ID", parent.ID }
         });
     }
 
@@ -100,7 +103,7 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
-    internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r): base(repository, r)
+    internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r) : base(repository, r)
     {
         ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;
@@ -112,10 +115,7 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     /// returns the <see cref="ParameterName"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    public override string ToString() => $"{ParameterName} = {Value}";
 
     /// <summary>
     /// Checks the parameter syntax (See <see cref="ParameterSyntaxChecker"/>)
@@ -127,16 +127,12 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return ((DeployedExtractionFilter) GetOwnerIfAny()).GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
+        ((DeployedExtractionFilter)GetOwnerIfAny()).GetQuerySyntaxHelper();
 
     /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
-        return Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
-    }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() =>
+        Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
 
     public DeployedExtractionFilterParameter ShallowClone(DeployedExtractionFilter into)
     {

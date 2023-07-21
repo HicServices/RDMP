@@ -44,7 +44,9 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
 
     private readonly ICheckable _preExecutionChecker;
 
-    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution,HICDatabaseConfiguration configuration)
+    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ILoadMetadata loadMetadata,
+        ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,
+        IDataLoadExecution loadExecution, HICDatabaseConfiguration configuration)
     {
         _repositoryLocator = repositoryLocator;
         LoadMetadata = loadMetadata;
@@ -55,7 +57,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
         LogManager = logManager;
         ExitCode = ExitCodeType.Success;
 
-        JobProvider = new JobFactory(loadMetadata,logManager);
+        JobProvider = new JobFactory(loadMetadata, logManager);
     }
 
     public virtual ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null)
@@ -63,7 +65,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
         PerformPreExecutionChecks();
 
         // create job
-        var job = JobProvider.Create(_repositoryLocator,DataLoadEventListener,_configuration);
+        var job = JobProvider.Create(_repositoryLocator, DataLoadEventListener, _configuration);
 
         // if job is null, there are no more jobs to submit
         if (job == null)
@@ -79,7 +81,8 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
     {
         try
         {
-            DataLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
+            DataLoadEventListener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
             var thrower = ThrowImmediatelyCheckNotifier.Quiet;
             _preExecutionChecker.Check(thrower);
         }

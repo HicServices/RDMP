@@ -42,7 +42,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     /// </summary>
     public IExecuteDatasetExtractionDestination Destination { get; private set; }
 
-    public ExtractionPipelineUseCase(IBasicActivateItems activator,IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
+    public ExtractionPipelineUseCase(IBasicActivateItems activator, IProject project, IExtractCommand extractCommand,
+        IPipeline pipeline, DataLoadInfo dataLoadInfo)
     {
         _dataLoadInfo = dataLoadInfo;
         ExtractCommand = extractCommand;
@@ -60,7 +61,6 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     }
 
 
-
     protected override IDataFlowPipelineContext GenerateContextImpl()
     {
         //create the context using the standard context factory
@@ -68,7 +68,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo);
 
         //adjust context: we want a destination requirement of IExecuteDatasetExtractionDestination
-        context.MustHaveDestination = typeof(IExecuteDatasetExtractionDestination);//we want this freaky destination type
+        context.MustHaveDestination =
+            typeof(IExecuteDatasetExtractionDestination); //we want this freaky destination type
         context.MustHaveSource = typeof(ExecuteDatasetExtractionSource);
 
         return context;
@@ -76,7 +77,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
     public void Execute(IDataLoadEventListener listener)
     {
-        if(ExtractCommand is ExtractDatasetCommand eds)
+        if (ExtractCommand is ExtractDatasetCommand eds)
         {
             bool runAgain;
             var totalFailureCount = 0;
@@ -97,15 +98,15 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                     runSuccessful = false;
                 }
 
-                if(runSuccessful)
+                if (runSuccessful)
                 {
                     runAgain = IncrementProgressIfAny(eds, listener);
                     consecutiveFailureCount = 0;
 
-                    if(runAgain)
-                    {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running pipeline again for next batch in ExtractionProgress"));
-                    }
+                    if (runAgain)
+                        listener.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Information,
+                                $"Running pipeline again for next batch in ExtractionProgress"));
                 }
                 else
                 {
@@ -114,13 +115,11 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
                     runAgain = ShouldRetry(eds, listener, totalFailureCount, consecutiveFailureCount);
 
-                    if(runAgain)
-                    {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Retrying pipeline"));
-                    }
+                    if (runAgain)
+                        listener.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Information, $"Retrying pipeline"));
                 }
-            }
-            while (runAgain);
+            } while (runAgain);
         }
         else
         {
@@ -148,7 +147,9 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             // update our progress
             progress.ProgressDate = extractDatasetCommand.BatchEnd.Value;
             progress.SaveToDatabase();
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving batch extraction progress as {progress.ProgressDate}"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    $"Saving batch extraction progress as {progress.ProgressDate}"));
 
             if (progress.MoreToFetch())
             {
@@ -159,6 +160,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
             return false;
         }
+
         return false;
     }
 
@@ -171,11 +173,12 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     /// <param name="totalFailureCount"></param>
     /// <param name="consecutiveFailureCount"></param>
     /// <returns></returns>
-    private bool ShouldRetry(ExtractDatasetCommand extractDatasetCommand, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount)
+    private bool ShouldRetry(ExtractDatasetCommand extractDatasetCommand, IDataLoadEventListener listener,
+        int totalFailureCount, int consecutiveFailureCount)
     {
         var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
 
-        return progress?.ApplyRetryWaitStrategy(Token,listener, totalFailureCount, consecutiveFailureCount) == true;
+        return progress?.ApplyRetryWaitStrategy(Token, listener, totalFailureCount, consecutiveFailureCount) == true;
     }
 
 
@@ -190,7 +193,9 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         {
             ExtractCommand.ElevateState(ExtractCommandState.WaitingToExecute);
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    $"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
 
             var engine = GetEngine(_pipeline, listener);
 
@@ -203,7 +208,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             catch (Exception e)
             {
                 ExtractCommand.ElevateState(ExtractCommandState.Crashed);
-                _dataLoadInfo.LogFatalError("Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
+                _dataLoadInfo.LogFatalError("Execute extraction pipeline",
+                    ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
                 if (ExtractCommand is ExtractDatasetCommand command)
                 {
@@ -256,7 +262,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         }
         catch (Exception ex)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception", ex));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception", ex));
             ExtractCommand.ElevateState(ExtractCommandState.Crashed);
         }
 
@@ -269,7 +276,9 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 ExtractCommand.ElevateState(ExtractCommandState.Completed);
         }
         else
+        {
             return false; // it crashed or was aborted etc
+        }
 
         return true;
     }
@@ -277,10 +286,12 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     public override IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
     {
         var engine = base.GetEngine(pipeline, listener);
-            
-        Destination = (IExecuteDatasetExtractionDestination)engine.DestinationObject; //record the destination that was created as part of the Pipeline configured
+
+        Destination =
+            (IExecuteDatasetExtractionDestination)engine
+                .DestinationObject; //record the destination that was created as part of the Pipeline configured
         Source = (ExecuteDatasetExtractionSource)engine.SourceObject;
-            
+
         return engine;
     }
 
@@ -289,11 +300,11 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         ExtractCommand.ElevateState(ExtractCommandState.WritingMetadata);
         WordDataWriter wordDataWriter;
 
-            
+
         try
         {
             wordDataWriter = new WordDataWriter(this);
-            wordDataWriter.GenerateWordFile();//run the report
+            wordDataWriter.GenerateWordFile(); //run the report
         }
         catch (Exception e)
         {
@@ -301,17 +312,20 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             // tell user that we could not run the report and set the status to warning
             ExtractCommand.ElevateState(ExtractCommandState.Warning);
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED",e));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED", e));
             return;
         }
-            
+
         //if there were any exceptions
         if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
         {
             ExtractCommand.ElevateState(ExtractCommandState.Warning);
 
             foreach (var e in wordDataWriter.ExceptionsGeneratingWordFile)
-                listener.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
+                listener.OnNotify(wordDataWriter,
+                    new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception",
+                        e));
         }
         else
         {
@@ -332,8 +346,5 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         GenerateContext();
     }
 
-    public static ExtractionPipelineUseCase DesignTime()
-    {
-        return new ExtractionPipelineUseCase();
-    }
+    public static ExtractionPipelineUseCase DesignTime() => new();
 }

@@ -60,7 +60,7 @@ public class MetadataReportArgs
     /// <summary>
     /// True to output descriptions of <see cref="CatalogueItem"/> even if they don't have any <see cref="ExtractionInformation"/>
     /// </summary>
-    public bool IncludeNonExtractableItems { get;set;}
+    public bool IncludeNonExtractableItems { get; set; }
 
     /// <summary>
     /// When outputting <see cref="Lookup"/> tables this is the maximum number of rows that will be written from the lookup table.
@@ -71,5 +71,4 @@ public class MetadataReportArgs
     {
         Catalogues = toReportOn.ToArray();
     }
-
 }

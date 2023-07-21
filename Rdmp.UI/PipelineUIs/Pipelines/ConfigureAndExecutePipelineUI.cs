@@ -69,7 +69,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         taskDescriptionLabel1.SetupFor(args);
 
         //designer mode
-        if(useCase == null && activator == null)
+        if (useCase == null && activator == null)
             return;
         Text = args.WindowTitle;
 
@@ -86,7 +86,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
         var context = useCase.GetContext();
 
-        if(context.GetFlowType() != typeof(DataTable))
+        if (context.GetFlowType() != typeof(DataTable))
             throw new NotSupportedException("Only DataTable flow contexts can be used with this class");
 
         foreach (var o in useCase.GetInitializationObjects())
@@ -96,7 +96,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
             _initializationObjects.Add(o);
         }
 
-        SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
+        SetPipelineOptions(activator.RepositoryLocator.CatalogueRepository);
     }
 
     private bool _pipelineOptionsSet;
@@ -107,7 +107,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     private void SetPipelineOptions(ICatalogueRepository repository)
     {
         if (_pipelineOptionsSet)
-            throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
+            throw new Exception(
+                "CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
 
         _pipelineOptionsSet = true;
@@ -146,7 +147,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         if (!_pipelineOptionsSet)
             return;
 
-        if(_pipelineSelectionUI.Pipeline != null)
+        if (_pipelineSelectionUI.Pipeline != null)
         {
             btnPreviewSource.Enabled = true;
             btnExecute.Enabled = true;
@@ -172,7 +173,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         //if it is already executing
         if (btnExecute.Text == "Stop")
         {
-            _cancel.Cancel();//set the cancellation token
+            _cancel.Cancel(); //set the cancellation token
             return;
         }
 
@@ -183,7 +184,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         //clear any old results
         progressUI1.Clear();
 
-        PipelineExecutionStarted?.Invoke(this,new PipelineEngineEventArgs(pipeline));
+        PipelineExecutionStarted?.Invoke(this, new PipelineEngineEventArgs(pipeline));
 
         progressUI1.ShowRunning(true);
 
@@ -203,20 +204,14 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
                     fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
                     exception = ex;
                 }
-
             }
-
-
-
         );
 
         t.ContinueWith(x =>
         {
             if (success)
-            {
                 //if it successfully got here then Thread has run the engine to completion successfully
                 PipelineExecutionFinishedsuccessfully?.Invoke(this, new PipelineEngineEventArgs(pipeline));
-            }
 
             progressUI1.ShowRunning(false);
 
@@ -225,10 +220,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
             if (success)
             {
                 if (UserSettings.ShowPipelineCompletedPopup)
-                {
                     WideMessageBox.Show("Pipeline Completed", "Pipeline execution completed", WideMessageBoxTheme.Help);
-
-                }
                 progressUI1.SetSuccess();
             }
             else
@@ -237,11 +229,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
                 progressUI1.SetFatal();
 
                 if (UserSettings.ShowPipelineCompletedPopup)
-                {
                     ExceptionViewer.Show("Pipeline Failed", exception ?? worst?.Exception);
-                }
             }
-
         }, TaskScheduler.FromCurrentSynchronizationContext());
 
         t.Start();
@@ -255,12 +244,13 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         if (pipeline != null)
             try
             {
-                var dtv = new DataTableViewerUI(((IDataFlowSource<DataTable>) pipeline.SourceObject).TryGetPreview(),"Preview");
+                var dtv = new DataTableViewerUI(((IDataFlowSource<DataTable>)pipeline.SourceObject).TryGetPreview(),
+                    "Preview");
                 SingleControlForm.ShowDialog(dtv);
             }
             catch (Exception exception)
             {
-                ExceptionViewer.Show("Preview Generation Failed",exception);
+                ExceptionViewer.Show("Preview Generation Failed", exception);
             }
     }
 
@@ -275,7 +265,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         }
         catch (Exception exception)
         {
-            fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Could not instantiate pipeline", exception));
+            fork.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Could not instantiate pipeline", exception));
             return null;
         }
 
@@ -286,7 +277,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         }
         catch (Exception exception)
         {
-            fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to Initialize pipeline", exception));
+            fork.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Failed to Initialize pipeline", exception));
             return null;
         }
 
@@ -295,26 +287,25 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
     private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     private void tpConfigure_Click(object sender, EventArgs e)
     {
-
     }
 
     public void CancelIfRunning()
     {
-        if(_cancel is { IsCancellationRequested: false })
+        if (_cancel is { IsCancellationRequested: false })
             _cancel.Cancel();
     }
 
     public void SetAdditionalProgressListener(IDataLoadEventListener listener)
     {
-        fork = new ForkDataLoadEventListener(progressUI1,listener);
+        fork = new ForkDataLoadEventListener(progressUI1, listener);
     }
 
-    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         Activator.ShowDialog(new SingleControlForm(this));
         return 0;

@@ -27,7 +27,7 @@ public class DilutionOperationFactory
     {
         ArgumentNullException.ThrowIfNull(operation);
 
-        if(!typeof(IDilutionOperation).IsAssignableFrom(operation))
+        if (!typeof(IDilutionOperation).IsAssignableFrom(operation))
             throw new ArgumentException($"Requested operation Type {operation} did was not an IDilutionOperation");
 
         var instance = MEF.CreateA<IDilutionOperation>(operation.FullName);

@@ -29,7 +29,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
     private Tab graphTab;
 
     public ConsoleGuiViewGraph(IBasicActivateItems activator, AggregateConfiguration aggregate) :
-        base (activator, new ViewAggregateExtractUICollection(aggregate) { TopX = null })
+        base(activator, new ViewAggregateExtractUICollection(aggregate) { TopX = null })
     {
         graphView = new GraphView
         {
@@ -38,7 +38,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         };
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
-        TabView.AddTab(graphTab = new Tab("Graph",graphView), false);
+        TabView.AddTab(graphTab = new Tab("Graph", graphView), false);
         this.aggregate = aggregate;
     }
 
@@ -50,7 +50,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         TabView.SelectedTab = graphTab;
 
         string valueColumnName;
-                        
+
         try
         {
             valueColumnName = aggregate.GetQuerySyntaxHelper().GetRuntimeName(aggregate.CountSQL);
@@ -77,14 +77,8 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         var boundsWidth = graphView.Bounds.Width;
         var boundsHeight = graphView.Bounds.Height;
 
-        if (boundsWidth == 0)
-        {
-            boundsWidth = TabView.Bounds.Width - 4;
-        }
-        if (boundsHeight == 0)
-        {
-            boundsHeight = TabView.Bounds.Height - 4;
-        }
+        if (boundsWidth == 0) boundsWidth = TabView.Bounds.Width - 4;
+        if (boundsHeight == 0) boundsHeight = TabView.Bounds.Height - 4;
 
         var titleWidth = aggregate.Name.Sum(c => Rune.ColumnWidth(c));
         var titleStartX = boundsWidth / 2 - titleWidth / 2;
@@ -101,29 +95,25 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // if no time axis then we have a regular bar chart
         if (axis == null)
         {
-            if(dt.Columns.Count == 2)
-            {
+            if (dt.Columns.Count == 2)
                 SetupBarSeries(dt, countColumnName, boundsWidth, boundsHeight);
-            }
             else
-            {
                 SetupMultiBarSeries(dt, countColumnName, boundsWidth, boundsHeight);
-            }
         }
         else
         {
-            SetupLineGraph(dt, axis,countColumnName, boundsWidth, boundsHeight);
+            SetupLineGraph(dt, axis, countColumnName, boundsWidth, boundsHeight);
         }
-
     }
 
-    private void SetupLineGraph(DataTable dt, AggregateContinuousDateAxis axis, string countColumnName, int boundsWidth, int boundsHeight)
+    private void SetupLineGraph(DataTable dt, AggregateContinuousDateAxis axis, string countColumnName, int boundsWidth,
+        int boundsHeight)
     {
         graphView.AxisY.Text = countColumnName;
         graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
 
-        var xIncrement = 1f/(boundsWidth / (float)dt.Rows.Count);
-            
+        var xIncrement = 1f / (boundsWidth / (float)dt.Rows.Count);
+
         graphView.MarginBottom = 2;
         graphView.AxisX.Increment = xIncrement * 10;
         graphView.AxisX.ShowLabelsEvery = 1;
@@ -139,10 +129,9 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var colors = GetColors(dt.Columns.Count - 1);
 
-        for (var i =1;i<dt.Columns.Count;i++)
+        for (var i = 1; i < dt.Columns.Count; i++)
         {
-
-            var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
+            var series = new PathAnnotation { LineColor = colors[i - 1], BeforeSeries = true };
             var row = 0;
 
             foreach (DataRow dr in dt.Rows)
@@ -159,19 +148,17 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
             graphView.Annotations.Add(series);
         }
 
-        var yIncrement = 1/((boundsHeight- graphView.MarginBottom)/(maxY - minY));
+        var yIncrement = 1 / ((boundsHeight - graphView.MarginBottom) / (maxY - minY));
 
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-        graphView.AxisY.LabelGetter = v => FormatValue(v.Value,minY);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, minY);
         graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY).Length, FormatValue(minY, minY).Length) + 1;
 
-        var legend = GetLegend(dt,boundsWidth,boundsHeight);
+        var legend = GetLegend(dt, boundsWidth, boundsHeight);
 
         for (var i = 1; i < dt.Columns.Count; i++)
-        {
             legend.AddEntry(new GraphCellToRender('.', colors[i - 1]), dt.Columns[i].ColumnName);
-        }
     }
 
     /// <summary>
@@ -195,7 +182,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         return legend;
     }
 
-    private void SetupBarSeries(DataTable dt,string countColumnName, int boundsWidth, int boundsHeight)
+    private void SetupBarSeries(DataTable dt, string countColumnName, int boundsWidth, int boundsHeight)
     {
         var barSeries = new BarSeries();
 
@@ -212,10 +199,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         {
             var label = dr[0].ToString();
 
-            if (string.IsNullOrWhiteSpace(label))
-            {
-                label = "<Null>";
-            }
+            if (string.IsNullOrWhiteSpace(label)) label = "<Null>";
 
             // treat nulls as 0
             var val = dr[1] == DBNull.Value ? 0 : (float)Convert.ToDouble(dr[1]);
@@ -281,10 +265,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var toReturn = new List<Attribute>();
 
-        for (var i = 0; i < numberNeeded; i++)
-        {
-            toReturn.Add(colors[i % colors.Length]);
-        }
+        for (var i = 0; i < numberNeeded; i++) toReturn.Add(colors[i % colors.Length]);
 
         return toReturn;
     }
@@ -297,12 +278,10 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
 
         // Configure legend
-        var legend = GetLegend(dt,boundsWidth,boundsHeight);
+        var legend = GetLegend(dt, boundsWidth, boundsHeight);
 
-        for(var i =1;i < dt.Columns.Count; i++)
-        {
-            legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i-1]), dt.Columns[i].ColumnName);
-        }
+        for (var i = 1; i < dt.Columns.Count; i++)
+            legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i - 1]), dt.Columns[i].ColumnName);
 
         // Configure multi bar series
         var barSeries = new MultiBarSeries(numberOfBars, numberOfBars + 1, 1, colors);
@@ -314,16 +293,13 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         {
             var label = dr[0].ToString();
 
-            if (string.IsNullOrWhiteSpace(label))
-            {
-                label = "<Null>";
-            }
+            if (string.IsNullOrWhiteSpace(label)) label = "<Null>";
             var vals = dr.ItemArray.Skip(1)
-                .Select(v=>v == DBNull.Value ? 0 : (float)Convert.ToDouble(v)).ToArray();
+                .Select(v => v == DBNull.Value ? 0 : (float)Convert.ToDouble(v)).ToArray();
 
             barSeries.AddBars(label, mediumStiple, vals);
 
-            foreach(var val in vals)
+            foreach (var val in vals)
             {
                 min = Math.Min(min, val);
                 max = Math.Max(max, val);
@@ -333,37 +309,38 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure Axis, Margins etc
 
         // make sure whole graph fits on axis
-        var yIncrement = (max - min) / (boundsHeight - 2/*MarginBottom*/);
+        var yIncrement = (max - min) / (boundsHeight - 2 /*MarginBottom*/);
 
         // 1 bar per row of console
         graphView.CellSize = new PointF(1, yIncrement);
 
         graphView.Series.Add(barSeries);
         graphView.MarginBottom = 2;
-        graphView.MarginLeft = (uint)Math.Max(FormatValue(max,min).Length, FormatValue(min, min).Length)+1;
-            
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(max, min).Length, FormatValue(min, min).Length) + 1;
+
         // work out how to space x axis without scrolling
-        graphView.AxisY.Increment = yIncrement*5;
+        graphView.AxisY.Increment = yIncrement * 5;
         graphView.AxisY.ShowLabelsEvery = 1;
         graphView.AxisY.LabelGetter = v => FormatValue(v.Value, min);
         graphView.AxisY.Text = countColumnName;
 
-        graphView.AxisX.Increment = numberOfBars+1;
+        graphView.AxisX.Increment = numberOfBars + 1;
         graphView.AxisX.ShowLabelsEvery = 1;
         graphView.AxisX.Increment = 0;
         graphView.AxisX.Text = dt.Columns[0].ColumnName;
     }
+
     private static string FormatValue(float val, float min)
     {
         return val < min
             ? ""
             : val switch
-        {
-            > 1 => val.ToString("N0"),
-            >= 0.01f => val.ToString("N2"),
-            > 0.0001f => val.ToString("N4"),
-            > 0.000001f => val.ToString("N6"),
-            _ => val.ToString(CultureInfo.InvariantCulture)
-        };
+            {
+                > 1 => val.ToString("N0"),
+                >= 0.01f => val.ToString("N2"),
+                > 0.0001f => val.ToString("N4"),
+                > 0.000001f => val.ToString("N6"),
+                _ => val.ToString(CultureInfo.InvariantCulture)
+            };
     }
 }

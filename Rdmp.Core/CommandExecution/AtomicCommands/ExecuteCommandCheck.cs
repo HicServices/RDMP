@@ -20,7 +20,8 @@ public sealed class ExecuteCommandCheck : BasicCommandExecution
     private readonly ICheckable _checkable;
     private readonly ICheckNotifier _notifier;
 
-    public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) : base(activator)
+    public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) :
+        base(activator)
     {
         _checkable = checkable;
         _notifier = notifier;

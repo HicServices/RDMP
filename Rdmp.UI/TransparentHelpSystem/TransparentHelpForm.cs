@@ -17,7 +17,7 @@ namespace Rdmp.UI.TransparentHelpSystem;
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public partial class TransparentHelpForm:Form
+public partial class TransparentHelpForm : Form
 {
     private readonly Control _host;
     private Control _highlight;
@@ -51,40 +51,37 @@ public partial class TransparentHelpForm:Form
         TransparencyKey = transparencyColor;
 
         timer.Interval = 100;
-        timer.Tick +=(s,e)=> UpdateLocation();
+        timer.Tick += (s, e) => UpdateLocation();
         timer.Start();
         DoubleBuffered = true;
 
         //if the host is a Form and it closes we should close too
         if (host is Form form)
-            form.FormClosed +=(s,e)=> Close();
+            form.FormClosed += (s, e) => Close();
     }
+
     private void UpdateLocation()
     {
         //move ourself over the hosted control
         if (_host is Form)
         {
-
-            Location =  _host.PointToScreen(new Point(0,0));
+            Location = _host.PointToScreen(new Point(0, 0));
             Width = _host.ClientRectangle.Width;
             Height = _host.ClientRectangle.Height;
         }
         else
         {
-            Location = _host.PointToScreen(_host.Location);//host is not a top level control but an embedded control so get the screen coordinate of the control;
+            Location = _host.PointToScreen(_host
+                .Location); //host is not a top level control but an embedded control so get the screen coordinate of the control;
             Width = _host.Width;
             Height = _host.Height;
         }
 
 
         if (_host.ContainsFocus)
-        {
             ShowWithoutActivate();
-        }
         else
-        {
             Visible = false;
-        }
 
         Invalidate(true);
     }
@@ -93,14 +90,15 @@ public partial class TransparentHelpForm:Form
     {
         base.OnPaint(e);
 
-        e.Graphics.FillRectangle(Brushes.Black,0,0,Width,Height);
+        e.Graphics.FillRectangle(Brushes.Black, 0, 0, Width, Height);
 
         if (_highlight != null)
         {
-            var screenLocation = _highlight.PointToScreen(new Point(0,0));
+            var screenLocation = _highlight.PointToScreen(new Point(0, 0));
             var clientLocation = PointToClient(screenLocation);
 
-            e.Graphics.FillRectangle(_highlightBrush, clientLocation.X, clientLocation.Y, _highlight.Width, _highlight.Height);
+            e.Graphics.FillRectangle(_highlightBrush, clientLocation.X, clientLocation.Y, _highlight.Width,
+                _highlight.Height);
         }
 
         if (_currentHelpBox != null)
@@ -108,7 +106,8 @@ public partial class TransparentHelpForm:Form
             var screenLocation = _currentHelpBox.PointToScreen(new Point(0, 0));
             var clientLocation = PointToClient(screenLocation);
 
-            e.Graphics.FillRectangle(_highlightBrush, clientLocation.X, clientLocation.Y, _currentHelpBox.Width, _currentHelpBox.Height);
+            e.Graphics.FillRectangle(_highlightBrush, clientLocation.X, clientLocation.Y, _currentHelpBox.Width,
+                _currentHelpBox.Height);
         }
     }
 
@@ -138,15 +137,18 @@ public partial class TransparentHelpForm:Form
     }
 
     private HelpBox _currentHelpBox;
-    public HelpBox ShowStage(HelpWorkflow workflow,HelpStage stage)
+
+    public HelpBox ShowStage(HelpWorkflow workflow, HelpStage stage)
     {
-        if(_currentHelpBox != null)
+        if (_currentHelpBox != null)
             _host.Controls.Remove(_currentHelpBox);
 
         _highlight = stage.HighlightControl;
         _currentHelpBox = new HelpBox(workflow, stage.HelpText, stage.OptionButtonText);
 
-        _currentHelpBox.Location = stage.UseDefaultPosition ? GetGoodLocationForHelpBox(_currentHelpBox) : stage.HostLocationForStageBox;
+        _currentHelpBox.Location = stage.UseDefaultPosition
+            ? GetGoodLocationForHelpBox(_currentHelpBox)
+            : stage.HostLocationForStageBox;
 
         _host.Controls.Add(_currentHelpBox);
         _currentHelpBox.BringToFront();
@@ -164,22 +166,22 @@ public partial class TransparentHelpForm:Form
 
         //First let's try to place it like this
         /**************HOST CONTROL BOUNDS*************
-         * 
+         *
          *       HIGHLIGHT
          *       HIGHLIGHT
          *       MSG
-         * 
+         *
          *********************************************/
 
 
         /**************HOST CONTROL BOUNDS*************
-        * 
-        *       HIGHLIGHT
-        *     _ HIGHLIGHT
-        *     ^  MSG<------availableSpaceHorizontally->
-        *     |
-        *     V availableSpaceBelowHighlight
-        *********************************************/
+         *
+         *       HIGHLIGHT
+         *     _ HIGHLIGHT
+         *     ^  MSG<------availableSpaceHorizontally->
+         *     |
+         *     V availableSpaceBelowHighlight
+         *********************************************/
 
         var availableSpaceBelowHighlight = _host.ClientRectangle.Height - highlightBottomLeft.Y;
         var availableSpaceHorizontally = _host.ClientRectangle.Width - highlightBottomLeft.X;
@@ -190,27 +192,28 @@ public partial class TransparentHelpForm:Form
         //there is enough space below
         if (currentHelpBox.Height < availableSpaceBelowHighlight)
         {
-            if(_currentHelpBox.Width < availableSpaceHorizontally)
+            if (_currentHelpBox.Width < availableSpaceHorizontally)
                 return highlightBottomLeft;
 
             //not enough space horizontally so try to move MSG to left till there is enough space
             /**************HOST CONTROL BOUNDS***********
-            * 
-            *       HIGHLIGHT
-            *  <---|HIGHLIGHT
-            *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
-            *    
-            *********************************************/
+             *
+             *       HIGHLIGHT
+             *  <---|HIGHLIGHT
+             *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
+             *
+             *********************************************/
             return highlightBottomLeft with { X = Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width) };
         }
 
         if (currentHelpBox.Height < availableSpaceAboveHighlight)
-        {
             //No space below so go above it
-            return _currentHelpBox.Width < availableSpaceHorizontally ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height } :
+            return _currentHelpBox.Width < availableSpaceHorizontally
+                ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height }
+                :
                 //consider moving X back because message box is so wide (See diagram above)
-                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightTopLeft.Y - currentHelpBox.Height);
-        }
+                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width),
+                    highlightTopLeft.Y - currentHelpBox.Height);
 
         var screenCoordinatesTopRight = _highlight.PointToScreen(new Point(_highlight.ClientRectangle.Width, 0));
         var highlightTopRight = _host.PointToClient(screenCoordinatesTopRight);
@@ -219,10 +222,12 @@ public partial class TransparentHelpForm:Form
         var spaceToRight = _host.ClientRectangle.Width - highlightTopRight.X;
 
         //there is no space at all for this help box (so just overlap it on the bottom left of the screen space available)
-        if(spaceToRight < _currentHelpBox.Width && spaceToLeft < _currentHelpBox.Width)
+        if (spaceToRight < _currentHelpBox.Width && spaceToLeft < _currentHelpBox.Width)
             return new Point(0, _host.ClientRectangle.Height - _currentHelpBox.Height);
 
         //there is space to the right or left so put it in whichever is greater
-        return spaceToRight > spaceToLeft ? highlightTopRight : new Point(highlightTopLeft.X - _currentHelpBox.Width,0);
+        return spaceToRight > spaceToLeft
+            ? highlightTopRight
+            : new Point(highlightTopLeft.X - _currentHelpBox.Width, 0);
     }
 }

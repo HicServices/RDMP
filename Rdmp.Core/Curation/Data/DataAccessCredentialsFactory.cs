@@ -34,9 +34,11 @@ public class DataAccessCredentialsFactory
     /// <param name="username"></param>
     /// <param name="password"></param>
     /// <param name="usageContext"></param>
-    public DataAccessCredentials Create(ITableInfo tableInfoCreated, string username, string password, DataAccessContext usageContext)
+    public DataAccessCredentials Create(ITableInfo tableInfoCreated, string username, string password,
+        DataAccessContext usageContext)
     {
-        var credentialsToAssociate = _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
+        var credentialsToAssociate =
+            _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
 
         if (credentialsToAssociate == null)
         {
@@ -49,7 +51,8 @@ public class DataAccessCredentialsFactory
             credentialsToAssociate.SaveToDatabase();
         }
 
-        _cataRepository.TableInfoCredentialsManager.CreateLinkBetween(credentialsToAssociate, tableInfoCreated,usageContext);
+        _cataRepository.TableInfoCredentialsManager.CreateLinkBetween(credentialsToAssociate, tableInfoCreated,
+            usageContext);
 
         return credentialsToAssociate;
     }

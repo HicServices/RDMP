@@ -20,5 +20,5 @@ public interface IHasSummary
     /// <param name="body">Long description which can contain newlines</param>
     /// <param name="stackTrace">Optional stack trace where error occurred (set to null if not applicable)</param>
     /// <param name="level">How servere the situation is/was</param>
-    void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level);
+    void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level);
 }

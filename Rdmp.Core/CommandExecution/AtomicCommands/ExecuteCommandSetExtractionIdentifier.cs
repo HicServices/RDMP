@@ -29,31 +29,31 @@ public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetCol
     public ExecuteCommandSetExtractionIdentifier(IBasicActivateItems activator,
             [DemandsInitialization("The dataset you want to change the extraction identifier for")]
             ICatalogue catalogue,
-
-            [DemandsInitialization("Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
+            [DemandsInitialization(
+                "Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
             IExtractionConfiguration inConfiguration,
-
-            [DemandsInitialization("Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma separate multiple entries if needed")]
+            [DemandsInitialization(
+                "Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma separate multiple entries if needed")]
             string column)
         // base class args
-        :base(activator, catalogue, inConfiguration,column,
+        : base(activator, catalogue, inConfiguration, column,
             "Set Extraction Identifier",
             "Extraction Identifier")
     {
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Key);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Key);
 
-    public override string GetCommandHelp() => "Change which column(s) contain the patient id / linkage column e.g. CHI";
+    public override string GetCommandHelp() =>
+        "Change which column(s) contain the patient id / linkage column e.g. CHI";
 
-    protected override bool IsValidSelection(ConcreteColumn[] selected)
-    {
-        return selected is not { Length: > 1 } // if multiple selected warn user
-               ||
-               YesNo(
-                   "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
-                   "Multiple IsExtractionIdentifier columns?");
-    }
+    protected override bool IsValidSelection(ConcreteColumn[] selected) =>
+        selected is not { Length: > 1 } // if multiple selected warn user
+        ||
+        YesNo(
+            "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
+            "Multiple IsExtractionIdentifier columns?");
 
     protected override bool Getter(ConcreteColumn c) => c.IsExtractionIdentifier;
 

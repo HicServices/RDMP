@@ -20,10 +20,10 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// </summary>
 public class Distincter : MatchingTablesMutilator
 {
-    public Distincter():base(LoadStage.AdjustRaw)
+    public Distincter() : base(LoadStage.AdjustRaw)
     {
-            
     }
+
     protected override void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table)
     {
         table.MakeDistinct(Timeout);

@@ -18,6 +18,7 @@ public class BoundDate : Bound
 {
     [Description("Optional, Requires the value being validated to be AFTER this date")]
     public DateTime? Lower { get; set; }
+
     [Description("Optional, Requires the value being validated to be BEFORE this date")]
     public DateTime? Upper { get; set; }
 
@@ -45,10 +46,10 @@ public class BoundDate : Bound
         var d = (DateTime)value;
 
         if (value != null && !IsWithinRange(d))
-            return new ValidationFailure(CreateViolationReportUsingDates(d),this);
+            return new ValidationFailure(CreateViolationReportUsingDates(d), this);
 
-        return value != null && !IsWithinRange(d,otherColumns, otherColumnNames)
-            ? new ValidationFailure(CreateViolationReportUsingFieldNames(d),this)
+        return value != null && !IsWithinRange(d, otherColumns, otherColumnNames)
+            ? new ValidationFailure(CreateViolationReportUsingFieldNames(d), this)
             : null;
     }
 
@@ -118,11 +119,12 @@ public class BoundDate : Bound
             {
                 lookupFieldNamed = DateTime.Parse(named);
             }
-            catch (InvalidCastException )
+            catch (InvalidCastException)
             {
-                return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
+                return
+                    null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
             }
-            catch (FormatException )
+            catch (FormatException)
             {
                 return null;
             }
@@ -141,7 +143,9 @@ public class BoundDate : Bound
         if (Lower != null)
             return GreaterThanMessage(d, Lower.ToString());
 
-        return Upper != null ? LessThanMessage(d, Upper.ToString()) : throw new InvalidOperationException("Illegal state.");
+        return Upper != null
+            ? LessThanMessage(d, Upper.ToString())
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
@@ -157,40 +161,28 @@ public class BoundDate : Bound
             : throw new InvalidOperationException("Illegal state.");
     }
 
-    private string BetweenMessage(DateTime d, string l, string u)
-    {
-        return
-            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
-    }
+    private string BetweenMessage(DateTime d, string l, string u) =>
+        $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
 
-    private static string GreaterThanMessage(DateTime d, string s)
-    {
-        return
-            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
-    }
+    private static string GreaterThanMessage(DateTime d, string s) =>
+        $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
 
-    private static string LessThanMessage(DateTime d, string s)
-    {
-        return
-            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
-    }
+    private static string LessThanMessage(DateTime d, string s) =>
+        $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
 
-    private static string Wrap(string s)
-    {
-        return $"[{s}]";
-    }
+    private static string Wrap(string s) => $"[{s}]";
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
         var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";
-            
-        if (Lower != null )
-            if(Inclusive)
+
+        if (Lower != null)
+            if (Inclusive)
                 result += $" >={Lower}";
             else
                 result += $" >{Lower}";
-            
-        if(Upper != null)
+
+        if (Upper != null)
             if (Inclusive)
                 result += $" <={Upper}";
             else

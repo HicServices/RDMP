@@ -58,10 +58,12 @@ public partial class RDMPMainForm : RDMPForm
             if (!string.IsNullOrWhiteSpace(t))
             {
                 var type = Type.GetType(t);
-                _theme = type == null ? new MyVS2015BlueTheme() : (ITheme) System.Activator.CreateInstance(type);
+                _theme = type == null ? new MyVS2015BlueTheme() : (ITheme)System.Activator.CreateInstance(type);
             }
             else
+            {
                 _theme = new MyVS2015BlueTheme();
+            }
         }
         catch (Exception)
         {
@@ -101,15 +103,15 @@ public partial class RDMPMainForm : RDMPForm
         _globalErrorCheckNotifier = exceptionCounter;
         _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
-        _windowManager = new WindowManager(_theme,this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+        _windowManager = new WindowManager(_theme, this, _refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
         SetItemActivator(_windowManager.ActivateItems);
 
         _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
-            
+
         //put the version of the software into the window title
-            
-            _version = StartupUI.GetVersion();
-            
+
+        _version = StartupUI.GetVersion();
+
         //put the current platform database into the window title too
         if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
         {
@@ -118,29 +120,28 @@ public partial class RDMPMainForm : RDMPForm
 
             var connectionStringsFileLoaded = RDMPBootStrapper.ApplicationArguments?.ConnectionStringsFileLoaded;
             if (connectionStringsFileLoaded != null)
-            {
                 instanceDescription =
                     $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
-            }
             if (database != null)
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
         }
-            
+
         Text = "Research Data Management Platform";
 
-        var rdmpDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP"));
-        if(!rdmpDir.Exists)
+        var rdmpDir =
+            new DirectoryInfo(
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP"));
+        if (!rdmpDir.Exists)
             rdmpDir.Create();
 
-        _persistenceFile = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"RDMP", "RDMPDockPanelPersist.xml"));
+        _persistenceFile =
+            new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP",
+                "RDMPDockPanelPersist.xml"));
 
         //if there is no persist file or user wants to show the home screen always on startup
         if (!_persistenceFile.Exists || UserSettings.ShowHomeOnStartup)
-        {
             _windowManager.PopHome();
-        }
         else if (_persistenceFile.Exists)
-        {
             try
             {
                 //load the state using the method
@@ -157,13 +158,13 @@ public partial class RDMPMainForm : RDMPForm
                 _persistenceFile.Delete();
                 ApplicationRestarter.Restart();
             }
-        }
-         
+
         FormClosing += CloseForm;
         Loading = false;
     }
 
-    public override string Text {
+    public override string Text
+    {
         get => base.Text;
         set => base.Text = $"{value} v{_version} {_connectedTo}".Trim();
     }
@@ -171,19 +172,15 @@ public partial class RDMPMainForm : RDMPForm
     private void LoadFromXml(Stream stream)
     {
         if (dockPanel1.DocumentStyle == DocumentStyle.SystemMdi)
-        {
             foreach (var form in MdiChildren)
                 form.Close();
-        }
         else
-        {
             foreach (var document in dockPanel1.DocumentsToArray())
             {
                 // IMPORTANT: dispose all panes.
                 document.DockHandler.DockPanel = null;
                 document.DockHandler.Close();
             }
-        }
 
         foreach (var pane in dockPanel1.Panes.ToList())
         {
@@ -194,13 +191,14 @@ public partial class RDMPMainForm : RDMPForm
         // IMPORTANT: dispose all float windows.
         foreach (var window in dockPanel1.FloatWindows.ToList())
             window.Dispose();
-            
+
         System.Diagnostics.Debug.Assert(dockPanel1.Panes.Count == 0);
         System.Diagnostics.Debug.Assert(dockPanel1.Contents.Count == 0);
         System.Diagnostics.Debug.Assert(dockPanel1.FloatWindows.Count == 0);
 
         dockPanel1.LoadFromXml(stream, DeserializeContent);
     }
+
     public void LoadFromXml(WindowLayout target)
     {
         var uniEncoding = new UnicodeEncoding();
@@ -210,7 +208,7 @@ public partial class RDMPMainForm : RDMPForm
         using var ms = new MemoryStream();
         using var sw = new StreamWriter(ms, uniEncoding);
         sw.Write(target.LayoutData);
-        sw.Flush();//otherwise you are risking empty stream
+        sw.Flush(); //otherwise you are risking empty stream
         ms.Seek(0, SeekOrigin.Begin);
         LoadFromXml(ms);
     }
@@ -231,10 +229,7 @@ public partial class RDMPMainForm : RDMPForm
         // give the window manager a chance to cancel closing
         _windowManager.OnFormClosing(e);
 
-        if (e.Cancel)
-        {
-            return;
-        }
+        if (e.Cancel) return;
 
         if (e.CloseReason == CloseReason.UserClosing && UserSettings.ConfirmApplicationExiting)
             if (!Activator.YesNo("Are you sure you want to Exit?", "Confirm Exit"))
@@ -246,13 +241,13 @@ public partial class RDMPMainForm : RDMPForm
         try
         {
             if (_persistenceFile == null) return;
-            if (_persistenceFile.Directory?.Exists==false)
+            if (_persistenceFile.Directory?.Exists == false)
                 _persistenceFile.Directory.Create();
             dockPanel1.SaveAsXml(_persistenceFile.FullName); //save when Form closes
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            ExceptionViewer.Show("Could not write persistence file",ex);
+            ExceptionViewer.Show("Could not write persistence file", ex);
         }
     }
 
@@ -267,17 +262,19 @@ public partial class RDMPMainForm : RDMPForm
                 return toolboxInstance;
             }
 
-            var instruction = PersistenceDecisionFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
-                              PersistenceDecisionFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
+            var instruction = PersistenceDecisionFactory.ShouldCreateBasicControl(persiststring, RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateSingleObjectControl(persiststring,
+                                  RepositoryLocator) ??
                               PersistenceDecisionFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
             if (instruction != null)
-                return _windowManager.ActivateItems.Activate(instruction,_windowManager.ActivateItems);
+                return _windowManager.ActivateItems.Activate(instruction, _windowManager.ActivateItems);
         }
         catch (Exception e)
         {
             _globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not work out what window to show for persistence string '{persiststring}'",CheckResult.Fail, e));
+                $"Could not work out what window to show for persistence string '{persiststring}'", CheckResult.Fail,
+                e));
         }
 
         return null;

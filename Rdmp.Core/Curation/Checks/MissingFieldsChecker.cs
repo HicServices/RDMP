@@ -29,16 +29,16 @@ public class MissingFieldsChecker : ICheckable
     public void Check(ICheckNotifier notifier)
     {
         var server = _repository.DiscoveredServer;
-        if(!server.Exists())
+        if (!server.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server", CheckResult.Fail));
             return;
         }
 
         var db = server.GetCurrentDatabase();
-        if(!db.Exists())
+        if (!db.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}", CheckResult.Fail));
             return;
         }
 
@@ -56,7 +56,7 @@ public class MissingFieldsChecker : ICheckable
     /// <param name="tables"></param>
     private static void CheckEntities(ICheckNotifier notifier, Type type, DiscoveredTable[] tables)
     {
-        if(type.IsInterface)
+        if (type.IsInterface)
             return;
 
         if (type.IsAbstract)
@@ -65,11 +65,11 @@ public class MissingFieldsChecker : ICheckable
         if (typeof(SpontaneousObject).IsAssignableFrom(type))
             return;
 
-        if(type.Name.StartsWith("Spontaneous"))
+        if (type.Name.StartsWith("Spontaneous"))
             return;
 
         //make sure argument was IMaps..
-        if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
+        if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
             throw new ArgumentException($"Type {type.Name} passed into method was not an IMapsDirectlyToDatabaseTable");
 
         //make sure table exists with exact same name as class
@@ -78,10 +78,11 @@ public class MissingFieldsChecker : ICheckable
         if (table == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",CheckResult.Fail, null));
+                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",
+                CheckResult.Fail, null));
             return;
         }
-            
+
         notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
 
 
@@ -101,11 +102,12 @@ public class MissingFieldsChecker : ICheckable
         var problems = false;
         foreach (var missingProperty in missingProperties)
         {
-            if(missingProperty.GetRuntimeName().Equals("RowVer"))
+            if (missingProperty.GetRuntimeName().Equals("RowVer"))
                 continue;
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Missing property {missingProperty} on class definition {type.FullName}, the underlying table contains this field but the class does not", CheckResult.Fail,
+                $"Missing property {missingProperty} on class definition {type.FullName}, the underlying table contains this field but the class does not",
+                CheckResult.Fail,
                 null));
             problems = true;
         }
@@ -118,8 +120,9 @@ public class MissingFieldsChecker : ICheckable
                 null));
             problems = true;
         }
-            
+
         if (!problems)
-            notifier.OnCheckPerformed(new CheckEventArgs($"All fields present and correct in Type/Table {table}",CheckResult.Success,null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"All fields present and correct in Type/Table {table}",
+                CheckResult.Success, null));
     }
 }

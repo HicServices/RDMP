@@ -20,18 +20,23 @@ public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateB
 {
     private readonly Image<Rgba32> _default;
 
-    private readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
+    private readonly Dictionary<string, Image<Rgba32>> _assemblyToIconDictionary = new();
     private readonly DatabaseTypeIconProvider _typeSpecificIconsProvider;
 
     public ExternalDatabaseServerStateBasedIconProvider()
     {
         _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
 
-        _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
-        _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
-        _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
-        _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
-        _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
+        _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
+        _assemblyToIconDictionary.Add(new ANOStorePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
+        _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
+        _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
+        _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
 
         _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
     }
@@ -39,7 +44,7 @@ public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateB
     public Image<Rgba32> GetIconForAssembly(Assembly assembly)
     {
         var assemblyName = assembly.GetName().Name;
-        return _assemblyToIconDictionary.TryGetValue(assemblyName,out var icon) ? icon : _default;
+        return _assemblyToIconDictionary.TryGetValue(assemblyName, out var icon) ? icon : _default;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -58,7 +63,8 @@ public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateB
         var toReturn = _default;
 
         //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
-        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
+        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) &&
+            _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
             toReturn = value;
 
         //add the database type overlay

@@ -14,7 +14,7 @@ namespace Rdmp.Core.Tests.ReusableCodeTests;
 public class ExpectedIdenticalStringsExceptionTests
 {
     // Escaped newline for string checks:
-    private static readonly string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
+    private static readonly string eol = Environment.NewLine.Replace("\r", "\\r").Replace("\n", "\\n");
 
     [Test]
     public void CompletelyDifferentCase()
@@ -97,11 +97,11 @@ ACTUAL  :e cosmic cycle wherein our wor...
             @" For what could be the
 meaning 
 of the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
-my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r",""),
+my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r", ""),
             @" For what could be the
 meaning 
 if the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
-my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r",""));
+my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r", ""));
 
         // .Replace above forces Unix-style strings for test consistency
         Assert.AreEqual($@"These are different

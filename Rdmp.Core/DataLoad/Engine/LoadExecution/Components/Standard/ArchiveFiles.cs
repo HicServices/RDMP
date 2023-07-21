@@ -77,7 +77,8 @@ public class ArchiveFiles : DataLoadComponent
 
     private static void MoveDirectories(IDataLoadJob job, DirectoryInfo zipDir)
     {
-        var dirsToMove = job.LoadDirectory.ForLoading.EnumerateDirectories().Where(info => !DirsToIgnore.Contains(info.Name)).ToList();
+        var dirsToMove = job.LoadDirectory.ForLoading.EnumerateDirectories()
+            .Where(info => !DirsToIgnore.Contains(info.Name)).ToList();
         foreach (var toMove in dirsToMove)
             toMove.MoveTo(Path.Combine(zipDir.FullName, toMove.Name));
     }
@@ -89,7 +90,7 @@ public class ArchiveFiles : DataLoadComponent
             toMove.MoveTo(Path.Combine(zipDir.FullName, toMove.Name));
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
     }
 }

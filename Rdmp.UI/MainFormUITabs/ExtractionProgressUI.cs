@@ -48,7 +48,9 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
     {
         base.SetDatabaseObject(activator, databaseObject);
 
-        var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out var date);
+        var result =
+            TimespanCalculator.GetMachineReadableTimespanIfKnownOf(
+                databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out var date);
 
         btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import).ImageToBitmap();
 
@@ -65,9 +67,13 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         }
 
 
-        tbStartDate.Text = databaseObject.StartDate == null ? "" :databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
+        tbStartDate.Text = databaseObject.StartDate == null
+            ? ""
+            : databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
         tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
-        tbProgress.Text = databaseObject.ProgressDate == null ? "" : databaseObject.ProgressDate.Value.ToString("yyyy-MM-dd");
+        tbProgress.Text = databaseObject.ProgressDate == null
+            ? ""
+            : databaseObject.ProgressDate.Value.ToString("yyyy-MM-dd");
 
         ddRetry.SelectedItem = databaseObject.Retry;
 
@@ -91,27 +97,17 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 
     private void tbDate_TextChanged(object sender, EventArgs e)
     {
-        if(sender == tbStartDate)
-        {
-            SetDate(tbStartDate, v => ExtractionProgress.StartDate = v);
-        }
+        if (sender == tbStartDate) SetDate(tbStartDate, v => ExtractionProgress.StartDate = v);
 
-        if (sender == tbEndDate)
-        {
-            SetDate(tbEndDate, v => ExtractionProgress.EndDate = v);
-        }
+        if (sender == tbEndDate) SetDate(tbEndDate, v => ExtractionProgress.EndDate = v);
 
-        if (sender == tbProgress)
-        {
-            SetDate(tbProgress, v => ExtractionProgress.ProgressDate = v);
-        }
-
+        if (sender == tbProgress) SetDate(tbProgress, v => ExtractionProgress.ProgressDate = v);
     }
 
     private void ddColumn_SelectionChangeCommitted(object sender, EventArgs e)
     {
         ragSmiley1.Reset();
-        if(ddColumn.SelectedItem is ExtractionInformation ei)
+        if (ddColumn.SelectedItem is ExtractionInformation ei)
         {
             ExtractionProgress.ValidateSelectedColumn(ragSmiley1, ei);
             ExtractionProgress.ExtractionInformation_ID = ei.ID;
@@ -120,9 +116,10 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 
     private void btnPickColumn_Click(object sender, EventArgs e)
     {
-        var col  = (ExtractionInformation)Activator.SelectOne("Column", ddColumn.Items.Cast<object>().OfType<ExtractionInformation>().ToArray());
+        var col = (ExtractionInformation)Activator.SelectOne("Column",
+            ddColumn.Items.Cast<object>().OfType<ExtractionInformation>().ToArray());
 
-        if(col != null)
+        if (col != null)
         {
             ddColumn.SelectedItem = col;
             ragSmiley1.Reset();
@@ -144,17 +141,12 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 
     private void ddRetry_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ExtractionProgress == null)
-        {
-            return;
-        }
+        if (ExtractionProgress == null) return;
         ExtractionProgress.Retry = (RetryStrategy)ddRetry.SelectedItem;
     }
 }
 
-
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionProgressUI_Design, UserControl>))]
 public abstract class ExtractionProgressUI_Design : RDMPSingleDatabaseObjectControl<ExtractionProgress>
 {
-
 }

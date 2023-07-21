@@ -14,8 +14,7 @@ namespace Rdmp.UI.Refreshing;
 /// </summary>
 public class SubscriptionException : Exception
 {
-    public SubscriptionException(string message): base(message)
+    public SubscriptionException(string message) : base(message)
     {
-
     }
 }

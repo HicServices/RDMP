@@ -47,7 +47,7 @@ public class RDMPForm : Form, IRDMPControl
     /// Constructs the form and initializes the activator
     /// </summary>
     /// <param name="activator"></param>
-    public RDMPForm(IActivateItems activator):this()
+    public RDMPForm(IActivateItems activator) : this()
     {
         SetItemActivator(activator);
     }
@@ -63,25 +63,20 @@ public class RDMPForm : Form, IRDMPControl
             Close();
 
         if (e.KeyCode == Keys.S && e.Control)
-        {
             if (this is ISaveableUI saveable)
                 saveable.GetObjectSaverButton().Save();
-        }
     }
 
     /// <summary>
     /// Returns this since RDMPForm is a Form and therefore a top level control
     /// </summary>
     /// <returns></returns>
-    public IRDMPControl GetTopmostRDMPUserControl()
-    {
-        return this;
-    }
+    public IRDMPControl GetTopmostRDMPUserControl() => this;
 
     public event EventHandler<bool> UnSavedChanges;
 
     public void SetUnSavedChanges(bool b)
     {
-        UnSavedChanges?.Invoke(this,b);
+        UnSavedChanges?.Invoke(this, b);
     }
 }

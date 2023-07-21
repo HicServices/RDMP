@@ -28,7 +28,8 @@ public class RegularExpression : SecondaryConstraint
         _pattern = pattern;
     }
 
-    [Description("The Regular Expression pattern that MUST match the value being validated.  If you find yourself copy pasting the same Pattern all over the place you should instead consider a StandardRegexConstraint")]
+    [Description(
+        "The Regular Expression pattern that MUST match the value being validated.  If you find yourself copy pasting the same Pattern all over the place you should instead consider a StandardRegexConstraint")]
     [ExpectsLotsOfText]
     public string Pattern
     {
@@ -38,7 +39,7 @@ public class RegularExpression : SecondaryConstraint
             //throws if you pass an invalid pattern
             new Regex(value);
 
-                
+
             _pattern = value;
         }
     }
@@ -55,16 +56,14 @@ public class RegularExpression : SecondaryConstraint
         var text = (string)value;
         var match = Regex.Match(text, _pattern);
 
-        return !match.Success ? new ValidationFailure($"Failed to match text [{value}] to regular expression /{_pattern}/",this) : null;
+        return !match.Success
+            ? new ValidationFailure($"Failed to match text [{value}] to regular expression /{_pattern}/", this)
+            : null;
     }
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return $"Matches regex {Pattern}";
-    }
+    public override string GetHumanReadableDescriptionOfValidation() => $"Matches regex {Pattern}";
 }

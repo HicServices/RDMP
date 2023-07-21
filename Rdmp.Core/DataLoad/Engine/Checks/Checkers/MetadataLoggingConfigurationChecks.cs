@@ -25,10 +25,8 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
     }
 
 
-
     public void Check(ICheckNotifier notifier)
     {
-
         var catalogues = _loadMetadata.GetAllCatalogues().ToArray();
 
         //if there are no logging tasks defined on any Catalogues
@@ -38,7 +36,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
 
             bool fix;
 
-            if(catalogues.Length == 1)
+            if (catalogues.Length == 1)
             {
                 proposedName = $"Loading '{catalogues[0]}'";
                 fix = notifier.OnCheckPerformed(
@@ -48,56 +46,58 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             }
             else
             {
-                proposedName =  _loadMetadata.Name;
+                proposedName = _loadMetadata.Name;
 
                 fix =
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             $"Catalogues {string.Join(",", catalogues.Select(c => c.Name))} do not have a logging task specified",
                             CheckResult.Fail, null, $"Create a new Logging Task called '{proposedName}'?"));
-
             }
 
             if (fix)
-                CreateNewLoggingTaskFor(notifier,catalogues, proposedName);
+                CreateNewLoggingTaskFor(notifier, catalogues, proposedName);
             else
                 return;
         }
 
         #region Fix missing LoggingDataTask
-        var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
-        var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
+
+        var missingTasks = catalogues.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+        var potentialTasks = catalogues.Except(missingTasks).Select(c => c.LoggingDataTask).Distinct().ToArray();
 
         //If any Catalogues are missing tasks
-        if(missingTasks.Any())
-        {
+        if (missingTasks.Any())
             //but there is consensus for those that are not missing tasks
-            if(potentialTasks.Length == 1)
+            if (potentialTasks.Length == 1)
             {
-                var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LoggingDataTasks",CheckResult.Fail,null, $"Set task to {potentialTasks.Single()}"));
+                var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LoggingDataTasks",
+                    CheckResult.Fail, null, $"Set task to {potentialTasks.Single()}"));
 
-                if(fix)
-                    foreach(var cata in missingTasks)
+                if (fix)
+                    foreach (var cata in missingTasks)
                     {
                         cata.LoggingDataTask = potentialTasks.Single();
                         cata.SaveToDatabase();
                     }
             }
-        }
+
         #endregion
 
         #region Fix missing LiveLoggingServer_ID
-        var missingServer = catalogues.Where(c=>c.LiveLoggingServer_ID == null).ToArray();
-        var potentialServer = catalogues.Except(missingServer).Select(c=>c.LiveLoggingServer_ID).Distinct().ToArray();
 
-        if(missingServer.Any())
+        var missingServer = catalogues.Where(c => c.LiveLoggingServer_ID == null).ToArray();
+        var potentialServer = catalogues.Except(missingServer).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
+
+        if (missingServer.Any())
         {
-            if(potentialServer.Length == 1)
+            if (potentialServer.Length == 1)
             {
-                var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to {potentialServer.Single()}"));
+                var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",
+                    CheckResult.Fail, null, $"Set LiveLoggingServer_ID to {potentialServer.Single()}"));
 
-                if(fix)
-                    foreach(var cata in missingServer)
+                if (fix)
+                    foreach (var cata in missingServer)
                     {
                         cata.LiveLoggingServer_ID = potentialServer.Single();
                         cata.SaveToDatabase();
@@ -105,25 +105,25 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             }
             else
             {
-
                 var defaults = _loadMetadata.CatalogueRepository;
                 var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-                if(defaultLoggingServer != null)
+                if (defaultLoggingServer != null)
                 {
-                    var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to '{defaultLoggingServer}' (the default)"));
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs(
+                        "Some catalogues have NULL LiveLoggingServer_ID", CheckResult.Fail, null,
+                        $"Set LiveLoggingServer_ID to '{defaultLoggingServer}' (the default)"));
 
-                    if(fix)
-                        foreach(var cata in missingServer)
+                    if (fix)
+                        foreach (var cata in missingServer)
                         {
                             cata.LiveLoggingServer_ID = defaultLoggingServer.ID;
                             cata.SaveToDatabase();
                         }
-
                 }
-
             }
         }
+
         #endregion
 
         string distinctLoggingTask = null;
@@ -135,7 +135,8 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Catalogues could not agreed on a single Logging Task", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Catalogues could not agreed on a single Logging Task",
+                CheckResult.Fail, e));
         }
 
 
@@ -143,47 +144,49 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         {
             var settings = _loadMetadata.GetDistinctLoggingDatabase();
             settings.TestConnection();
-            notifier.OnCheckPerformed(new CheckEventArgs("Connected to logging architecture successfully", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs("Connected to logging architecture successfully",
+                CheckResult.Success, null));
 
 
-            if(distinctLoggingTask != null)
+            if (distinctLoggingTask != null)
             {
                 var lm = new LogManager(settings);
                 var dataTasks = lm.ListDataTasks();
 
                 if (dataTasks.Contains(distinctLoggingTask))
+                {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Found Logging Task {distinctLoggingTask} in Logging database",CheckResult.Success, null));
+                        $"Found Logging Task {distinctLoggingTask} in Logging database", CheckResult.Success, null));
+                }
                 else
                 {
                     var fix = notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Could not find Logging Task {distinctLoggingTask} in Logging database", CheckResult.Fail, null,
+                        $"Could not find Logging Task {distinctLoggingTask} in Logging database", CheckResult.Fail,
+                        null,
                         $"Create Logging Task '{distinctLoggingTask}'"));
-                    if(fix)
+                    if (fix)
                         lm.CreateNewLoggingTaskIfNotExists(distinctLoggingTask);
                 }
             }
-
         }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Could reach default logging server", CheckResult.Fail, e));
         }
-
     }
 
-    private void CreateNewLoggingTaskFor(ICheckNotifier notifier,ICatalogue[] catalogues, string proposedName)
+    private void CreateNewLoggingTaskFor(ICheckNotifier notifier, ICatalogue[] catalogues, string proposedName)
     {
-        var catarepo =  _loadMetadata.CatalogueRepository;
+        var catarepo = _loadMetadata.CatalogueRepository;
 
-        var serverIds = catalogues.Select(c => c.LiveLoggingServer_ID).Where(i=>i.HasValue).Distinct().ToArray();
+        var serverIds = catalogues.Select(c => c.LiveLoggingServer_ID).Where(i => i.HasValue).Distinct().ToArray();
 
         IExternalDatabaseServer loggingServer;
 
         if (serverIds.Any())
         {
             //a server is specified
-            if(serverIds.Length != 1)
+            if (serverIds.Length != 1)
                 throw new Exception("Catalogues do not agree on a single logging server");
 
             //we checked for HasValue above see the WHERE in the linq
@@ -193,13 +196,13 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         {
             loggingServer = catarepo.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-            if(loggingServer == null)
+            if (loggingServer == null)
                 throw new Exception("There is no default logging server!");
         }
 
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(proposedName);
-        notifier.OnCheckPerformed(new CheckEventArgs($"Created Logging Task '{proposedName}'",CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Created Logging Task '{proposedName}'", CheckResult.Success));
 
         foreach (var catalogue in catalogues.Cast<Catalogue>())
         {
@@ -207,7 +210,5 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             catalogue.LoggingDataTask = proposedName;
             catalogue.SaveToDatabase();
         }
-
-
     }
 }

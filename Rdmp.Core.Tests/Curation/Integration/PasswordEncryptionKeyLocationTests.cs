@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class PasswordEncryptionKeyLocationTests:DatabaseTests
+public class PasswordEncryptionKeyLocationTests : DatabaseTests
 {
     [SetUp]
     protected override void SetUp()
@@ -23,7 +23,7 @@ public class PasswordEncryptionKeyLocationTests:DatabaseTests
 
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
 
-        if(keyLocation.GetKeyFileLocation() != null)
+        if (keyLocation.GetKeyFileLocation() != null)
             Assert.Inconclusive();
     }
 
@@ -37,14 +37,13 @@ public class PasswordEncryptionKeyLocationTests:DatabaseTests
 
         var e = Assert.Throws<NotSupportedException>(keyLocation.DeleteKey);
         Assert.AreEqual("Cannot delete key because there is no key file configured", e.Message);
-
     }
 
     [Test]
     public void CreateKeyFile()
     {
         var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
-        var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory,"my.key"));
+        var file = keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
 
         Console.WriteLine($"Key file location is:{file.FullName}");
         Console.WriteLine($"Text put into file is:{Environment.NewLine}{File.ReadAllText(file.FullName)}");
@@ -69,8 +68,8 @@ public class PasswordEncryptionKeyLocationTests:DatabaseTests
 
         //should do pass through encryption
         encrypter.Value = value;
-        Assert.AreNotEqual(value,encrypter.Value);
-        Assert.AreEqual(value,encrypter.GetDecryptedValue());
+        Assert.AreNotEqual(value, encrypter.Value);
+        Assert.AreEqual(value, encrypter.GetDecryptedValue());
 
         Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
         Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
@@ -82,8 +81,9 @@ public class PasswordEncryptionKeyLocationTests:DatabaseTests
         CatalogueRepository.EncryptionManager.ClearAllInjections();
 
         var s = CatalogueRepository.EncryptionManager.GetEncrypter();
-        var exception = Assert.Throws<CryptographicException>(()=>s.Decrypt(encrypter.Value));
-        Assert.IsTrue(exception.Message.StartsWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
+        var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
+        Assert.IsTrue(exception.Message.StartsWith(
+            "Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 
         var encrypted = s.Encrypt(value);
         Console.WriteLine($"Encrypted (with key) is:{encrypted}");
@@ -93,5 +93,4 @@ public class PasswordEncryptionKeyLocationTests:DatabaseTests
 
         keyLocation.DeleteKey();
     }
-
 }

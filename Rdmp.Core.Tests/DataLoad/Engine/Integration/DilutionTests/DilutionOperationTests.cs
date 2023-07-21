@@ -21,7 +21,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests;
 
-public class DilutionOperationTests:DatabaseTests
+public class DilutionOperationTests : DatabaseTests
 {
     [TestCase("2001-01-03", "2001-02-15")]
     [TestCase("2001-03-31", "2001-02-15")]
@@ -31,10 +31,8 @@ public class DilutionOperationTests:DatabaseTests
     [TestCase(null, null)]
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
-
-
-        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DateRoundingTests");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
+        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DateRoundingTests");
+        var col = Mock.Of<IPreLoadDiscardedColumn>(c =>
             c.TableInfo == tbl &&
             c.GetRuntimeName() == "TestField");
 
@@ -79,17 +77,23 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     [TestCase("!D!D!3!9TA!", "DD3")] //Random garbage
     [TestCase("EC4V_2AU", "EC4V")] //underscore instead of space
     [TestCase("EC4V2AU   ", "EC4V")] //Trailing whitespace
-    [TestCase("??", "??")] //It's short and it's complete garbage but this is the kind of thing research datasets have :)
-    [TestCase("???????", "????")] //Return type is varchar(4) so while we reject the original value we still end SetUp truncating it
+    [TestCase("??",
+        "??")] //It's short and it's complete garbage but this is the kind of thing research datasets have :)
+    [TestCase("???????",
+        "????")] //Return type is varchar(4) so while we reject the original value we still end SetUp truncating it
     [TestCase("I<3Coffee Yay", "I3Co")] //What can you do?!, got to return varchar(4)
-    [TestCase("D3 9T", "D39T")]//39T isn't a valid suffix and the remainder (D) wouldn't be enough for a postcode prefix anyway so just return the original input minus dodgy characters
-    [TestCase("G    9TA", "G")]//9TA is the correct suffix pattern (Numeric Alpha Alpha) so can be chopped off and the remainder returned (G)
-    [TestCase("DD3 9T", "DD")] //Expected to get it wrong because the suffix check sees 39T but the remainder is long enough to make a legit postcode (2).  We are currently deciding not to evaluate spaces/other dodgy characters when attempting to resolve postcodes
-    [TestCase(null,null)]
+    [TestCase("D3 9T",
+        "D39T")] //39T isn't a valid suffix and the remainder (D) wouldn't be enough for a postcode prefix anyway so just return the original input minus dodgy characters
+    [TestCase("G    9TA",
+        "G")] //9TA is the correct suffix pattern (Numeric Alpha Alpha) so can be chopped off and the remainder returned (G)
+    [TestCase("DD3 9T",
+        "DD")] //Expected to get it wrong because the suffix check sees 39T but the remainder is long enough to make a legit postcode (2).  We are currently deciding not to evaluate spaces/other dodgy characters when attempting to resolve postcodes
+    [TestCase(null, null)]
     public void TestExcludeRight3OfUKPostcodes(string input, string expectedDilute)
     {
-        var tbl = Mock.Of<ITableInfo>(t=>t.GetRuntimeName(LoadStage.AdjustStaging,null) == "ExcludeRight3OfPostcodes");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c=>c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
+        var tbl = Mock.Of<ITableInfo>(
+            t => t.GetRuntimeName(LoadStage.AdjustStaging, null) == "ExcludeRight3OfPostcodes");
+        var col = Mock.Of<IPreLoadDiscardedColumn>(c => c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
 
         var o = new ExcludeRight3OfUKPostcodes
         {
@@ -110,7 +114,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
 
             var result = server.GetCommand("SELECT * from ExcludeRight3OfPostcodes", con).ExecuteScalar();
 
-            if(expectedDilute == null)
+            if (expectedDilute == null)
                 Assert.AreEqual(DBNull.Value, result);
             else
                 Assert.AreEqual(expectedDilute, result);
@@ -121,19 +125,19 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
         }
     }
 
-    [TestCase("2001-01-03","datetime", true)]
+    [TestCase("2001-01-03", "datetime", true)]
     [TestCase("2001-01-03", "varchar(50)", true)]
-    [TestCase(null,"varchar(50)", false)]
+    [TestCase(null, "varchar(50)", false)]
     [TestCase(null, "bit", false)]
     [TestCase("1", "bit", true)]
     [TestCase("0", "bit", true)]
-    [TestCase("","varchar(1)", true)]//This data exists regardless of if it is blank so it still gets the 1
-    public void DiluteToBitFlag(string input,string inputDataType, bool expectedDilute)
+    [TestCase("", "varchar(1)", true)] //This data exists regardless of if it is blank so it still gets the 1
+    public void DiluteToBitFlag(string input, string inputDataType, bool expectedDilute)
     {
-        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DiluteToBitFlagTests");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
+        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DiluteToBitFlagTests");
+        var col = Mock.Of<IPreLoadDiscardedColumn>(c =>
             c.TableInfo == tbl &&
-            c.GetRuntimeName() =="TestField");
+            c.GetRuntimeName() == "TestField");
 
         var o = new CrushToBitFlag
         {
@@ -169,10 +173,10 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
 
         var dt = new DataTable();
         dt.Columns.Add("Bob");
-        dt.Rows.Add(new[] {"Fish"});
+        dt.Rows.Add(new[] { "Fish" });
 
         var tbl = db.CreateTable("DilutionNamerTest", dt);
-        Import(tbl,out var ti, out var cols);
+        Import(tbl, out var ti, out var cols);
 
         tbl.Rename("AAAA");
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
@@ -188,14 +192,14 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
         var dilution = new Dilution
         {
             ColumnToDilute = discarded,
-            Operation = typeof (CrushToBitFlag)
+            Operation = typeof(CrushToBitFlag)
         };
 
-        dilution.Initialize(db,LoadStage.AdjustStaging);
+        dilution.Initialize(db, LoadStage.AdjustStaging);
         dilution.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
-        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer),ti);
-            
+        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server, namer), ti);
+
         dilution.Mutilate(job);
     }
 }

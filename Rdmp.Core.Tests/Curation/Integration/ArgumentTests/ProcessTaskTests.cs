@@ -13,7 +13,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
 public class ProcessTaskTests : DatabaseTests
 {
-
     [Test]
     public void CloneProcessTask_ToSameLoadMetadataWithoutArguments()
     {
@@ -28,7 +27,7 @@ public class ProcessTaskTests : DatabaseTests
         {
             processTask1.SaveToDatabase();
 
-            var clone = processTask1.CloneToNewLoadMetadataStage(test,LoadStage.GetFiles);
+            var clone = processTask1.CloneToNewLoadMetadataStage(test, LoadStage.GetFiles);
             Assert.AreNotSame(clone.ID, processTask1.ID);
             Assert.IsFalse(clone.ID == processTask1.ID);
 
@@ -37,10 +36,10 @@ public class ProcessTaskTests : DatabaseTests
             clone = CatalogueRepository.GetObjectByID<ProcessTask>(clone.ID);
 
             Assert.IsFalse(orig.ID == clone.ID);
-            Assert.AreEqual(LoadStage.AdjustRaw,orig.LoadStage);
+            Assert.AreEqual(LoadStage.AdjustRaw, orig.LoadStage);
             Assert.AreEqual(LoadStage.GetFiles, clone.LoadStage);
 
-            Assert.AreEqual(orig.Order,clone.Order);
+            Assert.AreEqual(orig.Order, clone.Order);
             Assert.AreEqual(orig.Path, clone.Path);
             Assert.AreEqual(orig.ProcessTaskType, clone.ProcessTaskType);
             Assert.AreEqual(orig.LoadMetadata_ID, clone.LoadMetadata_ID);
@@ -62,7 +61,7 @@ public class ProcessTaskTests : DatabaseTests
         var parent2 = new LoadMetadata(CatalogueRepository);
 
         //make sure we didn't magically create the same ID somehow
-        Assert.AreNotEqual(parent1.ID,parent2.ID);
+        Assert.AreNotEqual(parent1.ID, parent2.ID);
 
         //setup things to clone in parent1
         var processTask1 = new ProcessTask(CatalogueRepository, parent1, LoadStage.AdjustRaw);
@@ -70,7 +69,7 @@ public class ProcessTaskTests : DatabaseTests
         {
             Name = "TestArg"
         };
-        arg.SetType(typeof (string));
+        arg.SetType(typeof(string));
         arg.SetValue("TestValue");
         arg.SaveToDatabase();
 
@@ -111,10 +110,10 @@ public class ProcessTaskTests : DatabaseTests
             var clonearg = clone.ProcessTaskArguments.SingleOrDefault();
             Assert.NotNull(clonearg);
 
-            Assert.AreNotEqual(clonearg.ID,arg.ID);
-            Assert.AreEqual(clonearg.GetType(),arg.GetType());
-            Assert.AreEqual(clonearg.Name,arg.Name);
-            Assert.AreEqual(clonearg.Value,arg.Value);
+            Assert.AreNotEqual(clonearg.ID, arg.ID);
+            Assert.AreEqual(clonearg.GetType(), arg.GetType());
+            Assert.AreEqual(clonearg.Name, arg.Name);
+            Assert.AreEqual(clonearg.Value, arg.Value);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             clone.DeleteInDatabase();

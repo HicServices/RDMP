@@ -22,7 +22,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public class PersistableToolboxDockContent:DockContent
+public class PersistableToolboxDockContent : DockContent
 {
     public const string Prefix = "Toolbox";
 
@@ -32,6 +32,7 @@ public class PersistableToolboxDockContent:DockContent
     {
         CollectionType = collectionType;
     }
+
     protected override string GetPersistString()
     {
         var args = new Dictionary<string, string>
@@ -41,10 +42,8 @@ public class PersistableToolboxDockContent:DockContent
 
         return $"{Prefix}{PersistStringHelper.Separator}{PersistStringHelper.SaveDictionaryToString(args)}";
     }
-    public RDMPCollectionUI GetCollection()
-    {
-        return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
-    }
+
+    public RDMPCollectionUI GetCollection() => Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
 
     public static RDMPCollection? GetToolboxFromPersistString(string persistString)
     {

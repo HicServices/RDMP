@@ -25,9 +25,9 @@ public class TestPrescribingCreation
         var r = new Random(500);
 
         var people = new PersonCollection();
-        people.GeneratePeople(100,r);
+        people.GeneratePeople(100, r);
 
-        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPrescribing.csv"));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DeleteMeTestPrescribing.csv"));
 
         var finished = false;
         var finishedWithRecords = -1;
@@ -45,9 +45,7 @@ public class TestPrescribingCreation
         Assert.IsTrue(finished);
         Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-        Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords);//can be newlines in middle of file
+        Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords); //can be newlines in middle of file
         f.Delete();
     }
-
-
 }

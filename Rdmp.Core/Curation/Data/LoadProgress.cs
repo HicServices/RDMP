@@ -22,6 +22,7 @@ namespace Rdmp.Core.Curation.Data;
 public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
 {
     #region Database Properties
+
     private bool _isDisabled;
     private string _name;
     private DateTime? _originDate;
@@ -36,6 +37,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         get => _isDisabled;
         set => SetField(ref _isDisabled, value);
     }
+
     /// <inheritdoc/>
     [NotNull]
     [Unique]
@@ -44,6 +46,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         get => _name;
         set => SetField(ref _name, value);
     }
+
     /// <inheritdoc/>
     public DateTime? OriginDate
     {
@@ -60,12 +63,14 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         get => _loadPeriodicity;
         set => SetField(ref _loadPeriodicity, value);
     }
+
     /// <inheritdoc/>
     public DateTime? DataLoadProgress
     {
         get => _dataLoadProgress;
         set => SetField(ref _dataLoadProgress, value);
     }
+
     /// <inheritdoc/>
     public int LoadMetadata_ID
     {
@@ -81,7 +86,9 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     }
 
     #endregion
+
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ILoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
@@ -94,7 +101,6 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
 
     public LoadProgress()
     {
-
     }
 
     /// <inheritdoc cref="ILoadProgress"/>
@@ -103,8 +109,8 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         repository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
-                {"Name", Guid.NewGuid().ToString()},
-                {"LoadMetadata_ID", parent.ID}
+                { "Name", Guid.NewGuid().ToString() },
+                { "LoadMetadata_ID", parent.ID }
             });
     }
 
@@ -121,18 +127,16 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{Name} ID={ID}";
-    }
+    public override string ToString() => $"{Name} ID={ID}";
 
     public void Check(ICheckNotifier notifier)
     {
-        if(OriginDate != null && OriginDate > DateTime.Now)
-            notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate cannot be in the future ({Name})",CheckResult.Fail));
+        if (OriginDate != null && OriginDate > DateTime.Now)
+            notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate cannot be in the future ({Name})",
+                CheckResult.Fail));
 
-        if(DataLoadProgress != null && DataLoadProgress > DateTime.Now)
-            notifier.OnCheckPerformed(new CheckEventArgs($"DataLoadProgress cannot be in the future ({Name})",CheckResult.Fail));
-
+        if (DataLoadProgress != null && DataLoadProgress > DateTime.Now)
+            notifier.OnCheckPerformed(new CheckEventArgs($"DataLoadProgress cannot be in the future ({Name})",
+                CheckResult.Fail));
     }
 }

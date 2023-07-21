@@ -59,19 +59,15 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         //the aggregate has no dimensions
         if (dim != null) return dim.ColumnInfo.TableInfo;
         var table = AggregateConfiguration.ForcedJoins.FirstOrDefault() ?? throw new Exception(
-                $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+            $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
         return table;
-
     }
 
     public string GetSql()
     {
         var ac = AggregateConfiguration;
 
-        if (!ac.IsCohortIdentificationAggregate)
-        {
-            return ac.GetQueryBuilder().SQL;
-        }
+        if (!ac.IsCohortIdentificationAggregate) return ac.GetQueryBuilder().SQL;
 
         var cic = ac.GetCohortIdentificationConfigurationIfAny();
         var globals = cic.GetAllParameters();
@@ -84,10 +80,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         return TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
     }
 
-    public string GetTabName()
-    {
-        return $"View Top 100 {AggregateConfiguration}";
-    }
+    public string GetTabName() => $"View Top 100 {AggregateConfiguration}";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -95,10 +88,8 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             autoComplete.Add(AggregateConfiguration);
     }
 
-    private AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+    private AggregateConfiguration AggregateConfiguration =>
+        DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return AggregateConfiguration?.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateConfiguration?.GetQuerySyntaxHelper();
 }

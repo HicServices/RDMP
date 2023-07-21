@@ -64,10 +64,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         loadProgressUI1.ApplyTheme(activator.Theme);
     }
 
-    private RDMPCommandLineOptions Detatch_CommandGetter()
-    {
-        return CommandGetter(CommandLineActivity.run);
-    }
+    private RDMPCommandLineOptions Detatch_CommandGetter() => CommandGetter(CommandLineActivity.run);
 
     public List<HelpStage> HelpStages { get; private set; }
 
@@ -104,13 +101,14 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         try
         {
             var command = CommandGetter(CommandLineActivity.check);
-            runner = RunnerFactory.CreateRunner(Activator,command);
+            runner = RunnerFactory.CreateRunner(Activator, command);
         }
         catch (Exception ex)
         {
             ragChecks.Fatal(ex);
             return;
         }
+
         CurrentRunner = runner;
 
         btnRunChecks.Enabled = false;
@@ -126,21 +124,20 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         //create a to memory that passes the events to checksui since that's the only one that can respond to proposed fixes
         var toMemory = new ToMemoryCheckNotifier(checksUI1);
 
-        Task.Factory.StartNew(() => Check(runner,toMemory)).ContinueWith(
-            t=>
+        Task.Factory.StartNew(() => Check(runner, toMemory)).ContinueWith(
+            t =>
             {
                 //once Thread completes do this on the main UI Thread
 
                 //find the worst check state
                 var worst = toMemory.GetWorst();
                 //update the rag smiley to reflect whether it has passed
-                ragChecks.OnCheckPerformed(new CheckEventArgs($"Checks resulted in {worst}",worst));
+                ragChecks.OnCheckPerformed(new CheckEventArgs($"Checks resulted in {worst}", worst));
                 //update the bit flag
                 ChecksPassed = worst <= CheckResult.Warning;
 
                 //enable other buttons now based on the new state
                 SetButtonStates();
-
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
         _runningTask = null;
@@ -151,7 +148,8 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     {
         try
         {
-            runner.Run(Activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,new GracefulCancellationToken());
+            runner.Run(Activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,
+                new GracefulCancellationToken());
         }
         catch (Exception e)
         {
@@ -168,13 +166,14 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         try
         {
             var command = CommandGetter(CommandLineActivity.run);
-            runner = RunnerFactory.CreateRunner(Activator,command);
+            runner = RunnerFactory.CreateRunner(Activator, command);
         }
         catch (Exception ex)
         {
             ragChecks.Fatal(ex);
             return;
         }
+
         CurrentRunner = runner;
 
         loadProgressUI1.Clear();
@@ -196,13 +195,9 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                     loadProgressUI1.ShowRunning(false);
 
                     if (exitCode != 0)
-                    {
                         loadProgressUI1.SetFatal();
-                    }
                     else
-                    {
                         loadProgressUI1.SetSuccess();
-                    }
 
                     ExecutionFinished?.Invoke(this, new ExecutionEventArgs(exitCode));
 
@@ -218,16 +213,19 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     {
         try
         {
-            var exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+            var exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1,
+                new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
 
-            loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,
+            loadProgressUI1.OnNotify(this, new NotifyEventArgs(
+                exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,
                 $"Exit code was {exitCode}"));
 
             return exitCode;
         }
         catch (Exception ex)
         {
-            loadProgressUI1.OnNotify(ProgressUI.GlobalRunError,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
+            loadProgressUI1.OnNotify(ProgressUI.GlobalRunError,
+                new NotifyEventArgs(ProgressEventType.Error, "Fatal Error", ex));
         }
 
         return -1;
@@ -285,7 +283,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     private void btnAbortLoad_Click(object sender, EventArgs e)
     {
         _cancellationTokenSource.Abort();
-        loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"Abort request issued"));
+        loadProgressUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Abort request issued"));
     }
 
     public void Reset()

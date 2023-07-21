@@ -15,7 +15,8 @@ namespace Rdmp.Core.ReusableLibraryCode;
 
 public static class Rfc4180Writer
 {
-    public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders, QuerySyntaxHelper escaper = null)
+    public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders,
+        QuerySyntaxHelper escaper = null)
     {
         if (includeHeaders)
         {
@@ -29,10 +30,12 @@ public static class Rfc4180Writer
         var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
         foreach (var kvp in typeDictionary)
             kvp.Value.AdjustToCompensateForValues(kvp.Key);
-            
+
         foreach (DataRow row in sourceTable.Rows)
         {
-            var line = (from DataColumn col in sourceTable.Columns select QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper))).ToList();
+            var line = (from DataColumn col in sourceTable.Columns
+                select QuoteValue(GetStringRepresentation(row[col],
+                    typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper))).ToList();
             writer.WriteLine(string.Join(",", line));
         }
 
@@ -59,13 +62,8 @@ public static class Rfc4180Writer
         return str;
     }
 
-    private static string GetStringRepresentation(DateTime dt)
-    {
-        return dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
-    }
+    private static string GetStringRepresentation(DateTime dt) =>
+        dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
 
-    private static string QuoteValue(string value)
-    {
-        return value == null ? "NULL" : $"\"{value}\"";
-    }
+    private static string QuoteValue(string value) => value == null ? "NULL" : $"\"{value}\"";
 }

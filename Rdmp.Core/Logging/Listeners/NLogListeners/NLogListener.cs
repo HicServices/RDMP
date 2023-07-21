@@ -29,8 +29,8 @@ public abstract class NLogListener
             Worst = level;
 
         NLog.LogManager.GetLogger((sender ?? "Null").ToString()).Log(level, exception, message);
-            
+
         if (ThrowOnError && level >= LogLevel.Error)
-            throw exception??new Exception(message);
+            throw exception ?? new Exception(message);
     }
 }

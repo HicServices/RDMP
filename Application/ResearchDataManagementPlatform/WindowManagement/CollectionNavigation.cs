@@ -15,12 +15,11 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// <summary>
 /// Records the fact that the user visited a specific object in a tree collection
 /// </summary>
-public sealed class CollectionNavigation: PropertywiseEquatable<CollectionNavigation>, INavigation
+public sealed class CollectionNavigation : PropertywiseEquatable<CollectionNavigation>, INavigation
 {
     public IMapsDirectlyToDatabaseTable Object { get; }
 
-    [MemberwiseEqualityIgnore]
-    public bool IsAlive => Object is not IMightNotExist o || o.Exists();
+    [MemberwiseEqualityIgnore] public bool IsAlive => Object is not IMightNotExist o || o.Exists();
 
     public CollectionNavigation(IMapsDirectlyToDatabaseTable @object)
     {
@@ -29,15 +28,12 @@ public sealed class CollectionNavigation: PropertywiseEquatable<CollectionNaviga
 
     public void Activate(ActivateItems activateItems)
     {
-        activateItems.RequestItemEmphasis(this,new EmphasiseRequest(Object,0));
+        activateItems.RequestItemEmphasis(this, new EmphasiseRequest(Object, 0));
     }
 
     public void Close()
     {
+    }
 
-    }
-    public override string ToString()
-    {
-        return Object.ToString();
-    }
+    public override string ToString() => Object.ToString();
 }

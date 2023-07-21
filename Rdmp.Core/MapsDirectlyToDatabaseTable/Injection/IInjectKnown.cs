@@ -47,7 +47,7 @@ public interface IInjectKnown
 /// 
 /// </code></example>
 /// <typeparam name="T"></typeparam>
-public interface IInjectKnown<T>:IInjectKnown
+public interface IInjectKnown<T> : IInjectKnown
 {
     /// <summary>
     /// Records the known state of T so that it doesn't have to be fetched by an expensive operation e.g. going to the database and fetching it.

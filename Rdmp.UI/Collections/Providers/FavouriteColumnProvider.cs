@@ -27,8 +27,7 @@ public class FavouriteColumnProvider
     private Bitmap _starHollow;
 
 
-
-    public FavouriteColumnProvider(IActivateItems activator,TreeListView tlv)
+    public FavouriteColumnProvider(IActivateItems activator, TreeListView tlv)
     {
         _activator = activator;
         _tlv = tlv;
@@ -78,18 +77,15 @@ public class FavouriteColumnProvider
             }
             catch (ArgumentException)
             {
-
             }
         }
     }
 
-    private Bitmap FavouriteImageGetter(object rowobject)
-    {
-        return rowobject is DatabaseEntity o ? _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow : null;
-    }
-    private object FavouriteAspectGetter(object rowobject)
-    {
-        return rowobject is DatabaseEntity o ? _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0 : (object)null;
-    }
+    private Bitmap FavouriteImageGetter(object rowobject) => rowobject is DatabaseEntity o
+        ? _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow
+        : null;
 
+    private object FavouriteAspectGetter(object rowobject) => rowobject is DatabaseEntity o
+        ? _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0
+        : (object)null;
 }

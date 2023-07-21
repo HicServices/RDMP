@@ -71,7 +71,6 @@ public interface IAggregateBuilderOptions
     CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate);
 }
 
-
 /// <summary>
 /// Indicates whether or not a given <see cref="AggregateConfiguration"/> (GROUP BY) can have a count(*), max(x) etc column given the
 /// current configuration and role it is playing.

@@ -41,7 +41,7 @@ internal class TypeTextOrCancelDialogTests : UITests
 
         var s = sb.ToString();
 
-        var dlg = new TypeTextOrCancelDialog(s,s,5000);
+        var dlg = new TypeTextOrCancelDialog(s, s, 5000);
 
         //pretend like we launched it
         LastUserInterfaceLaunched = dlg;
@@ -53,7 +53,5 @@ internal class TypeTextOrCancelDialogTests : UITests
         //dialog shouldn't go thinner than 540 or wider than 840 pixels
         Assert.GreaterOrEqual(dlg.Width, 540);
         Assert.LessOrEqual(dlg.Width, 840);
-
     }
-
 }

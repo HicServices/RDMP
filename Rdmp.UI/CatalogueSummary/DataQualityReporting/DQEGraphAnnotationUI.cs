@@ -20,17 +20,13 @@ internal class DQEGraphAnnotationUI
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((DQEGraphAnnotationUI) obj);
-    }
-    protected bool Equals(DQEGraphAnnotationUI other)
-    {
-        return Equals(_underlyingAnnotationObject, other._underlyingAnnotationObject);
+        return Equals((DQEGraphAnnotationUI)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return _underlyingAnnotationObject.ID.GetHashCode();
-    }
+    protected bool Equals(DQEGraphAnnotationUI other) =>
+        Equals(_underlyingAnnotationObject, other._underlyingAnnotationObject);
+
+    public override int GetHashCode() => _underlyingAnnotationObject.ID.GetHashCode();
 
     public DQEGraphAnnotationUI(DQEGraphAnnotation a, Chart chart)
     {
@@ -62,7 +58,6 @@ internal class DQEGraphAnnotationUI
             AllowSelecting = true,
             Tag = this
         };
-
     }
 
     public void Delete(Chart chart)
@@ -71,6 +66,4 @@ internal class DQEGraphAnnotationUI
         chart.Annotations.Remove(Annotation);
         chart.Annotations.Remove(TextAnnotation);
     }
-
-
 }

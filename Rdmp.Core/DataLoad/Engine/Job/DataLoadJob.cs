@@ -53,7 +53,9 @@ public class DataLoadJob : IDataLoadJob
 
     private string _loggingTask;
 
-    public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
+    public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description,
+        ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener,
+        HICDatabaseConfiguration configuration)
     {
         _logManager = logManager;
         RepositoryLocator = repositoryLocator;
@@ -88,7 +90,8 @@ public class DataLoadJob : IDataLoadJob
     private void CreateDataLoadInfo()
     {
         if (string.IsNullOrWhiteSpace(Description))
-            throw new Exception("The data load description (for the DataLoadInfo object) must not be empty, please provide a relevant description");
+            throw new Exception(
+                "The data load description (for the DataLoadInfo object) must not be empty, please provide a relevant description");
 
         DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, nameof(DataLoadProcess), Description, "", false);
 
@@ -113,7 +116,8 @@ public class DataLoadJob : IDataLoadJob
         if (DataLoadInfo == null)
             CreateDataLoadInfo();
 
-        DataLoadInfo.LogFatalError(nameof(DataLoadProcess), message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
+        DataLoadInfo.LogFatalError(nameof(DataLoadProcess),
+            message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
         DataLoadInfo.CloseAndMarkComplete();
     }
 
@@ -132,7 +136,7 @@ public class DataLoadJob : IDataLoadJob
         if (DataLoadInfo == null)
             throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
-        if(!DataLoadInfo.IsClosed)
+        if (!DataLoadInfo.IsClosed)
             DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, senderName, message);
     }
 
@@ -148,7 +152,7 @@ public class DataLoadJob : IDataLoadJob
     public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
     {
         foreach (TableInfo regularTableInfo in RegularTablesToLoad)
-            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener,regularTableInfo, stage);
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, regularTableInfo, stage);
 
         foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
             cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
@@ -163,33 +167,42 @@ public class DataLoadJob : IDataLoadJob
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        if(DataLoadInfo != null)
+        if (DataLoadInfo != null)
             switch (e.ProgressEventType)
             {
                 case ProgressEventType.Trace:
                 case ProgressEventType.Debug:
                     break;
                 case ProgressEventType.Information:
-                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
-                        : ""));
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation,
+                        sender.GetType().Name, e.Message + (e.Exception != null
+                            ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                            : ""));
                     break;
                 case ProgressEventType.Warning:
-                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
-                        : ""));
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name,
+                        e.Message + (e.Exception != null
+                            ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                            : ""));
                     break;
                 case ProgressEventType.Error:
-                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
-                    DataLoadInfo.LogFatalError(sender.GetType().Name, e.Exception != null ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : e.Message);
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name,
+                        e.Message);
+                    DataLoadInfo.LogFatalError(sender.GetType().Name,
+                        e.Exception != null
+                            ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)
+                            : e.Message);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        _listener.OnNotify(sender,e);
+
+        _listener.OnNotify(sender, e);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        _listener.OnProgress(sender,e);
+        _listener.OnProgress(sender, e);
     }
 
     public string ArchiveFilepath => Path.Combine(LoadDirectory.ForArchiving.FullName, $"{DataLoadInfo.ID}.zip");
@@ -205,7 +218,8 @@ public class DataLoadJob : IDataLoadJob
 
     public ColumnInfo[] GetAllColumns()
     {
-        return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
     }
 
     public void CrashAtEnd(NotifyEventArgs because)

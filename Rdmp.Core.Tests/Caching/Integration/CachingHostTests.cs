@@ -45,7 +45,7 @@ public class CachingHostTests : UnitTests
 
         // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
         var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");
-                        
+
         cp.CacheFillProgress = DateTime.Now.AddDays(-1);
         cp.PermissionWindow_ID = 1;
 
@@ -59,9 +59,9 @@ public class CachingHostTests : UnitTests
 
 
         //Create a time period that we are outwith (1 hour ago to 30 minutes ago).
-        var start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
-        var stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));
-        permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []
+        var start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 1, 0, 0));
+        var stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0, 0, 30, 0));
+        permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new[]
         {
             new PermissionWindowPeriod(
                 (int)DateTime.Now.DayOfWeek,
@@ -85,7 +85,8 @@ public class CachingHostTests : UnitTests
         var abortTokenSource = new CancellationTokenSource();
         var cancellationToken = new GracefulCancellationToken(stopTokenSource.Token, abortTokenSource.Token);
 
-        var task = Task.Run(() => cacheHost.Start(listener, cancellationToken), cancellationToken.CreateLinkedSource().Token);
+        var task = Task.Run(() => cacheHost.Start(listener, cancellationToken),
+            cancellationToken.CreateLinkedSource().Token);
 
         // Don't want to cancel before the DownloadUntilFinished loop starts and we receive the first "Download not permitted at this time, sleeping for 60 seconds" message
         listener.ReceivedMessage += abortTokenSource.Cancel;
@@ -97,18 +98,17 @@ public class CachingHostTests : UnitTests
         catch (AggregateException e)
         {
             Assert.AreEqual(1, e.InnerExceptions.Count);
-            Assert.IsInstanceOf(typeof (TaskCanceledException), e.InnerExceptions[0], e.InnerExceptions[0].Message);
+            Assert.IsInstanceOf(typeof(TaskCanceledException), e.InnerExceptions[0], e.InnerExceptions[0].Message);
         }
         finally
         {
             testDir.Delete(true);
         }
     }
-
-
 }
 
 internal delegate void ReceivedMessageHandler();
+
 internal class ExpectedNotificationListener : IDataLoadEventListener
 {
     private readonly string _expectedNotificationString;

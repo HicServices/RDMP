@@ -30,9 +30,9 @@ public class Gatherer
         _repositoryLocator = repositoryLocator;
 
         _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
-        _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
+        _functions.Add(typeof(ColumnInfo), o => GatherDependencies((ColumnInfo)o));
         _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-        _functions.Add(typeof(Curation.Data.Plugin), o => GatherDependencies((Curation.Data.Plugin)o));
+        _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
 
         _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
@@ -54,15 +54,10 @@ public class Gatherer
     /// </summary>
     /// <param name="databaseEntity"></param>
     /// <returns></returns>
-    public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity)
-    {
-        return _functions.ContainsKey(databaseEntity.GetType());
-    }
+    public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity) =>
+        _functions.ContainsKey(databaseEntity.GetType());
 
-    public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o)
-    {
-        return _functions[o.GetType()](o);
-    }
+    public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o) => _functions[o.GetType()](o);
 
     public static GatheredObject GatherDependencies(ANOTable anoTable)
     {
@@ -72,7 +67,7 @@ public class Gatherer
         return root;
     }
 
-    public static GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
+    public static GatheredObject GatherDependencies(Plugin plugin)
     {
         var root = new GatheredObject(plugin);
 
@@ -122,7 +117,7 @@ public class Gatherer
         var root = new GatheredObject(filter);
 
         foreach (var param in filter.GetAllParameters())
-            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
+            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable)param));
 
         return root;
     }
@@ -145,7 +140,7 @@ public class Gatherer
         foreach (var o in allObjects)
         {
             //don't add a reference to the thing we are gathering dependencies on!
-            if(Equals(o,c))
+            if (Equals(o, c))
                 continue;
 
             foreach (var propertyInfo in propertyFinder.GetProperties(o))
@@ -159,5 +154,4 @@ public class Gatherer
 
         return root;
     }
-
 }

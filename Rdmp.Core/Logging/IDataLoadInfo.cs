@@ -14,7 +14,9 @@ namespace Rdmp.Core.Logging;
 /// </summary>
 public interface IDataLoadInfo
 {
-    ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable, DataSource[] sources, int expectedInserts);
+    ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable, DataSource[] sources,
+        int expectedInserts);
+
     void LogFatalError(string errorSource, string errorDescription);
     void LogProgress(DataLoadInfo.ProgressEventType pevent, string Source, string description);
 

@@ -35,7 +35,7 @@ internal class DatabaseOperationTests : DatabaseTests
         var testDb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName);
         var raw = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase($"{testLiveDatabaseName}_RAW");
 
-        foreach (var db in new[] { raw ,testDb})
+        foreach (var db in new[] { raw, testDb })
             if (db.Exists())
             {
                 foreach (var table in db.DiscoverTables(true))
@@ -43,20 +43,22 @@ internal class DatabaseOperationTests : DatabaseTests
 
                 db.Drop();
             }
-        
+
         DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testLiveDatabaseName);
         Assert.IsTrue(testDb.Exists());
 
-        testDb.CreateTable("Table_1", new[] {new DatabaseColumnRequest("Id", "int")});
+        testDb.CreateTable("Table_1", new[] { new DatabaseColumnRequest("Id", "int") });
 
 
         //clone the builder
-        var builder = new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)
-        {
-            InitialCatalog = testLiveDatabaseName
-        };
+        var builder =
+            new SqlConnectionStringBuilder(
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)
+            {
+                InitialCatalog = testLiveDatabaseName
+            };
 
-        var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder),null,CatalogueRepository);
+        var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder), null, CatalogueRepository);
 
         var cloner = new DatabaseCloner(dbConfiguration);
         try
@@ -72,11 +74,11 @@ internal class DatabaseOperationTests : DatabaseTests
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo, LoadBubble.Raw);
+                cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
+                    LoadBubble.Raw);
 
             Assert.IsTrue(raw.Exists());
             Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
-
         }
         finally
         {
@@ -99,7 +101,8 @@ internal class DatabaseOperationTests : DatabaseTests
     {
         //create a new catalogue for test data (in the test data catalogue)
         var cat = new Catalogue(CatalogueRepository, "DeleteMe");
-        var importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table, DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
+        var importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table,
+            DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
         importer.DoImport(out var tableInfo, out var columnInfos);
 
         toCleanUp.Push(cat);
@@ -116,7 +119,8 @@ internal class DatabaseOperationTests : DatabaseTests
         foreach (var col in columnInfos)
         {
             //create it with the same name
-            var cataItem = new CatalogueItem(CatalogueRepository, cat, col.Name[(col.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)..].Trim('[', ']', '`'));
+            var cataItem = new CatalogueItem(CatalogueRepository, cat,
+                col.Name[(col.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)..].Trim('[', ']', '`'));
             toCleanUp.Push(cataItem);
 
             cataItem.SetColumnInfo(col);

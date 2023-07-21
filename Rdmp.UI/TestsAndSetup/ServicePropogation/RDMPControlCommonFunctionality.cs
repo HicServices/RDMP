@@ -60,11 +60,14 @@ public class RDMPControlCommonFunctionality
     private AtomicCommandUIFactory atomicCommandUIFactory;
 
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-    private readonly ToolStripButton _runChecksToolStripButton = new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+
+    private readonly ToolStripButton _runChecksToolStripButton =
+        new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+
     private ICheckable _checkable;
     private IActivateItems _activator;
 
-    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new();
+    private Dictionary<string, ToolStripDropDownButton> _dropDownButtons = new();
     private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new();
 
 
@@ -113,7 +116,8 @@ public class RDMPControlCommonFunctionality
     /// <param name="overrideCommandName"></param>
     /// <param name="overrideImage"></param>
     /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
-    public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null, string underMenu = null)
+    public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,
+        string underMenu = null)
     {
         var p = _hostControl.GetTopmostRDMPUserControl();
         if (p != _hostControl)
@@ -124,14 +128,16 @@ public class RDMPControlCommonFunctionality
 
         InitializeToolStrip();
 
-        var button = string.IsNullOrWhiteSpace(underMenu)? atomicCommandUIFactory.CreateToolStripItem(cmd) : atomicCommandUIFactory.CreateMenuItem(cmd);
+        var button = string.IsNullOrWhiteSpace(underMenu)
+            ? atomicCommandUIFactory.CreateToolStripItem(cmd)
+            : atomicCommandUIFactory.CreateMenuItem(cmd);
         if (!string.IsNullOrWhiteSpace(overrideCommandName))
             button.Text = overrideCommandName;
 
         if (overrideImage != null)
             button.Image = overrideImage.ImageToBitmap();
 
-        Add(button,underMenu);
+        Add(button, underMenu);
     }
 
     /// <summary>
@@ -154,13 +160,16 @@ public class RDMPControlCommonFunctionality
         if (!string.IsNullOrWhiteSpace(underMenu))
         {
             if (!_dropDownButtons.ContainsKey(underMenu))
-                _dropDownButtons.Add(underMenu,new ToolStripDropDownButton {Text = underMenu,DisplayStyle = ToolStripItemDisplayStyle.Text});
+                _dropDownButtons.Add(underMenu,
+                    new ToolStripDropDownButton { Text = underMenu, DisplayStyle = ToolStripItemDisplayStyle.Text });
 
             _dropDownButtons[underMenu].DropDownItems.Add(item);
             ToolStrip.Items.Add(_dropDownButtons[underMenu]);
         }
         else
+        {
             ToolStrip.Items.Add(item);
+        }
     }
 
     /// <summary>
@@ -213,9 +222,9 @@ public class RDMPControlCommonFunctionality
             _ragSmileyToolStrip.Enabled = true;
 
             var e = new BeforeCheckingEventArgs(_ragSmileyToolStrip, _checkable);
-            BeforeChecking(this,e);
+            BeforeChecking(this, e);
 
-            if(e.Cancel)
+            if (e.Cancel)
                 return;
         }
 
@@ -266,10 +275,12 @@ public class RDMPControlCommonFunctionality
     public void AddHelp(Control c, string propertyName, string title = null, AnchorStyles anchor = AnchorStyles.None)
     {
         if (_activator == null)
-            throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
+            throw new Exception(
+                "Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
 
         if (c.Parent == null)
-            throw new NotSupportedException("Control is not in a container.  HelpIcon cannot be added to top level controls");
+            throw new NotSupportedException(
+                "Control is not in a container.  HelpIcon cannot be added to top level controls");
 
         title ??= propertyName;
         var body = _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
@@ -309,7 +320,9 @@ public class RDMPControlCommonFunctionality
                 help.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
         }
         else
+        {
             help.Anchor = anchor;
+        }
 
         c.Parent.Controls.Add(help);
     }
@@ -344,7 +357,8 @@ public class RDMPControlCommonFunctionality
     /// <param name="overrideCommandName"></param>
     /// <param name="overrideImage"></param>
     /// <param name="underMenu"></param>
-    public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,string underMenu = null)
+    public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,
+        string underMenu = null)
     {
         var p = _hostControl.GetTopmostRDMPUserControl();
         if (p != _hostControl)
@@ -362,7 +376,7 @@ public class RDMPControlCommonFunctionality
         if (overrideImage != null)
             menuItem.Image = overrideImage.ImageToBitmap();
 
-        AddToMenu(menuItem,underMenu);
+        AddToMenu(menuItem, underMenu);
     }
 
     /// <summary>
@@ -396,7 +410,9 @@ public class RDMPControlCommonFunctionality
             _menuDropDown.DropDownItems.Add(_addToMenuSubmenus[underMenu]);
         }
         else
+        {
             _menuDropDown.DropDownItems.Add(menuItem);
+        }
 
         _menuDropDown.Visible = true;
     }
@@ -419,7 +435,8 @@ public class RDMPControlCommonFunctionality
     /// <param name="overrideCommandName"></param>
     /// <param name="overrideImage"></param>
     /// <param name="overlayKind"></param>
-    protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage, OverlayKind overlayKind = OverlayKind.None)
+    protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage,
+        OverlayKind overlayKind = OverlayKind.None)
     {
         Add(cmd, overrideCommandName, _activator.CoreIconProvider.GetImage(overrideImage, overlayKind));
     }
@@ -427,11 +444,12 @@ public class RDMPControlCommonFunctionality
     protected virtual void InitializeToolStrip()
     {
         if (_activator == null)
-            throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
+            throw new Exception(
+                "Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
 
         ((Control)_hostControl).Controls.Add(ToolStrip);
 
-        ToolStripAddedToHost?.Invoke(this,EventArgs.Empty);
+        ToolStripAddedToHost?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -462,7 +480,8 @@ public class RDMPControlCommonFunctionality
         }
     }
 
-    private Dictionary<Scintilla,Color> _oldColours = new();
+    private Dictionary<Scintilla, Color> _oldColours = new();
+
     /// <summary>
     /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
     /// </summary>
@@ -501,7 +520,7 @@ Stack Trace:{exception.StackTrace}";
         queryEditor.ReadOnly = true;
 
         //go red after you have set the text
-        ScintillaGoRed(queryEditor,true);
+        ScintillaGoRed(queryEditor, true);
     }
 
     /// <summary>

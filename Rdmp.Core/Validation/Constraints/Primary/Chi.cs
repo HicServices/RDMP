@@ -21,24 +21,20 @@ public partial class Chi : PrimaryConstraint
             return null;
 
 
-        if(value is not string valueAsString)
+        if (value is not string valueAsString)
             return new ValidationFailure(
-                $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}",this);
+                $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}", this);
 
-        return !IsValidChi(valueAsString, out var reason) ? new ValidationFailure(reason,this) : null;
+        return !IsValidChi(valueAsString, out var reason) ? new ValidationFailure(reason, this) : null;
     }
 
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return
-            "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
-    }
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
 
     public static bool IsValidChi(string columnValueAsString, out string reason)
     {
@@ -68,7 +64,6 @@ public partial class Chi : PrimaryConstraint
 
         reason = null;
         return true;
-
     }
 
     /// <summary>
@@ -93,7 +88,6 @@ public partial class Chi : PrimaryConstraint
         if (c == 11) c = 0;
 
         return ((char)(c + '0')).ToString();
-
     }
 
     /// <summary>
@@ -158,10 +152,7 @@ public partial class Chi : PrimaryConstraint
     {
         var sum = 0;
         var factor = 10;
-        for (var i = 0; i < 9; i++)
-        {
-            sum += (chi[i] - 48) * factor--;
-        }
+        for (var i = 0; i < 9; i++) sum += (chi[i] - 48) * factor--;
 
         return sum;
     }

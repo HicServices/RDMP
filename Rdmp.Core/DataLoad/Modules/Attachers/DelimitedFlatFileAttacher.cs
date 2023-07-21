@@ -26,7 +26,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     protected readonly DelimitedFlatFileDataFlowSource Source;
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
-    public string ForceHeaders {
+    public string ForceHeaders
+    {
         get => Source.ForceHeaders;
         set => Source.ForceHeaders = value;
     }
@@ -39,7 +40,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBlankLines_DemandDescription)]
-    public bool IgnoreBlankLines {
+    public bool IgnoreBlankLines
+    {
         get => Source.IgnoreBlankLines;
         set => Source.IgnoreBlankLines = value;
     }
@@ -58,7 +60,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         set => Source.IgnoreColumns = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,DefaultValue = BadDataHandlingStrategy.ThrowException)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,
+        DefaultValue = BadDataHandlingStrategy.ThrowException)]
     public BadDataHandlingStrategy BadDataHandlingStrategy
     {
         get => Source.BadDataHandlingStrategy;
@@ -72,21 +75,22 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         set => Source.IgnoreBadReads = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription, DefaultValue = true)]
     public bool ThrowOnEmptyFiles
     {
         get => Source.ThrowOnEmptyFiles;
         set => Source.ThrowOnEmptyFiles = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription, DefaultValue = false)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription,
+        DefaultValue = false)]
     public bool AttemptToResolveNewLinesInRecords
     {
         get => Source.AttemptToResolveNewLinesInRecords;
         set => Source.AttemptToResolveNewLinesInRecords = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription,DefaultValue = 100)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
     public int MaximumErrorsToReport
     {
         get => Source.MaximumErrorsToReport;
@@ -97,10 +101,18 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     public string AddFilenameColumnNamed { get; set; }
 
     [DemandsInitialization(Culture_DemandDescription)]
-    public override CultureInfo Culture { get => Source.Culture; set => Source.Culture = value; }
+    public override CultureInfo Culture
+    {
+        get => Source.Culture;
+        set => Source.Culture = value;
+    }
 
     [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
-    public override string ExplicitDateTimeFormat {get => Source.ExplicitDateTimeFormat; set => Source.ExplicitDateTimeFormat = value; }
+    public override string ExplicitDateTimeFormat
+    {
+        get => Source.ExplicitDateTimeFormat;
+        set => Source.ExplicitDateTimeFormat = value;
+    }
 
 
     protected DelimitedFlatFileAttacher(char separator)
@@ -116,7 +128,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     private IDataLoadEventListener _listener;
     private FileInfo _currentFile;
 
-    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken)
+    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
+        GracefulCancellationToken cancellationToken)
     {
         Source.MaxBatchSize = maxBatchSize;
         Source.SetDataTable(dt);
@@ -125,19 +138,20 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         //if we are adding a column to the data read which contains the file path
         if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
         {
-            if(!dt.Columns.Contains(AddFilenameColumnNamed))
+            if (!dt.Columns.Contains(AddFilenameColumnNamed))
                 throw new FlatFileLoadException(
                     $"AddFilenameColumnNamed is set to '{AddFilenameColumnNamed}' but the column did not exist in RAW");
 
             foreach (DataRow row in dt.Rows)
                 if (row[AddFilenameColumnNamed] == DBNull.Value)
                     row[AddFilenameColumnNamed] = _currentFile.FullName;
-
         }
+
         return dt.Rows.Count;
     }
 
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         Source.StronglyTypeInput = false;
         Source.StronglyTypeInputBatchSize = 0;

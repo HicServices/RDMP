@@ -24,7 +24,7 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
         Weight = 50.1f;
     }
 
-    public ExecuteCommandDisableOrEnable(IBasicActivateItems  activator, IDisableable[] disableables) : base(activator)
+    public ExecuteCommandDisableOrEnable(IBasicActivateItems activator, IDisableable[] disableables) : base(activator)
     {
         _targets = disableables;
 
@@ -35,17 +35,14 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
         }
 
         if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
-        {
             foreach (var d in _targets)
                 UpdateViabilityForTarget(d);
-        }
         else
-        {
             SetImpossible("All objects must be in the same disabled/enabled state");
-        }
 
         Weight = 50.1f;
     }
+
     private void UpdateViabilityForTarget(IDisableable target)
     {
         switch (target)
@@ -67,7 +64,6 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
 
         if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
-
     }
 
     public override void Execute()

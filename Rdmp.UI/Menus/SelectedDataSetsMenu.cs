@@ -15,14 +15,14 @@ namespace Rdmp.UI.Menus;
 
 internal class SelectedDataSetsMenu : RDMPContextMenuStrip
 {
-    public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet): base(args, selectedDataSet)
+    public SelectedDataSetsMenu(RDMPContextMenuStripArgs args, SelectedDataSets selectedDataSet) : base(args,
+        selectedDataSet)
     {
         ReBrandActivateAs("Edit Extractable Columns", RDMPConcept.ExtractionConfiguration, OverlayKind.Edit);
 
-        Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet) { Weight = 4f});
+        Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet) { Weight = 4f });
 
         Add(new ExecuteCommandRelease(_activator) { Weight = 4.1f }.SetTarget(selectedDataSet));
-
 
 
         Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet) { Weight = 5.1f });
@@ -32,24 +32,22 @@ internal class SelectedDataSetsMenu : RDMPContextMenuStrip
         var cata = selectedDataSet.ExtractableDataSet.Catalogue;
 
         // If the Catalogue has been deleted, don't build Catalogue specific menu items
-        if(cata == null)
+        if (cata == null)
             return;
 
         var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
 
         foreach (var graph in availableGraphs)
-        {
-            Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator, new ExtractionAggregateGraphObjectCollection(selectedDataSet, graph))
+            Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator,
+                new ExtractionAggregateGraphObjectCollection(selectedDataSet, graph))
             {
                 SuggestedCategory = "Graph",
                 OverrideCommandName = graph.Name,
                 Weight = 5.2f
             });
-        }
         ////////////////////////////////////////////////////////////////////
 
 
         Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
     }
-
 }

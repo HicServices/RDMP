@@ -55,7 +55,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     {
         InitializeComponent();
         olvParameterName.GroupKeyGetter += GroupKeyGetter;
-        olvParameters.AboutToCreateGroups +=olvParameters_AboutToCreateGroups;
+        olvParameters.AboutToCreateGroups += olvParameters_AboutToCreateGroups;
         olvParameters.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
 
         olvParameterName.ImageGetter += ImageGetter;
@@ -75,11 +75,16 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miAddNewParameter.Click += miAddParameter_Click;
         miOverrideParameter.Click += miOverride_Click;
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvComment, new Guid("8058e9c5-236e-443a-8586-6a21bf1a4562"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvOwner, new Guid("e2097029-e35f-4d56-a000-e8cca717b9ad"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvValue, new Guid("cfbab41b-8af1-480c-a7a0-0bbf42ee8cb9"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterName, new Guid("eadfd8e8-db88-4632-badc-0c6dbec2f877"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterSQL, new Guid("a9216170-621d-45c6-9d32-9046a054fc0f"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvComment,
+            new Guid("8058e9c5-236e-443a-8586-6a21bf1a4562"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvOwner,
+            new Guid("e2097029-e35f-4d56-a000-e8cca717b9ad"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvValue,
+            new Guid("cfbab41b-8af1-480c-a7a0-0bbf42ee8cb9"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterName,
+            new Guid("eadfd8e8-db88-4632-badc-0c6dbec2f877"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterSQL,
+            new Guid("a9216170-621d-45c6-9d32-9046a054fc0f"));
     }
 
     private object ParameterName_AspectGetter(object rowObject)
@@ -100,13 +105,12 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_AboutToCreateGroups(object sender, CreateGroupsEventArgs e)
     {
-
         var order = new Dictionary<string, int>
         {
-            {ParameterLevel.Global.ToString(),0},
-            {ParameterLevel.CompositeQueryLevel.ToString(),1},
-            {ParameterLevel.QueryLevel.ToString(),2},
-            {ParameterLevel.TableInfo.ToString(),3}
+            { ParameterLevel.Global.ToString(), 0 },
+            { ParameterLevel.CompositeQueryLevel.ToString(), 1 },
+            { ParameterLevel.QueryLevel.ToString(), 2 },
+            { ParameterLevel.TableInfo.ToString(), 3 }
         };
 
         foreach (var g in e.Groups)
@@ -117,7 +121,6 @@ public partial class ParameterCollectionUI : RDMPUserControl
             currentGroup.Header = $"{currentGroup.Header} (current)";
 
         e.Groups = e.Groups.OrderBy(g => g.SortValue).ToList();
-
     }
 
     public void Clear()
@@ -132,7 +135,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         olvParameters.ClearObjects();
 
         //add all parameters from all levels
-        foreach (ParameterLevel level in Enum.GetValues(typeof (ParameterLevel)))
+        foreach (ParameterLevel level in Enum.GetValues(typeof(ParameterLevel)))
         {
             var parametersFoundAtThisLevel = Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[level];
 
@@ -145,28 +148,26 @@ public partial class ParameterCollectionUI : RDMPUserControl
         parameterEditorScintillaControl1.RegenerateSQL();
 
         UpdateTabVisibility();
-
     }
 
     private void UpdateTabVisibility()
     {
         if (parameterEditorScintillaControl1.IsBroken)
             tabControl1.TabPages.Remove(tpSql);
-        else
-        if (!tabControl1.TabPages.Contains(tpSql))
+        else if (!tabControl1.TabPages.Contains(tpSql))
             tabControl1.TabPages.Add(tpSql);
     }
 
     private void DisableRelevantObjects()
     {
-        if(olvParameters.Objects == null)//there are no parameters
+        if (olvParameters.Objects == null) //there are no parameters
             return;
 
         var parameters = olvParameters.Objects.Cast<ISqlParameter>().ToArray();
         var toDisable = parameters.Where(Options.ShouldBeDisabled);
 
         //These parameters are super special and in fact only have a Value (other properties are inherited from a parent ExtractionFilterParameter) so only let the user edit the Value textbox if there are any of these in the UI
-        if(parameters.Any(p=>p is ExtractionFilterParameterSetValue))
+        if (parameters.Any(p => p is ExtractionFilterParameterSetValue))
         {
             olvComment.IsEditable = false;
             olvParameterSQL.IsEditable = false;
@@ -192,7 +193,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     }
 
 
-    public static Form ShowAsDialog(IActivateItems activator,ParameterCollectionUIOptions options, bool modal = false)
+    public static Form ShowAsDialog(IActivateItems activator, ParameterCollectionUIOptions options, bool modal = false)
     {
         var f = new Form
         {
@@ -202,7 +203,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         f.Width = ui.Width;
         f.Height = ui.Height;
 
-        ui.SetUp(options,activator);
+        ui.SetUp(options, activator);
         ui.Dock = DockStyle.Fill;
         f.Controls.Add(ui);
 
@@ -214,13 +215,13 @@ public partial class ParameterCollectionUI : RDMPUserControl
         return f;
     }
 
-    public void SetUp(ParameterCollectionUIOptions options,IActivateItems activator)
+    public void SetUp(ParameterCollectionUIOptions options, IActivateItems activator)
     {
         Options = options;
 
         SetItemActivator(activator);
 
-        hiParameters.SetHelpText("Use Case",options.UseCase);
+        hiParameters.SetHelpText("Use Case", options.UseCase);
 
         parameterEditorScintillaControl1.Options = options;
         RefreshParametersFromDatabase();
@@ -231,7 +232,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         var r = new Random();
 
 #pragma warning disable SCS0005 // Weak random generator: This is only used to create an initial value for a parameter.
-        var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
+        var dialog = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
 #pragma warning restore SCS0005 // Weak random generator
         if (dialog.ShowDialog() == DialogResult.OK)
         {
@@ -281,9 +282,11 @@ public partial class ParameterCollectionUI : RDMPUserControl
             oldParameterName = null;
         }
 
-        if(e.Column.Index == olvParameterSQL.Index)
-            if (!string.IsNullOrWhiteSpace((string) e.NewValue))
-                e.NewValue = e.NewValue.ToString().TrimEnd(';');//auto trim semicolons we automatically put those in ourselves we don't need user slapping them in too thanks
+        if (e.Column.Index == olvParameterSQL.Index)
+            if (!string.IsNullOrWhiteSpace((string)e.NewValue))
+                e.NewValue =
+                    e.NewValue.ToString()
+                        .TrimEnd(';'); //auto trim semicolons we automatically put those in ourselves we don't need user slapping them in too thanks
 
         e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
@@ -333,7 +336,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void RefreshProblemObjects()
     {
-        olvParameters.RefreshObjects(parameterEditorScintillaControl1.ProblemObjects.Select(kvp=>kvp.Key).ToList());
+        olvParameters.RefreshObjects(parameterEditorScintillaControl1.ProblemObjects.Select(kvp => kvp.Key).ToList());
     }
 
     private void olvParameters_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
@@ -357,7 +360,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (Options.IsOverridden(sqlParameter))
         {
             e.Title = "Parameter is overridden by a higher level";
-            e.Text = "You have defined a higher level parameter with the same name/datatype which will override this parameters value during query generation";
+            e.Text =
+                "You have defined a higher level parameter with the same name/datatype which will override this parameters value during query generation";
             return;
         }
 
@@ -370,11 +374,11 @@ public partial class ParameterCollectionUI : RDMPUserControl
             return;
         }
     }
+
     private string ImageGetter(object rowObject)
     {
         try
         {
-
             var sqlParameter = (ISqlParameter)rowObject;
 
             if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
@@ -383,19 +387,20 @@ public partial class ParameterCollectionUI : RDMPUserControl
             if (Options.IsOverridden(sqlParameter))
                 return "Overridden.png";
 
-            if(Options.IsHigherLevel(sqlParameter))
+            if (Options.IsHigherLevel(sqlParameter))
                 return "Locked.png";
         }
         catch (Exception)
         {
             return "Warning.png"; //if it crashed trying to get an image then ... bad times return warning
         }
+
         return null;
     }
 
     private static object OwnerAspectGetter(object rowobject)
     {
-        var parameter = (ISqlParameter) rowobject;
+        var parameter = (ISqlParameter)rowobject;
         var owner = parameter.GetOwnerIfAny();
 
         return owner == null ? null : $"{owner.GetType().Name}:{owner}";
@@ -407,14 +412,12 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miOverrideParameter.Enabled = CanOverride(parameter);
     }
 
-    private bool CanOverride(ISqlParameter sqlParameter)
-    {
-        return sqlParameter != null &&
-               //if it is not already overridden
-               !Options.IsOverridden(sqlParameter) &&
-               //and it exists at a lower level
-               Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
-    }
+    private bool CanOverride(ISqlParameter sqlParameter) =>
+        sqlParameter != null &&
+        //if it is not already overridden
+        !Options.IsOverridden(sqlParameter) &&
+        //and it exists at a lower level
+        Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
 
     private void miOverride_Click(object sender, EventArgs e)
     {
@@ -438,5 +441,4 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
-
 }

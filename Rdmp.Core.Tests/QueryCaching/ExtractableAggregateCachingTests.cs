@@ -16,9 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 
-public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
+public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
 {
-
     private Catalogue _cata;
     private AggregateConfiguration _config;
     private CachedAggregateConfigurationResultsManager _manager;
@@ -33,12 +32,12 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
         base.SetUp();
 
         _cata =
-            new Catalogue(CatalogueRepository,"ExtractableAggregateCachingTests");
+            new Catalogue(CatalogueRepository, "ExtractableAggregateCachingTests");
 
-        _table = new TableInfo(CatalogueRepository,"ExtractableAggregateCachingTests");
-        _columnInfo = new ColumnInfo(CatalogueRepository,"Col1", "varchar(1000)", _table);
-            
-        _catalogueItem = new CatalogueItem(CatalogueRepository,_cata, "Col1");
+        _table = new TableInfo(CatalogueRepository, "ExtractableAggregateCachingTests");
+        _columnInfo = new ColumnInfo(CatalogueRepository, "Col1", "varchar(1000)", _table);
+
+        _catalogueItem = new CatalogueItem(CatalogueRepository, _cata, "Col1");
 
 
         _extractionInformation = new ExtractionInformation(CatalogueRepository, _catalogueItem, _columnInfo, "Col1");
@@ -49,29 +48,32 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
             new AggregateConfiguration(CatalogueRepository, _cata, "ExtractableAggregateCachingTests");
 
         _manager = new CachedAggregateConfigurationResultsManager(QueryCachingDatabaseServer);
-
     }
 
 
     [Test]
     public void BasicCase()
     {
-        var ex = Assert.Throws<ArgumentException>(()=>_manager.CommitResults(new CacheCommitExtractableAggregate(_config,"I've got a lovely bunch of coconuts",new DataTable(),30 )));
+        var ex = Assert.Throws<ArgumentException>(() =>
+            _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts",
+                new DataTable(), 30)));
 
-                
-        Assert.IsTrue(ex.Message.StartsWith("The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
+
+        Assert.IsTrue(ex.Message.StartsWith(
+            "The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
 
         var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Rows.Add("fishy!");
 
-        var ex2 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
+        var ex2 = Assert.Throws<NotSupportedException>(() =>
+            _manager.CommitResults(
+                new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
         Assert.IsTrue(
             ex2.Message.StartsWith(
                 "Aggregate ExtractableAggregateCachingTests is not marked as IsExtractable therefore cannot be cached"));
 
-            
 
         _config.IsExtractable = true;
         _config.SaveToDatabase();
@@ -84,7 +86,9 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
         var dim = new AggregateDimension(CatalogueRepository, _extractionInformation, _config);
         _config.ClearAllInjections();
 
-        var ex3 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
+        var ex3 = Assert.Throws<NotSupportedException>(() =>
+            _manager.CommitResults(
+                new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
         Assert.IsTrue(
             ex3.Message.StartsWith(
@@ -94,18 +98,21 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
         _extractionInformation.SaveToDatabase();
         _config.ClearAllInjections();
 
-        Assert.DoesNotThrow(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
+        Assert.DoesNotThrow(() =>
+            _manager.CommitResults(
+                new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
         dim.DeleteInDatabase();
 
 
-        using var con = DataAccessPortal.ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection();
+        using var con = DataAccessPortal
+            .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection();
         var table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
-    
+
         con.Open();
         using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {table.GetFullyQualifiedName()}", con);
         using var r = cmd.ExecuteReader();
         Assert.IsTrue(r.Read());
-        Assert.AreEqual("fishy!",r["Col1"]);
+        Assert.AreEqual("fishy!", r["Col1"]);
     }
 }

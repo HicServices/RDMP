@@ -14,8 +14,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 /// </summary>
 public class CacheDataProviderFindingException : Exception
 {
-    public CacheDataProviderFindingException(string msg):base(msg)
+    public CacheDataProviderFindingException(string msg) : base(msg)
     {
-            
     }
 }

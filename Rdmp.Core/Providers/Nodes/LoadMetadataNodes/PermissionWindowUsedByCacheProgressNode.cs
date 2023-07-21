@@ -10,23 +10,22 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomMessage
+public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCustomMessage
 {
     public CacheProgress CacheProgress { get; set; }
     public PermissionWindow PermissionWindow { get; private set; }
     public bool DirectionIsCacheToPermissionWindow { get; set; }
 
-    public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow, bool directionIsCacheToPermissionWindow)
+    public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow,
+        bool directionIsCacheToPermissionWindow)
     {
         CacheProgress = cacheProgress;
         PermissionWindow = permissionWindow;
         DirectionIsCacheToPermissionWindow = directionIsCacheToPermissionWindow;
     }
 
-    public override string ToString()
-    {
-        return DirectionIsCacheToPermissionWindow ? PermissionWindow.Name : CacheProgress.ToString();
-    }
+    public override string ToString() =>
+        DirectionIsCacheToPermissionWindow ? PermissionWindow.Name : CacheProgress.ToString();
 
     public void DeleteInDatabase()
     {
@@ -35,38 +34,32 @@ public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomM
     }
 
     /// <inheritdoc/>
-    public string GetDeleteMessage()
-    {
-        return "remove PermissionWindow from CacheProgress";
-    }
+    public string GetDeleteMessage() => "remove PermissionWindow from CacheProgress";
+
     /// <inheritdoc/>
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
+    public string GetDeleteVerb() => "Remove";
 
     #region Equality Members
-    protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
-    {
-        return CacheProgress.Equals(other.CacheProgress) && PermissionWindow.Equals(other.PermissionWindow) && DirectionIsCacheToPermissionWindow.Equals(other.DirectionIsCacheToPermissionWindow);
-    }
+
+    protected bool Equals(PermissionWindowUsedByCacheProgressNode other) => CacheProgress.Equals(other.CacheProgress) &&
+                                                                            PermissionWindow.Equals(
+                                                                                other.PermissionWindow) &&
+                                                                            DirectionIsCacheToPermissionWindow.Equals(
+                                                                                other
+                                                                                    .DirectionIsCacheToPermissionWindow);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PermissionWindowUsedByCacheProgressNode) obj);
+        return Equals((PermissionWindowUsedByCacheProgressNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
-    }
+    public override int GetHashCode() =>
+        System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
+
     #endregion
 
-    public object GetImageObject()
-    {
-        return DirectionIsCacheToPermissionWindow ? PermissionWindow : (object)CacheProgress;
-    }
+    public object GetImageObject() => DirectionIsCacheToPermissionWindow ? PermissionWindow : (object)CacheProgress;
 }

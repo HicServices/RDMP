@@ -187,8 +187,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
     public AllPluginsNode AllPluginsNode { get; private set; }
-    public Curation.Data.Plugin[] AllPlugins { get; private set; }
-    public Curation.Data.Plugin[] AllCompatiblePlugins { get; private set; }
+    public Plugin[] AllPlugins { get; private set; }
+    public Plugin[] AllCompatiblePlugins { get; private set; }
 
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
 
@@ -197,10 +197,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// </summary>
     protected object WriteLock = new();
 
-    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } =
-        new AllOrphanAggregateConfigurationsNode();
-    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } =
-        new AllTemplateAggregateConfigurationsNode();
+    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
+    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
@@ -217,7 +215,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <param name="pluginChildProviders"></param>
     /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
     /// <param name="previousStateIfKnown">Previous child provider state if you know it otherwise null</param>
-    public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
+    public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
+        ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
     {
         _commentStore = repository.CommentStore;
         _catalogueRepository = repository;
@@ -266,19 +265,26 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
         AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
-        AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
+        AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
+            new DescendancyList(AllConnectionStringKeywordsNode));
 
         ReportProgress("after basic object fetches");
 
         Task.WaitAll(
             //which TableInfos use which Credentials under which DataAccessContexts
-            Task.Factory.StartNew(() => { AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos); }),
+            Task.Factory.StartNew(() =>
+            {
+                AllDataAccessCredentialUsages =
+                    repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,
+                        AllTableInfos);
+            }),
             Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
         );
 
         ReportProgress("After credentials");
 
-        TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+        TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID)
+            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 
         ReportProgress("After TableInfo to ColumnInfo mapping");
 
@@ -315,7 +321,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllLookups = GetAllObjects<Lookup>(repository);
 
         foreach (var l in AllLookups)
-            l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID], _allColumnInfos[l.Description_ID]);
+            l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
+                _allColumnInfos[l.Description_ID]);
 
         AllJoinInfos = repository.GetAllObjects<JoinInfo>();
 
@@ -378,8 +385,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
 
-        CohortIdentificationConfigurationRootFolder = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-        AddChildren(CohortIdentificationConfigurationRootFolder, new DescendancyList(CohortIdentificationConfigurationRootFolder));
+        CohortIdentificationConfigurationRootFolder =
+            FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+        AddChildren(CohortIdentificationConfigurationRootFolder,
+            new DescendancyList(CohortIdentificationConfigurationRootFolder));
 
         var templateAggregateConfigurationIds =
             new HashSet<int>(
@@ -387,10 +396,12 @@ public class CatalogueChildProvider : ICoreChildProvider
                     .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
                     .Select(r => r.ReferencedObjectID));
 
-        TemplateAggregateConfigurations = AllAggregateConfigurations.Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
+        TemplateAggregateConfigurations = AllAggregateConfigurations
+            .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
 
         //add the orphans under the orphan folder
-        AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations), new DescendancyList(OrphanAggregateConfigurationsNode));
+        AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),
+            new DescendancyList(OrphanAggregateConfigurationsNode));
 
         var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
         dec.SetBetterRouteExists();
@@ -399,14 +410,15 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
         //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
-        var joinableDictionaryByAggregateConfigurationId = AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+        var joinableDictionaryByAggregateConfigurationId =
+            AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
         foreach (var ac in AllAggregateConfigurations)
-        {
-            ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID, out var joinable) //if there's a joinable
-                ? joinable //inject that we know the joinable (and what it is)
-                : null); //otherwise inject that it is not a joinable (suppresses database checking later)
-        }
+            ac.InjectKnown(
+                joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,
+                    out var joinable) //if there's a joinable
+                    ? joinable //inject that we know the joinable (and what it is)
+                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
 
         ReportProgress("After AggregateConfiguration injection");
 
@@ -420,7 +432,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After Governance");
 
         AllPluginsNode = new AllPluginsNode();
-        AllPlugins = GetAllObjects<Curation.Data.Plugin>(repository);
+        AllPlugins = GetAllObjects<Plugin>(repository);
         AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
 
         AddChildren(AllPluginsNode);
@@ -444,7 +456,8 @@ public class CatalogueChildProvider : ICoreChildProvider
             if (!searchables.ContainsKey(e.ReferencedObjectID))
                 continue;
 
-            var known = searchables[e.ReferencedObjectID].FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
+            var known = searchables[e.ReferencedObjectID]
+                .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
 
             if (known != null)
                 e.InjectKnown(known);
@@ -456,11 +469,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void FetchCatalogueItems()
     {
-        AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
+        AllCatalogueItemsDictionary =
+            GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
 
         ReportProgress("After CatalogueItem getting");
 
-        _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+        _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID)
+            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
         _allColumnInfos = AllColumnInfos.ToDictionaryEx(i => i.ID, o => o);
 
         ReportProgress("After CatalogueItem Dictionary building");
@@ -473,24 +488,24 @@ public class CatalogueChildProvider : ICoreChildProvider
             else
                 ci.InjectKnown((ColumnInfo)null);
         });
-
     }
 
     private void FetchExtractionInformations()
     {
-        AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
-        _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
+        AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository)
+            .ToDictionaryEx(i => i.ID, o => o);
+        _extractionInformationsByCatalogueItem =
+            AllExtractionInformationsDictionary.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
 
         //Inject known CatalogueItems into ExtractionInformations
         foreach (var ei in AllExtractionInformationsDictionary.Values)
-        {
             if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out var ci))
             {
                 ei.InjectKnown(ci.ColumnInfo);
                 ei.InjectKnown(ci);
             }
-        }
     }
+
     private void BuildCohortCohortAggregateContainers()
     {
         AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
@@ -506,18 +521,22 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateConfigurations()
     {
-        AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
+        AllJoinableCohortAggregateConfigurationUse =
+            GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
         AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
 
         BuildAggregateDimensions();
 
         //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
-        OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
+        OrphanAggregateConfigurations =
+            new HashSet<AggregateConfiguration>(
+                AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
 
         foreach (var configuration in AllAggregateConfigurations)
         {
             configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
-            configuration.InjectKnown(AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+            configuration.InjectKnown(AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID)
+                .ToArray());
         }
 
         foreach (var d in AllAggregateDimensions)
@@ -536,7 +555,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateFilterContainers()
     {
-        AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository).ToDictionaryEx(o => o.ID, o2 => o2);
+        AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
+            .ToDictionaryEx(o => o.ID, o2 => o2);
         AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
         AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 
@@ -548,12 +568,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     protected void ReportProgress(string desc)
     {
-        if(UserSettings.DebugPerformance)
+        if (UserSettings.DebugPerformance)
         {
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs($"ChildProvider Stage {_progress++} ({desc}):{  ProgressStopwatch.ElapsedMilliseconds }ms",CheckResult.Success));
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                $"ChildProvider Stage {_progress++} ({desc}):{ProgressStopwatch.ElapsedMilliseconds}ms",
+                CheckResult.Success));
             ProgressStopwatch.Restart();
         }
-
     }
 
     private void AddChildren(AllPluginsNode allPluginsNode)
@@ -566,7 +587,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         var expiredPluginsNode = new AllExpiredPluginsNode();
         children.Add(expiredPluginsNode);
-        AddChildren(expiredPluginsNode,descendancy.Add(expiredPluginsNode));
+        AddChildren(expiredPluginsNode, descendancy.Add(expiredPluginsNode));
 
         AddToDictionaries(children, descendancy);
     }
@@ -599,7 +620,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach (var doc in AllGovernanceDocuments.Where(d=>d.GovernancePeriod_ID == governancePeriod.ID))
+        foreach (var doc in AllGovernanceDocuments.Where(d => d.GovernancePeriod_ID == governancePeriod.ID))
             children.Add(doc);
 
         AddToDictionaries(children, descendancy);
@@ -614,7 +635,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(permissionWindow, descendancy.Add(permissionWindow));
 
 
-        AddToDictionaries(new HashSet<object>(AllPermissionWindows),descendancy);
+        AddToDictionaries(new HashSet<object>(AllPermissionWindows), descendancy);
     }
 
     private void AddChildren(PermissionWindow permissionWindow, DescendancyList descendancy)
@@ -625,7 +646,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             if (cacheProgress.PermissionWindow_ID == permissionWindow.ID)
                 children.Add(new PermissionWindowUsedByCacheProgressNode(cacheProgress, permissionWindow, false));
 
-        AddToDictionaries(children,descendancy);
+        AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(AllExternalServersNode allExternalServersNode)
@@ -660,7 +681,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <summary>
     /// Creates new <see cref="StandardPipelineUseCaseNode"/>s and fills it with all compatible Pipelines - do not call this method more than once
     /// </summary>
-    protected void AddPipelineUseCases(Dictionary<string,PipelineUseCase> useCases)
+    protected void AddPipelineUseCases(Dictionary<string, PipelineUseCase> useCases)
     {
         var descendancy = new DescendancyList(AllPipelinesNode);
         var children = new HashSet<object>();
@@ -683,11 +704,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         children.Add(OtherPipelinesNode);
         OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
-        AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
+        AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
 
         //it is the first standard use case
         AddToDictionaries(children, descendancy);
-
     }
 
     private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
@@ -719,7 +739,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(PipelineCompatibleWithUseCaseNode pipelineNode, DescendancyList descendancy)
     {
-        var components = AllPipelineComponents.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID).OrderBy(o => o.Order)
+        var components = AllPipelineComponents.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID)
+            .OrderBy(o => o.Order)
             .ToArray();
 
         foreach (var component in components)
@@ -732,7 +753,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
     {
-        var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID).ToArray();
+        var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID)
+            .ToArray();
 
         var children = new HashSet<object>(components);
 
@@ -753,8 +775,8 @@ public class CatalogueChildProvider : ICoreChildProvider
             IEnumerable<TableInfo> tables = typeGroup;
 
             var serversByName = tables
-                .GroupBy(c => c.Server ?? TableInfoServerNode.NullServerNode,StringComparer.CurrentCultureIgnoreCase)
-                .Select(s => new TableInfoServerNode(s.Key,dbType, s));
+                .GroupBy(c => c.Server ?? TableInfoServerNode.NullServerNode, StringComparer.CurrentCultureIgnoreCase)
+                .Select(s => new TableInfoServerNode(s.Key, dbType, s));
 
 
             foreach (var server in serversByName)
@@ -768,7 +790,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllServers = allServers.ToArray();
 
         //record the fact that all the servers are children of the all servers node
-        AddToDictionaries(new HashSet<object>(AllServers),descendancy);
+        AddToDictionaries(new HashSet<object>(AllServers), descendancy);
     }
 
 
@@ -796,66 +818,54 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
     {
-        foreach(var child in folder.ChildFolders)
-        {
+        foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        }
 
         //add catalogues in folder
-        foreach(var c in folder.ChildObjects)
-        {
-            AddChildren(c, descendancy.Add(c));
-        }
+        foreach (var c in folder.ChildObjects) AddChildren(c, descendancy.Add(c));
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)),descendancy
+                    .Union(folder.ChildObjects)), descendancy
         );
     }
+
     private void AddChildren(FolderNode<LoadMetadata> folder, DescendancyList descendancy)
     {
-        foreach(var child in folder.ChildFolders)
-        {
+        foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        }
 
         //add loads in folder
-        foreach(var lmd in folder.ChildObjects)
-        {
-            AddChildren(lmd, descendancy.Add(lmd));
-        }
+        foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)),descendancy
+                    .Union(folder.ChildObjects)), descendancy
         );
     }
+
     private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
     {
-        foreach(var child in folder.ChildFolders)
-        {
+        foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        }
 
         //add cics in folder
-        foreach(var cic in folder.ChildObjects)
-        {
-            AddChildren(cic, descendancy.Add(cic));
-        }
+        foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)),descendancy
+                    .Union(folder.ChildObjects)), descendancy
         );
     }
 
     #region Load Metadata
+
     private void AddChildren(LoadMetadata lmd, DescendancyList descendancy)
     {
         var childObjects = new List<object>();
@@ -868,7 +878,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
-        AddChildren(allSchedulesNode,descendancy.Add(allSchedulesNode));
+        AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
         childObjects.Add(allSchedulesNode);
 
         var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
@@ -892,12 +902,12 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var lp in AllLoadProgresses.Where(p => p.LoadMetadata_ID == lmd.ID))
         {
-            AddChildren(lp,descendancy.Add(lp));
+            AddChildren(lp, descendancy.Add(lp));
             childObjects.Add(lp);
         }
 
-        if(childObjects.Any())
-            AddToDictionaries(childObjects,descendancy);
+        if (childObjects.Any())
+            AddToDictionaries(childObjects, descendancy);
     }
 
     private void AddChildren(LoadProgress loadProgress, DescendancyList descendancy)
@@ -908,53 +918,54 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(cacheProgress, descendancy.Add(cacheProgress));
 
         if (cacheProgresses.Any())
-            AddToDictionaries(new HashSet<object>(cacheProgresses),descendancy);
+            AddToDictionaries(new HashSet<object>(cacheProgresses), descendancy);
     }
 
     private void AddChildren(CacheProgress cacheProgress, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
 
-        if(cacheProgress.PermissionWindow_ID != null)
+        if (cacheProgress.PermissionWindow_ID != null)
         {
             var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
-            var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window,true);
+            var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window, true);
 
             children.Add(windowNode);
         }
 
-        if(children.Any())
+        if (children.Any())
             AddToDictionaries(children, descendancy);
     }
 
-    private void AddChildren(AllProcessTasksUsedByLoadMetadataNode allProcessTasksUsedByLoadMetadataNode, DescendancyList descendancy)
+    private void AddChildren(AllProcessTasksUsedByLoadMetadataNode allProcessTasksUsedByLoadMetadataNode,
+        DescendancyList descendancy)
     {
         var childObjects = new HashSet<object>();
 
         var lmd = allProcessTasksUsedByLoadMetadataNode.LoadMetadata;
-        childObjects.Add(new LoadStageNode(lmd,LoadStage.GetFiles));
+        childObjects.Add(new LoadStageNode(lmd, LoadStage.GetFiles));
         childObjects.Add(new LoadStageNode(lmd, LoadStage.Mounting));
         childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustRaw));
         childObjects.Add(new LoadStageNode(lmd, LoadStage.AdjustStaging));
         childObjects.Add(new LoadStageNode(lmd, LoadStage.PostLoad));
 
         foreach (LoadStageNode node in childObjects)
-            AddChildren(node,descendancy.Add(node));
+            AddChildren(node, descendancy.Add(node));
 
-        AddToDictionaries(childObjects,descendancy);
+        AddToDictionaries(childObjects, descendancy);
     }
 
     private void AddChildren(LoadStageNode loadStageNode, DescendancyList descendancy)
     {
         var tasks = AllProcessTasks.Where(
                 p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
-            .OrderBy(o=>o.Order).ToArray();
+            .OrderBy(o => o.Order).ToArray();
 
         foreach (var processTask in tasks)
             AddChildren(processTask, descendancy.Add(processTask));
 
-        if(tasks.Any())
-            AddToDictionaries(new HashSet<object>(tasks),descendancy);
+        if (tasks.Any())
+            AddToDictionaries(new HashSet<object>(tasks), descendancy);
     }
 
     private void AddChildren(ProcessTask procesTask, DescendancyList descendancy)
@@ -962,22 +973,26 @@ public class CatalogueChildProvider : ICoreChildProvider
         var args = AllProcessTasksArguments.Where(
             a => a.ProcessTask_ID == procesTask.ID).ToArray();
 
-        if(args.Any())
-            AddToDictionaries(new HashSet<object>(args),descendancy);
+        if (args.Any())
+            AddToDictionaries(new HashSet<object>(args), descendancy);
     }
-    private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode, DescendancyList descendancy)
+
+    private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
+        DescendancyList descendancy)
     {
         var chilObjects = new HashSet<object>();
 
-        var usedCatalogues = AllCatalogues.Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID).ToList();
+        var usedCatalogues = AllCatalogues
+            .Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID).ToList();
 
 
         foreach (var catalogue in usedCatalogues)
-            chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,catalogue));
+            chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
+                catalogue));
 
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
 
-        AddToDictionaries(chilObjects,descendancy);
+        AddToDictionaries(chilObjects, descendancy);
     }
 
     #endregion
@@ -1007,17 +1022,25 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         c.InjectKnown(cis);
 
-        var deprecated = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Deprecated), ExtractionCategory.Deprecated);
-        var special = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired), ExtractionCategory.SpecialApprovalRequired);
-        var intern = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Internal), ExtractionCategory.Internal);
-        var supplemental = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Supplemental), ExtractionCategory.Supplemental);
+        var deprecated = new CatalogueItemsNode(c,
+            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Deprecated),
+            ExtractionCategory.Deprecated);
+        var special = new CatalogueItemsNode(c,
+            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired),
+            ExtractionCategory.SpecialApprovalRequired);
+        var intern = new CatalogueItemsNode(c,
+            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Internal),
+            ExtractionCategory.Internal);
+        var supplemental = new CatalogueItemsNode(c,
+            cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Supplemental),
+            ExtractionCategory.Supplemental);
         var notExtractable = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation == null), null);
 
         AddChildren(core, descendancy.Add(core));
         childObjects.Add(core);
 
-        foreach(var optional in new[] { deprecated,special,intern,supplemental,notExtractable})
-            if(optional.CatalogueItems.Any())
+        foreach (var optional in new[] { deprecated, special, intern, supplemental, notExtractable })
+            if (optional.CatalogueItems.Any())
             {
                 AddChildren(optional, descendancy.Add(optional));
                 childObjects.Add(optional);
@@ -1038,7 +1061,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             childObjects.Add(documentationNode);
 
             //record the children
-            AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)),descendancy.Add(documentationNode));
+            AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)), descendancy.Add(documentationNode));
         }
 
         if (lookups.Any())
@@ -1049,7 +1072,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
             //record the children
-            AddToDictionaries(new HashSet<object>(lookups.Select(l=>new CatalogueLookupUsageNode(c,l))),
+            AddToDictionaries(new HashSet<object>(lookups.Select(l => new CatalogueLookupUsageNode(c, l))),
                 descendancy.Add(lookupsNode));
         }
 
@@ -1059,25 +1082,23 @@ public class CatalogueChildProvider : ICoreChildProvider
             childObjects.Add(aggregatesNode);
 
             var nodeDescendancy = descendancy.Add(aggregatesNode);
-            AddToDictionaries(new HashSet<object>(regularAggregates),nodeDescendancy);
+            AddToDictionaries(new HashSet<object>(regularAggregates), nodeDescendancy);
 
             foreach (var regularAggregate in regularAggregates)
                 AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
         }
 
         //finalise
-        AddToDictionaries(new HashSet<object>(childObjects),descendancy);
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 
     private void InjectCatalogueItems()
     {
-        foreach(var ci in AllCatalogueItems)
-        {
+        foreach (var ci in AllCatalogueItems)
             if (_extractionInformationsByCatalogueItem.TryGetValue(ci.ID, out var ei))
                 ci.InjectKnown(ei);
             else
                 ci.InjectKnown((ExtractionInformation)null);
-        }
     }
 
     private void AddChildren(CatalogueItemsNode node, DescendancyList descendancyList)
@@ -1092,31 +1113,28 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var childrenObjects = new HashSet<object>();
 
-        var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
+        var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>()
+            .ToArray();
 
         foreach (var p in parameters)
             childrenObjects.Add(p);
 
         // show the dimensions in the tree
-        foreach (var dim in aggregateConfiguration.AggregateDimensions)
-        {
-            childrenObjects.Add(dim);
-        }
+        foreach (var dim in aggregateConfiguration.AggregateDimensions) childrenObjects.Add(dim);
 
         // show the axis (if any) in the tree.  If there are multiple axis in this tree then that is bad but maybe the user can delete one of them to fix the situation
-        foreach(var axis in AllAggregateContinuousDateAxis.Where(a => aggregateConfiguration.AggregateDimensions.Any(d => d.ID == a.AggregateDimension_ID)))
-        {
+        foreach (var axis in AllAggregateContinuousDateAxis.Where(a =>
+                     aggregateConfiguration.AggregateDimensions.Any(d => d.ID == a.AggregateDimension_ID)))
             childrenObjects.Add(axis);
-        }
 
         //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
         //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
         //really user wants to see it in CohortIdentificationCollectionUI
         if (aggregateConfiguration.RootFilterContainer_ID != null)
         {
-            var container = AllAggregateContainersDictionary[(int) aggregateConfiguration.RootFilterContainer_ID];
+            var container = AllAggregateContainersDictionary[(int)aggregateConfiguration.RootFilterContainer_ID];
 
-            AddChildren(container,descendancy.Add(container));
+            AddChildren(container, descendancy.Add(container));
             childrenObjects.Add(container);
         }
 
@@ -1136,11 +1154,11 @@ public class CatalogueChildProvider : ICoreChildProvider
             childrenObjects.Add(subcontainer);
 
             //but also document its children
-            AddChildren(subcontainer,descendancy.Add(subcontainer));
+            AddChildren(subcontainer, descendancy.Add(subcontainer));
         }
 
         //also add the filters for the container
-        foreach(var f in filters)
+        foreach (var f in filters)
         {
             // for filters add the parameters under them
             AddChildren((AggregateFilter)f, descendancy.Add(f));
@@ -1148,12 +1166,13 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         //add our children to the dictionary
-        AddToDictionaries(new HashSet<object>(childrenObjects),descendancy);
+        AddToDictionaries(new HashSet<object>(childrenObjects), descendancy);
     }
 
     private void AddChildren(AggregateFilter f, DescendancyList descendancy)
     {
-        AddToDictionaries(new HashSet<object>(AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == f.ID)), descendancy);
+        AddToDictionaries(new HashSet<object>(AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == f.ID)),
+            descendancy);
     }
 
     private void AddChildren(CatalogueItem ci, DescendancyList descendancy)
@@ -1167,12 +1186,15 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(ei, descendancy.Add(ei));
         }
         else
-            ci.InjectKnown((ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
+        {
+            ci.InjectKnown(
+                (ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
+        }
 
         if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
-            childObjects.Add(new LinkedColumnInfoNode(ci,col));
+            childObjects.Add(new LinkedColumnInfoNode(ci, col));
 
-        AddToDictionaries(new HashSet<object>(childObjects),descendancy);
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 
     private void AddChildren(ExtractionInformation extractionInformation, DescendancyList descendancy)
@@ -1183,10 +1205,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             //add the filter as a child of the
             children.Add(filter);
-            AddChildren(filter,descendancy.Add(filter));
+            AddChildren(filter, descendancy.Add(filter));
         }
 
-        AddToDictionaries(children,descendancy);
+        AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ExtractionFilter filter, DescendancyList descendancy)
@@ -1206,11 +1228,12 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(set, descendancy.Add(set), parameters);
         }
 
-        if(children.Any())
-            AddToDictionaries(children,descendancy);
+        if (children.Any())
+            AddToDictionaries(children, descendancy);
     }
 
-    private void AddChildren(ExtractionFilterParameterSet set, DescendancyList descendancy, ExtractionFilterParameter[] filterParameters)
+    private void AddChildren(ExtractionFilterParameterSet set, DescendancyList descendancy,
+        ExtractionFilterParameter[] filterParameters)
     {
         var children = new HashSet<object>();
 
@@ -1229,13 +1252,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
-            children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+            children.Add(new QueryCacheUsedByCohortIdentificationNode(cic,
+                AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
 
         var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
-        foreach(var p in parameters)
-        {
-            children.Add(p);
-        }
+        foreach (var p in parameters) children.Add(p);
 
         //if it has a root container
         if (cic.RootCohortAggregateContainer_ID != null)
@@ -1246,7 +1267,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         //get the patient index tables
-        var joinableNode = new JoinableCollectionNode(cic, AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
+        var joinableNode = new JoinableCollectionNode(cic,
+            AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
         AddChildren(joinableNode, descendancy.Add(joinableNode).SetBetterRouteExists());
         children.Add(joinableNode);
 
@@ -1258,24 +1280,23 @@ public class CatalogueChildProvider : ICoreChildProvider
         var children = new HashSet<object>();
 
         foreach (var joinable in joinablesNode.Joinables)
-        {
             try
             {
                 var agg = AllAggregateConfigurations.Single(ac => ac.ID == joinable.AggregateConfiguration_ID);
-                ForceAggregateNaming(agg,descendancy);
+                ForceAggregateNaming(agg, descendancy);
                 children.Add(agg);
 
                 //it's no longer an orphan because it's in a known cic (as a patient index table)
                 OrphanAggregateConfigurations.Remove(agg);
 
-                AddChildren(agg,descendancy.Add(agg));
+                AddChildren(agg, descendancy.Add(agg));
             }
             catch (Exception e)
             {
                 throw new Exception(
-                    $"JoinableCohortAggregateConfiguration (patient index table) object (ID={joinable.ID}) references AggregateConfiguration_ID {joinable.AggregateConfiguration_ID} but that AggregateConfiguration was not found",e);
+                    $"JoinableCohortAggregateConfiguration (patient index table) object (ID={joinable.ID}) references AggregateConfiguration_ID {joinable.AggregateConfiguration_ID} but that AggregateConfiguration was not found",
+                    e);
             }
-        }
 
         AddToDictionaries(children, descendancy);
     }
@@ -1290,7 +1311,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //if there are subcontainers
         foreach (var subcontainer in subcontainers)
-            AddChildren(subcontainer,descendancy.Add(subcontainer));
+            AddChildren(subcontainer, descendancy.Add(subcontainer));
 
         //get our configurations
         var configurations = _cohortContainerManager.GetChildren(container).OfType<AggregateConfiguration>().ToList();
@@ -1309,7 +1330,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //children are all aggregates and containers at the current hierarchy level in order
         var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
 
-        AddToDictionaries(new HashSet<object>(children),descendancy);
+        AddToDictionaries(new HashSet<object>(children), descendancy);
     }
 
     private void ForceAggregateNaming(AggregateConfiguration configuration, DescendancyList descendancy)
@@ -1318,8 +1339,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (!configuration.IsCohortIdentificationAggregate)
         {
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
-                $"Had to fix naming of configuration '{configuration}' because it didn't start with correct cic prefix",CheckResult.Warning));
-            descendancy.Parents.OfType<CohortIdentificationConfiguration>().Single().EnsureNamingConvention(configuration);
+                $"Had to fix naming of configuration '{configuration}' because it didn't start with correct cic prefix",
+                CheckResult.Warning));
+            descendancy.Parents.OfType<CohortIdentificationConfiguration>().Single()
+                .EnsureNamingConvention(configuration);
             configuration.SaveToDatabase();
         }
     }
@@ -1330,10 +1353,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         var children = new HashSet<object>();
 
         var databases =
-
             serverNode.Tables.GroupBy(
                     k => k.Database ?? TableInfoDatabaseNode.NullDatabaseNode, StringComparer.CurrentCultureIgnoreCase)
-                .Select(g=> new TableInfoDatabaseNode(g.Key, serverNode, g));
+                .Select(g => new TableInfoDatabaseNode(g.Key, serverNode, g));
 
         foreach (var db in databases)
         {
@@ -1350,7 +1372,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //add empty hashset
         var children = new HashSet<object>();
 
-        foreach(var t in dbNode.Tables)
+        foreach (var t in dbNode.Tables)
         {
             //record the children of the table infos (mostly column infos)
             children.Add(t);
@@ -1363,10 +1385,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-    private void AddChildren(TableInfo tableInfo,DescendancyList descendancy)
+    private void AddChildren(TableInfo tableInfo, DescendancyList descendancy)
     {
         //add empty hashset
-        var children =  new HashSet<object>();
+        var children = new HashSet<object>();
 
         //if the table has an identifier dump listed
         if (tableInfo.IdentifierDumpServer_ID != null)
@@ -1402,19 +1424,16 @@ public class CatalogueChildProvider : ICoreChildProvider
             //that has parameters
             var parameters = tableInfo.GetAllParameters();
 
-            foreach(var p in parameters)
-            {
-                children.Add(p);
-            }
+            foreach (var p in parameters) children.Add(p);
         }
 
         //next add the column infos
-        if( TableInfosToColumnInfos.TryGetValue(tableInfo.ID,out var result))
+        if (TableInfosToColumnInfos.TryGetValue(tableInfo.ID, out var result))
             foreach (var c in result)
             {
                 children.Add(c);
                 c.InjectKnown(tableInfo);
-                AddChildren(c,descendancy.Add(c).SetBetterRouteExists());
+                AddChildren(c, descendancy.Add(c).SetBetterRouteExists());
             }
 
         //finally add any credentials objects
@@ -1423,7 +1442,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                 children.Add(node);
 
         //now we have recorded all the children add them with descendancy via the TableInfo descendancy
-        AddToDictionaries(children,descendancy);
+        AddToDictionaries(children, descendancy);
     }
 
     private void AddChildren(ColumnInfo columnInfo, DescendancyList descendancy)
@@ -1440,13 +1459,13 @@ public class CatalogueChildProvider : ICoreChildProvider
             children.Add(j);
 
         if (children.Any())
-            AddToDictionaries(children,descendancy);
+            AddToDictionaries(children, descendancy);
     }
 
     protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
     {
-        if(list.IsEmpty)
-            throw new ArgumentException("DescendancyList cannot be empty",nameof(list));
+        if (list.IsEmpty)
+            throw new ArgumentException("DescendancyList cannot be empty", nameof(list));
 
         //document that the last parent has these as children
         var parent = list.Last();
@@ -1456,7 +1475,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
         foreach (var o in children)
-            _descendancyDictionary.AddOrUpdate(o, list,(k,v)=> HandleDescendancyCollision(k,v,list));
+            _descendancyDictionary.AddOrUpdate(o, list, (k, v) => HandleDescendancyCollision(k, v, list));
 
 
         foreach (var masquerader in children.OfType<IMasqueradeAs>())
@@ -1466,13 +1485,15 @@ public class CatalogueChildProvider : ICoreChildProvider
             if (!AllMasqueraders.ContainsKey(key))
                 AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
-            lock(AllMasqueraders)
+            lock (AllMasqueraders)
+            {
                 AllMasqueraders[key].Add(masquerader);
+            }
         }
-
     }
 
-    private static DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
+    private static DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute,
+        DescendancyList newRoute)
     {
         //if the new route is the best best
         if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)
@@ -1491,36 +1512,30 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual object[] GetChildren(object model)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             //if we don't have a record of any children in the child dictionary for the parent model object
             if (!_childDictionary.ContainsKey(model))
             {
                 //if they want the children of a Pipeline (which we don't track) just serve the components
-                if (model is Pipeline p)
-                {
-                    return p.PipelineComponents.ToArray();
-                }
+                if (model is Pipeline p) return p.PipelineComponents.ToArray();
                 //if they want the children of a PipelineComponent (which we don't track) just serve the arguments
-                if (model is PipelineComponent pc)
-                {
-                    return pc.PipelineComponentArguments.ToArray();
-                }
+                if (model is PipelineComponent pc) return pc.PipelineComponentArguments.ToArray();
 
-                return Array.Empty<object>();//return none
+                return Array.Empty<object>(); //return none
             }
 
 
-            return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
+            return _childDictionary[model].OrderBy(o => o.ToString()).ToArray();
         }
     }
 
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             //things that are a match on Type but not IMasqueradeAs
-            var exactMatches = GetAllSearchables().Keys.Where(t=>t is not IMasqueradeAs).Where(type.IsInstanceOfType);
+            var exactMatches = GetAllSearchables().Keys.Where(t => t is not IMasqueradeAs).Where(type.IsInstanceOfType);
 
             //Union the unwrapped masqueraders
             return unwrapMasqueraders
@@ -1536,8 +1551,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public DescendancyList GetDescendancyListIfAnyFor(object model)
     {
-
-        lock(WriteLock)
+        lock (WriteLock)
         {
             return _descendancyDictionary.TryGetValue(model, out var result) ? result : null;
         }
@@ -1546,7 +1560,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public object GetRootObjectOrSelf(object objectToEmphasise)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
 
@@ -1557,12 +1571,12 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
 
             foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
-                toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
+                toReturn.Add((IMapsDirectlyToDatabaseTable)kvp.Key, kvp.Value);
 
             return toReturn;
         }
@@ -1570,7 +1584,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public IEnumerable<object> GetAllChildrenRecursively(object o)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             var toReturn = new List<object>();
 
@@ -1591,7 +1605,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <param name="objectsToAskAbout"></param>
     protected void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             var newObjectsFound = new HashSet<object>();
 
@@ -1600,88 +1614,92 @@ public class CatalogueChildProvider : ICoreChildProvider
             var providers = _pluginChildProviders.Except(_blockedPlugins).ToArray();
 
             //for every object found so far
-            if(providers.Any())
-                foreach (var o in objectsToAskAbout?? GetAllObjects())
-                {
+            if (providers.Any())
+                foreach (var o in objectsToAskAbout ?? GetAllObjects())
                     //for every plugin loaded (that is not forbidlisted)
-                    foreach (var plugin in providers)
+                foreach (var plugin in providers)
+                    //ask about the children
+                    try
                     {
-                        //ask about the children
-                        try
+                        sw.Restart();
+                        //otherwise ask plugin what its children are
+                        var pluginChildren = plugin.GetChildren(o);
+
+                        //if the plugin takes too long to respond we need to stop
+                        if (sw.ElapsedMilliseconds > 1000)
                         {
-                            sw.Restart();
-                            //otherwise ask plugin what its children are
-                            var pluginChildren = plugin.GetChildren(o);
-
-                            //if the plugin takes too long to respond we need to stop
-                            if (sw.ElapsedMilliseconds > 1000)
-                            {
-                                _blockedPlugins.Add(plugin);
-                                throw new Exception(
-                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                            }
-
-                            //it has children
-                            if (pluginChildren != null && pluginChildren.Any())
-                            {
-                                //get the descendancy of the parent
-                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
-                                var newDescendancy = parentDescendancy == null ? new DescendancyList(new[] {o}) : //if the parent is a root level object start a new descendancy list from it
-                                    parentDescendancy.Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-                                    newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                                //record that
-                                foreach (var pluginChild in pluginChildren)
-                                {
-                                    //if the parent didn't have any children before
-                                    if (!_childDictionary.ContainsKey(o))
-                                        _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
-
-
-                                    //add us to the parent objects child collection
-                                    _childDictionary[o].Add(pluginChild);
-
-                                    //add to the child collection of the parent object kvp.Key
-                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
-
-                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                    newObjectsFound.Add(pluginChild);
-                                }
-                            }
+                            _blockedPlugins.Add(plugin);
+                            throw new Exception(
+                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
                         }
-                        catch (Exception e)
+
+                        //it has children
+                        if (pluginChildren != null && pluginChildren.Any())
                         {
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                            //get the descendancy of the parent
+                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
+                            var newDescendancy = parentDescendancy == null
+                                ? new DescendancyList(new[] { o })
+                                : //if the parent is a root level object start a new descendancy list from it
+                                parentDescendancy
+                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                            newDescendancy =
+                                parentDescendancy
+                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                            //record that
+                            foreach (var pluginChild in pluginChildren)
+                            {
+                                //if the parent didn't have any children before
+                                if (!_childDictionary.ContainsKey(o))
+                                    _childDictionary.AddOrUpdate(o, new HashSet<object>(),
+                                        (o1, set) => set); //it does now
+
+
+                                //add us to the parent objects child collection
+                                _childDictionary[o].Add(pluginChild);
+
+                                //add to the child collection of the parent object kvp.Key
+                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
+                                    (s, e) => newDescendancy);
+
+                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                newObjectsFound.Add(pluginChild);
+                            }
                         }
                     }
-                }
+                    catch (Exception e)
+                    {
+                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                    }
 
-            if(newObjectsFound.Any())
+            if (newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);
         }
     }
 
     public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
-            return AllMasqueraders.TryGetValue(o,out var result) ?
-                result:Array.Empty<IMasqueradeAs>();
+            return AllMasqueraders.TryGetValue(o, out var result) ? result : Array.Empty<IMasqueradeAs>();
         }
     }
 
     protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             return repository.GetAllObjects<T>();
         }
     }
 
 
-    protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
+    protected void AddToReturnSearchablesWithNoDecendancy(
+        Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn,
+        IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
     {
-        lock(WriteLock)
+        lock (WriteLock)
         {
             foreach (var m in toAdd)
                 toReturn.Add(m, null);
@@ -1692,7 +1710,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         ArgumentNullException.ThrowIfNull(other);
 
-        if(other is not CatalogueChildProvider otherCat)
+        if (other is not CatalogueChildProvider otherCat)
             throw new NotSupportedException(
                 $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
 
@@ -1709,38 +1727,38 @@ public class CatalogueChildProvider : ICoreChildProvider
         _childDictionary = otherCat._childDictionary;
         _descendancyDictionary = otherCat._descendancyDictionary;
         _catalogueToCatalogueItems = otherCat._catalogueToCatalogueItems;
-        AllCatalogueItemsDictionary= otherCat.AllCatalogueItemsDictionary;
+        AllCatalogueItemsDictionary = otherCat.AllCatalogueItemsDictionary;
         _allColumnInfos = otherCat._allColumnInfos;
-        AllAggregateConfigurations= otherCat.AllAggregateConfigurations;
-        AllAggregateDimensions= otherCat.AllAggregateDimensions;
+        AllAggregateConfigurations = otherCat.AllAggregateConfigurations;
+        AllAggregateDimensions = otherCat.AllAggregateDimensions;
         AllAggregateContinuousDateAxis = otherCat.AllAggregateContinuousDateAxis;
         AllRDMPRemotesNode = otherCat.AllRDMPRemotesNode;
         AllRemoteRDMPs = otherCat.AllRemoteRDMPs;
         AllDashboardsNode = otherCat.AllDashboardsNode;
         AllDashboards = otherCat.AllDashboards;
-        AllObjectSharingNode= otherCat.AllObjectSharingNode;
+        AllObjectSharingNode = otherCat.AllObjectSharingNode;
         AllImports = otherCat.AllImports;
         AllExports = otherCat.AllExports;
-        AllStandardRegexesNode= otherCat.AllStandardRegexesNode;
-        AllPipelinesNode= otherCat.AllPipelinesNode;
+        AllStandardRegexesNode = otherCat.AllStandardRegexesNode;
+        AllPipelinesNode = otherCat.AllPipelinesNode;
         OtherPipelinesNode = otherCat.OtherPipelinesNode;
         AllPipelines = otherCat.AllPipelines;
         AllPipelineComponents = otherCat.AllPipelineComponents;
         AllPipelineComponentsArguments = otherCat.AllPipelineComponentsArguments;
         AllStandardRegexes = otherCat.AllStandardRegexes;
-        AllANOTablesNode= otherCat.AllANOTablesNode;
+        AllANOTablesNode = otherCat.AllANOTablesNode;
         AllANOTables = otherCat.AllANOTables;
-        AllExternalServers= otherCat.AllExternalServers;
+        AllExternalServers = otherCat.AllExternalServers;
         AllServers = otherCat.AllServers;
         AllTableInfos = otherCat.AllTableInfos;
         AllDataAccessCredentialsNode = otherCat.AllDataAccessCredentialsNode;
-        AllExternalServersNode= otherCat.AllExternalServersNode;
-        AllServersNode= otherCat.AllServersNode;
+        AllExternalServersNode = otherCat.AllExternalServersNode;
+        AllServersNode = otherCat.AllServersNode;
         AllDataAccessCredentials = otherCat.AllDataAccessCredentials;
         AllDataAccessCredentialUsages = otherCat.AllDataAccessCredentialUsages;
         TableInfosToColumnInfos = otherCat.TableInfosToColumnInfos;
-        AllColumnInfos= otherCat.AllColumnInfos;
-        AllPreLoadDiscardedColumns= otherCat.AllPreLoadDiscardedColumns;
+        AllColumnInfos = otherCat.AllColumnInfos;
+        AllPreLoadDiscardedColumns = otherCat.AllPreLoadDiscardedColumns;
         AllLookups = otherCat.AllLookups;
         AllJoinInfos = otherCat.AllJoinInfos;
         AllAnyTableParameters = otherCat.AllAnyTableParameters;
@@ -1773,7 +1791,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;
         AllCatalogueParameters = otherCat.AllCatalogueParameters;
         AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
-        AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues ;
+        AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues;
         OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
     }
 
@@ -1820,10 +1838,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         FetchCatalogueItems();
 
-        foreach(var ci in AllCatalogueItems.Where(ci=>ci.ID == ei.CatalogueItem_ID))
-        {
-            ci.ClearAllInjections();
-        }
+        foreach (var ci in AllCatalogueItems.Where(ci => ci.ID == ei.CatalogueItem_ID)) ci.ClearAllInjections();
 
         // property changes or deleting the ExtractionInformation
         FetchExtractionInformations();
@@ -1832,14 +1847,15 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(cata, cataDescendancy.Add(cata));
         return true;
     }
+
     public bool SelectiveRefresh(CohortAggregateContainer container)
     {
         var parentContainer = container.GetParentContainerIfAny();
-        if(parentContainer != null)
+        if (parentContainer != null)
         {
             var descendancy = GetDescendancyListIfAnyFor(parentContainer);
 
-            if(descendancy != null)
+            if (descendancy != null)
             {
                 BuildAggregateConfigurations();
 
@@ -1859,13 +1875,14 @@ public class CatalogueChildProvider : ICoreChildProvider
             {
                 BuildAggregateConfigurations();
                 BuildCohortCohortAggregateContainers();
-                AddChildren(cic,descendancy.Add(cic));
+                AddChildren(cic, descendancy.Add(cic));
                 return true;
             }
         }
 
         return false;
     }
+
     public bool SelectiveRefresh(AggregateFilter f)
     {
         var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
@@ -1874,16 +1891,13 @@ public class CatalogueChildProvider : ICoreChildProvider
         BuildAggregateFilterContainers();
         AddChildren((AggregateFilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
         return true;
-
     }
+
     public bool SelectiveRefresh(AggregateFilterContainer container)
     {
         var aggregate = container.GetAggregate();
 
-        if(aggregate == null)
-        {
-            return false;
-        }
+        if (aggregate == null) return false;
 
         var descendancy = GetDescendancyListIfAnyFor(aggregate);
 

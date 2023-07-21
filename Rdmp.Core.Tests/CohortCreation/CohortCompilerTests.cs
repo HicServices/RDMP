@@ -17,13 +17,13 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 
-public class CohortCompilerTests:CohortIdentificationTests
+public class CohortCompilerTests : CohortIdentificationTests
 {
     [Test]
     public void AddSameTaskTwice_StaysAtOne()
     {
         var compiler = new CohortCompiler(cohortIdentificationConfiguration);
-        container1.AddChild(aggregate1,0);
+        container1.AddChild(aggregate1, 0);
         try
         {
             compiler.AddTask(aggregate1, null);
@@ -56,7 +56,6 @@ public class CohortCompilerTests:CohortIdentificationTests
             Assert.AreNotSame(oldTask, compiler.Tasks.Single()); //new task should not be the same as the old one
             Assert.IsFalse(compiler.Tasks.Single().Key.CancellationToken.IsCancellationRequested);
             //new task should not be cancelled} finally {
-
         }
         finally
         {
@@ -70,7 +69,7 @@ public class CohortCompilerTests:CohortIdentificationTests
         var compiler = new CohortCompiler(cohortIdentificationConfiguration);
         rootcontainer.AddChild(aggregate1, 1);
 
-        compiler.AddTask(rootcontainer, null);//add the root container
+        compiler.AddTask(rootcontainer, null); //add the root container
 
         Assert.AreEqual(1, compiler.Tasks.Count);
         var oldTask = compiler.Tasks.First();
@@ -83,13 +82,14 @@ public class CohortCompilerTests:CohortIdentificationTests
         rootcontainer.AddChild(aggregate2, 1);
 
         compiler.AddTask(rootcontainer, null);
-        Assert.AreEqual(1, compiler.Tasks.Count);//should still be 1 task
+        Assert.AreEqual(1, compiler.Tasks.Count); //should still be 1 task
 
         // TN: Task was never asked to start so was still at NotScheduled so cancellation wouldn't actually happen
         //old task should have been asked to cancel
         //Assert.IsTrue(oldTask.Key.CancellationToken.IsCancellationRequested);
-        Assert.AreNotSame(oldTask, compiler.Tasks.Single());//new task should not be the same as the old one
-        Assert.IsFalse(compiler.Tasks.Single().Key.CancellationToken.IsCancellationRequested);//new task should not be cancelled
+        Assert.AreNotSame(oldTask, compiler.Tasks.Single()); //new task should not be the same as the old one
+        Assert.IsFalse(compiler.Tasks.Single().Key.CancellationToken
+            .IsCancellationRequested); //new task should not be cancelled
 
         rootcontainer.RemoveChild(aggregate1);
         rootcontainer.RemoveChild(aggregate2);
@@ -102,13 +102,13 @@ public class CohortCompilerTests:CohortIdentificationTests
         Subcontainer
     }
 
-    [TestCase(TestCompilerAddAllTasksTestCase.CIC,true)]
+    [TestCase(TestCompilerAddAllTasksTestCase.CIC, true)]
     [TestCase(TestCompilerAddAllTasksTestCase.CIC, false)]
     [TestCase(TestCompilerAddAllTasksTestCase.RootContainer, true)]
     [TestCase(TestCompilerAddAllTasksTestCase.RootContainer, false)]
     [TestCase(TestCompilerAddAllTasksTestCase.Subcontainer, true)]
     [TestCase(TestCompilerAddAllTasksTestCase.Subcontainer, false)]
-    public void TestCompilerAddAllTasks(TestCompilerAddAllTasksTestCase testCase,bool includeSubcontainers)
+    public void TestCompilerAddAllTasks(TestCompilerAddAllTasksTestCase testCase, bool includeSubcontainers)
     {
         var aggregate4 =
             new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4")
@@ -116,7 +116,8 @@ public class CohortCompilerTests:CohortIdentificationTests
                 CountSQL = null
             };
         aggregate4.SaveToDatabase();
-        new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
+        new AggregateDimension(CatalogueRepository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
         var aggregate5 =
             new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate5")
@@ -124,11 +125,14 @@ public class CohortCompilerTests:CohortIdentificationTests
                 CountSQL = null
             };
         aggregate5.SaveToDatabase();
-        new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate5);
+        new AggregateDimension(CatalogueRepository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate5);
 
-        var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository,cohortIdentificationConfiguration, aggregate5);
+        var joinable =
+            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
+                aggregate5);
 
-            
+
         try
         {
             //EXCEPT
@@ -148,7 +152,7 @@ public class CohortCompilerTests:CohortIdentificationTests
 
             rootcontainer.AddChild(aggregate2, 3);
 
-            container1.AddChild(aggregate3,1);
+            container1.AddChild(aggregate3, 1);
             container1.AddChild(aggregate4, 2);
 
             cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
@@ -160,17 +164,22 @@ public class CohortCompilerTests:CohortIdentificationTests
             {
                 case TestCompilerAddAllTasksTestCase.CIC:
                     tasks = compiler.AddAllTasks(includeSubcontainers);
-                    Assert.AreEqual(joinable,tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
-                    Assert.AreEqual(includeSubcontainers?7:6,tasks.Count); //all joinables, aggregates and root container
+                    Assert.AreEqual(joinable,
+                        tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
+                    Assert.AreEqual(includeSubcontainers ? 7 : 6,
+                        tasks.Count); //all joinables, aggregates and root container
 
                     break;
                 case TestCompilerAddAllTasksTestCase.RootContainer:
-                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
-                    Assert.AreEqual(includeSubcontainers?6:5,tasks.Count); //all aggregates and root container (but not joinables)
+                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(),
+                        cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
+                    Assert.AreEqual(includeSubcontainers ? 6 : 5,
+                        tasks.Count); //all aggregates and root container (but not joinables)
                     break;
                 case TestCompilerAddAllTasksTestCase.Subcontainer:
-                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), container1, includeSubcontainers);
-                    Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and its aggregates
+                    tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), container1,
+                        includeSubcontainers);
+                    Assert.AreEqual(includeSubcontainers ? 3 : 2, tasks.Count); //subcontainer and its aggregates
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(testCase));
@@ -183,7 +192,6 @@ public class CohortCompilerTests:CohortIdentificationTests
             container1.RemoveChild(aggregate3);
             container1.RemoveChild(aggregate4);
             container1.MakeIntoAnOrphan();
-
         }
         finally
         {

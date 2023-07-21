@@ -50,7 +50,8 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to fetch data using class {Provider.GetType().FullName}"));
@@ -58,18 +59,15 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
         return Provider.Fetch(job, cancellationToken);
     }
 
-    public override bool Exists()
-    {
-        return true;
-    }
+    public override bool Exists() => true;
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        Provider.LoadCompletedSoDispose(exitCode,postLoadEventListener);
+        Provider.LoadCompletedSoDispose(exitCode, postLoadEventListener);
     }
 
     public override void Check(ICheckNotifier checker)

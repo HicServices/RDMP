@@ -17,17 +17,16 @@ public class ExecuteCommandShowRelatedObject : BasicCommandExecution
 {
     private DatabaseEntity _toShow;
 
-    public ExecuteCommandShowRelatedObject(IBasicActivateItems activator, ReferenceOtherObjectDatabaseEntity node) : base(activator)
+    public ExecuteCommandShowRelatedObject(IBasicActivateItems activator, ReferenceOtherObjectDatabaseEntity node) :
+        base(activator)
     {
         _toShow = (DatabaseEntity)node.GetReferencedObject(BasicActivator.RepositoryLocator);
         if (_toShow == null)
             SetImpossible("Reference is an orphan");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
 
     public override void Execute()
     {

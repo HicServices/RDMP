@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// All virtual columns in this <see cref="Curation.Data.TableInfo"/> which appear in the data load (RAW) but do not exist in the live database (or are diluted).  This enables
 /// anonymisation or dropping of columns during the data load (See <see cref="PreLoadDiscardedColumn"/>)
 /// </summary>
-public class PreLoadDiscardedColumnsNode:Node
+public class PreLoadDiscardedColumnsNode : Node
 {
     public TableInfo TableInfo { get; }
 
@@ -22,28 +22,17 @@ public class PreLoadDiscardedColumnsNode:Node
         TableInfo = tableInfo;
     }
 
-    public override string ToString()
-    {
-        return "Discarded Columns";
-    }
+    public override string ToString() => "Discarded Columns";
 
-    protected bool Equals(PreLoadDiscardedColumnsNode other)
-    {
-        return Equals(TableInfo, other.TableInfo);
-    }
+    protected bool Equals(PreLoadDiscardedColumnsNode other) => Equals(TableInfo, other.TableInfo);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PreLoadDiscardedColumnsNode) obj);
+        return Equals((PreLoadDiscardedColumnsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return TableInfo != null ? TableInfo.GetHashCode() : 0;
-    }
-
-
+    public override int GetHashCode() => TableInfo != null ? TableInfo.GetHashCode() : 0;
 }

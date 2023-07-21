@@ -9,7 +9,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
-public abstract class ExtractCommand:IExtractCommand
+public abstract class ExtractCommand : IExtractCommand
 {
     public IProject Project { get; private set; }
     public IExtractionConfiguration Configuration { get; private set; }
@@ -22,7 +22,7 @@ public abstract class ExtractCommand:IExtractCommand
         Configuration = configuration;
 
         //needed for ExtractDatasetCommand.EmptyCommand
-        if(configuration != null)
+        if (configuration != null)
             Project = configuration.Project;
     }
 

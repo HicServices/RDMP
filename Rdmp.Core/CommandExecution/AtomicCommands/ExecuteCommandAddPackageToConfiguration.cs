@@ -20,14 +20,15 @@ public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecut
     private readonly ExtractionConfiguration _extractionConfiguration;
     private readonly ExtractableDataSetPackage[] _packages;
 
-    public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
+    public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
 
-        if(extractionConfiguration.IsReleased)
+        if (extractionConfiguration.IsReleased)
             SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
 
-        if(activator.CoreChildProvider is DataExportChildProvider childProvider)
+        if (activator.CoreChildProvider is DataExportChildProvider childProvider)
         {
             if (childProvider.AllPackages.Any())
                 _packages = childProvider.AllPackages;
@@ -35,16 +36,20 @@ public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecut
                 SetImpossible("There are no ExtractableDatasetPackages configured");
         }
         else
+        {
             SetImpossible("CoreChildProvider is not DataExportIconProvider");
+        }
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        if(SelectOne(_packages,out var package))
-            new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
+        if (SelectOne(_packages, out var package))
+            new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package),
+                _extractionConfiguration).Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage,OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import);
 }

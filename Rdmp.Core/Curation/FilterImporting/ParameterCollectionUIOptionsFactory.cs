@@ -41,7 +41,6 @@ public class ParameterCollectionUIOptionsFactory
         @"You are trying to perform a data extraction of one or more datasets against a cohort.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the ExtractionConfiguration level which will allow you to change all copies at once in one place.  You will also see two global parameters the system generates automatically when doing extractions these are @CohortDefinitionID and @ProjectNumber";
 
 
-
     public static ParameterCollectionUIOptions Create(IFilter value, ISqlParameter[] globalFilterParameters)
     {
         var pm = new ParameterManager();
@@ -60,6 +59,7 @@ public class ParameterCollectionUIOptionsFactory
         pm.AddParametersFor(tableInfo);
         return new ParameterCollectionUIOptions(UseCaseTableInfo, tableInfo, ParameterLevel.TableInfo, pm);
     }
+
     public static ParameterCollectionUIOptions Create(ExtractionFilterParameterSet parameterSet)
     {
         var pm = new ParameterManager();
@@ -67,13 +67,14 @@ public class ParameterCollectionUIOptionsFactory
 
         return new ParameterCollectionUIOptions(UseCaseParameterValueSet, parameterSet, ParameterLevel.TableInfo, pm);
     }
-    public static ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration, ICoreChildProvider coreChildProvider)
+
+    public static ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration,
+        ICoreChildProvider coreChildProvider)
     {
         ParameterManager pm;
 
         if (aggregateConfiguration.IsCohortIdentificationAggregate)
         {
-
             //Add the globals if it is part of a CohortIdentificationConfiguration
             var cic = aggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
 
@@ -109,9 +110,9 @@ public class ParameterCollectionUIOptionsFactory
         }
 
 
-        return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration, aggregateConfiguration, ParameterLevel.CompositeQueryLevel, pm);
+        return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration, aggregateConfiguration,
+            ParameterLevel.CompositeQueryLevel, pm);
     }
-
 
 
     public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
@@ -131,14 +132,16 @@ public class ParameterCollectionUIOptionsFactory
         };
     }
 
-    private static ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
+    private static ParameterCollectionUIOptions Create(
+        CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
     {
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, coreChildProvider);
         builder.RegenerateSQL();
 
         var paramManager = builder.ParameterManager;
 
-        return new ParameterCollectionUIOptions(UseCaseCohortIdentificationConfiguration, cohortIdentificationConfiguration, ParameterLevel.Global, paramManager);
+        return new ParameterCollectionUIOptions(UseCaseCohortIdentificationConfiguration,
+            cohortIdentificationConfiguration, ParameterLevel.Global, paramManager);
     }
 
     private ParameterCollectionUIOptions Create(ExtractionConfiguration extractionConfiguration)
@@ -153,20 +156,24 @@ public class ParameterCollectionUIOptionsFactory
 
             if (rootFilterContainer != null)
             {
-                var allFilters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(rootFilterContainer).ToList();
-                paramManager.AddParametersFor(allFilters);//query level
+                var allFilters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(rootFilterContainer)
+                    .ToList();
+                paramManager.AddParametersFor(allFilters); //query level
             }
         }
 
-        return new ParameterCollectionUIOptions(UseCaseExtractionConfigurationGlobals, extractionConfiguration, ParameterLevel.Global, paramManager, CreateNewParameterForExtractionConfiguration);
+        return new ParameterCollectionUIOptions(UseCaseExtractionConfigurationGlobals, extractionConfiguration,
+            ParameterLevel.Global, paramManager, CreateNewParameterForExtractionConfiguration);
     }
 
-    private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector, string parameterName)
+    private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector,
+        string parameterName)
     {
         if (!parameterName.StartsWith("@"))
             parameterName = $"@{parameterName}";
 
         var ec = (ExtractionConfiguration)collector;
-        return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
+        return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec,
+            AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
     }
 }

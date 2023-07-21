@@ -12,14 +12,14 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Unit;
 
-public class PermissionWindowTests:DatabaseTests
+public class PermissionWindowTests : DatabaseTests
 {
-
     [Test]
     public void TestSerialisation()
     {
-        var period1 = new PermissionWindowPeriod((int) DayOfWeek.Monday, new TimeSpan(0, 0, 0), new TimeSpan(6, 0, 0));
-        var period2 = new PermissionWindowPeriod((int) DayOfWeek.Monday, new TimeSpan(17, 0, 0), new TimeSpan(23, 59, 59));
+        var period1 = new PermissionWindowPeriod((int)DayOfWeek.Monday, new TimeSpan(0, 0, 0), new TimeSpan(6, 0, 0));
+        var period2 =
+            new PermissionWindowPeriod((int)DayOfWeek.Monday, new TimeSpan(17, 0, 0), new TimeSpan(23, 59, 59));
 
         var permissionWindow = new PermissionWindow(CatalogueRepository);
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>
@@ -39,7 +39,7 @@ public class PermissionWindowTests:DatabaseTests
         Assert.AreEqual(2, periods.Count);
 
         var newPeriod1 = periods[0];
-        Assert.AreEqual((int) DayOfWeek.Monday, newPeriod1.DayOfWeek);
+        Assert.AreEqual((int)DayOfWeek.Monday, newPeriod1.DayOfWeek);
 
         Assert.AreEqual(6, newPeriod1.End.Hours);
 
@@ -58,9 +58,10 @@ public class PermissionWindowTests:DatabaseTests
         var fiveMinutes = new TimeSpan(0, 5, 0);
 
         var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
-        var period1 = new PermissionWindowPeriod((int)DateTime.UtcNow.DayOfWeek, utcTime.Subtract(fiveMinutes), utcTime.Add(fiveMinutes));
+        var period1 = new PermissionWindowPeriod((int)DateTime.UtcNow.DayOfWeek, utcTime.Subtract(fiveMinutes),
+            utcTime.Add(fiveMinutes));
 
-        var permissionWindow = new PermissionWindow(CatalogueRepository); 
+        var permissionWindow = new PermissionWindow(CatalogueRepository);
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });
         Assert.IsTrue(permissionWindow.WithinPermissionWindow());
     }
@@ -75,7 +76,8 @@ public class PermissionWindowTests:DatabaseTests
 
         var oneMinute = new TimeSpan(0, 1, 0);
         var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
-        var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Add(oneMinute), utcTime.Add(oneMinute));
+        var period1 =
+            new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Add(oneMinute), utcTime.Add(oneMinute));
 
         var permissionWindow = new PermissionWindow(CatalogueRepository);
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });

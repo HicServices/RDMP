@@ -75,7 +75,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         olvExtractionInformations.IsSimpleDragSource = true;
 
         pk1.KeyType = JoinKeyType.PrimaryKey;
-        pk1.SelectedColumnChanged +=pk1_SelectedColumnChanged;
+        pk1.SelectedColumnChanged += pk1_SelectedColumnChanged;
 
         pk2.KeyType = JoinKeyType.PrimaryKey;
         pk2.SelectedColumnChanged += UpdateValidityAssesment;
@@ -102,12 +102,16 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     private void fk1_SelectedColumnChanged()
     {
-        SetStage(pk1.SelectedColumn == null ? LookupCreationStage.DragAForeignKey:LookupCreationStage.DragADescription);
+        SetStage(
+            pk1.SelectedColumn == null ? LookupCreationStage.DragAForeignKey : LookupCreationStage.DragADescription);
         UpdateValidityAssesment();
     }
+
     private void pk1_SelectedColumnChanged()
     {
-        SetStage(pk1.SelectedColumn == null ? LookupCreationStage.DragAPrimaryKey : LookupCreationStage.DragAForeignKey);
+        SetStage(pk1.SelectedColumn == null
+            ? LookupCreationStage.DragAPrimaryKey
+            : LookupCreationStage.DragAForeignKey);
         UpdateValidityAssesment();
     }
 
@@ -122,13 +126,15 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
 
         //add the currently configured extraction informations in the order they appear in the dataset
-        var allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+        var allExtractionInformationFromCatalogue =
+            new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         allExtractionInformationFromCatalogue.Sort();
 
         olvExtractionInformations.ClearObjects();
         olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
 
-        btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import).ImageToBitmap();
+        btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import)
+            .ImageToBitmap();
         toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
         btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ImageToBitmap();
@@ -141,16 +147,16 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         UpdateValidityAssesment();
     }
 
-    public void SetLookupTableInfo(TableInfo t,bool setComboBox = true)
+    public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
     {
-        if(t is { IsTableValuedFunction: true })
+        if (t is { IsTableValuedFunction: true })
         {
             WideMessageBox.Show("Lookup table not valid",
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
             return;
         }
 
-        if(setComboBox)
+        if (setComboBox)
             cbxLookup.SelectedItem = t;
 
         olvLookupColumns.ClearObjects();
@@ -170,14 +176,16 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             fk3.IsValidGetter = c => c.TableInfo_ID != t.ID;
         }
         else
+        {
             SetStage(LookupCreationStage.ChooseLookupTable);
+        }
     }
 
     private void btnImportNewTableInfo_Click(object sender, EventArgs e)
     {
-        var importDialog = new ImportSQLTableUI(Activator,false);
+        var importDialog = new ImportSQLTableUI(Activator, false);
 
-        if(importDialog.ShowDialog() == DialogResult.OK)
+        if (importDialog.ShowDialog() == DialogResult.OK)
             if (importDialog.TableInfoCreatedIfAny != null)
                 cbxLookup.SelectedItem = importDialog.TableInfoCreatedIfAny;
     }
@@ -200,7 +208,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     private void LookupConfiguration_Paint(object sender, PaintEventArgs e)
     {
-        var drawTaskListAt = new Point(580,10);
+        var drawTaskListAt = new Point(580, 10);
 
 
         var lines = new[]
@@ -216,7 +224,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
 
         for (var i = 0; i < lines.Length; i++)
-            e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
+            e.Graphics.DrawString(lines[i], Font, Brushes.Black,
+                new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight * i));
 
         var bulletLineIndex = _currentStage switch
         {
@@ -237,18 +246,18 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             //0,1
             //offset by the drawing start location + the appropriate line number
 
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight ),
-            new PointF(drawTaskListAt.X + lineHeight/2 , drawTaskListAt.Y + bulletLineIndex * lineHeight  + lineHeight/2),
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex *lineHeight)
+            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight),
+            new PointF(drawTaskListAt.X + lineHeight / 2,
+                drawTaskListAt.Y + bulletLineIndex * lineHeight + lineHeight / 2),
+            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex * lineHeight)
         };
 
-        e.Graphics.FillPolygon(Brushes.Black,triangleBasePoints);
-
+        e.Graphics.FillPolygon(Brushes.Black, triangleBasePoints);
     }
 
     private void DrawArrows(Graphics graphics)
     {
-        var arrowPen = new Pen(Color.DarkGray,2);
+        var arrowPen = new Pen(Color.DarkGray, 2);
 
         var capPath = new GraphicsPath();
 
@@ -256,7 +265,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         capPath.AddLine(new Point(0, 0), new Point(2, -2));
         capPath.AddLine(new Point(2, -2), new Point(0, 0));
         capPath.AddLine(new Point(0, 0), new Point(-2, -2));
-        capPath.AddLine(new Point(-2, -2),new Point(0, 0));
+        capPath.AddLine(new Point(-2, -2), new Point(0, 0));
 
         arrowPen.CustomEndCap = new CustomLineCap(null, capPath);
 
@@ -275,7 +284,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             case LookupCreationStage.DragAForeignKey:
 
                 DrawCurveWithLabel(
-                    new PointF(olvExtractionInformations.Right + 10, olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
+                    new PointF(olvExtractionInformations.Right + 10,
+                        olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
                     new PointF(olvSelectedDescriptionColumns.Right + 100, olvSelectedDescriptionColumns.Bottom + 200),
                     new PointF(fk1.Right + 500, fk1.Top + 100),
                     new PointF(fk1.Right + 15, fk1.Bottom - 10),
@@ -292,16 +302,18 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
                 throw new ArgumentOutOfRangeException();
         }
     }
-    private void DrawCurveWithLabel(PointF start, PointF end, string label,Graphics g, Pen p)
+
+    private void DrawCurveWithLabel(PointF start, PointF end, string label, Graphics g, Pen p)
     {
         var w = end.X - start.X;
         var h = end.Y - start.Y;
 
-        DrawCurveWithLabel(start, start with { X = start.X + w },start with { Y = start.Y + h },end,label,g,p);
+        DrawCurveWithLabel(start, start with { X = start.X + w }, start with { Y = start.Y + h }, end, label, g, p);
     }
 
     private bool debugPoints = false;
-    private void DrawCurveWithLabel(PointF start,PointF mid1, PointF mid2, PointF end, string label, Graphics g, Pen p)
+
+    private void DrawCurveWithLabel(PointF start, PointF mid1, PointF mid2, PointF end, string label, Graphics g, Pen p)
     {
         g.DrawBezier(p,
             start,
@@ -311,10 +323,10 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
         if (debugPoints)
         {
-            g.FillEllipse(Brushes.Red, start.X -2, start.Y -2, 5, 5);
+            g.FillEllipse(Brushes.Red, start.X - 2, start.Y - 2, 5, 5);
             g.FillEllipse(Brushes.Red, mid1.X - 2, mid1.Y - 2, 5, 5);
             g.FillEllipse(Brushes.Red, mid2.X - 2, mid2.Y - 2, 5, 5);
-            g.FillEllipse(Brushes.Red, end.X - 2, end.Y - 2, 5,5);
+            g.FillEllipse(Brushes.Red, end.X - 2, end.Y - 2, 5, 5);
         }
 
         g.DrawString(label, Font, Brushes.Black, new PointF(start.X, start.Y));
@@ -335,7 +347,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
     private void olvLookupColumns_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        if(e.Model is not ColumnInfo c)
+        if (e.Model is not ColumnInfo c)
             return;
 
         e.MenuStrip = new ColumnInfoMenu(new RDMPContextMenuStripArgs(Activator), c);
@@ -343,7 +355,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
     private void olvSelectedDescriptionColumns_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.Delete)
+        if (e.KeyCode == Keys.Delete)
         {
             olvSelectedDescriptionColumns.RemoveObject(olvSelectedDescriptionColumns.SelectedObject);
             UpdateValidityAssesment();
@@ -359,8 +371,8 @@ Only define secondary columns if you really need them! if any of the key fields 
 
     private void olvSelectedDescriptionColumns_ModelCanDrop(object sender, ModelDropEventArgs e)
     {
-        if(e.SourceModels.Count == 1)
-            if(e.SourceModels[0] is ColumnInfo)
+        if (e.SourceModels.Count == 1)
+            if (e.SourceModels[0] is ColumnInfo)
             {
                 var c = e.SourceModels[0] as ColumnInfo;
 
@@ -394,7 +406,10 @@ Only define secondary columns if you really need them! if any of the key fields 
                 throw new Exception("No Foreign key column selected");
 
             var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-            var foreignKeyExtractionInformation = allExtractionInformations.SingleOrDefault(e => e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ?? throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
+            var foreignKeyExtractionInformation =
+                allExtractionInformations.SingleOrDefault(e =>
+                    e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ??
+                throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
             if (pk2.SelectedColumn == null != (fk2.SelectedColumn == null))
                 throw new Exception("If you want to have secondary joins you must have them in pairs");
 
@@ -439,12 +454,13 @@ Only define secondary columns if you really need them! if any of the key fields 
                 };
 
                 if (p2 != null)
-                    keyPairs.Add(Tuple.Create(f2,p2));
+                    keyPairs.Add(Tuple.Create(f2, p2));
 
-                if(p3 != null)
-                    keyPairs.Add(Tuple.Create(f3,p3));
+                if (p3 != null)
+                    keyPairs.Add(Tuple.Create(f3, p3));
 
-                var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,foreignKeyExtractionInformation, descs,
+                var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,
+                    foreignKeyExtractionInformation, descs,
                     keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
 
                 cmd.Execute();
@@ -463,10 +479,9 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 olvSelectedDescriptionColumns.ClearObjects();
                 SetStage(LookupCreationStage.DragAPrimaryKey);
-
             }
-            btnCreateLookup.Enabled = true;
 
+            btnCreateLookup.Enabled = true;
         }
         catch (Exception e)
         {
@@ -475,32 +490,27 @@ Only define secondary columns if you really need them! if any of the key fields 
 
             ragSmiley1.Fatal(e);
         }
-
     }
 
-    public override string GetTabName()
-    {
-        return $"Add Lookup ({base.GetTabName()})";
-    }
+    public override string GetTabName() => $"Add Lookup ({base.GetTabName()})";
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         olvExtractionInformations.UseFiltering = true;
-        olvExtractionInformations.ModelFilter = new TextMatchFilter(olvExtractionInformations,tbFilter.Text);
+        olvExtractionInformations.ModelFilter = new TextMatchFilter(olvExtractionInformations, tbFilter.Text);
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
         var olv = (ObjectListView)sender;
 
-        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
-
+        if (olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
     }
 
     private void cbxLookup_SelectedItemChanged(object sender, EventArgs e)
     {
-        SetLookupTableInfo((TableInfo) cbxLookup.SelectedItem,false);
+        SetLookupTableInfo((TableInfo)cbxLookup.SelectedItem, false);
     }
 }
 

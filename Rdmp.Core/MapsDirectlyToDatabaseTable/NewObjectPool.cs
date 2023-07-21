@@ -17,7 +17,7 @@ public static class NewObjectPool
 
     public static void Add(IMapsDirectlyToDatabaseTable toCreate)
     {
-        lock(currentScopeLock)
+        lock (currentScopeLock)
         {
             CurrentScope?.Objects.Add(toCreate);
         }
@@ -51,7 +51,9 @@ public static class NewObjectPool
     {
         lock (currentScopeLock)
         {
-            return CurrentScope != null ? throw new Exception("An existing session is already underway") : (IDisposable)(CurrentScope = new Scope());
+            return CurrentScope != null
+                ? throw new Exception("An existing session is already underway")
+                : (IDisposable)(CurrentScope = new Scope());
         }
     }
 

@@ -25,14 +25,14 @@ public partial class RunUI : RDMPForm
 
     private readonly CommandInvoker _commandCaller;
 
-    public RunUI(IActivateItems activator):base(activator)
+    public RunUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
 
         _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
 
         _commandCaller = new CommandInvoker(activator);
-        _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);
+        _commandCaller.CommandImpossible += (s, e) => MessageBox.Show(e.Command.ReasonCommandImpossible);
         _commandCaller.CommandCompleted += (s, e) => Close();
 
         var commands = _commandCaller.GetSupportedCommands();
@@ -46,10 +46,12 @@ public partial class RunUI : RDMPForm
 
         comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());
     }
+
     public static void OnCommandExecutionException(IAtomicCommand instance, Exception exception)
     {
         ExceptionViewer.Show(exception);
     }
+
     private void comboBox1_KeyUp(object sender, KeyEventArgs e)
     {
         var key = (string)comboBox1.SelectedItem;

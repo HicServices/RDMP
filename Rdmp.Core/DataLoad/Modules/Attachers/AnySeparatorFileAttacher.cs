@@ -39,6 +39,5 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
                 new CheckEventArgs(
                     "Separator has not been set yet, this is the character or sequence which separates cells in your flat file.  For example in the case of a CSV (comma separated values) file the Separator argument should be set to ','",
                     CheckResult.Fail));
-
     }
 }

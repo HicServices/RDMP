@@ -31,10 +31,10 @@ public class ProcessTaskChecks : ICheckable
     public void Check(ProcessTask processTask, ICheckNotifier notifier)
     {
         if (dictionary == null)
-        {
             try
             {
-                dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
+                dictionary =
+                    new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
             }
             catch (Exception e)
             {
@@ -43,7 +43,6 @@ public class ProcessTaskChecks : ICheckable
                         CheckResult.Fail, e));
                 return;
             }
-        }
 
 
         var factory = new RuntimeTaskFactory(_loadMetadata.CatalogueRepository);
@@ -54,7 +53,7 @@ public class ProcessTaskChecks : ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt=>!pt.IsDisabled))
+        foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt => !pt.IsDisabled))
             Check(processTask, notifier);
     }
 }

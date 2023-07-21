@@ -17,11 +17,8 @@ public class DataAccessCredentialsCombineable : ICombineToMakeCommand
 
     public DataAccessCredentialsCombineable(DataAccessCredentials dataAccessCredentials)
     {
-        DataAccessCredentials = dataAccessCredentials; 
+        DataAccessCredentials = dataAccessCredentials;
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

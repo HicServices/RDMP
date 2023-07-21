@@ -29,16 +29,18 @@ public class SelectSQLRefactorer
     /// <param name="column"></param>
     /// <param name="tableName"></param>
     /// <param name="newFullySpecifiedTableName"></param>
-    public static void RefactorTableName(IColumn column,IHasFullyQualifiedNameToo tableName,string newFullySpecifiedTableName)
+    public static void RefactorTableName(IColumn column, IHasFullyQualifiedNameToo tableName,
+        string newFullySpecifiedTableName)
     {
-        var ci = column.ColumnInfo ?? throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
+        var ci = column.ColumnInfo ??
+                 throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
-            
-        if(!column.SelectSQL.Contains(fullyQualifiedName))
+
+        if (!column.SelectSQL.Contains(fullyQualifiedName))
             throw new RefactoringException(
                 $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
-        if(!newFullySpecifiedTableName.Contains('.'))
+        if (!newFullySpecifiedTableName.Contains('.'))
             throw new RefactoringException(
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
@@ -53,7 +55,8 @@ public class SelectSQLRefactorer
     /// <param name="column"></param>
     /// <param name="tableName"></param>
     /// <param name="newFullySpecifiedTableName"></param>
-    public static void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName, string newFullySpecifiedTableName)
+    public static void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName,
+        string newFullySpecifiedTableName)
     {
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
 
@@ -83,18 +86,19 @@ public class SelectSQLRefactorer
     /// <param name="columnName"></param>
     /// <param name="newFullySpecifiedColumnName"></param>
     /// <param name="strict">Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will throw a RefactoringException, false will return without making any changes</param>
-    public static void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName,bool strict = true)
+    public static void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName,
+        string newFullySpecifiedColumnName, bool strict = true)
     {
         var fullyQualifiedName = columnName.GetFullyQualifiedName();
 
         if (!column.SelectSQL.Contains(fullyQualifiedName))
-            if(strict)
+            if (strict)
                 throw new RefactoringException(
                     $"IColumn '{column}' did not contain the fully specified column name during refactoring ('{fullyQualifiedName}'");
             else
                 return;
-                
-        if (newFullySpecifiedColumnName.Count(c=>c == '.')<2)
+
+        if (newFullySpecifiedColumnName.Count(c => c == '.') < 2)
             throw new RefactoringException(
                 $"Replacement column name was not fully specified, value passed was '{newFullySpecifiedColumnName}' which should have had at least 2 dots");
 
@@ -109,10 +113,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public static bool IsRefactorable(IColumn column)
-    {
-        return GetReasonNotRefactorable(column) == null;
-    }
+    public static bool IsRefactorable(IColumn column) => GetReasonNotRefactorable(column) == null;
 
     /// <summary>
     /// Determines whether the SelectSQL of the specified IColumn includes fully specified refactorable references.  Returns the reason why
@@ -144,10 +145,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <returns></returns>
-    public static bool IsRefactorable(ITableInfo tableInfo)
-    {
-        return GetReasonNotRefactorable(tableInfo) == null;
-    }
+    public static bool IsRefactorable(ITableInfo tableInfo) => GetReasonNotRefactorable(tableInfo) == null;
 
     /// <summary>
     /// Returns the reason why <paramref name="table"/> is not refactorable e.g. if its name is not properly qualified
@@ -157,17 +155,17 @@ public class SelectSQLRefactorer
     /// <returns></returns>
     public static string GetReasonNotRefactorable(ITableInfo table)
     {
-        if(string.IsNullOrWhiteSpace(table.Name))
+        if (string.IsNullOrWhiteSpace(table.Name))
             return "Table has no Name property, this should be the fully qualified database table name";
 
-        if(string.IsNullOrWhiteSpace(table.Database))
+        if (string.IsNullOrWhiteSpace(table.Database))
             return "Table does not have its Database property set";
 
         //ensure database and Name match correctly
         var syntaxHelper = table.GetQuerySyntaxHelper();
         var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
 
-        if(!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
+        if (!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
             return $"Table with Name '{table.Name}' has incorrect database property '{table.Database}'";
 
         return table.Name != table.GetFullyQualifiedName()
@@ -184,22 +182,21 @@ public class SelectSQLRefactorer
     /// <param name="tableInfo"></param>
     /// <param name="newFullyQualifiedTableName"></param>
     /// <returns>Total number of changes made in columns and table name</returns>
-    public static int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
-    {
-        return RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
-    }
+    public static int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName) =>
+        RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
 
     /// <inheritdoc cref="RefactorTableName(ITableInfo, string)"/>
-    public static int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    public static int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName,
+        string newFullyQualifiedTableName)
     {
-        if(!IsRefactorable(tableInfo))
+        if (!IsRefactorable(tableInfo))
             throw new RefactoringException(
                 $"TableInfo {tableInfo} is not refactorable because {GetReasonNotRefactorable(tableInfo)}");
 
         var updatesMade = 0;
 
         //if it's a new name
-        if(tableInfo.Name != newFullyQualifiedTableName)
+        if (tableInfo.Name != newFullyQualifiedTableName)
         {
             tableInfo.Name = newFullyQualifiedTableName;
             Save(tableInfo);
@@ -208,7 +205,7 @@ public class SelectSQLRefactorer
 
         //Rename all ColumnInfos that belong to this TableInfo
         foreach (var columnInfo in tableInfo.ColumnInfos)
-            updatesMade += RefactorTableName(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
+            updatesMade += RefactorTableName(columnInfo, oldFullyQualifiedTableName, newFullyQualifiedTableName);
 
         return updatesMade;
     }
@@ -221,61 +218,60 @@ public class SelectSQLRefactorer
     /// <param name="oldFullyQualifiedTableName"></param>
     /// <param name="newFullyQualifiedTableName"></param>
     /// <returns>Total number of changes made including <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared on it</returns>
-    public static int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    public static int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName,
+        string newFullyQualifiedTableName)
     {
         var updatesMade = 0;
-            
+
         //run what they asked for
-        updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
+        updatesMade += RefactorTableNameImpl(columnInfo, oldFullyQualifiedTableName, newFullyQualifiedTableName);
 
         //these are all the things that could appear spattered throughout the old columns
-        var oldPrefixes = new List<string>{".." ,".dbo.",".[dbo]."};
+        var oldPrefixes = new List<string> { "..", ".dbo.", ".[dbo]." };
 
         //this is what they said they wanted in the refactoring
         var newPrefix = oldPrefixes.FirstOrDefault(newFullyQualifiedTableName.Contains);
 
         //if they are trying to standardise
-        if(newPrefix != null)
-            foreach(var old in oldPrefixes)
-            {
-                if(!string.Equals(old ,newPrefix))
-                {
-                    updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace(newPrefix,old),newFullyQualifiedTableName);
-                }
-            }
+        if (newPrefix != null)
+            foreach (var old in oldPrefixes)
+                if (!string.Equals(old, newPrefix))
+                    updatesMade += RefactorTableNameImpl(columnInfo, oldFullyQualifiedTableName.Replace(newPrefix, old),
+                        newFullyQualifiedTableName);
 
         return updatesMade;
     }
 
-    private static int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    private static int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName,
+        string newFullyQualifiedTableName)
     {
         var updatesMade = 0;
 
         var extractionInformations = columnInfo.ExtractionInformations.ToArray();
 
         foreach (var extractionInformation in extractionInformations)
-        {
             if (extractionInformation.SelectSQL.Contains(oldFullyQualifiedTableName))
             {
-                var newvalue = extractionInformation.SelectSQL.Replace(oldFullyQualifiedTableName, newFullyQualifiedTableName);
+                var newvalue =
+                    extractionInformation.SelectSQL.Replace(oldFullyQualifiedTableName, newFullyQualifiedTableName);
 
-                if(!extractionInformation.SelectSQL.Equals(newvalue))
+                if (!extractionInformation.SelectSQL.Equals(newvalue))
                 {
                     extractionInformation.SelectSQL = newvalue;
                     extractionInformation.SaveToDatabase();
                     updatesMade++;
                 }
             }
-        }
-            
+
         //rename ColumnInfos
-        if(columnInfo.Name.StartsWith(oldFullyQualifiedTableName))
+        if (columnInfo.Name.StartsWith(oldFullyQualifiedTableName))
         {
-            columnInfo.Name = Regex.Replace(columnInfo.Name , $"^{Regex.Escape(oldFullyQualifiedTableName)}",newFullyQualifiedTableName);
+            columnInfo.Name = Regex.Replace(columnInfo.Name, $"^{Regex.Escape(oldFullyQualifiedTableName)}",
+                newFullyQualifiedTableName);
             columnInfo.SaveToDatabase();
             updatesMade++;
         }
-                
+
         return updatesMade;
     }
 }

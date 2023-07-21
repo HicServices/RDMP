@@ -26,15 +26,9 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     internal class FakeEncryptedString : IEncryptedString
     {
         public string Value { get; set; }
-        public string GetDecryptedValue()
-        {
-            return Value;
-        }
+        public string GetDecryptedValue() => Value;
 
-        public bool IsStringEncrypted(string value)
-        {
-            return false;
-        }
+        public bool IsStringEncrypted(string value) => false;
     }
 
     private IEncryptedString _encryptedString;
@@ -66,32 +60,28 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// <param name="repository"></param>
     public void SetRepository(ICatalogueRepository repository)
     {
-        if(_encryptedString is FakeEncryptedString f)
-        {
+        if (_encryptedString is FakeEncryptedString f)
             _encryptedString = new EncryptedString(repository)
             {
                 Value = f.Value
             };
-        }            
     }
 
     /// <inheritdoc/>
     public string Password
     {
-        get
-        {
-            return _encryptedString is FakeEncryptedString
-                ? throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}")
+        get =>
+            _encryptedString is FakeEncryptedString
+                ? throw new Exception(
+                    $"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}")
                 : _encryptedString.Value;
-        }
         set => _encryptedString.Value = value;
     }
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        return _encryptedString == null
-            ? throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+    public string GetDecryptedPassword() =>
+        _encryptedString == null
+            ? throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
             : _encryptedString.GetDecryptedValue() ?? "";
-    }
 }

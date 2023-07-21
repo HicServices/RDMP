@@ -29,7 +29,7 @@ public class FailedCacheFetchRequestProvider : ICacheFetchRequestProvider
     {
         _cacheProgress = cacheProgress;
         _batchSize = batchSize;
-            
+
         Current = null;
     }
 
@@ -41,7 +41,9 @@ public class FailedCacheFetchRequestProvider : ICacheFetchRequestProvider
     {
         if (!_failuresToProvide.Any())
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Getting next batch of request failures from database."));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "Getting next batch of request failures from database."));
             GetNextBatchFromDatabase();
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Fetched {_failuresToProvide.Count} failures from database."));

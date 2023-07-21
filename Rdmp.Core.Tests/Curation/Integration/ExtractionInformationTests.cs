@@ -40,7 +40,6 @@ public class ExtractionInformationTests : DatabaseTests
 
         //create a link between catalogue item lazor and velocity column
         cataItem.SetColumnInfo(columnInfo);
-                
     }
 
     [Test]
@@ -55,7 +54,6 @@ public class ExtractionInformationTests : DatabaseTests
     [Test]
     public void test_creating_ExtractionFilter()
     {
-
         ExtractionInformation extractInfo = null;
         ExtractionFilter filterFastThings = null;
         ExtractionFilterParameter parameter = null;
@@ -63,7 +61,8 @@ public class ExtractionInformationTests : DatabaseTests
         try
         {
             //define extraction information
-            extractInfo = new ExtractionInformation(CatalogueRepository, cataItem, columnInfo, "ROUND(VelocityOfMatter,2) VelocityOfMatterRounded");
+            extractInfo = new ExtractionInformation(CatalogueRepository, cataItem, columnInfo,
+                "ROUND(VelocityOfMatter,2) VelocityOfMatterRounded");
 
             //define filter and parameter
             filterFastThings = new ExtractionFilter(CatalogueRepository, "FastThings", extractInfo)
@@ -77,16 +76,17 @@ public class ExtractionInformationTests : DatabaseTests
             parameter = new ExtractionFilterParameter(CatalogueRepository, "DECLARE @X INT", filterFastThings);
 
             Assert.IsNotNull(parameter);
-            Assert.AreEqual(parameter.ParameterName ,"@X");
+            Assert.AreEqual(parameter.ParameterName, "@X");
 
             parameter.Value = "500";
             parameter.SaveToDatabase();
 
             var afterSave = CatalogueRepository.GetObjectByID<ExtractionFilterParameter>(parameter.ID);
-            Assert.AreEqual(afterSave.Value ,"500");
+            Assert.AreEqual(afterSave.Value, "500");
 
 
-            var filterFastThings_NewCopyFromDB = CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
+            var filterFastThings_NewCopyFromDB =
+                CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
 
             Assert.AreEqual(filterFastThings.ID, filterFastThings_NewCopyFromDB.ID);
             Assert.AreEqual(filterFastThings.Description, filterFastThings_NewCopyFromDB.Description);
@@ -102,21 +102,15 @@ public class ExtractionInformationTests : DatabaseTests
 
             extractInfo?.DeleteInDatabase();
         }
-            
-
-
     }
 
     [Test]
     public void test_creating_ExtractionInformation()
     {
-            
-            
-        ExtractionInformation extractInfo =null;
+        ExtractionInformation extractInfo = null;
 
         try
         {
-
             //define extraction information
             //change some values and then save it
             extractInfo = new ExtractionInformation(CatalogueRepository, cataItem, columnInfo, "dave")
@@ -127,7 +121,7 @@ public class ExtractionInformationTests : DatabaseTests
             extractInfo.SaveToDatabase();
 
             //confirm the insert worked
-            Assert.AreEqual(extractInfo.SelectSQL,"dave");
+            Assert.AreEqual(extractInfo.SelectSQL, "dave");
 
             //fetch the extraction information via the linked CatalogueItem - ColumnInfo pair (i.e. we are testing the alternate route to fetch ExtractionInformation - by ID or by colum/item pair)
             var extractInfo2_CameFromLinker = cataItem.ExtractionInformation;
@@ -135,14 +129,12 @@ public class ExtractionInformationTests : DatabaseTests
             Assert.AreEqual(extractInfo.SelectSQL, extractInfo2_CameFromLinker.SelectSQL);
 
             //make sure it saves properly
-            Assert.AreEqual(extractInfo2_CameFromLinker.Order,123 );
-            Assert.AreEqual( extractInfo2_CameFromLinker.ExtractionCategory,ExtractionCategory.Supplemental);
-
+            Assert.AreEqual(extractInfo2_CameFromLinker.Order, 123);
+            Assert.AreEqual(extractInfo2_CameFromLinker.ExtractionCategory, ExtractionCategory.Supplemental);
         }
         finally
         {
             extractInfo?.DeleteInDatabase();
-
         }
     }
 }

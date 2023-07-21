@@ -41,7 +41,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     public override int? ClonedFromExtractionFilter_ID
     {
         get => _clonedFromExtractionFilterID;
-        set => SetField(ref _clonedFromExtractionFilterID , value);
+        set => SetField(ref _clonedFromExtractionFilterID, value);
     }
 
     /// <inheritdoc/>
@@ -49,35 +49,34 @@ public class DeployedExtractionFilter : ConcreteFilter
     public override int? FilterContainer_ID
     {
         get => _filterContainerID;
-        set => SetField(ref _filterContainerID , value);
+        set => SetField(ref _filterContainerID, value);
     }
 
     #endregion
+
     #region Relationships
 
     /// <summary>
     /// Returns all parameters declared against this filter (does not include other parameters in scope e.g. globals)
     /// </summary>
     [NoMappingToDatabase]
-    public DeployedExtractionFilterParameter[] ExtractionFilterParameters => Repository.GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID" , ID).ToArray();
+    public DeployedExtractionFilterParameter[] ExtractionFilterParameters => Repository
+        .GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID", ID).ToArray();
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public override IContainer FilterContainer => FilterContainer_ID.HasValue ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value) : null;
+    public override IContainer FilterContainer => FilterContainer_ID.HasValue
+        ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value)
+        : null;
 
     #endregion
 
     /// <inheritdoc/>
-    public override ColumnInfo GetColumnInfoIfExists()
-    {
-        return null;
-    }
+    public override ColumnInfo GetColumnInfoIfExists() => null;
 
     /// <inheritdoc/>
-    public override IFilterFactory GetFilterFactory()
-    {
-        return new DeployedExtractionFilterFactory((IDataExportRepository)Repository);
-    }
+    public override IFilterFactory GetFilterFactory() =>
+        new DeployedExtractionFilterFactory((IDataExportRepository)Repository);
 
     /// <inheritdoc/>
     public override Catalogue GetCatalogue()
@@ -87,7 +86,7 @@ public class DeployedExtractionFilter : ConcreteFilter
         {
             return (Catalogue)ds.Catalogue;
         }
-        catch(Exception)
+        catch (Exception)
         {
             //could be that the catalogue has been deleted
             return null;
@@ -95,15 +94,10 @@ public class DeployedExtractionFilter : ConcreteFilter
     }
 
     /// <inheritdoc/>
-    public override ISqlParameter[] GetAllParameters()
-    {
-        return ExtractionFilterParameters.Cast<ISqlParameter>().ToArray();
-
-    }
+    public override ISqlParameter[] GetAllParameters() => ExtractionFilterParameters.Cast<ISqlParameter>().ToArray();
 
     public DeployedExtractionFilter()
     {
-
     }
 
     /// <summary>
@@ -120,8 +114,8 @@ public class DeployedExtractionFilter : ConcreteFilter
         Repository = repository;
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name != null ? (object) name : DBNull.Value},
-            {"FilterContainer_ID", container != null ? (object) container.ID : DBNull.Value}
+            { "Name", name != null ? (object)name : DBNull.Value },
+            { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
         });
     }
 
@@ -150,10 +144,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     /// Returns Name of filters
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
 
     /// <summary>
@@ -164,7 +155,8 @@ public class DeployedExtractionFilter : ConcreteFilter
     {
         base.Check(notifier);
 
-        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
+        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID,
+            ((IDataExportRepository)Repository).CatalogueRepository);
         checker.Check(notifier);
     }
 

@@ -23,10 +23,7 @@ public abstract class PickObjectBase
     protected Regex Regex { get; }
     protected readonly IBasicActivateItems Activator;
 
-    public virtual bool IsMatch(string arg, int idx)
-    {
-        return Regex.IsMatch(arg);
-    }
+    public virtual bool IsMatch(string arg, int idx) => Regex.IsMatch(arg);
     public abstract CommandLineObjectPickerArgumentValue Parse(string arg, int idx);
 
 
@@ -41,10 +38,12 @@ public abstract class PickObjectBase
     {
         var match = Regex.Match(arg);
 
-        return !match.Success ? throw new InvalidOperationException("Regex did not match, no value could be parsed") : match;
+        return !match.Success
+            ? throw new InvalidOperationException("Regex did not match, no value could be parsed")
+            : match;
     }
 
-    public PickObjectBase(IBasicActivateItems activator,Regex regex)
+    public PickObjectBase(IBasicActivateItems activator, Regex regex)
     {
         Regex = regex;
         Activator = activator;
@@ -52,9 +51,10 @@ public abstract class PickObjectBase
 
     protected static Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
-        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Repositories.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
+        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Repositories.MEF.GetType(objectType)) ??
+                throw new CommandLineObjectPickerParseException("Could not recognize Type name", idx, arg);
         return !typeof(DatabaseEntity).IsAssignableFrom(t)
-            ? throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg)
+            ? throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity", idx, arg)
             : t;
     }
 
@@ -81,16 +81,13 @@ public abstract class PickObjectBase
                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
     }
 
-    private static Type GetTypeFromShortCodeIfAny(string possibleShortCode)
-    {
-        return SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ?
-            code :
-            null;
-    }
+    private static Type GetTypeFromShortCodeIfAny(string possibleShortCode) =>
+        SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ? code : null;
+
     protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
     {
         var repo = Activator.GetRepositoryFor(type);
-        return repo.GetObjectByID(type,id);
+        return repo.GetObjectByID(type, id);
     }
 
 
@@ -100,7 +97,7 @@ public abstract class PickObjectBase
         return repo.GetAllObjects(type);
     }
 
-    private readonly Dictionary<string,Regex> patternDictionary = new();
+    private readonly Dictionary<string, Regex> patternDictionary = new();
 
     /// <summary>
     /// Returns true if the <paramref name="pattern"/> (which is a simple non regex e.g. "Bio*") matches the ToString of <paramref name="o"/>
@@ -112,7 +109,8 @@ public abstract class PickObjectBase
     {
         //build regex for the pattern which must be a complete match with anything (.*) matching the users wildcard
         if (!patternDictionary.ContainsKey(pattern))
-            patternDictionary.Add(pattern, new Regex($"^{Regex.Escape(pattern).Replace(@"\*", ".*")}$",RegexOptions.IgnoreCase));
+            patternDictionary.Add(pattern,
+                new Regex($"^{Regex.Escape(pattern).Replace(@"\*", ".*")}$", RegexOptions.IgnoreCase));
 
         return patternDictionary[pattern].IsMatch(o.ToString());
     }
@@ -128,13 +126,10 @@ public abstract class PickObjectBase
         if (string.IsNullOrWhiteSpace(keyValueString))
             return null;
 
-        return !keyValueString.StartsWith(key,StringComparison.CurrentCultureIgnoreCase)
+        return !keyValueString.StartsWith(key, StringComparison.CurrentCultureIgnoreCase)
             ? throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'")
             : keyValueString[key.Length..].Trim(':');
     }
 
-    public virtual IEnumerable<string> GetAutoCompleteIfAny()
-    {
-        return null;
-    }
+    public virtual IEnumerable<string> GetAutoCompleteIfAny() => null;
 }

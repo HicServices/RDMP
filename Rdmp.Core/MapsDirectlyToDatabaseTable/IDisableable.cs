@@ -12,7 +12,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// Class supports a disabled state which should be consulted before running the component
 /// e.g. in a data load.
 /// </summary>
-public interface IDisableable: IRevertable
+public interface IDisableable : IRevertable
 {
     /// <summary>
     /// True to skip the component when executing (but still show it at design time).

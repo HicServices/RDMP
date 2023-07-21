@@ -17,14 +17,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 public abstract class AutomationCommandExecution : BasicCommandExecution
 {
     protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-    public static readonly string AutomationServiceExecutable = Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
+
+    public static readonly string AutomationServiceExecutable =
+        Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
 
     private readonly TableRepository _cataTableRepo;
     private readonly TableRepository _dataExportTableRepo;
     private readonly YamlRepository _yamlRepository;
 
 
-    protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
+    protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) :
+        base(activator)
     {
         CommandGetter = commandGetter;
 
@@ -36,7 +39,6 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
 
         if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
             SetImpossible("Current repository is not not TableRepository/YamlRepository");
-
     }
 
     /// <summary>
@@ -62,7 +64,7 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
             return;
 
         // if backing database uses a directory
-        if(_yamlRepository != null)
+        if (_yamlRepository != null)
         {
             // assemble CLI args that also say to use a directory
             options.Dir = _yamlRepository.Directory.FullName;

@@ -70,7 +70,7 @@ public enum ExtractionJoinType
 /// <para>'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join B on A.x = B.x AND A.y = B.y.  You can define
 /// these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.</para>
 /// </summary>
-public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
+public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
 {
     #region Database Properties
 
@@ -83,28 +83,28 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     public int ForeignKey_ID
     {
         get => _foreignKeyID;
-        set => SetField(ref _foreignKeyID , value);
+        set => SetField(ref _foreignKeyID, value);
     }
 
     /// <inheritdoc cref="IJoin.PrimaryKey"/>
     public int PrimaryKey_ID
     {
         get => _primaryKeyID;
-        set => SetField(ref _primaryKeyID , value);
+        set => SetField(ref _primaryKeyID, value);
     }
 
     /// <inheritdoc/>
     public string Collation
     {
         get => _collation;
-        set => SetField(ref _collation , value);
+        set => SetField(ref _collation, value);
     }
 
     /// <inheritdoc/>
     public ExtractionJoinType ExtractionJoinType
     {
         get => _extractionJoinType;
-        set => SetField(ref _extractionJoinType , value);
+        set => SetField(ref _extractionJoinType, value);
     }
 
     #endregion
@@ -117,6 +117,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
@@ -129,7 +130,6 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
 
     public JoinInfo()
     {
-
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
-    internal JoinInfo(IRepository repository,DbDataReader r):base(repository,r)
+    internal JoinInfo(IRepository repository, DbDataReader r) : base(repository, r)
     {
         ForeignKey_ID = Convert.ToInt32(r["ForeignKey_ID"]);
         PrimaryKey_ID = Convert.ToInt32(r["PrimaryKey_ID"]);
@@ -154,7 +154,8 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     }
 
 
-    public JoinInfo(ICatalogueRepository repository, ColumnInfo foreignKey, ColumnInfo primaryKey, ExtractionJoinType type, string collation)
+    public JoinInfo(ICatalogueRepository repository, ColumnInfo foreignKey, ColumnInfo primaryKey,
+        ExtractionJoinType type, string collation)
     {
         if (foreignKey.ID == primaryKey.ID)
             throw new ArgumentException("Joink Key 1 and Join Key 2 cannot be the same");
@@ -162,21 +163,17 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Joink Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ForeignKey_ID",foreignKey.ID},
-            {"PrimaryKey_ID",primaryKey.ID},
-            {"ExtractionJoinType",type.ToString()},
-            {"Collation",collation}
+            { "ForeignKey_ID", foreignKey.ID },
+            { "PrimaryKey_ID", primaryKey.ID },
+            { "ExtractionJoinType", type.ToString() },
+            { "Collation", collation }
         });
-
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $" {ForeignKey.Name} = {PrimaryKey.Name}";
-    }
+    public override string ToString() => $" {ForeignKey.Name} = {PrimaryKey.Name}";
 
     /// <summary>
     /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
@@ -185,10 +182,10 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <param name="availableJoin"></param>
     public void AddQueryBuildingTimeComboJoinDiscovery(JoinInfo availableJoin)
     {
-        if(availableJoin.Equals(this))
+        if (availableJoin.Equals(this))
             throw new Exception("A JoinInfo cannot add QueryTimeComboJoin to itself");
 
-        if(!_queryTimeComboJoins.Contains(availableJoin))
+        if (!_queryTimeComboJoins.Contains(availableJoin))
             _queryTimeComboJoins.Add(availableJoin);
     }
 
@@ -215,7 +212,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         };
     }
 
-    private class QueryTimeComboJoin :ISupplementalJoin
+    private class QueryTimeComboJoin : ISupplementalJoin
     {
         /// <inheritdoc cref="IJoin.ForeignKey"/>
         public ColumnInfo ForeignKey { get; set; }
@@ -246,18 +243,13 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {PrimaryKey, ForeignKey};
+        return new[] { PrimaryKey, ForeignKey };
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
 
     /// <inheritdoc/>
-    public string GetCustomJoinSql()
-    {
-        return CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this).FirstOrDefault()?.Value;
-    }
+    public string GetCustomJoinSql() => CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
+        .FirstOrDefault()?.Value;
 }

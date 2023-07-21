@@ -14,18 +14,18 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Rules;
 
-internal class NoBadNamesRule<T>:BinderRule<T> where T:IMapsDirectlyToDatabaseTable
+internal class NoBadNamesRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
-    public NoBadNamesRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,string propertyToCheckName) : base(activator,databaseObject,getter,control, propertyToCheckName)
+    public NoBadNamesRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,
+        string propertyToCheckName) : base(activator, databaseObject, getter, control, propertyToCheckName)
     {
-
     }
 
     protected override string IsValid(object currentValue, Type typeToTest)
     {
-        if(ProblemProvider.IgnoreBadNamesFor.Any(t=>t.IsAssignableFrom(typeof(T))))
+        if (ProblemProvider.IgnoreBadNamesFor.Any(t => t.IsAssignableFrom(typeof(T))))
             return null;
 
-        return currentValue is string s ? UsefulStuff.IsBadName(s) ? "Name contains illegal characters":null : null;
+        return currentValue is string s ? UsefulStuff.IsBadName(s) ? "Name contains illegal characters" : null : null;
     }
 }

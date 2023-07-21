@@ -32,6 +32,8 @@ public class AcceptAllCheckNotifier : ICheckNotifier
         if (!string.IsNullOrWhiteSpace(args.ProposedFix))
             return true;
 
-        return args.Result == CheckResult.Fail ? throw new Exception($"Failed check with message: {args.Message}", args.Ex) : true;
+        return args.Result == CheckResult.Fail
+            ? throw new Exception($"Failed check with message: {args.Message}", args.Ex)
+            : true;
     }
 }

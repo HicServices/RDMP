@@ -18,7 +18,8 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
     private readonly ColumnInfo columnInfo;
     private readonly string _datatype;
 
-    public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) : base(activator)
+    public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) :
+        base(activator)
     {
         this.columnInfo = columnInfo;
         _datatype = datatype;
@@ -38,7 +39,7 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var oldSqlType = fansiType.SQLType;
         var newSqlType = _datatype;
 
-        if(newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+        if (newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
             return;
 
         if (string.IsNullOrWhiteSpace(newSqlType))
@@ -60,12 +61,10 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var archive = col.Table.Database.ExpectTable($"{col.Table}_Archive");
 
         if (archive.Exists())
-        {
             try
             {
                 var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
                 if (archiveCol.DataType.SQLType.Equals(oldSqlType))
-                {
                     try
                     {
                         archiveCol.DataType.AlterTypeTo(newSqlType);
@@ -75,16 +74,13 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
                         ShowException($"Failed to Alter Archive Column '{archiveCol.GetFullyQualifiedName()}'", ex);
                         return;
                     }
-                }
             }
             catch (Exception)
             {
                 //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                 return;
             }
-        }
 
         Publish(columnInfo.TableInfo);
     }
-
 }

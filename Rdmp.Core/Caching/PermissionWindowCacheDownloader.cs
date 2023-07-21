@@ -37,7 +37,8 @@ public class PermissionWindowCacheDownloader
     /// <param name="permissionWindow"></param>
     /// <param name="cacheProgressItems"></param>
     /// <param name="pipelineEngineExecutionStrategy"></param>
-    public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, List<ICacheProgress> cacheProgressItems, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
+    public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, List<ICacheProgress> cacheProgressItems,
+        IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
     {
         _permissionWindow = permissionWindow;
 
@@ -54,7 +55,7 @@ public class PermissionWindowCacheDownloader
             return true;
 
         //return true only if the permission window is not locked and the time is currently within the window
-        return  _permissionWindow.WithinPermissionWindow();
+        return _permissionWindow.WithinPermissionWindow();
     }
 
     /// <summary>
@@ -69,10 +70,10 @@ public class PermissionWindowCacheDownloader
     public RetrievalResult Download(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _listener = listener;
-            
-        return IsDownloadRequired(listener) ?
-            RunPipelineExecutionTask(cancellationToken, CreateCachingEngine) :
-            _retrievalResult;
+
+        return IsDownloadRequired(listener)
+            ? RunPipelineExecutionTask(cancellationToken, CreateCachingEngine)
+            : _retrievalResult;
     }
 
     public RetrievalResult RetryDownload(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -81,9 +82,9 @@ public class PermissionWindowCacheDownloader
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Retrying download: {(_permissionWindow == null ? "No permission window" : _permissionWindow.Name)}"));
 
-        return IsDownloadRequired(listener) ?
-            RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine) :
-            _retrievalResult;
+        return IsDownloadRequired(listener)
+            ? RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine)
+            : _retrievalResult;
     }
 
     private bool IsDownloadRequired(IDataLoadEventListener listener)
@@ -96,19 +97,22 @@ public class PermissionWindowCacheDownloader
 
         if (_cacheProgressItems == null)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "No cache progress provided so nothing to download."));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "No cache progress provided so nothing to download."));
             _retrievalResult = RetrievalResult.Complete;
             return false;
         }
-            
+
         return true;
     }
 
-    private RetrievalResult RunPipelineExecutionTask(GracefulCancellationToken cancellationToken, Func<ICacheProgress, IDataFlowPipelineEngine> createEngineFunc)
+    private RetrievalResult RunPipelineExecutionTask(GracefulCancellationToken cancellationToken,
+        Func<ICacheProgress, IDataFlowPipelineEngine> createEngineFunc)
     {
         // CreateCachingEngine also populates the engineMap as it knows about both the load schedule and pipeline engine at the same time
         var cachingEngines = _cacheProgressItems.Select(createEngineFunc).ToList();
-            
+
         return RunOnce(cancellationToken, cachingEngines);
     }
 
@@ -119,16 +123,17 @@ public class PermissionWindowCacheDownloader
     /// <param name="cancellationToken"></param>
     /// <param name="cachingEngines"></param>
     /// <returns></returns>
-    private RetrievalResult RunOnce(GracefulCancellationToken cancellationToken, List<IDataFlowPipelineEngine> cachingEngines)
+    private RetrievalResult RunOnce(GracefulCancellationToken cancellationToken,
+        List<IDataFlowPipelineEngine> cachingEngines)
     {
-
         // We will be spawning our own task which we want separate control of (to kill if we pass outside the permission window), so need our own cancellation token
         var executionCancellationTokenSource = new GracefulCancellationTokenSource();
 
         // We want to be able to stop the engine if we pass outside the permission window, however the execution strategy objects should not know about PermissionWindows
         var executionTask = new Task(() =>
-            _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
-            
+            _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token,
+                _listener));
+
         // Block waiting on task completion or signalling of the cancellation token
         while (!executionTask.IsCompleted)
         {
@@ -143,15 +148,17 @@ public class PermissionWindowCacheDownloader
             {
                 // Wait nicely until the child task signals its abort token (by throwing?)
                 executionCancellationTokenSource.Abort();
-                _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Have issued Abort request to the Pipeline Execution Task. Waiting for the task to exit..."));
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        "Have issued Abort request to the Pipeline Execution Task. Waiting for the task to exit..."));
                 try
                 {
                     executionTask.Wait();
                 }
                 catch (AggregateException)
                 {
-
                 }
+
                 return RetrievalResult.Aborted;
             }
 
@@ -181,8 +188,11 @@ public class PermissionWindowCacheDownloader
 
         if (executionTask.IsFaulted)
         {
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Task faulted, information is in the attached exception.", executionTask.Exception));
-            throw new InvalidOperationException("Task faulted, see inner exception for details.", executionTask.Exception);
+            _listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Task faulted, information is in the attached exception.",
+                    executionTask.Exception));
+            throw new InvalidOperationException("Task faulted, see inner exception for details.",
+                executionTask.Exception);
         }
 
         return RetrievalResult.Complete;
@@ -197,14 +207,14 @@ public class PermissionWindowCacheDownloader
 
     private IDataFlowPipelineEngine CreateRetryCachingEngine(ICacheProgress cacheProgress)
     {
-        var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress, true,new FailedCacheFetchRequestProvider(cacheProgress));
+        var cachingPipelineEngineFactory =
+            new CachingPipelineUseCase(cacheProgress, true, new FailedCacheFetchRequestProvider(cacheProgress));
         return cachingPipelineEngineFactory.GetEngine(_listener);
     }
 
     private void CheckCacheProgressesUseCorrectPermissionWindow(IEnumerable<ICacheProgress> cacheProgressList)
     {
         foreach (var cacheProgress in cacheProgressList)
-        {
             if (_permissionWindow == null)
             {
                 if (cacheProgress.PermissionWindow_ID != null)
@@ -217,12 +227,9 @@ public class PermissionWindowCacheDownloader
                 throw new Exception(
                     $"Configuration error, CacheProgress with ID={cacheProgress.ID} does not have its permissions specified by Permission Window '{_permissionWindow.Name}' (ID={_permissionWindow.ID}). It uses Permission Window '{progressPermissionWindow.Name}' (ID={progressPermissionWindow.ID})");
             }
-
-        }
     }
 
-    public override string ToString()
-    {
-        return _permissionWindow == null ? "Downloader (Any Time)" : $"Downloader for {_permissionWindow.Name}";
-    }
+    public override string ToString() => _permissionWindow == null
+        ? "Downloader (Any Time)"
+        : $"Downloader for {_permissionWindow.Name}";
 }

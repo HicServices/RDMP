@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShowXmlDoc : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandShowXmlDoc : BasicUICommandExecution, IAtomicCommand
 {
     private readonly string _title;
     private string _help;
@@ -24,18 +24,17 @@ public class ExecuteCommandShowXmlDoc : BasicUICommandExecution,IAtomicCommand
     /// <param name="activator"></param>
     /// <param name="classOrProperty">Name of a documented class/interface/property (e.g. "CohortIdentificationConfiguration.QueryCachingServer_ID")</param>
     /// <param name="title"></param>
-    public ExecuteCommandShowXmlDoc(IActivateItems activator,string classOrProperty, string title):base(activator)
+    public ExecuteCommandShowXmlDoc(IActivateItems activator, string classOrProperty, string title) : base(activator)
     {
         _title = title;
-        _help = activator.RepositoryLocator.CatalogueRepository.CommentStore.GetDocumentationIfExists(classOrProperty, true,true);
+        _help = activator.RepositoryLocator.CatalogueRepository.CommentStore.GetDocumentationIfExists(classOrProperty,
+            true, true);
 
-        if(string.IsNullOrWhiteSpace(_help))
+        if (string.IsNullOrWhiteSpace(_help))
             SetImpossible($"No help available for keyword '{classOrProperty}'");
     }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Help);
-    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Help);
 
     public override void Execute()
     {

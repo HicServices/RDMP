@@ -18,7 +18,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
 
-public class EndToEndDLECacheTest:TestsRequiringADle
+public class EndToEndDLECacheTest : TestsRequiringADle
 {
     [Test]
     public void RunEndToEndDLECacheTest()
@@ -30,16 +30,16 @@ public class EndToEndDLECacheTest:TestsRequiringADle
 
         var lmd = TestLoadMetadata;
 
-        var lp = new LoadProgress(CatalogueRepository,lmd)
+        var lp = new LoadProgress(CatalogueRepository, lmd)
         {
-            DataLoadProgress = new DateTime(2001,1,1),
+            DataLoadProgress = new DateTime(2001, 1, 1),
             DefaultNumberOfDaysToLoadEachTime = 10
         };
         lp.SaveToDatabase();
 
         var cp = new CacheProgress(CatalogueRepository, lp)
         {
-            CacheFillProgress = new DateTime(2001,1,11) //10 days available to load
+            CacheFillProgress = new DateTime(2001, 1, 11) //10 days available to load
         };
         cp.SaveToDatabase();
 
@@ -49,38 +49,38 @@ public class EndToEndDLECacheTest:TestsRequiringADle
         //setup the cache process task
         var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles)
         {
-            Path = typeof (BasicCacheDataProvider).FullName,
+            Path = typeof(BasicCacheDataProvider).FullName,
             ProcessTaskType = ProcessTaskType.DataProvider
         };
         pt.SaveToDatabase();
         pt.CreateArgumentsForClassIfNotExists<BasicCacheDataProvider>();
 
         var attacher = lmd.ProcessTasks.Single(p => p.ProcessTaskType == ProcessTaskType.Attacher);
-        var patternArgument  = (ProcessTaskArgument)attacher.GetAllArguments().Single(a => a.Name.Equals("FilePattern"));
+        var patternArgument = (ProcessTaskArgument)attacher.GetAllArguments().Single(a => a.Name.Equals("FilePattern"));
         patternArgument.SetValue("*.csv");
         patternArgument.SaveToDatabase();
 
         //take the forLoading file
-        var csvFile = CreateFileInForLoading("bob.csv",10,new Random(5000));
+        var csvFile = CreateFileInForLoading("bob.csv", 10, new Random(5000));
 
         //and move it to the cache and give it a date in the range we expect for the cached data
-        csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName,"2001-01-09.csv"));
+        csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName, "2001-01-09.csv"));
 
         RunDLE(timeoutInMilliseconds);
 
-        Assert.AreEqual(10,RowsNow - RowsBefore);
+        Assert.AreEqual(10, RowsNow - RowsBefore);
 
         Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
         Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);
         Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Length);
 
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
-        Assert.AreEqual(".zip",archiveFile.Extension);
+        Assert.AreEqual(".zip", archiveFile.Extension);
 
 
         //load progress should be updated to the largest date in the cache (2001-01-09)
         lp.RevertToDatabaseState();
-        Assert.AreEqual(lp.DataLoadProgress, new DateTime(2001,01,09));
+        Assert.AreEqual(lp.DataLoadProgress, new DateTime(2001, 01, 09));
 
         cp.DeleteInDatabase();
         lp.DeleteInDatabase();

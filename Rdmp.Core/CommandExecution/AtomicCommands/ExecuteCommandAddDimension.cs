@@ -23,7 +23,8 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
     private readonly bool _askAtRuntime;
     private const float DefaultWeight = 2.4f;
 
-    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(basicActivator)
+    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(
+        basicActivator)
     {
         Weight = DefaultWeight;
         _aggregate = aggregate;
@@ -32,7 +33,8 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column) : base(basicActivator)
+    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate,
+        string column) : base(basicActivator)
     {
         Weight = DefaultWeight;
         _aggregate = aggregate;
@@ -43,7 +45,8 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
             // don't let them try to set a pivot on a cohort aggregate configuration but do let them clear it if it somehow ended up with one
             if (aggregate.IsCohortIdentificationAggregate)
             {
-                SetImpossible($"AggregateConfiguration {aggregate} is a cohort identification aggregate and so cannot have a pivot");
+                SetImpossible(
+                    $"AggregateConfiguration {aggregate} is a cohort identification aggregate and so cannot have a pivot");
                 return;
             }
         }
@@ -58,18 +61,12 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
 
     private void ValidateCanAdd(AggregateConfiguration aggregate)
     {
-        if(aggregate.Catalogue.IsApiCall())
-        {
-            SetImpossible("API calls cannot have AggregateDimensions");
-        }
+        if (aggregate.Catalogue.IsApiCall()) SetImpossible("API calls cannot have AggregateDimensions");
 
         if (aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
-        {
             if (aggregate.AggregateDimensions.Any())
-            {
-                SetImpossible("Cohort aggregates can only have a single dimension. Remove existing dimension to select another.");
-            }
-        }
+                SetImpossible(
+                    "Cohort aggregates can only have a single dimension. Remove existing dimension to select another.");
     }
 
     public override void Execute()
@@ -84,24 +81,19 @@ public sealed class ExecuteCommandAddDimension : BasicCommandExecution
         if (_askAtRuntime)
         {
             if (!possible.Any())
-            {
-                throw new Exception($"There are no ExtractionInformation that can be added as new dimensions to {_aggregate}");
-            }
+                throw new Exception(
+                    $"There are no ExtractionInformation that can be added as new dimensions to {_aggregate}");
 
             match = (ExtractionInformation)BasicActivator.SelectOne("Choose dimension to add", possible);
 
-            if (match == null)
-            {
-                return;
-            }
+            if (match == null) return;
         }
         else
         {
             match = possible.FirstOrDefault(a => string.Equals(_column, a.ToString()));
             if (match == null)
-            {
-                throw new Exception($"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
-            }
+                throw new Exception(
+                    $"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
         }
 
         var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueRepository, match, _aggregate);

@@ -49,7 +49,8 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     /// <param name="repository"></param>
     /// <param name="tableValuedFunction"></param>
     /// <param name="usageContext"></param>
-    public TableValuedFunctionImporter(ICatalogueRepository repository, DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
+    public TableValuedFunctionImporter(ICatalogueRepository repository,
+        DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
     {
         _repository = repository;
         _tableValuedFunction = tableValuedFunction;
@@ -64,11 +65,10 @@ public class TableValuedFunctionImporter : ITableInfoImporter
                 $"Could not find tableValuedFunction with name '{_tableValuedFunction.GetRuntimeName()}' (.Exists() returned false)");
 
         _tableValuedFunctionName = _tableValuedFunction.GetRuntimeName();
-                 
+
         _parameters = _tableValuedFunction.DiscoverParameters().ToArray();
 
         ParametersCreated = new List<AnyTableSqlParameter>();
-            
     }
 
 
@@ -97,7 +97,8 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         if (server.ExplicitUsernameIfAny != null)
         {
             var credentialsFactory = new DataAccessCredentialsFactory(_repository);
-            credentialsFactory.Create(tableInfoCreated, server.ExplicitUsernameIfAny, server.ExplicitPasswordIfAny, _usageContext);
+            credentialsFactory.Create(tableInfoCreated, server.ExplicitUsernameIfAny, server.ExplicitPasswordIfAny,
+                _usageContext);
         }
     }
 
@@ -105,7 +106,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
         var toAdd =
-            new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(),
+            new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
                 discoveredColumn.DataType.SQLType, parent)
             {
                 Format = discoveredColumn.Format,
@@ -128,10 +129,10 @@ public class TableValuedFunctionImporter : ITableInfoImporter
             var toAdd = CreateNewColumnInfo(parent, discoveredColumn);
             newColumnInfosToReturn.Add(toAdd);
         }
-            
+
         foreach (var discoveredParameter in _tableValuedFunction.DiscoverParameters())
-            CreateParameter(parent,discoveredParameter);
-                
+            CreateParameter(parent, discoveredParameter);
+
         return newColumnInfosToReturn.ToArray();
     }
 
@@ -160,5 +161,4 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
         return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
     }
-
 }

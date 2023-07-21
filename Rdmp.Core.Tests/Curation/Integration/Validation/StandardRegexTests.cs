@@ -12,13 +12,14 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.Validation;
 
-public class StandardRegexTests:DatabaseTests
+public class StandardRegexTests : DatabaseTests
 {
     [Test]
     public void CreateNew_UseConstraint()
     {
         // Clean SetUp any existing regexes
-        CatalogueRepository.GetAllObjects<StandardRegex>().Where(r=>r.ConceptName == "Fish").ToList().ForEach(r => r.DeleteInDatabase());
+        CatalogueRepository.GetAllObjects<StandardRegex>().Where(r => r.ConceptName == "Fish").ToList()
+            .ForEach(r => r.DeleteInDatabase());
 
         var regex = new StandardRegex(CatalogueRepository);
         try
@@ -35,7 +36,7 @@ public class StandardRegexTests:DatabaseTests
                 CatalogueStandardRegex = regex
             };
 
-            Assert.IsNull(constraint.Validate("Fish",null,null));
+            Assert.IsNull(constraint.Validate("Fish", null, null));
             var failure = constraint.Validate("FishFingers", null, null);
             Assert.IsNotNull(failure);
         }

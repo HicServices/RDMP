@@ -14,14 +14,13 @@ using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests;
 
-public class AllObjectsHaveImages:DatabaseTests
+public class AllObjectsHaveImages : DatabaseTests
 {
     [Test]
     public void AllIHasDependenciesHaveIcons()
     {
         var exceptionsAllowed = new[]
         {
-
             "IHasDependencies", //base interface of which nobody is who isn't otherwise on this list
             "ITableInfo", //handled because they are all secretly TableInfos
             "AggregateConfiguration", //handled by AggregateConfigurationStateBasedIconProvider
@@ -33,7 +32,6 @@ public class AllObjectsHaveImages:DatabaseTests
 
             "StackFrame"
             //not required , it's only ever dependent on itself and it doesn't have any visualisation on Catalogue / Export
-
         };
 
         var missingConcepts = Core.Repositories.MEF.GetAllTypes()
@@ -47,6 +45,6 @@ public class AllObjectsHaveImages:DatabaseTests
             Console.WriteLine(
                 $"The following Database Object Types are missing concepts (and therefore images) in CatalogueManager.exe{Environment.NewLine}{string.Join($",{Environment.NewLine}", missingConcepts)}");
 
-        Assert.AreEqual(0,missingConcepts.Count);
+        Assert.AreEqual(0, missingConcepts.Count);
     }
 }

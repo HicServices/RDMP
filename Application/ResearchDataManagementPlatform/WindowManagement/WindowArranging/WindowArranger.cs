@@ -25,11 +25,11 @@ public class WindowArranger : IArrangeWindows
     public WindowArranger(IActivateItems activator, WindowManager windowManager, DockPanel mainDockPanel)
     {
         _activator = activator;
-        _windowManager =windowManager;
+        _windowManager = windowManager;
     }
 
     public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
-    {            
+    {
         _activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
 
         var activate = new ExecuteCommandActivate(_activator, o);
@@ -39,7 +39,6 @@ public class WindowArranger : IArrangeWindows
             activate.Execute();
         else
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1)); //otherwise just show it
-        
     }
 
     public void Setup(WindowLayout target)
@@ -48,9 +47,9 @@ public class WindowArranger : IArrangeWindows
         var oldXml = _windowManager.MainForm.GetCurrentLayoutXml();
         var newXml = target.LayoutData;
 
-        if(AreBasicallyTheSameLayout(oldXml, newXml))
+        if (AreBasicallyTheSameLayout(oldXml, newXml))
             return;
-            
+
         _windowManager.CloseAllToolboxes();
         _windowManager.CloseAllWindows();
         _windowManager.MainForm.LoadFromXml(target);

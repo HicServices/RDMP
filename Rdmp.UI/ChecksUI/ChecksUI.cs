@@ -34,7 +34,7 @@ namespace Rdmp.UI.ChecksUI;
 /// 
 /// <para>Typing into the Filter lets you filter by message text.</para>
 /// </summary>
-public partial  class ChecksUI : UserControl, ICheckNotifier
+public partial class ChecksUI : UserControl, ICheckNotifier
 {
     private Bitmap _tick;
     private Bitmap _warning;
@@ -71,9 +71,12 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
         if (!UserSettings.AutoResizeColumns)
         {
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvMessage, new Guid("5d62580d-2bee-420b-ab43-f40317769514"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvResult, new Guid("18b26ae1-c35d-4e73-9dc5-88f15910c1f9"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvEventDate, new Guid("28c13822-b4c0-4fa5-b20d-af612b076716"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvMessage,
+                new Guid("5d62580d-2bee-420b-ab43-f40317769514"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvResult,
+                new Guid("18b26ae1-c35d-4e73-9dc5-88f15910c1f9"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvEventDate,
+                new Guid("28c13822-b4c0-4fa5-b20d-af612b076716"));
         }
     }
 
@@ -86,7 +89,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
             return;
         }
 
-        if(outOfDate)
+        if (outOfDate)
         {
             olvChecks.ClearObjects();
             olvChecks.AddObjects(_results);
@@ -98,7 +101,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
     private void AutoResizeColumns()
     {
-        if(UserSettings.AutoResizeColumns)
+        if (UserSettings.AutoResizeColumns)
         {
             olvResult.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             olvEventDate.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -111,12 +114,12 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         return rowObject is not CheckEventArgs e
             ? null
             : e.Result switch
-        {
-            CheckResult.Success => _tick,
-            CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
-            CheckResult.Fail => e.Ex == null ? _fail : _failEx,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            {
+                CheckResult.Success => _tick,
+                CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
+                CheckResult.Fail => e.Ex == null ? _fail : _failEx,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 
     public bool CheckingInProgress { get; private set; }
@@ -135,16 +138,15 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
         yesNoYesToAllDialog = new YesNoYesToAllDialog();
     }
-    public void StartChecking(ICheckable rootCheckable, bool bClearUI =true)
+
+    public void StartChecking(ICheckable rootCheckable, bool bClearUI = true)
     {
-        if(bClearUI)
-        {
-            yesNoYesToAllDialog = new YesNoYesToAllDialog();
-        }
+        if (bClearUI) yesNoYesToAllDialog = new YesNoYesToAllDialog();
 
         if (CheckingInProgress)
         {
-            MessageBox.Show("Checking already in progress, please wait for current checks to complete before requesting more");
+            MessageBox.Show(
+                "Checking already in progress, please wait for current checks to complete before requesting more");
             return;
         }
 
@@ -154,7 +156,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         CheckingInProgress = true;
         btnAbortChecking.Enabled = true;
         var listener = new ToMemoryCheckNotifier(this);
-            
+
         _checkingThread = new Thread(() =>
         {
             try
@@ -164,7 +166,6 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
             }
             catch (Exception e)
             {
-
                 listener.OnCheckPerformed(new CheckEventArgs("Entire checking process crashed", CheckResult.Fail, e));
                 CheckingInProgress = false;
 
@@ -176,12 +177,12 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
     private void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
     {
-        _results.Add(new CheckEventArgs("All Checks Complete",CheckResult.Success));
+        _results.Add(new CheckEventArgs("All Checks Complete", CheckResult.Success));
         outOfDate = true;
-            
+
         CheckingInProgress = false;
 
-        AllChecksComplete?.Invoke(this,new AllChecksCompleteHandlerArgs(listener));
+        AllChecksComplete?.Invoke(this, new AllChecksCompleteHandlerArgs(listener));
     }
 
 
@@ -220,12 +221,12 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
     private void AddToListbox(CheckEventArgs args)
     {
         _results.Add(args);
-        outOfDate = true; 
+        outOfDate = true;
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
-        olvChecks.ModelFilter = new TextMatchFilter(olvChecks,tbFilter.Text);
+        olvChecks.ModelFilter = new TextMatchFilter(olvChecks, tbFilter.Text);
     }
 
     public void Clear()
@@ -241,7 +242,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
             if (args.Ex != null)
                 ExceptionViewer.Show(args.Message, args.Ex);
             else
-                WideMessageBox.Show(args,false);
+                WideMessageBox.Show(args, false);
     }
 
     public void TerminateWithExtremePrejudice()

@@ -16,7 +16,6 @@ internal class IHasSummaryTests : UnitTests
     public void AllObjects_SupportSummary()
     {
         foreach (var obj in WhenIHaveAll())
-        {
             try
             {
                 var text = obj.GetSummary(true, true);
@@ -26,6 +25,5 @@ internal class IHasSummaryTests : UnitTests
             {
                 throw new Exception($"GetSummary is broken for {obj.GetType().Name}", ex);
             }
-        }
     }
 }

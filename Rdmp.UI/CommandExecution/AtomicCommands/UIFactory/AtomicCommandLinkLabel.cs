@@ -29,7 +29,7 @@ public partial class AtomicCommandLinkLabel : UserControl
         var name = command.GetCommandName();
         lblName.Text = name;
 
-        helpIcon1.SetHelpText(_command.GetCommandName(),command.GetCommandHelp());
+        helpIcon1.SetHelpText(_command.GetCommandName(), command.GetCommandHelp());
     }
 
     private void label1_Click(object sender, EventArgs e)

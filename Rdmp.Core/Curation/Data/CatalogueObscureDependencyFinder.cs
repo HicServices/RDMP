@@ -55,7 +55,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
             obscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
 
         //Delete any SQLFilterParameters associated with the parent object (which has just been deleted!)
-        if(AnyTableSqlParameter.IsSupportedType(oTableWrapperObject.GetType()))
+        if (AnyTableSqlParameter.IsSupportedType(oTableWrapperObject.GetType()))
             foreach (var p in _repository.GetAllParametersForParentTable(oTableWrapperObject))
                 p.DeleteInDatabase();
     }
@@ -65,11 +65,10 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="repositoryLocator"></param>
-    public void AddOtherDependencyFinderIfNotExists<T>(IRDMPPlatformRepositoryServiceLocator repositoryLocator) where T:IObscureDependencyFinder
+    public void AddOtherDependencyFinderIfNotExists<T>(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        where T : IObscureDependencyFinder
     {
         if (OtherDependencyFinders.All(f => f.GetType() != typeof(T)))
-        {
             OtherDependencyFinders.Add((T)ObjectConstructor.Construct(typeof(T), repositoryLocator));
-        }
     }
 }

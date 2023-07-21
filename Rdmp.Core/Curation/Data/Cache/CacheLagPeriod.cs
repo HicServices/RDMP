@@ -151,10 +151,7 @@ public class CacheLagPeriod
     /// <seealso cref="Duration"/>
     /// <param name="time"></param>
     /// <returns></returns>
-    public bool TimeIsWithinPeriod(DateTime time)
-    {
-        return time >= CalculateStartOfLagPeriodFrom(DateTime.Now);
-    }
+    public bool TimeIsWithinPeriod(DateTime time) => time >= CalculateStartOfLagPeriodFrom(DateTime.Now);
 
     /// <summary>
     /// Allows comparing a TimeSpan with a CacheLagPeriod.  This treats the Timespan as an offset equivalent to <see cref="Duration"/>

@@ -30,6 +30,5 @@ public class UpdateProgressToResultOfDelegate : UpdateProgressIfLoadsuccessful
             DateToSetProgressTo = _delegateToRun();
 
         base.LoadCompletedSoDispose(exitCode, postLoadEventListener);
-
     }
 }

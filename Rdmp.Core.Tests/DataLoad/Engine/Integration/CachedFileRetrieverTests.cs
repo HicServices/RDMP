@@ -33,10 +33,11 @@ public class CachedFileRetrieverTests : DatabaseTests
     public CachedFileRetrieverTests()
     {
         var cpMock = Mock.Of<ICacheProgress>();
-        _lpMock = Mock.Of<ILoadProgress>(l=>l.CacheProgress == cpMock);
+        _lpMock = Mock.Of<ILoadProgress>(l => l.CacheProgress == cpMock);
     }
 
-    [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
+    [Test(Description =
+        "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
     public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
     {
         var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -68,8 +69,12 @@ public class CachedFileRetrieverTests : DatabaseTests
             };
 
             // Should fail after determining that the files in ForLoading do not match the job specification
-            var ex = Assert.Throws<InvalidOperationException>(() => retriever.Fetch(job, new GracefulCancellationToken()));
-            Assert.IsTrue(ex.Message.StartsWith("The files in ForLoading do not match what this job expects to be loading from the cache."), ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace);
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+                retriever.Fetch(job, new GracefulCancellationToken()));
+            Assert.IsTrue(
+                ex.Message.StartsWith(
+                    "The files in ForLoading do not match what this job expects to be loading from the cache."),
+                ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace);
         }
         finally
         {
@@ -77,7 +82,8 @@ public class CachedFileRetrieverTests : DatabaseTests
         }
     }
 
-    [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading match the files that are expected given the job specification, e.g. a load has after the cache has been populated and a subsequent load with *exactly the same parameters* has been triggered. In this case the load can proceed.")]
+    [Test(Description =
+        "RDMPDEV-185: Tests the scenario where the files in ForLoading match the files that are expected given the job specification, e.g. a load has after the cache has been populated and a subsequent load with *exactly the same parameters* has been triggered. In this case the load can proceed.")]
     public void AttemptToLoadDataWithFilesInForLoading_AgreementBetweenForLoadingAndCache()
     {
         var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -99,8 +105,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
-                Layout =  cacheLayout
-
+                Layout = cacheLayout
             };
 
             // Set SetUp job
@@ -144,7 +149,6 @@ public class CachedFileRetrieverTests : DatabaseTests
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
                 Layout = cacheLayout
-
             };
 
             // Set SetUp job
@@ -170,17 +174,18 @@ public class CachedFileRetrieverTests : DatabaseTests
     {
         var catalogue = Mock.Of<ICatalogue>(c =>
             c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
-            c.GetLookupTableInfoList()==Array.Empty<TableInfo>() &&
+            c.GetLookupTableInfoList() == Array.Empty<TableInfo>() &&
             c.LoggingDataTask == "TestLogging"
         );
 
         var logManager = Mock.Of<ILogManager>();
-        var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
+        var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues() == new[] { catalogue });
 
-        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, ThrowImmediatelyDataLoadEventListener.Quiet, null)
-            {
-                LoadProgress = _lpMock
-            };
+        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory,
+            ThrowImmediatelyDataLoadEventListener.Quiet, null)
+        {
+            LoadProgress = _lpMock
+        };
         return j;
     }
 }
@@ -191,7 +196,6 @@ internal class TestCachedFileRetriever : CachedFileRetriever
 
     public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
     }
 
     public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)
@@ -199,12 +203,10 @@ internal class TestCachedFileRetriever : CachedFileRetriever
         var scheduledJob = ConvertToScheduledJob(dataLoadJob);
         GetDataLoadWorkload(scheduledJob);
         ExtractJobs(scheduledJob);
-            
+
         return ExitCodeType.Success;
     }
 
-    protected override ICacheLayout CreateCacheLayout(ICacheProgress cacheProgress, IDataLoadEventListener listener)
-    {
-        return Layout;
-    }
+    protected override ICacheLayout CreateCacheLayout(ICacheProgress cacheProgress, IDataLoadEventListener listener) =>
+        Layout;
 }

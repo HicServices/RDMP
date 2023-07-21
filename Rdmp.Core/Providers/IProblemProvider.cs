@@ -33,5 +33,4 @@ public interface IProblemProvider
     /// <param name="o"></param>
     /// <returns></returns>
     string DescribeProblem(object o);
-
 }

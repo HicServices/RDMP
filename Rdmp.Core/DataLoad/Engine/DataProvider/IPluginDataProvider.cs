@@ -11,5 +11,4 @@ namespace Rdmp.Core.DataLoad.Engine.DataProvider;
 /// </summary>
 public interface IPluginDataProvider : IDataProvider
 {
-
 }

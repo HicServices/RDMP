@@ -16,7 +16,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
 /// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
 /// </summary>
-public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
+public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
     public Project Project { get; }
 
@@ -25,34 +25,28 @@ public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
-    }
+    public override string ToString() =>
+        string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
 
-    protected bool Equals(ExtractionDirectoryNode other)
-    {
-        return Equals(Project, other.Project);
-    }
+    protected bool Equals(ExtractionDirectoryNode other) => Equals(Project, other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionDirectoryNode) obj);
+        return Equals((ExtractionDirectoryNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => System.HashCode.Combine(Project);
+
+    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(Project.ExtractionDirectory)
+        ? null
+        : new DirectoryInfo(Project.ExtractionDirectory);
+
+    public int Order
     {
-        return System.HashCode.Combine(Project);
+        get => 4;
+        set { }
     }
-
-    public DirectoryInfo GetDirectoryInfoIfAny()
-    {
-        return string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? null : new DirectoryInfo(Project.ExtractionDirectory);
-    }
-
-    public int Order{ get => 4;
-        set { }}
 }

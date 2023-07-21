@@ -29,22 +29,23 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
 
     private const float BorderWidth = 5;
 
-    public DashboardableControlHostPanel(IActivateItems activator, DashboardControl databaseRecord, IDashboardableControl hostedControl)
+    public DashboardableControlHostPanel(IActivateItems activator, DashboardControl databaseRecord,
+        IDashboardableControl hostedControl)
     {
         SetItemActivator(activator);
 
         _databaseRecord = databaseRecord;
         HostedControl = hostedControl;
         InitializeComponent();
-            
+
         pbDelete.Image = FamFamFamIcons.delete.ImageToBitmap();
 
         Margin = Padding.Empty;
 
         pbDelete.Visible = false;
-            
+
         Controls.Add((Control)HostedControl);
-            
+
         AdjustControlLocation();
     }
 
@@ -55,21 +56,19 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         //center it on us with a gap of BorderWidth
         if (_editMode)
         {
-
-            control.Location = new Point((int) BorderWidth, (int) BorderWidth);
-            control.Width = (int) (Width - BorderWidth*2);
-            control.Height = (int) (Height - BorderWidth*2);
+            control.Location = new Point((int)BorderWidth, (int)BorderWidth);
+            control.Width = (int)(Width - BorderWidth * 2);
+            control.Height = (int)(Height - BorderWidth * 2);
         }
         else
         {
-            control.Location = new Point(0,0);
+            control.Location = new Point(0, 0);
             control.Width = Width;
             control.Height = Height;
         }
 
         //anchor to all
         control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -87,8 +86,8 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         HostedControl.NotifyEditModeChange(isEditModeOn);
 
         pbDelete.Visible = isEditModeOn;
-            
-        if(isEditModeOn)
+
+        if (isEditModeOn)
             pbDelete.BringToFront();
 
         Invalidate();
@@ -97,11 +96,11 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
 
     private void pbDelete_Click(object sender, EventArgs e)
     {
-        if(_editMode)
+        if (_editMode)
         {
             var layout = _databaseRecord.ParentLayout;
             Activator.DeleteWithConfirmation(_databaseRecord);
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(layout));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(layout));
         }
     }
 }

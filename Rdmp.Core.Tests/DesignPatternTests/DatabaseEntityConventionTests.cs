@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DesignPatternTests;
 
-public class DatabaseEntityConventionTests:UnitTests
+public class DatabaseEntityConventionTests : UnitTests
 {
     /// <summary>
     /// This test checks that constructors of <see cref="DatabaseEntity"/> classes know what repo they are supposed to be written into
@@ -26,11 +26,13 @@ public class DatabaseEntityConventionTests:UnitTests
     {
         var problems = MEF.GetAllTypes()
             .Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t))
-            .SelectMany(static type => type.GetConstructors(), static (type, constructorInfo) => new { type, constructorInfo })
+            .SelectMany(static type => type.GetConstructors(),
+                static (type, constructorInfo) => new { type, constructorInfo })
             .Select(t1 => new { t1, parameters = t1.constructorInfo.GetParameters() })
             .Where(static t1 => t1.parameters.Any(p => p.ParameterType == typeof(IRepository)))
             .Select(static t1 =>
-                $"Constructor found on Type {t1.t1.type} that takes {nameof(IRepository)}, it should take either {nameof(IDataExportRepository)} or {nameof(ICatalogueRepository)}").ToList();
+                $"Constructor found on Type {t1.t1.type} that takes {nameof(IRepository)}, it should take either {nameof(IDataExportRepository)} or {nameof(ICatalogueRepository)}")
+            .ToList();
 
         foreach (var problem in problems)
             TestContext.Out.WriteLine(problem);

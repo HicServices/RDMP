@@ -20,8 +20,5 @@ public class ProcessTaskCombineable : ICombineToMakeCommand
         ProcessTask = processTask;
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

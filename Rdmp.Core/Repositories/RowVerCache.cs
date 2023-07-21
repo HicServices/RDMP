@@ -20,7 +20,7 @@ namespace Rdmp.Core.Repositories;
 /// constructed / updated when an RDMP platform database stores hundreds of thousands of objects.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
+public class RowVerCache<T> : IRowVerCache where T : IMapsDirectlyToDatabaseTable
 {
     private readonly TableRepository _repository;
 
@@ -61,10 +61,10 @@ public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
 
             // Get deleted objects
             /*
-                SELECT  
+                SELECT
     CT.ID
-FROM  
-    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
+FROM
+    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT
     WHERE SYS_CHANGE_OPERATION = 'D'
 
     */
@@ -86,7 +86,6 @@ FROM
 
                     if (d != null)
                         _cachedObjects.Remove(d);
-
                 }
             }
 
@@ -123,7 +122,8 @@ FROM
         //get the latest RowVer
         using var con = _repository.GetConnection();
         var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
-        if (table.Exists() && table.DiscoverColumns().Any(c=>c.GetRuntimeName().Equals("RowVer",StringComparison.InvariantCultureIgnoreCase)))
+        if (table.Exists() && table.DiscoverColumns()
+                .Any(c => c.GetRuntimeName().Equals("RowVer", StringComparison.InvariantCultureIgnoreCase)))
         {
             using var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con);
             var result = cmd.ExecuteScalar();
@@ -134,22 +134,19 @@ FROM
         using (var cmd =
                _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
         {
-
             var result = cmd.ExecuteScalar();
-            if(result != DBNull.Value)
+            if (result != DBNull.Value)
                 _changeTracking = Convert.ToInt64(result);
         }
     }
+
     private static string ByteArrayToString(IReadOnlyCollection<byte> ba)
     {
-        var hex = new StringBuilder("0x",2+ba.Count * 2);
+        var hex = new StringBuilder("0x", 2 + ba.Count * 2);
         foreach (var b in ba)
             hex.Append($"{b:x2}");
         return hex.ToString();
     }
 
-    public T1[] GetAllObjects<T1>()
-    {
-        return GetAllObjects().Cast<T1>().ToArray();
-    }
+    public T1[] GetAllObjects<T1>() => GetAllObjects().Cast<T1>().ToArray();
 }

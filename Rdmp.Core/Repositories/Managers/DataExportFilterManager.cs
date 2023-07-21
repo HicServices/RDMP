@@ -21,12 +21,10 @@ internal class DataExportFilterManager : IFilterManager
         _dataExportRepository = dataExportRepository;
     }
 
-    public IContainer GetParentContainerIfAny(IContainer container)
-    {
-        return _dataExportRepository.SelectAll<FilterContainer>(
+    public IContainer GetParentContainerIfAny(IContainer container) =>
+        _dataExportRepository.SelectAll<FilterContainer>(
             $"SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID={container.ID}",
             "FilterContainer_ParentID").SingleOrDefault();
-    }
 
 
     /// <inheritdoc/>
@@ -42,7 +40,8 @@ internal class DataExportFilterManager : IFilterManager
     /// <inheritdoc/>
     public virtual IFilter[] GetFilters(IContainer container)
     {
-        var filters = _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID" , container.ID);
+        var filters =
+            _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID", container.ID);
         return filters.Cast<IFilter>().ToArray();
     }
 
@@ -52,21 +51,26 @@ internal class DataExportFilterManager : IFilterManager
         if (child is not FilterContainer)
             throw new NotSupportedException();
 
-        _dataExportRepository.Insert("INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)", new Dictionary<string, object>
-        {
-            {"FilterContainer_ParentID", parent.ID},
-            {"FilterContainerChildID", child.ID}
-        });
+        _dataExportRepository.Insert(
+            "INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)",
+            new Dictionary<string, object>
+            {
+                { "FilterContainer_ParentID", parent.ID },
+                { "FilterContainerChildID", child.ID }
+            });
     }
 
     /// <inheritdoc/>
     public void MakeIntoAnOrphan(IContainer container)
     {
-        _dataExportRepository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
-        {
-            {"FilterContainerChildID", container.ID}
-        },false);
+        _dataExportRepository.Delete(
+            "DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID",
+            new Dictionary<string, object>
+            {
+                { "FilterContainerChildID", container.ID }
+            }, false);
     }
+
     public void AddChild(IContainer container, IFilter filter)
     {
         filter.FilterContainer_ID = container.ID;

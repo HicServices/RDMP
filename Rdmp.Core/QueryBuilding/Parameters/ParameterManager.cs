@@ -42,7 +42,7 @@ public class ParameterManager
     /// Collection of all the parameters found at each level so far
     /// <para>Do not modify this yourself</para>
     /// </summary>
-    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
+    public Dictionary<ParameterLevel, List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
 
     /// <summary>
     /// Repository for creating temporary aggregate parameters
@@ -56,13 +56,13 @@ public class ParameterManager
     public ParameterManager(ISqlParameter[] globals = null)
     {
         State = ParameterManagerLifecycleState.AllowingGlobals;
-            
+
         ParametersFoundSoFarInQueryGeneration.Add(ParameterLevel.TableInfo, new List<ISqlParameter>());
         ParametersFoundSoFarInQueryGeneration.Add(ParameterLevel.QueryLevel, new List<ISqlParameter>());
         ParametersFoundSoFarInQueryGeneration.Add(ParameterLevel.CompositeQueryLevel, new List<ISqlParameter>());
         ParametersFoundSoFarInQueryGeneration.Add(ParameterLevel.Global, new List<ISqlParameter>());
 
-        if(globals != null)
+        if (globals != null)
             ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].AddRange(globals);
     }
 
@@ -106,15 +106,16 @@ public class ParameterManager
     /// <param name="parameter"></param>
     public void AddGlobalParameter(ISqlParameter parameter)
     {
-        if(State != ParameterManagerLifecycleState.AllowingGlobals)
-            throw new InvalidOperationException("Cannot add global parameters at this stage, State must be AllowingGlobals.  Basically you can only add globals to a QueryBuilder before it has ever generated any .SQL, to prevent duplication or out dated results vs the results of a Resolved SQL resultant query");
+        if (State != ParameterManagerLifecycleState.AllowingGlobals)
+            throw new InvalidOperationException(
+                "Cannot add global parameters at this stage, State must be AllowingGlobals.  Basically you can only add globals to a QueryBuilder before it has ever generated any .SQL, to prevent duplication or out dated results vs the results of a Resolved SQL resultant query");
 
         ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].Add(parameter);
     }
 
     private void AddParametersFor(ICollectSqlParameters[] collectors, List<ISqlParameter> toAddTo)
     {
-        if(!collectors.Any())
+        if (!collectors.Any())
             return;
 
         foreach (var collector in collectors)
@@ -146,22 +147,22 @@ public class ParameterManager
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
         foreach (var sqlParameter in kvp.Value)
-                AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
+            AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter, kvp.Key), toReturn);
 
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy
         var emptyParameter = toReturn.FirstOrDefault(t => string.IsNullOrWhiteSpace(t.Parameter.Value));
-        if(emptyParameter != null)
+        if (emptyParameter != null)
         {
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
-            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ?? throw new QueryBuildingException(exceptionMessage);
+            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ??
+                                   throw new QueryBuildingException(exceptionMessage);
 
             //problem was from a user one from their Catalogue Database, tell them the ProblemObject as well
-            throw new QueryBuildingException(exceptionMessage,new[]{asConcreteObject});
-
+            throw new QueryBuildingException(exceptionMessage, new[] { asConcreteObject });
         }
 
-        return toReturn.Select(t=>t.Parameter);
+        return toReturn.Select(t => t.Parameter);
     }
 
     /// <summary>
@@ -176,10 +177,13 @@ public class ParameterManager
         _memoryRepository.Clear();
     }
 
-    private static void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
+    private static void AddParameterToCollection(ParameterFoundAtLevel toAdd,
+        List<ParameterFoundAtLevel> existingParameters)
     {
         //see if parameter if we already have one with the same name
-        var duplicate = existingParameters.FirstOrDefault(p => p.Parameter.ParameterName.Equals(toAdd.Parameter.ParameterName,StringComparison.InvariantCultureIgnoreCase));
+        var duplicate = existingParameters.FirstOrDefault(p =>
+            p.Parameter.ParameterName.Equals(toAdd.Parameter.ParameterName,
+                StringComparison.InvariantCultureIgnoreCase));
         if (duplicate != null)
         {
             //deal with duplicate paramater naming e.g. @startDate BUT: declared with 2 different types
@@ -188,11 +192,13 @@ public class ParameterManager
                         .Equals(duplicate.Parameter.ParameterSQL.Trim(), StringComparison.CurrentCultureIgnoreCase))
                 //to lower them so that we don't complain about 'AS VARCHAR(50)' vs 'as varchar(50)'
                 ThrowExceptionForParameterPair(
-                    $"Found multiple parameters called {toAdd.Parameter} but with differing SQL:{toAdd.Parameter.ParameterSQL} vs {duplicate.Parameter.ParameterSQL}", toAdd, duplicate);
+                    $"Found multiple parameters called {toAdd.Parameter} but with differing SQL:{toAdd.Parameter.ParameterSQL} vs {duplicate.Parameter.ParameterSQL}",
+                    toAdd, duplicate);
 
 
             //if values differ!
-            if (!string.Equals((duplicate.Parameter.Value ?? "").Trim(), (toAdd.Parameter.Value ?? "").Trim(), StringComparison.CurrentCultureIgnoreCase))
+            if (!string.Equals((duplicate.Parameter.Value ?? "").Trim(), (toAdd.Parameter.Value ?? "").Trim(),
+                    StringComparison.CurrentCultureIgnoreCase))
             {
                 //if the duplicate (already existing) parameter is of a lower level then it can be discarded because it didn't have a dodgy type mismatch etc (see ThrowIfUnsuitable above)
                 if (duplicate.Level < toAdd.Level)
@@ -201,16 +207,22 @@ public class ParameterManager
                     existingParameters.Add(toAdd);
                 }
                 else
+                {
                     ThrowExceptionForParameterPair(
-                        $"Found 2+ parameters with the name {toAdd} but differing Values of \"{toAdd.Parameter.Value}\" and \"{duplicate.Parameter.Value}\"",toAdd,duplicate);
+                        $"Found 2+ parameters with the name {toAdd} but differing Values of \"{toAdd.Parameter.Value}\" and \"{duplicate.Parameter.Value}\"",
+                        toAdd, duplicate);
+                }
             }
             //if we get here then its a duplicate but it is an exact duplicate so don't worry
         }
         else
+        {
             existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters
+        }
     }
 
-    private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
+    private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1,
+        ParameterFoundAtLevel parameter2)
     {
         var concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -218,15 +230,14 @@ public class ParameterManager
         var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
-        if(parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
+        if (parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
         {
             concreteObjects.Add(concrete1);
             desc1 += $" ID:{concrete1.ID}";
         }
 
-        if(parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
+        if (parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
         {
-
             concreteObjects.Add(concrete2);
             desc2 += $" ID:{concrete2.ID}";
         }
@@ -235,8 +246,8 @@ public class ParameterManager
         desc2 += ")";
 
         exceptionMessage += $".  Problem objects were {parameter1}{desc1} and {parameter2} {desc2}";
-            
-        throw new QueryBuildingException(exceptionMessage,concreteObjects);
+
+        throw new QueryBuildingException(exceptionMessage, concreteObjects);
     }
 
     /// <summary>
@@ -246,51 +257,55 @@ public class ParameterManager
     /// </summary>
     /// <param name="toImport"></param>
     /// <param name="parameterNameSubstitutions"></param>
-    public void ImportAndElevateResolvedParametersFromSubquery(ParameterManager toImport, out Dictionary<string,string> parameterNameSubstitutions)
+    public void ImportAndElevateResolvedParametersFromSubquery(ParameterManager toImport,
+        out Dictionary<string, string> parameterNameSubstitutions)
     {
         if (toImport == this)
             throw new InvalidOperationException("Cannot import parameters into yourself!");
 
-        if(State == ParameterManagerLifecycleState.Finalized)
+        if (State == ParameterManagerLifecycleState.Finalized)
             throw new InvalidOperationException(
                 $"Cannot import parameters because state of ParameterManager is already {ParameterManagerLifecycleState.Finalized}");
 
-        if(toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any())
+        if (toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any())
             throw new ArgumentException(
                 $"Cannot import from ParameterManager because it has 1+ {ParameterLevel.CompositeQueryLevel} parameters in it too!");
-            
+
         parameterNameSubstitutions = new Dictionary<string, string>();
 
         ////////////////////////////////////////////////////////////Handle TableInfo level parameters//////////////////////////////////////
         //for each table valued parameter (TableInfo level)
         foreach (var parameterToImport in toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo])
-        {
             //it does not already exist
-            if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p => p.ParameterName.Equals(parameterToImport.ParameterName,StringComparison.CurrentCultureIgnoreCase)))
+            if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p =>
+                    p.ParameterName.Equals(parameterToImport.ParameterName, StringComparison.CurrentCultureIgnoreCase)))
                 ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(parameterToImport); //import it
-
-            //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
-        }
+        //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
         toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Clear();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
+
 
         //////////////////////////////////////////////////////Handle all the other parameters//////////////////////////////////////////////
         //for each Query Level parameter
         foreach (var parameterToImport in toImport.GetFinalResolvedParametersList())
         {
             var toImportParameterName = parameterToImport.ParameterName;
-            var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].SingleOrDefault(p => p.ParameterName.Equals(toImportParameterName, StringComparison.CurrentCultureIgnoreCase));
+            var existing = ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel]
+                .SingleOrDefault(p =>
+                    p.ParameterName.Equals(toImportParameterName, StringComparison.CurrentCultureIgnoreCase));
 
             if (existing == null)
-                ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Add(parameterToImport);        //import it to the composite level
+            {
+                ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel]
+                    .Add(parameterToImport); //import it to the composite level
+            }
             else
             {
                 //we are importing SqlParameters from a subquery and we have found a parameter with the same name as one that is already contained at this composite level
 
                 //if the one we are importing is 100% identical (same declaration and value) then we don't need to import it
                 if (AreIdentical(existing, parameterToImport))
-                    continue;//skip it
+                    continue; //skip it
 
                 //it is different so we have to handle the conflict.  This could be because user has a filter @icdCode in 2 datasets with 2 different meanings and 2 different values
 
@@ -298,13 +313,14 @@ public class ParameterManager
                 var overridingGlobal = GetOverrideIfAnyFor(existing);
 
                 //with the same declaration SQL then we can discard the parameter because all values are going to be replaced by the global anyway!
-                if(overridingGlobal != null)
-                    if(AreDeclaredTheSame(overridingGlobal,parameterToImport))
-                        continue;//override will replace both so don't bother importing it
+                if (overridingGlobal != null)
+                    if (AreDeclaredTheSame(overridingGlobal, parameterToImport))
+                        continue; //override will replace both so don't bother importing it
                     else
                         //there's an override with the same name but different datatypes (that's a problem)
                         throw new QueryBuildingException(
-                            $"Parameter {parameterToImport} has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",new object[]{existing,parameterToImport,overridingGlobal});
+                            $"Parameter {parameterToImport} has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",
+                            new object[] { existing, parameterToImport, overridingGlobal });
 
                 //one already exists so we will have to do a parameter rename
 
@@ -346,7 +362,7 @@ public class ParameterManager
         var sameSql = AreDeclaredTheSame(first, other);
 
         var value1 = first.Value ?? "";
-        var value2 = other.Value??"";
+        var value2 = other.Value ?? "";
 
         var sameValue = value1.Trim().Equals(value2.Trim(), StringComparison.CurrentCultureIgnoreCase);
 
@@ -362,7 +378,8 @@ public class ParameterManager
         //while we have parameter called @p_2, @p_3 etc etc keep adding
         while (
             ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(
-                p => p.ParameterName.Equals($"{toImportParameterName}_{counter}", StringComparison.CurrentCultureIgnoreCase)))
+                p => p.ParameterName.Equals($"{toImportParameterName}_{counter}",
+                    StringComparison.CurrentCultureIgnoreCase)))
             counter++;
 
         //we have now found a unique number
@@ -379,7 +396,7 @@ public class ParameterManager
     {
         var toReturn = new List<ISqlParameter>();
 
-        var levels = (ParameterLevel[])Enum.GetValues(typeof (ParameterLevel));
+        var levels = (ParameterLevel[])Enum.GetValues(typeof(ParameterLevel));
 
         //for each level
         for (var i = 0; i < levels.Length; i++)
@@ -396,7 +413,8 @@ public class ParameterManager
                     //if there is a parameter at the above level with the same declaration
                     if (ParametersFoundSoFarInQueryGeneration[comparisonLevel].Any(p => AreDeclaredTheSame(p1, p)))
                         if (!toReturn.Contains(p1))
-                            toReturn.Add(p1);//it overrides this one (regardless of value - type differences do not result in overriding, they result in Exceptions! - see GetFinalResolvedParametersList)
+                            toReturn.Add(
+                                p1); //it overrides this one (regardless of value - type differences do not result in overriding, they result in Exceptions! - see GetFinalResolvedParametersList)
                 }
         }
 
@@ -414,10 +432,11 @@ public class ParameterManager
 
         var overrides = GetOverridenParameters();
 
-        foreach (ParameterLevel level in Enum.GetValues(typeof (ParameterLevel)))
+        foreach (ParameterLevel level in Enum.GetValues(typeof(ParameterLevel)))
             if (level > currentLevel)
             {
-                var compatibleOverride = ParametersFoundSoFarInQueryGeneration[level].FirstOrDefault(o => AreDeclaredTheSame(existing, o));
+                var compatibleOverride = ParametersFoundSoFarInQueryGeneration[level]
+                    .FirstOrDefault(o => AreDeclaredTheSame(existing, o));
 
                 //there are no override compatible parameters at this candidate level or the override is itself overridden at a higher level
                 if (compatibleOverride == null || overrides.Contains(compatibleOverride))
@@ -454,7 +473,7 @@ public class ParameterManager
         return ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter))
             ? ParametersFoundSoFarInQueryGeneration
                 //take the bottom most level it was found at
-                .OrderBy(static kvp=>kvp.Key)
+                .OrderBy(static kvp => kvp.Key)
                 .First(k => k.Value.Contains(parameter)).Key
             : null;
     }
@@ -467,9 +486,9 @@ public class ParameterManager
     public ParameterManager Clone()
     {
         var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray())
-            {
-                State = State
-            };
+        {
+            State = State
+        };
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
             clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);
@@ -485,10 +504,10 @@ public class ParameterManager
     public string[] GetCollisions(ParameterManager other)
     {
         var pm = new ParameterManager();
-        pm.ImportAndElevateResolvedParametersFromSubquery(this,out var subs);
-            
+        pm.ImportAndElevateResolvedParametersFromSubquery(this, out var subs);
+
         //not sure how there could be collisions given we went into a fresh one but I guess it would count
-        if(subs.Keys.Any())
+        if (subs.Keys.Any())
             return subs.Keys.ToArray();
 
         pm.ImportAndElevateResolvedParametersFromSubquery(other, out subs);
@@ -504,7 +523,7 @@ public class ParameterManager
     public void MergeWithoutRename(ParameterManager other)
     {
         var collisions = GetCollisions(other);
-        if(collisions.Any())
+        if (collisions.Any())
             throw new QueryBuildingException(
                 $"PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were {string.Join(",", collisions)}");
 
@@ -514,8 +533,7 @@ public class ParameterManager
             var from = other.ParametersFoundSoFarInQueryGeneration[l];
 
             //add all paramters which are not already represented with an identical parameter
-            to.AddRange(from.Where(f=>!to.Any(t=>AreIdentical(f,t))));
+            to.AddRange(from.Where(f => !to.Any(t => AreIdentical(f, t))));
         }
-
     }
 }

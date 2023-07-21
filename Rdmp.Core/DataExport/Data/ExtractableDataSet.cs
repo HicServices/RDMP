@@ -19,6 +19,7 @@ namespace Rdmp.Core.DataExport.Data;
 public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
 {
     #region Database Properties
+
     private int _catalogue_ID;
     private bool _disableExtraction;
     private int? _project_ID;
@@ -33,6 +34,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
             SetField(ref _catalogue_ID, value);
         }
     }
+
     /// <inheritdoc/>
     public bool DisableExtraction
     {
@@ -78,17 +80,18 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     {
         ClearAllInjections();
     }
+
     /// <summary>
     /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
     /// </summary>
     /// <returns></returns>
-    public ExtractableDataSet(IDataExportRepository repository, ICatalogue catalogue, bool disableExtraction =false)
+    public ExtractableDataSet(IDataExportRepository repository, ICatalogue catalogue, bool disableExtraction = false)
     {
         Repository = repository;
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"DisableExtraction", disableExtraction},
-            {"Catalogue_ID",catalogue.ID}
+            { "DisableExtraction", disableExtraction },
+            { "Catalogue_ID", catalogue.ID }
         });
 
         ClearAllInjections();
@@ -99,7 +102,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         : base(repository, r)
     {
         Catalogue_ID = Convert.ToInt32(r["Catalogue_ID"]);
-        DisableExtraction = (bool) r["DisableExtraction"];
+        DisableExtraction = (bool)r["DisableExtraction"];
         Project_ID = ObjectToNullableInt(r["Project_ID"]);
 
         ClearAllInjections();
@@ -136,29 +139,28 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         }
         catch (Exception e)
         {
-            if(e.Message.Contains("FK_SelectedDataSets_ExtractableDataSet"))
+            if (e.Message.Contains("FK_SelectedDataSets_ExtractableDataSet"))
                 throw new Exception(
-                    $"Cannot delete {this} because it is in use by the following configurations :{Environment.NewLine}{string.Join(Environment.NewLine, ExtractionConfigurations.Select(c => $"{c.Name}({c.Project})"))}", e);
+                    $"Cannot delete {this} because it is in use by the following configurations :{Environment.NewLine}{string.Join(Environment.NewLine, ExtractionConfigurations.Select(c => $"{c.Name}({c.Project})"))}",
+                    e);
             throw;
         }
     }
+
     #endregion
 
     /// <summary>
     /// Returns an object indicating whether the dataset is project specific or not
     /// </summary>
     /// <returns></returns>
-    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus()
-    {
-        return new CatalogueExtractabilityStatus(true, Project_ID != null);
-    }
+    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus() => new(true, Project_ID != null);
 
     private Lazy<ICatalogue> _catalogue;
 
     /// <inheritdoc/>
     public void InjectKnown(ICatalogue instance)
     {
-        if(instance.ID != Catalogue_ID)
+        if (instance.ID != Catalogue_ID)
             throw new ArgumentOutOfRangeException(nameof(instance),
                 $"You told us our Catalogue was '{instance}' but its ID didn't match so that is NOT our Catalogue");
         _catalogue = new Lazy<ICatalogue>(instance);
@@ -174,7 +176,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     {
         try
         {
-            var cata =  ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<Catalogue>(Catalogue_ID);
+            var cata = ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Catalogue>(Catalogue_ID);
             cata.InjectKnown(GetCatalogueExtractabilityStatus());
             return cata;
         }

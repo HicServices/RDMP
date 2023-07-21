@@ -47,7 +47,8 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
         if (VisualStudioDesignMode) //don't go looking up the key if you are visual studio in designer mode!
             return;
 
-        _location = new PasswordEncryptionKeyLocation((CatalogueRepository) Activator.RepositoryLocator.CatalogueRepository);
+        _location = new PasswordEncryptionKeyLocation(
+            (CatalogueRepository)Activator.RepositoryLocator.CatalogueRepository);
 
         SetEnabledness();
     }
@@ -60,7 +61,6 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
         btnShowDirectory.Enabled = keyLocation != null;
         btnDeleteKeyLocation.Enabled = keyLocation != null;
         btnCreateKeyFile.Enabled = keyLocation == null;
-
     }
 
     private void tbCertificate_TextChanged(object sender, EventArgs e)
@@ -118,9 +118,10 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
     {
         try
         {
-            if(MessageBox.Show(
-                   "You are about to delete the RDMPs record of where the key file is to decrypt passwords, if you do this all currently configured password will become inaccessible (EVEN IF YOU CREATE A NEW KEY, YOU WILL NOT BE ABLE TO GET THE CURRENT PASSWORDS BACK), are you sure you want to do this?",
-                   "Confirm deleting location of decryption key file", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
+            if (MessageBox.Show(
+                    "You are about to delete the RDMPs record of where the key file is to decrypt passwords, if you do this all currently configured password will become inaccessible (EVEN IF YOU CREATE A NEW KEY, YOU WILL NOT BE ABLE TO GET THE CURRENT PASSWORDS BACK), are you sure you want to do this?",
+                    "Confirm deleting location of decryption key file", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) ==
+                DialogResult.Yes)
                 _location.DeleteKey();
 
             SetEnabledness();
@@ -129,10 +130,5 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
         {
             ExceptionViewer.Show(exception);
         }
-
-            
-
     }
-
-
 }

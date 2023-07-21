@@ -23,7 +23,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 /// Destination for Extraction Pipelines.  Saves the extracted (anonymous) data contained in the DataTables received (which arrive in batches) to some location
 /// (depending on implementation).  Destinations must also support one off calls (per ExtractionConfiguration) to ExtractGlobals
 /// </summary>
-public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<DataLoadInfo>
+public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent<DataTable>,
+    IDataFlowDestination<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<DataLoadInfo>
 {
     TableLoadInfo TableLoadInfo { get; }
     DirectoryInfo DirectoryPopulated { get; }
@@ -52,7 +53,8 @@ public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent
     /// <param name="repositoryLocator"></param>
     /// <param name="selectedDataSet"></param>
     /// <returns></returns>
-    ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
+    ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSet);
 
 
     /// <summary>
@@ -71,5 +73,6 @@ public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent
     /// <param name="globalResult"></param>
     /// <param name="globalToCheck"></param>
     /// <returns></returns>
-    GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
+    GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
 }

@@ -22,7 +22,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 {
     public int Top
     {
-        get => _arguments.TryGetValue(TopKey,out var t) ? int.Parse(t) : 100;
+        get => _arguments.TryGetValue(TopKey, out var t) ? int.Parse(t) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
 
@@ -49,10 +49,8 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         DatabaseObjects.Add(cohort);
     }
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(_arguments);
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(_arguments);
+
     public override void LoadExtraText(string s)
     {
         _arguments = PersistStringHelper.LoadDictionaryFromString(s);
@@ -66,10 +64,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         yield return Cohort;
     }
 
-    public IDataAccessPoint GetDataAccessPoint()
-    {
-        return Cohort.ExternalCohortTable;
-    }
+    public IDataAccessPoint GetDataAccessPoint() => Cohort.ExternalCohortTable;
 
     public string GetSql()
     {
@@ -84,15 +79,12 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         var selectSql = GetSelectList(ect);
 
         // Don't bother with top/limit SQL if theres none set
-        if (Top <= 0)
-        {
-            response.SQL = "";
-        }
+        if (Top <= 0) response.SQL = "";
 
         return response.Location switch
         {
-            QueryComponent.SELECT  => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
-            QueryComponent.WHERE   => $"Select {selectSql} from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
+            QueryComponent.SELECT => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
+            QueryComponent.WHERE => $"Select {selectSql} from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
             QueryComponent.Postfix => $"Select {selectSql} from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -111,23 +103,15 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 
         // if it is not an identifiable extraction
         if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))
-        {
             // add the release identifier too
             selectList.Add(ect.ReleaseIdentifierField);
-        }
 
-        if (IncludeCohortID)
-        {
-            selectList.Add(ect.DefinitionTableForeignKeyField);
-        }
+        if (IncludeCohortID) selectList.Add(ect.DefinitionTableForeignKeyField);
 
         return Environment.NewLine + string.Join($",{Environment.NewLine}", selectList) + Environment.NewLine;
     }
 
-    public string GetTabName()
-    {
-        return $"View {Cohort}(V{Cohort.ExternalVersion})";
-    }
+    public string GetTabName() => $"View {Cohort}(V{Cohort.ExternalVersion})";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -139,8 +123,5 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         autoComplete.Add(table);
     }
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return Cohort?.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => Cohort?.GetQuerySyntaxHelper();
 }

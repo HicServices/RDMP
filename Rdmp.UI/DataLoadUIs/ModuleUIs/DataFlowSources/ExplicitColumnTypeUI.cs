@@ -15,17 +15,16 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources;
 /// </summary>
 public partial class ExplicitColumnTypeUI : UserControl
 {
-
     public string ColumnName => textBox1.Text;
 
-    public Type Type => (Type) ddType.SelectedItem;
+    public Type Type => (Type)ddType.SelectedItem;
 
     public ExplicitColumnTypeUI(string name, Type t)
     {
         InitializeComponent();
 
         ddType.Items.AddRange(
-            new []
+            new[]
             {
                 typeof(string),
                 typeof(double),
@@ -35,7 +34,6 @@ public partial class ExplicitColumnTypeUI : UserControl
 
         textBox1.Text = name;
         ddType.SelectedItem = t;
-
     }
 
     public event EventHandler DeletePressed;
@@ -43,12 +41,11 @@ public partial class ExplicitColumnTypeUI : UserControl
     private void btnDelete_Click(object sender, EventArgs e)
     {
         var h = DeletePressed;
-        if(h != null)
+        if (h != null)
             DeletePressed(this, EventArgs.Empty);
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
     {
-
     }
 }

@@ -29,14 +29,15 @@ public partial class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 
             var contents = File.ReadAllText(file);
 
-            if (!contents.Contains("[DemandsInitialization(\"") && !contents.Contains("[DemandsNestedInitialization(\""))
+            if (!contents.Contains("[DemandsInitialization(\"") &&
+                !contents.Contains("[DemandsNestedInitialization(\""))
                 continue;
 
             Console.WriteLine($"Found Demander:{file}");
 
             var index = contents.IndexOf(checkMethodSignature, StringComparison.Ordinal);
 
-            if(index == -1)
+            if (index == -1)
             {
                 _fails.Add(
                     $"FAIL:File {file} does not have a Check method implementation but contains the text [DemandsInitialization");

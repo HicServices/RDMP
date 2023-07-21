@@ -28,15 +28,18 @@ public class MemoryRepository : IRepository
     /// <summary>
     /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
     /// </summary>
-    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects =
+    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, byte> Objects =
         new();
-    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
+
+    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>
+        _propertyChanges = new();
 
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
 
-    public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
+    public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
+        where T : IMapsDirectlyToDatabaseTable
     {
         NextObjectId++;
         toCreate.ID = NextObjectId;
@@ -58,7 +61,7 @@ public class MemoryRepository : IRepository
 
         toCreate.Repository = this;
 
-        Objects.TryAdd(toCreate,0);
+        Objects.TryAdd(toCreate, 0);
 
         toCreate.PropertyChanged += toCreate_PropertyChanged;
 
@@ -67,11 +70,12 @@ public class MemoryRepository : IRepository
         Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
     }
 
-    protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val) where T : IMapsDirectlyToDatabaseTable
+    protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val)
+        where T : IMapsDirectlyToDatabaseTable
     {
-        if(val == null)
+        if (val == null)
         {
-            prop.SetValue(toCreate,val);
+            prop.SetValue(toCreate, val);
             return;
         }
 
@@ -113,25 +117,26 @@ public class MemoryRepository : IRepository
         {
             return Objects.Keys.OfType<T>().Single(o => o.ID == id);
         }
-        catch(InvalidOperationException e)
+        catch (InvalidOperationException e)
         {
-            throw new KeyNotFoundException($"Could not find {typeof(T).Name} with ID {id}",e);
+            throw new KeyNotFoundException($"Could not find {typeof(T).Name} with ID {id}", e);
         }
     }
 
     public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
     {
-        return Objects.Keys.OfType<T>().OrderBy(o=>o.ID).ToArray();
+        return Objects.Keys.OfType<T>().OrderBy(o => o.ID).ToArray();
     }
 
     public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
     {
-        var prop = typeof (T).GetProperty(property);
+        var prop = typeof(T).GetProperty(property);
 
         return GetAllObjects<T>().Where(o => Equals(prop.GetValue(o), value1)).ToArray();
     }
 
-    public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2, object value2) where T : IMapsDirectlyToDatabaseTable
+    public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,
+        object value2) where T : IMapsDirectlyToDatabaseTable
     {
         var prop1 = typeof(T).GetProperty(property1);
         var prop2 = typeof(T).GetProperty(property2);
@@ -150,7 +155,7 @@ public class MemoryRepository : IRepository
 
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
     {
-        return Objects.Keys.Where(o=>o.GetType() == t);
+        return Objects.Keys.Where(o => o.GetType() == t);
     }
 
     public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
@@ -159,28 +164,30 @@ public class MemoryRepository : IRepository
         var propertyName = $"{parent.GetType().Name}_ID";
 
         var prop = typeof(T).GetProperty(propertyName);
-        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID).ToArray();
+        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID)
+            .ToArray();
     }
 
-    public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
+    public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2>
+        where T2 : IMapsDirectlyToDatabaseTable
     {
         //e.g. Catalogue_ID
         var propertyName = $"{typeof(T2).Name}_ID";
 
-        var prop = typeof (T).GetProperty(propertyName);
-        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID).ToArray();
-
+        var prop = typeof(T).GetProperty(propertyName);
+        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID)
+            .ToArray();
     }
 
     public virtual void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         Saving?.Invoke(this, new SaveEventArgs(oTableWrapperObject));
 
-        var existing = Objects.Keys.FirstOrDefault(k=>k.Equals(oTableWrapperObject));
+        var existing = Objects.Keys.FirstOrDefault(k => k.Equals(oTableWrapperObject));
 
         // If saving a new reference to an existing object then we should update our tracked
         // objects to the latest reference since the old one is stale
-        if(!ReferenceEquals(existing,oTableWrapperObject))
+        if (!ReferenceEquals(existing, oTableWrapperObject))
         {
             Objects.TryRemove(oTableWrapperObject, out _);
             Objects.TryAdd(oTableWrapperObject, 0);
@@ -209,7 +216,6 @@ public class MemoryRepository : IRepository
     /// <param name="oTableWrapperObject"></param>
     protected virtual void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-
     }
 
     public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
@@ -223,26 +229,27 @@ public class MemoryRepository : IRepository
 
         var type = mapsDirectlyToDatabaseTable.GetType();
 
-        foreach (var e in _propertyChanges[mapsDirectlyToDatabaseTable].ToArray()) //call ToArray to avoid cyclical events on SetValue
+        foreach (var e in
+                 _propertyChanges[mapsDirectlyToDatabaseTable]
+                     .ToArray()) //call ToArray to avoid cyclical events on SetValue
         {
             var prop = type.GetProperty(e.PropertyName);
-            prop.SetValue(mapsDirectlyToDatabaseTable,e.OldValue);//reset the old values
+            prop.SetValue(mapsDirectlyToDatabaseTable, e.OldValue); //reset the old values
         }
 
         //forget about all changes now
         _propertyChanges.TryRemove(mapsDirectlyToDatabaseTable, out _);
-
     }
 
     public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
     {
         //if we don't know about it then it was deleted
-        if(!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
-            return new RevertableObjectReport {Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
+        if (!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
+            return new RevertableObjectReport { Evaluation = ChangeDescription.DatabaseCopyWasDeleted };
 
         //if it has no changes (since a save)
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
-            return new RevertableObjectReport {Evaluation = ChangeDescription.NoChanges};
+            return new RevertableObjectReport { Evaluation = ChangeDescription.NoChanges };
 
         //we have local 'unsaved' changes
         var type = mapsDirectlyToDatabaseTable.GetType();
@@ -250,7 +257,7 @@ public class MemoryRepository : IRepository
                 d => new RevertablePropertyDifference(type.GetProperty(d.PropertyName), d.NewValue, d.OldValue))
             .ToList();
 
-        return new RevertableObjectReport(differences){Evaluation = ChangeDescription.DatabaseCopyDifferent};
+        return new RevertableObjectReport(differences) { Evaluation = ChangeDescription.DatabaseCopyDifferent };
     }
 
     /// <inheritdoc/>
@@ -263,21 +270,16 @@ public class MemoryRepository : IRepository
             return false;
 
         if (obj1 == null && obj2 == null)
-            throw new NotSupportedException("Why are you comparing two null things against one another with this method?");
+            throw new NotSupportedException(
+                "Why are you comparing two null things against one another with this method?");
 
         return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
     }
 
     /// <inheritdoc/>
-    public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
-    {
-        return obj1.GetType().GetHashCode() * obj1.ID;
-    }
+    public int GetHashCode(IMapsDirectlyToDatabaseTable obj1) => obj1.GetType().GetHashCode() * obj1.ID;
 
-    public Version GetVersion()
-    {
-        return GetType().Assembly.GetName().Version;
-    }
+    public Version GetVersion() => GetType().Assembly.GetName().Version;
 
 
     public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
@@ -285,10 +287,7 @@ public class MemoryRepository : IRepository
         return Objects.Keys.OfType<T>().Any(o => o.ID == allegedParent);
     }
 
-    public bool StillExists(IMapsDirectlyToDatabaseTable o)
-    {
-        return Objects.ContainsKey(o);
-    }
+    public bool StillExists(IMapsDirectlyToDatabaseTable o) => Objects.ContainsKey(o);
 
     public bool StillExists(Type objectType, int objectId)
     {
@@ -298,7 +297,8 @@ public class MemoryRepository : IRepository
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
     {
         return Objects.Keys.SingleOrDefault(o => o.GetType() == objectType && objectId == o.ID)
-               ?? throw new KeyNotFoundException($"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
+               ?? throw new KeyNotFoundException(
+                   $"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
     }
 
     public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
@@ -313,10 +313,11 @@ public class MemoryRepository : IRepository
         return GetAllObjects(elementType).Where(o => hs.Contains(o.ID));
     }
 
-    public void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName, object propertyValue)
+    public void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,
+        object propertyValue)
     {
         var prop = entity.GetType().GetProperty(propertyName);
-        prop.SetValue(entity,propertyValue);
+        prop.SetValue(entity, propertyValue);
         SaveToDatabase(entity);
     }
 
@@ -326,14 +327,10 @@ public class MemoryRepository : IRepository
         return Objects.Keys.OrderBy(o => o.ID).ToArray();
     }
 
-    public bool SupportsObjectType(Type type)
-    {
-        return typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(type);
-    }
+    public bool SupportsObjectType(Type type) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type);
 
     public void TestConnection()
     {
-
     }
 
     public virtual void Clear()
@@ -356,18 +353,13 @@ public class MemoryRepository : IRepository
 
                         //or with a spontaneous base class
                         && (t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
-
                 ).ToArray();
     }
 
 
-    public IDisposable BeginNewTransaction()
-    {
-        return new EmptyDisposeable();
-    }
+    public IDisposable BeginNewTransaction() => new EmptyDisposeable();
 
     public void EndTransaction(bool commit)
     {
-
     }
 }

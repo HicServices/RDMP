@@ -42,11 +42,20 @@ public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>,
     public const int MinimumStronglyTypeInputBatchSize = 500;
 
     #region User viewable descriptions of what properties do (used to help wrapper classes have consistent definitions
-    public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
-    public const string ForceHeadersReplacesFirstLineInFile_Description = "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
-    public const string IgnoreQuotes_DemandDescription = "True if the parser should treat double quotes as normal characters";
+
+    public const string ForceHeaders_DemandDescription =
+        "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
+
+    public const string ForceHeadersReplacesFirstLineInFile_Description =
+        "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
+
+    public const string IgnoreQuotes_DemandDescription =
+        "True if the parser should treat double quotes as normal characters";
+
     public const string IgnoreBlankLines_DemandDescription = "True if the parser should skip over blank lines";
-    public const string MakeHeaderNamesSane_DemandDescription = "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
+
+    public const string MakeHeaderNamesSane_DemandDescription =
+        "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
 
     public const string BadDataHandlingStrategy_DemandDescription =
         @"Determines system behaviour when unprocessable rows are found in the file being loaded:
@@ -58,26 +67,32 @@ DivertRows - As IgnoreRows but write all unloadable lines to X_Errors.txt where 
         @"True - Ignore read warnings from CSVHelper (e.g. when a quote appears in the middle of a cell)
 False - Treat read warnings from CSVHelper according to the BadDataHandlingStrategy";
 
-    public const string ThrowOnEmptyFiles_DemandDescription = @"Determines system behaviour when a file is empty or has only a header row";
+    public const string ThrowOnEmptyFiles_DemandDescription =
+        @"Determines system behaviour when a file is empty or has only a header row";
 
     public const string AttemptToResolveNewLinesInRecords_DemandDescription =
         @"Determines system behaviour when a line has too few cells compared to the header count.  
 True - Attempt to read more lines to make a complete record
 False - Treat the line as bad data (See BadDataHandlingStrategy)";
 
-    public const string MaximumErrorsToReport_DemandDescription = "The maximum number of file report before suppressing logging.  This is important if you have a large file e.g. 80 million rows and you have a bug/configuration problem that results in lots of bad rows.  Specify 0 for no limit.  Negatives also result in no limit";
+    public const string MaximumErrorsToReport_DemandDescription =
+        "The maximum number of file report before suppressing logging.  This is important if you have a large file e.g. 80 million rows and you have a bug/configuration problem that results in lots of bad rows.  Specify 0 for no limit.  Negatives also result in no limit";
 
     public const string IgnoreColumns_Description =
         @"By default all columns from the source (file) will be read.  Set this to a list of headers (separated with the correct separator for your file) to ignore the specified columns.
 
 This will not help you avoid bad data as the full file structure must still be read regardless.";
+
     #endregion
 
     [DemandsInitialization("The separator that delimits the file", Mandatory = true)]
     public string Separator
     {
         get => _separator;
-        set => _separator = value == "\\t"?"\t":value; //automatically switch \\t into \t (user inputs \t it turns to whitespace tab when executing)
+        set => _separator =
+            value == "\\t"
+                ? "\t"
+                : value; //automatically switch \\t into \t (user inputs \t it turns to whitespace tab when executing)
     }
 
     [DemandsInitialization(ForceHeaders_DemandDescription)]
@@ -92,22 +107,29 @@ This will not help you avoid bad data as the full file structure must still be r
     [DemandsInitialization(IgnoreQuotes_DemandDescription)]
     public bool IgnoreBlankLines { get; set; }
 
-    [DemandsInitialization(MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
+    [DemandsInitialization(MakeHeaderNamesSane_DemandDescription, DemandType.Unspecified, true)]
     public bool MakeHeaderNamesSane { get; set; }
 
-    [DemandsInitialization("True (recommended) if you want to impute the datatypes from the data being loaded, False if you want to load everything as strings", DemandType.Unspecified,true)]
+    [DemandsInitialization(
+        "True (recommended) if you want to impute the datatypes from the data being loaded, False if you want to load everything as strings",
+        DemandType.Unspecified, true)]
     public bool StronglyTypeInput { get; set; }
 
-    [DemandsInitialization("BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
+    [DemandsInitialization(
+        "BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
     public int StronglyTypeInputBatchSize { get; set; }
 
-    [DemandsInitialization("Number of rows to read at once from the input file in each go (after the first - See StronglyTypeInputBatchSize)",DefaultValue=100000)]
-    public int MaxBatchSize {get;set;}
+    [DemandsInitialization(
+        "Number of rows to read at once from the input file in each go (after the first - See StronglyTypeInputBatchSize)",
+        DefaultValue = 100000)]
+    public int MaxBatchSize { get; set; }
 
-    [DemandsInitialization("A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
+    [DemandsInitialization(
+        "A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
     public ExplicitTypingCollection ExplicitlyTypedColumns { get; set; }
 
-    [DemandsInitialization(BadDataHandlingStrategy_DemandDescription, DefaultValue=BadDataHandlingStrategy.ThrowException)]
+    [DemandsInitialization(BadDataHandlingStrategy_DemandDescription,
+        DefaultValue = BadDataHandlingStrategy.ThrowException)]
     public BadDataHandlingStrategy BadDataHandlingStrategy { get; set; }
 
     [DemandsInitialization(IgnoreBadReads_DemandDescription, DefaultValue = true)]
@@ -126,6 +148,7 @@ This will not help you avoid bad data as the full file structure must still be r
     public string IgnoreColumns { get; set; }
 
     private CultureInfo _culture;
+
     [DemandsInitialization("The culture to use for dates")]
     public CultureInfo Culture
     {
@@ -134,7 +157,7 @@ This will not help you avoid bad data as the full file structure must still be r
     }
 
     [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
-    public string ExplicitDateTimeFormat {get;set;}
+    public string ExplicitDateTimeFormat { get; set; }
 
     /// <summary>
     /// The database table we are trying to load
@@ -155,7 +178,7 @@ This will not help you avoid bad data as the full file structure must still be r
     /// </summary>
     private string[] _prohibitedExtensions =
     {
-        ".xls",".xlsx",".doc",".docx"
+        ".xls", ".xlsx", ".doc", ".docx"
     };
 
     private string _separator;
@@ -168,9 +191,12 @@ This will not help you avoid bad data as the full file structure must still be r
 
     private void InitializeComponents()
     {
-        Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile, IgnoreColumns);
-        DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords,Culture,ExplicitDateTimeFormat);
-        EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport,IgnoreBadReads);
+        Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders,
+            ForceHeadersReplacesFirstLineInFile, IgnoreColumns);
+        DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile,
+            AttemptToResolveNewLinesInRecords, Culture, ExplicitDateTimeFormat);
+        EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy,
+            _listener, MaximumErrorsToReport <= 0 ? int.MaxValue : MaximumErrorsToReport, IgnoreBadReads);
     }
 
 
@@ -193,7 +219,7 @@ This will not help you avoid bad data as the full file structure must still be r
                 //open the file
                 OpenFile(_fileToLoad.File);
 
-                if(Headers.FileIsEmpty)
+                if (Headers.FileIsEmpty)
                 {
                     EventHandlers.FileIsEmpty();
                     return null;
@@ -205,7 +231,8 @@ This will not help you avoid bad data as the full file structure must still be r
             {
                 //create a table with the name of the file
                 _workingTable = Headers.GetDataTableWithHeaders(_listener);
-                _workingTable.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                _workingTable.TableName =
+                    QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                 //set the data table to the new untyped but correctly headered table
                 SetDataTable(_workingTable);
@@ -217,20 +244,23 @@ This will not help you avoid bad data as the full file structure must still be r
                         ? int.MaxValue
                         : StronglyTypeInputBatchSize;
 
-                    if(batchSizeToLoad < MinimumStronglyTypeInputBatchSize)
+                    if (batchSizeToLoad < MinimumStronglyTypeInputBatchSize)
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Warning,
-                                $"You set StronglyTypeInputBatchSize to {batchSizeToLoad} this may be too small!", null));
+                                $"You set StronglyTypeInputBatchSize to {batchSizeToLoad} this may be too small!",
+                                null));
 
                     //user want's to strongly type input with a custom batch size
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
                 }
                 else
                     //user does not want to strongly type or is strongly typing with regular batch size
+                {
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
+                }
 
                 if (StronglyTypeInput)
-                    _workingTable = DataPusher.StronglyTypeTable(_workingTable,ExplicitlyTypedColumns);
+                    _workingTable = DataPusher.StronglyTypeTable(_workingTable, ExplicitlyTypedColumns);
 
                 if (rowsRead == 0)
                     EventHandlers.FileIsEmpty();
@@ -251,23 +281,22 @@ This will not help you avoid bad data as the full file structure must still be r
 
             //if rows were not read
             if (rowsRead == 0)
-                return null;//we are done
+                return null; //we are done
 
             //rows were read so return a copy of the DataTable, because we will continually reload the same DataTable schema throughout the file we don't want to give up our reference to good headers incase someone mutlates it
-            var copy =  _workingTable.Copy();
+            var copy = _workingTable.Copy();
 
             foreach (var unamed in Headers.UnamedColumns)
                 copy.Columns.Remove(unamed.ColumnName);
 
             return copy;
         }
-        catch (Exception )
+        catch (Exception)
         {
             //make sure file is closed if it crashes
             _reader?.Dispose();
             throw;
         }
-
     }
 
 
@@ -289,6 +318,7 @@ This will not help you avoid bad data as the full file structure must still be r
             _reader = null;
         }
     }
+
     public DataTable TryGetPreview()
     {
         //there is already a data table in memory
@@ -296,7 +326,7 @@ This will not help you avoid bad data as the full file structure must still be r
             return _workingTable;
 
         //we have not loaded anything yet
-        if(Headers == null)
+        if (Headers == null)
         {
             //get a chunk
             var toReturn = GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
@@ -314,7 +344,8 @@ This will not help you avoid bad data as the full file structure must still be r
             return toReturn;
         }
 
-        throw new NotSupportedException("Cannot generate preview because _headers has already been set which likely means it is already loading / didn't cleanup properly after last preview attempt?");
+        throw new NotSupportedException(
+            "Cannot generate preview because _headers has already been set which likely means it is already loading / didn't cleanup properly after last preview attempt?");
     }
 
     public void Check(ICheckNotifier notifier)
@@ -325,11 +356,13 @@ This will not help you avoid bad data as the full file structure must still be r
 
         if (!StronglyTypeInput)
             notifier.OnCheckPerformed(
-                new CheckEventArgs("StronglyTypeInput is false, this feature is highly recommended",CheckResult.Warning));
+                new CheckEventArgs("StronglyTypeInput is false, this feature is highly recommended",
+                    CheckResult.Warning));
 
         if (StronglyTypeInput && StronglyTypeInputBatchSize < 500)
             notifier.OnCheckPerformed(
-                new CheckEventArgs("StronglyTypeInputBatchSize is less than the recommended 500: this may cause errors when determining the best data type from the source file.",
+                new CheckEventArgs(
+                    "StronglyTypeInputBatchSize is less than the recommended 500: this may cause errors when determining the best data type from the source file.",
                     CheckResult.Warning));
 
         if (_fileToLoad.File == null)
@@ -342,8 +375,7 @@ This will not help you avoid bad data as the full file structure must still be r
         }
 
         if (_fileToLoad != null)
-            CheckExpectedFileExtensions(notifier,_fileToLoad.File.Extension);
-
+            CheckExpectedFileExtensions(notifier, _fileToLoad.File.Extension);
     }
 
     private void CheckExpectedFileExtensions(ICheckNotifier notifier, string extension)
@@ -358,7 +390,7 @@ This will not help you avoid bad data as the full file structure must still be r
         }
 
         if (Separator == ",")
-            ExpectFileExtension(notifier, ".csv",extension);
+            ExpectFileExtension(notifier, ".csv", extension);
 
         if (Separator == "\t")
             ExpectFileExtension(notifier, ".tsv", extension);
@@ -367,7 +399,8 @@ This will not help you avoid bad data as the full file structure must still be r
     private static void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
     {
         if (expectedExtension.Equals(actualExtension))
-            notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",
+                CheckResult.Success));
         else
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Unexpected file extension '{actualExtension}' (expected {expectedExtension}) ", CheckResult.Warning));
@@ -379,7 +412,7 @@ This will not help you avoid bad data as the full file structure must still be r
         _lineNumberBatch = 0;
 
         //if it is blank or null (although tab is allowed)
-        if(string.IsNullOrWhiteSpace(Separator)  && Separator != "\t")
+        if (string.IsNullOrWhiteSpace(Separator) && Separator != "\t")
             throw new Exception(
                 $"Could not open file {fileToLoad.FullName} because the file Separator has not been set yet, make sure to set all relevant [DemandsInitialization] properties");
 
@@ -397,7 +430,6 @@ This will not help you avoid bad data as the full file structure must still be r
 
         Headers.GetHeadersFromFile(_reader);
     }
-
 
 
     private bool ShouldSkipRecord(ShouldSkipRecordArgs args)
@@ -427,7 +459,10 @@ This will not help you avoid bad data as the full file structure must still be r
         _lineNumberBatch = 0;
 
         //read from the peek first if there is anything otherwise read from the reader
-        while (_dataAvailable = DataPusher.PeekedRecord != null || _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
+        while
+            (_dataAvailable =
+             DataPusher.PeekedRecord != null ||
+             _reader.Read()) //while we can read data -- also record whether the data was exhausted by this Read() because  CSVReader blows up if you ask it to Read() after Read() has already returned a false once
         {
             FlatFileLine currentRow;
 
@@ -445,7 +480,7 @@ This will not help you avoid bad data as the full file structure must still be r
                     continue;
             }
 
-            _lineNumberBatch += DataPusher.PushCurrentLine(_reader,currentRow, dt,_listener,EventHandlers);
+            _lineNumberBatch += DataPusher.PushCurrentLine(_reader, currentRow, dt, _listener, EventHandlers);
 
             if (!_dataAvailable)
                 break;
@@ -456,7 +491,6 @@ This will not help you avoid bad data as the full file structure must still be r
         }
 
         return _lineNumberBatch;
-
     }
 
 
@@ -474,10 +508,7 @@ This will not help you avoid bad data as the full file structure must still be r
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    protected virtual object HackValueReadFromFile(string s)
-    {
-        return s;
-    }
+    protected virtual object HackValueReadFromFile(string s) => s;
 
     /// <summary>
     /// Sets the target DataTable that we are loading from the csv/tsv etc
@@ -485,12 +516,12 @@ This will not help you avoid bad data as the full file structure must still be r
     /// <param name="dt"></param>
     public void SetDataTable(DataTable dt)
     {
-        if(Headers == null)
+        if (Headers == null)
         {
             InitializeComponents();
             OpenFile(_fileToLoad.File);
 
-            Headers.MakeDataTableFitHeaders(dt,_listener);
+            Headers.MakeDataTableFitHeaders(dt, _listener);
         }
 
         _workingTable = dt;

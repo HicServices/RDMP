@@ -40,21 +40,21 @@ public class Patch : IComparable
         if (string.IsNullOrWhiteSpace(Description))
             return $"Patch {DatabaseVersionNumber}";
 
-        return Description.Length> 100
+        return Description.Length > 100
             ? $"Patch {DatabaseVersionNumber}({Description[..100]}...)"
             : $"Patch {DatabaseVersionNumber}({Description})";
     }
 
     private void ExtractDescriptionAndVersionFromScriptContents()
     {
-        var lines = EntireScript.Split(new []{'\r', '\n'},StringSplitOptions.RemoveEmptyEntries);
+        var lines = EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         var idx = lines[0].IndexOf(VersionKey, StringComparison.Ordinal);
 
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
 
-        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':',' ','\n','\r','/','*');
+        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
 
         try
         {
@@ -63,14 +63,15 @@ public class Patch : IComparable
         catch (Exception e)
         {
             throw new InvalidPatchException(locationInAssembly,
-                $"Could not process the scripts --Version: entry ('{versionNumber}') into a valid C# Version object",e);
+                $"Could not process the scripts --Version: entry ('{versionNumber}') into a valid C# Version object",
+                e);
         }
 
-        if(lines.Length >=2)
+        if (lines.Length >= 2)
         {
             idx = lines[1].IndexOf(DescriptionKey, StringComparison.Ordinal);
 
-            if (idx == -1 )
+            if (idx == -1)
                 throw new InvalidPatchException(locationInAssembly,
                     $"Second line of patch scripts must start with {DescriptionKey}");
 
@@ -89,10 +90,8 @@ public class Patch : IComparable
             EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(2));
     }
 
-    public override int GetHashCode()
-    {
-        return locationInAssembly.GetHashCode();
-    }
+    public override int GetHashCode() => locationInAssembly.GetHashCode();
+
     public override bool Equals(object obj)
     {
         var x = this;
@@ -109,14 +108,15 @@ public class Patch : IComparable
         return x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber)
             ? true
             : throw new InvalidPatchException(x.locationInAssembly,
-            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers", null);
+                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers",
+                null);
     }
+
     public int CompareTo(object obj)
     {
         if (obj is Patch patch)
-        {
-            return -string.Compare(patch.locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
-        }
+            return -string.Compare(patch.locationInAssembly, locationInAssembly,
+                StringComparison.Ordinal); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -145,7 +145,9 @@ public class Patch : IComparable
         SoftwareBehindDatabase
     }
 
-    public static PatchingState IsPatchingRequired(DiscoveredDatabase database, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
+    public static PatchingState IsPatchingRequired(DiscoveredDatabase database, IPatcher patcher,
+        out Version databaseVersion, out Patch[] patchesInDatabase,
+        out SortedDictionary<string, Patch> allPatchesInAssembly)
     {
         databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(database);
 
@@ -163,6 +165,8 @@ public class Patch : IComparable
         return
             allPatchesInAssembly.Values
                 .Except(patchesInDatabase)
-                .Any() ? PatchingState.Required:PatchingState.NotRequired;
+                .Any()
+                ? PatchingState.Required
+                : PatchingState.NotRequired;
     }
 }

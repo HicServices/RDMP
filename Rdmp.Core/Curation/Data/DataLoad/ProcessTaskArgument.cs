@@ -26,6 +26,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 public sealed class ProcessTaskArgument : Argument
 {
     #region Database Properties
+
     private int _processTask_ID;
 
     /// <summary>
@@ -50,7 +51,6 @@ public sealed class ProcessTaskArgument : Argument
 
     public ProcessTaskArgument()
     {
-
     }
 
     /// <summary>
@@ -61,11 +61,11 @@ public sealed class ProcessTaskArgument : Argument
     /// <param name="parent"></param>
     public ProcessTaskArgument(ICatalogueRepository repository, ProcessTask parent)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ProcessTask_ID", parent.ID},
-            {"Name", $"Parameter{Guid.NewGuid()}" },
-            {"Type", typeof (string).ToString()}
+            { "ProcessTask_ID", parent.ID },
+            { "Name", $"Parameter{Guid.NewGuid()}" },
+            { "Type", typeof(string).ToString() }
         });
     }
 
@@ -81,17 +81,17 @@ public sealed class ProcessTaskArgument : Argument
 
     internal ProcessTaskArgument(ShareManager shareManager, ShareDefinition shareDefinition)
     {
-        shareManager.UpsertAndHydrate(this,shareDefinition);
+        shareManager.UpsertAndHydrate(this, shareDefinition);
         try
         {
-
             //if the import is into a repository other than the master original repository
-            if(!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
+            if (!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
             {
                 //and we are a reference type e.g. to a ColumnInfo or something
                 var t = GetConcreteSystemType();
 
-                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) || typeof(IEnumerable<IMapsDirectlyToDatabaseTable>).IsAssignableFrom(t))
+                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) ||
+                    typeof(IEnumerable<IMapsDirectlyToDatabaseTable>).IsAssignableFrom(t))
                 {
                     //then use the value Null because whatever ID is stored in us won't be pointing to the same object
                     //as when we were exported!
@@ -106,11 +106,9 @@ public sealed class ProcessTaskArgument : Argument
             Console.WriteLine(e);
         }
     }
+
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Creates new ProcessTaskArguments for the supplied class T (based on what DemandsInitialization fields it has).  Parent is the ProcessTask that hosts the class T e.g. IAttacher
@@ -121,7 +119,6 @@ public sealed class ProcessTaskArgument : Argument
     {
         var argFactory = new ArgumentFactory();
         return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
-
                 //tell it how to create new instances of us related to parent
                 parent,
 
@@ -135,7 +132,7 @@ public sealed class ProcessTaskArgument : Argument
     public ProcessTaskArgument ShallowClone(ProcessTask into)
     {
         var clone = new ProcessTaskArgument(CatalogueRepository, into);
-        CopyShallowValuesTo(clone,true);
+        CopyShallowValuesTo(clone, true);
 
         return clone;
     }

@@ -17,10 +17,8 @@ public static class VersionExtensions
     /// <param name="other">The full version</param>
     /// <param name="significantParts"></param>
     /// <returns></returns>
-    public static bool IsCompatibleWith(this Version version, Version other, int significantParts)
-    {
-        return version.CompareTo(other, significantParts) == 0;
-    }
+    public static bool IsCompatibleWith(this Version version, Version other, int significantParts) =>
+        version.CompareTo(other, significantParts) == 0;
 
     /// <summary>
     /// Compares two versions but only up to the significant parts specified.
@@ -31,14 +29,8 @@ public static class VersionExtensions
     /// <returns></returns>
     public static int CompareTo(this Version version, Version otherVersion, int significantParts)
     {
-        if (version == null)
-        {
-            throw new ArgumentNullException(nameof(version));
-        }
-        if (otherVersion == null)
-        {
-            return 1;
-        }
+        if (version == null) throw new ArgumentNullException(nameof(version));
+        if (otherVersion == null) return 1;
 
         if (version.Major != otherVersion.Major && significantParts >= 1)
             return version.Major > otherVersion.Major ? 1 : -1;

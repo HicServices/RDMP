@@ -40,12 +40,14 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
 
     public bool IsSingleObject => _toExport.Length == 1;
 
-    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable toExport, FileInfo targetFileInfo = null) : this(activator, new[] { toExport })
+    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable toExport,
+        FileInfo targetFileInfo = null) : this(activator, new[] { toExport })
     {
         TargetFileInfo = targetFileInfo;
     }
 
-    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport, DirectoryInfo targetDirectoryInfo = null) : base(activator)
+    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport,
+        DirectoryInfo targetDirectoryInfo = null) : base(activator)
     {
         _toExport = toExport;
         ShowInExplorer = true;
@@ -62,6 +64,7 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             SetImpossible("No objects exist to be exported");
             return;
         }
+
         _gatherer = new Gatherer(_repositoryLocator);
 
         var incompatible = toExport.FirstOrDefault(o => !_gatherer.CanGatherDependencies(o));
@@ -70,21 +73,14 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             SetImpossible($"Object {incompatible.GetType()} is not supported by Gatherer");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a share file with definitions for the supplied objects and all children";
-    }
+    public override string GetCommandHelp() =>
+        "Creates a share file with definitions for the supplied objects and all children";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
 
 
-    public override string GetCommandName()
-    {
-        return "Export Object(s) to File...";
-    }
+    public override string GetCommandName() => "Export Object(s) to File...";
 
 
     public override void Execute()
@@ -96,7 +92,8 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             //Extract a single object (to file)
             if (TargetFileInfo == null && BasicActivator.IsInteractive)
             {
-                TargetFileInfo = BasicActivator.SelectFile("Path to output share definition to", "Share Definition", "*.sd");
+                TargetFileInfo =
+                    BasicActivator.SelectFile("Path to output share definition to", "Share Definition", "*.sd");
 
                 if (TargetFileInfo == null)
                     return;

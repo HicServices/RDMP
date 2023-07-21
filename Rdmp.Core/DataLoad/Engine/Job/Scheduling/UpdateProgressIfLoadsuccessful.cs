@@ -28,7 +28,8 @@ public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
         Job = job;
 
         if (Job.DatesToRetrieve == null || !Job.DatesToRetrieve.Any())
-            throw new DataLoadProgressUpdateException("Job does not have any DatesToRetrieve! collection was null or empty");
+            throw new DataLoadProgressUpdateException(
+                "Job does not have any DatesToRetrieve! collection was null or empty");
 
         DateToSetProgressTo = Job.DatesToRetrieve.Max();
     }
@@ -47,7 +48,7 @@ public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
         postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Updating DataLoadProgress of '{progress}' to {DateToSetProgressTo}"));
         progress.DataLoadProgress = DateToSetProgressTo;
-            
+
         progress.SaveToDatabase();
     }
 }

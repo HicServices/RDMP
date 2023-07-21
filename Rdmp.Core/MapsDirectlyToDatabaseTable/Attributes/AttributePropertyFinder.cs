@@ -27,42 +27,31 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
             var propertyInfos = type.GetProperties();
 
             foreach (var property in propertyInfos)
-            {
                 //if property has sql flag
                 if (property.GetCustomAttributes(typeof(T), true).Any())
                 {
-                    if(!_properties.ContainsKey(type))
+                    if (!_properties.ContainsKey(type))
                         _properties.Add(type, new HashSet<PropertyInfo>());
 
-                    if(!_properties[type].Contains(property))
+                    if (!_properties[type].Contains(property))
                         _properties[type].Add(property);
                 }
-            }
         }
     }
 
-    public AttributePropertyFinder(IMapsDirectlyToDatabaseTable o): this(new[] { o})
+    public AttributePropertyFinder(IMapsDirectlyToDatabaseTable o) : this(new[] { o })
     {
-            
     }
 
-    public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o)
-    {
-        return _properties.TryGetValue(o.GetType(), out var properties) ? properties : Array.Empty<PropertyInfo>();
-    }
+    public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o) =>
+        _properties.TryGetValue(o.GetType(), out var properties) ? properties : Array.Empty<PropertyInfo>();
 
     /// <summary>
     /// Returns true if the provided object has a property that matches the expected attribute
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public bool ObjectContainsProperty(IMapsDirectlyToDatabaseTable arg)
-    {
-        return _properties.ContainsKey(arg.GetType());
-    }
+    public bool ObjectContainsProperty(IMapsDirectlyToDatabaseTable arg) => _properties.ContainsKey(arg.GetType());
 
-    public T GetAttribute(PropertyInfo property)
-    {
-        return (T) property.GetCustomAttributes(typeof (T), true).SingleOrDefault();
-    }
+    public T GetAttribute(PropertyInfo property) => (T)property.GetCustomAttributes(typeof(T), true).SingleOrDefault();
 }

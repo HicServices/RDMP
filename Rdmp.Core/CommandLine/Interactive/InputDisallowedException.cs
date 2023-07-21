@@ -14,8 +14,7 @@ namespace Rdmp.Core.CommandLine.Interactive;
 /// </summary>
 public class InputDisallowedException : Exception
 {
-    public InputDisallowedException(string message):base(message)
+    public InputDisallowedException(string message) : base(message)
     {
-            
     }
 }

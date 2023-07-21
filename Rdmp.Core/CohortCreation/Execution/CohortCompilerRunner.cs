@@ -48,8 +48,8 @@ public class CohortCompilerRunner
     {
         _timeout = timeout;
         Compiler = compiler;
-            
-        if(Compiler.CohortIdentificationConfiguration == null)
+
+        if (Compiler.CohortIdentificationConfiguration == null)
             throw new ArgumentException("CohortCompiler must have a CohortIdentificationConfiguration");
 
         _cic = Compiler.CohortIdentificationConfiguration;
@@ -86,36 +86,42 @@ public class CohortCompilerRunner
 
             Compiler.CancelAllTasks(false);
 
-            RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTask && c.State == CompilationState.NotScheduled),token);
+            RunAsync(Compiler.Tasks.Keys.Where(c => c is JoinableTask && c.State == CompilationState.NotScheduled),
+                token);
 
             SetPhase(Phase.CachingJoinableTasks);
 
-            CacheAsync(Compiler.Tasks.Keys.OfType<JoinableTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()),token);
+            CacheAsync(
+                Compiler.Tasks.Keys.OfType<JoinableTask>().Where(c =>
+                    c.State == CompilationState.Finished && c.IsCacheableWhenFinished()), token);
 
             SetPhase(Phase.RunningAggregateTasks);
 
             // Add all aggregates
-            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), c => Compiler.AddTask(c, globals));
+            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(),
+                c => Compiler.AddTask(c, globals));
 
             Compiler.CancelAllTasks(false);
 
-            RunAsync(Compiler.Tasks.Keys.Where(c => c is AggregationTask && c.IsEnabled() && c.State == CompilationState.NotScheduled), token);
+            RunAsync(
+                Compiler.Tasks.Keys.Where(c =>
+                    c is AggregationTask && c.IsEnabled() && c.State == CompilationState.NotScheduled), token);
 
             SetPhase(Phase.CachingAggregateTasks);
 
-            CacheAsync(Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c => c.State == CompilationState.Finished && c.IsCacheableWhenFinished()), token);
+            CacheAsync(
+                Compiler.Tasks.Keys.OfType<AggregationTask>().Where(c =>
+                    c.State == CompilationState.Finished && c.IsCacheableWhenFinished()), token);
 
             SetPhase(Phase.RunningFinalTotals);
 
             var toReturn = Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
 
-            if(RunSubcontainers)
-            {
+            if (RunSubcontainers)
                 Parallel.ForEach(
                     _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
-                        c=>CohortQueryBuilderResult.IsEnabled(c,Compiler.CoreChildProvider)),
-                    a=>Compiler.AddTask(a, globals));
-            }
+                        c => CohortQueryBuilderResult.IsEnabled(c, Compiler.CoreChildProvider)),
+                    a => Compiler.AddTask(a, globals));
 
 
             Compiler.CancelAllTasks(false);
@@ -140,7 +146,7 @@ public class CohortCompilerRunner
         var tasks = toRun.ToArray();
 
         foreach (var r in tasks)
-            Compiler.LaunchSingleTask(r, _timeout,false);
+            Compiler.LaunchSingleTask(r, _timeout, false);
 
         //while there are executing tasks
         while (tasks.Any(t => t.State == CompilationState.Scheduled || t.State == CompilationState.Executing))
@@ -163,6 +169,6 @@ public class CohortCompilerRunner
         ExecutionPhase = p;
 
         var h = PhaseChanged;
-        h?.Invoke(this,EventArgs.Empty);
+        h?.Invoke(this, EventArgs.Empty);
     }
 }

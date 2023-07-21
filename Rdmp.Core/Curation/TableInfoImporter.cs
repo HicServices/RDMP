@@ -20,7 +20,7 @@ namespace Rdmp.Core.Curation;
 /// Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing
 /// TableInfos (See TableInfoSynchronizer).
 /// </summary>
-public class TableInfoImporter:ITableInfoImporter
+public class TableInfoImporter : ITableInfoImporter
 {
     private readonly ICatalogueRepository _repository;
     private readonly string _importFromServer;
@@ -52,10 +52,13 @@ public class TableInfoImporter:ITableInfoImporter
     /// <param name="usageContext"></param>
     /// <param name="importFromSchema"></param>
     /// <param name="importTableType"></param>
-    public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null,TableType importTableType = TableType.Table)
+    public TableInfoImporter(ICatalogueRepository repository, string importFromServer, string importDatabaseName,
+        string importTableName, DatabaseType type, string username = null, string password = null,
+        DataAccessContext usageContext = DataAccessContext.Any, string importFromSchema = null,
+        TableType importTableType = TableType.Table)
     {
         var syntax = ImplementationManager.GetImplementation(type).GetQuerySyntaxHelper();
-            
+
         _repository = repository;
         _importFromServer = importFromServer;
         _importDatabaseName = importDatabaseName;
@@ -77,7 +80,8 @@ public class TableInfoImporter:ITableInfoImporter
     /// <param name="catalogueRepository"></param>
     /// <param name="table"></param>
     /// <param name="usageContext"></param>
-    public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table, DataAccessContext usageContext = DataAccessContext.Any)
+    public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table,
+        DataAccessContext usageContext = DataAccessContext.Any)
         : this(catalogueRepository,
             table.Database.Server.Name,
             table.Database.GetRuntimeName(),
@@ -95,8 +99,9 @@ public class TableInfoImporter:ITableInfoImporter
 
     private void InitializeBuilder()
     {
-        _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type,_username, _password);
+        _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type, _username, _password);
     }
+
     #endregion
 
     /// <inheritdoc/>
@@ -108,7 +113,7 @@ public class TableInfoImporter:ITableInfoImporter
         }
         catch (Exception e)
         {
-            throw new Exception($"Could not reach server {_server.Name}",e);
+            throw new Exception($"Could not reach server {_server.Name}", e);
         }
 
         var querySyntaxHelper = _server.GetQuerySyntaxHelper();
@@ -130,7 +135,7 @@ public class TableInfoImporter:ITableInfoImporter
         var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
         var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
-            .ExpectTable(_importTableName,_importFromSchema, _importTableType)
+            .ExpectTable(_importTableName, _importFromSchema, _importTableType)
             .DiscoverColumns();
 
         var parent = new TableInfo(_repository, tableName)
@@ -140,36 +145,35 @@ public class TableInfoImporter:ITableInfoImporter
             Server = _importFromServer,
             Schema = _importFromSchema,
             IsView = _importTableType == TableType.View
-
         };
 
         parent.SaveToDatabase();
 
         tableInfoCreated = parent;
-        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn)).ToArray();
+        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn))
+            .ToArray();
 
         //if there is a username then we need to associate it with the TableInfo we just created
-        if(!string.IsNullOrWhiteSpace(_username) )
-        {
+        if (!string.IsNullOrWhiteSpace(_username))
             new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
-        }
     }
 
     /// <inheritdoc/>
-    public ColumnInfo CreateNewColumnInfo(ITableInfo parent,DiscoveredColumn discoveredColumn)
+    public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
-            {
-                //if it has an explicitly specified format (Collation)
-                Format = discoveredColumn.Format,
-                //if it is a primary key
-                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
-                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
-                Collation = discoveredColumn.Collation
-            };
+        var col = new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
+            discoveredColumn.DataType.SQLType, parent)
+        {
+            //if it has an explicitly specified format (Collation)
+            Format = discoveredColumn.Format,
+            //if it is a primary key
+            IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+            IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+            Collation = discoveredColumn.Collation
+        };
 
         col.SaveToDatabase();
-        
+
 
         return col;
     }
@@ -180,7 +184,8 @@ public class TableInfoImporter:ITableInfoImporter
         DoImport(out _, out _);
     }
 
-    private static readonly string[] ProhibitedNames = {
+    private static readonly string[] ProhibitedNames =
+    {
         "ADD",
         "EXTERNAL",
         "PROCEDURE",
@@ -367,5 +372,4 @@ public class TableInfoImporter:ITableInfoImporter
         "EXIT",
         "PROC"
     };
-
 }

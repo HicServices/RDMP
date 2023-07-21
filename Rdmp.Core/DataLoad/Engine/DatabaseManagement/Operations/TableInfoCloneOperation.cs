@@ -37,7 +37,8 @@ public class TableInfoCloneOperation
 
     private bool _operationSucceeded;
 
-    public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToBubble, IDataLoadEventListener listener)
+    public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo,
+        LoadBubble copyToBubble, IDataLoadEventListener listener)
     {
         _hicDatabaseConfiguration = hicDatabaseConfiguration;
         _tableInfo = tableInfo;
@@ -49,24 +50,27 @@ public class TableInfoCloneOperation
 
     public void Execute()
     {
-        if(_operationSucceeded)
+        if (_operationSucceeded)
             throw new Exception("Operation already executed once");
 
         var liveDb = DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
         var destTableName = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
 
 
-        var discardedColumns = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination == DiscardedColumnDestination.Dilute).ToArray();
+        var discardedColumns = _tableInfo.PreLoadDiscardedColumns
+            .Where(c => c.Destination == DiscardedColumnDestination.Dilute).ToArray();
 
-        CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble], _tableInfo.Discover(DataAccessContext.DataLoad), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, discardedColumns);
-            
+        CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble],
+            _tableInfo.Discover(DataAccessContext.DataLoad), destTableName, DropHICColumns, DropIdentityColumns,
+            AllowNulls, discardedColumns);
+
         _operationSucceeded = true;
     }
 
 
     public void Undo()
     {
-        if(!_operationSucceeded)
+        if (!_operationSucceeded)
             throw new Exception("Cannot undo operation because it has not yet been executed");
 
         var tableToRemove = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
@@ -76,20 +80,24 @@ public class TableInfoCloneOperation
 
     public static void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
     {
-        if (!IsNukable(dbInfo,tableName))
-            throw new Exception("This method nukes a table in a database! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
+        if (!IsNukable(dbInfo, tableName))
+            throw new Exception(
+                "This method nukes a table in a database! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
 
         dbInfo.ExpectTable(tableName).Drop();
     }
 
 
-    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
-    {
-        return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
-            ||
-            dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
-    }
-    public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
+    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName) =>
+        tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+        tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
+        ||
+        dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+        dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+
+    public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo,
+        DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns,
+        bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
     {
         if (!sourceTable.Exists())
             throw new Exception($"Table {sourceTable} does not exist on {srcDatabaseInfo}");
@@ -98,9 +106,10 @@ public class TableInfoCloneOperation
         //new table will start with the same name as the as the old scripted one
         var newTable = destDatabaseInfo.ExpectTable(destTableName);
 
-        var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
-            
-        _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));
+        var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls,
+            false /*False because we want to drop these columns entirely not just flip to int*/, newTable);
+
+        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));
 
         using (var con = destDatabaseInfo.Server.GetConnection())
         {
@@ -112,7 +121,7 @@ public class TableInfoCloneOperation
         if (!newTable.Exists())
             throw new Exception(
                 $"Table '{newTable}' not found in {destDatabaseInfo} despite running table creation SQL!");
-            
+
         foreach (var column in newTable.DiscoverColumns())
         {
             var drop = false;
@@ -126,17 +135,23 @@ public class TableInfoCloneOperation
                 drop = true;
 
             //if the ColumnInfo is explicitly marked to be ignored
-            if(_tableInfo.ColumnInfos.Any(c=>c.IgnoreInLoads && c.GetRuntimeName(_copyToBubble.ToLoadStage()).Equals(colName)))
+            if (_tableInfo.ColumnInfos.Any(c =>
+                    c.IgnoreInLoads && c.GetRuntimeName(_copyToBubble.ToLoadStage()).Equals(colName)))
             {
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is marked IgnoreInLoads"));
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"{colName} will be dropped because it is marked IgnoreInLoads"));
                 drop = true;
             }
 
 
             //also drop any columns we have specifically been told to ignore in the DLE configuration
-            if(_hicDatabaseConfiguration.IgnoreColumns != null && _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
+            if (_hicDatabaseConfiguration.IgnoreColumns != null &&
+                _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
             {
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                 drop = true;
             }
 
@@ -148,11 +163,13 @@ public class TableInfoCloneOperation
 
             if (dilution != null)
             {
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Altering diluted column {colName} to {dilution.Data_type}"));
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information,
+                        $"Altering diluted column {colName} to {dilution.Data_type}"));
                 column.DataType.AlterTypeTo(dilution.Data_type);
             }
 
-            if(drop)
+            if (drop)
                 newTable.DropColumn(column);
         }
     }

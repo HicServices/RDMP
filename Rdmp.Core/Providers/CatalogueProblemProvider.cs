@@ -44,13 +44,13 @@ public class CatalogueProblemProvider : ProblemProvider
 
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
         var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
-            
+
         //now identify those which have an ExtractionInformation (that's a problem! they are extractable but orphaned)
         _orphanCatalogueItems = new HashSet<int>(
             orphans.Where(o => _childProvider.AllExtractionInformations.Any(ei => ei.CatalogueItem_ID == o.ID))
 
                 //store just the ID for performance
-                .Select(i=>i.ID));
+                .Select(i => i.ID));
 
         _usedJoinables = new HashSet<int>(
             childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
@@ -86,10 +86,10 @@ public class CatalogueProblemProvider : ProblemProvider
         };
     }
 
-    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
-    {
-        return !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any() ? "Load has no Catalogues therefore loads no tables" : null;
-    }
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode) =>
+        !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any()
+            ? "Load has no Catalogues therefore loads no tables"
+            : null;
 
     public string DescribeProblem(ISqlParameter parameter)
     {
@@ -104,10 +104,7 @@ public class CatalogueProblemProvider : ProblemProvider
             if (desc != null && parameter is ExtractionFilterParameter)
             {
                 var filter = desc.Parents.OfType<ExtractionFilter>().FirstOrDefault();
-                if (filter != null && filter.ExtractionFilterParameterSets.Any())
-                {
-                    return null;
-                }
+                if (filter != null && filter.ExtractionFilterParameterSets.Any()) return null;
             }
 
             return "No value defined";
@@ -116,29 +113,23 @@ public class CatalogueProblemProvider : ProblemProvider
         var v = parameter.Value;
 
         var g = new Guesser();
-                
-        if(Culture != null)
+
+        if (Culture != null)
             g.Culture = Culture;
 
         g.AdjustToCompensateForValue(v);
 
         // if user has entered a date as the value
         if (g.Guess.CSharpType == typeof(DateTime))
-        {
             // and there are no delimiters
-            if(v.All(c=>c != '\'' && c != '"'))
-            {
+            if (v.All(c => c != '\'' && c != '"'))
                 return "Parameter value looks like a date but is not surrounded by quotes";
-            }
-        }
 
         return null;
     }
 
-    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
-    {
-        return decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
-    }
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode) =>
+        decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
 
     public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
     {
@@ -151,15 +142,11 @@ public class CatalogueProblemProvider : ProblemProvider
             : null;
     }
 
-    public static string DescribeProblem(IFilter filter)
-    {
-        return string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
-    }
+    public static string DescribeProblem(IFilter filter) =>
+        string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
 
-    public static string DescribeProblem(Catalogue catalogue)
-    {
-        return !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
-    }
+    public static string DescribeProblem(Catalogue catalogue) =>
+        !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
 
     /// <summary>
     /// Identifies problems with dataset governance (e.g. <see cref="Catalogue"/> which have expired <see cref="GovernancePeriod"/>)
@@ -190,7 +177,8 @@ public class CatalogueProblemProvider : ProblemProvider
                     expiredCatalogueIds.Remove(i);
         }
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
+        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
+            .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return
@@ -214,22 +202,23 @@ public class CatalogueProblemProvider : ProblemProvider
 
             if (catalogue.IsProjectSpecific(null))
             {
-                if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
+                if (extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
                     return
                         $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
             }
-            else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            else if (extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            {
                 return
                     $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
+            }
         }
 
         return null;
     }
 
-    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
-    {
-        return LoadDirectoryNode.IsEmpty ? "No Project Directory has been specified for the load" : null;
-    }
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode) => LoadDirectoryNode.IsEmpty
+        ? "No Project Directory has been specified for the load"
+        : null;
 
     public string DescribeProblem(CatalogueItem catalogueItem)
     {
@@ -240,7 +229,9 @@ public class CatalogueProblemProvider : ProblemProvider
             j.PrimaryKey_ID == catalogueItem.ColumnInfo_ID ||
             j.ForeignKey_ID == catalogueItem.ColumnInfo_ID);
 
-        return badJoin != null ? $"Columns in joins declared on this column have mismatched collations ({badJoin})" : null;
+        return badJoin != null
+            ? $"Columns in joins declared on this column have mismatched collations ({badJoin})"
+            : null;
     }
 
     public string DescribeProblem(CohortAggregateContainer container)
@@ -248,7 +239,8 @@ public class CatalogueProblemProvider : ProblemProvider
         // Make sure if the user has the default configuration (Root, Inclusion, Exclusion) that they do not mess up the ordering and get very confused
 
         // if the container is inclusion make sure the user hasn't reordered the container to make it act as exclusion instead!
-        if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ?? false)
+        if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ??
+            false)
         {
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
@@ -258,9 +250,8 @@ public class CatalogueProblemProvider : ProblemProvider
                 // then something called 'inclusion criteria' should be the first among them
                 var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
                 if (first != null && !first.Equals(container))
-                {
-                    return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
-                }
+                    return
+                        $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
             }
         }
 
@@ -282,8 +273,10 @@ public class CatalogueProblemProvider : ProblemProvider
                 return "You must have at least one element in the root container";
 
             //Excepts and Intersects must have at least 2
-            if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT || container.Operation == SetOperation.INTERSECT))
-                return "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
+            if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT ||
+                                               container.Operation == SetOperation.INTERSECT))
+                return
+                    "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
         }
         else
         {
@@ -291,11 +284,13 @@ public class CatalogueProblemProvider : ProblemProvider
             {
                 //if it's not a root, then there should be at least 2
                 if (enabledChildren.Length == 0)
-                    return "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
+                    return
+                        "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
 
 
                 if (enabledChildren.Length == 1)
-                    return "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
+                    return
+                        "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
             }
         }
 

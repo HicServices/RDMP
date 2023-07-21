@@ -29,7 +29,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
     private readonly bool _allowDeleteMany;
 
     public ExecuteCommandDelete(IBasicActivateItems activator,
-        IDeleteable deletable) : this(activator,new []{ deletable})
+        IDeleteable deletable) : this(activator, new[] { deletable })
     {
         Weight = 50.4f;
     }
@@ -37,14 +37,16 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandDelete(IBasicActivateItems activator,
-        [DemandsInitialization("The object(s) you want to delete.  If multiple you must set deleteMany to true",Mandatory = true)]
+        [DemandsInitialization("The object(s) you want to delete.  If multiple you must set deleteMany to true",
+            Mandatory = true)]
         IDeleteable[] deletables,
-        [DemandsInitialization("Optional.  Pass \"true\" to allow deleting many objects at once e.g. Catalogue:*bob* (deletes all catalogues with the word bob in)")]
+        [DemandsInitialization(
+            "Optional.  Pass \"true\" to allow deleting many objects at once e.g. Catalogue:*bob* (deletes all catalogues with the word bob in)")]
         bool deleteMany = false) : base(activator)
     {
         _deletables = deletables;
         _allowDeleteMany = deleteMany;
-        if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
+        if (_deletables.Any(d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
 
         var reason = "";
@@ -79,11 +81,12 @@ public class ExecuteCommandDelete : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-             
+
         // if the thing we are deleting is important and sensitive then we should use a transaction
-        if(_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
+        if (_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
         {
-            ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+            ExecuteWithCommit(ExecuteImpl, GetDescription(),
+                _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
             PublishNearest();
         }
         else
@@ -92,22 +95,16 @@ public class ExecuteCommandDelete : BasicCommandExecution
         }
     }
 
-    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
-    {
-        return
-            deleteable is CatalogueItem or ExtractionInformation;
-    }
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable) =>
+        deleteable is CatalogueItem or ExtractionInformation;
 
-    private string GetDescription()
-    {
-        return _deletables.Count == 1
+    private string GetDescription() =>
+        _deletables.Count == 1
             ? $"Delete '{_deletables.Single()}'"
             : $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
-    }
 
     private void ExecuteImpl()
     {
-
         switch (_deletables.Count)
         {
             case 1:
@@ -121,10 +118,8 @@ public class ExecuteCommandDelete : BasicCommandExecution
         // if the command did not ask to delete many and it is not interactive (e.g. CLI) then
         // we shouldn't just blindly delete them all
         if (!BasicActivator.IsInteractive && !_allowDeleteMany)
-        {
             throw new Exception(
                 $"Allow delete many is false but multiple objects were matched for deletion ({string.Join(",", _deletables)})");
-        }
 
         // if it is interactive, only proceed if the user confirms behaviour
         if (BasicActivator.IsInteractive &&
@@ -132,7 +127,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
         try
         {
-            foreach (var d in _deletables.Where(d=>d is not DatabaseEntity exists || exists.Exists()))
+            foreach (var d in _deletables.Where(d => d is not DatabaseEntity exists || exists.Exists()))
                 d.DeleteInDatabase();
         }
         finally

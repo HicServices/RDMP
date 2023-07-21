@@ -33,7 +33,10 @@ public class SuggestComboBox : ComboBox
     public int SuggestBoxHeight
     {
         get => _suggLb.Height;
-        set { if (value > 0) _suggLb.Height = value; }
+        set
+        {
+            if (value > 0) _suggLb.Height = value;
+        }
     }
 
     /// <summary>
@@ -110,7 +113,7 @@ public class SuggestComboBox : ComboBox
         if (string.IsNullOrWhiteSpace(Text))
             return false;
 
-        var keywords = Text.Split(new []{" "}, StringSplitOptions.RemoveEmptyEntries);
+        var keywords = Text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
         return keywords.All(k => arg.ToLower().Contains(k.ToLower()));
     }
@@ -120,7 +123,7 @@ public class SuggestComboBox : ComboBox
     private void _suggLb_VisibleChanged(object sender, EventArgs e)
     {
         //don't fire event if its already being fired (needed because Controls.Remove will make visible false)
-        if(_changingVisibility)
+        if (_changingVisibility)
             return;
 
         _changingVisibility = true;
@@ -131,9 +134,8 @@ public class SuggestComboBox : ComboBox
 
             if (form != null)
             {
-                if(_suggLb.Parent != form)
+                if (_suggLb.Parent != form)
                 {
-
                     //move it to the parent form
                     _suggLb.Parent.Controls.Remove(_suggLb);
                     form.Controls.Add(_suggLb);
@@ -297,15 +299,15 @@ public class SuggestComboBox : ComboBox
             e.SuppressKeyPress = true;
             return;
         }
+
         base.OnKeyDown(e);
     }
 
     private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData) =>
         // the keystrokes of interest should not be processed by base class:
-        return (_suggLb.Visible && KeysToHandle.Contains(keyData)) || base.ProcessCmdKey(ref msg, keyData);
-    }
+        (_suggLb.Visible && KeysToHandle.Contains(keyData)) || base.ProcessCmdKey(ref msg, keyData);
 
     #endregion
 }

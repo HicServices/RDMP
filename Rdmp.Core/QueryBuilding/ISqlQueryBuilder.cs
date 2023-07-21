@@ -32,7 +32,7 @@ public interface ISqlQueryBuilder
     /// <summary>
     /// Any SQL to inject between SELECT and the first column, e.g. "DISTINCT"
     /// </summary>
-    string LimitationSQL { get;}
+    string LimitationSQL { get; }
 
     /// <summary>
     /// Wrapper class for the columns you added to the query with <see cref="AddColumn(Rdmp.Core.QueryBuilding.IColumn)"/>).  After fetching the query (See <see cref="SQL"/>) this will be populated with
@@ -67,7 +67,7 @@ public interface ISqlQueryBuilder
     /// <summary>
     /// The <see cref="IContainer"/> (AND / OR) that contains all the lines of WHERE SQL (<see cref="IFilter"/>) including subcontainers.
     /// </summary>
-    IContainer RootFilterContainer{get;set;}
+    IContainer RootFilterContainer { get; set; }
 
     /// <summary>
     /// True to check the syntax of columns, parameters etc.  This should result in SyntaxErrorException being thrown when generating the SQL if it is substantially malformed
@@ -83,7 +83,7 @@ public interface ISqlQueryBuilder
     /// Manages the addition of <see cref="ISqlParameter"/> to the <see cref="ISqlQueryBuilder"/> in a scoped way (globals, query level etc).
     /// 
     /// </summary>
-    ParameterManager ParameterManager { get;}
+    ParameterManager ParameterManager { get; }
 
     /// <summary>
     /// Adds the provided columns to the query as lines of SELECT SQL

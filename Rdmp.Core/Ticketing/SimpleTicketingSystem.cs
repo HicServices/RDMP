@@ -32,28 +32,28 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
         // all ticket names are valid
         return;
     }
-    public bool IsValidTicketName(string ticketName)
-    {
+
+    public bool IsValidTicketName(string ticketName) =>
         // all ticket names are valid
-        return true;
-    }
+        true;
+
     public void NavigateToTicket(string ticketName)
     {
         // if the user has added a URL just append the ticket name to it
         // and open e.g. "www.myticketing?q=" + "HDD-123"
-        if(!string.IsNullOrWhiteSpace(Url))
+        if (!string.IsNullOrWhiteSpace(Url))
             UsefulStuff.OpenUrl(Url + ticketName);
     }
 
-    public TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket, string releaseTicket, out string reason, out Exception exception)
+    public TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket,
+        string releaseTicket, out string reason, out Exception exception)
     {
         reason = null;
         exception = null;
         // No restrictions on releasability
         return TicketingReleaseabilityEvaluation.Releaseable;
     }
-    public string GetProjectFolderName(string masterTicket)
-    {
-        return UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
-    }
+
+    public string GetProjectFolderName(string masterTicket) =>
+        UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
 }

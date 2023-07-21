@@ -31,13 +31,16 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, PermissableDefaults defaultToSet,DiscoveredDatabase toCreate)
-        : this(activator,defaultToSet == PermissableDefaults.None ? null : defaultToSet.ToTier2DatabaseType(),defaultToSet)
+    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator,
+        PermissableDefaults defaultToSet, DiscoveredDatabase toCreate)
+        : this(activator, defaultToSet == PermissableDefaults.None ? null : defaultToSet.ToTier2DatabaseType(),
+            defaultToSet)
     {
         _database = toCreate;
     }
 
-    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, IPatcher patcher, PermissableDefaults defaultToSet) : base(activator)
+    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, IPatcher patcher,
+        PermissableDefaults defaultToSet) : base(activator)
     {
         _patcher = patcher;
         _defaultToSet = defaultToSet;
@@ -90,14 +93,12 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
             ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueRepository,
                 $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
         else
-        {
             //create the new server
             ServerCreatedIfAny = BasicActivator.CreateNewPlatformDatabase(
                 BasicActivator.RepositoryLocator.CatalogueRepository,
                 _defaultToSet,
                 _patcher,
                 _database);
-        }
 
         //user cancelled creating a server
         if (ServerCreatedIfAny == null)
@@ -113,6 +114,5 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
         var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
         return IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
-
     }
 }

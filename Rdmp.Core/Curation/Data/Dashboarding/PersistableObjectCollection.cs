@@ -19,30 +19,21 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
     }
 
-    public virtual string SaveExtraText()
-    {
-        return "";
-    }
+    public virtual string SaveExtraText() => "";
 
     public virtual void LoadExtraText(string s)
     {
-            
     }
 
-    protected bool Equals(PersistableObjectCollection other)
-    {
-        return DatabaseObjects.SequenceEqual(other.DatabaseObjects) && Equals(SaveExtraText(), other.SaveExtraText());
-    }
+    protected bool Equals(PersistableObjectCollection other) => DatabaseObjects.SequenceEqual(other.DatabaseObjects) &&
+                                                                Equals(SaveExtraText(), other.SaveExtraText());
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PersistableObjectCollection) obj);
+        return obj.GetType() == GetType() && Equals((PersistableObjectCollection)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(DatabaseObjects, SaveExtraText());
-    }
+    public override int GetHashCode() => System.HashCode.Combine(DatabaseObjects, SaveExtraText());
 }

@@ -15,18 +15,29 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 internal sealed class ExtractionInformationStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private static readonly Image<Rgba32> ExtractionInformationCore = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
-    private static readonly Image<Rgba32> ExtractionInformationSupplemental = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_Supplemental);
-    private static readonly Image<Rgba32> ExtractionInformationSpecialApproval = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval);
-    private static readonly Image<Rgba32> ExtractionInformationInternalOnly = IconOverlayProvider.GetOverlayNoCache(ExtractionInformationSpecialApproval, OverlayKind.Internal);
-    private static readonly Image<Rgba32> ExtractionInformationDeprecated = IconOverlayProvider.GetOverlayNoCache(ExtractionInformationCore,OverlayKind.Deprecated);
-    private static readonly Image<Rgba32> ExtractionInformationProjectSpecific = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_ProjectSpecific);
+    private static readonly Image<Rgba32> ExtractionInformationCore =
+        Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
+
+    private static readonly Image<Rgba32> ExtractionInformationSupplemental =
+        Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_Supplemental);
+
+    private static readonly Image<Rgba32> ExtractionInformationSpecialApproval =
+        Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval);
+
+    private static readonly Image<Rgba32> ExtractionInformationInternalOnly =
+        IconOverlayProvider.GetOverlayNoCache(ExtractionInformationSpecialApproval, OverlayKind.Internal);
+
+    private static readonly Image<Rgba32> ExtractionInformationDeprecated =
+        IconOverlayProvider.GetOverlayNoCache(ExtractionInformationCore, OverlayKind.Deprecated);
+
+    private static readonly Image<Rgba32> ExtractionInformationProjectSpecific =
+        Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_ProjectSpecific);
+
     private static readonly Image<Rgba32> NoIconAvailable = Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-
-        if(o is ExtractionCategory cat)
+        if (o is ExtractionCategory cat)
             return GetImage(cat);
 
         if (o is not ExtractionInformation ei) return null;
@@ -43,7 +54,6 @@ internal sealed class ExtractionInformationStateBasedIconProvider : IObjectState
             toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
         return toReturn;
-
     }
 
     private static Image<Rgba32> GetImage(ExtractionCategory category)

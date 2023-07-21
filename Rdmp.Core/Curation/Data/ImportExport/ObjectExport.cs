@@ -56,11 +56,10 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectID",objectForSharing.ID},
-            {"ReferencedObjectType",objectForSharing.GetType().Name},
-            {"ReferencedObjectRepositoryType",objectForSharing.Repository.GetType().Name},
-            {"SharingUID",guid.ToString()}
-
+            { "ReferencedObjectID", objectForSharing.ID },
+            { "ReferencedObjectType", objectForSharing.GetType().Name },
+            { "ReferencedObjectRepositoryType", objectForSharing.Repository.GetType().Name },
+            { "SharingUID", guid.ToString() }
         });
 
         if (ID == 0 || Repository != repository)
@@ -82,12 +81,12 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return _knownReferenceTo != null ? $"E::{_knownReferenceTo.Value}" : $"E::{ReferencedObjectType}::{SharingUID}";
-    }
+    public override string ToString() => _knownReferenceTo != null
+        ? $"E::{_knownReferenceTo.Value}"
+        : $"E::{ReferencedObjectType}::{SharingUID}";
 
     private Lazy<IMapsDirectlyToDatabaseTable> _knownReferenceTo;
+
     public void ClearAllInjections()
     {
         _knownReferenceTo = null;

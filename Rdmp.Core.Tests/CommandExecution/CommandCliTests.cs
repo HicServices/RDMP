@@ -27,11 +27,11 @@ public abstract class CommandCliTests : UnitTests
 {
     protected CommandInvoker GetInvoker()
     {
-        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
         {
             DisallowInput = true
         });
-        invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
+        invoker.CommandImpossible += (s, c) => throw new Exception(c.Command.ReasonCommandImpossible);
 
         return invoker;
     }

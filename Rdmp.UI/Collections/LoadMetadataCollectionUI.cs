@@ -79,17 +79,18 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             olvName,
             olvName);
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+            { new ExecuteCommandCreateNewLoadMetadata(a) };
 
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
         BuildCommandList();
 
-        if(_isFirstTime)
+        if (_isFirstTime)
         {
-            CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f84e8217-6b3c-4eb4-a314-fbd95b51c422"));
-            CommonTreeFunctionality.SetupColumnTracking(olvValue,new Guid("facab93a-6950-4815-9f5f-5f076277adb5"));
+            CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f84e8217-6b3c-4eb4-a314-fbd95b51c422"));
+            CommonTreeFunctionality.SetupColumnTracking(olvValue, new Guid("facab93a-6950-4815-9f5f-5f076277adb5"));
 
             tlvLoadMetadata.Expand(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
@@ -112,11 +113,9 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         BuildCommandList();
     }
 
-    public static bool IsRootObject(object root)
-    {
+    public static bool IsRootObject(object root) =>
         // The root LoadMetadata FolderNode is a root element in this tree
-        return root is FolderNode<LoadMetadata> f ? f.Name == FolderHelper.Root : root is AllPermissionWindowsNode;
-    }
+        root is FolderNode<LoadMetadata> f ? f.Name == FolderHelper.Root : root is AllPermissionWindowsNode;
 
     public void BuildCommandList()
     {

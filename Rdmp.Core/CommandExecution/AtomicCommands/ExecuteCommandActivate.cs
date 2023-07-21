@@ -37,15 +37,10 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
         Weight = -99.99999f;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
 
-    public override string GetCommandName()
-    {
-        return OverrideCommandName ?? GlobalStrings.Activate;
-    }
+    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.Activate;
 
     public override void Execute()
     {

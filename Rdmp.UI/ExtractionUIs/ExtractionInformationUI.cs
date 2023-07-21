@@ -67,22 +67,26 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
     private readonly RAGSmileyToolStrip ragSmiley1;
     private bool _isLoading;
 
-    public ExtractionInformationUI()//For use with SetDatabaseObject
+    public ExtractionInformationUI() //For use with SetDatabaseObject
     {
         InitializeComponent();
-            
+
         if (VisualStudioDesignMode) //stop right here if in designer mode
             return;
 
         //note that we don't add the Any category
-        ddExtractionCategory.DataSource = new object[] { ExtractionCategory.Core, ExtractionCategory.Supplemental, ExtractionCategory.SpecialApprovalRequired, ExtractionCategory.Internal,ExtractionCategory.Deprecated, ExtractionCategory.ProjectSpecific};
+        ddExtractionCategory.DataSource = new object[]
+        {
+            ExtractionCategory.Core, ExtractionCategory.Supplemental, ExtractionCategory.SpecialApprovalRequired,
+            ExtractionCategory.Internal, ExtractionCategory.Deprecated, ExtractionCategory.ProjectSpecific
+        };
 
         ObjectSaverButton1.BeforeSave += BeforeSave;
 
         AssociatedCollection = RDMPCollection.Catalogue;
 
         ragSmiley1 = new RAGSmileyToolStrip(this);
-            
+
         UseCommitSystem = true;
     }
 
@@ -128,12 +132,12 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         }
     }
 
-    public override void SetDatabaseObject(IActivateItems activator,ExtractionInformation databaseObject)
+    public override void SetDatabaseObject(IActivateItems activator, ExtractionInformation databaseObject)
     {
         _isLoading = true;
         ExtractionInformation = databaseObject;
         base.SetDatabaseObject(activator, databaseObject);
-                        
+
         Setup(databaseObject);
 
         ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
@@ -141,9 +145,11 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         CommonFunctionality.Add(ragSmiley1);
 
         CommonFunctionality.AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
-        CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier", "Is Extraction Identifier");
+        CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier",
+            "Is Extraction Identifier");
         CommonFunctionality.AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey", "Is Extraction Primary Key");
-        CommonFunctionality.AddHelpString(lblIsTransform, "Transforms Data", "When the extraction SQL is different from the column SQL then it is considered to 'transform' the data.  For example 'UPPER([mydb].[mycol]) as mycol'.  Transforms must always have an alias.");
+        CommonFunctionality.AddHelpString(lblIsTransform, "Transforms Data",
+            "When the extraction SQL is different from the column SQL then it is considered to 'transform' the data.  For example 'UPPER([mydb].[mycol]) as mycol'.  Transforms must always have an alias.");
 
         lblIsTransform.Text = $"Transforms Data: {(ExtractionInformation.IsProperTransform() ? "Yes" : "No")}";
 
@@ -174,7 +180,6 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
                 // there was a problem working out the runtime name.  Maybe it is missing an alias or whatever
                 // so we can't do this rename - no big deal
             }
-
         }
 
         return true;
@@ -207,7 +212,8 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
             _querySyntaxHelper = ExtractionInformation.GetQuerySyntaxHelper();
 
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, _querySyntaxHelper);
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL,
+                _querySyntaxHelper);
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
             var autoComplete = new AutoCompleteProviderWin(_querySyntaxHelper);
@@ -225,16 +231,17 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             ExtractionInformation.SelectSQL = colInfo.Name.Trim();
             ExtractionInformation.SaveToDatabase();
         }
-            
-        QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias) ? _querySyntaxHelper.AliasPrefix + ExtractionInformation.Alias : "");
 
-            
-        lblFromTable.Text = colInfo == null?"MISSING ColumnInfo":colInfo.TableInfo.Name;
+        QueryEditor.Text = ExtractionInformation.SelectSQL + (!string.IsNullOrWhiteSpace(ExtractionInformation.Alias)
+            ? _querySyntaxHelper.AliasPrefix + ExtractionInformation.Alias
+            : "");
 
-            
+
+        lblFromTable.Text = colInfo == null ? "MISSING ColumnInfo" : colInfo.TableInfo.Name;
+
+
         if (!pSql.Controls.Contains(QueryEditor))
             pSql.Controls.Add(QueryEditor);
-            
     }
 
     private void cbHashOnDataRelease_CheckedChanged(object sender, EventArgs e)
@@ -247,6 +254,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             Setup(ExtractionInformation);
         }
     }
+
     /// <summary>
     /// Scans the query text for line comments and replaces any with block comments so the query will still work when flattened to a single line
     /// </summary>
@@ -258,7 +266,9 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         var commentRegex = new Regex($@"--\s*(?<comment>.*?)\s*{Environment.NewLine}");
         if (commentRegex.Matches(QueryEditor.Text).Count > 0)
         {
-            MessageBox.Show("Line comments are not allowed in the query, these will be automatically converted to block comments.", "Line comments");
+            MessageBox.Show(
+                "Line comments are not allowed in the query, these will be automatically converted to block comments.",
+                "Line comments");
             QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, $"/* ${{comment}} */{Environment.NewLine}");
         }
     }
@@ -280,7 +290,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
     public override string GetTabName()
     {
-        if(ExtractionInformation == null)
+        if (ExtractionInformation == null)
             return "Loading...";
 
         string name;
@@ -294,7 +304,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             name = "unknown";
         }
 
-        return $"{name} ({ ExtractionInformation.CatalogueItem.Catalogue.Name } Extraction Logic)";
+        return $"{name} ({ExtractionInformation.CatalogueItem.Catalogue.Name} Extraction Logic)";
     }
 }
 

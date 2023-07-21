@@ -39,7 +39,7 @@ using Rdmp.UI.Theme;
 
 namespace Rdmp.UI.Tests;
 
-public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
+public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
 {
     private readonly UITests _uiTests;
     private static CommentStore _commentStore;
@@ -56,7 +56,8 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     /// </summary>
     public TestActivateItemsResults Results { get; private set; }
 
-    public TestActivateItems(UITests uiTests,MemoryDataExportRepository repo):base(new RepositoryProvider(repo),new ToMemoryCheckNotifier())
+    public TestActivateItems(UITests uiTests, MemoryDataExportRepository repo) : base(new RepositoryProvider(repo),
+        new ToMemoryCheckNotifier())
     {
         _uiTests = uiTests;
         Results = new TestActivateItemsResults();
@@ -90,11 +91,11 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         base.Publish(o);
 
-        if(o is DatabaseEntity e)
-            RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
+        if (o is DatabaseEntity e)
+            RefreshBus.Publish(this, new RefreshObjectEventArgs(e));
     }
 
-    public override void Show(string title,string message)
+    public override void Show(string title, string message)
     {
         Assert.Fail($"Did not expect a MessageBox to be shown but it was '{message}'");
     }
@@ -104,10 +105,9 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     public new CommentStore CommentStore { get; private set; } // Hide normal CommentStore so we can overwrite it later
     public HistoryProvider HistoryProvider { get; }
 
-    public T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity
-    {
-        return _uiTests.AndLaunch<T>(databaseObject);
-    }
+    public T Activate<T, T2>(T2 databaseObject)
+        where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity =>
+        _uiTests.AndLaunch<T>(databaseObject);
 
     public T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new()
     {
@@ -119,7 +119,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
     public override bool DeleteWithConfirmation(IDeleteable deleteable)
     {
-        if(deleteable is DatabaseEntity d && !d.Exists())
+        if (deleteable is DatabaseEntity d && !d.Exists())
             throw new Exception("Attempt made to delete an object which didn't exist");
 
         base.DeleteWithConfirmation(deleteable);
@@ -128,35 +128,27 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         return true;
     }
 
-    public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
-    {
+    public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen) =>
         throw new NotImplementedException();
-    }
 
-    public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
-    {
+    public override bool SelectType(DialogArgs args, Type[] available, out Type chosen) =>
         throw new NotImplementedException();
-    }
 
-    public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
-    {
+    public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject) =>
         throw new NotImplementedException();
-    }
 
     public bool HasProblem(object model)
     {
-        return _problemProviders.Any(p=>p.HasProblem(model));
+        return _problemProviders.Any(p => p.HasProblem(model));
     }
 
     public string DescribeProblemIfAny(object model)
     {
-        return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
+        return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob => prob != null);
     }
 
-    public string GetDocumentation(Type type)
-    {
-        return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
-    }
+    public string GetDocumentation(Type type) =>
+        RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
 
     public string CurrentDirectory => TestContext.CurrentContext.TestDirectory;
 
@@ -169,11 +161,12 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
     public void KillForm(Form f, Exception reason)
     {
-        Results.KilledForms.Add(f,reason);
+        Results.KilledForms.Add(f, reason);
     }
+
     public void KillForm(Form f, string reason)
     {
-        Results.KilledForms.Add(f,new Exception(reason));
+        Results.KilledForms.Add(f, new Exception(reason));
     }
 
     public void OnRuleRegistered(IBinderRule rule)
@@ -183,7 +176,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
     public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
     {
-        if(ShouldReloadFreshCopyDelegate == null)
+        if (ShouldReloadFreshCopyDelegate == null)
         {
             Assert.Fail(
                 $"Object {databaseEntity} was out of date with the database, normally user would be asked to load a new copy but since this is a test the test will be failed.  Solve this either by calling SaveToDatabase before launching your UI or by setting the ShouldReloadFreshCopyDelegate delegate (if the MessageBox showing is how the live system should respond)");
@@ -195,7 +188,6 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
     public void ApplyTo(ToolStrip item)
     {
-
     }
 
     public bool ApplyThemeToMenus { get; set; }
@@ -204,7 +196,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     /// <summary>
     /// The answer to give when asked <see cref="YesNo"/>
     /// </summary>
-    public bool? YesNoResponse { get;set;}
+    public bool? YesNoResponse { get; set; }
 
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
@@ -226,21 +218,18 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     /// </summary>
     public string TypeTextResponse { get; set; }
 
-    public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+    public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
+        bool requireSaneHeaderText)
     {
         text = TypeTextResponse;
         return !string.IsNullOrWhiteSpace(TypeTextResponse);
     }
 
-    public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
-    {
+    public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription) =>
         throw new NotImplementedException();
-    }
 
-    public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
-    {
+    public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription) =>
         throw new NotImplementedException();
-    }
 
     public override void ShowException(string errorText, Exception exception)
     {
@@ -256,54 +245,38 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         return new List<CommandInvokerDelegate>
         {
-            new(typeof(IActivateItems),true,p=>this)
+            new(typeof(IActivateItems), true, p => this)
         };
     }
 
     public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
-        IMapsDirectlyToDatabaseTable[] availableObjects)
+        IMapsDirectlyToDatabaseTable[] availableObjects) =>
+        throw new NotImplementedException();
+
+    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args,
+        IMapsDirectlyToDatabaseTable[] availableObjects) => throw new NotImplementedException();
+
+    public override DirectoryInfo SelectDirectory(string prompt) => throw new NotImplementedException();
+
+    public override FileInfo SelectFile(string prompt) => SelectFile(prompt, null, null);
+
+    public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern) =>
+        throw new NotImplementedException();
+
+    public override FileInfo SelectFile(string prompt, string patternDescription, string pattern) =>
+        throw new NotImplementedException();
+
+    protected override bool
+        SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen) =>
+        throw new NotImplementedException();
+
+    public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny,
+        string initialSearch)
     {
         throw new NotImplementedException();
     }
 
-    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DirectoryInfo SelectDirectory(string prompt)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override FileInfo SelectFile(string prompt)
-    {
-        return SelectFile(prompt, null, null);
-    }
-
-    public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
-    {
-        throw new NotImplementedException();
-    }
-    public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<SessionCollectionUI> GetSessions()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<SessionCollectionUI> GetSessions() => throw new NotImplementedException();
 
     public override void ShowData(IViewSQLAndResultsCollection collection)
     {
@@ -325,15 +298,11 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         throw new NotImplementedException();
     }
 
-    public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
-    {
+    public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected) =>
         throw new NotImplementedException();
-    }
 
-    public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
-    {
+    public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) =>
         throw new NotImplementedException();
-    }
 
     public override void LaunchSubprocess(ProcessStartInfo startInfo)
     {
@@ -346,7 +315,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     }
 }
 
-public class TestActivateItemsResults:ICheckNotifier
+public class TestActivateItemsResults : ICheckNotifier
 {
     public List<Control> WindowsShown = new();
     public Dictionary<Form, Exception> KilledForms = new();
@@ -363,7 +332,7 @@ public class TestActivateItemsResults:ICheckNotifier
 
     public bool OnCheckPerformed(CheckEventArgs args)
     {
-        if(args.Result >= CheckResult.Fail)
+        if (args.Result >= CheckResult.Fail)
             FatalCalls.Add(args);
 
         return false;

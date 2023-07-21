@@ -8,7 +8,6 @@ using System;
 using System.Windows.Forms;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleDialogs;
-
 using ScintillaNET;
 
 namespace Rdmp.UI.PluginManagement.CodeGeneration;
@@ -32,13 +31,11 @@ public partial class GenerateClassCodeFromTableUI : Form
 
     private void btnGenerateCode_Click(object sender, EventArgs e)
     {
-
         try
         {
             var table = serverDatabaseTableSelector1.GetDiscoveredTable();
             var generator = new MapsDirectlyToDatabaseTableClassCodeGenerator(table);
             _codeEditor.Text = generator.GetCode();
-
         }
         catch (Exception exception)
         {

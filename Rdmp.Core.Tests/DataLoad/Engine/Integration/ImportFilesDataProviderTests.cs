@@ -20,7 +20,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-public class ImportFilesDataProviderTests:DatabaseTests
+public class ImportFilesDataProviderTests : DatabaseTests
 {
     [Test]
     public void CopyFiles()
@@ -34,7 +34,7 @@ public class ImportFilesDataProviderTests:DatabaseTests
 
         var originpath = Path.Combine(sourceDir.FullName, "myFile.txt");
 
-        File.WriteAllText(originpath,"fish");
+        File.WriteAllText(originpath, "fish");
 
         var job = new ThrowImmediatelyDataLoadJob();
         var mockProjectDirectory = Mock.Of<ILoadDirectory>(p => p.ForLoading == targetDir);
@@ -105,7 +105,5 @@ public class ImportFilesDataProviderTests:DatabaseTests
         //only forLoading file should exist (in real life that one would be handled by archivng already)
         Assert.AreEqual(1, targetDir.GetFiles().Length);
         Assert.AreEqual(0, sourceDir.GetFiles().Length);
-
     }
-
 }

@@ -26,11 +26,13 @@ public class ToFileDataLoadEventListener : IDataLoadEventListener
 
     public ToFileDataLoadEventListener(Type logger)
         : this(logger.FullName)
-    { }
+    {
+    }
 
     public ToFileDataLoadEventListener(object logger)
         : this(logger.GetType())
-    { }
+    {
+    }
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
@@ -41,6 +43,5 @@ public class ToFileDataLoadEventListener : IDataLoadEventListener
     public void OnProgress(object sender, ProgressEventArgs e)
     {
         _logger = NLog.LogManager.GetLogger(sender.GetType().FullName);
-            
     }
 }

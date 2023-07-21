@@ -77,7 +77,7 @@ public class BulkTestsData
     /// <summary>
     /// the bulk test data created during <see cref="SetupTestData"/>
     /// </summary>
-    public DiscoveredTable Table {get;private set; }
+    public DiscoveredTable Table { get; private set; }
 
     /// <summary>
     /// Prepares to create a new table in the <paramref name="targetDatabase"/> of test data using <see cref="Demography"/>. To actually generate the data
@@ -93,7 +93,6 @@ public class BulkTestsData
         ExpectedNumberOfRowsInTestData = numberOfRows;
 
         _dataGenerator = new Demography(new Random(500));
-
     }
 
     /// <summary>
@@ -108,22 +107,22 @@ public class BulkTestsData
 
         //generate some people
         var people = new PersonCollection();
-        people.GeneratePeople(5000,r);
+        people.GeneratePeople(5000, r);
 
         //generate the test data
-        var dt = _dataGenerator.GetDataTable(people,ExpectedNumberOfRowsInTestData);
+        var dt = _dataGenerator.GetDataTable(people, ExpectedNumberOfRowsInTestData);
 
         var tbl = BulkDataDatabase.ExpectTable(BulkDataTable);
 
-        if(tbl.Exists())
+        if (tbl.Exists())
             tbl.Drop();
 
         //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
-        Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{
-            new("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
-            new("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
-            new("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}
-
+        Table = BulkDataDatabase.CreateTable(BulkDataTable, dt, new DatabaseColumnRequest[]
+        {
+            new("chi", new DatabaseTypeRequest(typeof(string), 10)) { IsPrimaryKey = true },
+            new("dtCreated", new DatabaseTypeRequest(typeof(DateTime))) { IsPrimaryKey = true },
+            new("hb_extract", new DatabaseTypeRequest(typeof(string), 1)) { IsPrimaryKey = true }
         });
     }
 
@@ -132,10 +131,8 @@ public class BulkTestsData
     /// </summary>
     /// <param name="numberOfRows"></param>
     /// <returns></returns>
-    public DataTable GetDataTable(int numberOfRows)
-    {
-        return BulkDataDatabase.ExpectTable(BulkDataTable).GetDataTable(numberOfRows);
-    }
+    public DataTable GetDataTable(int numberOfRows) =>
+        BulkDataDatabase.ExpectTable(BulkDataTable).GetDataTable(numberOfRows);
 
     /// <summary>
     /// Creates Rdmp metadata objects (<see cref="catalogue"/>, <see cref="tableInfo"/> etc) which point to the <see cref="BulkDataTable"/>
@@ -144,10 +141,10 @@ public class BulkTestsData
     public ICatalogue ImportAsCatalogue()
     {
         var f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
-        f.DoImport(out tableInfo,out columnInfos);
+        f.DoImport(out tableInfo, out columnInfos);
 
-        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
-        forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
+        var forwardEngineer = new ForwardEngineerCatalogue(tableInfo, columnInfos);
+        forwardEngineer.ExecuteForwardEngineering(out var c, out catalogueItems, out extractionInformations);
         catalogue = c;
 
         var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));
@@ -164,10 +161,10 @@ public class BulkTestsData
     {
         var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
 
-        if(tableInfo.Exists())
+        if (tableInfo.Exists())
             tableInfo.DeleteInDatabase();
 
-        if(creds != null)
+        if (creds != null)
             try
             {
                 creds.DeleteInDatabase();
@@ -177,7 +174,7 @@ public class BulkTestsData
                 Console.WriteLine($"Ignored Potential Exception:{e}");
             }
 
-        if(catalogue.Exists())
+        if (catalogue.Exists())
             catalogue.DeleteInDatabase();
     }
 

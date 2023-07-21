@@ -26,12 +26,14 @@ public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
     public string ReplacementName { get; set; }
 
 
-    [DemandsInitialization("In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.", Mandatory = true, DefaultValue = false)]
+    [DemandsInitialization(
+        "In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.",
+        Mandatory = true, DefaultValue = false)]
     public bool RelaxedMode { get; set; }
 
 
-
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         if (!toProcess.Columns.Contains(ColumnNameToFind))
             return RelaxedMode
@@ -46,20 +48,20 @@ public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-            
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-            
     }
 
     public void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(ColumnNameToFind))
-            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ColumnNameToFind",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ColumnNameToFind",
+                CheckResult.Fail));
 
         if (string.IsNullOrWhiteSpace(ReplacementName))
-            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ReplacementName", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ReplacementName",
+                CheckResult.Fail));
     }
 }

@@ -29,30 +29,18 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
-
     }
 
-    public IDataAccessPoint GetDataAccessPoint()
-    {
-        return _loggingServer;
-    }
+    public IDataAccessPoint GetDataAccessPoint() => _loggingServer;
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _loggingServer.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _loggingServer.GetQuerySyntaxHelper();
 
-    public string GetSql()
-    {
-        return $@"Select * from {_filter.LoggingTable }
+    public string GetSql() =>
+        $@"Select * from {_filter.LoggingTable}
 
-{_filter.GetWhereSql() }";
-    }
+{_filter.GetWhereSql()}";
 
-    public string GetTabName()
-    {
-        return _filter.ToString();
-    }
+    public string GetTabName() => _filter.ToString();
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

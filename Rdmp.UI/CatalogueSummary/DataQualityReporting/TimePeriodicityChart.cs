@@ -23,14 +23,14 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 /// validation as a stack chart.  The Data tab will show you the raw counts that power the graph.  See SecondaryConstraintUI for validation configuration and ConsequenceKey for the
 /// meanings of each consequence classification.
 /// </summary>
-public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportingChart
+public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReportingChart
 {
-    private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter =  new();
+    private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
     public TimePeriodicityChart()
     {
         InitializeComponent();
-            
+
         chart1.PaletteCustomColors = new Color[]
         {
             ConsequenceBar.CorrectColor,
@@ -67,7 +67,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         chart1.Visible = false;
         var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, pivotCategoryValue, true);
 
-        if(dt == null)
+        if (dt == null)
         {
             ClearGraph();
             chart1.Visible = true;
@@ -82,23 +82,21 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
         if (dt.Rows.Count != 0)
             ChartLookAndFeelSetter.PopulateYearMonthChart(chart1, dt, "Data Quality");
-            
+
         chart1.DataBind();
         chart1.Visible = true;
-            
+
         ReGenerateAnnotations();
     }
 
     private void ReGenerateAnnotations()
     {
-
         chart1.Annotations.Clear();
 
         AddUserAnnotations(_currentEvaluation);
 
         if (cbShowGaps.Checked)
             AddGapAnnotations(chart1.DataSource as DataTable);
-
     }
 
     private void AddGapAnnotations(DataTable dt)
@@ -108,12 +106,12 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
         foreach (DataRow dr in dt.Rows)
         {
-            var currentBucket = new DateTime((int) dr["Year"],(int) dr["Month"],1);
+            var currentBucket = new DateTime((int)dr["Year"], (int)dr["Month"], 1);
             var diff = currentBucket.Subtract(lastBucket);
 
             bucketNumber++;
 
-            if (lastBucket != DateTime.MinValue && diff.TotalDays >31)
+            if (lastBucket != DateTime.MinValue && diff.TotalDays > 31)
             {
                 //add gap annotation
                 var line = new LineAnnotation
@@ -146,7 +144,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
                 chart1.Annotations.Add(text);
             }
 
-            lastBucket = new DateTime((int) dr["Year"],(int) dr["Month"],1);
+            lastBucket = new DateTime((int)dr["Year"], (int)dr["Month"], 1);
         }
     }
 
@@ -155,11 +153,12 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         //clear old annotations
         chart1.Annotations.Clear();
 
-        var evaluations = evaluation.GetAllDQEGraphAnnotations(_pivotCategoryValue).Where(a => a.AnnotationIsForGraph == DQEGraphType.TimePeriodicityGraph);
-            
+        var evaluations = evaluation.GetAllDQEGraphAnnotations(_pivotCategoryValue)
+            .Where(a => a.AnnotationIsForGraph == DQEGraphType.TimePeriodicityGraph);
+
         foreach (var annotation in evaluations)
         {
-            var a = new DQEGraphAnnotationUI(annotation,chart1);
+            var a = new DQEGraphAnnotationUI(annotation, chart1);
             chart1.Annotations.Add(a.Annotation);
             chart1.Annotations.Add(a.TextAnnotation);
         }
@@ -176,7 +175,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
         if (!annotating)
             return;
-            
+
         pointStartX = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.X);
         pointStartY = chart1.ChartAreas[0].AxisY.PixelPositionToValue(e.Y);
     }
@@ -190,20 +189,19 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         var pointEndY = chart1.ChartAreas[0].AxisY.PixelPositionToValue(e.Y);
 
         // don't let them annotate emptiness!
-        if(double.IsNaN(pointEndX) || double.IsNaN(pointEndY))
-        {
-            return;
-        }
+        if (double.IsNaN(pointEndX) || double.IsNaN(pointEndY)) return;
 
         if (Activator.TypeText(new DialogArgs
             {
                 WindowTitle = "Add Annotation",
-                TaskDescription = "Type some annotation text(will be saved to the database for other data analysts to see)",
+                TaskDescription =
+                    "Type some annotation text(will be saved to the database for other data analysts to see)",
                 EntryLabel = "Annotation:"
             }, 500, null, out var result, false))
         {
             //create new annotation in the database
-            new DQEGraphAnnotation(_currentEvaluation.DQERepository,pointStartX, pointStartY, pointEndX, pointEndY, result, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
+            new DQEGraphAnnotation(_currentEvaluation.DQERepository, pointStartX, pointStartY, pointEndX, pointEndY,
+                result, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
 
             //refresh the annotations
             AddUserAnnotations(_currentEvaluation);
@@ -231,23 +229,20 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
     private void chart1_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.Delete)
+        if (e.KeyCode == Keys.Delete)
             foreach (DQEGraphAnnotationUI ui in
-                     chart1.Annotations.Where(a => a.IsSelected && a.Tag is DQEGraphAnnotationUI) //get the selected ones
+                     chart1.Annotations
+                         .Where(a => a.IsSelected && a.Tag is DQEGraphAnnotationUI) //get the selected ones
                          .Select(t => t.Tag) //get all the appropriately typed annotations
                          .Distinct() //distinct because we get a line and a text for each - works because all .Equals are on ID of underlying object
-                         .ToArray())//use ToArray so we can modify it in for loop
-            {
-                if(Activator.YesNo($"Delete annotation '{ui.TextAnnotation.Text}'", "Confirm deleting annotation from database"))
-                    ui.Delete(chart1);//delete it is what we are actually doing
-            }
+                         .ToArray()) //use ToArray so we can modify it in for loop
+                if (Activator.YesNo($"Delete annotation '{ui.TextAnnotation.Text}'",
+                        "Confirm deleting annotation from database"))
+                    ui.Delete(chart1); //delete it is what we are actually doing
     }
 
     private void cbShowGaps_CheckedChanged(object sender, EventArgs e)
     {
-        if(chart1.DataSource != null)
-        {
-            ReGenerateAnnotations();
-        }
+        if (chart1.DataSource != null) ReGenerateAnnotations();
     }
 }

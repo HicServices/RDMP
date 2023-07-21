@@ -40,6 +40,7 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     }
 
     #region Relationships
+
     /// <inheritdoc cref="TableInfo_ID"/>
     [NoMappingToDatabase]
     public TableInfo TableInfo => _knownTableInfo.Value;
@@ -59,12 +60,12 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     /// <param name="repository"></param>
     /// <param name="sds"></param>
     /// <param name="tableInfo"></param>
-    public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, ITableInfo tableInfo)
+    public SelectedDataSetsForcedJoin(IDataExportRepository repository, SelectedDataSets sds, ITableInfo tableInfo)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"SelectedDataSets_ID",sds.ID},
-            {"TableInfo_ID",tableInfo.ID}
+            { "SelectedDataSets_ID", sds.ID },
+            { "TableInfo_ID", tableInfo.ID }
         });
 
         if (ID == 0 || Repository != repository)
@@ -72,7 +73,8 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
 
         ClearAllInjections();
     }
-    internal SelectedDataSetsForcedJoin(IRepository repository, DbDataReader r): base(repository, r)
+
+    internal SelectedDataSetsForcedJoin(IRepository repository, DbDataReader r) : base(repository, r)
     {
         SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
         TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
@@ -85,14 +87,13 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     {
         _knownTableInfo = new Lazy<TableInfo>(instance);
     }
+
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
         _knownTableInfo = new Lazy<TableInfo>(FetchTableInfo);
     }
 
-    private TableInfo FetchTableInfo()
-    {
-        return ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<TableInfo>(TableInfo_ID);
-    }
+    private TableInfo FetchTableInfo() =>
+        ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<TableInfo>(TableInfo_ID);
 }

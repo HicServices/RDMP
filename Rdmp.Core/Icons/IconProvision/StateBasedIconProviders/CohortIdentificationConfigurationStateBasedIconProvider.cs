@@ -18,12 +18,14 @@ public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectSt
     public CohortIdentificationConfigurationStateBasedIconProvider()
     {
         _cohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.CohortIdentificationConfiguration);
-        _frozenCohortIdentificationConfiguration = Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);   
+        _frozenCohortIdentificationConfiguration =
+            Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
     }
-    public Image<Rgba32> GetImageIfSupportedObject(object o)
-    {
-        return o is not CohortIdentificationConfiguration cic
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
+        o is not CohortIdentificationConfiguration cic
             ? null
-            : cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;
-    }
+            : cic.Frozen
+                ? _frozenCohortIdentificationConfiguration
+                : _cohortIdentificationConfiguration;
 }

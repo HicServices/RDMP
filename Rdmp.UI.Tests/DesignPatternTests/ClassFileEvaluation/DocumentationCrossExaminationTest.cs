@@ -17,16 +17,22 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 internal class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
-    private static readonly Regex MatchComments = new(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+
+    private static readonly Regex MatchComments =
+        new(@"///[^;\r\n]*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private string[] _mdFiles;
-    private static readonly Regex MatchMdReferences = new(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+
+    private static readonly Regex MatchMdReferences =
+        new(@"`(.*)`", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private const bool ReWriteMarkdownToReferenceGlossary = true;
 
     //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
     //since the very fact that you add something to Ignorelist means that it is in the codebase after all!
+
     #region IgnoreList Terms
+
     private static readonly HashSet<string> IgnoreList = new()
     {
         "AppData",
@@ -271,11 +277,13 @@ internal class DocumentationCrossExaminationTest
         "SocialSecurityNumber",
         "BuildInParallel"
     };
+
     #endregion
+
     public DocumentationCrossExaminationTest(DirectoryInfo slndir)
     {
         _slndir = slndir;
-        _mdFiles = Directory.GetFiles(slndir.FullName, "*.md",SearchOption.AllDirectories);
+        _mdFiles = Directory.GetFiles(slndir.FullName, "*.md", SearchOption.AllDirectories);
     }
 
     public void FindProblems(List<string> csFilesFound)
@@ -300,15 +308,14 @@ internal class DocumentationCrossExaminationTest
         {
             var isDesignerFile = file.Contains(".Designer.cs");
 
-            if(file.Contains("CodeTutorials"))
+            if (file.Contains("CodeTutorials"))
                 continue;
 
             //don't look in the packages dir!
-            if(file.Contains("packages"))
+            if (file.Contains("packages"))
                 continue;
 
             foreach (var line in File.ReadLines(file))
-            {
                 //if it is a comment
                 if (MatchComments.IsMatch(line))
                 {
@@ -328,31 +335,29 @@ internal class DocumentationCrossExaminationTest
                     foreach (Match word in Regex.Matches(line, @"\w+"))
                         codeTokens.Add(word.Value);
                 }
-            }
         }
 
         //find all comments in .md tutorials
         foreach (var mdFile in _mdFiles)
         {
             //don't look in the packages dir!
-            if(mdFile.Contains("packages"))
+            if (mdFile.Contains("packages"))
                 continue;
 
-            fileCommentTokens.Add(mdFile,new HashSet<string>());
+            fileCommentTokens.Add(mdFile, new HashSet<string>());
             var fileContents = File.ReadAllText(mdFile);
 
             foreach (Match m in MatchMdReferences.Matches(fileContents))
             foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
                 fileCommentTokens[mdFile].Add(word.Value);
 
-            EnsureMaximumGlossaryUse(mdFile,problems);
+            EnsureMaximumGlossaryUse(mdFile, problems);
 
             EnsureCodeBlocksCompile(mdFile, problems);
         }
 
 
-        foreach ((var filename, var tokens) in fileCommentTokens)
-        {
+        foreach (var (filename, tokens) in fileCommentTokens)
             problems.AddRange(tokens
                 .Where(token => !codeTokens.Contains(token) && !codeTokens.Contains($"ExecuteCommand{token}"))
                 .Where(token => !IgnoreList.Contains(token))
@@ -360,23 +365,25 @@ internal class DocumentationCrossExaminationTest
                 .Where(token => token.Length <= 2 || !token.EndsWith("s") || !codeTokens.Contains(token[..^1]))
                 .Select(token =>
                     $"FATAL PROBLEM: File '{filename}' talks about something which isn't in the codebase, called a:{Environment.NewLine}{token}"));
-        }
 
         if (problems.Any())
         {
-            Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest.Ignorelist):");
-            foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
+            Console.WriteLine(
+                "Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest.Ignorelist):");
+            foreach (var pLine in problems.Where(l => l.Contains('\n')).Select(p => p.Split('\n')))
                 Console.WriteLine($"\"{pLine[1]}\",");
             foreach (var problem in problems)
                 Console.WriteLine(problem);
         }
 
-        Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
+        Assert.AreEqual(0, problems.Count,
+            "Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
     }
 
     private static void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
     {
-        var codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
+        var codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,
+            "../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
         Console.WriteLine($"Starting {mdFile}");
 
@@ -400,11 +407,12 @@ internal class DocumentationCrossExaminationTest
                 var guid = match.Groups[1].Value;
                 var sb = new StringBuilder();
 
-                markdownCodeBlocks.Add(guid,null);
+                markdownCodeBlocks.Add(guid, null);
 
                 //consume the line and look for ```csharp on the next line
-                if(!rStartCodeBlock.IsMatch(lines[++i]))
-                    throw new Exception($"Expected code block in markdown for GUID {guid} to be followed by a line {rStartCodeBlock}");
+                if (!rStartCodeBlock.IsMatch(lines[++i]))
+                    throw new Exception(
+                        $"Expected code block in markdown for GUID {guid} to be followed by a line {rStartCodeBlock}");
 
                 //skip the ```csharp line
                 i++;
@@ -419,7 +427,7 @@ internal class DocumentationCrossExaminationTest
 
         foreach (var kvp in markdownCodeBlocks)
         {
-            var rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
+            var rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion", RegexOptions.Singleline);
             var m = rBlock.Match(codeBlocksContent);
 
             if (!m.Success)
@@ -445,7 +453,7 @@ internal class DocumentationCrossExaminationTest
         var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
 
         //don't evaluate the glossary!
-        if(Path.GetFileName(mdFile) == "Glossary.md")
+        if (Path.GetFileName(mdFile) == "Glossary.md")
             return;
 
         if (Path.GetFileName(mdFile) == "template.md")
@@ -454,8 +462,8 @@ internal class DocumentationCrossExaminationTest
         var glossaryHeaders =
             new HashSet<string>(
                 File.ReadAllLines(glossaryPath)
-                    .Where(l=>rGlossary.IsMatch(l))
-                    .Select(l=>rGlossary.Match(l).Groups[1].Value.Trim()));
+                    .Where(l => rGlossary.IsMatch(l))
+                    .Select(l => rGlossary.Match(l).Groups[1].Value.Trim()));
 
         var inCodeBlock = false;
         var lineNumber = 0;
@@ -469,27 +477,25 @@ internal class DocumentationCrossExaminationTest
         {
             lineNumber++;
 
-            if(string.IsNullOrWhiteSpace(line))
+            if (string.IsNullOrWhiteSpace(line))
                 continue;
 
             //don't complain about the glossary links at the bottom of the file.
-            if(rGlossaryLink.IsMatch(line))
+            if (rGlossaryLink.IsMatch(line))
                 continue;
 
             //don't complain about keywords in code blocks
-            if(line.TrimStart().StartsWith("```") || line.TrimStart().StartsWith("> ```"))
+            if (line.TrimStart().StartsWith("```") || line.TrimStart().StartsWith("> ```"))
                 inCodeBlock = !inCodeBlock;
 
             if (!inCodeBlock)
-            {
                 foreach (Match match in rWords.Matches(line))
-                {
                     if (glossaryHeaders.Contains(match.Value))
                     {
                         //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
-                        if(match.Index - 1 > 0
-                           &&
-                           (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
+                        if (match.Index - 1 > 0
+                            &&
+                            (line[match.Index - 1] == '[' || line[match.Index - 1] == '"'))
                             continue;
 
 
@@ -504,9 +510,11 @@ internal class DocumentationCrossExaminationTest
                         var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
 
                         //if it has spaces on either side
-                        if(line[Math.Max(0,match.Index-1)] == ' ' && line[Math.Min(line.Length-1,match.Index + match.Length)] == ' '
-                                                                  //don't mess with lines that contain an image
-                                                                  && !line.Contains("!["))
+                        if (line[Math.Max(0, match.Index - 1)] == ' ' && line[
+                                                                          Math.Min(line.Length - 1,
+                                                                              match.Index + match.Length)] == ' '
+                                                                      //don't mess with lines that contain an image
+                                                                      && !line.Contains("!["))
                             allLinesRevised[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
 
                         //also if we have a name like `Catalogue` it should probably be [Catalogue] instead so it works as a link
@@ -515,23 +523,21 @@ internal class DocumentationCrossExaminationTest
                         //if it is a novel occurrence
                         if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
                         {
-                            suggestedLinks.Add(match.Value,suggestedLine);
-                            problems.Add($"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"" );
+                            suggestedLinks.Add(match.Value, suggestedLine);
+                            problems.Add(
+                                $"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"");
                         }
                     }
-                }
-            }
         }
 
         // ReSharper disable once RedundantLogicalConditionalExpressionOperand
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (suggestedLinks.Any() && ReWriteMarkdownToReferenceGlossary)
         {
-            File.WriteAllLines(mdFile,allLinesRevised);
+            File.WriteAllLines(mdFile, allLinesRevised);
 
-            File.AppendAllText(mdFile,Environment.NewLine);
+            File.AppendAllText(mdFile, Environment.NewLine);
             File.AppendAllLines(mdFile, suggestedLinks.Values.Distinct());
         }
-
     }
 }

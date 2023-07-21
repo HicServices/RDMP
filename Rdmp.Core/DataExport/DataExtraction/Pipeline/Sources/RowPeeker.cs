@@ -29,10 +29,8 @@ internal class RowPeeker
     {
         //if we have a peeked record
         if (_peekedRecord != null)
-        {
             try
             {
-
                 //if we are at the end of the batch
                 if (chunk == null)
                 {
@@ -48,15 +46,14 @@ internal class RowPeeker
                 // We "clone" the row
                 newRow.ItemArray = _peekedRecord.ItemArray;
                 //add the peeked record
-                chunk.Rows.InsertAt(newRow,0);
+                chunk.Rows.InsertAt(newRow, 0);
             }
             finally
             {
                 //clear the peek
-                if(clearPeek)
+                if (clearPeek)
                     _peekedRecord = null;
             }
-        }
 
         return chunk;
     }
@@ -69,16 +66,19 @@ internal class RowPeeker
     /// <param name="source"></param>
     /// <param name="equalityFunc"></param>
     /// <param name="chunk"></param>
-    public void AddWhile(IDbDataCommandDataFlowSource source, Func<DataRow,bool> equalityFunc,DataTable chunk)
+    public void AddWhile(IDbDataCommandDataFlowSource source, Func<DataRow, bool> equalityFunc, DataTable chunk)
     {
-        if(_peekedRecord != null)
-            throw new Exception("Cannot AddWhile when there is an existing peeked record, call AddPeekedRowsIfAny to drain the Peek");
+        if (_peekedRecord != null)
+            throw new Exception(
+                "Cannot AddWhile when there is an existing peeked record, call AddPeekedRowsIfAny to drain the Peek");
 
         //while we are still successfully reading rows and those rows have the same release id
-        while(source.ReadOneRow() is { } r)
-            if(equalityFunc(r))
+        while (source.ReadOneRow() is { } r)
+            if (equalityFunc(r))
                 //add it to the current chunk
+            {
                 chunk.ImportRow(r);
+            }
             else
             {
                 //match was failure on this new record (but the data is not exhausted).  So the peek becomes this new record

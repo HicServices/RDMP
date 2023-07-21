@@ -33,7 +33,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occuring if you handle magic numbers from
 /// other agencies). </para>
 /// </summary>
-public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDependencies,INamed
+public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDependencies, INamed
 {
     /// <summary>
     /// Name of the table in your database that contains the private to release identifier mappings (e.g. 'Cohort').

@@ -30,6 +30,7 @@ namespace Rdmp.UI.CohortUI;
 public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
 {
     private ExtractableCohortAuditLogBuilder _auditLogBuilder = new();
+
     public ExtractableCohortCollectionUI()
     {
         InitializeComponent();
@@ -51,6 +52,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
         lbCohortDatabaseTable.BeforeSorting += BeforeSorting;
     }
+
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
@@ -58,6 +60,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         // wait till we have an activator before registering this callback otherwise we will get null reference
         olvCreatedFrom.AspectGetter = CreatedFromAspectGetter;
     }
+
     private object CreatedFromAspectGetter(object rowObject)
     {
         if (rowObject is ExtractableCohortDescription ecd)
@@ -73,25 +76,23 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
     {
         lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
-            e.ColumnToSort,e.SortOrder , e.SecondaryColumnToSort, e.SecondarySortOrder);
+            e.ColumnToSort, e.SortOrder, e.SecondaryColumnToSort, e.SecondarySortOrder);
         e.Handled = true;
     }
 
     private void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
     {
         if (e.Column == olvViewLog && e.Model is ExtractableCohortDescription ecd)
-            WideMessageBox.Show("Cohort audit log",ecd.Cohort.AuditLog,WideMessageBoxTheme.Help);
+            WideMessageBox.Show("Cohort audit log", ecd.Cohort.AuditLog, WideMessageBoxTheme.Help);
     }
 
-    private object ViewLogAspectGetter(object rowObject)
-    {
-        return rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog) ? "View Log" : (object)null;
-    }
+    private object ViewLogAspectGetter(object rowObject) =>
+        rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog)
+            ? "View Log"
+            : (object)null;
 
-    private object IDAspectGetter(object rowObject)
-    {
-        return rowObject is ExtractableCohortDescription ecd ? ecd.Cohort.ID : (object)null;
-    }
+    private object IDAspectGetter(object rowObject) =>
+        rowObject is ExtractableCohortDescription ecd ? ecd.Cohort.ID : (object)null;
 
     private bool haveSubscribed;
 
@@ -99,7 +100,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         try
         {
-            if(!haveSubscribed)
+            if (!haveSubscribed)
             {
                 activator.RefreshBus.EstablishLifetimeSubscription(this);
                 haveSubscribed = true;
@@ -110,7 +111,8 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}",
+                e);
         }
     }
 
@@ -119,12 +121,14 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         try
         {
             lbCohortDatabaseTable.ClearObjects();
-            lbCohortDatabaseTable.AddObjects(cohorts.Select(cohort => new ExtractableCohortDescription(cohort)).ToArray());
+            lbCohortDatabaseTable.AddObjects(cohorts.Select(cohort => new ExtractableCohortDescription(cohort))
+                .ToArray());
         }
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}",
+                e);
         }
     }
 
@@ -142,19 +146,16 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table)
         //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the invocation list)
         foreach (var (fetch, nodes) in fetchDescriptionsDictionary)
-        {
             //Could be we are disposed when this happens
             fetch.Finished += () =>
             {
                 if (!lbCohortDatabaseTable.IsDisposed)
                     lbCohortDatabaseTable.RefreshObjects(nodes);
             };
-        }
     }
 
     private void lbCohortDatabaseTable_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     public event SelectedCohortChangedHandler SelectedCohortChanged;
@@ -167,8 +168,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
             var toDelete = node.Cohort;
 
-            if (Activator.YesNo($"Are you sure you want to delete {toDelete} (ID={toDelete.ID})","Confirm Delete"))
-            {
+            if (Activator.YesNo($"Are you sure you want to delete {toDelete} (ID={toDelete.ID})", "Confirm Delete"))
                 try
                 {
                     toDelete.DeleteInDatabase();
@@ -179,7 +179,6 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
                 {
                     ExceptionViewer.Show(exception);
                 }
-            }
             else
                 return;
         }
@@ -188,7 +187,8 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         lbCohortDatabaseTable.UseFiltering = true;
-        lbCohortDatabaseTable.ModelFilter = new TextMatchFilter(lbCohortDatabaseTable, tbFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+        lbCohortDatabaseTable.ModelFilter = new TextMatchFilter(lbCohortDatabaseTable, tbFilter.Text,
+            StringComparison.CurrentCultureIgnoreCase);
     }
 
     private void lbCohortDatabaseTable_FormatRow(object sender, FormatRowEventArgs e)
@@ -199,32 +199,35 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         if (model.Exception != null)
             e.Item.BackColor = Color.Red;
     }
+
     private void lbCohortDatabaseTable_ItemActivate(object sender, EventArgs e)
     {
-        if(lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription model)
+        if (lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription model)
             return;
 
-        if(model.Exception != null)
+        if (model.Exception != null)
             ExceptionViewer.Show(model.Exception);
     }
 
     public void SetSelectedCohort(ExtractableCohort toSelect)
     {
-
         if (toSelect == null)
         {
             lbCohortDatabaseTable.SelectedObject = null;
             return;
         }
 
-        var matchingNode = lbCohortDatabaseTable.Objects.Cast<ExtractableCohortDescription>().SingleOrDefault(c => c.Cohort.ID == toSelect.ID);
+        var matchingNode = lbCohortDatabaseTable.Objects.Cast<ExtractableCohortDescription>()
+            .SingleOrDefault(c => c.Cohort.ID == toSelect.ID);
 
         lbCohortDatabaseTable.SelectedObject = matchingNode;
     }
 
     private void lbCohortDatabaseTable_SelectionChanged(object sender, EventArgs e)
     {
-        var selected = lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription node ? null : node.Cohort;
+        var selected = lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription node
+            ? null
+            : node.Cohort;
 
         SelectedCohortChanged?.Invoke(this, selected);
     }

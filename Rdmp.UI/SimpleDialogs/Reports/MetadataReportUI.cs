@@ -44,7 +44,7 @@ public partial class MetadataReportUI : RDMPForm
     private readonly Catalogue[] _catalogues;
     private bool _firstTime = true;
 
-    public MetadataReportUI(IActivateItems activator,ICatalogue[] initialSelection = null):base(activator)
+    public MetadataReportUI(IActivateItems activator, ICatalogue[] initialSelection = null) : base(activator)
     {
         InitializeComponent();
 
@@ -65,8 +65,9 @@ public partial class MetadataReportUI : RDMPForm
 
         IEnumerable<Catalogue> toReportOn = _catalogues;
 
-        if(rbAllCatalogues.Checked)
-            toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated).ToArray();
+        if (rbAllCatalogues.Checked)
+            toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated)
+                .ToArray();
         else if (_cataloguesToRun == null || !_catalogues.Any())
             return;
         else
@@ -76,8 +77,8 @@ public partial class MetadataReportUI : RDMPForm
         {
             Timeout = _timeout,
             IncludeRowCounts = cbIncludeRowCounts.Checked,
-            IncludeDistinctIdentifierCounts =  cbIncludeDistinctIdentifiers.Checked,
-            SkipImages =  !cbIncludeGraphs.Checked,
+            IncludeDistinctIdentifierCounts = cbIncludeDistinctIdentifiers.Checked,
+            SkipImages = !cbIncludeGraphs.Checked,
             TimespanCalculator = new DatasetTimespanCalculator(),
             IncludeDeprecatedItems = cbIncludeDeprecatedCatalogueItems.Checked,
             IncludeInternalItems = cbIncludeInternalCatalogueItems.Checked,
@@ -88,7 +89,7 @@ public partial class MetadataReportUI : RDMPForm
         _report = new MetadataReport(Activator.RepositoryLocator.CatalogueRepository, args);
 
         _report.RequestCatalogueImages += report_RequestCatalogueImages;
-        _report.GenerateWordFileAsync(progressBarsUI1,true);
+        _report.GenerateWordFileAsync(progressBarsUI1, true);
 
         btnGenerateReport.Enabled = false;
         btnStop.Enabled = true;
@@ -98,17 +99,18 @@ public partial class MetadataReportUI : RDMPForm
     {
         //cross thread
         if (InvokeRequired)
-            return (BitmapWithDescription[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages), catalogue);
+            return (BitmapWithDescription[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages),
+                catalogue);
 
         var toReturn = new List<BitmapWithDescription>();
 
 
-        aggregateGraph1.Width = (int) _report.PageWidthInPixels;
+        aggregateGraph1.Width = (int)_report.PageWidthInPixels;
         aggregateGraph1.Visible = true;
 
 
         //only graph extractable aggregates
-        foreach (var aggregate in catalogue.AggregateConfigurations.Where(config=>config.IsExtractable))
+        foreach (var aggregate in catalogue.AggregateConfigurations.Where(config => config.IsExtractable))
         {
             if (_firstTime)
             {
@@ -116,11 +118,13 @@ public partial class MetadataReportUI : RDMPForm
                 _firstTime = false;
             }
             else
-                aggregateGraph1.SetAggregate(Activator,aggregate);
+            {
+                aggregateGraph1.SetAggregate(Activator, aggregate);
+            }
 
             aggregateGraph1.LoadGraphAsync();
 
-            while(aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
+            while (aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
             {
                 Thread.Sleep(100);
                 Application.DoEvents();
@@ -129,7 +133,7 @@ public partial class MetadataReportUI : RDMPForm
             if (aggregateGraph1.Crashed)
             {
                 progressBarsUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                    $"Aggregate with ID {aggregate.ID} crashed",aggregateGraph1.Exception));
+                    $"Aggregate with ID {aggregate.ID} crashed", aggregateGraph1.Exception));
                 continue;
             }
 
@@ -142,7 +146,6 @@ public partial class MetadataReportUI : RDMPForm
         aggregateGraph1.Visible = false;
 
         return toReturn.ToArray();
-
     }
 
     private void btnStop_Click(object sender, EventArgs e)
@@ -163,7 +166,7 @@ public partial class MetadataReportUI : RDMPForm
 
     private void rbAllCatalogues_CheckedChanged(object sender, EventArgs e)
     {
-        if(bLoading)
+        if (bLoading)
             return;
 
         cbxCatalogues.Enabled = false;
@@ -172,7 +175,7 @@ public partial class MetadataReportUI : RDMPForm
 
     private void rbSpecificCatalogue_CheckedChanged(object sender, EventArgs e)
     {
-        if(bLoading)
+        if (bLoading)
             return;
 
         cbxCatalogues.Enabled = true;
@@ -199,22 +202,19 @@ public partial class MetadataReportUI : RDMPForm
 
     private void cbIncludeDistinctIdentifiers_CheckedChanged(object sender, EventArgs e)
     {
-
     }
 
     private void btnPick_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObjects(new DialogArgs
-           {
-               TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
-           }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(),out var selected))
-        {
+        if (Activator.SelectObjects(new DialogArgs
+            {
+                TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
+            }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
             SetCatalogueSelection(selected);
-        }
-
     }
 
     private bool bLoading;
+
     private void SetCatalogueSelection(ICatalogue[] array)
     {
         bLoading = true;
@@ -225,7 +225,7 @@ public partial class MetadataReportUI : RDMPForm
             cbxCatalogues.Enabled = false;
             _cataloguesToRun = array;
         }
-        else if(array.Length == 1)
+        else if (array.Length == 1)
         {
             rbSpecificCatalogue.Checked = true;
             cbxCatalogues.SelectedItem = array[0];
@@ -245,11 +245,11 @@ public partial class MetadataReportUI : RDMPForm
 
     private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(bLoading)
+        if (bLoading)
             return;
 
         if (cbxCatalogues.SelectedItem != null)
-            _cataloguesToRun = new[] {(ICatalogue) cbxCatalogues.SelectedItem};
+            _cataloguesToRun = new[] { (ICatalogue)cbxCatalogues.SelectedItem };
     }
 
     private void btnFolder_Click(object sender, EventArgs e)
@@ -260,16 +260,15 @@ public partial class MetadataReportUI : RDMPForm
             .Distinct()
             .ToArray();
 
-        if(Activator.SelectObject(new DialogArgs
-           {
-               TaskDescription = "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
-           }, folders,out var selected))
-        {
+        if (Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription =
+                    "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
+            }, folders, out var selected))
             SetCatalogueSelection(
                 Activator.CoreChildProvider
                     .AllCatalogues
                     .Where(c => c.Folder.Equals(selected))
                     .ToArray());
-        }
     }
 }

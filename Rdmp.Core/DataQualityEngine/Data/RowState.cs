@@ -16,7 +16,6 @@ namespace Rdmp.Core.DataQualityEngine.Data;
 /// </summary>
 public class RowState
 {
-
     public int Correct { get; private set; }
     public int Missing { get; private set; }
     public int Wrong { get; private set; }
@@ -30,7 +29,7 @@ public class RowState
     {
         Correct = Convert.ToInt32(r["Correct"]);
         Missing = Convert.ToInt32(r["Missing"]);
-        Wrong   = Convert.ToInt32(r["Wrong"]);
+        Wrong = Convert.ToInt32(r["Wrong"]);
         Invalid = Convert.ToInt32(r["Invalid"]);
         PivotCategory = (string)r["PivotCategory"];
         DataLoadRunID = Convert.ToInt32(r["DataLoadRunID"]);
@@ -38,16 +37,15 @@ public class RowState
     }
 
 
-
-    public RowState(Evaluation evaluation, int dataLoadRunID, int correct, int missing, int wrong,int invalid, string validatorXml,string pivotCategory, DbConnection con, DbTransaction transaction)
+    public RowState(Evaluation evaluation, int dataLoadRunID, int correct, int missing, int wrong, int invalid,
+        string validatorXml, string pivotCategory, DbConnection con, DbTransaction transaction)
     {
-
         var sql =
             $"INSERT INTO RowState(Evaluation_ID,Correct,Missing,Wrong,Invalid,DataLoadRunID,ValidatorXML,PivotCategory)VALUES({evaluation.ID},{correct},{missing},{wrong},{invalid},{dataLoadRunID},@validatorXML,@pivotCategory)";
 
         using (var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction))
         {
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@validatorXML",cmd,validatorXml);
+            DatabaseCommandHelper.AddParameterWithValueToCommand("@validatorXML", cmd, validatorXml);
             DatabaseCommandHelper.AddParameterWithValueToCommand("@pivotCategory", cmd, pivotCategory);
             cmd.ExecuteNonQuery();
         }

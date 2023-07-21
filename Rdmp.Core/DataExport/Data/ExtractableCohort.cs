@@ -24,7 +24,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IExtractableCohort"/>
-public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
+public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>,
+    IInjectKnown<ExternalCohortTable>, ICustomSearchString
 {
     /// <summary>
     /// Logging entry in the RDMP central relational log under which to record all activities that relate to creating cohorts
@@ -32,6 +33,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     public const string CohortLoggingTask = "CohortManagement";
 
     #region Database Properties
+
     private int _externalCohortTable_ID;
     private string _overrideReleaseIdentifierSQL;
     private string _auditLog;
@@ -77,7 +79,6 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     #endregion
 
 
-
     private int _count = -1;
 
 
@@ -95,6 +96,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     }
 
     private int _countDistinct = -1;
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public int CountDistinct
@@ -111,6 +113,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     private Dictionary<string, string> _releaseToPrivateKeyDictionary;
 
     #region Relationships
+
     /// <inheritdoc cref="ExternalCohortTable_ID"/>
     [NoMappingToDatabase]
     public IExternalCohortTable ExternalCohortTable => _knownExternalCohortTable.Value;
@@ -159,7 +162,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
             _broken = true;
             _cacheData = new Lazy<IExternalCohortDefinitionData>((IExternalCohortDefinitionData)null);
         }
-                
+
         return null;
     }
 
@@ -197,19 +200,18 @@ from {ExternalCohortTable.DefinitionTableName}
 where 
     {syntax.EnsureWrapped("id")} = {OriginID}";
 
-        if(timeoutInSeconds != -1)
-        {
-            db.Server.TestConnection(timeoutInSeconds * 1000);
-        }
+        if (timeoutInSeconds != -1) db.Server.TestConnection(timeoutInSeconds * 1000);
 
         using var con = db.Server.GetConnection();
         con.Open();
         using var getDescription = db.Server.GetCommand(sql, con);
-        if(timeoutInSeconds != -1)
+        if (timeoutInSeconds != -1)
             getDescription.CommandTimeout = timeoutInSeconds;
 
         using var r = getDescription.ExecuteReader();
-        return r.Read() ? new ExternalCohortDefinitionData(r, ExternalCohortTable.Name) : ExternalCohortDefinitionData.Orphan;
+        return r.Read()
+            ? new ExternalCohortDefinitionData(r, ExternalCohortTable.Name)
+            : ExternalCohortDefinitionData.Orphan;
     }
 
 
@@ -229,12 +231,13 @@ where
         Repository = repository;
 
         if (!externalSource.IDExistsInCohortTable(originalId))
-            throw new Exception($"ID {originalId} does not exist in Cohort Definitions (Referential Integrity Problem)");
+            throw new Exception(
+                $"ID {originalId} does not exist in Cohort Definitions (Referential Integrity Problem)");
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"OriginID", originalId},
-            {"ExternalCohortTable_ID", externalSource.ID}
+            { "OriginID", originalId },
+            { "ExternalCohortTable_ID", externalSource.ID }
         });
 
         ClearAllInjections();
@@ -251,10 +254,7 @@ where
     }
 
     /// <inheritdoc/>
-    public string GetSearchString()
-    {
-        return $"{ToString()} {ExternalProjectNumber} {ExternalVersion}";
-    }
+    public string GetSearchString() => $"{ToString()} {ExternalProjectNumber} {ExternalVersion}";
 
     private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
 
@@ -284,7 +284,7 @@ where
         dtReturn.EndLoadData();
 
         dtReturn.TableName = cohortTable.GetRuntimeName();
-                
+
         return dtReturn;
     }
 
@@ -293,7 +293,7 @@ where
     {
         var ect = ExternalCohortTable;
         var syntax = ect.GetQuerySyntaxHelper();
-            
+
         return
             $"{syntax.EnsureFullyQualified(syntax.GetRuntimeName(ect.Database ?? string.Empty), /* no schema*/ null, syntax.GetRuntimeName(ect.TableName ?? string.Empty), syntax.GetRuntimeName(ect.DefinitionTableForeignKeyField ?? string.Empty))}={OriginID}";
     }
@@ -314,9 +314,10 @@ where
     public int GetCountDistinctFromDatabase(int timeout = -1)
     {
         var syntax = GetQuerySyntaxHelper();
-            
+
         return Convert.ToInt32(ExecuteScalar(
-            $"SELECT count(DISTINCT {syntax.EnsureWrapped(GetReleaseIdentifier(true))}) FROM {ExternalCohortTable.TableName} WHERE {WhereSQL()}",timeout));
+            $"SELECT count(DISTINCT {syntax.EnsureWrapped(GetReleaseIdentifier(true))}) FROM {ExternalCohortTable.TableName} WHERE {WhereSQL()}",
+            timeout));
     }
 
     private object ExecuteScalar(string sql, int timeout = -1)
@@ -328,7 +329,7 @@ where
         con.Open();
 
         using var cmd = db.Server.GetCommand(sql, con);
-        if(timeout != -1)
+        if (timeout != -1)
             cmd.CommandTimeout = timeout;
 
         return cmd.ExecuteScalar();
@@ -349,15 +350,13 @@ where
             out var versionMemberName,
             out var projectNumberMemberName);
         foreach (DataRow r in dt.Rows)
-        {
             yield return
                 new CohortDefinition(
                     Convert.ToInt32(r[valueMemberName]),
                     r[displayMemberName].ToString(),
                     Convert.ToInt32(r[versionMemberName]),
                     Convert.ToInt32(r[projectNumberMemberName])
-                    ,externalSource);
-        }
+                    , externalSource);
     }
 
     /// <summary>
@@ -369,7 +368,9 @@ where
     /// <param name="versionMemberName"></param>
     /// <param name="projectNumberMemberName"></param>
     /// <returns></returns>
-    public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource, out string displayMemberName, out string valueMemberName, out string versionMemberName, out string projectNumberMemberName)
+    public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource,
+        out string displayMemberName, out string valueMemberName, out string versionMemberName,
+        out string projectNumberMemberName)
     {
         var server = externalSource.Discover().Server;
         var syntax = server.GetQuerySyntaxHelper();
@@ -413,7 +414,8 @@ where
 
         var syntaxHelper = GetQuerySyntaxHelper();
 
-        if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+        if (syntaxHelper.GetRuntimeName(toReturn)
+            .Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
             ThrowImmediatelyCheckNotifier.Quiet
                 .OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
 
@@ -421,30 +423,19 @@ where
     }
 
     /// <inheritdoc/>
-    public string GetPrivateIdentifier(bool runtimeName = false)
-    {
-        return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(ExternalCohortTable.PrivateIdentifierField) : ExternalCohortTable.PrivateIdentifierField;
-    }
+    public string GetPrivateIdentifier(bool runtimeName = false) => runtimeName
+        ? GetQuerySyntaxHelper().GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)
+        : ExternalCohortTable.PrivateIdentifierField;
 
     /// <inheritdoc/>
-    public string GetPrivateIdentifierDataType()
-    {
-        return ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
-            
-    }
+    public string GetPrivateIdentifierDataType() => ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
 
     /// <inheritdoc/>
-    public string GetReleaseIdentifierDataType()
-    {
-        return ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
-    }
+    public string GetReleaseIdentifierDataType() => ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
 
 
     /// <inheritdoc/>
-    public DiscoveredDatabase GetDatabaseServer()
-    {
-        return ExternalCohortTable.Discover();
-    }
+    public DiscoveredDatabase GetDatabaseServer() => ExternalCohortTable.Discover();
 
     //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
     private int _reverseAnonymiseProgressFetchingMap;
@@ -456,7 +447,7 @@ where
     private bool _broken;
 
     /// <inheritdoc/>
-    public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
+    public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener, bool allowCaching)
     {
         var haveWarnedAboutTop1AlreadyCount = 10;
 
@@ -468,7 +459,6 @@ where
         //if we don't want to support caching or there is no cached value yet
         if (!allowCaching || _releaseToPrivateKeyDictionary == null)
         {
-
             var map = FetchEntireCohort();
 
 
@@ -480,33 +470,43 @@ where
             {
                 if (_releaseToPrivateKeyDictionary.Keys.Contains(r[releaseIdentifier]))
                 {
-                    if (haveWarnedAboutTop1AlreadyCount >0)
+                    if (haveWarnedAboutTop1AlreadyCount > 0)
                     {
                         haveWarnedAboutTop1AlreadyCount--;
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Top 1-ing will occur for release identifier {r[releaseIdentifier]} because it maps to multiple private identifiers"));
-
                     }
                     else
                     {
                         if (haveWarnedAboutTop1AlreadyCount == 0)
                         {
                             haveWarnedAboutTop1AlreadyCount = -1;
-                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Top 1-ing error message disabled due to flood of messages"));
+                            listener.OnNotify(this,
+                                new NotifyEventArgs(ProgressEventType.Warning,
+                                    "Top 1-ing error message disabled due to flood of messages"));
                         }
                     }
                 }
                 else
-                    _releaseToPrivateKeyDictionary.Add(r[releaseIdentifier].ToString().Trim(), r[privateIdentifier].ToString().Trim());
+                {
+                    _releaseToPrivateKeyDictionary.Add(r[releaseIdentifier].ToString().Trim(),
+                        r[privateIdentifier].ToString().Trim());
+                }
 
                 _reverseAnonymiseProgressFetchingMap++;
 
-                if(_reverseAnonymiseProgressFetchingMap%500 == 0)
-                    listener.OnProgress(this, new ProgressEventArgs("Assembling Release Map Dictionary", new ProgressMeasurement(_reverseAnonymiseProgressFetchingMap, ProgressType.Records), sw.Elapsed));
+                if (_reverseAnonymiseProgressFetchingMap % 500 == 0)
+                    listener.OnProgress(this,
+                        new ProgressEventArgs("Assembling Release Map Dictionary",
+                            new ProgressMeasurement(_reverseAnonymiseProgressFetchingMap, ProgressType.Records),
+                            sw.Elapsed));
             }
 
-            listener.OnProgress(this, new ProgressEventArgs("Assembling Release Map Dictionary", new ProgressMeasurement(_reverseAnonymiseProgressFetchingMap, ProgressType.Records), sw.Elapsed));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Assembling Release Map Dictionary",
+                    new ProgressMeasurement(_reverseAnonymiseProgressFetchingMap, ProgressType.Records), sw.Elapsed));
         }
+
         var nullsFound = 0;
         var substitutions = 0;
 
@@ -515,44 +515,50 @@ where
 
         //fix values
         foreach (DataRow row in toProcess.Rows)
-        {
             try
             {
                 var value = row[releaseIdentifier];
 
-                if(value == null || value == DBNull.Value)
+                if (value == null || value == DBNull.Value)
                 {
                     nullsFound++;
                     continue;
                 }
 
-                row[releaseIdentifier] = _releaseToPrivateKeyDictionary[value.ToString().Trim()].Trim();//swap release value for private value (reversing the anonymisation)
+                row[releaseIdentifier] =
+                    _releaseToPrivateKeyDictionary[value.ToString().Trim()]
+                        .Trim(); //swap release value for private value (reversing the anonymisation)
                 substitutions++;
 
                 _reverseAnonymiseProgressReversing++;
 
                 if (_reverseAnonymiseProgressReversing % 500 == 0)
-                    listener.OnProgress(this, new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers", new ProgressMeasurement(_reverseAnonymiseProgressReversing, ProgressType.Records), sw2.Elapsed));
+                    listener.OnProgress(this,
+                        new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers",
+                            new ProgressMeasurement(_reverseAnonymiseProgressReversing, ProgressType.Records),
+                            sw2.Elapsed));
             }
             catch (KeyNotFoundException e)
             {
                 throw new Exception(
-                    $"Could not find private identifier ({privateIdentifier}) for the release identifier ({releaseIdentifier}) with value '{row[releaseIdentifier]}' in cohort with cohortDefinitionID {OriginID}",e);
+                    $"Could not find private identifier ({privateIdentifier}) for the release identifier ({releaseIdentifier}) with value '{row[releaseIdentifier]}' in cohort with cohortDefinitionID {OriginID}",
+                    e);
             }
-        }
-            
+
         //final value
-        listener.OnProgress(this, new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers", new ProgressMeasurement(_reverseAnonymiseProgressReversing, ProgressType.Records), sw2.Elapsed));
-            
-        if(nullsFound > 0)
+        listener.OnProgress(this,
+            new ProgressEventArgs("Substituting Release Identifiers For Private Identifiers",
+                new ProgressMeasurement(_reverseAnonymiseProgressReversing, ProgressType.Records), sw2.Elapsed));
+
+        if (nullsFound > 0)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                 $"Found {nullsFound} null release identifiers amongst the {toProcess.Rows.Count} rows of the input data table (on which we were attempting to reverse anonymise)"));
 
-        listener.OnNotify(this, new NotifyEventArgs(substitutions >0?ProgressEventType.Information : ProgressEventType.Error,
+        listener.OnNotify(this, new NotifyEventArgs(
+            substitutions > 0 ? ProgressEventType.Information : ProgressEventType.Error,
             $"Substituted {substitutions} release identifiers for private identifiers in input data table (input data table contained {toProcess.Rows.Count} rows)"));
 
         toProcess.Columns[releaseIdentifier].ColumnName = privateIdentifier;
-        
     }
 
     /// <summary>
@@ -580,11 +586,13 @@ where
     {
         _knownExternalCohortTable = new Lazy<IExternalCohortTable>(instance);
     }
+
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
-        _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>GetExternalData());
-        _knownExternalCohortTable = new Lazy<IExternalCohortTable>(()=>Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
+        _cacheData = new Lazy<IExternalCohortDefinitionData>(() => GetExternalData());
+        _knownExternalCohortTable =
+            new Lazy<IExternalCohortTable>(() => Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
         _broken = false;
     }
 
@@ -595,8 +603,6 @@ where
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID " , ID);
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() =>
+        Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID ", ID);
 }

@@ -28,16 +28,15 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
-    public ExecuteCommandCreateNewCohortFromTable(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+    public ExecuteCommandCreateNewCohortFromTable(IBasicActivateItems activator,
+        ExternalCohortTable externalCohortTable) : base(activator)
     {
         UseTripleDotSuffix = true;
         ExternalCohortTable = externalCohortTable;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a cohort using ALL of the patient identifiers in the referenced table";
-    }
+    public override string GetCommandHelp() =>
+        "Creates a cohort using ALL of the patient identifiers in the referenced table";
 
 
     public override void Execute()
@@ -45,21 +44,18 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         var tbl = BasicActivator.SelectTable(false, "Pick a table to import cohorts from");
 
         if (tbl == null)
-        {
             // user cancelled selecting a table
             return;
-        }
 
         if (!BasicActivator.SelectObject(new DialogArgs
             {
                 EntryLabel = "Patient Identifier Column",
-                TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
+                TaskDescription =
+                    $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
                 AllowAutoSelect = true
             }, tbl.DiscoverColumns(), out var col))
-        {
             // user cancelled selecting a column
             return;
-        }
 
         base.Execute();
 
@@ -93,8 +89,6 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
 }

@@ -19,6 +19,7 @@ public class TreeNodeParentFinder
     {
         _tree = tree;
     }
+
     public T GetFirstOrNullParentRecursivelyOfType<T>(object modelObject) where T : class
     {
         //get parent of node

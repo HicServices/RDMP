@@ -19,7 +19,8 @@ namespace Rdmp.Core.Caching.Pipeline;
 /// </summary>
 public class RoundRobinPipelineExecution : IMultiPipelineEngineExecutionStrategy
 {
-    public void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken, IDataLoadEventListener listener)
+    public void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken,
+        IDataLoadEventListener listener)
     {
         // Execute one pass through a pipeline before moving to the next. Continue until completion.
         var engineList = engines.ToList();
@@ -40,6 +41,8 @@ public class RoundRobinPipelineExecution : IMultiPipelineEngineExecutionStrategy
             }
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Round robin executor is finished, all pipelines have run to completion."));
+        listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information,
+                "Round robin executor is finished, all pipelines have run to completion."));
     }
 }

@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Checks;
 /// Checks whether a given IFilter which was known to be cloned is still identical to its parent ExtractionFilter.  Also confirms that its parent still exists.
 /// It is legal to modify an IFilter after cloning into a subfilter (e.g. AggregateFilter) therefore this class only provides Warning level events
 /// </summary>
-public class ClonedFilterChecker:ICheckable
+public class ClonedFilterChecker : ICheckable
 {
     private readonly IFilter _child;
     private int? _allegedParent;
@@ -27,7 +27,8 @@ public class ClonedFilterChecker:ICheckable
     /// <param name="child"></param>
     /// <param name="allegedParentExtractionFilterID">ExtractionFilter from which the IFilter was derrived</param>
     /// <param name="catalogueDatabaseRepository"></param>
-    public ClonedFilterChecker(IFilter child, int? allegedParentExtractionFilterID, IRepository catalogueDatabaseRepository)
+    public ClonedFilterChecker(IFilter child, int? allegedParentExtractionFilterID,
+        IRepository catalogueDatabaseRepository)
     {
         _child = child;
         _allegedParent = allegedParentExtractionFilterID;
@@ -43,7 +44,6 @@ public class ClonedFilterChecker:ICheckable
     {
         if (_allegedParent == null)
         {
-
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Filter {_child} is not cloned from a Catalogue filter so does not need checking for synchronicity",
@@ -58,13 +58,14 @@ public class ClonedFilterChecker:ICheckable
         //tell them if it has been nuked
         notifier.OnCheckPerformed(
             new CheckEventArgs(
-                $"Catalogue reports that the original filter we were cloned from {(exist ? " still exists " : " no longer exists")}", exist ? CheckResult.Success : CheckResult.Warning));
+                $"Catalogue reports that the original filter we were cloned from {(exist ? " still exists " : " no longer exists")}",
+                exist ? CheckResult.Success : CheckResult.Warning));
 
         //it hasn't been nuked
         if (exist)
         {
             //get it
-            var parent = _catalogueDatabaseRepository.GetObjectByID<ExtractionFilter>((int) _allegedParent);
+            var parent = _catalogueDatabaseRepository.GetObjectByID<ExtractionFilter>((int)_allegedParent);
 
             if (string.IsNullOrWhiteSpace(parent.WhereSQL) || string.IsNullOrWhiteSpace(_child.WhereSQL))
                 return;
@@ -75,10 +76,10 @@ public class ClonedFilterChecker:ICheckable
                     $"Filter {_child} has the same WhereSQL as parent",
                     CheckResult.Success));
             else
-            {
                 try
                 {
-                    throw new ExpectedIdenticalStringsException("Expected WHERE SQL to be identical", parent.WhereSQL,_child.WhereSQL);
+                    throw new ExpectedIdenticalStringsException("Expected WHERE SQL to be identical", parent.WhereSQL,
+                        _child.WhereSQL);
                 }
                 catch (ExpectedIdenticalStringsException ex)
                 {
@@ -87,7 +88,6 @@ public class ClonedFilterChecker:ICheckable
                             $"{_child.GetType().Name} called '{_child}' (ID={_child.ID}) WhereSQL does not match the parent it was originally cloned from (ExtractionFilter ID={_allegedParent}).  You might have made a deliberate change in your copy or it might mean that someone has corrected the parent since you first cloned it",
                             CheckResult.Warning, ex));
                 }
-            }
         }
     }
 }

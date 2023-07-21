@@ -35,6 +35,7 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
     {
         InitializeComponent();
     }
+
     public override void SetDatabaseObject(IActivateItems activator, StandardRegex databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -49,21 +50,21 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",r=>r.ID);
-        Bind(tbConceptName,"Text","ConceptName", r=>r.ConceptName);
-        Bind(tbRegex,"Text","Regex", r=>r.Regex);
-        Bind(tbDescription,"Text","Description", r => r.Description);
+        Bind(tbID, "Text", "ID", r => r.ID);
+        Bind(tbConceptName, "Text", "ConceptName", r => r.ConceptName);
+        Bind(tbRegex, "Text", "Regex", r => r.Regex);
+        Bind(tbDescription, "Text", "Description", r => r.Description);
     }
 
     private void btnTest_Click(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(tbTesting.Text))
         {
-            lblResultOfTest.Text = "The test text box is blank, null values will automatically pass validation (use a NotNull constraint to do null related evaluations)";
+            lblResultOfTest.Text =
+                "The test text box is blank, null values will automatically pass validation (use a NotNull constraint to do null related evaluations)";
             lblResultOfTest.ForeColor = Color.Green;
         }
-        else
-        if (Regex.IsMatch(tbTesting.Text, _standardRegex.Regex))
+        else if (Regex.IsMatch(tbTesting.Text, _standardRegex.Regex))
         {
             lblResultOfTest.Text =
                 $"The text '{tbTesting.Text}' matches the Regex pattern '{_standardRegex.Regex}' meaning that the value will pass validation and not be flagged as a validation failure";

@@ -50,7 +50,8 @@ public class LogViewerFilter
                 throw new ArgumentOutOfRangeException(nameof(loggingTable), loggingTable, null);
         }
     }
-    public LoggingTables LoggingTable {get;set;}
+
+    public LoggingTables LoggingTable { get; set; }
 
     public bool IsEmpty => Run == null && Table == null && Task == null;
 
@@ -63,13 +64,13 @@ public class LogViewerFilter
     /// <summary>
     /// An object that contains data about the filter or supplementary information.  The default is null.
     /// </summary>
-    public object Tag {get;set;}
+    public object Tag { get; set; }
 
     public override string ToString()
     {
         var sb = new StringBuilder();
 
-        if(Task != null)
+        if (Task != null)
             sb.Append($"DataLoadTask={Task}");
 
         if (Run != null)

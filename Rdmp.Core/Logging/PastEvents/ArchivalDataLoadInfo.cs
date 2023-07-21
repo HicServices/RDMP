@@ -54,7 +54,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     /// <summary>
     /// All tables loaded during the run
     /// </summary>
-    public List<ArchivalTableLoadInfo>  TableLoadInfos => _knownTableInfos.Value;
+    public List<ArchivalTableLoadInfo> TableLoadInfos => _knownTableInfos.Value;
 
     /// <summary>
     /// All errors that occured during the run
@@ -78,15 +78,14 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     /// </summary>
     internal ArchivalDataLoadInfo()
     {
-
     }
 
-    internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
+    internal ArchivalDataLoadInfo(DbDataReader r, DiscoveredDatabase loggingDatabase)
     {
         _loggingDatabase = loggingDatabase;
         ID = Convert.ToInt32(r["ID"]);
         DataLoadTaskID = Convert.ToInt32(r["dataLoadTaskID"]);
-            
+
         //populate basic facts from the table
         StartTime = (DateTime)r["startTime"];
         if (r["endTime"] == null || r["endTime"] == DBNull.Value)
@@ -117,16 +116,14 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         using var con = _loggingDatabase.Server.GetConnection();
         con.Open();
 
-        using var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con);
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con);
         using var r = cmd.ExecuteReader();
-        while(r.Read())
+        while (r.Read())
         {
             var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
 
-            if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
-            {
-                continue;
-            }
+            if ((audit.Inserts ?? 0) <= 0 && (audit.Updates ?? 0) <= 0 && (audit.Deletes ?? 0) <= 0 &&
+                UserSettings.HideEmptyTableLoadRunAudits) continue;
 
             toReturn.Add(audit);
         }

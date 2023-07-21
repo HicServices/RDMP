@@ -22,19 +22,19 @@ public class EndToEndDLETest : TestsRequiringADle
     public void RunEndToEndDLETest()
     {
         const int timeoutInMilliseconds = 120000;
-        CreateFileInForLoading("loadmeee.csv",500,new Random(500));
+        CreateFileInForLoading("loadmeee.csv", 500, new Random(500));
         RunDLE(timeoutInMilliseconds);
     }
 
-    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     public void TestDle_DodgyColumnNames(DatabaseType dbType)
     {
         var db = GetCleanedServer(dbType);
 
-        var tbl = db.CreateTable("Troll Select * Loll",new DatabaseColumnRequest[]
+        var tbl = db.CreateTable("Troll Select * Loll", new DatabaseColumnRequest[]
         {
-            new("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true},
-            new(",,,,",new DatabaseTypeRequest(typeof(string)))
+            new("group by", new DatabaseTypeRequest(typeof(string), 100)) { IsPrimaryKey = true },
+            new(",,,,", new DatabaseTypeRequest(typeof(string)))
         });
 
         CreateFileInForLoading("Troll.csv", new string[]
@@ -50,16 +50,16 @@ public class EndToEndDLETest : TestsRequiringADle
         };
         lmd.SaveToDatabase();
 
-        CreateFlatFileAttacher(lmd,"Troll.csv",cata.GetTableInfoList(false).Single());
+        CreateFlatFileAttacher(lmd, "Troll.csv", cata.GetTableInfoList(false).Single());
 
         cata.LoadMetadata_ID = lmd.ID;
         cata.SaveToDatabase();
 
-        Assert.AreEqual(0,tbl.GetRowCount());
+        Assert.AreEqual(0, tbl.GetRowCount());
 
-        RunDLE(lmd,30000,true);
+        RunDLE(lmd, 30000, true);
 
-        Assert.AreEqual(1,tbl.GetRowCount());
-        Assert.AreEqual("fishon",tbl.GetDataTable().Rows[0][",,,,"]);
+        Assert.AreEqual(1, tbl.GetRowCount());
+        Assert.AreEqual("fishon", tbl.GetDataTable().Rows[0][",,,,"]);
     }
 }

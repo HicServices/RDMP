@@ -9,7 +9,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Providers.Nodes;
 
-public class LinkedColumnInfoNode : Node,IDeleteable, IMasqueradeAs
+public class LinkedColumnInfoNode : Node, IDeleteable, IMasqueradeAs
 {
     public CatalogueItem CatalogueItem { get; }
     public ColumnInfo ColumnInfo { get; }
@@ -20,33 +20,22 @@ public class LinkedColumnInfoNode : Node,IDeleteable, IMasqueradeAs
         ColumnInfo = columnInfo;
     }
 
-    public override string ToString()
-    {
-        return ColumnInfo.ToString();
-    }
+    public override string ToString() => ColumnInfo.ToString();
 
-    protected bool Equals(LinkedColumnInfoNode other)
-    {
-        return Equals(CatalogueItem, other.CatalogueItem) && Equals(ColumnInfo, other.ColumnInfo);
-    }
+    protected bool Equals(LinkedColumnInfoNode other) =>
+        Equals(CatalogueItem, other.CatalogueItem) && Equals(ColumnInfo, other.ColumnInfo);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LinkedColumnInfoNode) obj);
+        return Equals((LinkedColumnInfoNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(CatalogueItem, ColumnInfo);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(CatalogueItem, ColumnInfo);
 
-    public object MasqueradingAs()
-    {
-        return ColumnInfo;
-    }
+    public object MasqueradingAs() => ColumnInfo;
 
     public void DeleteInDatabase()
     {

@@ -13,7 +13,7 @@ namespace Rdmp.UI.ChecksUI;
 /// <summary>
 /// Popup dialog version of ChecksUI, See ChecksUI for description of functionality.
 /// </summary>
-public partial class PopupChecksUI : Form,ICheckNotifier
+public partial class PopupChecksUI : Form, ICheckNotifier
 {
     public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
@@ -28,7 +28,9 @@ public partial class PopupChecksUI : Form,ICheckNotifier
             _haveDemandedVisibility = true;
         }
         else
+        {
             CreateHandle(); //let windows get a handle on the situation ;)
+        }
 
         KeyPreview = true;
     }
@@ -48,7 +50,7 @@ public partial class PopupChecksUI : Form,ICheckNotifier
         if (_worstSeen < args.Result)
             _worstSeen = args.Result;
 
-        if(args.Result is CheckResult.Fail or CheckResult.Warning && !_haveDemandedVisibility)
+        if (args.Result is CheckResult.Fail or CheckResult.Warning && !_haveDemandedVisibility)
         {
             _haveDemandedVisibility = true;
             Invoke(new MethodInvoker(Show));
@@ -84,8 +86,5 @@ public partial class PopupChecksUI : Form,ICheckNotifier
         checksUI1.StartChecking(checkable);
     }
 
-    public CheckResult GetWorst()
-    {
-        return _worstSeen;
-    }
+    public CheckResult GetWorst() => _worstSeen;
 }

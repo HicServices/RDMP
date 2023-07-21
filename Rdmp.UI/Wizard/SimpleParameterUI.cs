@@ -21,7 +21,7 @@ public partial class SimpleParameterUI : UserControl
 {
     private readonly ISqlParameter _parameter;
 
-    public SimpleParameterUI(IActivateItems activator,ISqlParameter parameter)
+    public SimpleParameterUI(IActivateItems activator, ISqlParameter parameter)
     {
         _parameter = parameter;
         InitializeComponent();
@@ -32,7 +32,7 @@ public partial class SimpleParameterUI : UserControl
         tbValue.Text = parameter.Value;
 
         //move the text box to the right of the parameter name but make sure it is minimum visible
-        tbValue.Left = Math.Min(Width - tbValue.Width,lblParameterName.Right);
+        tbValue.Left = Math.Min(Width - tbValue.Width, lblParameterName.Right);
     }
 
     public void SetValueTo(ExtractionFilterParameterSet set)
@@ -40,9 +40,9 @@ public partial class SimpleParameterUI : UserControl
         if (set == null)
             return;
 
-        var correctValue = set.GetAllParameters().FirstOrDefault(p=>p.ParameterName.Equals(_parameter.ParameterName));
+        var correctValue = set.GetAllParameters().FirstOrDefault(p => p.ParameterName.Equals(_parameter.ParameterName));
 
-        if(correctValue == null)
+        if (correctValue == null)
         {
             tbValue.Text = "";
             return;
@@ -54,13 +54,13 @@ public partial class SimpleParameterUI : UserControl
     public void HandleSettingParameters(IFilter filter)
     {
         //rename operations can have happened
-        var parameterToSet = filter.GetAllParameters().Single(p => p.ParameterName.StartsWith(_parameter.ParameterName));
+        var parameterToSet =
+            filter.GetAllParameters().Single(p => p.ParameterName.StartsWith(_parameter.ParameterName));
         parameterToSet.Value = tbValue.Text;
         parameterToSet.SaveToDatabase();
     }
 
     private void tbValue_TextChanged(object sender, EventArgs e)
     {
-
     }
 }

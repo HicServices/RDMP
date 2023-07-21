@@ -52,5 +52,4 @@ public interface ICohortDefinition
     /// <param name="matchDescription"></param>
     /// <returns></returns>
     bool IsAcceptableAsNewCohort(out string matchDescription);
-
 }

@@ -38,14 +38,16 @@ public partial class ArgumentValueBoolUI : UserControl, IArgumentValueUI
             args.Setter(false);
         }
         else
-            cbValue.Checked = (bool)args.InitialValue;//otherwise use the previous value
+        {
+            cbValue.Checked = (bool)args.InitialValue; //otherwise use the previous value
+        }
 
         _bLoading = false;
     }
 
     private void cbValue_CheckedChanged(object sender, System.EventArgs e)
     {
-        if(_bLoading)
+        if (_bLoading)
             return;
 
         _args.Setter(cbValue.Checked);

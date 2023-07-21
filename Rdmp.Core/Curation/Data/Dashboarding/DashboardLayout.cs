@@ -19,9 +19,10 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 /// has a collection of DashboardControls which are IDashboardableControl instances that the user has configured on his Dashboard via DashboardLayoutUI.  This can include plugins. Not only
 /// does this class provide persistence for useful layouts of controls between application executions but it allows users to share their dashboards with one another.
 /// </summary>
-public class DashboardLayout : DatabaseEntity,INamed
+public class DashboardLayout : DatabaseEntity, INamed
 {
     #region Database Properties
+
     private string _name;
     private DateTime _created;
     private string _username;
@@ -52,6 +53,7 @@ public class DashboardLayout : DatabaseEntity,INamed
         get => _username;
         set => SetField(ref _username, value);
     }
+
     #endregion
 
     #region Relationships
@@ -66,7 +68,6 @@ public class DashboardLayout : DatabaseEntity,INamed
 
     public DashboardLayout()
     {
-
     }
 
     internal DashboardLayout(ICatalogueRepository repository, DbDataReader r)
@@ -86,16 +87,13 @@ public class DashboardLayout : DatabaseEntity,INamed
     {
         Repository = repository;
 
-        Repository.InsertAndHydrate(this,new Dictionary<string, object>
+        Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Username",Environment.UserName},
-            {"Name",name}
+            { "Username", Environment.UserName },
+            { "Name", name }
         });
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 }

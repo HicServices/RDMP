@@ -43,7 +43,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
 
     public ICatalogue CatalogueCreatedIfAny { get; private set; }
 
-    public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue,Project projectSpecific)
+    public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator, DiscoveredDatabase database,
+        FileInfo file, bool alsoForwardEngineerCatalogue, Project projectSpecific)
     {
         _repositoryLocator = activator.RepositoryLocator;
         _activator = activator;
@@ -55,7 +56,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
 
         configureAndExecutePipeline1 = new ConfigureAndExecutePipelineUI(
             ExecuteCommandCreateNewCatalogueByImportingFile.GetCreateCatalogueFromFileDialogArgs()
-            ,new UploadFileUseCase(file,database,activator),activator);
+            , new UploadFileUseCase(file, database, activator), activator);
         _file = file;
         // 
         // configureAndExecutePipeline1
@@ -67,12 +68,13 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
         configureAndExecutePipeline1.TabIndex = 14;
         Controls.Add(configureAndExecutePipeline1);
 
-        configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
-
+        configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully +=
+            ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
     }
 
 
-    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
+    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender,
+        PipelineEngineEventArgs args)
     {
         //pipeline executed successfully
         if (_alsoForwardEngineerCatalogue)
@@ -85,7 +87,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
                 targetTable = dest.TargetTableName;
                 var table = _database.ExpectTable(targetTable);
 
-                var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
+                var ui = new ConfigureCatalogueExtractabilityUI(_activator,
+                    new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
                     $"File '{_file.FullName}'", _projectSpecific);
                 ui.ShowDialog();
 
@@ -100,7 +103,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
             catch (Exception e)
             {
                 ExceptionViewer.Show(
-                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details", e);
+                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details",
+                    e);
             }
         }
     }

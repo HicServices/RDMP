@@ -16,7 +16,7 @@ using Rdmp.UI.SimpleDialogs;
 namespace Rdmp.UI.ChecksUI;
 
 /// <inheritdoc cref="IRAGSmiley" />
-public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
+public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 {
     private readonly Control _host;
     private CheckResult _worst;
@@ -43,7 +43,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
 
     private void T_Tick(object sender, EventArgs e)
     {
-        if(IsDisposed)
+        if (IsDisposed)
         {
             timer.Stop();
             timer.Dispose();
@@ -75,20 +75,11 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
         }
     }
 
-    public bool IsGreen()
-    {
-        return _worst == CheckResult.Success;
-    }
+    public bool IsGreen() => _worst == CheckResult.Success;
 
-    public bool IsWarning()
-    {
-        return _worst == CheckResult.Warning;
-    }
+    public bool IsWarning() => _worst == CheckResult.Warning;
 
-    public bool IsFatal()
-    {
-        return _worst == CheckResult.Fail;
-    }
+    public bool IsFatal() => _worst == CheckResult.Fail;
 
     private readonly Bitmap _green = Images.TinyGreen.ImageToBitmap();
     private readonly Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
@@ -143,15 +134,15 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
 
 
         if (dialog != null)
-        {
-            if(!string.IsNullOrWhiteSpace(args.ProposedFix))
-                if (dialog.ShowDialog($"Problem:{args.Message}\r\n\r\nFix:{args.ProposedFix}", "Apply Fix?") == DialogResult.Yes)
+            if (!string.IsNullOrWhiteSpace(args.ProposedFix))
+                if (dialog.ShowDialog($"Problem:{args.Message}\r\n\r\nFix:{args.ProposedFix}", "Apply Fix?") ==
+                    DialogResult.Yes)
                 {
                     ElevateState(CheckResult.Warning);
-                    memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",CheckResult.Warning));
+                    memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",
+                        CheckResult.Warning));
                     return true;
                 }
-        }
 
         ElevateState(args.Result);
 
@@ -186,7 +177,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
             new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
             //if we have a tagged Exception that isn't included in the ToMemoryCheckNotifier we should show the user that one too
-            if (tag != null && memoryCheckNotifier.Messages.All(m=>m.Ex != tag))
+            if (tag != null && memoryCheckNotifier.Messages.All(m => m.Ex != tag))
                 popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
 
             return true;
@@ -199,7 +190,6 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     {
         lock (oTaskLock)
         {
-
             //if there is already a Task and it has not completed
             if (_checkTask is { IsCompleted: false })
                 return;

@@ -19,11 +19,12 @@ public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecut
 {
     private readonly ITriggerImplementer _triggerImplementer;
 
-    public ExecuteCommandAlterTableAddArchiveTrigger(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
+    public ExecuteCommandAlterTableAddArchiveTrigger(IBasicActivateItems activator, TableInfo tableInfo) : base(
+        activator, tableInfo)
     {
-        if(IsImpossible)
+        if (IsImpossible)
             return;
-                
+
         if (!Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
         {
             SetImpossible(GlobalStrings.TableHasNoPrimaryKey);
@@ -35,25 +36,24 @@ public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecut
         var currentStatus = _triggerImplementer.GetTriggerStatus();
 
         if (currentStatus != TriggerStatus.Missing)
-            SetImpossible(GlobalStrings.TriggerStatusIsCurrently , currentStatus.S());
+            SetImpossible(GlobalStrings.TriggerStatusIsCurrently, currentStatus.S());
     }
 
     public override void Execute()
     {
         base.Execute();
-            
+
         if (!Synchronize())
             return;
-           
+
         if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
         {
             _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-            Show(GlobalStrings.CreateArchiveTableSuccess , $"{TableInfo.GetRuntimeName()}_Archive ");
+            Show(GlobalStrings.CreateArchiveTableSuccess, $"{TableInfo.GetRuntimeName()}_Archive ");
         }
 
         Synchronize();
 
         Publish(TableInfo);
     }
-
 }

@@ -61,5 +61,4 @@ public interface IPipeline : IInjectKnown<IPipelineComponent[]>, INamed
     /// </summary>
     /// <returns></returns>
     Pipeline Clone();
-
 }

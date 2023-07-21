@@ -20,7 +20,7 @@ public class QueryBuildingException : Exception
     /// <summary>
     /// List of objects thought to be responsible for the query generation failing
     /// </summary>
-    public List<IMapsDirectlyToDatabaseTable> ProblemObjects {get;private set;}
+    public List<IMapsDirectlyToDatabaseTable> ProblemObjects { get; private set; }
 
 
     /// <inheritdoc cref="QueryBuildingException(string)"/>
@@ -39,7 +39,7 @@ public class QueryBuildingException : Exception
     /// <summary>
     /// Creates a new Exception for when there is a problem with QueryBuilding e.g. being unable to find a compatible IJoin (JoinInfo) between two TableInfos required by a query
     /// </summary>
-    public QueryBuildingException(string message):base (message)
+    public QueryBuildingException(string message) : base(message)
     {
         ProblemObjects = new List<IMapsDirectlyToDatabaseTable>();
     }

@@ -31,12 +31,12 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// The Schema scope of the table (or blank if dbo / default / not supported by dbms).  This scope exists below Database and Above Table.  Not all database management
     /// engines support the concept of Schema (e.g. MySql).
     /// </summary>
-    string Schema { get; set;}
+    string Schema { get; set; }
 
     /// <summary>
     /// True if the table referenced is an sql server table valued function (which probably takes parameters)
     /// </summary>
-    bool IsTableValuedFunction { get; set;}
+    bool IsTableValuedFunction { get; set; }
 
 
     /// <summary>
@@ -46,7 +46,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// the tables.  If it cannot work out how to resolve the join order (e.g. if there are 3+ tables and joins going in both directions) then it will demand that one of the
     /// <see cref="TableInfo"/> be picked as the first table from which all other tables should then be joined.</para>
     /// </summary>
-    bool IsPrimaryExtractionTable {get;set; }
+    bool IsPrimaryExtractionTable { get; set; }
 
     /// <summary>
     /// The server that stores <see cref="PreLoadDiscardedColumn"/> values which do not make it to LIVE during a data load e.g. because they contain identifiable data that
@@ -134,7 +134,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// <summary>
     /// True if the object referenced is a database view
     /// </summary>
-    bool IsView {get;set; }
+    bool IsView { get; set; }
 
     /// <summary>
     /// The repository this object is stored in

@@ -21,23 +21,20 @@ public class DoNothingDataProvider : IDataProvider
 {
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,"DoNothingDataProvider did nothing!"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DoNothingDataProvider did nothing!"));
         return ExitCodeType.Success;
-            
     }
 
-    public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
     }
 
 
     public void Check(ICheckNotifier notifier)
     {
-            
     }
 }

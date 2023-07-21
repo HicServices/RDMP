@@ -44,7 +44,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         while (solutionDir?.GetFiles("*.sln").Any() != true) solutionDir = solutionDir?.Parent;
         Assert.IsNotNull(solutionDir, "Failed to find {0} in any parent directories", SolutionName);
 
-        var sln = new VisualStudioSolutionFile(solutionDir,solutionDir.GetFiles(SolutionName).Single());
+        var sln = new VisualStudioSolutionFile(solutionDir, solutionDir.GetFiles(SolutionName).Single());
 
         ProcessFolderRecursive(sln.RootFolders, solutionDir);
 
@@ -56,7 +56,6 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         FindUnreferencedProjectsRecursively(foundProjects, solutionDir);
 
         foreach (var kvp in foundProjects)
-        {
             switch (kvp.Value.Count)
             {
                 case 0:
@@ -68,7 +67,6 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
                         $"FAIL: Found 2+ copies of project {kvp.Key.Name} while traversing solution directories and subdirectories:{Environment.NewLine}{string.Join(Environment.NewLine, kvp.Value)}");
                     break;
             }
-        }
 
         Assert.AreEqual(0, _errors.Count);
         //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
@@ -111,13 +109,12 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         //        continue;
 
 
-
         //    Console.WriteLine(file.FullName);
         //}
-
     }
 
-    private void FindUnreferencedProjectsRecursively(Dictionary<VisualStudioProjectReference, List<string>> projects, DirectoryInfo dir)
+    private void FindUnreferencedProjectsRecursively(Dictionary<VisualStudioProjectReference, List<string>> projects,
+        DirectoryInfo dir)
     {
         var projFiles = dir.EnumerateFiles("*.csproj");
 
@@ -137,13 +134,14 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
             FindUnreferencedProjectsRecursively(projects, subdir);
     }
 
-    private void ProcessFolderRecursive(IEnumerable<VisualStudioSolutionFolder> folders, DirectoryInfo currentPhysicalDirectory)
+    private void ProcessFolderRecursive(IEnumerable<VisualStudioSolutionFolder> folders,
+        DirectoryInfo currentPhysicalDirectory)
     {
-
         //Process root folders
         foreach (var solutionFolder in folders)
         {
-            var physicalSolutionFolder = currentPhysicalDirectory.EnumerateDirectories().SingleOrDefault(d => d.Name.Equals(solutionFolder.Name));
+            var physicalSolutionFolder = currentPhysicalDirectory.EnumerateDirectories()
+                .SingleOrDefault(d => d.Name.Equals(solutionFolder.Name));
 
             if (physicalSolutionFolder == null)
             {
@@ -162,17 +160,22 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
 
     private void FindProjectInFolder(VisualStudioProjectReference p, DirectoryInfo physicalSolutionFolder)
     {
-        var physicalProjectFolder = physicalSolutionFolder.EnumerateDirectories().SingleOrDefault(f => f.Name.Equals(p.Name));
+        var physicalProjectFolder =
+            physicalSolutionFolder.EnumerateDirectories().SingleOrDefault(f => f.Name.Equals(p.Name));
 
         if (physicalProjectFolder == null)
+        {
             Error($"FAIL: Physical folder {p.Name} does not exist in directory {physicalSolutionFolder.FullName}");
+        }
         else
         {
             var csProjFile = physicalProjectFolder.EnumerateFiles("*.csproj").SingleOrDefault(f => f.Name.Equals(
                 $"{p.Name}.csproj"));
             if (csProjFile == null)
+            {
                 Error(
                     $"FAIL: .csproj file {p.Name}.csproj was not found in folder {physicalProjectFolder.FullName}");
+            }
             else
             {
                 var tidy = new CsProjFileTidy(csProjFile);
@@ -192,6 +195,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
     }
 
     private readonly List<string> _errors = new();
+
     private void Error(string s)
     {
         Console.WriteLine(s);
@@ -217,7 +221,8 @@ public class CopyrightHeaderEvaluator
             var text = File.ReadLines(file).First();
 
             if (!text.StartsWith("// Copyright (c) The University of Dundee 2018-20")
-                && text != @"// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications")
+                && text !=
+                @"// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications")
             {
                 changes = true;
                 sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2023");
@@ -226,16 +231,19 @@ public class CopyrightHeaderEvaluator
                     @"// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
                 sbSuggestedText.AppendLine(
                     @"// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.");
-                sbSuggestedText.AppendLine(@"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
+                sbSuggestedText.AppendLine(
+                    @"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
                 sbSuggestedText.AppendLine();
-                sbSuggestedText.AppendJoin(Environment.NewLine,text);
+                sbSuggestedText.AppendJoin(Environment.NewLine, text);
             }
 
             if (changes)
                 suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
         }
 
-        Assert.AreEqual(0,suggestedNewFileContents.Count,"The following files did not contain copyright:{0}{1}", Environment.NewLine, string.Join(Environment.NewLine,suggestedNewFileContents.Keys.Select(Path.GetFileName)));
+        Assert.AreEqual(0, suggestedNewFileContents.Count, "The following files did not contain copyright:{0}{1}",
+            Environment.NewLine,
+            string.Join(Environment.NewLine, suggestedNewFileContents.Keys.Select(Path.GetFileName)));
 
         //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
         foreach (var suggestedNewFileContent in suggestedNewFileContents)
@@ -251,7 +259,7 @@ public partial class AutoCommentsEvaluator
 
         foreach (var f in csFilesFound)
         {
-            if(f.Contains(".Designer.cs"))
+            if (f.Contains(".Designer.cs"))
                 continue;
 
             var changes = false;
@@ -264,7 +272,6 @@ public partial class AutoCommentsEvaluator
 
             for (var i = 0; i < text.Length; i++)
             {
-
                 //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
                 if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                 {
@@ -280,7 +287,6 @@ public partial class AutoCommentsEvaluator
                         var m = PublicRegex().Match(next);
                         if (m.Success)
                         {
-
                             var whitespace = m.Groups[1].Value;
                             var member = m.Groups[3].Value;
 
@@ -297,7 +303,6 @@ public partial class AutoCommentsEvaluator
                                 sbSuggestedText.AppendLine(text[i]);
                                 continue;
                             }
-
                         }
                     }
                 }
@@ -322,9 +327,9 @@ public partial class AutoCommentsEvaluator
                 }
 
                 //if we have a paragraph break in the summary comments and the next line isn't an end summary
-                if (areInSummary && text[i].Trim().Equals("///") && !text[i+1].Trim().Equals("/// </summary>"))
+                if (areInSummary && text[i].Trim().Equals("///") && !text[i + 1].Trim().Equals("/// </summary>"))
                 {
-                    if(paraOpened)
+                    if (paraOpened)
                     {
                         sbSuggestedText.Insert(sbSuggestedText.Length - 2, "</para>");
                         paraOpened = false;
@@ -339,7 +344,8 @@ public partial class AutoCommentsEvaluator
                         sbSuggestedText.AppendLine(text[i]);
 
                         //add the para tag
-                        var nextLine = text[i + 1].Insert(text[i+1].IndexOf("///", StringComparison.Ordinal)+4,"<para>");
+                        var nextLine = text[i + 1].Insert(text[i + 1].IndexOf("///", StringComparison.Ordinal) + 4,
+                            "<para>");
                         sbSuggestedText.AppendLine(nextLine);
                         i++;
                         paraOpened = true;

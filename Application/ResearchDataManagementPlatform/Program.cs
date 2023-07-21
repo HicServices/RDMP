@@ -23,22 +23,22 @@ internal static partial class Program
     [LibraryImport("kernel32.dll")]
     private static partial void AttachConsole(int dwProcessId);
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main(string[] args)
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    private static void Main(string[] args)
+    {
+        try
         {
-            try
-            {
-                AttachConsole(-1);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Couldn't redirect console. Never mind");
-            }
+            AttachConsole(-1);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Couldn't redirect console. Never mind");
+        }
 
-            Startup.PreStartup();
+        Startup.PreStartup();
 
         UsefulStuff.GetParser()
             .ParseArguments<ResearchDataManagementPlatformOptions>(args)
@@ -51,7 +51,7 @@ internal static partial class Program
         {
             arg.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             ExceptionViewer.Show(ex);
             return -500;

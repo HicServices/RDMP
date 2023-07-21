@@ -19,17 +19,17 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAtomicCommand
+internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAtomicCommand
 {
     private readonly IFilter _filter;
     private AggregateConfiguration[] _compatibleGraphs;
 
-    public ExecuteCommandViewFilterMatchGraph(IActivateItems activator, IFilter filter):base(activator)
+    public ExecuteCommandViewFilterMatchGraph(IActivateItems activator, IFilter filter) : base(activator)
     {
         _filter = filter;
         var cata = filter.GetCatalogue();
 
-        if(cata == null)
+        if (cata == null)
         {
             SetImpossible("No Catalogue found for filter");
             return;
@@ -48,20 +48,18 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAto
         _compatibleGraphs = compatibleGraphs;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Filter);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Filter);
 
     public override void Execute()
     {
         base.Execute();
 
         var selected = SelectOne(_compatibleGraphs);
-            
-        if(selected == null)
+
+        if (selected == null)
             return;
-            
+
         //if it's a cohort set
         if (_filter is AggregateFilter aggFilter && aggFilter.GetAggregate().IsCohortIdentificationAggregate)
         {
@@ -81,6 +79,5 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAto
             var collection = new FilterGraphObjectCollection(selected, (ConcreteFilter)_filter);
             Activator.Activate<FilterGraphUI>(collection);
         }
-                
     }
 }

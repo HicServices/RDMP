@@ -11,8 +11,8 @@ namespace Rdmp.Core.CommandExecution.Combining;
 
 public class CohortCombineToCreateCommandHelper
 {
-
-    public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator,ICatalogue c, ExtractionInformation[] candidates)
+    public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator, ICatalogue c,
+        ExtractionInformation[] candidates)
     {
         if (candidates.Length == 0)
             throw new Exception(
@@ -23,6 +23,8 @@ public class CohortCombineToCreateCommandHelper
 
         var selected = activator.SelectOne("Pick Extraction Identifier", candidates);
 
-        return selected != null ? (ExtractionInformation)selected : throw new Exception("User refused to choose an extraction identifier");
+        return selected != null
+            ? (ExtractionInformation)selected
+            : throw new Exception("User refused to choose an extraction identifier");
     }
 }

@@ -34,10 +34,10 @@ internal class DataAccessPortalCollectionTests
     public void TestOneServer_CountCorrect(bool singleServer)
     {
         var collection = new DataAccessPointCollection(singleServer);
-        collection.Add(Mock.Of<IDataAccessPoint>(m=>
+        collection.Add(Mock.Of<IDataAccessPoint>(m =>
             m.Server == "loco" &&
             m.DatabaseType == DatabaseType.Oracle));
-        Assert.AreEqual(1,collection.Points.Count);
+        Assert.AreEqual(1, collection.Points.Count);
     }
 
     [Test]
@@ -61,7 +61,7 @@ internal class DataAccessPortalCollectionTests
 
         //they both go to B so the single server should specify B
         var db = collection.GetDistinctServer().GetCurrentDatabase();
-        Assert.AreEqual("B",db.GetRuntimeName());
+        Assert.AreEqual("B", db.GetRuntimeName());
     }
 
     [Test]
@@ -95,9 +95,9 @@ internal class DataAccessPortalCollectionTests
             m.Server == "loco" &&
             m.Database == "B" &&
             m.DatabaseType == DatabaseType.Oracle &&
-            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u=>
-                u.Username == "ff"&&
-                u.GetDecryptedPassword() == "pwd")));  
+            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
+                u.Username == "ff" &&
+                u.GetDecryptedPassword() == "pwd")));
 
         collection.Add(Mock.Of<IDataAccessPoint>(m =>
             m.Server == "loco" &&
@@ -132,7 +132,8 @@ internal class DataAccessPortalCollectionTests
         );
 
         //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("collection could not agree whether to use Credentials or not", ex.InnerException.Message);
+        StringAssert.Contains("collection could not agree whether to use Credentials or not",
+            ex.InnerException.Message);
         Assert.AreEqual(1, collection.Points.Count);
     }
 
@@ -155,13 +156,15 @@ internal class DataAccessPortalCollectionTests
                 m.Server == "loco" &&
                 m.Database == "A" &&
                 m.DatabaseType == DatabaseType.Oracle &&
-                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                    u.Username == "user2" &&
-                    u.GetDecryptedPassword() == "pwd")))
+                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(
+                    u =>
+                        u.Username == "user2" &&
+                        u.GetDecryptedPassword() == "pwd")))
         );
 
         //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("could not agree on a single Username to use to access the data under", ex.InnerException.Message);
+        StringAssert.Contains("could not agree on a single Username to use to access the data under",
+            ex.InnerException.Message);
         Assert.AreEqual(1, collection.Points.Count);
     }
 
@@ -184,13 +187,15 @@ internal class DataAccessPortalCollectionTests
                 m.Server == "loco" &&
                 m.Database == "A" &&
                 m.DatabaseType == DatabaseType.Oracle &&
-                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                    u.Username == "user1" &&
-                    u.GetDecryptedPassword() == "pwd2")))
+                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(
+                    u =>
+                        u.Username == "user1" &&
+                        u.GetDecryptedPassword() == "pwd2")))
         );
 
         //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("collection could not agree on a single Password to use to access the data under", ex.InnerException.Message);
+        StringAssert.Contains("collection could not agree on a single Password to use to access the data under",
+            ex.InnerException.Message);
         Assert.AreEqual(1, collection.Points.Count);
     }
 

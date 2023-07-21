@@ -22,6 +22,7 @@ public class LoadStageNodeStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         _iconProvider = iconProvider;
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         return o switch

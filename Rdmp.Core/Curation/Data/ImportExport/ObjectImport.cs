@@ -47,7 +47,6 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
 
     public ObjectImport()
     {
-
     }
 
     /// <summary>
@@ -56,15 +55,14 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     /// <param name="repository"></param>
     /// <param name="sharingUID"></param>
     /// <param name="localObject"></param>
-    internal ObjectImport(ICatalogueRepository repository, string sharingUID,IMapsDirectlyToDatabaseTable localObject)
+    internal ObjectImport(ICatalogueRepository repository, string sharingUID, IMapsDirectlyToDatabaseTable localObject)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectRepositoryType",localObject.Repository.GetType().Name},
-            {"ReferencedObjectType",localObject.GetType().Name},
-            {"ReferencedObjectID",localObject.ID},
-            {"SharingUID",sharingUID}
-
+            { "ReferencedObjectRepositoryType", localObject.Repository.GetType().Name },
+            { "ReferencedObjectType", localObject.GetType().Name },
+            { "ReferencedObjectID", localObject.ID },
+            { "SharingUID", sharingUID }
         });
 
         if (ID == 0 || Repository != repository)
@@ -79,9 +77,5 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"I::{ReferencedObjectType}::{SharingUID}";
-    }
-
+    public override string ToString() => $"I::{ReferencedObjectType}::{SharingUID}";
 }

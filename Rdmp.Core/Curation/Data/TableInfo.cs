@@ -38,7 +38,8 @@ namespace Rdmp.Core.Curation.Data;
 /// A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at any time to handle schema changes
 /// (e.g. dropping columns) (see <see cref="TableInfoSynchronizer"/>).</para>
 /// </summary>
-public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
+public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,
+    ICheckable
 {
     /// <summary>
     /// Cached results of <see cref="GetQuerySyntaxHelper"/>
@@ -46,6 +47,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
 
     #region Database Properties
+
     private string _name;
     private DatabaseType _databaseType;
     private string _server;
@@ -140,7 +142,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         set => SetField(ref _schema, value);
     }
 
-    public bool IsView {
+    public bool IsView
+    {
         get => _isView;
         set => SetField(ref _isView, value);
     }
@@ -153,20 +156,22 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
 
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ColumnInfo[] ColumnInfos => _knownColumnInfos.Value;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public PreLoadDiscardedColumn[] PreLoadDiscardedColumns => Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
+    public PreLoadDiscardedColumn[] PreLoadDiscardedColumns =>
+        Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
 
     /// <inheritdoc cref="IdentifierDumpServer_ID"/>
     [NoMappingToDatabase]
     public ExternalDatabaseServer IdentifierDumpServer =>
         IdentifierDumpServer_ID == null
             ? null
-            : Repository.GetObjectByID<ExternalDatabaseServer>((int) IdentifierDumpServer_ID);
+            : Repository.GetObjectByID<ExternalDatabaseServer>((int)IdentifierDumpServer_ID);
 
     #endregion
 
@@ -187,8 +192,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"IdentifierDumpServer_ID",dumpServer?.ID ?? (object) DBNull.Value}
+            { "Name", name },
+            { "IdentifierDumpServer_ID", dumpServer?.ID ?? (object)DBNull.Value }
         });
 
         ClearAllInjections();
@@ -197,7 +202,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     internal TableInfo(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        Name =r["Name"].ToString();
+        Name = r["Name"].ToString();
         DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
         Server = r["Server"].ToString();
         Database = r["Database"].ToString();
@@ -205,9 +210,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         Schema = r["Schema"].ToString();
         _validationXml = r["ValidationXml"].ToString();
 
-        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
+        IsTableValuedFunction =
+            r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
 
-        IsPrimaryExtractionTable = r["IsPrimaryExtractionTable"] != DBNull.Value && Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
+        IsPrimaryExtractionTable = r["IsPrimaryExtractionTable"] != DBNull.Value &&
+                                   Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
 
         IdentifierDumpServer_ID =
             r["IdentifierDumpServer_ID"] == DBNull.Value ? null : (int)r["IdentifierDumpServer_ID"];
@@ -218,16 +225,10 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters()
-    {
-        return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
-    }
+    public ISqlParameter[] GetAllParameters() => CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
 
     /// <summary>
     /// Sorts two <see cref="TableInfo"/> alphabetically
@@ -245,26 +246,18 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
 
     /// <inheritdoc/>
-    public string GetRuntimeName()
-    {
-        return GetQuerySyntaxHelper().GetRuntimeName(Name);
-    }
+    public string GetRuntimeName() => GetQuerySyntaxHelper().GetRuntimeName(Name);
 
     /// <inheritdoc cref="ITableInfo.GetFullyQualifiedName"/>
-    public string GetFullyQualifiedName()
-    {
-        return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
-    }
+    public string GetFullyQualifiedName() =>
+        GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
 
     /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()"/>
-    public string GetDatabaseRuntimeName()
-    {
-        return Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
-    }
+    public string GetDatabaseRuntimeName() => Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
 
 
     /// <inheritdoc/>
-    public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)
+    public string GetDatabaseRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads namer = null)
     {
         var baseName = GetDatabaseRuntimeName();
 
@@ -285,18 +278,14 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
     /// <inheritdoc/>
-    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
-    {
-        return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
-    }
+    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null) =>
+        GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
 
     /// <inheritdoc/>
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
-        return context == DataAccessContext.Any
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+        context == DataAccessContext.Any
             ? throw new Exception("You cannot ask for any credentials, you must supply a usage context.")
             : _knownCredentials[context].Value;
-    }
 
     /// <summary>
     /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this
@@ -305,23 +294,25 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <param name="credentials">Credentials to use (username / encrypted password)</param>
     /// <param name="context">When the credentials can be used (Use Any for any case)</param>
     /// <param name="allowOverwriting">False will throw if there is already credentials declared for the table/context</param>
-    public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwriting = false)
+    public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context,
+        bool allowOverwriting = false)
     {
-        var existingCredentials = CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
+        var existingCredentials =
+            CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
 
         //if user told us to set credentials to null complain
-        if(credentials == null)
-            throw new Exception("Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
+        if (credentials == null)
+            throw new Exception(
+                "Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
 
         //if there are existing credentials already
         if (existingCredentials != null)
         {
-
             //user is trying to set the same credentials again
-            if(existingCredentials.Equals(credentials))
-                return;//don't bother
+            if (existingCredentials.Equals(credentials))
+                return; //don't bother
 
-            if(!allowOverwriting)
+            if (!allowOverwriting)
                 throw new Exception(
                     $"Cannot overwrite existing credentials {existingCredentials.Name} with new credentials {credentials.Name} with context {context} because allowOverwriting was false");
 
@@ -329,6 +320,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             //remove the existing link
             CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
         }
+
         //create a new one to the new credentials
         CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
     }
@@ -342,11 +334,9 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
                 .Cast<IHasDependencies>()
                 .ToArray();
     }
+
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return ColumnInfos.ToArray();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => ColumnInfos.ToArray();
 
 
     /// <summary>
@@ -358,7 +348,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         if (IsLookupTable())
             if (IsPrimaryExtractionTable)
-                notifier.OnCheckPerformed(new CheckEventArgs("Table is both a Lookup table AND is marked IsPrimaryExtractionTable",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "Table is both a Lookup table AND is marked IsPrimaryExtractionTable", CheckResult.Fail));
 
         try
         {
@@ -367,7 +358,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Synchronization failed on TableInfo {this}",CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Synchronization failed on TableInfo {this}",
+                CheckResult.Fail, e));
         }
     }
 
@@ -385,52 +377,42 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
     /// <inheritdoc/>
-    public bool IsLookupTable()
-    {
-        return _knownIsLookup.Value;
-    }
+    public bool IsLookupTable() => _knownIsLookup.Value;
 
-    private bool FetchIsLookup()
-    {
-        return CatalogueRepository.IsLookupTable(this);
-    }
+    private bool FetchIsLookup() => CatalogueRepository.IsLookupTable(this);
 
     /// <inheritdoc/>
-    public Catalogue[] GetAllRelatedCatalogues()
-    {
-        return CatalogueRepository.GetAllCataloguesUsing(this);
-    }
+    public Catalogue[] GetAllRelatedCatalogues() => CatalogueRepository.GetAllCataloguesUsing(this);
 
     /// <inheritdoc/>
     public IEnumerable<IHasStageSpecificRuntimeName> GetColumnsAtStage(LoadStage loadStage)
     {
         //if it is AdjustRaw then it will also have the pre load discarded columns
         if (loadStage <= LoadStage.AdjustRaw)
-            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(c => c.Destination != DiscardedColumnDestination.Dilute))
+            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(c =>
+                         c.Destination != DiscardedColumnDestination.Dilute))
                 yield return discardedColumn;
 
         //also add column infos
         foreach (var c in ColumnInfos)
             if (loadStage <= LoadStage.AdjustRaw && SpecialFieldNames.IsHicPrefixed(c))
                 continue;
-            else
-            if(loadStage <= LoadStage.AdjustStaging && c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
+            else if (loadStage <= LoadStage.AdjustStaging &&
+                     c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
                 continue;
-            else
-            if(loadStage == LoadStage.AdjustStaging &&
-               //these two do not appear in staging
-               (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)  || c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-              )
+            else if (loadStage == LoadStage.AdjustStaging &&
+                     //these two do not appear in staging
+                     (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
+                      c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
+                    )
                 continue;
             else
                 yield return c;
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _cachedSyntaxHelpers.GetOrAdd(DatabaseType,new QuerySyntaxHelperFactory().Create(DatabaseType));
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
+        _cachedSyntaxHelpers.GetOrAdd(DatabaseType, new QuerySyntaxHelperFactory().Create(DatabaseType));
 
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo[] instance)
@@ -459,10 +441,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         }
     }
 
-    private ColumnInfo[] FetchColumnInfos()
-    {
-        return Repository.GetAllObjectsWithParent<ColumnInfo,TableInfo>(this);
-    }
+    private ColumnInfo[] FetchColumnInfos() => Repository.GetAllObjectsWithParent<ColumnInfo, TableInfo>(this);
 
     /// <inheritdoc/>
     public DiscoveredTable Discover(DataAccessContext context)
@@ -471,7 +450,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
         return IsTableValuedFunction
             ? db.ExpectTableValuedFunction(GetRuntimeName(), Schema)
-            : db.ExpectTable(GetRuntimeName(),Schema, IsView?TableType.View : TableType.Table);
+            : db.ExpectTable(GetRuntimeName(), Schema, IsView ? TableType.View : TableType.Table);
     }
 
     /// <inheritdoc/>
@@ -489,19 +468,19 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             return false;
         }
 
-        if(!tbl.Database.Server.Exists())
+        if (!tbl.Database.Server.Exists())
         {
             reason = $"Server {tbl.Database.Server} did not exist";
             return false;
         }
 
-        if(!tbl.Database.Exists())
+        if (!tbl.Database.Exists())
         {
             reason = $"Database {tbl.Database} did not exist";
             return false;
         }
 
-        if(!tbl.Exists())
+        if (!tbl.Exists())
         {
             reason = $"Table {tbl.GetFullyQualifiedName()} did not exist";
             return false;
@@ -512,7 +491,6 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
 
-
     /// <summary>
     /// Returns true if the TableInfo is a reference to the discovered live table (same database, same table name, same server)
     /// <para>By default servername is not checked since you can have server aliases e.g. localhost\sqlexpress could be the same as 127.0.0.1\sqlexpress</para>
@@ -520,11 +498,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <param name="discoveredTable">Pass true to also check the servername is EXACTLY the same (dangerous due to the fact that servers can be accessed by hostname or IP etc)</param>
     /// <param name="alsoCheckServer"></param>
     /// <returns></returns>
-    public bool Is(DiscoveredTable discoveredTable,bool alsoCheckServer = false)
-    {
-        return GetRuntimeName().Equals(discoveredTable.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&
-               GetDatabaseRuntimeName().Equals(discoveredTable.Database.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
-               DatabaseType == discoveredTable.Database.Server.DatabaseType &&
-               (!alsoCheckServer || discoveredTable.Database.Server.Name.Equals(Server,StringComparison.CurrentCultureIgnoreCase));
-    }
+    public bool Is(DiscoveredTable discoveredTable, bool alsoCheckServer = false) =>
+        GetRuntimeName().Equals(discoveredTable.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
+        GetDatabaseRuntimeName()
+            .Equals(discoveredTable.Database.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
+        DatabaseType == discoveredTable.Database.Server.DatabaseType &&
+        (!alsoCheckServer ||
+         discoveredTable.Database.Server.Name.Equals(Server, StringComparison.CurrentCultureIgnoreCase));
 }

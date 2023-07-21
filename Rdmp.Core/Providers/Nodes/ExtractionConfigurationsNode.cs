@@ -12,7 +12,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Collection of all <see cref="ExtractionConfiguration"/> in a given <see cref="Project"/>
 /// </summary>
-public class ExtractionConfigurationsNode:Node,IOrderable
+public class ExtractionConfigurationsNode : Node, IOrderable
 {
     public Project Project { get; }
 
@@ -21,30 +21,23 @@ public class ExtractionConfigurationsNode:Node,IOrderable
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Extraction Configurations";
-    }
+    public override string ToString() => "Extraction Configurations";
 
-    protected bool Equals(ExtractionConfigurationsNode other)
-    {
-        return Equals(Project, other.Project);
-    }
+    protected bool Equals(ExtractionConfigurationsNode other) => Equals(Project, other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionConfigurationsNode) obj);
+        return Equals((ExtractionConfigurationsNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => System.HashCode.Combine(Project);
+
+    public int Order
     {
-        return System.HashCode.Combine(Project);
+        get => 3;
+        set { }
     }
-
-    public int Order { get => 3;
-        set{} }
-
 }

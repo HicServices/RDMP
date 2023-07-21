@@ -40,11 +40,14 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     public ExecuteCommandViewData(IBasicActivateItems activator,
         [DemandsInitialization("The object (ColumnInfo, TableInfo etc) you want to view a sample of")]
         IMapsDirectlyToDatabaseTable obj,
-        [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",DefaultValue = ViewType.TOP_100)]
+        [DemandsInitialization(
+            "Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",
+            DefaultValue = ViewType.TOP_100)]
         ViewType viewType = ViewType.TOP_100,
         [DemandsInitialization(ToFileDescription)]
         FileInfo toFile = null,
-        [DemandsInitialization("Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
+        [DemandsInitialization(
+            "Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
         bool useCache = true) : base(activator, toFile)
     {
         _viewType = viewType;
@@ -82,7 +85,6 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
             default:
                 throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
         }
-
     }
 
     private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
@@ -93,31 +95,26 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
 
         //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
         if (cic is { QueryCachingServer_ID: not null } && ac.PatientIndexJoinablesUsed.Any())
-        {
             collection.UseQueryCache = _useCache;
-        }
 
         collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
 
         return collection;
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
-    {
-
-        return new ViewCohortExtractionUICollection(ec)
+    private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec) =>
+        new ViewCohortExtractionUICollection(ec)
         {
             Top = _viewType == ViewType.TOP_100 ? 100 : -1,
             IncludeCohortID = false
         };
-    }
 
     private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic)
     {
         if (_viewType == ViewType.TOP_100)
-        {
-            LogManager.GetCurrentClassLogger().Warn($"'{ViewType.TOP_100}' is not supported on '{nameof(CohortIdentificationConfiguration)}', '{ViewType.All}' will be used");
-        }
+            LogManager.GetCurrentClassLogger()
+                .Warn(
+                    $"'{ViewType.TOP_100}' is not supported on '{nameof(CohortIdentificationConfiguration)}', '{ViewType.All}' will be used");
 
         return new ViewCohortIdentificationConfigurationSqlCollection(cic)
         {
@@ -128,18 +125,15 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     private void ThrowIfNotSimpleSelectViewType()
     {
         if (_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
-        {
-            throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
-        }
+            throw new ArgumentException(
+                $"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(Catalogue cata)
-    {
-        return new ViewCatalogueDataCollection(cata)
+    private IViewSQLAndResultsCollection CreateCollection(Catalogue cata) =>
+        new ViewCatalogueDataCollection(cata)
         {
             TopX = _viewType == ViewType.All ? null : 100
         };
-    }
 
     /// <summary>
     /// Fetches the <paramref name="viewType"/> of the data in <see cref="ColumnInfo"/> <paramref name="c"/>
@@ -147,13 +141,15 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     /// <param name="activator"></param>
     /// <param name="viewType"></param>
     /// <param name="c"></param>
-    public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator, null)
+    public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator,
+        null)
     {
         _viewType = viewType;
         _collection = CreateCollection(c);
     }
 
-    public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator, null)
+    public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(
+        activator, null)
     {
         _viewType = viewType;
         _collection = CreateCollection(ei);
@@ -169,6 +165,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         _viewType = ViewType.TOP_100;
         _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
     }
+
     #endregion
 
     private IViewSQLAndResultsCollection CreateCollection(ColumnInfo c)
@@ -197,13 +194,9 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
             return OverrideCommandName;
 
         return _obj is CohortIdentificationConfiguration
-            ? _useCache ?
-                "Query Builder SQL/Results" :
-                "Query Builder SQL/Results (No Cache)"
+            ? _useCache ? "Query Builder SQL/Results" : "Query Builder SQL/Results (No Cache)"
             : $"View {_viewType.ToString().Replace("_", " ")}";
     }
-    protected override IViewSQLAndResultsCollection GetCollection()
-    {
-        return _collection;
-    }
+
+    protected override IViewSQLAndResultsCollection GetCollection() => _collection;
 }
