@@ -19,7 +19,7 @@ public interface IProblemProvider
     /// </summary>
     /// <param name="childProvider"></param>
     void RefreshProblems(ICoreChildProvider childProvider);
-        
+
     /// <summary>
     /// True if the supplied object has problems with it
     /// </summary>
@@ -33,5 +33,4 @@ public interface IProblemProvider
     /// <param name="o"></param>
     /// <returns></returns>
     string DescribeProblem(object o);
-
 }

@@ -16,7 +16,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class AllCohortsNodeMenu:RDMPContextMenuStrip
+internal class AllCohortsNodeMenu : RDMPContextMenuStrip
 {
     [UseWithObjectConstructor]
     public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
@@ -26,14 +26,15 @@ internal class AllCohortsNodeMenu:RDMPContextMenuStrip
 
         Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
 
-        Items.Add("Create blank cohort database (Not recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem).ImageToBitmap(), (s, e) => AddBlankExternalCohortTable());
-            
+        Items.Add("Create blank cohort database (Not recommended)",
+            _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem).ImageToBitmap(),
+            (s, e) => AddBlankExternalCohortTable());
     }
-        
+
     private void AddBlankExternalCohortTable()
     {
         var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,
-            $"Blank Cohort Source {Guid.NewGuid()}",DatabaseType.MicrosoftSQLServer);
+            $"Blank Cohort Source {Guid.NewGuid()}", DatabaseType.MicrosoftSQLServer);
         Publish(newExternalCohortTable);
         Activate(newExternalCohortTable);
     }

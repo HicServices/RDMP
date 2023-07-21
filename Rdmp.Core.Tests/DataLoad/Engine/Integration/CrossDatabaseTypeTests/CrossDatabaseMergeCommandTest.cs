@@ -26,7 +26,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
 
-public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
+public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
 {
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
@@ -37,20 +37,20 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
             SetupFromTo(databaseType);
 
         var dt = new DataTable();
-        var colName = new DataColumn("Name",typeof(string));
-        var colAge = new DataColumn("Age",typeof(int));
+        var colName = new DataColumn("Name", typeof(string));
+        var colAge = new DataColumn("Age", typeof(int));
         dt.Columns.Add(colName);
         dt.Columns.Add(colAge);
-        dt.Columns.Add("Postcode",typeof(string));
+        dt.Columns.Add("Postcode", typeof(string));
 
         //Data in live awaiting toTbl be updated
-        dt.Rows.Add(new object[]{"Dave",18,"DD3 1AB"});
-        dt.Rows.Add(new object[] {"Dave", 25, "DD1 1XS" });
-        dt.Rows.Add(new object[] {"Mango", 32, DBNull.Value});
-        dt.Rows.Add(new object[] { "Filli", 32,"DD3 78L" });
+        dt.Rows.Add(new object[] { "Dave", 18, "DD3 1AB" });
+        dt.Rows.Add(new object[] { "Dave", 25, "DD1 1XS" });
+        dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value });
+        dt.Rows.Add(new object[] { "Filli", 32, "DD3 78L" });
         dt.Rows.Add(new object[] { "Mandrake", 32, DBNull.Value });
 
-        dt.PrimaryKey = new[]{colName,colAge};
+        dt.PrimaryKey = new[] { colName, colAge };
 
         var toTbl = To.CreateTable("ToTable", dt);
 
@@ -59,7 +59,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         Assert.IsFalse(toTbl.DiscoverColumn("Postcode").IsPrimaryKey);
 
         dt.Rows.Clear();
-            
+
         //new data being loaded
         dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update toTbl change postcode toTbl "DD1 1PS"
         dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new insert Chutney
@@ -71,7 +71,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         var fromTbl = From.CreateTable($"{DatabaseName}_ToTable_STAGING", dt);
 
         //import the toTbl table as a TableInfo
-        var cata = Import(toTbl,out var ti, out var cis);
+        var cata = Import(toTbl, out var ti, out var cis);
 
         //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
         var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
@@ -96,19 +96,19 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         {
             LoadMetadata = lmd,
             DataLoadInfo = dli,
-            RegularTablesToLoad = new List<ITableInfo>(new[]{ti})
+            RegularTablesToLoad = new List<ITableInfo>(new[] { ti })
         };
 
         migrationHost.Migrate(job, new GracefulCancellationToken());
 
         var resultantDt = toTbl.GetDataTable();
-        Assert.AreEqual(7,resultantDt.Rows.Count);
+        Assert.AreEqual(7, resultantDt.Rows.Count);
 
         AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
         AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
         AssertRowEquals(resultantDt, "Mango", 32, DBNull.Value);
 
-        AssertRowEquals(resultantDt,"Filli",32,DBNull.Value);
+        AssertRowEquals(resultantDt, "Filli", 32, DBNull.Value);
         AssertRowEquals(resultantDt, "Mandrake", 32, "DD1 1PS");
         AssertRowEquals(resultantDt, "Mandrake", 31, "DD1 1PS");
 
@@ -119,15 +119,17 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         var log = archival.First();
 
 
-        Assert.AreEqual(dli.ID,log.ID);
-        Assert.AreEqual(2,log.TableLoadInfos.Single().Inserts);
+        Assert.AreEqual(dli.ID, log.ID);
+        Assert.AreEqual(2, log.TableLoadInfos.Single().Inserts);
         Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
     }
 
-    private static void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
+    private static void AssertRowEquals(DataTable resultantDt, string name, int age, object postcode)
     {
         Assert.AreEqual(
-            1, resultantDt.Rows.Cast<DataRow>().Count(r => Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),
-            "Did not find expected record:" + string.Join(",",name,age,postcode));
+            1,
+            resultantDt.Rows.Cast<DataRow>().Count(r =>
+                Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),
+            "Did not find expected record:" + string.Join(",", name, age, postcode));
     }
 }

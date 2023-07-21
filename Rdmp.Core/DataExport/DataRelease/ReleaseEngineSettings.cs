@@ -12,9 +12,10 @@ namespace Rdmp.Core.DataExport.DataRelease;
 /// <summary>
 /// Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
 /// </summary>
-public class ReleaseEngineSettings:ICheckable
+public class ReleaseEngineSettings : ICheckable
 {
-    [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
+    [DemandsInitialization("Delete the released files from the origin location if release is succesful",
+        DefaultValue = true)]
     public bool DeleteFilesOnSuccess { get; set; }
 
     public ReleaseEngineSettings()
@@ -24,6 +25,6 @@ public class ReleaseEngineSettings:ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        notifier.OnCheckPerformed(new CheckEventArgs("All green!",CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs("All green!", CheckResult.Success));
     }
 }

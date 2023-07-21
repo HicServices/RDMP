@@ -35,12 +35,14 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public const string WorkSheetName_DemandDescription =
         "Name of the worksheet to load data from (single sheet name only).  If this is empty then the first sheet in the spreadsheet will be loaded instead";
 
-    public const string AddFilenameColumnNamed_DemandDescription = "Optional - Set to the name of a column in your RAW database (e.g. Filename).  If set this named column will be populated with the path to the file being read (e.g. c:\\myproj\\Data\\ForLoading\\MyFile.csv)";
+    public const string AddFilenameColumnNamed_DemandDescription =
+        "Optional - Set to the name of a column in your RAW database (e.g. Filename).  If set this named column will be populated with the path to the file being read (e.g. c:\\myproj\\Data\\ForLoading\\MyFile.csv)";
 
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
+        DemandType.Unspecified, true)]
     public bool MakeHeaderNamesSane { get; set; }
 
     [DemandsInitialization(AddFilenameColumnNamed_DemandDescription)]
@@ -58,7 +60,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             return null;
 
         haveDispatchedDataTable = true;
-            
+
         return dataReadFromFile;
     }
 
@@ -66,7 +68,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     {
         var sw = new Stopwatch();
         sw.Start();
-        if(_fileToLoad == null)
+        if (_fileToLoad == null)
             throw new Exception("_fileToLoad has not been set yet, possibly component has not been Initialized yet");
 
         if (!IsAcceptableFileExtension())
@@ -86,12 +88,14 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             {
                 var worksheet =
                     //if the user hasn't picked one, use the first
-                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
+                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
+                    throw new FlatFileLoadException(
                         $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
                 toReturn = GetAllData(worksheet, listener);
 
                 //set the table name the file name
-                toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                toReturn.TableName =
+                    QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                 if (toReturn.Columns.Count == 0)
                     throw new FlatFileLoadException(
@@ -184,10 +188,10 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             }
 
             //if we didn't get any values at all for the row throw it away
-            if(!gotAtLeastOneGoodValue)
+            if (!gotAtLeastOneGoodValue)
                 toReturn.Rows.Remove(r);
         }
-            
+
         return toReturn;
     }
 
@@ -207,7 +211,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
         if (treatAs == CellType.Unknown)
             treatAs = cell.CellType;
-            
+
         switch (treatAs)
         {
             case CellType.Unknown:
@@ -223,7 +227,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     if (IsDateWithoutTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd");
 
-                    if(IsDateWithTime(format))
+                    if (IsDateWithTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
                     if (IsTimeWithoutDate(format))
@@ -257,19 +261,13 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
     }
 
-    private static bool IsDateWithTime(string formatString)
-    {
-        return formatString.Contains('h') && formatString.Contains('y');
-    }
-    private static bool IsDateWithoutTime(string formatString)
-    {
-        return formatString.Contains('y') && !formatString.Contains('h');
-    }
+    private static bool IsDateWithTime(string formatString) => formatString.Contains('h') && formatString.Contains('y');
 
-    private static bool IsTimeWithoutDate(string formatString)
-    {
-        return !formatString.Contains('y') && formatString.Contains('h');
-    }
+    private static bool IsDateWithoutTime(string formatString) =>
+        formatString.Contains('y') && !formatString.Contains('h');
+
+    private static bool IsTimeWithoutDate(string formatString) =>
+        !formatString.Contains('y') && formatString.Contains('h');
 
     private static bool IsDateFormat(string formatString)
     {
@@ -317,10 +315,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         ".xls"
     };
 
-    private bool IsAcceptableFileExtension()
-    {
-        return acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
-    }
+    private bool IsAcceptableFileExtension() => acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
 
     private static bool IsNull(object o)
     {
@@ -351,12 +346,10 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-            
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-            
     }
 
     public DataTable TryGetPreview()
@@ -364,17 +357,19 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         var timeoutToken = new CancellationTokenSource();
         timeoutToken.CancelAfter(10000);
 
-        var token = new GracefulCancellationToken(timeoutToken.Token,timeoutToken.Token );
+        var token = new GracefulCancellationToken(timeoutToken.Token, timeoutToken.Token);
 
         DataTable dt;
         try
         {
-            dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(),token);
+            dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(), token);
         }
         catch (Exception e)
         {
-            if(timeoutToken.IsCancellationRequested)
-                throw new Exception("Failed to generate preview in 10 seconds or less, giving up trying to load a preview (this doesn't mean that the source is broken, more likely you just have a big file or something)",e);
+            if (timeoutToken.IsCancellationRequested)
+                throw new Exception(
+                    "Failed to generate preview in 10 seconds or less, giving up trying to load a preview (this doesn't mean that the source is broken, more likely you just have a big file or something)",
+                    e);
 
             throw;
         }

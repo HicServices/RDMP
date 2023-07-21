@@ -42,7 +42,5 @@ internal class PeriodicityStateTests : DatabaseTests
 
         Assert.IsNotNull(dict);
         Assert.IsEmpty(dict);
-
     }
-
 }

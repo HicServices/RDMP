@@ -32,7 +32,7 @@ public class RDMPContextMenuStripArgs
         ItemActivator = itemActivator;
     }
 
-    public RDMPContextMenuStripArgs(IActivateItems itemActivator, TreeListView tree, object model):this(itemActivator)
+    public RDMPContextMenuStripArgs(IActivateItems itemActivator, TreeListView tree, object model) : this(itemActivator)
     {
         Tree = tree;
         Model = model;
@@ -42,7 +42,7 @@ public class RDMPContextMenuStripArgs
     /// Notifies the menu builder that we do not want to show a given Type of command for this menu e.g. because we have a better UI we plan to make available instead
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public void SkipCommand<T>() where T:IAtomicCommand
+    public void SkipCommand<T>() where T : IAtomicCommand
     {
         _skipCommands.Add(typeof(T));
     }
@@ -52,10 +52,7 @@ public class RDMPContextMenuStripArgs
     /// </summary>
     /// <param name="cmd"></param>
     /// <returns></returns>
-    public bool ShouldSkipCommand(IAtomicCommand cmd)
-    {
-        return _skipCommands.Contains(cmd.GetType());
-    }
+    public bool ShouldSkipCommand(IAtomicCommand cmd) => _skipCommands.Contains(cmd.GetType());
 
     /// <summary>
     /// Returns the first Parent control of <see cref="Tree"/> in the Windows Forms Controls Parent hierarchy which is Type T

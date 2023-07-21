@@ -23,10 +23,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
 {
     private List<NotifyEventArgs> _crashAtEnd = new();
+
     /// <inheritdoc/>
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 
-    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true): base(throwOnErrorEvents)
+    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true) : base(throwOnErrorEvents)
     {
     }
 
@@ -37,8 +38,8 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     public ILoadMetadata LoadMetadata { get; private set; }
     public bool DisposeImmediately { get; private set; }
     public string ArchiveFilepath { get; private set; }
-    public List<ITableInfo> RegularTablesToLoad { get; private set; } = new List<ITableInfo>();
-    public List<ITableInfo> LookupTablesToLoad { get; private set; } = new List<ITableInfo>();
+    public List<ITableInfo> RegularTablesToLoad { get; private set; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; private set; } = new();
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
     public void StartLogging()
@@ -65,10 +66,13 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
     }
+
     public ColumnInfo[] GetAllColumns()
     {
-        return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
     }
+
     /// <inheritdoc/>
     public void CrashAtEnd(NotifyEventArgs because)
     {

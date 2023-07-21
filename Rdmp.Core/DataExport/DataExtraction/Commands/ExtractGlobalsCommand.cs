@@ -25,10 +25,11 @@ public class ExtractGlobalsCommand : ExtractCommand
     public GlobalsBundle Globals { get; set; }
 
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
+
     public List<IExtractionResults> ExtractionResults { get; private set; }
 
-    public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project, ExtractionConfiguration configuration, GlobalsBundle globals):base(configuration)
+    public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project,
+        ExtractionConfiguration configuration, GlobalsBundle globals) : base(configuration)
     {
         RepositoryLocator = repositoryLocator;
         this.project = project;
@@ -37,18 +38,10 @@ public class ExtractGlobalsCommand : ExtractCommand
         ExtractionResults = new List<IExtractionResults>();
     }
 
-    public override DirectoryInfo GetExtractionDirectory()
-    {
-        return new ExtractionDirectory(project.ExtractionDirectory, Configuration).GetGlobalsDirectory();
-    }
+    public override DirectoryInfo GetExtractionDirectory() =>
+        new ExtractionDirectory(project.ExtractionDirectory, Configuration).GetGlobalsDirectory();
 
-    public override string DescribeExtractionImplementation()
-    {
-        return string.Join(";", Globals.Contents);
-    }
+    public override string DescribeExtractionImplementation() => string.Join(";", Globals.Contents);
 
-    public override string ToString()
-    {
-        return ExtractionDirectory.GLOBALS_DATA_NAME;
-    }
+    public override string ToString() => ExtractionDirectory.GLOBALS_DATA_NAME;
 }

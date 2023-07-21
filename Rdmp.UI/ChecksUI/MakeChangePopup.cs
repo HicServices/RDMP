@@ -16,7 +16,7 @@ namespace Rdmp.UI.ChecksUI;
 /// Yes/No dialog for handling <see cref="CheckEventArgs.ProposedFix"/>.  Describes the fix and prompts the user for a response.  Includes
 /// support for Yes to All.
 /// </summary>
-public class MakeChangePopup:ICheckNotifier
+public class MakeChangePopup : ICheckNotifier
 {
     private readonly YesNoYesToAllDialog _dialog;
 
@@ -44,14 +44,13 @@ public class MakeChangePopup:ICheckNotifier
     {
         //if there is a fix suggest it to the user
         if (args.ProposedFix != null)
-            return ShowYesNoMessageBoxToApplyFix(_dialog,args.Message, args.ProposedFix);
-            
+            return ShowYesNoMessageBoxToApplyFix(_dialog, args.Message, args.ProposedFix);
+
         //else show an Exception
-        if(args.Ex != null)
+        if (args.Ex != null)
             ExceptionViewer.Show(args.Ex);
-        else
-        if(args.Result == CheckResult.Fail)
-            WideMessageBox.Show(args.Message,"",environmentDotStackTrace: Environment.StackTrace);
+        else if (args.Result == CheckResult.Fail)
+            WideMessageBox.Show(args.Message, "", Environment.StackTrace);
 
         return false;
     }

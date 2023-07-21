@@ -32,20 +32,21 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
 
     public const string Prefix = "RDMPSingleDatabaseObjectControl";
 
-    public PersistableSingleDatabaseObjectDockContent(IRDMPSingleDatabaseObjectControl control, IMapsDirectlyToDatabaseTable databaseObject,RefreshBus refreshBus):base(refreshBus)
+    public PersistableSingleDatabaseObjectDockContent(IRDMPSingleDatabaseObjectControl control,
+        IMapsDirectlyToDatabaseTable databaseObject, RefreshBus refreshBus) : base(refreshBus)
     {
         Control = (Control)control;
-            
+
         DatabaseObject = databaseObject;
         TabText = "Loading...";
 
         control.UnSavedChanges += OnUnSavedChanges;
-        Closing += (s,e)=>control.UnSavedChanges -= OnUnSavedChanges;
+        Closing += (s, e) => control.UnSavedChanges -= OnUnSavedChanges;
     }
 
     private void OnUnSavedChanges(object sender, bool unsavedChanges)
     {
-        if(TabText == null)
+        if (TabText == null)
             return;
 
         TabText = unsavedChanges ? $"{TabText.TrimEnd('*')}*" : TabText.TrimEnd('*');
@@ -54,12 +55,13 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
     protected override string GetPersistString()
     {
         const char s = PersistStringHelper.Separator;
-        return Prefix + s + Control.GetType().FullName + s + DatabaseObject.Repository.GetType().FullName + s + DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
+        return Prefix + s + Control.GetType().FullName + s + DatabaseObject.Repository.GetType().FullName + s +
+               DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
     }
 
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        var newTabName = ((IRDMPSingleDatabaseObjectControl) Control).GetTabName();
+        var newTabName = ((IRDMPSingleDatabaseObjectControl)Control).GetTabName();
 
         if (ParentForm is CustomFloatWindow floatWindow)
             floatWindow.Text = newTabName;
@@ -77,6 +79,6 @@ public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
 
     public override void HandleUserRequestingEmphasis(IActivateItems activator)
     {
-        activator.RequestItemEmphasis(this,new EmphasiseRequest(DatabaseObject));
+        activator.RequestItemEmphasis(this, new EmphasiseRequest(DatabaseObject));
     }
 }

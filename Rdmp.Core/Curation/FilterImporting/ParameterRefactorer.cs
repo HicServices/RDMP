@@ -64,5 +64,4 @@ public class ParameterRefactorer : IParameterRefactorer
 
         return true;
     }
-
 }

@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.ImportTests;
 
-public class PluginClassTests:UnitTests
+public class PluginClassTests : UnitTests
 {
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -53,10 +53,10 @@ public class PluginClassTests:UnitTests
         lma1.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted
         lma1.Plugin.PluginVersion = new Version(1, 1, 1, 1); //the version of the plugin
         lma1.Plugin.SaveToDatabase();
-                       
+
         lma2.Plugin.Name = "MyPlugin";
-        lma2.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
-        lma2.Plugin.PluginVersion =  new Version(1, 1, 1, 2);//the version of the plugin (higher)
+        lma2.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted (same as above)
+        lma2.Plugin.PluginVersion = new Version(1, 1, 1, 2); //the version of the plugin (higher)
         lma2.SaveToDatabase();
 
         var plugins = Repository.PluginManager.GetCompatiblePlugins();
@@ -80,7 +80,7 @@ public class PluginClassTests:UnitTests
             $"Blah3.{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-        var p = new Core.Curation.Data.Plugin(Repository, fi,new Version(1,1,1),new Version(1,1,1,1));
+        var p = new Core.Curation.Data.Plugin(Repository, fi, new Version(1, 1, 1), new Version(1, 1, 1, 1));
         var lma = new LoadModuleAssembly(Repository, fi2, p);
         var lma2 = new LoadModuleAssembly(Repository, fi3, p);
 
@@ -104,11 +104,11 @@ public class PluginClassTests:UnitTests
 
         Assert.AreEqual(3, Repository.GetAllObjects<ObjectImport>().Length);
 
-        lma2 = (LoadModuleAssembly) created[2];
+        lma2 = (LoadModuleAssembly)created[2];
 
         //now delete lma2 only
         lma2.DeleteInDatabase();
-            
+
         Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Length);
 
         //import them
@@ -118,14 +118,14 @@ public class PluginClassTests:UnitTests
         Assert.AreEqual(3, created2.Count());
     }
 
-    [TestCase("Rdmp.1.2.3.nupkg","Rdmp")]
-    [TestCase("Rdmp.Dicom.1.2.3.nupkg","Rdmp.Dicom")]
-    [TestCase("Rdmp.Dicom.nupkg","Rdmp.Dicom")]
-    [TestCase("Rdmp.Dicom","Rdmp.Dicom")]
+    [TestCase("Rdmp.1.2.3.nupkg", "Rdmp")]
+    [TestCase("Rdmp.Dicom.1.2.3.nupkg", "Rdmp.Dicom")]
+    [TestCase("Rdmp.Dicom.nupkg", "Rdmp.Dicom")]
+    [TestCase("Rdmp.Dicom", "Rdmp.Dicom")]
     public void Test_Plugin_ShortName(string fullname, string expected)
     {
         var p = WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>();
         p.Name = fullname;
-        Assert.AreEqual(expected,p.GetShortName());
+        Assert.AreEqual(expected, p.GetShortName());
     }
 }

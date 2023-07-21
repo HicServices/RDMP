@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 public class SimpleColumnInfoTests : DatabaseTests
 {
     [Test]
-    [TestCase("varchar(5)",5)]
+    [TestCase("varchar(5)", 5)]
     [TestCase("int", -1)]
     [TestCase("datetime2", -1)]
     [TestCase("nchar(100)", 100)]
@@ -32,8 +32,9 @@ public class SimpleColumnInfoTests : DatabaseTests
         });
 
         Import(t, out var ti, out var cis);
-            
-        Assert.AreEqual(expectedLength,cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
+
+        Assert.AreEqual(expectedLength,
+            cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
 
         ti.DeleteInDatabase();
     }

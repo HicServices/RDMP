@@ -52,12 +52,13 @@ public class LogManager : ILogManager
         Server = server;
     }
 
-    public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging))
+    public LogManager(IDataAccessPoint loggingServer) : this(
+        DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging))
     {
         DataAccessPointIfAny = loggingServer;
     }
 
-    public string[] ListDataTasks(bool hideTests=false)
+    public string[] ListDataTasks(bool hideTests = false)
     {
         var tasks = new List<string>();
 
@@ -66,18 +67,20 @@ public class LogManager : ILogManager
             con.Open();
             using (var cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con))
             {
-                using(var r = cmd.ExecuteReader())
+                using (var r = cmd.ExecuteReader())
+                {
                     while (r.Read())
-                    {
                         if (hideTests)
                         {
-                            if(!(bool)r["isTest"])
+                            if (!(bool)r["isTest"])
                                 tasks.Add(r["name"].ToString());
                             //else it is a test, and we are hidding them
                         }
                         else
+                        {
                             tasks.Add(r["name"].ToString()); //we are not hiding tests
-                    }
+                        }
+                }
             }
 
             return tasks.ToArray();
@@ -94,25 +97,29 @@ public class LogManager : ILogManager
     public DataTable GetTable(LogViewerFilter filter, int? topX, bool sortDesc)
     {
         var prefix = "";
-        var where = filter == null ? "": filter.GetWhereSql();
+        var where = filter == null ? "" : filter.GetWhereSql();
 
         if (topX.HasValue)
             prefix = $"TOP {topX.Value}";
-            
-        return GetAsTable(string.Format("SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
+
+        return GetAsTable(string.Format(
+            "SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc ? "Desc" : "Asc"), prefix,
+            where));
     }
 
     private DataTable GetAsTable(string sql)
     {
         var dt = new DataTable();
-            
+
         using (var con = Server.GetConnection())
         {
             con.Open();
 
-            using(var cmd = Server.GetCommand(sql, con))
-            using(var da = Server.GetDataAdapter(cmd))
+            using (var cmd = Server.GetCommand(sql, con))
+            using (var da = Server.GetDataAdapter(cmd))
+            {
                 da.Fill(dt);
+            }
 
             return dt;
         }
@@ -126,10 +133,12 @@ public class LogManager : ILogManager
         {
             con.Open();
 
-            using(var cmd = Server.GetCommand("SELECT * FROM DataSet", con))
-            using(var r = cmd.ExecuteReader())
+            using (var cmd = Server.GetCommand("SELECT * FROM DataSet", con))
+            using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
                     tasks.Add(r["dataSetID"].ToString());
+            }
 
             return tasks.ToArray();
         }
@@ -143,22 +152,25 @@ public class LogManager : ILogManager
     /// <param name="specificDataLoadRunIDOnly"></param>
     /// <param name="topX"></param>
     /// <returns></returns>
-    public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null, int? topX = null)
+    public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null,
+        int? specificDataLoadRunIDOnly = null, int? topX = null)
     {
         var db = Server.GetCurrentDatabase();
         var run = db.ExpectTable("DataLoadRun");
-            
+
         using (var con = Server.GetConnection())
         {
             con.Open();
 
-            var dataTaskId = GetDataTaskId(dataTask,Server, con);
+            var dataTaskId = GetDataTaskId(dataTask, Server, con);
 
             using (var cmd = Server.GetCommand("", con))
             {
                 var where = "";
                 if (specificDataLoadRunIDOnly != null)
+                {
                     where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
+                }
                 else
                 {
                     where = "WHERE dataLoadTaskID = @dataTaskId";
@@ -178,33 +190,31 @@ public class LogManager : ILogManager
 
                 sb.Append("SELECT ");
 
-                if(top?.Location == QueryComponent.SELECT)
-                {
-                    sb.AppendLine(top.SQL);
-                }
+                if (top?.Location == QueryComponent.SELECT) sb.AppendLine(top.SQL);
 
                 sb.Append(" *");
 
 
                 sb.AppendLine($" FROM {run.GetFullyQualifiedName()}  {where} ORDER BY ID desc");
 
-                if(top?.Location == QueryComponent.Postfix)
-                {
-                    sb.AppendLine(top.SQL);
-                }
+                if (top?.Location == QueryComponent.Postfix) sb.AppendLine(top.SQL);
 
                 cmd.CommandText = sb.ToString();
 
                 DbDataReader r;
                 if (token == null)
+                {
                     r = cmd.ExecuteReader();
+                }
                 else
                 {
                     var rTask = cmd.ExecuteReaderAsync(token.Value);
                     rTask.Wait(token.Value);
 
                     if (rTask.IsCompleted)
+                    {
                         r = rTask.Result;
+                    }
                     else
                     {
                         cmd.Cancel();
@@ -216,9 +226,11 @@ public class LogManager : ILogManager
                     }
                 }
 
-                using(r)
+                using (r)
+                {
                     while (r.Read())
                         yield return new ArchivalDataLoadInfo(r, db);
+                }
             }
         }
     }
@@ -237,17 +249,18 @@ public class LogManager : ILogManager
     }
 
 
-
-    public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
+    public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description,
+        string suggestedRollbackCommand, bool isTest)
     {
-        var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase)) ?? throw new KeyNotFoundException(
-                $"DataLoadTask called '{dataLoadTaskName}' was not found in the logging database {Server}");
+        var task = ListDataTasks()
+                       .FirstOrDefault(t => t.Equals(dataLoadTaskName, StringComparison.CurrentCultureIgnoreCase)) ??
+                   throw new KeyNotFoundException(
+                       $"DataLoadTask called '{dataLoadTaskName}' was not found in the logging database {Server}");
         var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
 
-        DataLoadInfoCreated?.Invoke(this,toReturn);
+        DataLoadInfoCreated?.Invoke(this, toReturn);
 
         return toReturn;
-
     }
 
     /// <summary>
@@ -266,9 +279,9 @@ public class LogManager : ILogManager
 
                 using (var cmd = Server.GetCommand(sql, conn))
                 {
-                    Server.AddParameterWithValueToCommand("@date", cmd,DateTime.Now);
-                    Server.AddParameterWithValueToCommand("@dataSetID",cmd,dataSetID);
-                    Server.AddParameterWithValueToCommand("@username",cmd,Environment.UserName);
+                    Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
+                    Server.AddParameterWithValueToCommand("@dataSetID", cmd, dataSetID);
+                    Server.AddParameterWithValueToCommand("@username", cmd, Environment.UserName);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -289,7 +302,7 @@ public class LogManager : ILogManager
 
                 using (var cmd = Server.GetCommand(sql, conn))
                 {
-                    Server.AddParameterWithValueToCommand("@datasetName",cmd,datasetName);
+                    Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -297,14 +310,13 @@ public class LogManager : ILogManager
     }
 
 
-
     public void CreateNewLoggingTaskIfNotExists(string toCreate)
     {
-        if(!ListDataSets().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
+        if (!ListDataSets().Contains(toCreate, StringComparer.CurrentCultureIgnoreCase))
             CreateNewDataSet(toCreate);
 
-        if(!ListDataTasks().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
-            CreateNewLoggingTask(GetMaxTaskID()+1,toCreate);
+        if (!ListDataTasks().Contains(toCreate, StringComparer.CurrentCultureIgnoreCase))
+            CreateNewLoggingTask(GetMaxTaskID() + 1, toCreate);
     }
 
     private int GetMaxTaskID()
@@ -346,11 +358,10 @@ public class LogManager : ILogManager
                     affectedRows = cmd.ExecuteNonQuery();
                 }
 
-                if(affectedRows != ids.Length)
+                if (affectedRows != ids.Length)
                     throw new Exception(
                         $"Query {sql} resulted in {affectedRows}, we were expecting there to be {ids.Length} updates because that is how many FatalError IDs that were passed to this method");
             }
         }
     }
-
 }

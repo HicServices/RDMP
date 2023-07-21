@@ -33,8 +33,8 @@ public class CohortQueryBuilderDependencySql
     {
         Sql = sql;
         ParametersUsed = parameterManager;
-
     }
+
     /// <summary>
     /// Can only be called once, updates the <see cref="Sql"/> to resolve parameter naming collisions with the larger query
     /// (see <paramref name="compositeLevelParameterManager"/>.  Returns the updated <see cref="Sql"/> (for convenience)
@@ -46,16 +46,17 @@ public class CohortQueryBuilderDependencySql
     /// <returns></returns>
     public string Use(ParameterManager compositeLevelParameterManager)
     {
-        if(_hasBeenUsed)
+        if (_hasBeenUsed)
             throw new InvalidOperationException("Block can only be used once");
 
         //import parameters unless caching was used
-        compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed, out var renameOperations);
+        compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed,
+            out var renameOperations);
 
         //rename in the SQL too!
         foreach (var kvp in renameOperations)
             Sql = ParameterCreator.RenameParameterInSQL(Sql, kvp.Key, kvp.Value);
-            
+
         _hasBeenUsed = true;
 
         return Sql;

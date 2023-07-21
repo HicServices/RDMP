@@ -11,25 +11,22 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsConnectionStringKeyword :RDMPCommandExecutionProposal<ConnectionStringKeyword>
+internal class
+    ProposeExecutionWhenTargetIsConnectionStringKeyword : RDMPCommandExecutionProposal<ConnectionStringKeyword>
 {
     public ProposeExecutionWhenTargetIsConnectionStringKeyword(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ConnectionStringKeyword target)
-    {
-        return true;
-    }
+    public override bool CanActivate(ConnectionStringKeyword target) => true;
 
     public override void Activate(ConnectionStringKeyword target)
     {
-        ItemActivator.Activate<ConnectionStringKeywordUI,ConnectionStringKeyword>(target);
+        ItemActivator.Activate<ConnectionStringKeywordUI, ConnectionStringKeyword>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConnectionStringKeyword target, InsertOption insertOption = InsertOption.Default)
-    {
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConnectionStringKeyword target,
+        InsertOption insertOption = InsertOption.Default) =>
         //no drag and drop
-        return null;
-    }
+        null;
 }

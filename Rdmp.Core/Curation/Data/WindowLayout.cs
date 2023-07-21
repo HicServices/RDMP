@@ -17,12 +17,13 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// Persisted window layout of RDMPMainForm as Xml.  This can be used to reload RDMP to a given layout of windows and can be shared between users.
 /// </summary>
-public class WindowLayout: DatabaseEntity,INamed
+public class WindowLayout : DatabaseEntity, INamed
 {
     #region Database Properties
 
     private string _name;
     private string _layoutData;
+
     #endregion
 
     /// <inheritdoc/>
@@ -45,7 +46,6 @@ public class WindowLayout: DatabaseEntity,INamed
 
     public WindowLayout()
     {
-
     }
 
     /// <summary>
@@ -56,10 +56,10 @@ public class WindowLayout: DatabaseEntity,INamed
     /// <param name="layoutXml">The layout Xml of RDMPMainForm, use GetCurrentLayoutXml to get this, cannot be null</param>
     public WindowLayout(ICatalogueRepository repository, string name, string layoutXml)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name",name},
-            {"LayoutData",layoutXml}
+            { "Name", name },
+            { "LayoutData", layoutXml }
         });
 
         if (ID == 0 || Repository != repository)
@@ -67,15 +67,12 @@ public class WindowLayout: DatabaseEntity,INamed
     }
 
     /// <inheritdoc/>
-    public WindowLayout(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    public WindowLayout(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"].ToString();
         LayoutData = r["LayoutData"].ToString();
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 }

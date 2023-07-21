@@ -41,5 +41,4 @@ public interface IExternalDatabaseServer : IDataAccessPoint, INamed
     /// <param name="context"></param>
     /// <returns></returns>
     DiscoveredDatabase Discover(DataAccessContext context);
-
 }

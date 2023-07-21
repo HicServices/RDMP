@@ -14,38 +14,36 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionProposal<LoadStageNode>
+internal class ProposeExecutionWhenTargetIsLoadStageNode : RDMPCommandExecutionProposal<LoadStageNode>
 {
     public ProposeExecutionWhenTargetIsLoadStageNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
-        
-    public override bool CanActivate(LoadStageNode target)
-    {
-        return false;
-    }
+
+    public override bool CanActivate(LoadStageNode target) => false;
 
     public override void Activate(LoadStageNode target)
     {
-            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage,
+        InsertOption insertOption = InsertOption.Default)
     {
         if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
             return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);
 
         if (cmd is FileCollectionCombineable sourceFileTaskCommand && sourceFileTaskCommand.Files.Length == 1)
         {
-
             var f = sourceFileTaskCommand.Files.Single();
 
-            if(f.Extension == ".sql")
-                return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,targetStage.LoadMetadata, targetStage.LoadStage,f);
+            if (f.Extension == ".sql")
+                return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,
+                    targetStage.LoadMetadata, targetStage.LoadStage, f);
 
 
             if (f.Extension == ".exe")
-                return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable, targetStage.LoadMetadata, targetStage.LoadStage, f);
+                return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable,
+                    targetStage.LoadMetadata, targetStage.LoadStage, f);
         }
 
 

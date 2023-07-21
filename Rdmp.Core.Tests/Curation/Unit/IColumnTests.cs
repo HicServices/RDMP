@@ -21,16 +21,15 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 [Category("Unit")]
 internal class IColumnTests
 {
-
     /// <summary>
     /// For tests
     /// </summary>
-    private class TestColumn:SpontaneousObject,IColumn
+    private class TestColumn : SpontaneousObject, IColumn
     {
-        public TestColumn():base(new MemoryRepository())
+        public TestColumn() : base(new MemoryRepository())
         {
-                
         }
+
         public string GetRuntimeName()
         {
             var helper = MicrosoftQuerySyntaxHelper.Instance;
@@ -41,12 +40,12 @@ internal class IColumnTests
         public ColumnInfo ColumnInfo { get; private set; }
         public int Order { get; set; }
 
-        [Sql]
-        public string SelectSQL { get; set; }
+        [Sql] public string SelectSQL { get; set; }
         public string Alias { get; set; }
         public bool HashOnDataRelease { get; private set; }
         public bool IsExtractionIdentifier { get; private set; }
         public bool IsPrimaryKey { get; private set; }
+
         public void Check(ICheckNotifier notifier)
         {
             new ColumnSyntaxChecker(this).Check(notifier);
@@ -75,15 +74,14 @@ internal class IColumnTests
             Alias = "test"
         };
 
-        Assert.AreEqual(tc.GetRuntimeName(),"test");
+        Assert.AreEqual(tc.GetRuntimeName(), "test");
 
         tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])"; //still has Alias
-        Assert.AreEqual(tc.GetRuntimeName(),"test");
+        Assert.AreEqual(tc.GetRuntimeName(), "test");
 
         tc.Alias = null;
-        tc.SelectSQL = "[mydb]..[myExcitingField]"; 
+        tc.SelectSQL = "[mydb]..[myExcitingField]";
         Assert.AreEqual(tc.GetRuntimeName(), "myExcitingField");
-            
     }
 
     [Test]
@@ -94,7 +92,7 @@ internal class IColumnTests
             SelectSQL = "MangleQuery([mydb]..[myExcitingField])"
         };
 
-        var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
+        var ex = Assert.Throws<RuntimeNameException>(() => tc.GetRuntimeName());
     }
 
 
@@ -111,7 +109,6 @@ internal class IColumnTests
         tc.Check(new ThrowImmediatelyCheckNotifier());
         tc.Alias = "`[bob smith]`";
         tc.Check(new ThrowImmediatelyCheckNotifier());
-
     }
 
 
@@ -122,9 +119,8 @@ internal class IColumnTests
         {
             Alias = "bob smith"
         };
-        var ex = Assert.Throws<SyntaxErrorException>(()=>tc.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"",ex.Message);
-
+        var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"", ex.Message);
     }
 
     [Test]
@@ -136,9 +132,9 @@ internal class IColumnTests
         };
 
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Invalid characters found in Alias \"`bob\"",ex.Message);
-           
+        Assert.AreEqual("Invalid characters found in Alias \"`bob\"", ex.Message);
     }
+
     [Test]
     public void CheckSyntax_IColumn_ThrowBecauseInvalidAlias3()
     {
@@ -147,12 +143,10 @@ internal class IColumnTests
             Alias = "bob]"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Invalid characters found in Alias \"bob]\"",ex.Message);
-            
+        Assert.AreEqual("Invalid characters found in Alias \"bob]\"", ex.Message);
     }
 
-    [Test] 
-        
+    [Test]
     public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
     {
         var tc = new TestColumn
@@ -161,6 +155,6 @@ internal class IColumnTests
             SelectSQL = "GetSomething('here'"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'",ex.Message);
+        Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'", ex.Message);
     }
 }

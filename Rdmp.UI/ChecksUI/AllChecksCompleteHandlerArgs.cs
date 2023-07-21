@@ -12,7 +12,7 @@ namespace Rdmp.UI.ChecksUI;
 /// <summary>
 /// Event arguments for when a <see cref="ICheckable"/> UI finishes checking an object.
 /// </summary>
-public class AllChecksCompleteHandlerArgs: EventArgs
+public class AllChecksCompleteHandlerArgs : EventArgs
 {
     public ToMemoryCheckNotifier CheckResults { get; private set; }
 

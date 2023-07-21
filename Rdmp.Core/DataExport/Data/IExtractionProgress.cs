@@ -78,5 +78,6 @@ public interface IExtractionProgress : IMapsDirectlyToDatabaseTable, ISaveable, 
     /// <param name="totalFailureCount"></param>
     /// <param name="consecutiveFailureCount"></param>
     /// <returns></returns>
-    bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount);
+    bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount,
+        int consecutiveFailureCount);
 }

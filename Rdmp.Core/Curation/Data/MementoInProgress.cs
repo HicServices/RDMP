@@ -35,10 +35,7 @@ public class MementoInProgress
     public MementoInProgress(IMapsDirectlyToDatabaseTable o, string oldYaml)
     {
         OldYaml = oldYaml;
-        foreach(var prop in TableRepository.GetPropertyInfos(o.GetType()))
-        {
-            _props.Add(prop, prop.GetValue(o, null));
-        }
+        foreach (var prop in TableRepository.GetPropertyInfos(o.GetType())) _props.Add(prop, prop.GetValue(o, null));
     }
 
     /// <summary>
@@ -49,24 +46,21 @@ public class MementoInProgress
     /// <returns></returns>
     public IEnumerable<PropertyInfo> GetDiffProperties(IMapsDirectlyToDatabaseTable currentState)
     {
-        foreach(var prop in _props)
+        foreach (var prop in _props)
         {
             var newState = prop.Key.GetValue(currentState, null);
 
             // if new state is not null
-            if(newState != null)
+            if (newState != null)
             {
                 // any change is a difference
-                if(!newState.Equals(prop.Value))
+                if (!newState.Equals(prop.Value))
                     yield return prop.Key;
             }
             else
             {
                 // value changed from null to not null
-                if(prop.Value != null)
-                {
-                    yield return prop.Key;
-                }
+                if (prop.Value != null) yield return prop.Key;
             }
         }
     }

@@ -12,7 +12,7 @@ namespace Rdmp.UI.Menus;
 [System.ComponentModel.DesignerCategory("")]
 internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
 {
-    public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,node)
+    public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args, node)
     {
         Add(new ExecuteCommandConfigureDefaultServers(_activator));
     }

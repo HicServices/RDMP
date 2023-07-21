@@ -5,8 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 
-
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
@@ -21,7 +19,8 @@ public class WideMessageBoxArgs
     public WideMessageBoxTheme Theme { get; set; }
     public bool FormatAsParagraphs { get; set; }
 
-    public WideMessageBoxArgs(string title, string message,string environmentDotStackTrace,string keywordNotToAdd,WideMessageBoxTheme theme)
+    public WideMessageBoxArgs(string title, string message, string environmentDotStackTrace, string keywordNotToAdd,
+        WideMessageBoxTheme theme)
     {
         Title = title;
         Message = message;

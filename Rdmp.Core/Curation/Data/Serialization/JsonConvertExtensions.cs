@@ -30,10 +30,10 @@ public static class JsonConvertExtensions
         {
             TypeNameHandling = TypeNameHandling.None,
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-            Converters = new JsonConverter[] {databaseEntityJsonConverter},
+            Converters = new JsonConverter[] { databaseEntityJsonConverter },
             ContractResolver = new DictionaryAsArrayResolver()
         };
-            
+
         return JsonConvert.SerializeObject(value, settings);
     }
 
@@ -50,19 +50,22 @@ public static class JsonConvertExtensions
     /// <param name="repositoryLocator"></param>
     /// <param name="objectsForConstructingStuffWith"></param>
     /// <returns></returns>
-    public static object DeserializeObject(string value, Type type,IRDMPPlatformRepositoryServiceLocator repositoryLocator, params object[] objectsForConstructingStuffWith)
+    public static object DeserializeObject(string value, Type type,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator, params object[] objectsForConstructingStuffWith)
     {
         var databaseEntityJsonConverter = new DatabaseEntityJsonConverter(repositoryLocator);
-        var lazyJsonConverter = new PickAnyConstructorJsonConverter(new[] {repositoryLocator}.Union(objectsForConstructingStuffWith).ToArray());
+        var lazyJsonConverter =
+            new PickAnyConstructorJsonConverter(new[] { repositoryLocator }.Union(objectsForConstructingStuffWith)
+                .ToArray());
 
         var settings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.None,
             TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-            Converters = new JsonConverter[] {databaseEntityJsonConverter, lazyJsonConverter},
+            Converters = new JsonConverter[] { databaseEntityJsonConverter, lazyJsonConverter },
             ContractResolver = new DictionaryAsArrayResolver()
         };
-            
+
         return JsonConvert.DeserializeObject(value, type, settings);
     }
 }

@@ -14,6 +14,6 @@ internal class GovernancePeriodMenu : RDMPContextMenuStrip
     public GovernancePeriodMenu(RDMPContextMenuStripArgs args, GovernancePeriod period)
         : base(args, period)
     {
-        Add(new ExecuteCommandAddNewGovernanceDocument(_activator,period));
+        Add(new ExecuteCommandAddNewGovernanceDocument(_activator, period));
     }
 }

@@ -23,24 +23,29 @@ public class SingleScheduledJobFactory : ScheduledJobFactory
     private readonly ILoadProgress _loadProgress;
     private readonly IJobDateGenerationStrategy _jobDateGenerationStrategy;
 
-    public SingleScheduledJobFactory(ILoadProgress loadProgress, IJobDateGenerationStrategy jobDateGenerationStrategy, int overrideNumberOfDaysToLoad , ILoadMetadata loadMetadata, ILogManager logManager) : base(overrideNumberOfDaysToLoad, loadMetadata, logManager)
+    public SingleScheduledJobFactory(ILoadProgress loadProgress, IJobDateGenerationStrategy jobDateGenerationStrategy,
+        int overrideNumberOfDaysToLoad, ILoadMetadata loadMetadata, ILogManager logManager) : base(
+        overrideNumberOfDaysToLoad, loadMetadata, logManager)
     {
         _loadProgress = loadProgress;
         _jobDateGenerationStrategy = jobDateGenerationStrategy;
     }
 
-    public override bool HasJobs()
-    {
-        return _jobDateGenerationStrategy.GetTotalNumberOfJobs(OverrideNumberOfDaysToLoad??_loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0;
-    }
+    public override bool HasJobs() =>
+        _jobDateGenerationStrategy.GetTotalNumberOfJobs(
+            OverrideNumberOfDaysToLoad ?? _loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0;
 
-    protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+    protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
     {
         var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        return new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)
+        return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
+            listener, configuration)
         {
             LoadProgress = _loadProgress,
-            DatesToRetrieve = _jobDateGenerationStrategy.GetDates(OverrideNumberOfDaysToLoad??_loadProgress.DefaultNumberOfDaysToLoadEachTime, false)
+            DatesToRetrieve =
+                _jobDateGenerationStrategy.GetDates(
+                    OverrideNumberOfDaysToLoad ?? _loadProgress.DefaultNumberOfDaysToLoadEachTime, false)
         };
     }
 }

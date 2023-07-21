@@ -24,5 +24,6 @@ public interface IMutilateDataTables : ICheckable, IDisposeAfterDataLoad
     /// <param name="dbInfo"></param>
     /// <param name="loadStage"></param>
     void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage);
+
     ExitCodeType Mutilate(IDataLoadJob job);
 }

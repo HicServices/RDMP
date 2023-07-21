@@ -25,7 +25,7 @@ public class PipelineChecker : ICheckable
     {
         _pipeline = pipeline;
     }
-        
+
     /// <summary>
     /// Checks that all the components defined in the pipeline are found using a MEFChecker.  This will also handle classes changing namespaces by updating
     /// class name reference.
@@ -34,11 +34,15 @@ public class PipelineChecker : ICheckable
     public void Check(ICheckNotifier notifier)
     {
         var mef = ((ICatalogueRepository)_pipeline.Repository).MEF;
-            
+
         foreach (var component in _pipeline.PipelineComponents)
         {
             var copy = component;
-            var mefChecker = new MEFChecker(mef, component.Class, delegate(string s) { copy.Class = s; copy.SaveToDatabase(); });
+            var mefChecker = new MEFChecker(mef, component.Class, delegate(string s)
+            {
+                copy.Class = s;
+                copy.SaveToDatabase();
+            });
             mefChecker.Check(notifier);
         }
     }

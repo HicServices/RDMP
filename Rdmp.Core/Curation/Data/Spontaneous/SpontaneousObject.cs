@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous;
 /// <para>SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the
 /// system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue</para>
 /// </summary>
-public abstract class SpontaneousObject: DatabaseEntity
+public abstract class SpontaneousObject : DatabaseEntity
 {
     /// <summary>
     /// Optional repository for tracking the objects relationship to other <see cref="SpontaneousObject"/>
@@ -29,12 +29,11 @@ public abstract class SpontaneousObject: DatabaseEntity
     /// <param name="repository"></param>
     protected SpontaneousObject(MemoryRepository repository)
     {
-        repository?.InsertAndHydrate(this,new Dictionary<string, object>());
+        repository?.InsertAndHydrate(this, new Dictionary<string, object>());
     }
 
     public override void SaveToDatabase()
     {
-            
     }
 
     public override void DeleteInDatabase()

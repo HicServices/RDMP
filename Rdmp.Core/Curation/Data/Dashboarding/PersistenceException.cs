@@ -20,7 +20,6 @@ public class PersistenceException : Exception
     /// <param name="message"></param>
     public PersistenceException(string message) : base(message)
     {
-            
     }
 
     /// <summary>
@@ -28,7 +27,7 @@ public class PersistenceException : Exception
     /// </summary>
     /// <param name="message"></param>
     /// <param name="exception"></param>
-    public PersistenceException(string message, Exception exception):base(message,exception)
+    public PersistenceException(string message, Exception exception) : base(message, exception)
     {
     }
 }

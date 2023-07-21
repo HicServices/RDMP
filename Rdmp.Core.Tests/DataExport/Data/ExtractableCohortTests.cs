@@ -20,7 +20,7 @@ internal class ExtractableCohortTests : TestsRequiringACohort
         var cohort = _extractableCohort;
 
         Assert.IsNotNull(cohort.GetPrivateIdentifier());
-        Assert.AreNotEqual(cohort.GetReleaseIdentifier(),cohort.GetPrivateIdentifier());
+        Assert.AreNotEqual(cohort.GetReleaseIdentifier(), cohort.GetPrivateIdentifier());
 
         var ect = cohort.ExternalCohortTable;
         ect.ReleaseIdentifierField = ect.PrivateIdentifierField;
@@ -28,13 +28,15 @@ internal class ExtractableCohortTests : TestsRequiringACohort
 
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
 
-        var ex = Assert.Throws<Exception>(()=>cohort.GetReleaseIdentifier());
+        var ex = Assert.Throws<Exception>(() => cohort.GetReleaseIdentifier());
 
-        Assert.AreEqual("R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", ex.Message);
+        Assert.AreEqual(
+            "R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)",
+            ex.Message);
 
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
 
-        Assert.AreEqual(cohort.GetReleaseIdentifier(),cohort.GetPrivateIdentifier());
+        Assert.AreEqual(cohort.GetReleaseIdentifier(), cohort.GetPrivateIdentifier());
 
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
     }

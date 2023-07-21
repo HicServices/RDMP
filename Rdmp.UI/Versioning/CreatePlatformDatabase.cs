@@ -35,7 +35,7 @@ public partial class CreatePlatformDatabase : Form
 
     private bool _programaticClose;
     private IPatcher _patcher;
-        
+
     private Task _tCreateDatabase;
     public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; } = null;
 
@@ -50,11 +50,11 @@ public partial class CreatePlatformDatabase : Form
         //show only Database section
         serverDatabaseTableSelector1.HideTableComponents();
 
-        if(patcher.SqlServerOnly)
+        if (patcher.SqlServerOnly)
             serverDatabaseTableSelector1.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
     }
 
-        
+
     private void btnCreate_Click(object sender, EventArgs e)
     {
         var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
@@ -85,11 +85,10 @@ public partial class CreatePlatformDatabase : Form
             "The following SQL is about to be executed:", createSql.EntireScript);
 
         var executor = new MasterDatabaseScriptExecutor(db);
-            
+
         if (preview.ShowDialog() == DialogResult.OK)
-        {
-            _tCreateDatabase = Task.Run(()=>
-                    
+            _tCreateDatabase = Task.Run(() =>
+
                 {
                     var memory = new ToMemoryCheckNotifier(checksUI1);
 
@@ -100,43 +99,44 @@ public partial class CreatePlatformDatabase : Form
                         DatabaseCreatedIfAny = db;
 
                         var worst = memory.GetWorst();
-                        if(worst == CheckResult.Success || worst == CheckResult.Warning)
-                            if (MessageBox.Show("Succesfully created database, close form?", "Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (worst == CheckResult.Success || worst == CheckResult.Warning)
+                            if (MessageBox.Show("Succesfully created database, close form?", "Success",
+                                    MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 _programaticClose = true;
                                 Invoke(new MethodInvoker(Close));
                             }
                     }
                     else
-                        _completed = false;//failed to create database
+                    {
+                        _completed = false; //failed to create database
+                    }
                 }
             );
-        }
     }
 
-        
 
     private bool silentlyApplyPatchCallback(Patch p)
     {
-        checksUI1.OnCheckPerformed(new CheckEventArgs($"About to apply patch {p.locationInAssembly}", CheckResult.Success, null));
+        checksUI1.OnCheckPerformed(new CheckEventArgs($"About to apply patch {p.locationInAssembly}",
+            CheckResult.Success, null));
         return true;
     }
-        
+
     private void CreatePlatformDatabase_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if(_tCreateDatabase != null)
-        {
+        if (_tCreateDatabase != null)
             if (!_tCreateDatabase.IsCompleted && !_programaticClose)
-            {
-                if(
-                    MessageBox.Show("CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.","Really Close?",MessageBoxButtons.YesNoCancel) 
+                if (
+                    MessageBox.Show(
+                        "CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.",
+                        "Really Close?", MessageBoxButtons.YesNoCancel)
                     != DialogResult.Yes)
                     e.Cancel = true;
-            }
-        }
     }
-        
-    public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, IPatcher patcher)
+
+    public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,
+        PermissableDefaults defaultToSet, IPatcher patcher)
     {
         var createPlatform = new CreatePlatformDatabase(patcher);
         createPlatform.ShowDialog();
@@ -147,8 +147,8 @@ public partial class CreatePlatformDatabase : Form
         {
             var newServer = new ExternalDatabaseServer(repository, db.GetRuntimeName(), patcher);
             newServer.SetProperties(db);
-                
-            if(defaultToSet != PermissableDefaults.None)
+
+            if (defaultToSet != PermissableDefaults.None)
                 repository.SetDefault(defaultToSet, newServer);
 
             return newServer;

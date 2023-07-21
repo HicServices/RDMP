@@ -28,14 +28,15 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// </summary>
 public class FixedWidthAttacher : FlatFileAttacher
 {
-
     [DemandsInitialization(
         @"The location of a HIC formatted Fixed width file descriptor, e.g. \\ares\unit\HIC Data\DATA Sets\z_TEMPLATE_data_folder\Data\ExampleFixedWidthFormatFile.csv"
     )]
     public FileInfo PathToFormatFile { get; set; }
 
     private DataTable _flatFile;
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         bHaveAlreadySubmittedData = false;
 
@@ -47,10 +48,12 @@ public class FixedWidthAttacher : FlatFileAttacher
     {
         //complain about unmatched columns
         foreach (DataColumn col in _flatFile.Columns)
-            if (!loadTarget.Columns.Contains(col.ColumnName))//We use notify error here rather than throwing an Exception because there could be many dodgy /misnamed columns so tell the user about all of them
+            if (!loadTarget.Columns
+                    .Contains(col
+                        .ColumnName)) //We use notify error here rather than throwing an Exception because there could be many dodgy /misnamed columns so tell the user about all of them
                 job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error,
-                        $"Format file ({PathToFormatFile.FullName}) indicated there would be a header called '{col.ColumnName}' but the column did not appear in the RAW database table (Columns in RAW were {string.Join(",", loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})")); 
+                        $"Format file ({PathToFormatFile.FullName}) indicated there would be a header called '{col.ColumnName}' but the column did not appear in the RAW database table (Columns in RAW were {string.Join(",", loadTarget.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})"));
     }
 
     private bool bHaveAlreadySubmittedData;
@@ -63,7 +66,8 @@ public class FixedWidthAttacher : FlatFileAttacher
     /// <param name="maxBatchSize"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable destination, int maxBatchSize,GracefulCancellationToken cancellationToken)
+    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable destination, int maxBatchSize,
+        GracefulCancellationToken cancellationToken)
     {
         if (bHaveAlreadySubmittedData)
             return 0;
@@ -79,21 +83,19 @@ public class FixedWidthAttacher : FlatFileAttacher
 
         //there is no more data to read, return the number of rows read but set bHaveAlreadySubmittedData to true so that we return 0 next time this method is called
         bHaveAlreadySubmittedData = true;
-           
+
         return destination.Rows.Count;
     }
 
     protected override void CloseFile()
     {
-            
     }
 
     public override void Check(ICheckNotifier notifier)
     {
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-            
     }
 }

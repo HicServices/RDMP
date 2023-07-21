@@ -21,15 +21,12 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 public abstract class PipelineUseCase : IPipelineUseCase
 {
     /// <inheritdoc/>
-    public HashSet<object> GetInitializationObjects()
-    {
-        return InitializationObjects;
-    }
+    public HashSet<object> GetInitializationObjects() => InitializationObjects;
 
     /// <inheritdoc/>
     public IDataFlowPipelineContext GetContext()
     {
-        if(_context == null)
+        if (_context == null)
             throw new Exception(
                 $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
 
@@ -54,6 +51,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
 
     /// <inheritdoc/>
     public object ExplicitSource { get; protected set; }
+
     /// <inheritdoc/>
     public object ExplicitDestination { get; protected set; }
 
@@ -64,7 +62,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     /// <para>If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects for the task</para>
     /// </summary>
     public bool IsDesignTime { get; private set; }
-        
+
     protected HashSet<object> InitializationObjects = new();
     private IDataFlowPipelineContext _context;
 
@@ -89,11 +87,9 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
-    {
-        return pipelines.Where(IsAllowable);
-    }
-        
+    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines) =>
+        pipelines.Where(IsAllowable);
+
     /// <inheritdoc/>
     public virtual IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
     {
@@ -116,26 +112,17 @@ public abstract class PipelineUseCase : IPipelineUseCase
     public bool IsAllowable(Pipeline pipeline)
     {
         // Pipeline is not compatible with the execution context of the pipeline use case
-        if(!_context.IsAllowable(pipeline))
-        {
-            return false;
-        }
+        if (!_context.IsAllowable(pipeline)) return false;
         try
         {
             // Does the pipeline contain any components that are invalid under the current list of available initialization objects etc
             foreach (var component in pipeline.PipelineComponents)
             {
                 var type = component.GetClassAsSystemType();
-                if(type == null)
-                {
-                    return false;
-                }
+                if (type == null) return false;
 
                 var advert = new AdvertisedPipelineComponentTypeUnderContext(type, this);
-                if (!advert.IsCompatible())
-                {
-                    return false;
-                }
+                if (!advert.IsCompatible()) return false;
             }
         }
         catch (Exception)

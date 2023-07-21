@@ -15,33 +15,25 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution,IAtomicCommandWithTarget
+public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution, IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
 
     public ExecuteCommandConfigureCatalogueValidationRules(IActivateItems activator) : base(activator)
     {
-            
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Allows you to specify validation rules for columns in the dataset and pick the time coverage/pivot fields";
-    }
+    public override string GetCommandHelp() =>
+        "Allows you to specify validation rules for columns in the dataset and pick the time coverage/pivot fields";
 
-    public override string GetCommandName()
-    {
-        return "Validation Rules...";
-    }
+    public override string GetCommandName() => "Validation Rules...";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue) target;
+        _catalogue = (Catalogue)target;
         return this;
     }
 
@@ -51,7 +43,7 @@ public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExe
 
         _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
-        if(_catalogue == null)
+        if (_catalogue == null)
             return;
 
         Activator.Activate<ValidationSetupUI, Catalogue>(_catalogue);

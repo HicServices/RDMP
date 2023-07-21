@@ -24,7 +24,8 @@ public abstract class DataQualityReport : IDataQualityReport
         Check(checkNotifier);
 
         return checkNotifier.GetWorst() <= CheckResult.Warning;
-
     }
-    public abstract void GenerateReport(ICatalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken);
+
+    public abstract void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
+        CancellationToken cancellationToken);
 }

@@ -14,26 +14,25 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExecutionProposal<AggregateConfiguration>
+internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandExecutionProposal<AggregateConfiguration>
 {
     public ProposeExecutionWhenTargetIsAggregateConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(AggregateConfiguration target)
-    {
-        return true;
-    }
+    public override bool CanActivate(AggregateConfiguration target) => true;
 
     public override void Activate(AggregateConfiguration target)
     {
         ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
     {
-        if(cmd is ContainerCombineable cc)
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetAggregateConfiguration,cc.Container);
+        if (cmd is ContainerCombineable cc)
+            return new ExecuteCommandImportFilterContainerTree(ItemActivator, targetAggregateConfiguration,
+                cc.Container);
 
         //if it is an aggregate being dragged
         if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)
@@ -44,7 +43,8 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExe
 
             //that is part of cohort identification already and being dragged above/below the current aggregate
             if (sourceAggregateCommand.ContainerIfAny != null && insertOption != InsertOption.Default)
-                return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetAggregateConfiguration, insertOption);
+                return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
+                    targetAggregateConfiguration, insertOption);
         }
 
         if (cmd is CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand)
@@ -55,16 +55,16 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExe
 
             //above or below
             if (insertOption != InsertOption.Default)
-                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand, targetAggregateConfiguration, insertOption);
+                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
+                    targetAggregateConfiguration, insertOption);
         }
 
-        if(cmd is ExtractionFilterParameterSetCombineable efps)
-        {
-            return new ExecuteCommandCreateNewFilter(ItemActivator,targetAggregateConfiguration){
+        if (cmd is ExtractionFilterParameterSetCombineable efps)
+            return new ExecuteCommandCreateNewFilter(ItemActivator, targetAggregateConfiguration)
+            {
                 BasedOn = efps.ParameterSet.ExtractionFilter,
                 ParameterSet = efps.ParameterSet
             };
-        }
 
         return null;
     }

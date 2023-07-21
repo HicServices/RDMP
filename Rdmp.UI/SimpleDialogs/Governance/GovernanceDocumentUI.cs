@@ -37,7 +37,7 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID, "Text", "ID", g=>g.ID);
+        Bind(tbID, "Text", "ID", g => g.ID);
         Bind(tbName, "Text", "Name", g => g.Name);
         Bind(tbDescription, "Text", "Description", g => g.Description);
         Bind(tbPath, "Text", "URL", g => g.URL);
@@ -50,12 +50,9 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
             CheckFileExists = true
         };
 
-        if (ofd.ShowDialog() == DialogResult.OK)
-        {
-            tbPath.Text = ofd.FileName;
-        }
+        if (ofd.ShowDialog() == DialogResult.OK) tbPath.Text = ofd.FileName;
     }
-        
+
     private void btnOpenContainingFolder_Click(object sender, EventArgs e)
     {
         try

@@ -15,11 +15,11 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers;
 /// <summary>
 /// See Attacher
 /// </summary>
-public interface IAttacher: IDisposeAfterDataLoad, ICheckable
+public interface IAttacher : IDisposeAfterDataLoad, ICheckable
 {
     ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
     void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
-        
+
     ILoadDirectory LoadDirectory { get; set; }
     bool RequestsExternalDatabaseCreation { get; }
 }

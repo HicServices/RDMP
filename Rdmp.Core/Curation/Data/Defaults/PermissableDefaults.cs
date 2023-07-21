@@ -23,7 +23,7 @@ public enum PermissableDefaults
     /// Relational logging database to store logs in while loading, running DQE, extracting etc
     /// </summary>
     LiveLoggingServer_ID,
-        
+
     /// <summary>
     /// Server to split sensitive identifiers off to during load (e.g. IdentifierDumper)
     /// </summary>

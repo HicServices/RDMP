@@ -39,6 +39,7 @@ internal class ConsoleGuiBigListBox<T>
     /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
     /// </summary>
     private ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
+
     private Task _currentFilterTask;
     private object _taskCancellationLock = new();
 
@@ -60,7 +61,7 @@ internal class ConsoleGuiBigListBox<T>
         _okText = okText;
         _addSearch = addSearch;
         _prompt = prompt;
-            
+
         AspectGetter = displayMember ?? (arg => arg?.ToString() ?? string.Empty);
     }
 
@@ -74,7 +75,7 @@ internal class ConsoleGuiBigListBox<T>
     /// <param name="displayMember">What to display in the list box (defaults to <see cref="object.ToString"/></param>
     /// <param name="addNull">Creates a selection option "Null" that returns a null selection</param>
     public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,
-        Func<T, string> displayMember, bool addNull):this(prompt,okText,addSearch,displayMember)
+        Func<T, string> displayMember, bool addNull) : this(prompt, okText, addSearch, displayMember)
     {
         ArgumentNullException.ThrowIfNull(collection);
 
@@ -82,32 +83,26 @@ internal class ConsoleGuiBigListBox<T>
         _addNull = addNull;
     }
 
-    private class ListViewObject<T2> where T2:T
+    private class ListViewObject<T2> where T2 : T
     {
         private readonly Func<T2, string> _displayFunc;
         public T2 Object { get; }
 
-        public ListViewObject(T2 o, Func<T2,string> displayFunc)
+        public ListViewObject(T2 o, Func<T2, string> displayFunc)
         {
             _displayFunc = displayFunc;
             Object = o;
         }
 
-        public override string ToString()
-        {
-            return _displayFunc(Object);
-        }
+        public override string ToString() => _displayFunc(Object);
 
-        public override int GetHashCode()
-        {
-            return Object.GetHashCode();
-        }
+        public override int GetHashCode() => Object.GetHashCode();
 
         public override bool Equals(object obj)
         {
-            if(obj is ListViewObject<T2> other)
+            if (obj is ListViewObject<T2> other)
                 return Object.Equals(other.Object);
-                
+
             return false;
         }
     }
@@ -120,18 +115,19 @@ internal class ConsoleGuiBigListBox<T>
     {
         var okClicked = false;
 
-        var win = new Window (_prompt) {
+        var win = new Window(_prompt)
+        {
             X = 0,
             Y = 0,
 
             // By using Dim.Fill(), it will automatically resize without manual intervention
-            Width = Dim.Fill (),
-            Height = Dim.Fill (),
+            Width = Dim.Fill(),
+            Height = Dim.Fill(),
             Modal = true,
             ColorScheme = ConsoleMainWindow.ColorScheme
         };
 
-        _listView = new ListView(new List<string>(new []{"Error"}))
+        _listView = new ListView(new List<string>(new[] { "Error" }))
         {
             X = 0,
             Y = 0,
@@ -140,10 +136,10 @@ internal class ConsoleGuiBigListBox<T>
         };
 
         _listView.KeyPress += _listView_KeyPress;
-        _listView.SetSource( (_collection = BuildList(GetInitialSource())).ToList());
+        _listView.SetSource((_collection = BuildList(GetInitialSource())).ToList());
         win.Add(_listView);
 
-        var btnOk = new Button(_okText,true)
+        var btnOk = new Button(_okText, true)
         {
             Y = Pos.Bottom(_listView),
             Width = 8,
@@ -165,7 +161,7 @@ internal class ConsoleGuiBigListBox<T>
             Width = 10,
             Height = 1
         };
-        btnCancel.Clicked += ()=>Application.RequestStop();
+        btnCancel.Clicked += () => Application.RequestStop();
 
         if (_addSearch)
         {
@@ -177,7 +173,8 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(searchLabel);
 
-            _mainInput = new TextField ("") {
+            _mainInput = new TextField("")
+            {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
                 Width = 30
@@ -198,19 +195,19 @@ internal class ConsoleGuiBigListBox<T>
         }
         else
         {
-            btnOk.X = Pos.Center()-5;
+            btnOk.X = Pos.Center() - 5;
             btnCancel.X = Pos.Center() + 5;
         }
 
-            
+
         win.Add(btnOk);
         win.Add(btnCancel);
 
-        AddMoreButtonsAfter(win,btnCancel);
+        AddMoreButtonsAfter(win, btnCancel);
 
-        var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
+        var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(500), Timer);
 
-        Application.Run(win,ConsoleMainWindow.ExceptionPopup);
+        Application.Run(win, ConsoleMainWindow.ExceptionPopup);
 
         Application.MainLoop.RemoveTimeout(callback);
 
@@ -220,10 +217,7 @@ internal class ConsoleGuiBigListBox<T>
     private void _listView_KeyPress(View.KeyEventEventArgs obj)
     {
         // if user types in some text change the focus to the text box to enable searching
-        if (char.IsLetterOrDigit((char)obj.KeyEvent.KeyValue))
-        {
-            _mainInput.FocusFirst();
-        }
+        if (char.IsLetterOrDigit((char)obj.KeyEvent.KeyValue)) _mainInput.FocusFirst();
     }
 
     /// <summary>
@@ -234,25 +228,24 @@ internal class ConsoleGuiBigListBox<T>
     {
     }
 
-    private bool Timer (MainLoop caller)
+    private bool Timer(MainLoop caller)
     {
-        if(_changes && DateTime.Now.Subtract(_lastKeypress) > TimeSpan.FromSeconds(1))
-        {
-            lock(_taskCancellationLock)
+        if (_changes && DateTime.Now.Subtract(_lastKeypress) > TimeSpan.FromSeconds(1))
+            lock (_taskCancellationLock)
             {
                 var oldSelected = _listView.SelectedItem;
                 _listView.SetSource(_collection.ToList());
 
-                if(oldSelected < _collection.Count)
-                    _listView.SelectedItem = oldSelected ;
+                if (oldSelected < _collection.Count)
+                    _listView.SelectedItem = oldSelected;
 
                 _changes = false;
                 return true;
             }
-        }           
-            
+
         return true;
     }
+
     protected void RestartFiltering()
     {
         RestartFiltering(_mainInput.Text.ToString());
@@ -260,13 +253,12 @@ internal class ConsoleGuiBigListBox<T>
 
     protected void RestartFiltering(string searchTerm)
     {
-
         var cts = new CancellationTokenSource();
 
-        lock(_taskCancellationLock)
+        lock (_taskCancellationLock)
         {
             //cancel any previous searches
-            foreach(var c in _cancelFiltering)
+            foreach (var c in _cancelFiltering)
                 c.Cancel();
 
             _cancelFiltering.Clear();
@@ -274,47 +266,49 @@ internal class ConsoleGuiBigListBox<T>
             _cancelFiltering.Add(cts);
         }
 
-        _currentFilterTask = Task.Run(()=>
+        _currentFilterTask = Task.Run(() =>
         {
-            var result = BuildList(GetListAfterSearch(searchTerm,cts.Token));
+            var result = BuildList(GetListAfterSearch(searchTerm, cts.Token));
 
-            lock(_taskCancellationLock)
+            lock (_taskCancellationLock)
             {
                 _collection = result;
                 _changes = true;
             }
-
-        });       
+        });
     }
 
     private IList<ListViewObject<T>> BuildList(IList<T> listOfT)
     {
-        var toReturn = listOfT.Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList();
+        var toReturn = listOfT.Select(o => new ListViewObject<T>(o, AspectGetter)).ToList();
 
-        if(_addNull)
-            toReturn.Add(new ListViewObject<T>((T)(object)null,o=>"Null"));
+        if (_addNull)
+            toReturn.Add(new ListViewObject<T>((T)(object)null, o => "Null"));
 
         return toReturn;
     }
 
     protected virtual IList<T> GetListAfterSearch(string searchString, CancellationToken token)
     {
-        if(_publicCollection == null)
-            throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
+        if (_publicCollection == null)
+            throw new InvalidOperationException(
+                "When using the protected constructor derived classes must override this method ");
 
         var searchTerms = searchString.Split(' ');
 
         //stop the Contains searching when the user cancels the search
         return _publicCollection.Where(o => !token.IsCancellationRequested &&
                                             // must have all search terms
-                                            searchTerms.All(t=>AspectGetter(o).Contains(t, StringComparison.CurrentCultureIgnoreCase))
+                                            searchTerms.All(t =>
+                                                AspectGetter(o).Contains(t, StringComparison.CurrentCultureIgnoreCase))
         ).ToList();
     }
 
     protected virtual IList<T> GetInitialSource()
     {
-        if(_publicCollection == null)
-            throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
+        if (_publicCollection == null)
+            throw new InvalidOperationException(
+                "When using the protected constructor derived classes must override this method ");
 
         return _publicCollection;
     }

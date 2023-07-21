@@ -17,12 +17,14 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IProjectCohortIdentificationConfigurationAssociation"/>
-public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation,IInjectKnown<CohortIdentificationConfiguration>
+public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity,
+    IProjectCohortIdentificationConfigurationAssociation, IInjectKnown<CohortIdentificationConfiguration>
 {
     #region Database Properties
 
     private int _project_ID;
     private int _cohortIdentificationConfiguration_ID;
+
     #endregion
 
     /// <inheritdoc/>
@@ -43,7 +45,6 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
 
     #region Relationships
-
 
     /// <inheritdoc cref="Project_ID"/>
     [NoMappingToDatabase]
@@ -71,12 +72,13 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     /// <param name="repository"></param>
     /// <param name="project"></param>
     /// <param name="cic"></param>
-    public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project, CohortIdentificationConfiguration cic)
+    public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project,
+        CohortIdentificationConfiguration cic)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Project_ID",project.ID},
-            {"CohortIdentificationConfiguration_ID",cic.ID}
+            { "Project_ID", project.ID },
+            { "CohortIdentificationConfiguration_ID", cic.ID }
         });
 
         if (ID == 0 || Repository != repository)
@@ -84,6 +86,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
         ClearAllInjections();
     }
+
     internal ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
         : base(repository, r)
     {
@@ -101,15 +104,12 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
     public void ClearAllInjections()
     {
-        _knownCic = new Lazy<CohortIdentificationConfiguration>(FetchCohortIdentificationConfiguration); 
+        _knownCic = new Lazy<CohortIdentificationConfiguration>(FetchCohortIdentificationConfiguration);
     }
 
-    private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration()
-    {
-        return
-            DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
-                CohortIdentificationConfiguration_ID).SingleOrDefault();
-    }
+    private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration() =>
+        DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
+            CohortIdentificationConfiguration_ID).SingleOrDefault();
 
 
     /// <summary>
@@ -119,7 +119,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     public override string ToString()
     {
         var assoc = CohortIdentificationConfiguration;
-        return assoc == null ? "Orphan Association" :assoc.Name;
+        return assoc == null ? "Orphan Association" : assoc.Name;
     }
 
     public bool ShouldBeReadOnly(out string reason)
@@ -129,23 +129,14 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     }
 
     /// <inheritdoc/>
-    public string GetDeleteMessage()
-    {
-        return "remove CohortIdentificationConfiguration from the Project";
-    }
+    public string GetDeleteMessage() => "remove CohortIdentificationConfiguration from the Project";
 
     /// <inheritdoc/>
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
+    public string GetDeleteVerb() => "Remove";
 
     /// <summary>
     /// Returns the <see cref="CohortIdentificationConfiguration_ID"/>
     /// </summary>
     /// <returns></returns>
-    public object MasqueradingAs()
-    {
-        return CohortIdentificationConfiguration;
-    }
+    public object MasqueradingAs() => CohortIdentificationConfiguration;
 }

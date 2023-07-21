@@ -26,8 +26,13 @@ public abstract class ScheduledDataLoadProcess : DataLoadProcess
     protected readonly ILoadProgressSelectionStrategy LoadProgressSelectionStrategy;
     protected readonly int? OverrideNumberOfDaysToLoad;
 
-    protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,HICDatabaseConfiguration configuration)
-        : base(repositoryLocator,loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution,configuration)
+    protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution,
+        JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory,
+        ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad,
+        ILogManager logManager, IDataLoadEventListener dataLoadEventListener, HICDatabaseConfiguration configuration)
+        : base(repositoryLocator, loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution,
+            configuration)
     {
         JobDateGenerationStrategyFactory = jobDateGenerationStrategyFactory;
         LoadProgressSelectionStrategy = loadProgressSelectionStrategy;

@@ -35,7 +35,8 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         _catalogueRepository = catalogueRepository;
     }
 
-    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         var sourceFolder = GetSourceFolder();
         Debug.Assert(sourceFolder != null, "sourceFolder != null");
@@ -53,7 +54,8 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
             File.Copy(Path.Combine(_dataPathMap.FullName, $"{databaseName}.mdf"), Path.Combine(dbOutputFolder.FullName,
                 $"{databaseName}.mdf"));
-            File.Copy(Path.Combine(_dataPathMap.FullName, $"{databaseName}_log.ldf"), Path.Combine(dbOutputFolder.FullName,
+            File.Copy(Path.Combine(_dataPathMap.FullName, $"{databaseName}_log.ldf"), Path.Combine(
+                dbOutputFolder.FullName,
                 $"{databaseName}_log.ldf"));
             File.Delete(Path.Combine(_dataPathMap.FullName, $"{databaseName}.mdf"));
             File.Delete(Path.Combine(_dataPathMap.FullName, $"{databaseName}_log.ldf"));
@@ -66,7 +68,8 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
         var extractDir = _releaseData.ConfigurationsForRelease.First().Key.GetProject().ExtractionDirectory;
 
-        return new ExtractionDirectory(extractDir, _releaseData.ConfigurationsForRelease.First().Key).ExtractionDirectoryInfo;
+        return new ExtractionDirectory(extractDir, _releaseData.ConfigurationsForRelease.First().Key)
+            .ExtractionDirectoryInfo;
     }
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -82,11 +85,14 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
     {
         if (!_releaseData.ReleaseGlobals || _releaseData.ReleaseState == ReleaseState.DoingPatch)
-            notifier.OnCheckPerformed(new CheckEventArgs("You cannot untick globals or release a subset of datasets when releasing from a DB", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "You cannot untick globals or release a subset of datasets when releasing from a DB",
+                CheckResult.Fail));
 
         var foundConnection = string.Empty;
         var tables = new List<string>();
-        foreach (var cumulativeResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.CumulativeExtractionResults))
+        foreach (var cumulativeResult in _releaseData.ConfigurationsForRelease.SelectMany(x =>
+                     x.Key.CumulativeExtractionResults))
         {
             if (cumulativeResult.DestinationDescription.Split('|').Length != 3)
                 throw new Exception("The extraction did not generate a description that can be parsed. " +
@@ -101,8 +107,9 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
                 foundConnection = candidate;
 
             if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
-                throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
-                                    "Please re-run the extracts against the same database.");
+                throw new Exception(
+                    "You are trying to extract from multiple servers or databases. This is not allowed! " +
+                    "Please re-run the extracts against the same database.");
 
             foreach (var supplementalResult in cumulativeResult.SupplementalExtractionResults
                          .Where(x => x.IsReferenceTo(typeof(SupportingSQLTable)) ||
@@ -118,12 +125,14 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
                 tables.Add(supplementalResult.DestinationDescription.Split('|')[2]);
 
                 if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
-                    throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
-                                        "Please re-run the extracts against the same database.");
+                    throw new Exception(
+                        "You are trying to extract from multiple servers or databases. This is not allowed! " +
+                        "Please re-run the extracts against the same database.");
             }
         }
 
-        foreach (var globalResult in _releaseData.ConfigurationsForRelease.SelectMany(x => x.Key.SupplementalExtractionResults)
+        foreach (var globalResult in _releaseData.ConfigurationsForRelease
+                     .SelectMany(x => x.Key.SupplementalExtractionResults)
                      .Where(x => x.IsReferenceTo(typeof(SupportingSQLTable)) ||
                                  x.IsReferenceTo(typeof(TableInfo))))
         {
@@ -140,8 +149,9 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
                 foundConnection = candidate;
 
             if (foundConnection != candidate) // ...then we check that all other candidates point to the same DB
-                throw new Exception("You are trying to extract from multiple servers or databases. This is not allowed! " +
-                                    "Please re-run the extracts against the same database.");
+                throw new Exception(
+                    "You are trying to extract from multiple servers or databases. This is not allowed! " +
+                    "Please re-run the extracts against the same database.");
         }
 
         var externalServerId = int.Parse(foundConnection.Split('|')[0]);
@@ -154,21 +164,15 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
             throw new Exception(
                 $"The selected Server ({externalServer.Name}) must have a Data Path in order to be used as an extraction destination.");
 
-        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, false);
         _database = server.ExpectDatabase(dbName);
 
-        if (!_database.Exists())
-        {
-            throw new Exception($"Database {_database} does not exist!");
-        }
+        if (!_database.Exists()) throw new Exception($"Database {_database} does not exist!");
 
         foreach (var table in tables)
         {
             var foundTable = _database.ExpectTable(table);
-            if (!foundTable.Exists())
-            {
-                throw new Exception($"Table {table} does not exist!");
-            }
+            if (!foundTable.Exists()) throw new Exception($"Table {table} does not exist!");
         }
 
         var spuriousTables = _database.DiscoverTables(false).Where(t => !tables.Contains(t.GetRuntimeName())).ToList();
@@ -177,10 +181,8 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
                 CheckResult.Warning,
                 null,
                 "Are you sure you want to continue the release process?")))
-        {
             if (!isRunTime)
                 throw new Exception("Release aborted by user.");
-        }
 
         var sourceFolder = GetSourceFolder();
         var dbOutputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.MASTER_DATA_FOLDER_NAME);

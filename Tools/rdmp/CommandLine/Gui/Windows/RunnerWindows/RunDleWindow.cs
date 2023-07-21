@@ -22,14 +22,12 @@ internal class RunDleWindow : RunEngineWindow<DleOptions>
         this.lmd = lmd;
     }
 
-    private static DleOptions GetCommand(LoadMetadata lmd)
-    {
-        return new DleOptions
+    private static DleOptions GetCommand(LoadMetadata lmd) =>
+        new()
         {
             LoadMetadata = lmd.ID.ToString(),
             Iterative = false
         };
-    }
 
     protected override void AdjustCommand(DleOptions opts, CommandLineActivity activity)
     {
@@ -43,11 +41,11 @@ internal class RunDleWindow : RunEngineWindow<DleOptions>
 
             opts.LoadProgress = lp.ID.ToString();
 
-            if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out var chosen))
+            if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime,
+                    out var chosen))
                 opts.DaysToLoad = (int)chosen;
             else
                 return;
         }
-
     }
 }

@@ -20,26 +20,27 @@ namespace Rdmp.Core.DataExport.Data;
 /// </summary>
 public class FilterContainer : ConcreteContainer, IContainer
 {
-
     public FilterContainer()
     {
-
     }
+
     /// <summary>
     /// Creates a new instance with the given <paramref name="operation"/>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
-    public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND):base(repository.FilterManager)
+    public FilterContainer(IDataExportRepository repository,
+        FilterContainerOperation operation = FilterContainerOperation.AND) : base(repository.FilterManager)
     {
         Repository = repository;
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Operation", operation.ToString()}
+            { "Operation", operation.ToString() }
         });
     }
 
-    internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,repository, r)
+    internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,
+        repository, r)
     {
     }
 
@@ -67,22 +68,19 @@ public class FilterContainer : ConcreteContainer, IContainer
     /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Operation.ToString();
-    }
+    public override string ToString() => Operation.ToString();
 
 
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves
         var clonedFilterContainer = ShallowClone();
-            
+
         //clone our filters
         foreach (var deployedExtractionFilter in GetFilters())
         {
             //clone it
-            var cloneFilter = ((DeployedExtractionFilter) deployedExtractionFilter).ShallowClone(clonedFilterContainer);
+            var cloneFilter = ((DeployedExtractionFilter)deployedExtractionFilter).ShallowClone(clonedFilterContainer);
 
             //clone parameters
             foreach (DeployedExtractionFilterParameter parameter in deployedExtractionFilter.GetAllParameters())
@@ -154,19 +152,16 @@ public class FilterContainer : ConcreteContainer, IContainer
 
         //our parent must be the root container maybe? recursive
         return parent?.GetSelectedDataSetsRecursively();
-
     }
 
-    public override IFilterFactory GetFilterFactory()
-    {
-        return new DeployedExtractionFilterFactory(DataExportRepository);
-    }
+    public override IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);
 
     public override void DeleteInDatabase()
     {
         base.DeleteInDatabase();
 
-        foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(nameof(SelectedDataSets.RootFilterContainer_ID), ID))
+        foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(
+                     nameof(SelectedDataSets.RootFilterContainer_ID), ID))
         {
             sds.RootFilterContainer_ID = null;
             sds.SaveToDatabase();

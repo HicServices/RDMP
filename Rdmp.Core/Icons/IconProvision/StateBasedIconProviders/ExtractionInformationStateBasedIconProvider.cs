@@ -28,36 +28,38 @@ public class ExtractionInformationStateBasedIconProvider : IObjectStateBasedIcon
     {
         _extractionInformation_Core = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation);
         _extractionInformation_Supplemental = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_Supplemental);
-        _extractionInformation_SpecialApproval = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval);
-        _extractionInformation_ProjectSpecific = Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_ProjectSpecific);
+        _extractionInformation_SpecialApproval =
+            Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval);
+        _extractionInformation_ProjectSpecific =
+            Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_ProjectSpecific);
         _overlayProvider = new IconOverlayProvider();
-        _extractionInformation_InternalOnly = _overlayProvider.GetOverlayNoCache(_extractionInformation_SpecialApproval, OverlayKind.Internal);
-        _extractionInformation_Deprecated = _overlayProvider.GetOverlayNoCache(_extractionInformation_Core,OverlayKind.Deprecated);
+        _extractionInformation_InternalOnly =
+            _overlayProvider.GetOverlayNoCache(_extractionInformation_SpecialApproval, OverlayKind.Internal);
+        _extractionInformation_Deprecated =
+            _overlayProvider.GetOverlayNoCache(_extractionInformation_Core, OverlayKind.Deprecated);
 
         _noIconAvailable = Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
     }
-        
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-            
-        if(o is ExtractionCategory cat)
+        if (o is ExtractionCategory cat)
             return GetImage(cat);
 
         if (o is not ExtractionInformation ei) return null;
 
         var toReturn = GetImage(ei.ExtractionCategory);
-                
+
         if (ei.IsExtractionIdentifier)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
 
         if (ei.IsPrimaryKey)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
-        if (ei.HashOnDataRelease) 
+        if (ei.HashOnDataRelease)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
         return toReturn;
-
     }
 
     private Image<Rgba32> GetImage(ExtractionCategory category)

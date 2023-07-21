@@ -29,26 +29,28 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating;
 /// </summary>
 public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProgressUpdateInfo>
 {
+    private const string WarningLIVE =
+        "(Must return a single date value.  IMPORTANT: Since you are targetting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
 
-    private const string WarningLIVE = "(Must return a single date value.  IMPORTANT: Since you are targetting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
-    private const string WarningRAW = "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
-        
+    private const string WarningRAW =
+        "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
+
     public Scintilla QueryEditor { get; set; }
-        
+
     public DataLoadProgressUpdateInfoUI()
     {
         InitializeComponent();
-            
+
         QueryEditor = new ScintillaTextEditorFactory().Create(null);
 
         pSQL.Controls.Add(QueryEditor);
         QueryEditor.TextChanged += QueryEditor_TextChanged;
 
         ddStrategy.DataSource = Enum.GetValues(typeof(DataLoadProgressUpdateStrategy));
-
     }
 
     public ICatalogueRepository CatalogueRepository { get; set; }
+
     public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)
     {
         SetUnderlyingObjectTo((DataLoadProgressUpdateInfo)value);
@@ -59,10 +61,9 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         if (value == null)
             return;
 
-        QueryEditor.Text  = value.ExecuteScalarSQL;
+        QueryEditor.Text = value.ExecuteScalarSQL;
         tbTimeout.Text = value.Timeout.ToString();
         ddStrategy.SelectedItem = value.Strategy;
-
     }
 
     public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
@@ -71,7 +72,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         {
             ExecuteScalarSQL = QueryEditor.Text,
             Timeout = _timeout,
-            Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem
+            Strategy = (DataLoadProgressUpdateStrategy)ddStrategy.SelectedItem
         };
 
         return toReturn;
@@ -79,9 +80,10 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
     private void ddStrategy_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var selected = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem;
+        var selected = (DataLoadProgressUpdateStrategy)ddStrategy.SelectedItem;
 
-        var setVisible = selected is DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE or DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
+        var setVisible = selected is DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE
+            or DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
         pSQL.Visible = setVisible;
         tbTimeout.Visible = setVisible;
         lblTimeout.Visible = setVisible;
@@ -97,7 +99,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
         CheckObject();
     }
-        
+
     private bool _programaticClose;
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -113,6 +115,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         DialogResult = DialogResult.OK;
         Close();
     }
+
     private void DataLoadProgressUpdateInfoUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //use pressed Ok or Cancel 
@@ -150,6 +153,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     }
 
     private int _timeout;
+
     private void tbTimeout_TextChanged(object sender, EventArgs e)
     {
         try

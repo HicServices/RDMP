@@ -24,32 +24,29 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
 {
     private FileInfo _file;
 
-    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
+    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable)
+        :
         base(activator, externalCohortTable, null, null, null)
     {
         UseTripleDotSuffix = true;
     }
 
-    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
+    public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file,
+        ExternalCohortTable externalCohortTable)
         : this(activator, file, externalCohortTable, null, null, null)
     {
     }
 
     [UseWithObjectConstructor]
     public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator,
-
         [DemandsInitialization("A file containing private cohort identifiers")]
         FileInfo file,
-
         [DemandsInitialization(Desc_ExternalCohortTableParameter)]
         ExternalCohortTable externalCohortTable,
-
         [DemandsInitialization(Desc_CohortNameParameter)]
         string cohortName,
-
         [DemandsInitialization(Desc_ProjectParameter)]
         Project project,
-
         [DemandsInitialization("Pipeline for reading from the file and allocating release identifiers")]
         IPipeline pipeline)
         : base(activator, externalCohortTable, cohortName, project, pipeline)
@@ -58,15 +55,10 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Create a cohort containing ALL the patient identifiers in the chosen file";
-    }
+    public override string GetCommandHelp() =>
+        "Create a cohort containing ALL the patient identifiers in the chosen file";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.ImportFile);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.ImportFile);
 
     public override void Execute()
     {
@@ -86,7 +78,9 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
             flatFile = new FlatFileToLoad(file);
         }
         else
+        {
             flatFile = new FlatFileToLoad(_file);
+        }
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(flatFile.File));
@@ -97,7 +91,8 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
 
         request.FileToLoad = flatFile;
 
-        var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, $"Uploading File {flatFile.File.Name}", flatFile);
+        var configureAndExecuteDialog =
+            GetConfigureAndExecuteControl(request, $"Uploading File {flatFile.File.Name}", flatFile);
 
         //add the flat file to the dialog with an appropriate description of what they are trying to achieve
         configureAndExecuteDialog.Run(BasicActivator.RepositoryLocator, null, null, null);

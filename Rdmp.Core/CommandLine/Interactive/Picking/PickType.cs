@@ -21,25 +21,20 @@ internal class PickType : PickObjectBase
     public override string Help { get; }
     public override IEnumerable<string> Examples { get; }
 
-    public override bool IsMatch(string arg, int idx)
-    {
-        return GetType(arg) != null;
-    }
+    public override bool IsMatch(string arg, int idx) => GetType(arg) != null;
 
-    public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
-    {
-        return new CommandLineObjectPickerArgumentValue(arg,idx,GetType(arg));
-    }
+    public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx) => new(arg, idx, GetType(arg));
 
     private Type GetType(string arg)
     {
-        if(string.IsNullOrWhiteSpace(arg))
+        if (string.IsNullOrWhiteSpace(arg))
             return null;
 
         try
         {
             return
-                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix +
+                                                                            arg)
                 ??
                 Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
         }

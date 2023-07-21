@@ -30,8 +30,8 @@ namespace Rdmp.UI.LocationsMenu;
 public partial class ServerDefaultsUI : RDMPForm
 {
     private IServerDefaults defaults;
-        
-    public ServerDefaultsUI(IActivateItems activator):base(activator)
+
+    public ServerDefaultsUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
     }
@@ -44,8 +44,6 @@ public partial class ServerDefaultsUI : RDMPForm
             return;
 
         RefreshUIFromDatabase();
-
-
     }
 
     private void RefreshUIFromDatabase()
@@ -54,12 +52,15 @@ public partial class ServerDefaultsUI : RDMPForm
         {
             defaults = Activator.RepositoryLocator.CatalogueRepository;
 
-            var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
-                
+            var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+                .ToArray();
+
             InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
             InitializeServerDropdown(ddDQEServer, PermissableDefaults.DQE, allServers);
-            InitializeServerDropdown(ddWebServiceQueryCacheServer, PermissableDefaults.WebServiceQueryCachingServer_ID, allServers);
-            InitializeServerDropdown(ddCohortIdentificationQueryCacheServer, PermissableDefaults.CohortIdentificationQueryCachingServer_ID, allServers);
+            InitializeServerDropdown(ddWebServiceQueryCacheServer, PermissableDefaults.WebServiceQueryCachingServer_ID,
+                allServers);
+            InitializeServerDropdown(ddCohortIdentificationQueryCacheServer,
+                PermissableDefaults.CohortIdentificationQueryCachingServer_ID, allServers);
             InitializeServerDropdown(ddDefaultIdentifierDump, PermissableDefaults.IdentifierDumpServer_ID, allServers);
             InitializeServerDropdown(ddOverrideRawServer, PermissableDefaults.RAWDataLoadServer, allServers);
             InitializeServerDropdown(ddDefaultANOStore, PermissableDefaults.ANOStore, allServers);
@@ -70,9 +71,10 @@ public partial class ServerDefaultsUI : RDMPForm
             btnCreateNewWebServiceQueryCache.Enabled = ddWebServiceQueryCacheServer.SelectedItem == null;
             btnClearWebServiceQueryCache.Enabled = ddWebServiceQueryCacheServer.SelectedItem != null;
 
-            btnCreateNewCohortIdentificationQueryCache.Enabled = ddCohortIdentificationQueryCacheServer.SelectedItem == null;
-            btnClearCohortIdentificationQueryCache.Enabled = ddCohortIdentificationQueryCacheServer.SelectedItem !=null;
-                
+            btnCreateNewCohortIdentificationQueryCache.Enabled =
+                ddCohortIdentificationQueryCacheServer.SelectedItem == null;
+            btnClearCohortIdentificationQueryCache.Enabled =
+                ddCohortIdentificationQueryCacheServer.SelectedItem != null;
         }
         catch (Exception ex)
         {
@@ -80,7 +82,8 @@ public partial class ServerDefaultsUI : RDMPForm
         }
     }
 
-    private void InitializeServerDropdown(ComboBox comboBox, PermissableDefaults permissableDefault, ExternalDatabaseServer[] allServers)
+    private void InitializeServerDropdown(ComboBox comboBox, PermissableDefaults permissableDefault,
+        ExternalDatabaseServer[] allServers)
     {
         comboBox.Items.Clear();
 
@@ -88,13 +91,16 @@ public partial class ServerDefaultsUI : RDMPForm
         var patcher = permissableDefault.ToTier2DatabaseType();
 
         var toAdd = allServers;
-            
-        if(patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
-        {
-            var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(patcher)).ToArray();
 
-            if (currentDefault == null || compatibles.Contains(currentDefault))//if there is not yet a default or the existing default is of the correct type
-                toAdd = compatibles;//then we can go ahead and use the restricted type
+        if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
+        {
+            var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+                .Where(s => s.WasCreatedBy(patcher)).ToArray();
+
+            if (currentDefault == null ||
+                compatibles.Contains(
+                    currentDefault)) //if there is not yet a default or the existing default is of the correct type
+                toAdd = compatibles; //then we can go ahead and use the restricted type
 
             //otherwise what we have is a default of the wrong server type! eep.
         }
@@ -103,20 +109,20 @@ public partial class ServerDefaultsUI : RDMPForm
 
         //select the server
         if (currentDefault != null)
-            comboBox.SelectedItem = comboBox.Items.Cast<ExternalDatabaseServer>().Single(s => s.ID == currentDefault.ID);
+            comboBox.SelectedItem =
+                comboBox.Items.Cast<ExternalDatabaseServer>().Single(s => s.ID == currentDefault.ID);
     }
 
-        
+
     private void ddDefault_SelectedIndexChanged(object sender, EventArgs e)
     {
         PermissableDefaults toChange;
 
-        if(sender == ddDefaultIdentifierDump)
+        if (sender == ddDefaultIdentifierDump)
             toChange = PermissableDefaults.IdentifierDumpServer_ID;
-        else
-        if (sender == ddDefaultLoggingServer)
+        else if (sender == ddDefaultLoggingServer)
             toChange = PermissableDefaults.LiveLoggingServer_ID;
-        else if(sender == ddOverrideRawServer)
+        else if (sender == ddOverrideRawServer)
             toChange = PermissableDefaults.RAWDataLoadServer;
         else if (sender == ddDefaultANOStore)
             toChange = PermissableDefaults.ANOStore;
@@ -128,7 +134,7 @@ public partial class ServerDefaultsUI : RDMPForm
             throw new Exception($"Did not recognise sender:{sender}");
 
         //user selected nothing
-        if(((ComboBox) sender).SelectedItem is not ExternalDatabaseServer selectedItem)
+        if (((ComboBox)sender).SelectedItem is not ExternalDatabaseServer selectedItem)
             return;
 
         defaults.SetDefault(toChange, selectedItem);
@@ -138,13 +144,12 @@ public partial class ServerDefaultsUI : RDMPForm
     {
         PermissableDefaults toClear;
 
-        if(sender == btnClearLoggingServer)
+        if (sender == btnClearLoggingServer)
         {
             toClear = PermissableDefaults.LiveLoggingServer_ID;
             ddDefaultLoggingServer.SelectedItem = null;
         }
-        else
-        if(sender == btnClearIdentifierDump)
+        else if (sender == btnClearIdentifierDump)
         {
             toClear = PermissableDefaults.IdentifierDumpServer_ID;
             ddDefaultIdentifierDump.SelectedItem = null;
@@ -153,7 +158,6 @@ public partial class ServerDefaultsUI : RDMPForm
         {
             toClear = PermissableDefaults.DQE;
             ddDQEServer.SelectedItem = null;
-
         }
         else if (sender == btnClearRAWServer)
         {
@@ -176,29 +180,33 @@ public partial class ServerDefaultsUI : RDMPForm
             ddCohortIdentificationQueryCacheServer.SelectedItem = null;
         }
         else
+        {
             throw new Exception($"Did not recognise sender:{sender}");
+        }
 
         defaults.ClearDefault(toClear);
         RefreshUIFromDatabase();
     }
-        
+
     private void CreateNewExternalServer(PermissableDefaults defaultToSet, IPatcher patcher)
     {
-        if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository, defaultToSet, patcher) != null)
+        if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository,
+                defaultToSet, patcher) != null)
             RefreshUIFromDatabase();
     }
 
 
     private void ddDQEServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ddDQEServer.SelectedItem != null)
-            defaults.SetDefault(PermissableDefaults.DQE, (ExternalDatabaseServer) ddDQEServer.SelectedItem);
+        if (ddDQEServer.SelectedItem != null)
+            defaults.SetDefault(PermissableDefaults.DQE, (ExternalDatabaseServer)ddDQEServer.SelectedItem);
     }
 
     private void btnCreateNewDQEServer_Click(object sender, EventArgs e)
     {
         CreateNewExternalServer(PermissableDefaults.DQE, new DataQualityEnginePatcher());
     }
+
     private void btnCreateNewWebServiceQueryCache_Click(object sender, EventArgs e)
     {
         CreateNewExternalServer(PermissableDefaults.WebServiceQueryCachingServer_ID, new QueryCachingPatcher());
@@ -208,7 +216,7 @@ public partial class ServerDefaultsUI : RDMPForm
     {
         CreateNewExternalServer(PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
     }
-        
+
     private void btnCreateNewIdentifierDump_Click(object sender, EventArgs e)
     {
         CreateNewExternalServer(PermissableDefaults.IdentifierDumpServer_ID, new IdentifierDumpDatabasePatcher());
@@ -221,8 +229,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
     private void btnCreateNewCohortIdentificationQueryCache_Click(object sender, EventArgs e)
     {
-        CreateNewExternalServer(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, new QueryCachingPatcher());
+        CreateNewExternalServer(PermissableDefaults.CohortIdentificationQueryCachingServer_ID,
+            new QueryCachingPatcher());
     }
-
-
 }

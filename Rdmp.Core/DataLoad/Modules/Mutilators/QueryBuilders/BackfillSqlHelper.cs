@@ -22,7 +22,8 @@ public class BackfillSqlHelper
     private readonly DiscoveredDatabase _liveDbInfo;
     private readonly TableInfo _tiWithTimeColumn;
 
-    public BackfillSqlHelper(ColumnInfo timePeriodicityField, DiscoveredDatabase stagingDbInfo, DiscoveredDatabase liveDbInfo)
+    public BackfillSqlHelper(ColumnInfo timePeriodicityField, DiscoveredDatabase stagingDbInfo,
+        DiscoveredDatabase liveDbInfo)
     {
         _timePeriodicityField = timePeriodicityField;
         _stagingDbInfo = stagingDbInfo;
@@ -39,10 +40,12 @@ public class BackfillSqlHelper
     /// <param name="dbInfo"></param>
     /// <param name="joinPath"></param>
     /// <returns></returns>
-    public string CreateSqlForJoinToTimePeriodicityTable(string tableAlias, ITableInfo tableInfo, string timePeriodTableAlias, DiscoveredDatabase dbInfo, List<JoinInfo> joinPath)
+    public string CreateSqlForJoinToTimePeriodicityTable(string tableAlias, ITableInfo tableInfo,
+        string timePeriodTableAlias, DiscoveredDatabase dbInfo, List<JoinInfo> joinPath)
     {
         if (tableInfo.ID == _timePeriodicityField.TableInfo_ID && joinPath.Count > 0)
-            throw new InvalidOperationException("You have asked for a join where the original table *is* the TimePeriodicityTable but a non-empty join path has been provided. There should be no path when dealing directly with the TimePeriodicity table");
+            throw new InvalidOperationException(
+                "You have asked for a join where the original table *is* the TimePeriodicityTable but a non-empty join path has been provided. There should be no path when dealing directly with the TimePeriodicity table");
 
         // Simple case, there is no join so we are just selecting the row and aliasing the TimePeriodicityField for the provided table
         if (!joinPath.Any())
@@ -51,11 +54,14 @@ public class BackfillSqlHelper
                 $"[{dbInfo.GetRuntimeName()}]..[{tableInfo.GetRuntimeName()}]");
 
         // Ensure that the TimePeriodicityTable is at the end of the path (to make constructing the join a bit easier)
-        if (joinPath[0].ForeignKey.TableInfo_ID == _tiWithTimeColumn.ID || joinPath[0].PrimaryKey.TableInfo_ID == _tiWithTimeColumn.ID)
+        if (joinPath[0].ForeignKey.TableInfo_ID == _tiWithTimeColumn.ID ||
+            joinPath[0].PrimaryKey.TableInfo_ID == _tiWithTimeColumn.ID)
             joinPath.Reverse();
 
-        if (joinPath[^1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID && joinPath[^1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
-            throw new InvalidOperationException("The TimePeriodicity table is not at the beginning or end of the join path.");
+        if (joinPath[^1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID &&
+            joinPath[^1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
+            throw new InvalidOperationException(
+                "The TimePeriodicity table is not at the beginning or end of the join path.");
 
         var sql = string.Format(@"SELECT {0}.*, {1}.{2} AS TimePeriodicityField 
 FROM {3} {4}",
@@ -98,7 +104,6 @@ LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",
                     join.PrimaryKey.GetRuntimeName(),
                     join.ForeignKey.GetRuntimeName());
             }
-
         }
 
         return sql;

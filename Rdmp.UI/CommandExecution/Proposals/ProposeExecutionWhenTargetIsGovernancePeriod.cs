@@ -13,34 +13,30 @@ using Rdmp.UI.SimpleDialogs.Governance;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsGovernancePeriod:RDMPCommandExecutionProposal<GovernancePeriod>
+internal class ProposeExecutionWhenTargetIsGovernancePeriod : RDMPCommandExecutionProposal<GovernancePeriod>
 {
     public ProposeExecutionWhenTargetIsGovernancePeriod(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(GovernancePeriod target)
-    {
-        return true;
-    }
+    public override bool CanActivate(GovernancePeriod target) => true;
 
     public override void Activate(GovernancePeriod target)
     {
         ItemActivator.Activate<GovernancePeriodUI, GovernancePeriod>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernancePeriod target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernancePeriod target,
+        InsertOption insertOption = InsertOption.Default)
     {
-            
-
         if (cmd is FileCollectionCombineable files && files.Files.Length == 1)
             return new ExecuteCommandAddNewGovernanceDocument(ItemActivator, target, files.Files[0]);
 
-        if(cmd is CatalogueCombineable c)
-            return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator,target,c.Catalogue);
+        if (cmd is CatalogueCombineable c)
+            return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator, target, c.Catalogue);
 
-        if(cmd is ManyCataloguesCombineable mcat)
-            return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator,target,mcat.Catalogues);
+        if (cmd is ManyCataloguesCombineable mcat)
+            return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator, target, mcat.Catalogues);
 
         //no drag and drop support
         return null;

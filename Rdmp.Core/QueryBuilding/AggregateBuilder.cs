@@ -45,13 +45,16 @@ public class AggregateBuilder : ISqlQueryBuilder
     private readonly ITableInfo[] _forceJoinsToTheseTables;
 
     /// <inheritdoc/>
-    public string SQL { get
+    public string SQL
     {
-        if (SQLOutOfDate)
-            RegenerateSQL();
+        get
+        {
+            if (SQLOutOfDate)
+                RegenerateSQL();
 
-        return _sql;
-    } }
+            return _sql;
+        }
+    }
 
     /// <inheritdoc/>
     public string LimitationSQL { get; private set; }
@@ -104,7 +107,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
     {
         SQLOutOfDate = true;
-        return SqlQueryBuilderHelper.AddCustomLine(this,text, positionToInsert);
+        return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
     }
 
     /// <inheritdoc/>
@@ -123,6 +126,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     public ParameterManager ParameterManager { get; private set; }
 
     private string _sql;
+
     /// <inheritdoc/>
     public bool SQLOutOfDate { get; set; }
 
@@ -143,13 +147,13 @@ public class AggregateBuilder : ISqlQueryBuilder
         set
         {
             //no change
-            if(value == _doNotWriteOutParameters)
+            if (value == _doNotWriteOutParameters)
                 return;
 
             _doNotWriteOutParameters = value;
 
             //if the user is telling us not to write out parameters we had better clear any knowledge we had of parameters from previous runs
-            if(value)
+            if (value)
                 ParameterManager.ClearNonGlobals();
 
             SQLOutOfDate = true;
@@ -167,7 +171,8 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <param name="countSQL"></param>
     /// <param name="aggregateConfigurationIfAny"></param>
     /// <param name="forceJoinsToTheseTables">Tables you definetly want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
-    public AggregateBuilder(string limitationSQL, string countSQL,AggregateConfiguration aggregateConfigurationIfAny,ITableInfo[] forceJoinsToTheseTables)
+    public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny,
+        ITableInfo[] forceJoinsToTheseTables)
         : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
     {
         _forceJoinsToTheseTables = forceJoinsToTheseTables;
@@ -189,7 +194,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <param name="aggregateConfigurationIfAny"><see cref="AggregateConfiguration"/> containing columns, filters, parameters etc for the GROUP BY</param>
     public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
     {
-        if (limitationSQL != null && limitationSQL.Trim().StartsWith("top",StringComparison.CurrentCultureIgnoreCase))
+        if (limitationSQL != null && limitationSQL.Trim().StartsWith("top", StringComparison.CurrentCultureIgnoreCase))
             throw new Exception("Use AggregateTopX property instead of limitation SQL to acheive this");
 
         _aggregateConfigurationIfAny = aggregateConfigurationIfAny;
@@ -200,7 +205,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         SelectColumns = new List<QueryTimeColumn>();
 
-        if(!string.IsNullOrWhiteSpace(countSQL))
+        if (!string.IsNullOrWhiteSpace(countSQL))
         {
             _countColumn = new AggregateCountColumn(countSQL)
             {
@@ -212,7 +217,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         LabelWithComment = aggregateConfigurationIfAny != null ? aggregateConfigurationIfAny.Name : "";
 
         _queryLevelParameterProvider = aggregateConfigurationIfAny;
-            
+
         if (aggregateConfigurationIfAny != null)
         {
             HavingSQL = aggregateConfigurationIfAny.HavingSQL;
@@ -223,7 +228,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <inheritdoc/>
     public void AddColumn(IColumn col)
     {
-        AddColumn(col,true);
+        AddColumn(col, true);
     }
 
     /// <summary>
@@ -259,7 +264,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         }
     }
 
-    private int _pivotID=-1;
+    private int _pivotID = -1;
     private bool _doNotWriteOutParameters;
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
     private readonly AggregateConfiguration _aggregateConfigurationIfAny;
@@ -296,8 +301,8 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         ParameterManager.ClearNonGlobals();
 
-        if(_queryLevelParameterProvider != null)
-            ParameterManager.AddParametersFor(_queryLevelParameterProvider,ParameterLevel.QueryLevel);
+        if (_queryLevelParameterProvider != null)
+            ParameterManager.AddParametersFor(_queryLevelParameterProvider, ParameterLevel.QueryLevel);
 
         TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
 
@@ -306,7 +311,8 @@ public class AggregateBuilder : ISqlQueryBuilder
             : TablesUsedInQuery;
 
         if (!tables.Any())
-            throw new QueryBuildingException("No tables could be identified for the query.  Try adding a column or a force join");
+            throw new QueryBuildingException(
+                "No tables could be identified for the query.  Try adding a column or a force join");
 
         //get the database language syntax based on the tables used in the query
         QuerySyntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(tables);
@@ -315,16 +321,17 @@ public class AggregateBuilder : ISqlQueryBuilder
         //tell the count column what language it is
         if (_countColumn != null)
         {
-            _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null && _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
+            _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null &&
+                                               _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
 
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
-            _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper,!_isCohortIdentificationAggregate);
+            _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper, !_isCohortIdentificationAggregate);
         }
 
 
         var aggregateHelper = QuerySyntaxHelper.AggregateHelper;
 
-        if(_pivotID != -1)
+        if (_pivotID != -1)
             try
             {
                 _pivotDimension = SelectColumns.Single(
@@ -335,17 +342,20 @@ public class AggregateBuilder : ISqlQueryBuilder
             catch (Exception e)
             {
                 throw new QueryBuildingException(
-                    $"Problem occurred when trying to find PivotDimension ID {_pivotID} in SelectColumns list",e);
+                    $"Problem occurred when trying to find PivotDimension ID {_pivotID} in SelectColumns list", e);
             }
 
-        foreach (AggregateDimension dimension in SelectColumns.Select(c=>c.IColumn).Where(e=>e is AggregateDimension))
+        foreach (AggregateDimension dimension in SelectColumns.Select(c => c.IColumn)
+                     .Where(e => e is AggregateDimension))
         {
-            var availableAxis =dimension.AggregateContinuousDateAxis;
+            var availableAxis = dimension.AggregateContinuousDateAxis;
 
-            if(availableAxis != null)
+            if (availableAxis != null)
                 if (_axis != null)
+                {
                     throw new QueryBuildingException(
                         $"Multiple dimensions have an AggregateContinuousDateAxis within the same configuration (Dimensions {_axisAppliesToDimension.GetRuntimeName()} and {dimension.GetRuntimeName()})");
+                }
                 else
                 {
                     _axis = availableAxis;
@@ -380,8 +390,9 @@ public class AggregateBuilder : ISqlQueryBuilder
                 }
 
                 //if user has force joined to a primary extraction table
-                if(t.IsPrimaryExtractionTable)
-                    if (primary == null) //we don't currently know the primary (i.e. none of the SELECT columns were from primary tables so use this table as primary)
+                if (t.IsPrimaryExtractionTable)
+                    if (primary ==
+                        null) //we don't currently know the primary (i.e. none of the SELECT columns were from primary tables so use this table as primary)
                         primary = t;
                     else if (primary.ID == t.ID) //we know the primary already but it is the same table so thats fine
                         continue;
@@ -405,7 +416,8 @@ public class AggregateBuilder : ISqlQueryBuilder
         //assuming we were not told to ignore the writing out of parameters!
         if (!DoNotWriteOutParameters)
             foreach (var parameter in ParameterManager.GetFinalResolvedParametersList())
-                queryLines.Add(new CustomLine(QueryBuilder.GetParameterDeclarationSQL(parameter),QueryComponent.VariableDeclaration));
+                queryLines.Add(new CustomLine(QueryBuilder.GetParameterDeclarationSQL(parameter),
+                    QueryComponent.VariableDeclaration));
 
         CompileCustomLinesInStageAndAddToList(QueryComponent.VariableDeclaration, queryLines);
 
@@ -415,11 +427,11 @@ public class AggregateBuilder : ISqlQueryBuilder
         queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this), QueryComponent.FROM));
         CompileCustomLinesInStageAndAddToList(QueryComponent.JoinInfoJoin, queryLines);
 
-        queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this),QueryComponent.WHERE));
+        queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this), QueryComponent.WHERE));
 
-        CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE,queryLines);
+        CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE, queryLines);
 
-        GetGroupBySQL(queryLines,aggregateHelper);
+        GetGroupBySQL(queryLines, aggregateHelper);
 
         queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
 
@@ -429,32 +441,31 @@ public class AggregateBuilder : ISqlQueryBuilder
     private void ValidateDimensions()
     {
         //axis but no pivot
-        if(_axis != null && _pivotDimension == null && SelectColumns.Count !=2 )
+        if (_axis != null && _pivotDimension == null && SelectColumns.Count != 2)
             throw new QueryBuildingException(
                 $"You must have two columns in an AggregateConfiguration that contains an axis.  These must be the axis column and the count/sum column.  Your query had {SelectColumns.Count} ({string.Join(",", SelectColumns.Select(c => $"'{c.IColumn}'"))})");
-            
+
         //axis and pivot
-        if(_axis != null && _pivotDimension != null && SelectColumns.Count !=3 )
+        if (_axis != null && _pivotDimension != null && SelectColumns.Count != 3)
             throw new QueryBuildingException(
                 $"You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had {SelectColumns.Count} ({string.Join(",", SelectColumns.Select(c => $"'{c.IColumn}'"))})");
     }
 
-    private void CompileCustomLinesInStageAndAddToList( QueryComponent stage,List<CustomLine> list)
+    private void CompileCustomLinesInStageAndAddToList(QueryComponent stage, List<CustomLine> list)
     {
         list.AddRange(SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage));
     }
 
-    private void GetGroupBySQL(List<CustomLine> queryLines,IAggregateHelper aggregateHelper)
+    private void GetGroupBySQL(List<CustomLine> queryLines, IAggregateHelper aggregateHelper)
     {
         //now are there columns that...
         if (SelectColumns.Any(col =>
-                col.IColumn is not AggregateCountColumn  //are not count(*) style columns
+                col.IColumn is not AggregateCountColumn //are not count(*) style columns
                 &&
                 !_skipGroupByForThese.Contains(col.IColumn))) //and are not being skipped for GROUP BY
         {
-
             //yes there are! better group by then!
-            queryLines.Add(new CustomLine("group by ",QueryComponent.GroupBy));
+            queryLines.Add(new CustomLine("group by ", QueryComponent.GroupBy));
 
             foreach (var col in SelectColumns)
             {
@@ -465,31 +476,29 @@ public class AggregateBuilder : ISqlQueryBuilder
                 if (_skipGroupByForThese.Contains(col.IColumn))
                     continue;
 
-                var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},",QueryComponent.GroupBy);
+                var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},", QueryComponent.GroupBy);
 
-                FlagLineBasedOnIcolumn(line,col.IColumn);
+                FlagLineBasedOnIcolumn(line, col.IColumn);
 
                 queryLines.Add(line);
-
             }
 
             //clear trailing last comma
             queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
 
-            queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.Having));
+            queryLines.Add(new CustomLine(GetHavingSql(), QueryComponent.Having));
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.GroupBy, queryLines);
 
             //order by only if we are not pivotting
             if (!DoNotWriteOutOrderBy)
             {
-                queryLines.Add(new CustomLine("order by " ,QueryComponent.OrderBy));
+                queryLines.Add(new CustomLine("order by ", QueryComponent.OrderBy));
 
                 //if there's a top X (with an explicit order by)
                 if (AggregateTopX != null)
-                {
-                    queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy) { Role = CustomLineRole.TopX });
-                }
+                    queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy)
+                        { Role = CustomLineRole.TopX });
                 else
                     foreach (var col in SelectColumns)
                     {
@@ -500,9 +509,10 @@ public class AggregateBuilder : ISqlQueryBuilder
                         if (_skipGroupByForThese.Contains(col.IColumn))
                             continue;
 
-                        var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},", QueryComponent.OrderBy);
+                        var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},",
+                            QueryComponent.OrderBy);
 
-                        FlagLineBasedOnIcolumn(line,col.IColumn);
+                        FlagLineBasedOnIcolumn(line, col.IColumn);
 
                         queryLines.Add(line);
                     }
@@ -511,7 +521,9 @@ public class AggregateBuilder : ISqlQueryBuilder
             }
         }
         else
-            queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.GroupBy));
+        {
+            queryLines.Add(new CustomLine(GetHavingSql(), QueryComponent.GroupBy));
+        }
 
         queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
 
@@ -527,42 +539,43 @@ public class AggregateBuilder : ISqlQueryBuilder
     private string GetGroupOrOrderByCustomLineBasedOn(QueryTimeColumn col)
     {
         /*            Background
-         * 
+         *
          * When using a transform as the SELECT column, different DBMS expect different values in the ORDER/GROUP by bit
-         * 
-         * For this explanation, consider the transform "UPPER(mycol) as mytransform".  This is a select line 
+         *
+         * For this explanation, consider the transform "UPPER(mycol) as mytransform".  This is a select line
          * composed of "UPPER(mycol)" and its alias "mytransform"
-         * 
+         *
          * Microsoft Sql Server expects:
-         *   select 
+         *   select
          *      (UPPER(mycol)) as mytransform,
          *      count(*)
-         *   from 
+         *   from
          *      bob
-         *   group by 
+         *   group by
          *      UPPER(mycol)
-         *   order by 
+         *   order by
          *      UPPER(mycol)
-         * 
+         *
          * MySql will NOT work with the above and instead expects:
-         *   select 
+         *   select
          *      UPPER(mycol) as mytransform,
          *      count(*)
-         *   from 
+         *   from
          *      bob
-         *   group by 
+         *   group by
          *      mytransform
-         *   order by 
+         *   order by
          *      mytransform
-         * 
+         *
          * */
 
-            
+
         // the sql bit of the transform (e.g. "UPPER(mycol)" in above example)
 
         // the column alias (e.g. "mytransform" in above example)
 
-        QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper), out var select, out var alias);
+        QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper),
+            out var select, out var alias);
 
         return GetGroupOrOrderByCustomLineBasedOn(select, alias);
     }
@@ -570,11 +583,10 @@ public class AggregateBuilder : ISqlQueryBuilder
     private static string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
     {
         if (UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs)
-        {
-            return !string.IsNullOrWhiteSpace(alias) ?
-                alias :  // for MySql prefer using the alias if it has one
+            return !string.IsNullOrWhiteSpace(alias)
+                ? alias
+                : // for MySql prefer using the alias if it has one
                 select;
-        }
 
         // for everyone else just use the full SQL
         return select;
@@ -585,29 +597,29 @@ public class AggregateBuilder : ISqlQueryBuilder
         //if it is an axis column tag it as an axis
         if (Equals(column, _axisAppliesToDimension))
             line.Role = CustomLineRole.Axis;
-            
+
         //if it is a count column then flag it as that (cic aggregates take extreme liberties with count columns like hijacking them in a most dispicable way so don't even bother with this flag for them)
         if (column is AggregateCountColumn && !_isCohortIdentificationAggregate)
             line.Role = CustomLineRole.CountFunction;
 
-        if(_pivotDimension != null)
-            if(Equals(column,_pivotDimension.IColumn))
+        if (_pivotDimension != null)
+            if (Equals(column, _pivotDimension.IColumn))
                 line.Role = CustomLineRole.Pivot;
     }
 
     private void GetSelectSQL(List<CustomLine> lines)
     {
-        lines.Add(new CustomLine($"/*{LabelWithComment}*/",QueryComponent.SELECT));
-        lines.Add(new CustomLine("SELECT ",QueryComponent.SELECT));
+        lines.Add(new CustomLine($"/*{LabelWithComment}*/", QueryComponent.SELECT));
+        lines.Add(new CustomLine("SELECT ", QueryComponent.SELECT));
 
         //if there is no top X or an axis is specified (in which case the TopX applies to the PIVOT if any not the axis)
         if (!string.IsNullOrWhiteSpace(LimitationSQL))
-            lines.Add(new CustomLine(LimitationSQL ,QueryComponent.SELECT));
-            
-        CompileCustomLinesInStageAndAddToList(QueryComponent.SELECT,lines);
+            lines.Add(new CustomLine(LimitationSQL, QueryComponent.SELECT));
+
+        CompileCustomLinesInStageAndAddToList(QueryComponent.SELECT, lines);
 
         CompileCustomLinesInStageAndAddToList(QueryComponent.QueryTimeColumn, lines);
-            
+
         //put in all the selected columns (which are not being skipped because they aren't a part of group by)
         foreach (var col in SelectColumns.Where(col => !_skipGroupByForThese.Contains(col.IColumn)))
         {
@@ -616,8 +628,9 @@ public class AggregateBuilder : ISqlQueryBuilder
                     $"Column {col.IColumn.GetRuntimeName()} is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
 
 
-            var line = new CustomLine($"{col.GetSelectSQL(null, null, QuerySyntaxHelper)},", QueryComponent.QueryTimeColumn);
-            FlagLineBasedOnIcolumn(line,col.IColumn);
+            var line = new CustomLine($"{col.GetSelectSQL(null, null, QuerySyntaxHelper)},",
+                QueryComponent.QueryTimeColumn);
+            FlagLineBasedOnIcolumn(line, col.IColumn);
 
             //it's the axis dimension tag it with the axis tag
             lines.Add(line);
@@ -632,11 +645,11 @@ public class AggregateBuilder : ISqlQueryBuilder
     {
         var dimension = aggregateTopX.OrderByColumn;
         if (dimension == null)
-            return GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL,_countColumn.Alias)
+            return GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL, _countColumn.Alias)
                    + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
                        ? " asc"
                        : " desc");
-        
+
         return GetGroupOrOrderByCustomLineBasedOn(dimension.SelectSQL, dimension.Alias)
                + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
                    ? " asc"
@@ -654,6 +667,7 @@ public class AggregateBuilder : ISqlQueryBuilder
             toReturn += $"HAVING{Environment.NewLine}";
             toReturn += HavingSQL;
         }
+
         return toReturn;
     }
 
@@ -661,8 +675,5 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// Throws <see cref="NotSupportedException"/> since <see cref="Lookup"/> canot be part of an aggregate GROUP BY
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups()
-    {
-        throw new NotSupportedException();
-    }
+    public IEnumerable<Lookup> GetDistinctRequiredLookups() => throw new NotSupportedException();
 }

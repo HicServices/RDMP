@@ -26,15 +26,9 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     internal class FakeEncryptedString : IEncryptedString
     {
         public string Value { get; set; }
-        public string GetDecryptedValue()
-        {
-            return Value;
-        }
+        public string GetDecryptedValue() => Value;
 
-        public bool IsStringEncrypted(string value)
-        {
-            return false;
-        }
+        public bool IsStringEncrypted(string value) => false;
     }
 
     private IEncryptedString _encryptedString;
@@ -66,13 +60,11 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// <param name="repository"></param>
     public void SetRepository(ICatalogueRepository repository)
     {
-        if(_encryptedString is FakeEncryptedString f)
-        {
+        if (_encryptedString is FakeEncryptedString f)
             _encryptedString = new EncryptedString(repository)
             {
                 Value = f.Value
             };
-        }            
     }
 
     /// <inheritdoc/>
@@ -81,7 +73,8 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
         get
         {
             if (_encryptedString is FakeEncryptedString)
-                throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
+                throw new Exception(
+                    $"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
 
             return _encryptedString.Value;
         }
@@ -92,7 +85,8 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     public string GetDecryptedPassword()
     {
         if (_encryptedString == null)
-            throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
+            throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
 
         return _encryptedString.GetDecryptedValue() ?? "";
     }

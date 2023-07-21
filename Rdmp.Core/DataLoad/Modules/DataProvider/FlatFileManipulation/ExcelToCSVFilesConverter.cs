@@ -29,31 +29,33 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation;
 /// DLE component which converts Microsoft Excel Workbooks into CSV files.  Workbooks can have multiple worksheets in which case 1 csv will be created for
 /// each worksheet.  Supports both .xls and .xlsx by using NPOI (i.e. not Interop).
 /// </summary>
-public class ExcelToCSVFilesConverter: IPluginDataProvider
+public class ExcelToCSVFilesConverter : IPluginDataProvider
 {
     [DemandsInitialization("Pattern to match Excel files in forLoading directory", Mandatory = true)]
     public string ExcelFilePattern { get; set; }
 
-    [DemandsInitialization("Optional,if populated will only extract sheets that match the pattern e.g. '.*data$' will only extract worksheets whose names end with data")]
+    [DemandsInitialization(
+        "Optional,if populated will only extract sheets that match the pattern e.g. '.*data$' will only extract worksheets whose names end with data")]
     public Regex WorksheetPattern { get; set; }
 
-    [DemandsInitialization("Normally a workbook called 'mywb.xlsx' with 2 worksheets 'sheet1' and 'sheet2' will produce csv files called 'sheet1.csv' and 'sheet2.csv'.  Setting this to true will add the workbook name as a prefix 'mywb_sheet1.csv' and 'mywb_sheet2.csv'",defaultValue:false)]
+    [DemandsInitialization(
+        "Normally a workbook called 'mywb.xlsx' with 2 worksheets 'sheet1' and 'sheet2' will produce csv files called 'sheet1.csv' and 'sheet2.csv'.  Setting this to true will add the workbook name as a prefix 'mywb_sheet1.csv' and 'mywb_sheet2.csv'",
+        defaultValue: false)]
     public bool PrefixWithWorkbookName { get; set; }
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
     }
 
     public void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(ExcelFilePattern))
-            notifier.OnCheckPerformed(new CheckEventArgs("Argument ExcelFilePattern has not been specified", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Argument ExcelFilePattern has not been specified",
+                CheckResult.Fail));
     }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -63,11 +65,11 @@ public class ExcelToCSVFilesConverter: IPluginDataProvider
         foreach (var f in job.LoadDirectory.ForLoading.GetFiles(ExcelFilePattern))
         {
             foundAtLeastOne = true;
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"About to process file {f.Name}"));
-            ProcessFile(f,job);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to process file {f.Name}"));
+            ProcessFile(f, job);
         }
 
-        if(!foundAtLeastOne)
+        if (!foundAtLeastOne)
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                 $"Did not find any files matching Pattern '{ExcelFilePattern}' in directory '{job.LoadDirectory.ForLoading.FullName}'"));
 
@@ -82,7 +84,7 @@ public class ExcelToCSVFilesConverter: IPluginDataProvider
             wb = new HSSFWorkbook(fs);
         else
             wb = new XSSFWorkbook(fs);
-                
+
         try
         {
             var source = new ExcelDataFlowSource();
@@ -113,14 +115,14 @@ public class ExcelToCSVFilesConverter: IPluginDataProvider
 
                     job.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Information, $"Saved worksheet as {newName}"));
-
                 }
                 else
+                {
                     job.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Information,
                             $"Ignoring worksheet:{sheet.SheetName}"));
+                }
             }
-
         }
         finally
         {
@@ -128,8 +130,5 @@ public class ExcelToCSVFilesConverter: IPluginDataProvider
         }
     }
 
-    private bool IsWorksheetNameMatch(string name)
-    {
-        return WorksheetPattern?.IsMatch(name)!=false;
-    }
+    private bool IsWorksheetNameMatch(string name) => WorksheetPattern?.IsMatch(name) != false;
 }

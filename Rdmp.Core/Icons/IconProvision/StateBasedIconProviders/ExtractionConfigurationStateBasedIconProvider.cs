@@ -14,12 +14,11 @@ public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIc
 {
     private readonly Image<Rgba32> _normal;
     private readonly Image<Rgba32> _frozen;
-        
+
     public ExtractionConfigurationStateBasedIconProvider(DataExportIconProvider iconProvider)
     {
         _normal = Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);
         _frozen = Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
-
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -29,6 +28,6 @@ public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIc
 
         var basicImage = ec.IsReleased ? _frozen : _normal;
 
-        return basicImage;//it's all fine and green
+        return basicImage; //it's all fine and green
     }
 }

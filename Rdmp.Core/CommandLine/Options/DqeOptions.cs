@@ -12,8 +12,8 @@ namespace Rdmp.Core.CommandLine.Options;
 /// Command line parameters for the Data Quality Engine
 /// </summary>
 [Verb("dqe", HelpText = "Runs the Data Quality Engine")]
-public class DqeOptions:RDMPCommandLineOptions
+public class DqeOptions : RDMPCommandLineOptions
 {
-    [Option('c',"Catalogue",HelpText = "ID of the Catalogue to run the DQE on",Required = true)]
-    public string Catalogue{ get; set; }
+    [Option('c', "Catalogue", HelpText = "ID of the Catalogue to run the DQE on", Required = true)]
+    public string Catalogue { get; set; }
 }

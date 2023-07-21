@@ -34,16 +34,13 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
     /// <param name="columnName"></param>
     /// <param name="toFile"></param>
     public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator,
-
         [DemandsInitialization("The filter you want to view matching data on (e.g. an AggregateFilter)")]
         IFilter filter,
-
         [DemandsInitialization("What kind of data do you want to fetch")]
         ViewType viewType = ViewType.TOP_100,
-
-        [DemandsInitialization("If filter is not implicitly tied to a specific column, pass the name of the column for whom you want to view data.")]
+        [DemandsInitialization(
+            "If filter is not implicitly tied to a specific column, pass the name of the column for whom you want to view data.")]
         string columnName = null,
-
         [DemandsInitialization(ToFileDescription)]
         FileInfo toFile = null) : this(activator, viewType, toFile)
     {
@@ -55,11 +52,10 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
             var candidates = GetCandidates(c);
 
             // match on exact name?
-            _columnInfo = candidates.FirstOrDefault(c => c.GetRuntimeName().Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
+            _columnInfo = candidates.FirstOrDefault(c =>
+                c.GetRuntimeName().Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
             if (_columnInfo == null)
-            {
                 throw new Exception($"Could not find a ColumnInfo called '{columnName}' in Catalogue '{c}'");
-            }
         }
         else
         {
@@ -73,7 +69,9 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
         // there is no single column associated with the filter so get user to pick one of them
         PopulateCandidates(filter.GetCatalogue(), filter);
     }
-    public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IContainer container, ViewType viewType = ViewType.TOP_100) : this(activator, viewType, null)
+
+    public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IContainer container,
+        ViewType viewType = ViewType.TOP_100) : this(activator, viewType, null)
     {
         _container = container;
 
@@ -96,10 +94,12 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
             return null;
         }
 
-        return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Where(c => c != null).Distinct().ToArray();
+        return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo)
+            .Where(c => c != null).Distinct().ToArray();
     }
 
-    protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) : base(activator, toFile)
+    protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) :
+        base(activator, toFile)
     {
         _viewType = viewType;
     }
@@ -116,9 +116,9 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
                 throw new ArgumentOutOfRangeException();
         }
     }
+
     protected override IViewSQLAndResultsCollection GetCollection()
     {
-
         _columnInfo ??= SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
 
         if (_columnInfo == null)
@@ -136,8 +136,7 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
 
         return collection;
     }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter);
-    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter);
 }

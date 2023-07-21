@@ -17,7 +17,8 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
 {
     private TableInfo _tableInfo;
 
-    public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
+    public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) :
+        base(activator)
     {
         _tableInfo = tableInfo;
 
@@ -30,8 +31,9 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
     {
         base.Execute();
 
-        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo,null,"Existing Table",ProjectSpecific,TargetFolder);
-            
+        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo, null, "Existing Table", ProjectSpecific,
+            TargetFolder);
+
         if (cata is DatabaseEntity de)
         {
             Publish(de);
@@ -39,8 +41,6 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
 }

@@ -28,7 +28,6 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
 
     private ExternalCohortDefinitionData()
     {
-
     }
 
     /// <inheritdoc/>

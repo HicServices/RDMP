@@ -12,7 +12,6 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 public class SupportingObjectStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-
     private readonly Image<Rgba32> _supportingDocument;
     private readonly Image<Rgba32> _supportingDocumentGlobal;
     private readonly Image<Rgba32> _supportingDocumentExtractable;
@@ -34,8 +33,8 @@ public class SupportingObjectStateBasedIconProvider : IObjectStateBasedIconProvi
         _supportingSqlGlobal = Image.Load<Rgba32>(CatalogueIcons.SupportingSqlGlobal);
         _supportingSqlExtractable = Image.Load<Rgba32>(CatalogueIcons.SupportingSqlExtractable);
         _supportingSqlExtractableGlobal = Image.Load<Rgba32>(CatalogueIcons.SupportingSqlExtractableGlobal);
-
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         return o switch

@@ -25,14 +25,14 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// All metadata details nessesary to create a cohort including which project it goes into, its name, version etc.  There are no identifiers for the cohort.
 /// Also functions as the use case for cohort creation (to which it passes itself as an input object).
 /// </summary>
-public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICanBeSummarised
+public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequest, ICanBeSummarised
 {
     private readonly IDataExportRepository _repository;
 
     //for pipeline editing initialization when no known cohort is available
 
     #region Things that can be turned into cohorts
-        
+
     private FlatFileToLoad _fileToLoad;
     private ExtractionInformation _extractionIdentifierColumn;
     private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
@@ -46,19 +46,19 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
             Pop(_fileToLoad);
 
             _fileToLoad = value;
-                
+
             //add the new one
             Push(value);
         }
     }
-        
+
     public CohortIdentificationConfiguration CohortIdentificationConfiguration
     {
         get => _cohortIdentificationConfiguration;
         set
         {
             Pop(_cohortIdentificationConfiguration);
-            _cohortIdentificationConfiguration = value; 
+            _cohortIdentificationConfiguration = value;
             Push(value);
         }
     }
@@ -69,11 +69,11 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         set
         {
             Pop(_extractionIdentifierColumn);
-            _extractionIdentifierColumn = value; 
+            _extractionIdentifierColumn = value;
             Push(_extractionIdentifierColumn);
         }
     }
-        
+
     private void Pop(object oldValue)
     {
         if (oldValue != null && InitializationObjects.Contains(oldValue))
@@ -84,16 +84,18 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
     {
         AddInitializationObject(newValue);
     }
+
     #endregion
 
     public IProject Project { get; private set; }
     public ICohortDefinition NewCohortDefinition { get; set; }
-        
+
     public ExtractableCohort CohortCreatedIfAny { get; set; }
 
     public string DescriptionForAuditLog { get; set; }
 
-    public CohortCreationRequest(IProject project, ICohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
+    public CohortCreationRequest(IProject project, ICohortDefinition newCohortDefinition,
+        IDataExportRepository repository, string descriptionForAuditLog)
     {
         _repository = repository;
         Project = project;
@@ -113,7 +115,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
     /// <param name="configuration"></param>
     public CohortCreationRequest(ExtractionConfiguration configuration)
     {
-        _repository = (IDataExportRepository) configuration.Repository;
+        _repository = (IDataExportRepository)configuration.Repository;
 
         if (configuration.CohortIdentificationConfiguration_ID == null)
             throw new NotSupportedException(
@@ -123,14 +125,15 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         var origCohortData = origCohort.GetExternalData();
         CohortIdentificationConfiguration = configuration.CohortIdentificationConfiguration;
         Project = configuration.Project;
-            
-        if(Project.ProjectNumber == null)
+
+        if (Project.ProjectNumber == null)
             throw new ProjectNumberException($"Project '{Project}' does not have a ProjectNumber");
 
-        var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable)
-            {
-                CohortReplacedIfAny = origCohort
-            };
+        var definition = new CohortDefinition(null, origCohortData.ExternalDescription,
+            origCohortData.ExternalVersion + 1, (int)Project.ProjectNumber, origCohort.ExternalCohortTable)
+        {
+            CohortReplacedIfAny = origCohort
+        };
 
         NewCohortDefinition = definition;
         DescriptionForAuditLog = "Cohort Refresh";
@@ -140,25 +143,22 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         AddInitializationObject(FileToLoad);
         AddInitializationObject(ExtractionIdentifierColumn);
         AddInitializationObject(this);
-            
+
         GenerateContext();
     }
 
-    protected override IDataFlowPipelineContext GenerateContextImpl()
-    {
-        return new DataFlowPipelineContext<DataTable>
+    protected override IDataFlowPipelineContext GenerateContextImpl() =>
+        new DataFlowPipelineContext<DataTable>
         {
             MustHaveDestination = typeof(ICohortPipelineDestination),
             MustHaveSource = typeof(IDataFlowSource<DataTable>)
         };
-    }
-
 
 
     public void Check(ICheckNotifier notifier)
     {
         NewCohortDefinition.LocationOfCohort.Check(notifier);
-            
+
         if (NewCohortDefinition.ID != null)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
@@ -169,9 +169,9 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
         if (Project.ProjectNumber == null)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Project {Project} does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest ({NewCohortDefinition.ProjectNumber})", CheckResult.Fail));
-        else
-        if (Project.ProjectNumber != NewCohortDefinition.ProjectNumber)
+                $"Project {Project} does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest ({NewCohortDefinition.ProjectNumber})",
+                CheckResult.Fail));
+        else if (Project.ProjectNumber != NewCohortDefinition.ProjectNumber)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Project {Project} has ProjectNumber={Project.ProjectNumber} but the CohortCreationRequest.ProjectNumber is {NewCohortDefinition.ProjectNumber}",
@@ -187,12 +187,14 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
                 CheckResult.Success));
 
         if (string.IsNullOrWhiteSpace(DescriptionForAuditLog))
-            notifier.OnCheckPerformed(new CheckEventArgs("User did not provide a description of the cohort for the AuditLog",CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("User did not provide a description of the cohort for the AuditLog",
+                    CheckResult.Fail));
     }
 
     public void PushToServer(IManagedConnection connection)
     {
-        if(!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
+        if (!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
             throw new Exception(reason);
 
         NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);
@@ -200,10 +202,12 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
     public int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages)
     {
-        if(NewCohortDefinition.ID == null)
-            throw new NotSupportedException("CohortCreationRequest cannot be imported because its ID is null, it is likely that it has not been pushed to the server yet");
+        if (NewCohortDefinition.ID == null)
+            throw new NotSupportedException(
+                "CohortCreationRequest cannot be imported because its ID is null, it is likely that it has not been pushed to the server yet");
 
-        var cohort = new ExtractableCohort(_repository, (ExternalCohortTable) NewCohortDefinition.LocationOfCohort, (int)NewCohortDefinition.ID);
+        var cohort = new ExtractableCohort(_repository, (ExternalCohortTable)NewCohortDefinition.LocationOfCohort,
+            (int)NewCohortDefinition.ID);
         cohort.AppendToAuditLog(DescriptionForAuditLog);
 
         CohortCreatedIfAny = cohort;
@@ -214,16 +218,16 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
             NewCohortDefinition.CohortReplacedIfAny.SaveToDatabase();
         }
 
-        if(migrateUsages && NewCohortDefinition.CohortReplacedIfAny != null)
+        if (migrateUsages && NewCohortDefinition.CohortReplacedIfAny != null)
         {
             var oldId = NewCohortDefinition.CohortReplacedIfAny.ID;
             var newId = cohort.ID;
 
             // ExtractionConfigurations that use the old (replaced) cohort
             var liveUsers = _repository.GetAllObjects<ExtractionConfiguration>()
-                .Where(ec=>ec.Cohort_ID == oldId && ec.IsReleased == false);
+                .Where(ec => ec.Cohort_ID == oldId && ec.IsReleased == false);
 
-            foreach(var ec in liveUsers)
+            foreach (var ec in liveUsers)
             {
                 ec.Cohort_ID = newId;
                 ec.SaveToDatabase();
@@ -237,7 +241,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
     /// <summary>
     /// Design time types
     /// </summary>
-    private CohortCreationRequest():base(new Type[]
+    private CohortCreationRequest() : base(new Type[]
     {
         typeof(FlatFileToLoad),
         typeof(CohortIdentificationConfiguration),
@@ -249,10 +253,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         GenerateContext();
     }
 
-    public static PipelineUseCase DesignTime()
-    {
-        return new CohortCreationRequest();
-    }
+    public static PipelineUseCase DesignTime() => new CohortCreationRequest();
 
     public override string ToString()
     {
@@ -262,8 +263,6 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         return NewCohortDefinition.Description;
     }
 
-    public string GetSummary(bool includeName, bool includeId)
-    {
-        return $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
-    }
+    public string GetSummary(bool includeName, bool includeId) =>
+        $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
 }

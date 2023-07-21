@@ -8,33 +8,32 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 namespace Rdmp.Core.Databases;
 
-public sealed class ANOStorePatcher:Patcher
+public sealed class ANOStorePatcher : Patcher
 {
-    public ANOStorePatcher():base(2,"Databases.ANOStoreDatabase")
+    public ANOStorePatcher() : base(2, "Databases.ANOStoreDatabase")
     {
         LegacyName = "ANOStore.Database";
     }
 }
 
-public sealed class IdentifierDumpDatabasePatcher:Patcher
+public sealed class IdentifierDumpDatabasePatcher : Patcher
 {
-    public IdentifierDumpDatabasePatcher():base(2,"Databases.IdentifierDumpDatabase")
+    public IdentifierDumpDatabasePatcher() : base(2, "Databases.IdentifierDumpDatabase")
     {
         LegacyName = "IdentifierDump.Database";
     }
 }
 
-public sealed class DataExportPatcher:Patcher
+public sealed class DataExportPatcher : Patcher
 {
-    public DataExportPatcher():base(1,"Databases.DataExportDatabase")
+    public DataExportPatcher() : base(1, "Databases.DataExportDatabase")
     {
-            
     }
 }
 
-public sealed class CataloguePatcher:Patcher
+public sealed class CataloguePatcher : Patcher
 {
-    public CataloguePatcher():base(1,"Databases.CatalogueDatabase")
+    public CataloguePatcher() : base(1, "Databases.CatalogueDatabase")
     {
     }
 }

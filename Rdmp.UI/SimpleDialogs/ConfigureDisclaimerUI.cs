@@ -22,18 +22,20 @@ namespace Rdmp.UI.SimpleDialogs;
 public partial class ConfigureDisclaimerUI : RDMPForm
 {
     private bool _allowClose = false;
-        
-    public ConfigureDisclaimerUI(IActivateItems activator):base(activator)
+
+    public ConfigureDisclaimerUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
     }
 
     protected override void OnLoad(EventArgs e)
     {
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
 
-        var value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+        var value =
+            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
+                .ReleaseDocumentDisclaimer);
 
         tb.Text = value ?? GetDefaultText();
 
@@ -42,52 +44,52 @@ public partial class ConfigureDisclaimerUI : RDMPForm
         base.OnLoad(e);
     }
 
-    private static string GetDefaultText()
-    {
-        return
-            @"*****************************************************************************************************************************
+    private static string GetDefaultText() =>
+        @"*****************************************************************************************************************************
 Please acknowledge HIC as a data source in any publications/reports which contain results generated from our data.  We suggest adding the following:
 We acknowledge the support of the Health Informatics Centre, University of Dundee for managing and supplying the anonymised data.
 Once you have finished your project, please inform HIC who will make arrangements to recover and archive your project.
 *****************************************************************************************************************************";
-    }
 
     private void btnCancelChanges_Click(object sender, EventArgs e)
     {
         _allowClose = true;
-        DialogResult = DialogResult.Cancel; 
+        DialogResult = DialogResult.Cancel;
         Close();
     }
 
     private void btnSaveAndClose_Click(object sender, EventArgs e)
     {
-        Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.ReleaseDocumentDisclaimer, tb.Text);
+        Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(
+            DataExportProperty.ReleaseDocumentDisclaimer, tb.Text);
         _allowClose = true;
         DialogResult = DialogResult.OK;
         Close();
     }
+
     private void ConfigureDisclaimer_FormClosing(object sender, FormClosingEventArgs e)
     {
         if (VisualStudioDesignMode)
             return;
 
         if (!_allowClose)
-            switch (MessageBox.Show("Save changes? Yes - save and close, No - discard changes and close, Cancel - Do not close", "Save Changes?", MessageBoxButtons.YesNoCancel))
+            switch (MessageBox.Show(
+                        "Save changes? Yes - save and close, No - discard changes and close, Cancel - Do not close",
+                        "Save Changes?", MessageBoxButtons.YesNoCancel))
             {
                 case DialogResult.Cancel:
                     e.Cancel = true;
                     break;
                 case DialogResult.Yes:
-                    btnSaveAndClose_Click(null,null);
+                    btnSaveAndClose_Click(null, null);
                     break;
                 case DialogResult.No:
-                    btnCancelChanges_Click(null,null);
+                    btnCancelChanges_Click(null, null);
                     break;
                 default:
                     e.Cancel = true;
                     break;
             }
-
     }
 
 

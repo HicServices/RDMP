@@ -24,7 +24,8 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
     private Random _r;
     private IDataGenerator _generator;
 
-    public ExecuteCommandGenerateTestData(IBasicActivateItems activator, string datasetName, int numberOfPeople, int numberOfRecords, int seed, string toFile):base(activator)
+    public ExecuteCommandGenerateTestData(IBasicActivateItems activator, string datasetName, int numberOfPeople,
+        int numberOfRecords, int seed, string toFile) : base(activator)
     {
         _datasetName = datasetName;
         _numberOfPeople = numberOfPeople;
@@ -32,15 +33,18 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
         _toFile = toFile;
 
         var dataGeneratorFactory = new DataGeneratorFactory();
-        var match = dataGeneratorFactory.GetAvailableGenerators().FirstOrDefault(g=>g.Name.Contains(datasetName,StringComparison.InvariantCultureIgnoreCase));
+        var match = dataGeneratorFactory.GetAvailableGenerators().FirstOrDefault(g =>
+            g.Name.Contains(datasetName, StringComparison.InvariantCultureIgnoreCase));
 
-        if(match == null)
+        if (match == null)
         {
-            SetImpossible($"Unknown dataset '{datasetName}'.  Known datasets are:{Environment.NewLine}{string.Join(Environment.NewLine,dataGeneratorFactory.GetAvailableGenerators().Select(g=>g.Name).ToArray())}");
+            SetImpossible(
+                $"Unknown dataset '{datasetName}'.  Known datasets are:{Environment.NewLine}{string.Join(Environment.NewLine, dataGeneratorFactory.GetAvailableGenerators().Select(g => g.Name).ToArray())}");
             return;
         }
+
         _r = new Random(seed);
-        _generator = dataGeneratorFactory.Create(match,_r);
+        _generator = dataGeneratorFactory.Create(match, _r);
     }
 
     public override void Execute()
@@ -48,13 +52,13 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
         base.Execute();
 
         var people = new PersonCollection();
-        people.GeneratePeople(_numberOfPeople,_r);
+        people.GeneratePeople(_numberOfPeople, _r);
 
         var f = new FileInfo(_toFile);
 
-        if(!f.Directory.Exists)
+        if (!f.Directory.Exists)
             f.Directory.Create();
 
-        _generator.GenerateTestDataFile(people,f,_numberOfRecords);
+        _generator.GenerateTestDataFile(people, f, _numberOfRecords);
     }
 }

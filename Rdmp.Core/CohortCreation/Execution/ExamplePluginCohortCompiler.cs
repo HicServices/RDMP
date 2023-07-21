@@ -26,24 +26,22 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
 {
     public const string ExampleAPIName = $"{ApiPrefix}GenerateRandomChisExample";
 
-    public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,CancellationToken token)
+    public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
 
         // The user of RDMP will have configured ac as either patient index table or normal cohort aggregate
         if (ac.IsJoinablePatientIndexTable())
-        {
             // user expects multiple columns from the API
-            RunAsPatientIndexTable(ac, cache,token);
-        }
+            RunAsPatientIndexTable(ac, cache, token);
         else
-        {
             // user expects only a single linkage identifier to be returned by the API
-            RunAsIdentifierList(ac, cache,token);
-        }
+            RunAsIdentifierList(ac, cache, token);
     }
 
-    private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
+    private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken token)
     {
         using var dt = new DataTable();
         dt.Columns.Add("chi", typeof(string));
@@ -54,14 +52,13 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         var pc = new PersonCollection();
         pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
 
-        foreach (var p in pc.People)
-        {
-            dt.Rows.Add(p.CHI, p.DateOfBirth,p.DateOfDeath ?? (object)DBNull.Value);
-        }
+        foreach (var p in pc.People) dt.Rows.Add(p.CHI, p.DateOfBirth, p.DateOfDeath ?? (object)DBNull.Value);
 
-        SubmitPatientIndexTable(dt, ac, cache,true);
+        SubmitPatientIndexTable(dt, ac, cache, true);
     }
-    private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
+
+    private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken token)
     {
         var pc = new PersonCollection();
         var requiredNumber = GetNumberToGenerate(ac);
@@ -71,34 +68,28 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         var set = new HashSet<string>(pc.People.Select(p => p.CHI));
 
         // there may be duplicates, if so we need to bump up the number to match the required count
-        while(set.Count < requiredNumber)
+        while (set.Count < requiredNumber)
         {
             pc.GeneratePeople(1, rand);
             set.Add(pc.People[0].CHI);
         }
-                
+
         // generate a list of random chis
         SubmitIdentifierList("chi", set, ac, cache);
     }
 
-    private static int GetNumberToGenerate(AggregateConfiguration ac)
-    {
+    private static int GetNumberToGenerate(AggregateConfiguration ac) =>
         // You can persist configuration info about how to query the API any way
         // you want.  Here we just use the Description field
-        return int.TryParse(ac.Description, out var result) ? result: 5;
-    }
+        int.TryParse(ac.Description, out var result) ? result : 5;
 
-    public override bool ShouldRun(ICatalogue cata)
-    {
+    public override bool ShouldRun(ICatalogue cata) =>
         // we will handle any dataset where the associated Catalogue has this name
         // you can customise how to spot your API calls however you want
-        return cata.Name.Equals(ExampleAPIName);
-    }
+        cata.Name.Equals(ExampleAPIName);
 
-    protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo)
-    {
+    protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo) =>
         // when RunAsPatientIndexTable is being used the column that can be linked
         // to other datasets is called "chi"
-        return "chi";
-    }
+        "chi";
 }

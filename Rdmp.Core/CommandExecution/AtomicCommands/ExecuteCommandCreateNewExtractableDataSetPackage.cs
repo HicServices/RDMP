@@ -12,25 +12,23 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExecution, IAtomicCommand
 {
     public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
     {
-        if(BasicActivator.RepositoryLocator.DataExportRepository == null)
+        if (BasicActivator.RepositoryLocator.DataExportRepository == null)
             SetImpossible("Data export database is not setup");
 
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
-    }
+    public override string GetCommandHelp() =>
+        "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
 
     public override void Execute()
     {
         base.Execute();
-            
+
         if (TypeText("Name for package", "Name", 500, null, out var name))
         {
             var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
@@ -39,8 +37,6 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecut
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
 }

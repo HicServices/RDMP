@@ -14,7 +14,6 @@ namespace Rdmp.UI;
 
 public static class ApplicationRestarter
 {
-
     public static void Restart()
     {
         try
@@ -38,20 +37,19 @@ public static class ApplicationRestarter
             sb.Append(arguments[argumentIndex]);
             sb.Append("\" ");
         }
+
         if (arguments.Length > 1)
         {
             sb.Append('"');
             sb.Append(arguments[^1]);
             sb.Append('"');
         }
+
         var currentStartInfo = new ProcessStartInfo
         {
             FileName = Path.ChangeExtension(Application.ExecutablePath, "exe")
         };
-        if (sb.Length > 0)
-        {
-            currentStartInfo.Arguments = sb.ToString();
-        }
+        if (sb.Length > 0) currentStartInfo.Arguments = sb.ToString();
         Application.Exit();
         Process.Start(currentStartInfo);
     }

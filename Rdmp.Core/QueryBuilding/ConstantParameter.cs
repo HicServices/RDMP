@@ -31,7 +31,7 @@ public class ConstantParameter : ISqlParameter
     /// <param name="value">The value to set the paramater e.g. 1</param>
     /// <param name="comment">Some text to appear above the parameter, explaining its purpose</param>
     /// <param name="syntaxHelper"></param>
-    public ConstantParameter(string parameterSQL,string value,string comment, IQuerySyntaxHelper syntaxHelper)
+    public ConstantParameter(string parameterSQL, string value, string comment, IQuerySyntaxHelper syntaxHelper)
     {
         _syntaxHelper = syntaxHelper;
         Value = value;
@@ -48,10 +48,7 @@ public class ConstantParameter : ISqlParameter
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    public override string ToString() => $"{ParameterName} = {Value}";
 
     /// <summary>
     /// Checks the syntax of the parameter (See <see cref="ParameterSyntaxChecker"/>)
@@ -63,10 +60,7 @@ public class ConstantParameter : ISqlParameter
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _syntaxHelper;
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _syntaxHelper;
 
     /// <inheritdoc/>
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
@@ -86,10 +80,7 @@ public class ConstantParameter : ISqlParameter
     /// Returns null, <see cref="ConstantParameter"/> are never owned by any objects
     /// </summary>
     /// <returns></returns>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
-        return null;
-    }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => null;
 
     /// <summary>
     /// Attempts to parse the provided <paramref name="sql"/> text into a <see cref="ConstantParameter"/>
@@ -118,7 +109,7 @@ public class ConstantParameter : ISqlParameter
 
         var valueLineSplit = valueLine.Split(new[] { '=' });
         var value = valueLineSplit[1].TrimEnd(new[] { ';', '\r' });
-            
+
         return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
     }
 }

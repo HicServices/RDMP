@@ -20,18 +20,18 @@ public enum Releaseability
     /// Something went wrong while RDMP was trying to determine the releasability of the dataset (figuring out if the files and current configuration match.)
     /// </summary>
     ExceptionOccurredWhileEvaluatingReleaseability,
-        
+
     /// <summary>
     /// The RDMP has no record of an extraction having taken place on the dataset (including a failed one)
     /// </summary>
     NeverBeenSuccessfullyExecuted,
-        
+
     /// <summary>
     /// The RDMP has a record of the dataset being extracted but either the extracted data file or accompanying metadata file(s) was
     /// not found in the correct location on disk (either it was moved or the extraction crashed halfway through)
     /// </summary>
     ExtractFilesMissing,
-        
+
     /// <summary>
     /// Because project extractions can take some time to do it is possible that another data analyst (or you without realising it) makes a change to a dataset
     /// in the project which has already been extracted (e.g. selecting an additional column for extraction).  If this happens your extracted file will be wrong

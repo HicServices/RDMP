@@ -39,20 +39,23 @@ public class RDMPSingleControlTabMenu : ContextMenuStrip
             var uiFactory = new AtomicCommandUIFactory(activator);
             var builder = new GoToCommandFactory(activator);
 
-            var gotoMenu = new ToolStripMenuItem(AtomicCommandFactory.GoTo){Enabled = false };
+            var gotoMenu = new ToolStripMenuItem(AtomicCommandFactory.GoTo) { Enabled = false };
             Items.Add(gotoMenu);
 
-            foreach(var cmd in builder.GetCommands(single.DatabaseObject).OfType<ExecuteCommandShow>())
+            foreach (var cmd in builder.GetCommands(single.DatabaseObject).OfType<ExecuteCommandShow>())
             {
                 gotoMenu.DropDownItems.Add(uiFactory.CreateMenuItem(cmd));
                 gotoMenu.Enabled = true;
             }
+
             RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(gotoMenu);
         }
 
-        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(), (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
+        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
 
-        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(), (s, e) => _tab.ShowHelp(activator))
+        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(),
+            (s, e) => _tab.ShowHelp(activator))
         {
             ShortcutKeys = Keys.F1
         };

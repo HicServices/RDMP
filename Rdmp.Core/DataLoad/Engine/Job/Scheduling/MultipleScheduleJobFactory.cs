@@ -28,11 +28,12 @@ public class MultipleScheduleJobFactory : ScheduledJobFactory
     private readonly List<ILoadProgress> _scheduleList;
     private int _lastScheduleId;
 
-    public MultipleScheduleJobFactory(Dictionary<ILoadProgress, IJobDateGenerationStrategy> availableSchedules, int? overrideNumberOfDaysToLoad , ILoadMetadata loadMetadata, ILogManager logManager)
+    public MultipleScheduleJobFactory(Dictionary<ILoadProgress, IJobDateGenerationStrategy> availableSchedules,
+        int? overrideNumberOfDaysToLoad, ILoadMetadata loadMetadata, ILogManager logManager)
         : base(overrideNumberOfDaysToLoad, loadMetadata, logManager)
     {
         _availableSchedules = availableSchedules;
-            
+
         _scheduleList = _availableSchedules.Keys.ToList();
 
         _lastScheduleId = 0;
@@ -44,18 +45,25 @@ public class MultipleScheduleJobFactory : ScheduledJobFactory
     /// <returns></returns>
     public override bool HasJobs()
     {
-        return _scheduleList.Any(loadProgress => _availableSchedules[loadProgress].GetTotalNumberOfJobs(OverrideNumberOfDaysToLoad??loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0);
+        return _scheduleList.Any(loadProgress =>
+            _availableSchedules[loadProgress]
+                .GetTotalNumberOfJobs(OverrideNumberOfDaysToLoad ?? loadProgress.DefaultNumberOfDaysToLoadEachTime,
+                    false) > 0);
     }
 
-    protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+    protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
     {
         var loadProgress = _scheduleList[_lastScheduleId];
-        var datesToRetrieve = _availableSchedules[loadProgress].GetDates(OverrideNumberOfDaysToLoad??_scheduleList[_lastScheduleId].DefaultNumberOfDaysToLoadEachTime, false);
+        var datesToRetrieve = _availableSchedules[loadProgress]
+            .GetDates(OverrideNumberOfDaysToLoad ?? _scheduleList[_lastScheduleId].DefaultNumberOfDaysToLoadEachTime,
+                false);
         if (!datesToRetrieve.Any())
             return null;
 
         var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        var job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)
+        var job = new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
+            listener, configuration)
         {
             LoadProgress = loadProgress,
             DatesToRetrieve = datesToRetrieve

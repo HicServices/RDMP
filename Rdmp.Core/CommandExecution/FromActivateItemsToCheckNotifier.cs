@@ -24,15 +24,15 @@ public class FromActivateItemsToCheckNotifier : ICheckNotifier
     {
         if (args.ProposedFix != null)
             return basicActivator.YesNo(args.ProposedFix, "Apply fix?");
-            
-        if(args.Result >= CheckResult.Fail)
+
+        if (args.Result >= CheckResult.Fail)
         {
             if (args.Ex == null)
                 basicActivator.Show(args.Message);
             else
                 basicActivator.ShowException(args.Message, args.Ex);
         }
-            
+
         return false;
     }
 }

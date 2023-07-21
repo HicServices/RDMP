@@ -26,7 +26,8 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="sourceFileCollection"></param>
-    protected ExecuteCommandImportShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection) : base(activator)
+    protected ExecuteCommandImportShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection) :
+        base(activator)
     {
         if (sourceFileCollection != null)
         {
@@ -37,17 +38,17 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
 
     public sealed override void Execute()
     {
         base.Execute();
 
         //ensure file selected
-        if ((_shareDefinitionFile ??= BasicActivator.SelectFile("Select share definition file to import","Share Definition","*.sd")) == null)
+        if ((_shareDefinitionFile ??=
+                BasicActivator.SelectFile("Select share definition file to import", "Share Definition", "*.sd")) ==
+            null)
             return;
 
         var json = File.ReadAllText(_shareDefinitionFile.FullName);

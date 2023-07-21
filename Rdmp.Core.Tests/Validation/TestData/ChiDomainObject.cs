@@ -14,5 +14,4 @@ public class ChiDomainObject
     {
         this.chi = chi;
     }
-
 }

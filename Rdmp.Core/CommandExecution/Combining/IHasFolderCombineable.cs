@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// <see cref="ICombineableSource"/> interface for anyone who hosts an <see cref="IHasFolder"/> object
 /// and wants to support drag and drop onto folders
 /// </summary>
-public interface IHasFolderCombineable: ICombineToMakeCommand
+public interface IHasFolderCombineable : ICombineToMakeCommand
 {
     IHasFolder Folderable { get; }
 }

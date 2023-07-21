@@ -32,13 +32,13 @@ internal class CatalogueRepositoryTests
             ConnectTimeout = 2
         });
 
-        var msg = Assert.Throws<Exception>(()=>repo.TestConnection());
+        var msg = Assert.Throws<Exception>(() => repo.TestConnection());
 
-        StringAssert.StartsWith("Testing connection failed",msg.Message);
-        StringAssert.DoesNotContain("omg",msg.Message);
-        StringAssert.Contains("****",msg.Message);
-        StringAssert.Contains("Timeout",msg.Message);
-        StringAssert.Contains("2",msg.Message);
+        StringAssert.StartsWith("Testing connection failed", msg.Message);
+        StringAssert.DoesNotContain("omg", msg.Message);
+        StringAssert.Contains("****", msg.Message);
+        StringAssert.Contains("Timeout", msg.Message);
+        StringAssert.Contains("2", msg.Message);
     }
 
     [Test]
@@ -46,8 +46,9 @@ internal class CatalogueRepositoryTests
     {
         ImplementationManager.Load<FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation>();
 
-        if(EnvironmentInfo.IsLinux)
-            Assert.Inconclusive("Linux doesn't really support IntegratedSecurity and in fact can bomb just setting it on a builder");
+        if (EnvironmentInfo.IsLinux)
+            Assert.Inconclusive(
+                "Linux doesn't really support IntegratedSecurity and in fact can bomb just setting it on a builder");
 
         var repo = new CatalogueRepository(new SqlConnectionStringBuilder
         {
@@ -56,12 +57,11 @@ internal class CatalogueRepositoryTests
             ConnectTimeout = 2
         });
 
-        var msg = Assert.Throws<Exception>(()=>repo.TestConnection());
+        var msg = Assert.Throws<Exception>(() => repo.TestConnection());
 
-        StringAssert.StartsWith("Testing connection failed",msg.Message);
-        StringAssert.Contains("Integrated Security=",msg.Message);
-        StringAssert.Contains("Timeout",msg.Message);
-        StringAssert.Contains("2",msg.Message);
+        StringAssert.StartsWith("Testing connection failed", msg.Message);
+        StringAssert.Contains("Integrated Security=", msg.Message);
+        StringAssert.Contains("Timeout", msg.Message);
+        StringAssert.Contains("2", msg.Message);
     }
-
 }

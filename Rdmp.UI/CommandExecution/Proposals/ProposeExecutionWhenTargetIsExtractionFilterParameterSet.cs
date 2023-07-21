@@ -11,16 +11,15 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
+internal class
+    ProposeExecutionWhenTargetIsExtractionFilterParameterSet : RDMPCommandExecutionProposal<
+        ExtractionFilterParameterSet>
 {
     public ProposeExecutionWhenTargetIsExtractionFilterParameterSet(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ExtractionFilterParameterSet target)
-    {
-        return true;
-    }
+    public override bool CanActivate(ExtractionFilterParameterSet target) => true;
 
     public override void Activate(ExtractionFilterParameterSet target)
     {
@@ -28,8 +27,6 @@ internal class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPComm
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionFilterParameterSet target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+        InsertOption insertOption = InsertOption.Default) =>
+        null;
 }

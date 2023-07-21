@@ -33,7 +33,6 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
             _ => false
             //do not apply fixes to warnings/success
         };
-
     }
 
     /// <summary>

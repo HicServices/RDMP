@@ -14,14 +14,11 @@ namespace Rdmp.Core.CommandExecution.Combining;
 public class DataAccessCredentialsCombineable : ICombineToMakeCommand
 {
     public DataAccessCredentials DataAccessCredentials { get; private set; }
-         
+
     public DataAccessCredentialsCombineable(DataAccessCredentials dataAccessCredentials)
     {
-        DataAccessCredentials = dataAccessCredentials; 
+        DataAccessCredentials = dataAccessCredentials;
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

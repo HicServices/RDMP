@@ -74,15 +74,15 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
         var serializer = new XmlSerializer(GetType());
 
         using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = true }))
+        {
             serializer.Serialize(sw, this);
+        }
 
         return sb.ToString();
     }
 
-    public bool IsValid()
-    {
-        return !string.IsNullOrWhiteSpace(Endpoint) &&
-               !string.IsNullOrWhiteSpace(Username) &&
-               !string.IsNullOrWhiteSpace(Password);
-    }
+    public bool IsValid() =>
+        !string.IsNullOrWhiteSpace(Endpoint) &&
+        !string.IsNullOrWhiteSpace(Username) &&
+        !string.IsNullOrWhiteSpace(Password);
 }

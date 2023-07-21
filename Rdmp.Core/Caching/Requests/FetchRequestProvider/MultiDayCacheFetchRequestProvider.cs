@@ -35,7 +35,7 @@ public class MultiDayCacheFetchRequestProvider : ICacheFetchRequestProvider
         else
         {
             Current = Current.GetNext();
-                
+
             // We have provided requests for the whole time period
             if (Current.Start > _endDateInclusive)
                 return null;

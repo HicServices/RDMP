@@ -30,12 +30,13 @@ public class PluginManager : IPluginManager
         var runningSoftwareVersion = typeof(PluginManager).Assembly.GetName().Version;
 
         //nupkg that are compatible with the running software
-        var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));
+        var plugins = _repository.GetAllObjects<Curation.Data.Plugin>()
+            .Where(a => a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion, 2));
 
         //latest versions
         var latestVersionsOfPlugins = plugins.GroupBy(static p => p.GetShortName())
             .Select(static grp => grp.MaxBy(static p => p.PluginVersion));
-                        
+
         return latestVersionsOfPlugins.ToArray();
     }
 }

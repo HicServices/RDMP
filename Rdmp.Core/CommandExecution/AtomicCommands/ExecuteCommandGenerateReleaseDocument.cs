@@ -22,42 +22,33 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
 
-    public ExecuteCommandGenerateReleaseDocument(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+    public ExecuteCommandGenerateReleaseDocument(IBasicActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
         /////////////////Other stuff///////////
         if (!extractionConfiguration.CumulativeExtractionResults.Any())
             SetImpossible("No datasets have been extracted");
 
-        if(_extractionConfiguration.Cohort_ID == null)
-        {
+        if (_extractionConfiguration.Cohort_ID == null)
             SetImpossible("ExtractionConfiguration does not have a cohort");
-        }
         else
-        {
             try
             {
                 // try to fetch the cohort (give it 2 seconds maximum). 
                 // we don't want to freeze waiting for context menu to pop up on this
                 var eds = _extractionConfiguration.Cohort.GetExternalData(2);
 
-                if (eds == ExternalCohortDefinitionData.Orphan)
-                {
-                    SetImpossible("Cohort did not exist");
-                }
+                if (eds == ExternalCohortDefinitionData.Orphan) SetImpossible("Cohort did not exist");
             }
             catch (Exception)
             {
                 SetImpossible("Cohort was unreachable");
             }
-        }
-                
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
-    }
+    public override string GetCommandHelp() =>
+        "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
 
     public override void Execute()
     {
@@ -65,7 +56,8 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
 
         try
         {
-            ReleaseRunner.IdentifyAndRemoveOldExtractionResults(BasicActivator.RepositoryLocator, new AcceptAllCheckNotifier(), _extractionConfiguration);
+            ReleaseRunner.IdentifyAndRemoveOldExtractionResults(BasicActivator.RepositoryLocator,
+                new AcceptAllCheckNotifier(), _extractionConfiguration);
         }
         catch (Exception e)
         {
@@ -74,19 +66,18 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
 
         try
         {
-            var generator = new WordDataReleaseFileGenerator(_extractionConfiguration, BasicActivator.RepositoryLocator.DataExportRepository);
+            var generator = new WordDataReleaseFileGenerator(_extractionConfiguration,
+                BasicActivator.RepositoryLocator.DataExportRepository);
 
             //null means leave word file on screen and don't save
             generator.GenerateWordFile(null);
         }
         catch (Exception e)
         {
-            BasicActivator.ShowException("Failed to generate release document",e);
+            BasicActivator.ShowException("Failed to generate release document", e);
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
 }

@@ -24,7 +24,9 @@ internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDat
     /// The member on <see cref="ToTest"/> that
     /// </summary>
     protected readonly string PropertyToCheckName;
-    protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
+
+    protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control,
+        string propertyToCheckName)
     {
         ErrorProvider = new ErrorProvider();
         Activator = activator;
@@ -41,10 +43,7 @@ internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDat
     private void ToTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         // the property being changed is not ours
-        if (!string.Equals(e.PropertyName, PropertyToCheckName))
-        {
-            return;
-        }
+        if (!string.Equals(e.PropertyName, PropertyToCheckName)) return;
 
         var currentValue = PropertyToCheck(ToTest);
         var typeToTest = ToTest.GetType();

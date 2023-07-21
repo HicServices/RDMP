@@ -15,26 +15,25 @@ namespace Rdmp.UI.TestsAndSetup;
 /// </summary>
 public class GlobalExceptionHandler
 {
-    public static GlobalExceptionHandler Instance {get;} = new GlobalExceptionHandler();
+    public static GlobalExceptionHandler Instance { get; } = new();
 
     /// <summary>
     /// What to do when errors occur, changing this discards the old action and sets a new one.  Defaults to launching a non modal <see cref="ExceptionViewer"/>
     /// </summary>
-    public Action<Exception> Handler {get;set;}
+    public Action<Exception> Handler { get; set; }
 
     public GlobalExceptionHandler()
     {
-        Handler = e=>ExceptionViewer.Show(e,false);
+        Handler = e => ExceptionViewer.Show(e, false);
     }
-    internal void Handle(object sender, UnhandledExceptionEventArgs  args)
+
+    internal void Handle(object sender, UnhandledExceptionEventArgs args)
     {
         Handler((Exception)args.ExceptionObject);
-
     }
+
     internal void Handle(object sender, ThreadExceptionEventArgs args)
     {
         Handler(args.Exception);
     }
-
-        
 }

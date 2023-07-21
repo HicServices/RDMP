@@ -24,7 +24,7 @@ public class SimpleCounterButton : ToolStripButton
         get => _count;
         set
         {
-            _count = value; 
+            _count = value;
             Invalidate();
         }
     }
@@ -49,17 +49,14 @@ public class SimpleCounterButton : ToolStripButton
 
             var labelSize = e.Graphics.MeasureString(label, labelFont);
 
-            var labelXStart = (Width - labelSize.Width)/2;
+            var labelXStart = (Width - labelSize.Width) / 2;
 
-            var labelRect = new RectangleF(new PointF(labelXStart,Height - (labelSize.Height + LabelPadding)), labelSize);
-                
-            e.Graphics.FillRectangle(Brushes.White,labelRect);
-            e.Graphics.DrawRectangle(Pens.Gray,Rectangle.Round(labelRect));
-            e.Graphics.DrawString(label,labelFont,Brushes.Black,labelRect);
-    
+            var labelRect = new RectangleF(new PointF(labelXStart, Height - (labelSize.Height + LabelPadding)),
+                labelSize);
+
+            e.Graphics.FillRectangle(Brushes.White, labelRect);
+            e.Graphics.DrawRectangle(Pens.Gray, Rectangle.Round(labelRect));
+            e.Graphics.DrawString(label, labelFont, Brushes.Black, labelRect);
         }
-            
     }
-
-        
 }

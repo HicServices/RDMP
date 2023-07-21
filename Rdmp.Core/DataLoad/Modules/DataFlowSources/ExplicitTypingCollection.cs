@@ -20,17 +20,17 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 /// 
 /// <para>This class can be used by [DemandsInitialization] properties and it will launch its custom UI: ExplicitTypingCollectionUI</para>
 /// </summary>
-public class ExplicitTypingCollection:ICustomUIDrivenClass
+public class ExplicitTypingCollection : ICustomUIDrivenClass
 {
     /// <summary>
     /// A dictionary of names (e.g. column names) which must have specific C# data types
     /// </summary>
     public Dictionary<string, Type> ExplicitTypesCSharp = new();
-        
+
     /// <inheritdoc/>
     public void RestoreStateFrom(string value)
-    { 
-        if(value == null)
+    {
+        if (value == null)
             return;
 
         var doc = new XmlDocument();
@@ -41,12 +41,10 @@ public class ExplicitTypingCollection:ICustomUIDrivenClass
         var typesNode = doc.GetElementsByTagName("ExplicitTypesCSharp").Cast<XmlNode>().Single();
         var dictionary = typesNode.InnerText;
 
-        var lines = dictionary.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+        var lines = dictionary.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
         for (var i = 0; i < lines.Length; i += 2)
             ExplicitTypesCSharp.Add(lines[i], Type.GetType(lines[i + 1]));
-
-
     }
 
     /// <inheritdoc/>
@@ -62,6 +60,7 @@ public class ExplicitTypingCollection:ICustomUIDrivenClass
             sb.AppendLine(kvp.Key);
             sb.AppendLine(kvp.Value.FullName);
         }
+
         sb.AppendLine("</ExplicitTypesCSharp>");
 
         return sb.ToString();

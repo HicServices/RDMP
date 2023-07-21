@@ -18,14 +18,15 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
 {
     private readonly int _dataLoadRunID;
 
-    public LiveMigrationQueryHelper(MigrationColumnSet columnsToMigrate, int dataLoadRunID) : base (columnsToMigrate)
+    public LiveMigrationQueryHelper(MigrationColumnSet columnsToMigrate, int dataLoadRunID) : base(columnsToMigrate)
     {
         _dataLoadRunID = dataLoadRunID;
     }
 
     public override string BuildUpdateClauseForRow(string sourceAlias, string destAlias)
     {
-        var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => $"{destAlias}.[{name}] = {sourceAlias}.[{name}]").ToList();
+        var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => $"{destAlias}.[{name}] = {sourceAlias}.[{name}]")
+            .ToList();
         parts.Add($"{destAlias}.{SpecialFieldNames.DataLoadRunID} = {_dataLoadRunID}");
 
         return string.Join(", ", parts);
@@ -37,7 +38,8 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
         throw new NotImplementedException();
     }
 
-    public static List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate, int dataLoadRunID)
+    public static List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate,
+        int dataLoadRunID)
     {
         var inserts = new List<KeyValuePair<string, string>>();
 

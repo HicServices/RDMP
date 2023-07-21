@@ -18,29 +18,28 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// The runtime/compile time wrapper for CohortAggregateContainer. UNION,EXCEPT,INTERSECT containers with 0 or more AggregateConfigurations within
 /// them - also optionally with other sub containers.
 /// </summary>
-public class AggregationContainerTask : Compileable,IOrderable
+public class AggregationContainerTask : Compileable, IOrderable
 {
     private CohortAggregateContainer[] _parentContainers;
     public CohortAggregateContainer Container { get; set; }
-        
+
     public CohortAggregateContainer[] SubContainers { get; set; }
     public AggregateConfiguration[] ContainedConfigurations { get; set; }
 
-    public AggregationContainerTask(CohortAggregateContainer container, CohortCompiler compiler):base(compiler)
+    public AggregationContainerTask(CohortAggregateContainer container, CohortCompiler compiler) : base(compiler)
     {
         Container = container;
-            
+
         SubContainers = compiler.CoreChildProvider.GetChildren(Container).OfType<CohortAggregateContainer>().ToArray();
-        ContainedConfigurations = compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
+        ContainedConfigurations =
+            compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
 
         var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
-        _parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ?? Array.Empty<CohortAggregateContainer>();
+        _parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ??
+                            Array.Empty<CohortAggregateContainer>();
     }
 
-    public override string GetCatalogueName()
-    {
-        return "";
-    }
+    public override string GetCatalogueName() => "";
 
     public override IMapsDirectlyToDatabaseTable Child => Container;
 
@@ -49,15 +48,16 @@ public class AggregationContainerTask : Compileable,IOrderable
         var cataIDs = Container.GetAggregateConfigurations().Select(c => c.Catalogue_ID).Distinct().ToList();
 
         //if this container does not have any configurations
-        if (!cataIDs.Any())//try looking at the subcontainers
+        if (!cataIDs.Any()) //try looking at the subcontainers
         {
-            var subcontainers =  Container.GetSubContainers().FirstOrDefault(subcontainer => subcontainer.GetAggregateConfigurations().Any());
-            if(subcontainers != null)
+            var subcontainers = Container.GetSubContainers()
+                .FirstOrDefault(subcontainer => subcontainer.GetAggregateConfigurations().Any());
+            if (subcontainers != null)
                 cataIDs = subcontainers.GetAggregateConfigurations().Select(c => c.Catalogue_ID).Distinct().ToList();
         }
 
         //none of the subcontainers have any catalogues either!
-        if(!cataIDs.Any())
+        if (!cataIDs.Any())
             throw new Exception(
                 $"Aggregate Container {Container.ID} does not have any datasets in it and neither does an of its direct subcontainers have any, how far down the tree do you expect me to look!");
 
@@ -68,16 +68,15 @@ public class AggregationContainerTask : Compileable,IOrderable
 
     public override bool IsEnabled()
     {
-        return !Container.IsDisabled && !_parentContainers.Any(c=>c.IsDisabled);
+        return !Container.IsDisabled && !_parentContainers.Any(c => c.IsDisabled);
     }
 
     public string DescribeOperation()
     {
-
         switch (((CohortAggregateContainer)Child).Operation)
         {
             case SetOperation.UNION:
-                return 
+                return
                     @"Includes ALL patients which appear in any of the sets in this container.  If there are subcontainers
 (i.e. other UNION/INTERSECT/EXCEPT blocks under this one) then the UNION operation will be applied to the
 result of the subcontainer.";
@@ -90,10 +89,9 @@ returned by this operation they must be in all the sets under this (including th
                     @"Includes ALL patients in the FIRST set (or subcontainer) under this container but ONLY if they DO NOT
 APPEAR in any of the sets that come after the FIRST.  This means that you get everyone in the first set
 EXCEPT anyone appearing in any of the other sets that follow the FIRST.";
-            default : throw new ArgumentOutOfRangeException(
-                $"Did not know what tool tip to return for set operation {ToString()}");
-
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"Did not know what tool tip to return for set operation {ToString()}");
         }
     }
-
 }

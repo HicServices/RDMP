@@ -13,13 +13,13 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// Records the user configured value of a property marked with [DemandsInitialization] declared on a data flow/dle component (including plugin components).
 ///  See Argument for full description.
 /// </summary>
-public interface IArgument:IMapsDirectlyToDatabaseTable,ISaveable
+public interface IArgument : IMapsDirectlyToDatabaseTable, ISaveable
 {
     /// <summary>
     /// The name of the Property which this object stores the value of.  The Property should be decorated with [DemandsInitialization]
     /// </summary>
     string Name { get; set; }
-        
+
     /// <summary>
     /// Record of <see cref="DemandsInitializationAttribute.Description"/> as it was specified when the <see cref="IArgument"/> was created
     /// </summary>
@@ -47,7 +47,7 @@ public interface IArgument:IMapsDirectlyToDatabaseTable,ISaveable
     /// </summary>
     /// <returns></returns>
     object GetValueAsSystemType();
-        
+
     /// <summary>
     /// Parses the current <see cref="Type"/> string into a <see cref="System.Type"/>
     /// </summary>

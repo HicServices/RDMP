@@ -24,8 +24,7 @@ public class Evaluation : DatabaseEntity
     public DateTime DateOfEvaluation { get; private set; }
     public int CatalogueID { get; set; }
 
-    [NoMappingToDatabase]
-    public ICatalogue Catalogue { get; private set; }
+    [NoMappingToDatabase] public ICatalogue Catalogue { get; private set; }
 
     private RowState[] rowStates;
 
@@ -43,7 +42,7 @@ public class Evaluation : DatabaseEntity
         set => rowStates = value;
     }
 
-        
+
     private ColumnState[] columnStates;
 
     [NoMappingToDatabase]
@@ -51,7 +50,7 @@ public class Evaluation : DatabaseEntity
     {
         get
         {
-            if(columnStates == null)
+            if (columnStates == null)
                 LoadRowAndColumnStates();
 
             return columnStates;
@@ -60,17 +59,16 @@ public class Evaluation : DatabaseEntity
         set => columnStates = value;
     }
 
-    [NoMappingToDatabase]
-    public DQERepository DQERepository { get; set; }
+    [NoMappingToDatabase] public DQERepository DQERepository { get; set; }
 
     public Evaluation()
     {
-
     }
+
     public IEnumerable<DQEGraphAnnotation> GetAllDQEGraphAnnotations(string pivotCategory = null)
     {
-        return DQERepository.GetAllObjects<DQEGraphAnnotation>().
-            Where(a => a.Evaluation_ID == ID && a.PivotCategory.Equals(pivotCategory ?? "ALL"));
+        return DQERepository.GetAllObjects<DQEGraphAnnotation>()
+            .Where(a => a.Evaluation_ID == ID && a.PivotCategory.Equals(pivotCategory ?? "ALL"));
     }
 
     /// <summary>
@@ -78,7 +76,7 @@ public class Evaluation : DatabaseEntity
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
-    internal Evaluation(DQERepository repository,DbDataReader r):base(repository,r)
+    internal Evaluation(DQERepository repository, DbDataReader r) : base(repository, r)
     {
         DQERepository = repository;
 
@@ -92,15 +90,15 @@ public class Evaluation : DatabaseEntity
         catch (Exception e)
         {
             throw new Exception(
-                $"Could not create a DataQualityEngine.Evaluation for Evaluation with ID {ID} because it is a report of an old Catalogue that has been deleted or otherwise does not exist/could not be retrieved (CatalogueID was:{CatalogueID}).  See inner exception for full details",e);
+                $"Could not create a DataQualityEngine.Evaluation for Evaluation with ID {ID} because it is a report of an old Catalogue that has been deleted or otherwise does not exist/could not be retrieved (CatalogueID was:{CatalogueID}).  See inner exception for full details",
+                e);
         }
-            
     }
 
     /// <summary>
     /// Starts a new evaluation with the given transaction
     /// </summary>
-    internal Evaluation(DQERepository dqeRepository,ICatalogue c)
+    internal Evaluation(DQERepository dqeRepository, ICatalogue c)
     {
         DQERepository = dqeRepository;
         Catalogue = c;
@@ -108,15 +106,17 @@ public class Evaluation : DatabaseEntity
         dqeRepository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
-                {"CatalogueID",c.ID},
-                {"DateOfEvaluation" , DateTime.Now}
+                { "CatalogueID", c.ID },
+                { "DateOfEvaluation", DateTime.Now }
             });
     }
-        
 
-    internal void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
+
+    internal void AddRowState(int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,
+        string pivotCategory, DbConnection con, DbTransaction transaction)
     {
-        new RowState(this, dataLoadRunID, correct, missing, wrong, invalid, validatorXml, pivotCategory, con, transaction);
+        new RowState(this, dataLoadRunID, correct, missing, wrong, invalid, validatorXml, pivotCategory, con,
+            transaction);
     }
 
     public string[] GetPivotCategoryValues()
@@ -126,23 +126,22 @@ public class Evaluation : DatabaseEntity
 
         using (var con = DQERepository.GetConnection())
         {
-            using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
             using (var r = cmd.ExecuteReader())
             {
                 while (r.Read())
-                    toReturn.Add((string) r["PivotCategory"]);
+                    toReturn.Add((string)r["PivotCategory"]);
             }
         }
 
         return toReturn.ToArray();
-            
     }
 
     public override void DeleteInDatabase()
     {
         var affectedRows = DQERepository.Delete($"DELETE FROM Evaluation where ID = {ID}");
 
-        if(affectedRows == 0)
+        if (affectedRows == 0)
             throw new Exception($"Delete statement resulted in {affectedRows} affected rows");
     }
 
@@ -154,10 +153,7 @@ public class Evaluation : DatabaseEntity
     {
         var state = ColumnStates?.FirstOrDefault();
 
-        if (state == null)
-        {
-            return null;
-        }
+        if (state == null) return null;
 
         return state.CountCorrect + state.CountMissing + state.CountWrong + state.CountInvalidatesRow;
     }
@@ -166,7 +162,8 @@ public class Evaluation : DatabaseEntity
     {
         var states = new List<RowState>();
         if (Repository is not TableRepository repo)
-            throw new Exception($"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
+            throw new Exception(
+                $"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
 
         using var con = repo.GetConnection();
         //get all the row level data

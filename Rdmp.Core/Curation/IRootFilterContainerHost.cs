@@ -13,9 +13,8 @@ namespace Rdmp.Core.Curation;
 /// <summary>
 /// Interface for objects with <see cref="IContainer"/> (WHERE) logic defined for them
 /// </summary>
-public interface IRootFilterContainerHost: ISaveable, IMapsDirectlyToDatabaseTable, IMightBeReadOnly
+public interface IRootFilterContainerHost : ISaveable, IMapsDirectlyToDatabaseTable, IMightBeReadOnly
 {
-        
     /// <summary>
     /// The root AND/OR container which provides WHERE logic that should be included in the query when extracting the dataset
     /// </summary>
@@ -31,7 +30,7 @@ public interface IRootFilterContainerHost: ISaveable, IMapsDirectlyToDatabaseTab
     /// Returns the root container specified by the <see cref="RootFilterContainer_ID"/>
     /// </summary>
     /// <returns></returns>
-    IContainer RootFilterContainer {get;}
+    IContainer RootFilterContainer { get; }
 
     /// <summary>
     /// Creates an appropriate filter to be the root of the hierarchy (See <see cref="RootFilterContainer"/>)

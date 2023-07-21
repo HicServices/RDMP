@@ -35,16 +35,14 @@ public class CohortRefreshEngine
 
     public void Execute()
     {
-        var engine = Request.GetEngine(_configuration.CohortRefreshPipeline,_listener);
+        var engine = Request.GetEngine(_configuration.CohortRefreshPipeline, _listener);
 
         //if the refresh pipeline is a cic source
         if (engine.SourceObject is CohortIdentificationConfigurationSource cicSource)
-        {
             //a cohort identification configuration is a complex query possibly with many cached subqueries, if we are refreshing the cic we will want to clear (and recache) identifiers
             //from the live tables
             cicSource.ClearCohortIdentificationConfigurationCacheBeforeRunning = true;
-        }
-            
+
         engine.ExecutePipeline(new GracefulCancellationToken());
 
         var newCohort = Request.CohortCreatedIfAny;

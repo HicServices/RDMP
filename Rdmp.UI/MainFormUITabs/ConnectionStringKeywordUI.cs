@@ -56,14 +56,14 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
         base.SetBindings(rules, databaseObject);
 
         Bind(tbID, "Text", "ID", k => k.ID);
-        Bind(tbName,"Text","Name",k=>k.Name);
+        Bind(tbName, "Text", "Name", k => k.Name);
         Bind(tbValue, "Text", "Value", k => k.Value);
         Bind(ddDatabaseType, "Text", "DatabaseType", k => k.DatabaseType);
     }
 
     private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(_keyword == null)
+        if (_keyword == null)
             return;
 
         var type = (DatabaseType)ddDatabaseType.SelectedValue;
@@ -72,6 +72,6 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConnectionStringKeywordUI_Design, UserControl>))]
-public abstract class ConnectionStringKeywordUI_Design: RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>
+public abstract class ConnectionStringKeywordUI_Design : RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>
 {
 }

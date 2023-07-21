@@ -46,7 +46,7 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         _server = databaseObject;
 
         bloading = true;
-            
+
         try
         {
             SetupDropdownItems();
@@ -69,8 +69,8 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",s=>s.ID);
-        Bind(tbName,"Text","Name",s=>s.Name);
+        Bind(tbID, "Text", "ID", s => s.ID);
+        Bind(tbName, "Text", "Name", s => s.Name);
         Bind(tbServerName, "Text", "Server", s => s.Server);
         Bind(tbMappedDataPath, "Text", "MappedDataPath", s => s.MappedDataPath);
         Bind(tbDatabaseName, "Text", "Database", s => s.Database);
@@ -83,19 +83,19 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         ddSetKnownType.Items.Clear();
 
         var manager = new PatcherManager();
-            
+
         ddSetKnownType.Items.AddRange(manager
             .GetAllPatchers(Activator.RepositoryLocator.CatalogueRepository.MEF)
             .Select(p => p.Name)
             .ToArray());
     }
-        
+
     private void tbPassword_TextChanged(object sender, EventArgs e)
     {
-        if(!bloading)
+        if (!bloading)
             _server.Password = tbPassword.Text;
     }
-        
+
     private void btnClearKnownType_Click(object sender, EventArgs e)
     {
         _server.CreatedByAssembly = null;
@@ -115,6 +115,6 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalDatabaseServerUI_Design, UserControl>))]
-public abstract class ExternalDatabaseServerUI_Design:RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
+public abstract class ExternalDatabaseServerUI_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
 {
 }

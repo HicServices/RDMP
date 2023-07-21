@@ -16,9 +16,11 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="ICumulativeExtractionResults"/>
-public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
+public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtractionResults,
+    IInjectKnown<IExtractableDataSet>
 {
     #region Database Properties
+
     private int _extractionConfiguration_ID;
     private int _extractableDataSet_ID;
     private DateTime _dateOfExtraction;
@@ -38,60 +40,70 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
         get => _extractionConfiguration_ID;
         set => SetField(ref _extractionConfiguration_ID, value);
     }
+
     /// <inheritdoc/>
     public int ExtractableDataSet_ID
     {
         get => _extractableDataSet_ID;
         private set => SetField(ref _extractableDataSet_ID, value);
     }
+
     /// <inheritdoc/>
     public DateTime DateOfExtraction
     {
         get => _dateOfExtraction;
         private set => SetField(ref _dateOfExtraction, value);
     }
+
     /// <inheritdoc/>
     public string DestinationType
     {
         get => _destinationType;
         private set => SetField(ref _destinationType, value);
     }
+
     /// <inheritdoc/>
     public string DestinationDescription
     {
         get => _destinationDescription;
         private set => SetField(ref _destinationDescription, value);
     }
+
     /// <inheritdoc/>
     public int RecordsExtracted
     {
         get => _recordsExtracted;
         set => SetField(ref _recordsExtracted, value);
     }
+
     /// <inheritdoc/>
     public int DistinctReleaseIdentifiersEncountered
     {
         get => _distinctReleaseIdentifiersEncountered;
         set => SetField(ref _distinctReleaseIdentifiersEncountered, value);
     }
+
     /// <inheritdoc/>
     public string FiltersUsed
     {
         get => _filtersUsed;
         set => SetField(ref _filtersUsed, value);
     }
+
     /// <inheritdoc/>
     public string Exception
     {
         get => _exception;
         set => SetField(ref _exception, value);
     }
+
     /// <inheritdoc/>
     public string SQLExecuted
     {
         get => _sQLExecuted;
         private set => SetField(ref _sQLExecuted, value);
     }
+
     /// <inheritdoc/>
     public int CohortExtracted
     {
@@ -102,6 +114,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     #endregion
 
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IExtractableDataSet ExtractableDataSet => _knownExtractableDataSet.Value;
@@ -113,7 +126,8 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
             Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
 
     /// <inheritdoc/>
-    public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject)
+    public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted,
+        IMapsDirectlyToDatabaseTable extractedObject)
     {
         var result = new SupplementalExtractionResults(DataExportRepository, this, sqlExecuted, extractedObject);
         SupplementalExtractionResults.Add(result);
@@ -121,11 +135,9 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <inheritdoc/>
-    public bool IsFor(ISelectedDataSets selectedDataSet)
-    {
-        return selectedDataSet.ExtractableDataSet_ID == ExtractableDataSet_ID &&
-               selectedDataSet.ExtractionConfiguration_ID == ExtractionConfiguration_ID;
-    }
+    public bool IsFor(ISelectedDataSets selectedDataSet) =>
+        selectedDataSet.ExtractableDataSet_ID == ExtractableDataSet_ID &&
+        selectedDataSet.ExtractionConfiguration_ID == ExtractionConfiguration_ID;
 
     #endregion
 
@@ -143,15 +155,16 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <param name="configuration"></param>
     /// <param name="dataset"></param>
     /// <param name="sql"></param>
-    public CumulativeExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration, IExtractableDataSet dataset, string sql)
+    public CumulativeExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration,
+        IExtractableDataSet dataset, string sql)
     {
         Repository = repository;
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ExtractionConfiguration_ID", configuration.ID},
-            {"ExtractableDataSet_ID", dataset.ID},
-            {"SQLExecuted", sql},
-            {"CohortExtracted", configuration.Cohort_ID}
+            { "ExtractionConfiguration_ID", configuration.ID },
+            { "ExtractableDataSet_ID", dataset.ID },
+            { "SQLExecuted", sql },
+            { "CohortExtracted", configuration.Cohort_ID }
         });
 
         ClearAllInjections();
@@ -189,35 +202,26 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <inheritdoc/>
-    public Type GetDestinationType()
-    {
-        return ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(_destinationType);
-    }
+    public Type GetDestinationType() =>
+        ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(_destinationType);
 
     /// <inheritdoc/>
-    public bool IsReferenceTo(Type t)
-    {
-        return t == typeof (ExtractableDataSet);
-    }
+    public bool IsReferenceTo(Type t) => t == typeof(ExtractableDataSet);
 
     /// <inheritdoc/>
-    public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
-    {
-        return o is ExtractableDataSet eds && eds.ID == ExtractionConfiguration_ID;
-    }
+    public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o) =>
+        o is ExtractableDataSet eds && eds.ID == ExtractionConfiguration_ID;
 
     /// <inheritdoc/>
-    public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted, bool isBatchResume, bool failed)
+    public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted,
+        bool isBatchResume, bool failed)
     {
         DestinationType = destinationType.FullName;
         DestinationDescription = destinationDescription;
 
-        if(isBatchResume)
+        if (isBatchResume)
         {
-            if(!failed)
-            {
-                RecordsExtracted += recordsExtracted;
-            }
+            if (!failed) RecordsExtracted += recordsExtracted;
         }
         else
         {
@@ -231,10 +235,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// Returns the name of the dataset for which this extraction is an audit of
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return ExtractableDataSet.Catalogue.Name;
-    }
+    public override string ToString() => ExtractableDataSet.Catalogue.Name;
 
     /// <inheritdoc/>
     public void InjectKnown(IExtractableDataSet instance)
@@ -245,6 +246,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
-        _knownExtractableDataSet = new Lazy<IExtractableDataSet>(() => Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID));
+        _knownExtractableDataSet =
+            new Lazy<IExtractableDataSet>(() => Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID));
     }
 }

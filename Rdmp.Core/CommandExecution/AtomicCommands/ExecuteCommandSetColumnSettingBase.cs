@@ -21,11 +21,12 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     private readonly string _commandName;
     private ConcreteColumn[] _selectedDataSetColumns;
     private ConcreteColumn[] _alreadyMarkedInConfiguration;
-        
+
     /// <summary>
     /// Explicit columns to pick rather than prompting to choose at runtime
     /// </summary>
     private string[] toPick;
+
     private readonly string _commandProperty;
 
     /// <summary>
@@ -38,7 +39,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     /// <param name="commandName">Describe what is being changed from user perspective e.g. "Set IsExtractionIdentifier"</param>
     /// <param name="commandProperty">Name of property being changed by this command e.g "Extraction Identifier"</param>
     public ExecuteCommandSetColumnSettingBase(
-        IBasicActivateItems activator,ICatalogue catalogue,IExtractionConfiguration inConfiguration,string column,
+        IBasicActivateItems activator, ICatalogue catalogue, IExtractionConfiguration inConfiguration, string column,
         string commandName, string commandProperty
     ) : base(activator)
     {
@@ -80,13 +81,10 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
                 return;
             }
 
-            _alreadyMarked = _extractionInformations.Where(c=>Getter(c)).ToArray();
+            _alreadyMarked = _extractionInformations.Where(c => Getter(c)).ToArray();
         }
 
-        if (!string.IsNullOrWhiteSpace(column))
-        {
-            toPick = column.Split(',', StringSplitOptions.RemoveEmptyEntries);
-        }
+        if (!string.IsNullOrWhiteSpace(column)) toPick = column.Split(',', StringSplitOptions.RemoveEmptyEntries);
     }
 
 
@@ -102,6 +100,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
         return $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
     }
+
     public override void Execute()
     {
         base.Execute();
@@ -121,6 +120,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
             Publish(_catalogue);
         }
     }
+
     private void ChangeFor(string initialSearchText, ConcreteColumn[] allColumns)
     {
         ConcreteColumn[] selected = null;
@@ -130,27 +130,30 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
             selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
 
             if (selected.Length != toPick.Length)
-            {
-                throw new Exception($"Could not find column(s) {string.Join(',', toPick)} amongst available columns ({string.Join(',', allColumns.Select(c => c.GetRuntimeName()))})");
-            }
+                throw new Exception(
+                    $"Could not find column(s) {string.Join(',', toPick)} amongst available columns ({string.Join(',', allColumns.Select(c => c.GetRuntimeName()))})");
         }
         else
         {
-            if (SelectMany(new DialogArgs { 
+            if (SelectMany(new DialogArgs
+                {
                     InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
                     AllowSelectingNull = true,
                     WindowTitle = $"Set {_commandProperty}",
-                    TaskDescription = $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
+                    TaskDescription =
+                        $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
                 }, allColumns, out selected))
             {
                 if (selected == null || selected.Length == 0)
                     if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
                         return;
-                if(!IsValidSelection(selected))
+                if (!IsValidSelection(selected))
                     return;
             }
             else
+            {
                 return;
+            }
         }
 
         foreach (var ec in allColumns)
@@ -159,7 +162,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
             if (Getter(ec) != newValue)
             {
-                Setter(ec,newValue);
+                Setter(ec, newValue);
                 ec.SaveToDatabase();
             }
         }

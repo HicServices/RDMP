@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTarget
+public class ExecuteCommandRelease : BasicUICommandExecution, IAtomicCommandWithTarget
 {
     private Project _project;
     private ExtractionConfiguration _configuration;
@@ -28,15 +28,10 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
         OverrideCommandName = "Run Release...";
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Gather all the extracted files into one releasable package and freeze the extraction configuration";
-    }
+    public override string GetCommandHelp() =>
+        "Gather all the extracted files into one releasable package and freeze the extraction configuration";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Release);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Release);
 
     /// <summary>
     /// Sets the thing being released, valid targets are <see cref="Project"/>, <see cref="ExtractionConfiguration"/> and <see cref="ISelectedDataSets"/>.
@@ -45,7 +40,7 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
     /// <returns></returns>
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _project =  target as Project;
+        _project = target as Project;
         _configuration = target as ExtractionConfiguration;
         _selectedDataSet = target as ISelectedDataSets;
 
@@ -54,25 +49,24 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
 
         if (_configuration != null)
         {
-
             _project = (Project)_configuration.Project;
 
             if (_configuration.IsReleased)
                 SetImpossible("ExtractionConfiguration has already been Released");
 
-            if(_configuration.Cohort_ID == null)
+            if (_configuration.Cohort_ID == null)
                 SetImpossible("No Cohort Defined");
 
             if (!_configuration.SelectedDataSets.Any())
                 SetImpossible("No datasets configured");
-
         }
+
         if (_selectedDataSet != null)
         {
-            _configuration = (ExtractionConfiguration) _selectedDataSet.ExtractionConfiguration;
-            _project = (Project) _configuration.Project;
+            _configuration = (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration;
+            _project = (Project)_configuration.Project;
 
-            if(_selectedDataSet.ExtractionConfiguration.IsReleased)
+            if (_selectedDataSet.ExtractionConfiguration.IsReleased)
                 SetImpossible("This dataset is part of an ExtractionConfiguration that has already been Released");
 
             if (_selectedDataSet.ExtractionConfiguration.Cohort_ID == null)
@@ -88,17 +82,15 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
 
         var p = _project ?? SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
         if (p == null)
-        {
             // user cancelled picking a Project
             return;
-        }
 
         var releaseUI = Activator.Activate<DataReleaseUI, Project>(p);
-            
-        if(_configuration != null)
+
+        if (_configuration != null)
             if (_selectedDataSet == null)
                 releaseUI.TickAllFor(_configuration);
             else
-                releaseUI.Tick(_selectedDataSet);            
+                releaseUI.Tick(_selectedDataSet);
     }
 }

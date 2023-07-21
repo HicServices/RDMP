@@ -33,7 +33,8 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <summary>
     /// Readonly cast of <see cref="ComponentObjects"/>. If you need to add components, add them to <see cref="ComponentObjects"/> instead.
     /// </summary>
-    public ReadOnlyCollection<IDataFlowComponent<T>> Components => ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly();
+    public ReadOnlyCollection<IDataFlowComponent<T>> Components =>
+        ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly();
 
     /// <summary>
     /// The last component in the pipeline, responsible for writing the chunks (of type {T}) to somewhere (E.g. to disk, to database etc)
@@ -64,7 +65,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <param name="destination"></param>
     /// <param name="listener"></param>
     /// <param name="pipelineSource"></param>
-    public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source,
+    public DataFlowPipelineEngine(DataFlowPipelineContext<T> context, IDataFlowSource<T> source,
         IDataFlowDestination<T> destination, IDataLoadEventListener listener,
         IPipeline pipelineSource = null)
     {
@@ -80,13 +81,13 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <inheritdoc/>
     public void Initialize(params object[] initializationObjects)
     {
-        _context.PreInitialize(_listener,Source,initializationObjects);
+        _context.PreInitialize(_listener, Source, initializationObjects);
 
         foreach (var component in Components)
             _context.PreInitialize(_listener, component, initializationObjects);
 
-        _context.PreInitialize(_listener,Destination,initializationObjects);
-            
+        _context.PreInitialize(_listener, Destination, initializationObjects);
+
         initialized = true;
     }
 
@@ -123,11 +124,13 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         catch (Exception e)
         {
             exception = e;
-            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, e.Message,e));
+            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message, e));
         }
         finally
         {
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
+            _listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Debug,
+                    "Preparing to Dispose of DataFlowPipelineEngine components"));
 
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Source}"));
             try
@@ -140,7 +143,8 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 if (exception == null)
                     throw;
 
-                _listener.OnNotify(Source, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
+                _listener.OnNotify(Source,
+                    new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Source Component", e));
             }
 
             foreach (var dataLoadComponent in Components)
@@ -157,7 +161,8 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                     if (exception == null)
                         throw;
 
-                    _listener.OnNotify(dataLoadComponent,new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Component",e));
+                    _listener.OnNotify(dataLoadComponent,
+                        new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Component", e));
                 }
             }
 
@@ -172,19 +177,21 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 if (exception == null)
                     throw;
 
-                _listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Destination Component", e));
+                _listener.OnNotify(Destination,
+                    new NotifyEventArgs(ProgressEventType.Error, "Error Disposing Destination Component", e));
             }
         }
 
         if (exception != null)
-            throw new PipelineCrashedException("Data Flow Pipeline Crashed",exception);
+            throw new PipelineCrashedException("Data Flow Pipeline Crashed", exception);
     }
 
     /// <inheritdoc/>
     public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken)
     {
         if (!initialized)
-            throw new Exception("Engine has not been initialized, call Initialize(DataFlowPipelineContext context, params object[] initializationObjects");
+            throw new Exception(
+                "Engine has not been initialized, call Initialize(DataFlowPipelineContext context, params object[] initializationObjects");
 
         T currentChunk;
         try
@@ -203,14 +210,16 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
 
         if (currentChunk == null)
         {
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Received null chunk from the Source component, stopping engine"));
+            _listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Debug,
+                    "Received null chunk from the Source component, stopping engine"));
             return false;
         }
 
         foreach (var component in Components)
         {
             if (cancellationToken.IsAbortRequested) break;
-            currentChunk = component.ProcessPipelineData( currentChunk, _listener, cancellationToken);
+            currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
         }
 
         if (cancellationToken.IsAbortRequested) return true;
@@ -221,7 +230,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
         if (typeof(DataTable).IsAssignableFrom(typeof(T)))
             ((DataTable)(object)currentChunk).Clear();
-            
+
 
         //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
         if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
@@ -246,24 +255,27 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 checkableSource.Check(notifier);
             }
             else
+            {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Source component {Source} does not support ICheckable so skipping checking it",
                         CheckResult.Warning));
+            }
 
             foreach (var component in Components)
-            {
                 if (component is ICheckable checkable)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}", CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}",
+                        CheckResult.Success));
                     checkable.Check(notifier);
                 }
                 else
+                {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             $"Component {component} does not support ICheckable so skipping checking it",
                             CheckResult.Warning));
-            }
+                }
 
             if (Destination is ICheckable checkableDestination)
             {
@@ -273,11 +285,12 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 checkableDestination.Check(notifier);
             }
             else
+            {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Destination component {Destination} does not support ICheckable so skipping checking it",
                         CheckResult.Warning));
-
+            }
         }
         catch (Exception e)
         {
@@ -288,13 +301,9 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         }
 
 
-        notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components",CheckResult.Success));
-                 
+        notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components", CheckResult.Success));
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return _name;
-    }
+    public override string ToString() => _name;
 }

@@ -27,19 +27,14 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
         IgnoreRows = false;
     }
 
-    public Catalogue[] GetCatalogues()
-    {
-        return DatabaseObjects.Cast<Catalogue>().ToArray();
-    }
+    public Catalogue[] GetCatalogues() => DatabaseObjects.Cast<Catalogue>().ToArray();
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+    public override string SaveExtraText() =>
+        PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
-            {"ShowPeriod", ShowPeriod.ToString()},
-            {"IgnoreRows", IgnoreRows.ToString()}
+            { "ShowPeriod", ShowPeriod.ToString() },
+            { "IgnoreRows", IgnoreRows.ToString() }
         });
-    }
 
     public override void LoadExtraText(string s)
     {
@@ -49,13 +44,15 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
         if (dict == null || !dict.Any())
             return;
 
-        ShowPeriod = (DatasetRaceway.RacewayShowPeriod)Enum.Parse(typeof(DatasetRaceway.RacewayShowPeriod), dict["ShowPeriod"], true);
+        ShowPeriod =
+            (DatasetRaceway.RacewayShowPeriod)Enum.Parse(typeof(DatasetRaceway.RacewayShowPeriod), dict["ShowPeriod"],
+                true);
         IgnoreRows = Convert.ToBoolean(dict["IgnoreRows"]);
     }
 
     public void AddCatalogue(Catalogue catalogue)
     {
-        if(catalogue == null)
+        if (catalogue == null)
             throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Add(catalogue);
@@ -63,7 +60,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public void RemoveCatalogue(Catalogue catalogue)
     {
-        if(catalogue == null)
+        if (catalogue == null)
             throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Remove(catalogue);

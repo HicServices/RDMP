@@ -16,7 +16,6 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
 using ScintillaNET;
 
 namespace Rdmp.UI.MainFormUITabs;
@@ -39,21 +38,21 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         InitializeComponent();
         ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
         AssociatedCollection = RDMPCollection.Catalogue;
-            
+
         ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
     }
 
     private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
     {
         //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
-        var propagate = new PropagateCatalogueItemChangesToSimilarNamedUI(Activator, _catalogueItem, out bool shouldDialogBeDisplayed);
+        var propagate =
+            new PropagateCatalogueItemChangesToSimilarNamedUI(Activator, _catalogueItem,
+                out var shouldDialogBeDisplayed);
 
         //there are other CatalogueItems that share the same name as this one so give the user the option to propagate his changes to those too
         if (shouldDialogBeDisplayed)
-        {
             if (Activator.ShowDialog(propagate) == DialogResult.Cancel)
                 return false;
-        }
 
         return true;
     }
@@ -65,39 +64,37 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         if (_scintillaDescription == null)
         {
             var f = new ScintillaTextEditorFactory();
-            _scintillaDescription = f.Create(null, SyntaxLanguage.None, null, true, false,activator.CurrentDirectory);
+            _scintillaDescription = f.Create(null, SyntaxLanguage.None, null, true, false, activator.CurrentDirectory);
             _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
             _scintillaDescription.WrapMode = WrapMode.Word;
             panel1.Controls.Add(_scintillaDescription);
         }
 
-        base.SetDatabaseObject(activator,databaseObject);
-            
+        base.SetDatabaseObject(activator, databaseObject);
+
 
         if (_catalogueItem.ExtractionInformation == null)
-            CommonFunctionality.AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem), "Make Extractable");
+            CommonFunctionality.AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem),
+                "Make Extractable");
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, CatalogueItem databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(ci_tbID,"Text","ID",ci=>ci.ID);
+        Bind(ci_tbID, "Text", "ID", ci => ci.ID);
         Bind(ci_tbName, "Text", "Name", ci => ci.Name);
-        Bind(ci_tbStatisticalConsiderations,"Text", "Statistical_cons",ci=>ci.Statistical_cons);
+        Bind(ci_tbStatisticalConsiderations, "Text", "Statistical_cons", ci => ci.Statistical_cons);
         Bind(ci_tbResearchRelevance, "Text", "Research_relevance", ci => ci.Research_relevance);
         Bind(_scintillaDescription, "Text", "Description", ci => ci.Description);
         Bind(ci_tbTopics, "Text", "Topic", ci => ci.Topic);
         Bind(ci_ddPeriodicity, "SelectedItem", "Periodicity", ci => ci.Periodicity);
         Bind(ci_tbAggregationMethod, "Text", "Agg_method", ci => ci.Agg_method);
         Bind(ci_tbLimitations, "Text", "Limitations", ci => ci.Limitations);
-        Bind(ci_tbComments,"Text", "Comments",ci=>ci.Comments);
+        Bind(ci_tbComments, "Text", "Comments", ci => ci.Comments);
     }
 
-    public override string GetTabName()
-    {
-        return $"{base.GetTabName()} ({_catalogueItem.Catalogue.Name})";
-    }
+    public override string GetTabName() => $"{base.GetTabName()} ({_catalogueItem.Catalogue.Name})";
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueItemUI_Design, UserControl>))]

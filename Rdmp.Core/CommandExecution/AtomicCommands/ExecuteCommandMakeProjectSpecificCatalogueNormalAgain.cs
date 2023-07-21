@@ -14,12 +14,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution, IAtomicCommand
 {
     private Catalogue _catalogue;
     private ExtractableDataSet _extractableDataSet;
 
-    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue):base(activator)
+    public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue) :
+        base(activator)
     {
         _catalogue = catalogue;
 
@@ -30,7 +31,8 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue).SingleOrDefault();
+        _extractableDataSet = dataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(catalogue)
+            .SingleOrDefault();
 
         if (_extractableDataSet == null)
         {
@@ -45,10 +47,8 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         }
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
-    }
+    public override string GetCommandHelp() =>
+        "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
 
     public override void Execute()
     {
@@ -66,8 +66,6 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         Publish(_catalogue);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
 }

@@ -13,8 +13,7 @@ namespace Rdmp.Core.DataLoad.Modules.Exceptions;
 /// </summary>
 public class MultipleMatchingFilesException : Exception
 {
-    public MultipleMatchingFilesException(string s):base(s)
+    public MultipleMatchingFilesException(string s) : base(s)
     {
-            
     }
 }

@@ -23,13 +23,7 @@ public class CatalogueLookupUsageNode : IMasqueradeAs
         Lookup = l;
     }
 
-    public override string ToString()
-    {
-        return Lookup.ToString();
-    }
+    public override string ToString() => Lookup.ToString();
 
-    public object MasqueradingAs()
-    {
-        return Lookup;
-    }
+    public object MasqueradingAs() => Lookup;
 }

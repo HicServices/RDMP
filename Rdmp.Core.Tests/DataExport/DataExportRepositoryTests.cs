@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport;
 
-internal class DataExportRepositoryTests:DatabaseTests
+internal class DataExportRepositoryTests : DatabaseTests
 {
     [Test]
     public void TestNoIsExtractionIdentifierFinding()
@@ -29,14 +29,14 @@ internal class DataExportRepositoryTests:DatabaseTests
         //only one selected dataset
         var dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
         Assert.AreEqual(1, dodgy.Length);
-        Assert.AreEqual(sds,dodgy[0]);
+        Assert.AreEqual(sds, dodgy[0]);
 
         //make an extarctable column on that dataset
-        var col = new ColumnInfo(CatalogueRepository,"ff","varchar(1)",new TableInfo(CatalogueRepository, "fff"));
+        var col = new ColumnInfo(CatalogueRepository, "ff", "varchar(1)", new TableInfo(CatalogueRepository, "fff"));
         var ci = new CatalogueItem(CatalogueRepository, cata, "A");
-        var ei = new ExtractionInformation(CatalogueRepository, ci, col,col.Name);
+        var ei = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
         var ec = new ExtractableColumn(DataExportRepository, ds, config, ei, 0, col.Name);
-            
+
         //still shouldn't be dodgy
         dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
         Assert.AreEqual(1, dodgy.Length);
@@ -49,6 +49,5 @@ internal class DataExportRepositoryTests:DatabaseTests
         //no longer dodgy because there is an extraction identifier
         dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
         Assert.AreEqual(0, dodgy.Length);
-
     }
 }

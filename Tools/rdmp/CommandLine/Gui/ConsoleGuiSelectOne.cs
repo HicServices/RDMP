@@ -27,14 +27,17 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     /// </summary>
     public const int MaxMatches = 100;
 
-    public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
-        true,null)
+    public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available) :
+        base("Open", "Ok",
+            true, null)
     {
         _activator = activator;
 
-        _masterCollection = available != null ? available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v)) : _activator.CoreChildProvider.GetAllSearchables();
+        _masterCollection = available != null
+            ? available.ToDictionary(k => k, v => activator.CoreChildProvider.GetDescendancyListIfAnyFor(v))
+            : _activator.CoreChildProvider.GetAllSearchables();
 
-        _publicCollection = _masterCollection.Select(v=>v.Key).ToList();
+        _publicCollection = _masterCollection.Select(v => v.Key).ToList();
         SetAspectGet(_activator.CoreChildProvider);
     }
 
@@ -52,13 +55,15 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
 
         _scorer = new SearchablesMatchScorer
         {
-            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),StringComparer.CurrentCultureIgnoreCase)
+            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),
+                StringComparer.CurrentCultureIgnoreCase)
         };
     }
 
     protected override void AddMoreButtonsAfter(Window win, Button btnCancel)
     {
-        var lbl = new Label("ID:"){
+        var lbl = new Label("ID:")
+        {
             X = Pos.Right(btnCancel) + 1,
             Y = Pos.Top(btnCancel)
         };
@@ -71,28 +76,29 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             Width = 5
         };
 
-        txtId.TextChanged += s=>RestartFiltering();
+        txtId.TextChanged += s => RestartFiltering();
 
         win.Add(txtId);
     }
 
 
-    protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText, CancellationToken token)
+    protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText,
+        CancellationToken token)
     {
-        if(token.IsCancellationRequested)
+        if (token.IsCancellationRequested)
             return new List<IMapsDirectlyToDatabaseTable>();
 
-        if(int.TryParse(txtId.Text.ToString(), out var searchForID))
+        if (int.TryParse(txtId.Text.ToString(), out var searchForID))
             _scorer.ID = searchForID;
         else
             _scorer.ID = null;
 
-        var dict = _scorer.ScoreMatches(_masterCollection, searchText, token,null);
+        var dict = _scorer.ScoreMatches(_masterCollection, searchText, token, null);
 
         //can occur if user punches many keys at once
-        if(dict == null)
+        if (dict == null)
             return new List<IMapsDirectlyToDatabaseTable>();
 
-        return SearchablesMatchScorer.ShortList(dict, MaxMatches,_activator);
+        return SearchablesMatchScorer.ShortList(dict, MaxMatches, _activator);
     }
 }

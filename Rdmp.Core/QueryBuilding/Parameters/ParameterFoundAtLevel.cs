@@ -30,7 +30,7 @@ public class ParameterFoundAtLevel
     /// </summary>
     /// <param name="parameter"></param>
     /// <param name="level"></param>
-    public ParameterFoundAtLevel(ISqlParameter parameter,ParameterLevel level)
+    public ParameterFoundAtLevel(ISqlParameter parameter, ParameterLevel level)
     {
         Parameter = parameter;
         Level = level;
@@ -40,8 +40,5 @@ public class ParameterFoundAtLevel
     /// Provides human readable description of the parameter and where it was found
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return $"{Parameter.ParameterName} (At Level:{Level})";
-    }
+    public override string ToString() => $"{Parameter.ParameterName} (At Level:{Level})";
 }

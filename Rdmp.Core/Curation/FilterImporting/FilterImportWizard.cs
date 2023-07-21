@@ -32,11 +32,11 @@ public class FilterImportWizard
         _activator = activator;
     }
 
-    public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport)
-    {
-        return Import(containerToImportOneInto, filterToImport, null);
-    }
-    public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ExtractionFilterParameterSet parameterSet)
+    public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport) =>
+        Import(containerToImportOneInto, filterToImport, null);
+
+    public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport,
+        ExtractionFilterParameterSet parameterSet)
     {
         GetGlobalsAndFilters(containerToImportOneInto, out var globals, out var otherFilters);
         return Import(containerToImportOneInto, filterToImport, globals, otherFilters, parameterSet);
@@ -48,18 +48,21 @@ public class FilterImportWizard
         return ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
     }
 
-    public IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
+    public IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto,
+        IFilter[] filtersThatCouldBeImported)
     {
         GetGlobalsAndFilters(containerToImportOneInto, out var global, out var otherFilters);
         return ImportManyFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
     }
 
-    private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope, ExtractionFilterParameterSet parameterSet)
+    private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport,
+        ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope, ExtractionFilterParameterSet parameterSet)
     {
         var cancel = false;
 
         //Sometimes filters have some recommended parameter values which the user can pick from (e.g. filter Condition could have parameter value sets for 'Dementia', 'Alzheimers' etc
-        var chosenParameterValues = parameterSet ?? AdvertiseAvailableFilterParameterSetsIfAny(filterToImport, out cancel);
+        var chosenParameterValues =
+            parameterSet ?? AdvertiseAvailableFilterParameterSetsIfAny(filterToImport, out cancel);
 
         if (cancel)
             return null;
@@ -67,20 +70,25 @@ public class FilterImportWizard
         FilterImporter importer = null;
 
         if (containerToImportOneInto is AggregateFilterContainer)
-            importer = new FilterImporter(new AggregateFilterFactory((ICatalogueRepository)containerToImportOneInto.Repository), globalParameters);
+            importer = new FilterImporter(
+                new AggregateFilterFactory((ICatalogueRepository)containerToImportOneInto.Repository),
+                globalParameters);
         else if (containerToImportOneInto is FilterContainer)
             importer =
-                new FilterImporter(new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository), globalParameters);
+                new FilterImporter(
+                    new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository),
+                    globalParameters);
         else
             throw new ArgumentException(
-                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}", nameof(containerToImportOneInto));
+                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}",
+                nameof(containerToImportOneInto));
 
         //if there is a parameter value set then tell the importer to use these parameter values instead of the IFilter's default ones
         if (chosenParameterValues != null)
             importer.AlternateValuesToUseForNewParameters = chosenParameterValues.GetAllParameters();
 
         //create the filter
-        var newFilter = importer.ImportFilter(containerToImportOneInto,filterToImport, otherFiltersInScope);
+        var newFilter = importer.ImportFilter(containerToImportOneInto, filterToImport, otherFiltersInScope);
 
         //if we used custom parameter values we should update the filter name so the user is reminded that the concept of the filter includes both 'Condition' and the value they selected e.g. 'Dementia'
         if (chosenParameterValues != null)
@@ -91,64 +99,57 @@ public class FilterImportWizard
 
         //If we've not imported values but there is a parameter then ask for their values
         if (chosenParameterValues == null && newFilter.GetAllParameters().Any())
-        {
             foreach (var parameter in newFilter.GetAllParameters())
             {
                 var initialText = parameter.Value;
-                if(initialText == AnyTableSqlParameter.DefaultValue)
-                {
-                    initialText = null;
-                }
+                if (initialText == AnyTableSqlParameter.DefaultValue) initialText = null;
 
-                if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out var param, false))
+                if (_activator.IsInteractive && _activator.TypeText(
+                        AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText,
+                        out var param, false))
                 {
                     parameter.Value = param;
                     parameter.SaveToDatabase();
                 }
             }
-        }
 
         return newFilter;
     }
 
-    private IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
+    private IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported,
+        ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
     {
         var chosenFilter = _activator.SelectOne("Import filter", filtersThatCouldBeImported);
 
         if (chosenFilter != null)
-        {
-            return Import(containerToImportOneInto, (IFilter)chosenFilter, globalParameters, otherFiltersInScope,null);
-        }
+            return Import(containerToImportOneInto, (IFilter)chosenFilter, globalParameters, otherFiltersInScope, null);
 
-        return null;//user chose not to import anything
+        return null; //user chose not to import anything
     }
 
-    private IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
+    private IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto,
+        IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
     {
         var results = _activator.SelectMany(new DialogArgs
         {
             WindowTitle = "Import Filter(s)",
             EntryLabel = "Import",
-            TaskDescription = "The following Catalogue filters are available for importing.  Selecting a filter will make a new cloned copy in your WHERE container.  If a filter has declared parameters you may be prompted to pick from an existing predetermined set of values."
-
+            TaskDescription =
+                "The following Catalogue filters are available for importing.  Selecting a filter will make a new cloned copy in your WHERE container.  If a filter has declared parameters you may be prompted to pick from an existing predetermined set of values."
         }, typeof(ExtractionFilter), filtersThatCouldBeImported);
 
         if (results is not null)
-        {
             foreach (var f in results)
             {
-                var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope,null);
+                var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope, null);
 
                 // returns null if cancelled
                 if (i != null)
                     yield return i;
                 else
-                {
                     // user cancelled import half way through
                     yield break;
-                }
             }
-        }
     }
 
     private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(IFilter filter, out bool cancel)
@@ -159,7 +160,9 @@ public class FilterImportWizard
         if (filter is not ExtractionFilter extractionFilterOrNull)
             return null;
 
-        var parameterSets = extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(extractionFilterOrNull);
+        var parameterSets =
+            extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(
+                extractionFilterOrNull);
 
 
         if (parameterSets.Any())
@@ -168,7 +171,7 @@ public class FilterImportWizard
             {
                 WindowTitle = "Choose Parameter Set",
                 TaskDescription = @$"Filter '{filter}' has parameters ({
-                    string.Join(',',filter.GetAllParameters().Select(p=>p.ParameterName))
+                    string.Join(',', filter.GetAllParameters().Select(p => p.ParameterName))
                 }).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
             }, parameterSets);
 
@@ -180,7 +183,8 @@ public class FilterImportWizard
         return null;
     }
 
-    private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals, out IFilter[] otherFilters)
+    private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals,
+        out IFilter[] otherFilters)
     {
         if (containerToImportOneInto is AggregateFilterContainer aggregatecontainer)
         {
@@ -190,18 +194,24 @@ public class FilterImportWizard
 
             globals = options.GetAllParameters(aggregate);
             var root = aggregate.RootFilterContainer;
-            otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+            otherFilters = root == null
+                ? Array.Empty<IFilter>()
+                : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
             return;
         }
 
         if (containerToImportOneInto is FilterContainer filtercontainer)
         {
-            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ?? throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
+            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ??
+                                  throw new Exception(
+                                      $"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
             var config = selectedDataSet.ExtractionConfiguration;
             var root = selectedDataSet.RootFilterContainer;
 
             globals = config.GlobalExtractionFilterParameters;
-            otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+            otherFilters = root == null
+                ? Array.Empty<IFilter>()
+                : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
 
             return;
         }

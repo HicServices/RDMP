@@ -22,11 +22,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 /// </summary>
 public class RuntimeArgumentCollection
 {
-    public IStageArgs StageSpecificArguments
-    {
-        get;
-        set;
-    }
+    public IStageArgs StageSpecificArguments { get; set; }
 
     public HashSet<IArgument> Arguments { get; private set; }
 
@@ -47,11 +43,8 @@ public class RuntimeArgumentCollection
 
     public void IterateAllArguments(Func<string, object, bool> func)
     {
-        foreach (var arg in Arguments)
-        {
-            func(arg.Name, arg.GetValueAsSystemType());
-        }
-            
+        foreach (var arg in Arguments) func(arg.Name, arg.GetValueAsSystemType());
+
         if (StageSpecificArguments == null)
             return;
 
@@ -66,7 +59,8 @@ public class RuntimeArgumentCollection
 
     public object GetCustomArgumentValue(string name)
     {
-        var first = Arguments.SingleOrDefault(a => a.Name.Equals(name)) ?? throw new KeyNotFoundException($"Argument {name} was missing");
+        var first = Arguments.SingleOrDefault(a => a.Name.Equals(name)) ??
+                    throw new KeyNotFoundException($"Argument {name} was missing");
         try
         {
             return first.GetValueAsSystemType();
@@ -74,13 +68,14 @@ public class RuntimeArgumentCollection
         catch (Exception e)
         {
             throw new Exception(
-                $"Could not convert value '{first.Value}' into a {first.GetSystemType().FullName} for argument '{first.Name}'", e);
+                $"Could not convert value '{first.Value}' into a {first.GetSystemType().FullName} for argument '{first.Name}'",
+                e);
         }
     }
 
-    public IEnumerable<KeyValuePair<string,object>>  GetAllArguments()
+    public IEnumerable<KeyValuePair<string, object>> GetAllArguments()
     {
-        if(StageSpecificArguments != null)
+        if (StageSpecificArguments != null)
             foreach (var kvp in StageSpecificArguments.ToDictionary())
                 yield return kvp;
 
@@ -92,12 +87,11 @@ public class RuntimeArgumentCollection
     {
         if (StageSpecificArguments != null)
             foreach (var kvp in StageSpecificArguments.ToDictionary())
-                if(kvp.Value.GetType() == typeof(T))
-                    yield return new KeyValuePair<string, T>(kvp.Key,(T)kvp.Value);
+                if (kvp.Value.GetType() == typeof(T))
+                    yield return new KeyValuePair<string, T>(kvp.Key, (T)kvp.Value);
 
         foreach (var argument in Arguments)
-            if(argument.GetSystemType() == typeof(T))
+            if (argument.GetSystemType() == typeof(T))
                 yield return new KeyValuePair<string, T>(argument.Name, (T)argument.GetValueAsSystemType());
-
     }
 }

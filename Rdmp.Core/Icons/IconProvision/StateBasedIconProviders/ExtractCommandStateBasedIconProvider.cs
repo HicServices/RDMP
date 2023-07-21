@@ -27,6 +27,7 @@ public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvide
         _failed = Image.Load<Rgba32>(CatalogueIcons.Failed);
         _tick = Image.Load<Rgba32>(CatalogueIcons.Tick);
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is not ExtractCommandState ecs)

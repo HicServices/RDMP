@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 
 /// <inheritdoc/>
-public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
+public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
 {
     public string Sql { get; }
     private DbDataReader _reader;
@@ -38,7 +38,8 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     /// </summary>
     public Action<DbCommand> CommandAdjuster { get; set; }
 
-    public DbDataCommandDataFlowSource(string sql,string taskBeingPerformed, DbConnectionStringBuilder builder, int timeout)
+    public DbDataCommandDataFlowSource(string sql, string taskBeingPerformed, DbConnectionStringBuilder builder,
+        int timeout)
     {
         Sql = sql;
         _taskBeingPerformed = taskBeingPerformed;
@@ -81,7 +82,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
                 cancellationToken.ThrowIfCancellationRequested();
 
                 AddRowToDataTable(chunk, _reader);
-                readThisBatch ++;
+                readThisBatch++;
 
                 //we reached batch limit
                 if (readThisBatch == BatchSize)
@@ -96,22 +97,23 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
 
             //if data was exhausted on first read and we are allowing empty result sets
             if (firstChunk && AllowEmptyResultSets)
-                return chunk;//return the empty chunk
+                return chunk; //return the empty chunk
 
             //data exhausted
             return null;
         }
         catch (Exception e)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Source read failed",e));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Source read failed", e));
             throw;
         }
         finally
         {
             firstChunk = false;
             timer.Stop();
-            job.OnProgress(this, new ProgressEventArgs(_taskBeingPerformed, new ProgressMeasurement(TotalRowsRead, ProgressType.Records), timer.Elapsed));
-
+            job.OnProgress(this,
+                new ProgressEventArgs(_taskBeingPerformed, new ProgressMeasurement(TotalRowsRead, ProgressType.Records),
+                    timer.Elapsed));
         }
     }
 
@@ -125,32 +127,32 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     }
 
     /// <inheritdoc/>
-    public DataRow ReadOneRow()
-    {
+    public DataRow ReadOneRow() =>
         //return null if there are no more records to read
-        return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
-    }
+        _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
 
     private static DataTable GetChunkSchema(DbDataReader reader)
     {
         var toReturn = new DataTable("dt");
 
         //Retrieve column schema into a DataTable.
-        var schemaTable = reader.GetSchemaTable() ?? throw new InvalidOperationException("Could not retrieve schema information from the DbDataReader");
+        var schemaTable = reader.GetSchemaTable() ??
+                          throw new InvalidOperationException(
+                              "Could not retrieve schema information from the DbDataReader");
         Debug.Assert(schemaTable.Columns[0].ColumnName.ToLower().Contains("name"));
 
         //For each field in the table...
         foreach (DataRow myField in schemaTable.Rows)
         {
-
-            var t = Type.GetType(myField["DataType"].ToString()) ?? throw new NotSupportedException($"Type.GetType failed on SQL DataType:{myField["DataType"]}");
+            var t = Type.GetType(myField["DataType"].ToString()) ??
+                    throw new NotSupportedException($"Type.GetType failed on SQL DataType:{myField["DataType"]}");
 
             //let's not mess around with floats, make everything a double please
-            if (t == typeof (float))
-                t = typeof (double);
+            if (t == typeof(float))
+                t = typeof(double);
 
 
-            toReturn.Columns.Add(myField[0].ToString(), t);//0 should always be the column name
+            toReturn.Columns.Add(myField[0].ToString(), t); //0 should always be the column name
         }
 
         return toReturn;
@@ -184,7 +186,8 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
         }
         catch (Exception e)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Could not close Reader / Connection", e));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning, "Could not close Reader / Connection", e));
         }
     }
 

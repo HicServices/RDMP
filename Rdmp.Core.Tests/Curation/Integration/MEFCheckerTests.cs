@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class MEFCheckerTests:UnitTests
+public class MEFCheckerTests : UnitTests
 {
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -27,21 +27,24 @@ public class MEFCheckerTests:UnitTests
     [Test]
     public void FindClass_WrongCase_FoundAnyway()
     {
-        Assert.AreEqual(typeof(Catalogue),Repository.MEF.GetType("catalogue"));
+        Assert.AreEqual(typeof(Catalogue), Repository.MEF.GetType("catalogue"));
     }
 
     [Test]
     public void FindClass_EmptyString()
     {
         var m = new MEFChecker(Repository.MEF, "", s => Assert.Fail());
-        var ex =  Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",ex.Message);
+        var ex = Assert.Throws<Exception>(() => m.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual(
+            "MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",
+            ex.Message);
     }
 
     [Test]
     public void FindClass_CorrectNamespace()
     {
-        var m = new MEFChecker(Repository.MEF, "Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher", s => Assert.Fail());
+        var m = new MEFChecker(Repository.MEF, "Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher",
+            s => Assert.Fail());
         m.Check(new ThrowImmediatelyCheckNotifier());
     }
 
@@ -58,20 +61,22 @@ public class MEFCheckerTests:UnitTests
     public void FindClass_NonExistant()
     {
         var m = new MEFChecker(Repository.MEF, "CatalogueLibrary.UncleSam", s => Assert.Fail());
-        var ex = Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",ex.Message);
+        var ex = Assert.Throws<Exception>(() => m.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains(
+            "Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",
+            ex.Message);
     }
 
     [Test]
     public void DllFileDuplication_Ignored()
     {
         // Setup 2 directories that will contain duplicate copies of the same dll
-        var badDir1 = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bad1"));
+        var badDir1 = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bad1"));
         var badDir2 = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bad2"));
-            
+
         if (badDir1.Exists)
             badDir1.Delete(true);
-            
+
         badDir1.Create();
 
         if (badDir2.Exists)
@@ -79,23 +84,19 @@ public class MEFCheckerTests:UnitTests
 
         badDir2.Create();
 
-        var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Rdmp.Core.dll"));
+        var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Rdmp.Core.dll"));
 
         // copy the dll to both folders
-        File.Copy(dllToCopy.FullName, Path.Combine(badDir1.FullName,"Rdmp.Core.dll"));
+        File.Copy(dllToCopy.FullName, Path.Combine(badDir1.FullName, "Rdmp.Core.dll"));
         File.Copy(dllToCopy.FullName, Path.Combine(badDir2.FullName, "Rdmp.Core.dll"));
 
         var tomem = new ToMemoryCheckNotifier();
 
-        var sdc = new SafeDirectoryCatalog(tomem, badDir1.FullName,badDir2.FullName);
+        var sdc = new SafeDirectoryCatalog(tomem, badDir1.FullName, badDir2.FullName);
 
-        Assert.AreEqual(sdc .DuplicateDllsIgnored, 1);
-            
+        Assert.AreEqual(sdc.DuplicateDllsIgnored, 1);
+
         badDir1.Delete(true);
         badDir2.Delete(true);
-
     }
-
-
-
 }

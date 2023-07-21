@@ -16,6 +16,6 @@ public class ImpossibleCommand : BasicCommandExecution, IAtomicCommand
 {
     public ImpossibleCommand(string reasonImpossible)
     {
-        SetImpossible(reasonImpossible);   
+        SetImpossible(reasonImpossible);
     }
 }

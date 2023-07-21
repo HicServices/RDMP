@@ -13,22 +13,21 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution, IAtomicCommand
 {
     private readonly LoadProgress _loadProgress;
 
-    public ExecuteCommandCreateNewCacheProgress(IBasicActivateItems activator, LoadProgress loadProgress) : base(activator)
+    public ExecuteCommandCreateNewCacheProgress(IBasicActivateItems activator, LoadProgress loadProgress) :
+        base(activator)
     {
         _loadProgress = loadProgress;
 
-        if(_loadProgress.CacheProgress != null)
+        if (_loadProgress.CacheProgress != null)
             SetImpossible("LoadProgress already has a CacheProgress associated with it");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Defines that the load requires data that is intensive/expensive to fetch and that this fetching and storing to disk should happen independently of the loading";
-    }
+    public override string GetCommandHelp() =>
+        "Defines that the load requires data that is intensive/expensive to fetch and that this fetching and storing to disk should happen independently of the loading";
 
     public override void Execute()
     {
@@ -36,13 +35,11 @@ public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution,IAtomi
 
         // If the LoadProgress doesn't have a corresponding CacheProgress, create it
         var cp = new CacheProgress(BasicActivator.RepositoryLocator.CatalogueRepository, _loadProgress);
-            
+
         Publish(_loadProgress);
         Emphasise(cp);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Add);
 }

@@ -16,7 +16,7 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class TableInfoSynchronizerTests:DatabaseTests
+public class TableInfoSynchronizerTests : DatabaseTests
 {
     private DiscoveredServer _server;
     private ITableInfo tableInfoCreated;
@@ -36,22 +36,23 @@ public class TableInfoSynchronizerTests:DatabaseTests
         using (var con = _server.GetConnection())
         {
             con.Open();
-            _server.GetCommand($"CREATE TABLE {TABLE_NAME}(Name varchar(10), Address varchar(500))",con).ExecuteNonQuery();
+            _server.GetCommand($"CREATE TABLE {TABLE_NAME}(Name varchar(10), Address varchar(500))", con)
+                .ExecuteNonQuery();
         }
 
         var tbl = _database.ExpectTable("TableInfoSynchronizerTests");
 
-        var importer = new TableInfoImporter(CatalogueRepository,tbl);
-        importer.DoImport(out tableInfoCreated,out columnInfosCreated);
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
+        importer.DoImport(out tableInfoCreated, out columnInfosCreated);
     }
 
     [Test]
     public void SynchronizationTests_NoChanges()
     {
-        Assert.AreEqual(TABLE_NAME , tableInfoCreated.GetRuntimeName());
+        Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
 
         var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
-        Assert.AreEqual(true,synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual(true, synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
     }
 
     [Test]
@@ -70,15 +71,14 @@ public class TableInfoSynchronizerTests:DatabaseTests
         if (acceptChanges)
         {
             //accept changes should result in a synchronized table
-            Assert.AreEqual(true,synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(1,tableInfoCreated.ColumnInfos.Length);//should only be 1 remaining 
+            Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
+            Assert.AreEqual(1, tableInfoCreated.ColumnInfos.Length); //should only be 1 remaining 
         }
         else
         {
             var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);    
+            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);
         }
-            
     }
 
     [Test]
@@ -86,7 +86,6 @@ public class TableInfoSynchronizerTests:DatabaseTests
     [TestCase(false)]
     public void SynchronizationTests_ColumnAdded(bool acceptChanges)
     {
-            
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
@@ -100,7 +99,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
         {
             //accept changes should result in a synchronized table
             Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(3, tableInfoCreated.ColumnInfos.Length);//should 3 now
+            Assert.AreEqual(3, tableInfoCreated.ColumnInfos.Length); //should 3 now
         }
         else
         {
@@ -119,10 +118,10 @@ public class TableInfoSynchronizerTests:DatabaseTests
 
         try
         {
-            Assert.AreEqual(TABLE_NAME,cata.Name);
+            Assert.AreEqual(TABLE_NAME, cata.Name);
             Assert.AreEqual(2, cataItems.Length);
             Assert.AreEqual(2, extractionInformations.Length);
-            
+
             using (var con = _server.GetConnection())
             {
                 con.Open();
@@ -135,12 +134,14 @@ public class TableInfoSynchronizerTests:DatabaseTests
             {
                 //accept changes should result in a synchronized table
                 Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-                Assert.AreEqual(3, tableInfoCreated.ColumnInfos.Length);//should 3 now
-                Assert.AreEqual(3, cata.CatalogueItems.Length);//should 3 now
-                Assert.AreEqual(3, cata.GetAllExtractionInformation(ExtractionCategory.Any).Length);//should 3 now
+                Assert.AreEqual(3, tableInfoCreated.ColumnInfos.Length); //should 3 now
+                Assert.AreEqual(3, cata.CatalogueItems.Length); //should 3 now
+                Assert.AreEqual(3, cata.GetAllExtractionInformation(ExtractionCategory.Any).Length); //should 3 now
 
-                Assert.AreEqual(1,cata.GetAllExtractionInformation(ExtractionCategory.Any).Count(e=>e.SelectSQL.Contains("Birthday")));
-                Assert.AreEqual(1,cata.CatalogueItems.Count(ci => ci.Name.Contains("Birthday")));
+                Assert.AreEqual(1,
+                    cata.GetAllExtractionInformation(ExtractionCategory.Any)
+                        .Count(e => e.SelectSQL.Contains("Birthday")));
+                Assert.AreEqual(1, cata.CatalogueItems.Count(ci => ci.Name.Contains("Birthday")));
             }
             else
             {
@@ -165,20 +166,20 @@ public class TableInfoSynchronizerTests:DatabaseTests
         var db = _database;
 
         //FAnsi doesn't let you create tables with brackets in the names so we have to do it manually
-        using(var con = db.Server.GetConnection())
+        using (var con = db.Server.GetConnection())
         {
             con.Open();
-            var cmd = db.Server.GetCommand("CREATE TABLE [BB (ff)] (A int not null)",con);
+            var cmd = db.Server.GetCommand("CREATE TABLE [BB (ff)] (A int not null)", con);
             cmd.ExecuteNonQuery();
         }
 
         var tbl = db.CreateTable("FF",
             new DatabaseColumnRequest[]
             {
-                new DatabaseColumnRequest("F",new DatabaseTypeRequest(typeof(int)))
+                new("F", new DatabaseTypeRequest(typeof(int)))
             });
 
-        Import(tbl,out var ti,out _);
+        Import(tbl, out var ti, out _);
 
         var s = new TableInfoSynchronizer(ti);
         s.Synchronize(new ThrowImmediatelyCheckNotifier());

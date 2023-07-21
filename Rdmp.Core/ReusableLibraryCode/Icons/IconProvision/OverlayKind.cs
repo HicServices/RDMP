@@ -11,7 +11,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 /// </summary>
 public enum OverlayKind
 {
-    None =0,
+    None = 0,
     Add,
     Problem,
     Link,

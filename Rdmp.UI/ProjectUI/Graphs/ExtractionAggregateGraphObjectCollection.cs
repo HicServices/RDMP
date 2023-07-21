@@ -20,12 +20,12 @@ public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollect
     /// The extraction dataset (in a given <see cref="ExtractionConfiguration"/>) to which the <see cref="Graph"/> results
     /// should be limited.  The graph should only depict records appearing in this extract.
     /// </summary>
-    public SelectedDataSets SelectedDataSets => (SelectedDataSets) DatabaseObjects[0];
+    public SelectedDataSets SelectedDataSets => (SelectedDataSets)DatabaseObjects[0];
 
     /// <summary>
     /// The graph to be shown
     /// </summary>
-    public AggregateConfiguration Graph => (AggregateConfiguration) DatabaseObjects[1];
+    public AggregateConfiguration Graph => (AggregateConfiguration)DatabaseObjects[1];
 
 
     /// <summary>
@@ -33,7 +33,6 @@ public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollect
     /// </summary>
     public ExtractionAggregateGraphObjectCollection()
     {
-
     }
 
     /// <summary>
@@ -41,7 +40,8 @@ public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollect
     /// </summary>
     /// <param name="selectedDataSet"></param>
     /// <param name="graph"></param>
-    public ExtractionAggregateGraphObjectCollection(SelectedDataSets selectedDataSet, AggregateConfiguration graph):this()
+    public ExtractionAggregateGraphObjectCollection(SelectedDataSets selectedDataSet, AggregateConfiguration graph) :
+        this()
     {
         DatabaseObjects.Add(selectedDataSet);
         DatabaseObjects.Add(graph);
@@ -56,7 +56,7 @@ public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollect
     /// <returns></returns>
     public bool IsImpossible(out string reason)
     {
-        if(SelectedDataSets.ExtractionConfiguration.Cohort_ID == null)
+        if (SelectedDataSets.ExtractionConfiguration.Cohort_ID == null)
         {
             reason = "ExtractionConfiguration does not have a cohort";
             return true;

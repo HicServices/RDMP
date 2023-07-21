@@ -35,19 +35,20 @@ public partial class CohortCreationRequestUI : RDMPForm
 {
     private readonly IExternalCohortTable _target;
     private IDataExportRepository _repository;
-        
+
     public string CohortDescription
     {
         get => tbDescription.Text;
         set => tbDescription.Text = value;
     }
 
-    public CohortCreationRequestUI(IActivateItems activator,IExternalCohortTable target, IProject project =null):base(activator)
+    public CohortCreationRequestUI(IActivateItems activator, IExternalCohortTable target, IProject project = null) :
+        base(activator)
     {
         _target = target;
 
         InitializeComponent();
-            
+
         if (_target == null)
             return;
 
@@ -56,22 +57,22 @@ public partial class CohortCreationRequestUI : RDMPForm
         lblExternalCohortTable.Text = _target.ToString();
 
         SetProject(project);
-            
+
         pbProject.Image = CatalogueIcons.Project.ImageToBitmap();
         pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
-            TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
+            TaskDescription =
+                "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
         });
     }
 
-        
+
     public CohortCreationRequest Result { get; set; }
     public IProject Project { get; set; }
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-
         if (Project == null)
         {
             MessageBox.Show("You must select a project, if you do not have one yet then create one");
@@ -97,7 +98,6 @@ public partial class CohortCreationRequestUI : RDMPForm
                 MessageBox.Show("You must enter a name for your cohort");
                 return;
             }
-
         }
         else if (rbRevisedCohort.Checked)
         {
@@ -116,15 +116,17 @@ public partial class CohortCreationRequestUI : RDMPForm
             return;
         }
 
-            
+
         //construct the result
-        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text)
+        Result = new CohortCreationRequest(Project,
+            new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target),
+            (IDataExportRepository)Project.Repository, tbDescription.Text)
+        {
+            NewCohortDefinition =
             {
-                NewCohortDefinition =
-                {
-                    CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
-                }
-            };
+                CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
+            }
+        };
 
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
@@ -154,7 +156,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         DialogResult = DialogResult.Cancel;
         Close();
     }
-        
+
     private void rbNewCohort_CheckedChanged(object sender, EventArgs e)
     {
         gbNewCohort.Enabled = true;
@@ -166,7 +168,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         gbNewCohort.Enabled = false;
         gbRevisedCohort.Enabled = true;
 
-            
+
         RefreshCohortsDropdown(true);
     }
 
@@ -189,7 +191,9 @@ public partial class CohortCreationRequestUI : RDMPForm
                 existingHelpIcon.Enabled = true;
             }
             else
+            {
                 existingHelpIcon.Enabled = false;
+            }
         }
         else
         {
@@ -206,17 +210,17 @@ public partial class CohortCreationRequestUI : RDMPForm
 
         if (Project == null)
         {
-            if(interactive)
-            {
-                MessageBox.Show("You must select a Project");
-            }
-                    
+            if (interactive) MessageBox.Show("You must select a Project");
+
             return;
         }
 
-        var cohorts = ((DataExportChildProvider)Activator.CoreChildProvider).Cohorts.Where(c => c.ExternalProjectNumber == Project.ProjectNumber);
+        var cohorts =
+            ((DataExportChildProvider)Activator.CoreChildProvider).Cohorts.Where(c =>
+                c.ExternalProjectNumber == Project.ProjectNumber);
 
-        var maxVersionCohorts = cohorts.GroupBy(x => x.GetExternalData().ExternalDescription, (key, g) => g.OrderByDescending(e => e.ExternalVersion).First()).ToArray();
+        var maxVersionCohorts = cohorts.GroupBy(x => x.GetExternalData().ExternalDescription,
+            (key, g) => g.OrderByDescending(e => e.ExternalVersion).First()).ToArray();
         ddExistingCohort.Items.AddRange(maxVersionCohorts);
     }
 
@@ -230,14 +234,22 @@ public partial class CohortCreationRequestUI : RDMPForm
             p.SwitchToCutDownUIMode();
 
             var ok = new Button();
-            ok.Click += (s, ev) => { dialog.Close(); dialog.DialogResult = DialogResult.OK; };
-            ok.Location = new Point(0,p.Height + 10);
-            ok.Width = p.Width/2;
+            ok.Click += (s, ev) =>
+            {
+                dialog.Close();
+                dialog.DialogResult = DialogResult.OK;
+            };
+            ok.Location = new Point(0, p.Height + 10);
+            ok.Width = p.Width / 2;
             ok.Height = 30;
             ok.Text = "Ok";
 
             var cancel = new Button();
-            cancel.Click += (s, ev) =>{dialog.Close();dialog.DialogResult = DialogResult.Cancel;};
+            cancel.Click += (s, ev) =>
+            {
+                dialog.Close();
+                dialog.DialogResult = DialogResult.Cancel;
+            };
             cancel.Location = new Point(p.Width / 2, p.Height + 10);
             cancel.Width = p.Width / 2;
             cancel.Height = 30;
@@ -245,16 +257,16 @@ public partial class CohortCreationRequestUI : RDMPForm
 
             dialog.Controls.Add(ok);
             dialog.Controls.Add(cancel);
-                    
+
             dialog.Height = p.Height + 80;
             dialog.Width = p.Width + 10;
             dialog.Controls.Add(p);
-                
+
             ok.Anchor = AnchorStyles.Bottom;
-            cancel.Anchor  = AnchorStyles.Bottom;
+            cancel.Anchor = AnchorStyles.Bottom;
 
             var project = new Project(_repository, "New Project");
-            p.SetDatabaseObject(Activator,project);
+            p.SetDatabaseObject(Activator, project);
             var result = dialog.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -264,8 +276,9 @@ public partial class CohortCreationRequestUI : RDMPForm
                 Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(project));
             }
             else
+            {
                 project.DeleteInDatabase();
-
+            }
         }
         catch (Exception exception)
         {
@@ -294,7 +307,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         btnNewProject.Visible = Project == null;
         btnExisting.Visible = Project == null;
         btnClear.Visible = Project != null;
-            
+
         //if a project is selected and the project has no project number
         lblErrorNoProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
         tbSetProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
@@ -302,18 +315,16 @@ public partial class CohortCreationRequestUI : RDMPForm
 
     private void tbName_TextChanged(object sender, EventArgs e)
     {
-
     }
 
     private void btnExisting_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObject(new DialogArgs
-           {
-               TaskDescription = "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
-           }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
-        {
+        if (Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription =
+                    "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
+            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
             SetProject(proj);
-        }                
     }
 
     private void tbSetProjectNumber_TextChanged(object sender, EventArgs e)
@@ -337,5 +348,4 @@ public partial class CohortCreationRequestUI : RDMPForm
     {
         SetProject(null);
     }
-
 }

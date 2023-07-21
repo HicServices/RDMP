@@ -18,7 +18,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 /// <summary>
 /// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
 /// </summary>
-public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
+public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
 {
     private Stopwatch sw = new();
     private int totalRecordsProcessed = 0;
@@ -30,7 +30,8 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     /// </summary>
     public bool NoLogging { get; set; }
 
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         sw.Start();
 
@@ -42,7 +43,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
             totalRecordsProcessed++;
             var hashOfItems = GetHashCode(row.ItemArray);
 
-            if (_uniqueHashesSeen.TryGetValue(hashOfItems,out var collisions))
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems, out var collisions))
             {
                 //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
                 if (collisions.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
@@ -64,11 +65,16 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 
         sw.Stop();
 
-        if(!NoLogging)
+        if (!NoLogging)
         {
-            listener.OnProgress(this, new ProgressEventArgs("Evaluating For Duplicates", new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
-            listener.OnProgress(this,new ProgressEventArgs("Discarding Duplicates",new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records),sw.Elapsed));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Evaluating For Duplicates",
+                    new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Discarding Duplicates",
+                    new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records), sw.Elapsed));
         }
+
         return toReturn;
     }
 
@@ -78,12 +84,10 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public void Check(ICheckNotifier notifier)
     {
-
     }
 
     /// <summary>
@@ -100,23 +104,17 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     {
         // if non-null array then go into unchecked block to avoid overflow
         if (array != null)
-        {
             unchecked
             {
                 var hash = 17;
 
                 // get hash code for all items in array
-                foreach (var item in array)
-                {
-                    hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
-                }
+                foreach (var item in array) hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
 
                 return hash;
             }
-        }
 
         // if null, hash code is zero
         return 0;
     }
-
 }

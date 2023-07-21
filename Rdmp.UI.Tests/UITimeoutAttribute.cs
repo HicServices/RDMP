@@ -32,16 +32,13 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
     }
 
     /// <inheritdoc/>
-    public TestCommand Wrap(TestCommand command)
-    {
-        return new TimeoutCommand(command, _timeout);
-    }
+    public TestCommand Wrap(TestCommand command) => new TimeoutCommand(command, _timeout);
 
     private partial class TimeoutCommand : DelegatingTestCommand
     {
         private int _timeout;
 
-        public TimeoutCommand(TestCommand innerCommand, int timeout): base(innerCommand)
+        public TimeoutCommand(TestCommand innerCommand, int timeout) : base(innerCommand)
         {
             _timeout = timeout;
         }
@@ -84,11 +81,9 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
             try
             {
-                while (thread.IsAlive && (_timeout > 0  || Debugger.IsAttached))
-                {
+                while (thread.IsAlive && (_timeout > 0 || Debugger.IsAttached))
                     if (!thread.Join(_timeout) && !Debugger.IsAttached)
                         _timeout = 0;
-                }
 
                 var closeAttempts = 10;
 
@@ -100,9 +95,9 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     //if it still has a window handle then presumably needs further treatment
                     IntPtr handle;
 
-                    while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
+                    while ((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
                     {
-                        if(closeAttempts-- <=0)
+                        if (closeAttempts-- <= 0)
                             throw new Exception("Failed to close all windows even after multiple attempts");
 
                         var sbClass = new StringBuilder(100);
@@ -124,7 +119,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                 if (threadException != null)
                     throw threadException;
 
-                if(result == null)
+                if (result == null)
                     throw new Exception("UI test did not produce a result");
 
                 return result;

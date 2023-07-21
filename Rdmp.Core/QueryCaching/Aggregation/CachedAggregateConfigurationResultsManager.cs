@@ -41,7 +41,7 @@ public class CachedAggregateConfigurationResultsManager
     private DiscoveredDatabase _database;
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        
+
     /// <summary>
     /// The name of the table in the query cache which tracks the SQL executed and the resulting tables generated when caching
     /// </summary>
@@ -55,11 +55,11 @@ public class CachedAggregateConfigurationResultsManager
 
     public const string CachingPrefix = "/*Cached:";
 
-    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration, AggregateOperation operation)
-    {
-        return GetLatestResultsTableUnsafe(configuration, operation, out _);
-    }
-    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation, out string sql)
+    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
+        AggregateOperation operation) => GetLatestResultsTableUnsafe(configuration, operation, out _);
+
+    public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
+        AggregateOperation operation, out string sql)
     {
         var syntax = _database.Server.GetQuerySyntaxHelper();
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -74,15 +74,16 @@ public class CachedAggregateConfigurationResultsManager
 WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
 AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
             {
-                using(var r = cmd.ExecuteReader())
+                using (var r = cmd.ExecuteReader())
+                {
                     if (r.Read())
                     {
-                        var tableName =  r["TableName"].ToString();
+                        var tableName = r["TableName"].ToString();
                         sql = r["SqlExecuted"] as string;
                         return _database.ExpectTable(tableName);
                     }
+                }
             }
-                
         }
 
         sql = null;
@@ -98,7 +99,8 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
     /// <param name="operation"></param>
     /// <param name="currentSql"></param>
     /// <returns></returns>
-    public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
+    public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration,
+        AggregateOperation operation, string currentSql)
     {
         var syntax = _database.Server.GetQuerySyntaxHelper();
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -116,7 +118,8 @@ WHERE
 {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID} AND
 {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
             {
-                using(var r = cmd.ExecuteReader())
+                using (var r = cmd.ExecuteReader())
+                {
                     if (r.Read())
                     {
                         if (IsMatchOnSqlExecuted(r, currentSql))
@@ -127,6 +130,7 @@ WHERE
 
                         return null; //this means that there was outdated SQL, we could show this to user at some point
                     }
+                }
             }
         }
 
@@ -137,7 +141,7 @@ WHERE
     {
         //replace all whitespace with single whitespace 
         var standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
-        var standardisedUsersSql = Regex.Replace(currentSql,@"\s+"," ");
+        var standardisedUsersSql = Regex.Replace(currentSql, @"\s+", " ");
 
         var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
 
@@ -174,7 +178,7 @@ WHERE
 
             //add explicit types
             var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
-            if(tbl.Exists())
+            if (tbl.Exists())
                 tbl.Drop();
 
             tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
@@ -186,11 +190,11 @@ WHERE
 
             mgrTable.Insert(new Dictionary<string, object>
             {
-                { "Committer", Environment.UserName},
-                { "AggregateConfiguration_ID", configuration.ID},
-                { "SqlExecuted", arguments.SQL.Trim()},
-                { "Operation", operation.ToString()},
-                { "TableName", tbl.GetRuntimeName()}
+                { "Committer", Environment.UserName },
+                { "AggregateConfiguration_ID", configuration.ID },
+                { "SqlExecuted", arguments.SQL.Trim() },
+                { "Operation", operation.ToString() },
+                { "TableName", tbl.GetRuntimeName() }
             });
 
             arguments.CommitTableDataCompleted(tbl);
@@ -216,13 +220,14 @@ WHERE
 
                 //drop the data
                 _database.ExpectTable(table.GetRuntimeName()).Drop();
-                    
+
                 //delete the record!
                 using (var cmd = DatabaseCommandHelper.GetCommand(
-                           $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'", con))
+                           $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'",
+                           con))
                 {
                     var deletedRows = cmd.ExecuteNonQuery();
-                    if(deletedRows != 1)
+                    if (deletedRows != 1)
                         throw new Exception(
                             $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records");
                 }

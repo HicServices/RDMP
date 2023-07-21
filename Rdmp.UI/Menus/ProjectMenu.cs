@@ -12,16 +12,20 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class ProjectMenu:RDMPContextMenuStrip
+internal class ProjectMenu : RDMPContextMenuStrip
 {
     public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
-        : base(args,project)
+        : base(args, project)
     {
         Add(new ExecuteCommandExecuteExtractionConfiguration(_activator) { Weight = -99.9f }.SetTarget(project));
         Add(new ExecuteCommandRelease(_activator) { Weight = -99.8f }.SetTarget(project));
 
         args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
-        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = AtomicCommandFactory.Add, Weight = -1.9f });
+        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
+        {
+            OverrideCommandName = "New Project Specific Catalogue From File...",
+            SuggestedCategory = AtomicCommandFactory.Add, Weight = -1.9f
+        });
     }
 }

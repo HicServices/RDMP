@@ -16,7 +16,6 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class ShowSQLUI : Form
 {
-
     private ScintillaNET.Scintilla QueryEditor;
     private bool _designMode;
 
@@ -35,6 +34,5 @@ public partial class ShowSQLUI : Form
         QueryEditor.ReadOnly = isReadOnly;
 
         Controls.Add(QueryEditor);
-
     }
 }

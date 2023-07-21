@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data;
 /// Class for persisting the Comment, type and value of an Sql Parameter (e.g. /*mycool variable*/ DECLARE @bob as Varchar(10); Set @bob = 'fish').  RDMP supports 
 /// parameter overriding and merging duplicate parameters etc during query building (See ParameterManager).
 /// </summary>
-public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper,ICheckable
+public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper, ICheckable
 {
     /// <summary>
     /// The name only of the parameter e.g. @bob, this should be automatically calculated from the ParameterSQL to avoid any potential for mismatch
@@ -36,7 +36,7 @@ public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper,ICheckable
     /// </summary>
     [Sql]
     string Value { get; set; }
-        
+
     /// <summary>
     /// An optional description of what the parameter represents.  This will be included in SQL generated and will be wrapped in an SQL comment block.
     /// </summary>

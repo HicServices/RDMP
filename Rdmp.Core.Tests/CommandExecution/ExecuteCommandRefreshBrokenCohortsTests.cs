@@ -14,9 +14,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-internal class ExecuteCommandRefreshBrokenCohortsTests 
+internal class ExecuteCommandRefreshBrokenCohortsTests
 {
-
     [Test]
     public void TestBrokenCohort()
     {
@@ -41,11 +40,12 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
 
         var repoLocator = new RepositoryProvider(repo);
 
-        var activator = new ConsoleInputManager(repoLocator, new ThrowImmediatelyCheckNotifier()) {
+        var activator = new ConsoleInputManager(repoLocator, new ThrowImmediatelyCheckNotifier())
+        {
             DisallowInput = true
         };
 
-        Assert.AreEqual(1,((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources.Count);
+        Assert.AreEqual(1, ((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources.Count);
 
         var cmd = new ExecuteCommandRefreshBrokenCohorts(activator)
         {
@@ -53,7 +53,7 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
             // and find it missing again
             NoPublish = true
         };
-            
+
         Assert.IsFalse(cmd.IsImpossible);
         cmd.Execute();
 
@@ -64,8 +64,8 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
         cmd = new ExecuteCommandRefreshBrokenCohorts(activator);
         Assert.IsTrue(cmd.IsImpossible);
         Assert.AreEqual("There are no broken ExternalCohortTable to clear status on", cmd.ReasonCommandImpossible);
-            
-        cmd = new ExecuteCommandRefreshBrokenCohorts(activator,ect);
+
+        cmd = new ExecuteCommandRefreshBrokenCohorts(activator, ect);
         Assert.IsTrue(cmd.IsImpossible);
         Assert.AreEqual("'yarg' is not broken", cmd.ReasonCommandImpossible);
     }

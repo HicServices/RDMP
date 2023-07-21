@@ -11,10 +11,8 @@ using System;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests;
 
-public class MicrosoftAggregateBuilderTests:AggregateBuilderTestsBase
+public class MicrosoftAggregateBuilderTests : AggregateBuilderTestsBase
 {
-       
-        
     [Test]
     public void TestAggregateBuilding_NoConfigurationOneDimension()
     {
@@ -32,7 +30,7 @@ Col1
 order by 
 Col1"), CollapseWhitespace(builder.SQL));
     }
-        
+
     /// <summary>
     /// Tests the systems ability to figure out the alias of the count column when it has " AS " (e.g. in a cast scalar function)
     /// </summary>
@@ -104,15 +102,15 @@ Col2"), CollapseWhitespace(builder.SQL));
         var topX1 = new AggregateTopX(CatalogueRepository, _configuration, 10);
         var ex = Assert.Throws<Exception>(() => new AggregateTopX(CatalogueRepository, _configuration, 10));
 
-        Assert.AreEqual("AggregateConfiguration MyConfig already has a TopX",ex.Message);
+        Assert.AreEqual("AggregateConfiguration MyConfig already has a TopX", ex.Message);
         topX1.DeleteInDatabase();
     }
 
-    [TestCase("count(*)",true)]
+    [TestCase("count(*)", true)]
     [TestCase("count(*)", false)]
-    [TestCase("max(Col1)",true)]
+    [TestCase("max(Col1)", true)]
     [TestCase("max(Col2)", false)]
-    public void TestAggregateBuilding_NoConfigurationTwoDimension_Top10(string countColField,bool asc)
+    public void TestAggregateBuilding_NoConfigurationTwoDimension_Top10(string countColField, bool asc)
     {
         var topX = new AggregateTopX(CatalogueRepository, _configuration, 10)
         {
@@ -126,7 +124,7 @@ Col2"), CollapseWhitespace(builder.SQL));
         _configuration.CountSQL = countColField;
 
         var builder = _configuration.GetQueryBuilder();
-            
+
         Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/
 SELECT 
 TOP 10
@@ -174,20 +172,19 @@ Col1,
 Col2
 order by 
 Col1 {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
-            
+
         topX.DeleteInDatabase();
     }
 
     [Test]
     public void TestAggregateBuilding_NoConfigurationNoDimensions()
     {
-        var builder = new AggregateBuilder(null, "count(*)", null,new []{_ti});
-            
+        var builder = new AggregateBuilder(null, "count(*)", null, new[] { _ti });
+
         Assert.AreEqual(CollapseWhitespace(@"/**/
 SELECT 
 count(*) AS MyCount
 FROM 
 T1"), CollapseWhitespace(builder.SQL));
     }
-
 }

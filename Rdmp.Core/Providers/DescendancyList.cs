@@ -29,7 +29,7 @@ public class DescendancyList
     /// For use with <see cref="GetMostDescriptiveParent"/> these objects will be skipped when finding a descriptive parent
     /// </summary>
     private static HashSet<Type> TypesThatAreNotUsefulParents = new(
-        new []
+        new[]
         {
             typeof(CatalogueItemsNode),
             typeof(DocumentationNode),
@@ -41,7 +41,6 @@ public class DescendancyList
             typeof(PreLoadDiscardedColumnsNode),
             typeof(ProjectCataloguesNode),
             typeof(ProjectCohortIdentificationConfigurationAssociationsNode)
-
         });
 
     /// <summary>
@@ -83,7 +82,7 @@ public class DescendancyList
     /// <returns></returns>
     public DescendancyList Add(object anotherKnownParent)
     {
-        if(Parents.Contains(anotherKnownParent))
+        if (Parents.Contains(anotherKnownParent))
             throw new ArgumentException($"DecendancyList already contains '{anotherKnownParent}'");
 
         var list = new List<object>(Parents)
@@ -134,19 +133,14 @@ public class DescendancyList
 
         return toReturn;
     }
-    public override string ToString()
-    {
-        return $"<<{string.Join("=>", Parents)}>>";
-    }
+
+    public override string ToString() => $"<<{string.Join("=>", Parents)}>>";
 
     /// <summary>
     /// returns the last object in the chain, for example Root=>GrandParent=>Parent would return 'Parent'
     /// </summary>
     /// <returns></returns>
-    public object Last()
-    {
-        return Parents.Last();
-    }
+    public object Last() => Parents.Last();
 
     /// <summary>
     /// Returns the first <see cref="Parents"/> which is meaningful to the user in locating the object within
@@ -155,12 +149,13 @@ public class DescendancyList
     /// <returns></returns>
     public object GetMostDescriptiveParent()
     {
-        return Parents.LastOrDefault(parent => 
+        return Parents.LastOrDefault(parent =>
             !TypesThatAreNotUsefulParents.Contains(parent.GetType())
             &&
             parent is not IContainer
         );
     }
+
     /// <summary>
     /// Returns all <see cref="Parents"/> which are meaningful to the user in locating the object within
     /// a hierarchy 

@@ -20,30 +20,31 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecution, IAtomicCommand
 {
     private readonly CatalogueItem _toPopulate;
-        
-    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate):base(activator)
+
+    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate) :
+        base(activator)
     {
         _toPopulate = toPopulate;
     }
 
     public override void Execute()
     {
-        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except(new[] {_toPopulate}).ToList();
+        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except(new[] { _toPopulate }).ToList();
 
         string initialSearchText = null;
 
         //if we have a CatalogueItem other than us that has same Name maybe that's the one they want
         if (available.Any(a => a.Name.Equals(_toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
             initialSearchText = _toPopulate.Name;
-            
-        if(SelectOne(available,out var selected,initialSearchText,false))
+
+        if (SelectOne(available, out var selected, initialSearchText, false))
         {
             CopyNonIDValuesAcross(selected, _toPopulate, true);
             _toPopulate.SaveToDatabase();
-                
+
             Publish(_toPopulate);
         }
-            
+
         base.Execute();
     }
 
@@ -53,7 +54,8 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
     /// <param name="from"></param>
     /// <param name="to"></param>
     /// <param name="skipNameProperty"></param>
-    public static void CopyNonIDValuesAcross(IMapsDirectlyToDatabaseTable from, IMapsDirectlyToDatabaseTable to, bool skipNameProperty = false)
+    public static void CopyNonIDValuesAcross(IMapsDirectlyToDatabaseTable from, IMapsDirectlyToDatabaseTable to,
+        bool skipNameProperty = false)
     {
         var type = from.GetType();
 
@@ -81,5 +83,4 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
         var s = to as ISaveable;
         s?.SaveToDatabase();
     }
-
 }

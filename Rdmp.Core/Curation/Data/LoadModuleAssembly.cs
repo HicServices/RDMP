@@ -28,6 +28,7 @@ namespace Rdmp.Core.Curation.Data;
 public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 {
     #region Database Properties
+
     private byte[] _bin;
     private string _committer;
     private DateTime _uploadDate;
@@ -42,7 +43,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     public byte[] Bin
     {
         get => _bin;
-        set => SetField(ref _bin,value);
+        set => SetField(ref _bin, value);
     }
 
     /// <summary>
@@ -51,7 +52,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     public string Committer
     {
         get => _committer;
-        set => SetField(ref _committer,value);
+        set => SetField(ref _committer, value);
     }
 
     /// <summary>
@@ -60,7 +61,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     public DateTime UploadDate
     {
         get => _uploadDate;
-        set => SetField(ref _uploadDate,value);
+        set => SetField(ref _uploadDate, value);
     }
 
     /// <summary>
@@ -70,7 +71,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     public int Plugin_ID
     {
         get => _plugin_ID;
-        set => SetField(ref _plugin_ID,value);
+        set => SetField(ref _plugin_ID, value);
     }
 
     #endregion
@@ -101,7 +102,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         //so we can reference it in fetch requests to check for duplication (normally Repository is set during hydration by the repo)
         Repository = repository;
 
-        Repository.InsertAndHydrate(this,dictionaryParameters);
+        Repository.InsertAndHydrate(this, dictionaryParameters);
         ClearAllInjections();
     }
 
@@ -128,15 +129,16 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        var targetDirectory = downloadDirectory.FullName ?? throw new Exception("Could not get currently executing assembly directory");
+        var targetDirectory = downloadDirectory.FullName ??
+                              throw new Exception("Could not get currently executing assembly directory");
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 
         var targetFile = Path.Combine(targetDirectory, Plugin.Name);
-            
+
         //file already exists
         if (File.Exists(targetFile))
-            if(AreEqual(File.ReadAllBytes(targetFile), Bin))
+            if (AreEqual(File.ReadAllBytes(targetFile), Bin))
                 return targetFile;
 
         var timeout = 5000;
@@ -163,16 +165,16 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 
     private static Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
     {
-        if(f.Extension != PackPluginRunner.PluginPackageSuffix)
+        if (f.Extension != PackPluginRunner.PluginPackageSuffix)
             throw new Exception($"Expected LoadModuleAssembly file to be a {PackPluginRunner.PluginPackageSuffix}");
 
         var allBytes = File.ReadAllBytes(f.FullName);
 
         var dictionaryParameters = new Dictionary<string, object>
         {
-            {"Bin",allBytes},
-            {"Committer",Environment.UserName},
-            {"Plugin_ID",plugin.ID}
+            { "Bin", allBytes },
+            { "Committer", Environment.UserName },
+            { "Plugin_ID", plugin.ID }
         };
 
         return dictionaryParameters;
@@ -192,10 +194,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"LoadModuleAssembly_{ID}";
-    }
+    public override string ToString() => $"LoadModuleAssembly_{ID}";
 
     public void ClearAllInjections()
     {

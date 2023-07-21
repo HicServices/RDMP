@@ -36,8 +36,8 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<ExtractionFilterParameterSet[]>
 {
-
     #region Database Properties
+
     private int _extractionInformationID;
     private Lazy<ExtractionFilterParameterSet[]> _knownExtractionFilterParameterSets;
 
@@ -45,11 +45,11 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     /// The column in the <see cref="Catalogue"/> which is best/most associated with this filter.  A filter can query any column in any of the table(s) under
     /// the <see cref="Catalogue"/> but must always be associated with only one specific extractable column (<see cref="ExtractionInformation"/>)
     /// </summary>
-    [Relationship(typeof(ExtractionInformation),RelationshipType.LocalReference)]
+    [Relationship(typeof(ExtractionInformation), RelationshipType.LocalReference)]
     public int ExtractionInformation_ID
     {
         get => _extractionInformationID;
-        set => SetField(ref _extractionInformationID , value);
+        set => SetField(ref _extractionInformationID, value);
     }
 
     #endregion
@@ -74,37 +74,28 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     public ExtractionFilterParameterSet[] ExtractionFilterParameterSets => _knownExtractionFilterParameterSets.Value;
 
     /// <inheritdoc/>
-    public override ColumnInfo GetColumnInfoIfExists()
-    {
-        return ExtractionInformation.ColumnInfo;
-    }
+    public override ColumnInfo GetColumnInfoIfExists() => ExtractionInformation.ColumnInfo;
 
     /// <inheritdoc/>
-    public override IFilterFactory GetFilterFactory()
-    {
-        return new ExtractionFilterFactory(ExtractionInformation);
-    }
+    public override IFilterFactory GetFilterFactory() => new ExtractionFilterFactory(ExtractionInformation);
 
     /// <inheritdoc/>
-    public override Catalogue GetCatalogue()
-    {
-        return ExtractionInformation.CatalogueItem.Catalogue;
-    }
+    public override Catalogue GetCatalogue() => ExtractionInformation.CatalogueItem.Catalogue;
+
     /// <inheritdoc/>
-    public override ISqlParameter[] GetAllParameters()
-    {
-        return ExtractionFilterParameters.ToArray();
-    }
+    public override ISqlParameter[] GetAllParameters() => ExtractionFilterParameters.ToArray();
 
     #region Relationships
 
     /// <inheritdoc cref="ExtractionInformation_ID"/>
     [NoMappingToDatabase]
-    public ExtractionInformation ExtractionInformation => Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
+    public ExtractionInformation ExtractionInformation =>
+        Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
 
     /// <inheritdoc cref="ConcreteFilter.GetAllParameters"/>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionFilterParameter> ExtractionFilterParameters => Repository.GetAllObjectsWithParent<ExtractionFilterParameter>(this);
+    public IEnumerable<ExtractionFilterParameter> ExtractionFilterParameters =>
+        Repository.GetAllObjectsWithParent<ExtractionFilterParameter>(this);
 
     #endregion
 
@@ -125,10 +116,10 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     {
         name ??= $"New Filter {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"ExtractionInformation_ID", parent.ID}
+            { "Name", name },
+            { "ExtractionInformation_ID", parent.ID }
         });
 
         ClearAllInjections();
@@ -141,16 +132,13 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         WhereSQL = r["WhereSQL"] as string;
         Description = r["Description"] as string;
         Name = r["Name"] as string;
-        IsMandatory = (bool) r["IsMandatory"];
+        IsMandatory = (bool)r["IsMandatory"];
 
         ClearAllInjections();
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     //we are an extraction filter ourselves! so obviously we werent cloned from one! (this is for aggregate and data export filters and satisfies IFilter).  Actually we can
     //be cloned via the publishing (elevation) from a custom filter defined at Aggregate level for example.  But in this case we don't need to know the ID anyway since we
@@ -163,7 +151,8 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     public override int? ClonedFromExtractionFilter_ID
     {
         get => null;
-        set => throw new NotSupportedException("ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
+        set => throw new NotSupportedException(
+            "ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
     }
 
     /// <inheritdoc/>
@@ -173,10 +162,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return ExtractionFilterParameters.ToArray();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => ExtractionFilterParameters.ToArray();
 
     public void InjectKnown(ExtractionFilterParameterSet[] instance)
     {
@@ -185,13 +171,15 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
 
     public void ClearAllInjections()
     {
-        _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(() => CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
+        _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(() =>
+            CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
     }
 
     public override void DeleteInDatabase()
     {
         if (ExtractionFilterParameterSets.Any())
-            throw new Exception($"Cannot delete '{this}' because there are one or more {nameof(ExtractionFilterParameterSet)} declared on it");
+            throw new Exception(
+                $"Cannot delete '{this}' because there are one or more {nameof(ExtractionFilterParameterSet)} declared on it");
 
         base.DeleteInDatabase();
     }

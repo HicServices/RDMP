@@ -21,7 +21,7 @@ namespace Rdmp.UI.Wizard;
 public partial class SimpleSetOperation : UserControl
 {
     private IActivateItems _activator;
-    private string _unionText ;
+    private string _unionText;
     private string _intersectText = "Records Must Appear In BOTH Datasets To Match ";
     private bool _isInclusionCriteria;
 
@@ -30,7 +30,7 @@ public partial class SimpleSetOperation : UserControl
         InitializeComponent();
     }
 
-    public void SetupFor(IActivateItems activator,bool isInclusionCriteria)
+    public void SetupFor(IActivateItems activator, bool isInclusionCriteria)
     {
         _activator = activator;
         _isInclusionCriteria = isInclusionCriteria;
@@ -53,15 +53,13 @@ public partial class SimpleSetOperation : UserControl
 
     private void ddSetOperation_SelectedIndexChanged(object sender, EventArgs e)
     {
-
         var op = GetSetOperation();
         pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op).ImageToBitmap();
-
     }
 
     private SetOperation GetSetOperation()
     {
-        if((string) ddSetOperation.SelectedItem == _intersectText)
+        if ((string)ddSetOperation.SelectedItem == _intersectText)
             return SetOperation.INTERSECT;
 
         return SetOperation.UNION;
@@ -84,7 +82,7 @@ public partial class SimpleSetOperation : UserControl
         else
         {
             container.Order = 2;
-            container.Name = "Exclusion Criteria";    
+            container.Name = "Exclusion Criteria";
         }
 
         container.SaveToDatabase();

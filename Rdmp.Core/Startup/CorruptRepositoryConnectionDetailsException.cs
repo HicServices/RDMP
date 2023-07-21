@@ -24,11 +24,13 @@ public class CorruptRepositoryConnectionDetailsException : Exception
     {
     }
 
-    public CorruptRepositoryConnectionDetailsException(string message, Exception innerException) : base(message, innerException)
+    public CorruptRepositoryConnectionDetailsException(string message, Exception innerException) : base(message,
+        innerException)
     {
     }
 
-    protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info, context)
+    protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info,
+        context)
     {
     }
 }

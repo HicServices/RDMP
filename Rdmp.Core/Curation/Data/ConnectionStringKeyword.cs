@@ -30,8 +30,9 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     private DatabaseType _databaseType;
     private string _name;
     private string _value;
+
     #endregion
-        
+
     /// <summary>
     /// The DBMS (Oracle / MySql etc) which this keyword should be used when connecting to
     /// </summary>
@@ -62,7 +63,6 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
 
     public ConnectionStringKeyword()
     {
-
     }
 
     /// <summary>
@@ -72,13 +72,14 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     /// <param name="databaseType"></param>
     /// <param name="keyword"></param>
     /// <param name="value"></param>
-    public ConnectionStringKeyword(ICatalogueRepository repository,DatabaseType databaseType, string keyword, string value)
+    public ConnectionStringKeyword(ICatalogueRepository repository, DatabaseType databaseType, string keyword,
+        string value)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"DatabaseType",databaseType.ToString()},
-            {"Name",keyword},
-            {"Value",value}
+            { "DatabaseType", databaseType.ToString() },
+            { "Name", keyword },
+            { "Value", value }
         });
 
         if (ID == 0 || Repository != repository)
@@ -88,16 +89,13 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     internal ConnectionStringKeyword(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        DatabaseType = (DatabaseType) Enum.Parse(typeof(DatabaseType),r["DatabaseType"].ToString());
+        DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
         Name = r["Name"].ToString();
         Value = r["Value"] as string;
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Checks that the keyword is valid syntax for the <see cref="DatabaseType"/> and can be set on a <see cref="DbConnectionStringBuilder"/>
@@ -109,7 +107,8 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
         {
             var accumulator = new ConnectionStringKeywordAccumulator(DatabaseType);
             accumulator.AddOrUpdateKeyword(Name, Value, ConnectionStringKeywordPriority.SystemDefaultLow);
-            notifier.OnCheckPerformed(new CheckEventArgs("Integrity of keyword is ok according to ConnectionStringKeywordAccumulator", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Integrity of keyword is ok according to ConnectionStringKeywordAccumulator", CheckResult.Success));
         }
         catch (Exception e)
         {

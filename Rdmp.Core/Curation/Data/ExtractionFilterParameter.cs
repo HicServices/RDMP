@@ -29,7 +29,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     private string _comment;
     private string _parameterSQL;
     private int _extractionFilterID;
-        
+
     /// <inheritdoc/>
     [Sql]
     public string Value
@@ -37,12 +37,14 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
         get => _value;
         set => SetField(ref _value, value);
     }
+
     /// <inheritdoc/>
     public string Comment
     {
         get => _comment;
         set => SetField(ref _comment, value);
     }
+
     /// <inheritdoc/>
     [Sql]
     public string ParameterSQL
@@ -58,7 +60,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     public int ExtractionFilter_ID
     {
         get => _extractionFilterID;
-        set => SetField(ref _extractionFilterID , value);
+        set => SetField(ref _extractionFilterID, value);
     }
 
     #endregion
@@ -71,6 +73,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Relationships
+
     /// <inheritdoc cref="ExtractionFilter_ID"/>
     [NoMappingToDatabase]
     public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
@@ -79,7 +82,6 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
 
     public ExtractionFilterParameter()
     {
-
     }
 
     /// <summary>
@@ -91,10 +93,10 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     /// <param name="parent"></param>
     public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ParameterSQL", parameterSQL},
-            {"ExtractionFilter_ID", parent.ID}
+            { "ParameterSQL", parameterSQL },
+            { "ExtractionFilter_ID", parent.ID }
         });
     }
 
@@ -109,10 +111,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    public override string ToString() => $"{ParameterName} = {Value}";
 
     /// <inheritdoc cref="ParameterSyntaxChecker"/>
     public void Check(ICheckNotifier notifier)
@@ -121,22 +120,16 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return ExtractionFilter.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ExtractionFilter.GetQuerySyntaxHelper();
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {ExtractionFilter};
+        return new[] { ExtractionFilter };
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return null;
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => null;
 
     /// <summary>
     /// Returns true if a  <see cref="Comment"/> has been provided and an example/initial <see cref="Value"/> specified.  This is a requirement of
@@ -151,8 +144,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
 
         if (string.IsNullOrWhiteSpace(sqlParameter.ParameterSQL))
             reasonParameterRejected = "There is no ParameterSQL";
-        else
-        if (string.IsNullOrWhiteSpace(sqlParameter.Value))
+        else if (string.IsNullOrWhiteSpace(sqlParameter.Value))
             reasonParameterRejected = "There is no value/default value listed";
 
 
@@ -160,8 +152,5 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     }
 
     /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-    {
-        return ExtractionFilter;
-    }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => ExtractionFilter;
 }

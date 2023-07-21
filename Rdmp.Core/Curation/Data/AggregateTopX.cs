@@ -38,7 +38,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     public int AggregateConfiguration_ID
     {
         get => _aggregateConfigurationID;
-        set => SetField(ref _aggregateConfigurationID , value);
+        set => SetField(ref _aggregateConfigurationID, value);
     }
 
     /// <inheritdoc/>
@@ -63,10 +63,12 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
         get => _orderByDirection;
         set => SetField(ref _orderByDirection, value);
     }
+
     #endregion
 
-        
+
     #region Relationships
+
     /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
     [NoMappingToDatabase]
     public AggregateDimension OrderByDimensionIfAny
@@ -102,7 +104,8 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
         AggregateConfiguration_ID = (int)r["AggregateConfiguration_ID"];
         TopX = (int)r["TopX"];
         OrderByDimensionIfAny_ID = ObjectToNullableInt(r["OrderByDimensionIfAny_ID"]);
-        OrderByDirection = (AggregateTopXOrderByDirection) Enum.Parse(typeof (AggregateTopXOrderByDirection), r["OrderByDirection"].ToString());
+        OrderByDirection = (AggregateTopXOrderByDirection)Enum.Parse(typeof(AggregateTopXOrderByDirection),
+            r["OrderByDirection"].ToString());
     }
 
     /// <summary>
@@ -114,18 +117,14 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     /// <param name="topX"></param>
     public AggregateTopX(ICatalogueRepository repository, AggregateConfiguration forConfiguration, int topX)
     {
-        if(forConfiguration.GetTopXIfAny() != null)
-        {
+        if (forConfiguration.GetTopXIfAny() != null)
             throw new Exception($"AggregateConfiguration {forConfiguration} already has a TopX");
-        }
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"AggregateConfiguration_ID", forConfiguration.ID},
-            {"TopX", topX},
-            { nameof(OrderByDirection) , AggregateTopXOrderByDirection.Descending}
+            { "AggregateConfiguration_ID", forConfiguration.ID },
+            { "TopX", topX },
+            { nameof(OrderByDirection), AggregateTopXOrderByDirection.Descending }
         });
     }
-
-        
 }

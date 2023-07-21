@@ -27,13 +27,10 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
 
     [UseWithObjectConstructor]
     public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
-
         [DemandsInitialization("The extraction configuration you want to know about")]
         ExtractionConfiguration ec,
-
         [DemandsInitialization("The dataset for whom you want to see the extraction SQL")]
         Catalogue c,
-
         [DemandsInitialization(ToFileDescription)]
         FileInfo toFile = null) : base(activator, toFile)
     {
@@ -41,10 +38,7 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
 
         _selectedDataSet = ec.SelectedDataSets.FirstOrDefault(sds => sds.GetCatalogue().Equals(c));
 
-        if (_selectedDataSet == null)
-        {
-            SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
-        }
+        if (_selectedDataSet == null) SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
     }
 
     public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
@@ -61,19 +55,16 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
         _extractionConfiguration = sds.ExtractionConfiguration;
         _selectedDataSet = sds;
     }
+
     public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator, null)
     {
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
-    }
+    public override string GetCommandHelp() =>
+        "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -98,7 +89,9 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
         var sds = _selectedDataSet;
 
         if (sds == null && _extractionConfiguration != null)
-            sds = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
+            sds = SelectOne(
+                BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(
+                    _extractionConfiguration));
 
         if (_selectedDataSet == null)
             return null;

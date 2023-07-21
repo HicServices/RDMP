@@ -14,20 +14,24 @@ namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 
 internal interface IArchivedFileExtractor
 {
-    void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob);
+    void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory,
+        IDataLoadEventListener dataLoadJob);
 }
 
 internal abstract class ArchiveExtractor : IArchivedFileExtractor
 {
     private readonly string _extension;
-    protected abstract void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob);
+
+    protected abstract void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory,
+        IDataLoadEventListener dataLoadJob);
 
     protected ArchiveExtractor(string extension)
     {
         _extension = extension;
     }
 
-    public void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob)
+    public void Extract(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory,
+        IDataLoadEventListener dataLoadJob)
     {
         //ensure it is a legit zip file
         if (!job.Value.Extension.Equals(_extension))
@@ -56,7 +60,8 @@ internal class ZipExtractor : ArchiveExtractor
     }
 
 
-    protected override void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadEventListener)
+    protected override void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory,
+        IDataLoadEventListener dataLoadEventListener)
     {
         var archive = new ZipArchive(new FileStream(job.Value.FullName, FileMode.Open));
         archive.ExtractToDirectory(destinationDirectory.FullName);

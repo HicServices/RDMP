@@ -17,9 +17,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 /// <summary>
 /// Extraction component for extracting (and optionally transforming in some way) arbitrary files on disk as part of an extraction
 /// </summary>
-public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>,  IPipelineRequirement<IExtractCommand>
+public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>
 {
-    protected ExtractGlobalsCommand _command {get;set;}
+    protected ExtractGlobalsCommand _command { get; set; }
 
     private bool _isFirstTime = true;
 
@@ -41,15 +41,18 @@ public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>,  IPip
         _command = value as ExtractGlobalsCommand;
     }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
-        if(_command == null)
+        if (_command == null)
         {
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Ignoring {GetType().Name} component because command is not ExtractGlobalsCommand"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    $"Ignoring {GetType().Name} component because command is not ExtractGlobalsCommand"));
             return toProcess;
         }
 
-        if(_isFirstTime)
+        if (_isFirstTime)
             MoveFiles(_command, listener, cancellationToken);
 
         _isFirstTime = false;
@@ -63,5 +66,6 @@ public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>,  IPip
     /// <param name="command"></param>
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
-    protected abstract void MoveFiles(ExtractGlobalsCommand command, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+    protected abstract void MoveFiles(ExtractGlobalsCommand command, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken);
 }

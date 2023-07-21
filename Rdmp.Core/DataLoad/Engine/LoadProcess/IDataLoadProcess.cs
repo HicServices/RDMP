@@ -12,7 +12,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadProcess;
 /// <summary>
 /// See DataLoadProcess
 /// </summary>
-public interface IDataLoadProcess 
+public interface IDataLoadProcess
 {
     ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null);
     IDataLoadExecution LoadExecution { get; }

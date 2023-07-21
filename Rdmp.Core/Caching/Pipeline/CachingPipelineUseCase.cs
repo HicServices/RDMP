@@ -27,7 +27,7 @@ namespace Rdmp.Core.Caching.Pipeline;
 /// not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in the first place (set throwIfNoPipeline
 /// to false under such circumstances).
 /// </summary>
-public sealed class CachingPipelineUseCase:PipelineUseCase
+public sealed class CachingPipelineUseCase : PipelineUseCase
 {
     private readonly ICacheProgress _cacheProgress;
     private readonly ICacheFetchRequestProvider _providerIfAny;
@@ -41,7 +41,8 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
     /// <param name="ignorePermissionWindow">Set to true to ignore the CacheProgress.PermissionWindow (if any)</param>
     /// <param name="providerIfAny">The strategy for figuring out what dates to load the cache with e.g. failed cache fetches or new jobs from head of que?</param>
     /// <param name="throwIfNoPipeline"></param>
-    public CachingPipelineUseCase(ICacheProgress cacheProgress,bool ignorePermissionWindow=false,ICacheFetchRequestProvider providerIfAny = null,bool throwIfNoPipeline = true)
+    public CachingPipelineUseCase(ICacheProgress cacheProgress, bool ignorePermissionWindow = false,
+        ICacheFetchRequestProvider providerIfAny = null, bool throwIfNoPipeline = true)
     {
         _cacheProgress = cacheProgress;
         _providerIfAny = providerIfAny;
@@ -51,11 +52,11 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
             _permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
         else
             _permissionWindow = cacheProgress.PermissionWindow;
-            
+
         _providerIfAny ??= new CacheFetchRequestProvider(_cacheProgress)
-            {
-                PermissionWindow = _permissionWindow
-            };
+        {
+            PermissionWindow = _permissionWindow
+        };
 
         _pipeline = _cacheProgress.Pipeline;
 
@@ -74,7 +75,9 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
                     $"LoadMetadata '{lmd}' does not have a Load Directory specified, cannot create ProcessingPipelineUseCase without one");
         }
         else
+        {
             AddInitializationObject(new LoadDirectory(lmd.LocationOfFlatFiles));
+        }
 
         AddInitializationObject(_providerIfAny);
         AddInitializationObject(_permissionWindow);
@@ -89,34 +92,32 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
         var context = contextFactory.Create(PipelineUsage.None);
 
         //adjust context: we want a destination requirement of ICacheFileSystemDestination so that we can load from the cache using the pipeline endpoint as the source of the data load
-        context.MustHaveDestination = typeof(ICacheFileSystemDestination);//we want this freaky destination type
+        context.MustHaveDestination = typeof(ICacheFileSystemDestination); //we want this freaky destination type
         context.MustHaveSource = typeof(ICacheSource);
 
         return context;
     }
 
 
-    public ICacheFileSystemDestination CreateDestinationOnly( IDataLoadEventListener listener)
+    public ICacheFileSystemDestination CreateDestinationOnly(IDataLoadEventListener listener)
     {
         // get the current destination
-        var destination = GetEngine(_pipeline, listener).DestinationObject ?? throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
+        var destination = GetEngine(_pipeline, listener).DestinationObject ??
+                          throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
         if (destination is not ICacheFileSystemDestination systemDestination)
             throw new NotSupportedException(
                 $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}");
-            
+
         return systemDestination;
     }
 
-    public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener)
-    {
-        return GetEngine(_pipeline, listener);
-    }
+    public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener) => GetEngine(_pipeline, listener);
 
 
     /// <summary>
     /// Design time types
     /// </summary>
-    private CachingPipelineUseCase():base(new Type[]
+    private CachingPipelineUseCase() : base(new Type[]
     {
         typeof(ICacheFetchRequestProvider),
         typeof(IPermissionWindow),
@@ -127,8 +128,5 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
         GenerateContext();
     }
 
-    public static CachingPipelineUseCase DesignTime()
-    {
-        return new CachingPipelineUseCase();
-    }
+    public static CachingPipelineUseCase DesignTime() => new();
 }

@@ -39,13 +39,13 @@ public class PathLinkLabel : Label
             ExceptionViewer.Show(exception);
         }
     }
-        
+
     protected override void OnPaint(PaintEventArgs e)
     {
         //paint background
         using var b = new SolidBrush(BackColor);
         e.Graphics.FillRectangle(b, Bounds);
-            
+
         //paint text
         using var f = new Font(Font, FontStyle.Underline);
         TextRenderer.DrawText(e.Graphics, Text, f, ClientRectangle, Color.Blue, TextFormatFlags.PathEllipsis);

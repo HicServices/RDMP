@@ -25,26 +25,23 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     public string Folder { get; set; } = FolderHelper.Root;
 
     public ExecuteCommandCreateNewLoadMetadata(IBasicActivateItems activator,
-        [DemandsInitialization("Which Catalogue does this load.  Catalogues must not be associated with an existing load")]
+        [DemandsInitialization(
+            "Which Catalogue does this load.  Catalogues must not be associated with an existing load")]
         Catalogue catalogue = null) : base(activator)
     {
-        _availableCatalogues = activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
+        _availableCatalogues =
+            activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
 
         if (!_availableCatalogues.Any())
             SetImpossible("There are no Catalogues that are not associated with another Load already");
 
-        if(catalogue != null)
-        {
-            SetTarget(catalogue);
-        }
+        if (catalogue != null) SetTarget(catalogue);
 
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Create a new data load configuration for loading data into a given set of datasets through RAW=>STAGING=>LIVE migration / adjustment";
-    }
+    public override string GetCommandHelp() =>
+        "Create a new data load configuration for loading data into a given set of datasets through RAW=>STAGING=>LIVE migration / adjustment";
 
     public override void Execute()
     {
@@ -72,7 +69,6 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
             Publish(lmd);
 
             Activate(lmd);
-
         }
         finally
         {
@@ -81,15 +77,10 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     }
 
 
-    public override string GetCommandName()
-    {
-        return "Create New Data Load Configuration...";
-    }
+    public override string GetCommandName() => "Create New Data Load Configuration...";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

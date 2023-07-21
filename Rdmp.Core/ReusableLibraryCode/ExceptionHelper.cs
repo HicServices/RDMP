@@ -17,7 +17,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 public static class ExceptionHelper
 {
     [Pure]
-    public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace=false)
+    public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace = false)
     {
         var message = e.Message;
         if (includeStackTrace)
@@ -40,10 +40,8 @@ public static class ExceptionHelper
     /// <param name="e"></param>
     /// <returns></returns>
     [Pure]
-    public static T GetExceptionIfExists<T>(this AggregateException e) where T:Exception
-    {
-        return e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
-    }
+    public static T GetExceptionIfExists<T>(this AggregateException e) where T : Exception =>
+        e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
 
     /// <summary>
     /// Returns the first InnerException of type T in the Exception or null.

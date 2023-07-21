@@ -19,6 +19,7 @@ namespace Rdmp.Core.Curation.Data;
 public class Commit : DatabaseEntity
 {
     #region Database Properties
+
     private string _username;
     private DateTime _date;
     private string _transaction;
@@ -35,11 +36,13 @@ public class Commit : DatabaseEntity
         get => _date;
         set => SetField(ref _date, value);
     }
+
     public string Transaction
     {
         get => _transaction;
         set => SetField(ref _transaction, value);
     }
+
     public string Description
     {
         get => _description;
@@ -50,16 +53,14 @@ public class Commit : DatabaseEntity
 
     #region Relationships
 
-
-    [NoMappingToDatabase]
-    public Memento[] Mementos => Repository.GetAllObjectsWithParent<Memento>(this);
+    [NoMappingToDatabase] public Memento[] Mementos => Repository.GetAllObjectsWithParent<Memento>(this);
 
     #endregion
 
     public Commit()
     {
-
     }
+
     public Commit(ICatalogueRepository repo, DbDataReader r) : base(repo, r)
     {
         Transaction = r["Transaction"].ToString();
@@ -67,19 +68,17 @@ public class Commit : DatabaseEntity
         Date = Convert.ToDateTime(r["Date"]);
         Description = r["Description"].ToString();
     }
+
     public Commit(ICatalogueRepository repository, Guid transaction, string description)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Transaction",transaction.ToString("N")},
-            {"Username", Environment.UserName},
-            {"Date", DateTime.Now},
-            {"Description",description}
+            { "Transaction", transaction.ToString("N") },
+            { "Username", Environment.UserName },
+            { "Date", DateTime.Now },
+            { "Description", description }
         });
     }
 
-    public override string ToString()
-    {
-        return Transaction;
-    }
+    public override string ToString() => Transaction;
 }

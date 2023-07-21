@@ -70,8 +70,8 @@ public class DatabaseTests
     /// </summary>
     public CatalogueRepository CatalogueTableRepository
     {
-        get {
-
+        get
+        {
             if (RepositoryLocator.CatalogueRepository is CatalogueRepository tableRepository)
                 return tableRepository;
 
@@ -79,6 +79,7 @@ public class DatabaseTests
             return null;
         }
     }
+
     public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
 
     /// <summary>
@@ -89,7 +90,6 @@ public class DatabaseTests
     {
         get
         {
-
             if (RepositoryLocator.DataExportRepository is DataExportRepository tableRepository)
                 return tableRepository;
 
@@ -97,6 +97,7 @@ public class DatabaseTests
             return null;
         }
     }
+
     protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
     protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
 
@@ -113,14 +114,15 @@ public class DatabaseTests
     static DatabaseTests()
     {
         Rdmp.Core.Repositories.CatalogueRepository.SuppressHelpLoading = true;
-            
+
         ImplementationManager.Load<MicrosoftSQLImplementation>();
         ImplementationManager.Load<MySqlImplementation>();
         ImplementationManager.Load<OracleImplementation>();
         ImplementationManager.Load<PostgreSqlImplementation>();
 
         // Always ignore SSL when running tests
-        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
+        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate",
+            "true", ConnectionStringKeywordPriority.ApiRule);
 
         ReadSettingsFile();
     }
@@ -130,7 +132,7 @@ public class DatabaseTests
         const string settingsFile = "TestDatabases.txt";
 
         //see if there is a local text file first
-        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, settingsFile));
 
         if (!f.Exists)
             throw new FileNotFoundException($"Could not find file '{f.FullName}'");
@@ -144,7 +146,6 @@ public class DatabaseTests
 
     public DatabaseTests()
     {
-
         var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
@@ -154,56 +155,53 @@ public class DatabaseTests
             ValidateCertificate = false
         };
 
-        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ?
-            new RepositoryProvider(global::Tests.Common.DatabaseTests.GetFreshYamlRepository()) :
-            new PlatformDatabaseCreationRepositoryFinder(opts);
-                    
-        if(CatalogueRepository is TableRepository cataRepo)
+        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo
+            ? new RepositoryProvider(GetFreshYamlRepository())
+            : new PlatformDatabaseCreationRepositoryFinder(opts);
+
+        if (CatalogueRepository is TableRepository cataRepo)
         {
             Console.WriteLine(
                 $"Expecting Unit Test Catalogue To Be At Server={cataRepo.DiscoveredServer.Name} Database={cataRepo.DiscoveredServer.GetCurrentDatabase()}");
 
-            if(!cataRepo.DiscoveredServer.Exists())
-            {
-                DealWithMissingTestDatabases(opts,cataRepo);
-            }
-
+            if (!cataRepo.DiscoveredServer.Exists()) DealWithMissingTestDatabases(opts, cataRepo);
         }
-                
+
 
         Console.WriteLine("Found Catalogue");
 
-            
 
-        if(DataExportRepository is TableRepository tblRepo)
+        if (DataExportRepository is TableRepository tblRepo)
         {
             Console.WriteLine(
                 $"Expecting Unit Test Data Export To Be At Server={tblRepo.DiscoveredServer.Name} Database= {tblRepo.DiscoveredServer.GetCurrentDatabase()}");
-            Assert.IsTrue(tblRepo.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
+                "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
         }
-                
+
 
         Console.WriteLine("Found DataExport");
-            
+
         Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
 
         RunBlitzDatabases(RepositoryLocator);
 
         var defaults = CatalogueRepository;
 
-        DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
-        UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
-        DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
+        DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix,
+            PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE, new DataQualityEnginePatcher());
+        UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix,
+            PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID,
+            new LoggingDatabasePatcher());
+        DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(
+            CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null,
+                PermissableDefaults.RAWDataLoadServer, null));
         if (DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder is SqlConnectionStringBuilder dsiccrdatocsb)
-        {
             dsiccrdatocsb.TrustServerCertificate = true;
-        }
 
-        _discoveredSqlServer = new DiscoveredServer(TestDatabaseSettings.ServerName,null,DatabaseType.MicrosoftSQLServer,TestDatabaseSettings.Username,TestDatabaseSettings.Password);
-        if (_discoveredSqlServer.Builder is SqlConnectionStringBuilder csb)
-        {
-            csb.TrustServerCertificate = true;
-        }
+        _discoveredSqlServer = new DiscoveredServer(TestDatabaseSettings.ServerName, null,
+            DatabaseType.MicrosoftSQLServer, TestDatabaseSettings.Username, TestDatabaseSettings.Password);
+        if (_discoveredSqlServer.Builder is SqlConnectionStringBuilder csb) csb.TrustServerCertificate = true;
 
         if (TestDatabaseSettings.MySql != null)
         {
@@ -216,13 +214,14 @@ public class DatabaseTests
 
                 new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
             }
+
             _discoveredMySqlServer = new DiscoveredServer(builder);
         }
 
         if (TestDatabaseSettings.Oracle != null)
             _discoveredOracleServer = new DiscoveredServer(TestDatabaseSettings.Oracle, DatabaseType.Oracle);
 
-        if(TestDatabaseSettings.PostgreSql != null)
+        if (TestDatabaseSettings.PostgreSql != null)
             _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
     }
 
@@ -231,13 +230,12 @@ public class DatabaseTests
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
         if (HaveTriedCreatingTestDatabases || !mainDb.Server.Exists())
-        {
-            Assert.Inconclusive("Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
-        }
+            Assert.Inconclusive(
+                "Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
 
         // if user is trying to connect to a test database
         // and that server exists (but TEST_ databases don't)
-        if (opts.Prefix.Contains("TEST",StringComparison.InvariantCultureIgnoreCase))
+        if (opts.Prefix.Contains("TEST", StringComparison.InvariantCultureIgnoreCase))
         {
             // then create them
             TestContext.Out.WriteLine($"Creating TEST databases on {mainDb.Server} using prefix {opts.Prefix}");
@@ -251,7 +249,7 @@ public class DatabaseTests
     private static IDataExportRepository GetFreshYamlRepository()
     {
         var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
-            
+
         // clear out any test remnants
         if (dir.Exists)
             dir.Delete(true);
@@ -259,7 +257,8 @@ public class DatabaseTests
         return new YamlRepository(dir);
     }
 
-    private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
+    private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix,
+        string databaseName, PermissableDefaults defaultToSet, IPatcher patcher)
     {
         var opts = new PlatformDatabaseCreationOptions
         {
@@ -276,7 +275,7 @@ public class DatabaseTests
             builder.InitialCatalog = "";
 
         //create a new pointer
-        var externalServerPointer = new ExternalDatabaseServer(CatalogueRepository, databaseName??"RAW",patcher)
+        var externalServerPointer = new ExternalDatabaseServer(CatalogueRepository, databaseName ?? "RAW", patcher)
         {
             Server = builder.DataSource,
             Database = builder.InitialCatalog,
@@ -288,7 +287,7 @@ public class DatabaseTests
 
         //now make it the default DQE
         defaults.SetDefault(defaultToSet, externalServerPointer);
-            
+
         return builder;
     }
 
@@ -298,22 +297,21 @@ public class DatabaseTests
     /// <param name="repositoryLocator"></param>
     protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        if(CatalogueRepository is YamlRepository y)
-        {
-            foreach(var o in y.AllObjects)
-            {
+        if (CatalogueRepository is YamlRepository y)
+            foreach (var o in y.AllObjects)
                 o.DeleteInDatabase();
-            }
-        }
 
         if (CatalogueRepository is not TableRepository cataTblRepo)
             return;
 
         using var con = cataTblRepo.GetConnection();
-        var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-        var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+        var catalogueDatabaseName = ((TableRepository)repositoryLocator.CatalogueRepository).DiscoveredServer
+            .GetCurrentDatabase().GetRuntimeName();
+        var dataExportDatabaseName = ((TableRepository)repositoryLocator.DataExportRepository).DiscoveredServer
+            .GetCurrentDatabase().GetRuntimeName();
 
-        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection,con.Transaction);
+        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),
+            con.Connection, con.Transaction);
     }
 
     /// <summary>
@@ -322,19 +320,20 @@ public class DatabaseTests
     /// </summary>
     protected void BlitzMainDataTables()
     {
-        if (CatalogueRepository is YamlRepository y)
-        {
-            BlitzMainDataTables(y);
-        }
+        if (CatalogueRepository is YamlRepository y) BlitzMainDataTables(y);
 
         if (CatalogueRepository is not TableRepository cataTblRepo)
             return;
 
         using var con = cataTblRepo.GetConnection();
-        var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-        var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+        var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer
+            .GetCurrentDatabase().GetRuntimeName();
+        var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer
+            .GetCurrentDatabase().GetRuntimeName();
 
-        UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection, con.Transaction);
+        UsefulStuff.ExecuteBatchNonQuery(
+            string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection,
+            con.Transaction);
     }
 
     private void BlitzMainDataTables(YamlRepository y)
@@ -368,11 +367,10 @@ public class DatabaseTests
         DeleteAll<TableInfo>(y);
         DeleteAll<DataAccessCredentials>(y);
 
-        foreach(var c in CatalogueRepository.GetAllObjects<Catalogue>())
+        foreach (var c in CatalogueRepository.GetAllObjects<Catalogue>())
         {
             c.PivotCategory_ExtractionInformation_ID = null;
             c.TimeCoverage_ExtractionInformation_ID = null;
-
         }
 
         DeleteAll<ExtractionFilterParameterSetValue>(y);
@@ -426,10 +424,7 @@ public class DatabaseTests
 
     private static void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
     {
-        foreach (var o in y.GetAllObjects<T>())
-        {
-            o.DeleteInDatabase();
-        }
+        foreach (var o in y.GetAllObjects<T>()) o.DeleteInDatabase();
     }
 
     protected void RunBlitzDatabases()
@@ -443,7 +438,7 @@ public class DatabaseTests
         //if it is the first time
         if (_startup == null)
         {
-            _startup = new Startup(new EnvironmentInfo(),RepositoryLocator);
+            _startup = new Startup(new EnvironmentInfo(), RepositoryLocator);
 
             _startup.DatabaseFound += StartupOnDatabaseFound;
             _startup.MEFFileDownloaded += StartupOnMEFFileDownloaded;
@@ -460,7 +455,6 @@ public class DatabaseTests
     [SetUp]
     protected virtual void SetUp()
     {
-
     }
 
     [TearDown]
@@ -478,10 +472,11 @@ public class DatabaseTests
             }
     }
 
-        private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
-        {
-            if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
-                Assert.Fail(args.SummariseAsString());
+    private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
+    {
+        if (args.Exception != null && args.Status != RDMPPlatformDatabaseStatus.Healthy &&
+            args.Status != RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+            Assert.Fail(args.SummariseAsString());
 
         switch (args.Status)
         {
@@ -489,7 +484,8 @@ public class DatabaseTests
             case RDMPPlatformDatabaseStatus.Healthy:
                 return;
             case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
-                Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
+                Assert.Fail(
+                    @"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
                 break;
             //it's a tier appropriate fatal error message
             case RDMPPlatformDatabaseStatus.Broken:
@@ -503,12 +499,18 @@ public class DatabaseTests
 
     private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
     {
-        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
+        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}",
+            args.Status, args.Type.Name, Environment.NewLine,
+            args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
 
     private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
     {
-        Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
+        Assert.IsTrue(
+            args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock,
+            "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed,
+            Environment.NewLine,
+            args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
 
 
@@ -597,7 +599,6 @@ delete from {1}..ExtractableDataSetPackage
 delete from {1}..ExtractableDataSet
 delete from {1}..Project
 ";
-
 
 
     public const string BlitzDatabasesLite = @"
@@ -690,11 +691,9 @@ delete from {1}..Project
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
-    protected static string CollapseWhitespace(string sql)
-    {
+    protected static string CollapseWhitespace(string sql) =>
         //replace all whitespace with single spaces
-        return Regex.Replace(sql, @"\s+", " ").Trim();
-    }
+        Regex.Replace(sql, @"\s+", " ").Trim();
 
     private HashSet<DiscoveredDatabase> forCleanup = new();
 
@@ -711,7 +710,7 @@ delete from {1}..Project
 
         //if user specified the standard name or no name
         var isStandardDb = dbnName == null || dbnName == standardName;
-            
+
         //use the standard name if they haven't specified one
         dbnName ??= standardName;
 
@@ -759,7 +758,8 @@ delete from {1}..Project
         return database;
     }
 
-    private static DiscoveredServer MsScratch,MyScratch,PostScratch,OracleScratch;
+    private static DiscoveredServer MsScratch, MyScratch, PostScratch, OracleScratch;
+
     protected (IManagedConnection trans, DiscoveredDatabase) GetScratchDatabase(DatabaseType type)
     {
         var server = type switch
@@ -771,7 +771,7 @@ delete from {1}..Project
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
         var trans = server.BeginNewTransactedConnection();
-        return (trans,server.GetCurrentDatabase());
+        return (trans, server.GetCurrentDatabase());
     }
 
     protected static void DeleteTables(DiscoveredDatabase database)
@@ -783,7 +783,6 @@ delete from {1}..Project
             {
                 con.Open();
                 foreach (var t in database.DiscoverTables(false))
-                {
                     //disable system versioning on any temporal tables otherwise drop fails
                     try
                     {
@@ -796,7 +795,6 @@ delete from {1}..Project
                         TestContext.Out.WriteLine(
                             $"Failed to generate disable System Versioning check for table {t} (nevermind)");
                     }
-                }
             }
 
         var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
@@ -804,48 +802,42 @@ delete from {1}..Project
         foreach (var t in tables.Order.Reverse())
             try
             {
-
                 t.Drop();
             }
             catch (Exception ex)
             {
-                throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
+                throw new Exception($"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup", ex);
             }
-            
+
         foreach (var t in database.DiscoverTableValuedFunctions())
             try
             {
-
                 t.Drop();
             }
             catch (Exception ex)
             {
-                throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
+                throw new Exception($"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup", ex);
             }
-
     }
 
-    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,
+        out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems,
+        out ExtractionInformation[] extractionInformations)
     {
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
-        importer.DoImport(out tableInfoCreated,out columnInfosCreated);
+        importer.DoImport(out tableInfoCreated, out columnInfosCreated);
 
         var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated);
-        forwardEngineer.ExecuteForwardEngineering(out var catalogue,out catalogueItems,out extractionInformations);
+        forwardEngineer.ExecuteForwardEngineering(out var catalogue, out catalogueItems, out extractionInformations);
 
         return catalogue;
     }
 
-    protected ICatalogue Import(DiscoveredTable tbl)
-    {
-        return Import(tbl, out _, out _, out _,out _);
-    }
+    protected ICatalogue Import(DiscoveredTable tbl) => Import(tbl, out _, out _, out _, out _);
 
-    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
-    {
-
-        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations);
-    }
+    protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,
+        out ColumnInfo[] columnInfosCreated) => Import(tbl, out tableInfoCreated, out columnInfosCreated,
+        out var catalogueItems, out var extractionInformations);
 
     protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
@@ -857,10 +849,8 @@ delete from {1}..Project
         {
             var matchAll = true;
             for (var i = 0; i < rowObjects.Length; i++)
-            {
                 if (!AreBasicallyEquals(rowObjects[i], r[i]))
                     matchAll = false;
-            }
 
             //found a row that matches on all params
             if (matchAll)
@@ -886,8 +876,9 @@ delete from {1}..Project
 
         //they are not null so tostring them deals with int vs long etc that DbDataAdapters can be a bit flaky on
         if (handleSlashRSlashN)
-            return string.Equals(o.ToString().Replace("\r","").Replace("\n",""), o2.ToString().Replace("\r","").Replace("\n",""));
-            
+            return string.Equals(o.ToString().Replace("\r", "").Replace("\n", ""),
+                o2.ToString().Replace("\r", "").Replace("\n", ""));
+
         return string.Equals(o.ToString(), o2.ToString());
     }
 
@@ -899,20 +890,22 @@ delete from {1}..Project
         Writer = 2,
         CreateAndDropTables = 4,
 
-        All = Reader|Writer|CreateAndDropTables
+        All = Reader | Writer | CreateAndDropTables
     }
 
-    protected void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db,TestLowPrivilegePermissions permissions)
+    protected void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions)
     {
         SetupLowPrivilegeUserRightsFor(db, permissions, null);
     }
+
     protected void SetupLowPrivilegeUserRightsFor(ITableInfo ti, TestLowPrivilegePermissions permissions)
     {
         var db = DataAccessPortal.ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
         SetupLowPrivilegeUserRightsFor(db, permissions, ti);
     }
 
-    private void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions, ITableInfo ti)
+    private void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions,
+        ITableInfo ti)
     {
         var dbType = db.Server.DatabaseType;
 
@@ -927,7 +920,9 @@ delete from {1}..Project
         var sql = GrantAccessSql(username, dbType, permissions);
 
         using (var con = db.Server.GetConnection())
+        {
             UsefulStuff.ExecuteBatchNonQuery(sql, con);
+        }
 
         if (ti != null)
         {
@@ -939,7 +934,6 @@ delete from {1}..Project
             var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
             credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
         }
-            
     }
 
 
@@ -989,16 +983,11 @@ GO
         foreach (var d in dir.GetDirectories())
             d.Delete(true);
     }
-
 }
-
 
 public static class TestDatabaseNames
 {
     public static string Prefix;
 
-    public static string GetConsistentName(string databaseName)
-    {
-        return Prefix + databaseName;
-    }
+    public static string GetConsistentName(string databaseName) => Prefix + databaseName;
 }

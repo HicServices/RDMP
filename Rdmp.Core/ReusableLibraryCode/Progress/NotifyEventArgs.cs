@@ -37,14 +37,15 @@ public class NotifyEventArgs
         }
     }
 
-    public NotifyEventArgs(ProgressEventType progressEventType, string message,  Exception exception)
+    public NotifyEventArgs(ProgressEventType progressEventType, string message, Exception exception)
     {
         ProgressEventType = progressEventType;
         Message = message;
         Exception = exception;
         Handled = false;
 
-        try{
+        try
+        {
             StackTrace = Environment.StackTrace;
         }
         catch (Exception)
@@ -74,6 +75,7 @@ public class NotifyEventArgs
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
         return new CheckEventArgs(Message, result, Exception);
     }
 }

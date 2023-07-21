@@ -11,7 +11,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// <summary>
 /// Interface for database object classes with a deprecated status flag
 /// </summary>
-public interface IMightBeDeprecated:IRevertable
+public interface IMightBeDeprecated : IRevertable
 {
     /// <summary>
     /// Bit flag indicating whether the object should be considered Deprecated (i.e. do not use anymore).  This is preferred to deleting it.  The implications

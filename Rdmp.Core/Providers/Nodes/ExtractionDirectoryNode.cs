@@ -16,7 +16,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
 /// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
 /// </summary>
-public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
+public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
     public Project Project { get; private set; }
 
@@ -33,23 +33,17 @@ public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
         return Project.ExtractionDirectory;
     }
 
-    protected bool Equals(ExtractionDirectoryNode other)
-    {
-        return Equals(Project, other.Project);
-    }
+    protected bool Equals(ExtractionDirectoryNode other) => Equals(Project, other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionDirectoryNode) obj);
+        return Equals((ExtractionDirectoryNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return Project != null ? Project.GetHashCode() : 0;
-    }
+    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
 
     public DirectoryInfo GetDirectoryInfoIfAny()
     {
@@ -59,6 +53,9 @@ public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
         return new DirectoryInfo(Project.ExtractionDirectory);
     }
 
-    public int Order{ get => 4;
-        set { }}
+    public int Order
+    {
+        get => 4;
+        set { }
+    }
 }

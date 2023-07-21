@@ -20,7 +20,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 /// into the persistence text file when the application is exited (via PersistableObjectCollectionDockContent)</para>
 /// 
 /// </summary>
-public interface IObjectCollectionControl:IRDMPControl,ILifetimeSubscriber,INamedTab
+public interface IObjectCollectionControl : IRDMPControl, ILifetimeSubscriber, INamedTab
 {
     /// <summary>
     /// Provides a fully hydrated collection either created by a user action or by deserializing a persistence string in PersistableObjectCollectionDockContent.  Either way the

@@ -14,12 +14,11 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// </summary>
 public class ExecuteSqlFileRuntimeTaskException : Exception
 {
-    public ExecuteSqlFileRuntimeTaskException(string message):base(message)
+    public ExecuteSqlFileRuntimeTaskException(string message) : base(message)
     {
-            
     }
-    public ExecuteSqlFileRuntimeTaskException(string message, Exception innerException): base(message, innerException)
+
+    public ExecuteSqlFileRuntimeTaskException(string message, Exception innerException) : base(message, innerException)
     {
-            
     }
 }

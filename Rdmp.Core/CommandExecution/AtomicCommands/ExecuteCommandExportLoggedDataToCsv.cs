@@ -20,35 +20,31 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 {
     private LogViewerFilter _filter;
     private ExternalDatabaseServer[] _loggingServers;
-        
+
     [UseWithObjectConstructor]
-    public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator,LoggingTables table, int idIfAny)
-        : this(activator,new LogViewerFilter(table,idIfAny <= 0 ? (int?) null:idIfAny))
+    public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LoggingTables table, int idIfAny)
+        : this(activator, new LogViewerFilter(table, idIfAny <= 0 ? (int?)null : idIfAny))
     {
-            
     }
 
     public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+        _loggingServers =
+            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
-        if(!_loggingServers.Any())
+        if (!_loggingServers.Any())
             SetImpossible("There are no logging servers");
     }
 
-    public override string GetCommandName()
-    {
-        return "Export to CSV";
-    }
+    public override string GetCommandName() => "Export to CSV";
 
     public override void Execute()
     {
-        var db = SelectOne(_loggingServers,null,true);
+        var db = SelectOne(_loggingServers, null, true);
         var server = db.Discover(DataAccessContext.Logging).Server;
-            
+
         if (db != null)
-        {
             using (var con = server.GetConnection())
             {
                 con.Open();
@@ -78,9 +74,8 @@ order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter
 
                 var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
                     CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
-                    
+
                 extract.DoExtraction();
             }
-        }
     }
 }

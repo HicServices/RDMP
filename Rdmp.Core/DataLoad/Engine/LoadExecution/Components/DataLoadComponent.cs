@@ -14,7 +14,7 @@ public abstract class DataLoadComponent : IDataLoadComponent
 {
     public bool SkipComponent { get; set; }
     public string Description { get; set; }
-        
+
     public abstract ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken);
 
     protected DataLoadComponent()

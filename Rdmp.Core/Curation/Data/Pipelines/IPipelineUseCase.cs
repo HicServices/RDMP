@@ -34,7 +34,7 @@ public interface IPipelineUseCase : IHasDesignTimeMode
     /// <param name="pipelines"></param>
     /// <returns></returns>
     IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines);
-        
+
     /// <summary>
     /// Returns true if the <paramref name="pipeline"/> is compatible with the use case
     /// </summary>

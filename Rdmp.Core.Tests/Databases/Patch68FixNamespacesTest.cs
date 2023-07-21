@@ -14,9 +14,8 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;
 
-internal class Patch68FixNamespacesTest:UnitTests
+internal class Patch68FixNamespacesTest : UnitTests
 {
-
     /// <summary>
     /// Tests the systems ability to migrate old class paths in deployed databases to the new namespaces as they exist in
     /// the refactored (modern) RDMP sln layout (before there were buckets of projects!)
@@ -26,7 +25,7 @@ internal class Patch68FixNamespacesTest:UnitTests
     {
         var p = new CataloguePatcher();
 
-        var patch = p.GetAllPatchesInAssembly(null).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
+        var patch = p.GetAllPatchesInAssembly(null).Single(kvp => kvp.Key == "068_FixNamespaces.sql").Value;
 
         var findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
 
@@ -34,12 +33,12 @@ internal class Patch68FixNamespacesTest:UnitTests
 
         foreach (Match match in findSubsRegex.Matches(patch.EntireScript))
         {
-            if(substitutions.ContainsKey(match.Groups[1].Value))
+            if (substitutions.ContainsKey(match.Groups[1].Value))
                 continue;
 
-            substitutions.Add(match.Groups[1].Value,match.Groups[2].Value);
+            substitutions.Add(match.Groups[1].Value, match.Groups[2].Value);
         }
-            
+
         SetupMEF();
 
         MEF.SafeDirectoryCatalog.AddType(typeof(FAnsi.DatabaseType));
@@ -53,14 +52,15 @@ internal class Patch68FixNamespacesTest:UnitTests
 
             var foundNow = MEF.GetType(newClass);
 
-            Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '" + oldClass +"' which after renaming became '" + newClass +"'");
-
+            Assert.IsNotNull(foundNow,
+                "Patch did not work correctly for Type '" + oldClass + "' which after renaming became '" + newClass +
+                "'");
         }
-                
-
     }
+
     private string[] ExpectedClasses
-        = {
+        =
+        {
             "CachingEngine.PipelineExecution.Destinations.CacheFileGranularity",
             "CatalogueLibrary.Data.ColumnInfo",
             "CatalogueLibrary.Data.DataAccessCredentials",
@@ -121,5 +121,4 @@ internal class Patch68FixNamespacesTest:UnitTests
             "LoadModules.Generic.Mutilators.TableVarcharMaxer",
             "LoadModules.Generic.Web.WebFileDownloader"
         };
-
 }

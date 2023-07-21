@@ -20,7 +20,7 @@ public interface INameDatabasesAndTablesDuringLoads
     /// <param name="convention">The stage for which you want to know the corresponding database name</param>
     /// <returns></returns>
     string GetDatabaseName(string rootDatabaseName, LoadBubble convention);
-        
+
     /// <summary>
     /// Determines what name to give to passed LIVE table in the given DLE load bubble (e.g. RAW / STAGING)
     /// </summary>

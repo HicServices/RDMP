@@ -39,7 +39,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private int? _seed;
 
-    public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
+    public GenerateTestDataUI(IActivateItems activator, ICommandExecution command) : base(activator)
     {
         InitializeComponent();
 
@@ -47,7 +47,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
         var yLoc = 0;
 
-        foreach(var t in dataGeneratorFactory.GetAvailableGenerators())
+        foreach (var t in dataGeneratorFactory.GetAvailableGenerators())
         {
             var ui = new DataGeneratorUI
             {
@@ -57,29 +57,29 @@ public partial class GenerateTestDataUI : RDMPForm
             yLoc += ui.Height;
             pDatasets.Controls.Add(ui);
         }
-            
+
         lblDirectory.Visible = false;
 
         EnableOrDisableGoButton();
 
-        if(command != null)
+        if (command != null)
             BuildHelpWorkflow(command);
 
-        helpIcon1.SetHelpText("Tutorial","Click for tutorial",HelpWorkflow);
+        helpIcon1.SetHelpText("Tutorial", "Click for tutorial", HelpWorkflow);
     }
 
     private void BuildHelpWorkflow(ICommandExecution command)
     {
-
         HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(Activator));
 
         var ds =
             new HelpStage(pDatasets,
                 "This control will allow you to create flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in each dataset e.g. 1,000,000");
         var pop =
-            new HelpStage(pPopulationSize, "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
+            new HelpStage(pPopulationSize,
+                "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
 
-        var location = new HelpStage(pOutputDirectory,@"Click browse to select a directory to create the 3 files in");
+        var location = new HelpStage(pOutputDirectory, @"Click browse to select a directory to create the 3 files in");
 
         var execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
 
@@ -100,7 +100,6 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void groupBox1_Enter(object sender, EventArgs e)
     {
-
     }
 
     private int populationSize;
@@ -110,14 +109,13 @@ public partial class GenerateTestDataUI : RDMPForm
         try
         {
             populationSize = int.Parse(tbPopulationSize.Text);
-            if(populationSize < 1)
+            if (populationSize < 1)
                 throw new IndexOutOfRangeException();
 
             tbPopulationSize.ForeColor = Color.Black;
 
             ragSmileyPopulation.Visible = true;
             ragSmileyPopulation.Reset();
-
         }
         catch (Exception ex)
         {
@@ -125,6 +123,7 @@ public partial class GenerateTestDataUI : RDMPForm
             ragSmileyPopulation.Visible = true;
             ragSmileyPopulation.Fatal(ex);
         }
+
         EnableOrDisableGoButton();
     }
 
@@ -132,12 +131,10 @@ public partial class GenerateTestDataUI : RDMPForm
     {
         if (tbPopulationSize.ForeColor == Color.Red)
             btnGenerate.Enabled = false;
-        else
-        if (string.IsNullOrWhiteSpace(tbPopulationSize.Text) || !lblDirectory.Visible)
+        else if (string.IsNullOrWhiteSpace(tbPopulationSize.Text) || !lblDirectory.Visible)
             btnGenerate.Enabled = false;
         else
             btnGenerate.Enabled = true;
-
     }
 
     private bool started = false;
@@ -147,15 +144,14 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
+        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui => ui.Generate).ToArray();
 
-        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
-            
-        if(!uis.Any())
+        if (!uis.Any())
         {
             MessageBox.Show("At least one dataset must be selected");
             return;
         }
-            
+
         try
         {
             if (started)
@@ -167,30 +163,34 @@ public partial class GenerateTestDataUI : RDMPForm
             started = true;
 
 
-            var r = _seed.HasValue ? new Random(_seed.Value):new Random();
+            var r = _seed.HasValue ? new Random(_seed.Value) : new Random();
 
 
             var identifiers = new PersonCollection();
-            identifiers.GeneratePeople(populationSize,r);
+            identifiers.GeneratePeople(populationSize, r);
 
-            if(cbLookups.Checked)
+            if (cbLookups.Checked)
                 DataGenerator.WriteLookups(_extractDirectory);
 
             //run them at the same time
-            if(!_seed.HasValue)
+            if (!_seed.HasValue)
             {
                 foreach (var ui in uis)
                 {
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
                     var ui1 = ui;
-                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};
+                    ui.Completed += () =>
+                    {
+                        Executing.Remove(ui1);
+                        AnnounceIfComplete();
+                    };
                 }
             }
             else
             {
                 var queue = new Queue<DataGeneratorUI>(uis);
-                Execute(identifiers,queue,queue.Dequeue(),r);
+                Execute(identifiers, queue, queue.Dequeue(), r);
             }
         }
         catch (Exception exception)
@@ -201,7 +201,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void Execute(PersonCollection identifiers, Queue<DataGeneratorUI> queue, DataGeneratorUI current, Random r)
     {
-        if(current == null)
+        if (current == null)
             return;
 
         //tell form it is running
@@ -210,7 +210,7 @@ public partial class GenerateTestDataUI : RDMPForm
         var dataGeneratorFactory = new DataGeneratorFactory();
 
         //reset the current generator to use the seed provided
-        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(),r);
+        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(), r);
 
 
         current.BeginGeneration(identifiers, _extractDirectory);
@@ -218,8 +218,8 @@ public partial class GenerateTestDataUI : RDMPForm
         //when it is complete
         current.Completed += () =>
         {
-            if(queue.Count != 0)
-                Execute(identifiers,queue,queue.Dequeue(),r);
+            if (queue.Count != 0)
+                Execute(identifiers, queue, queue.Dequeue(), r);
 
             Executing.Remove(current);
             AnnounceIfComplete();
@@ -228,7 +228,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void AnnounceIfComplete()
     {
-        if(!Executing.Any())
+        if (!Executing.Any())
         {
             MessageBox.Show("Finished generating test data");
             Close();
@@ -238,7 +238,7 @@ public partial class GenerateTestDataUI : RDMPForm
     private void UserExercisesUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //if it hasn't started let them close
-        if(!started)
+        if (!started)
             return;
 
         //warn them and cancel if any of them are still generating data
@@ -278,13 +278,12 @@ public partial class GenerateTestDataUI : RDMPForm
         try
         {
             _seed = int.Parse(tbSeed.Text);
-            tbSeed.ForeColor= Color.Black;
-
-        }catch(Exception )
+            tbSeed.ForeColor = Color.Black;
+        }
+        catch (Exception)
         {
             _seed = null;
-            tbSeed.ForeColor= Color.Red;
+            tbSeed.ForeColor = Color.Red;
         }
-
     }
 }

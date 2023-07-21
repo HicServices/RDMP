@@ -32,29 +32,30 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryPreview { get; set; }
 
-    public ConfigureHashingAlgorithmUI(IActivateItems activator):base(activator)
+    public ConfigureHashingAlgorithmUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
-            
-        if(VisualStudioDesignMode)
+
+        if (VisualStudioDesignMode)
             return;
 
         QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
         QueryPreview.ReadOnly = true;
 
         panel2.Controls.Add(QueryPreview);
-
     }
 
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
 
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
 
         //get the current hashing algorithm
-        var value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
+        var value =
+            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty
+                .HashingAlgorithmPattern);
         tbHashingAlgorithm.Text = value;
     }
 
@@ -66,13 +67,12 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
         {
             QueryPreview.ReadOnly = false;
             QueryPreview.Text = pattern.Replace("{0}", "[TEST]..[ExampleColumn]").Replace("{1}", "123");
-            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
-                
+            Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(
+                DataExportProperty.HashingAlgorithmPattern, pattern);
         }
         catch (Exception exception)
         {
             QueryPreview.Text = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
-
         }
         finally
         {

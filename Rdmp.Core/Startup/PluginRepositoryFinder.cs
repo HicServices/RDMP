@@ -12,9 +12,10 @@ namespace Rdmp.Core.Startup;
 /// <summary>
 /// MEF discoverable version of IPluginRepositoryFinder
 /// </summary>
-public abstract class PluginRepositoryFinder :IPluginRepositoryFinder
+public abstract class PluginRepositoryFinder : IPluginRepositoryFinder
 {
     protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
+
     protected PluginRepositoryFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         RepositoryLocator = repositoryLocator;

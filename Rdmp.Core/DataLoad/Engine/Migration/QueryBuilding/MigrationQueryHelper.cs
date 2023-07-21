@@ -50,7 +50,7 @@ public abstract class MigrationQueryHelper
             McsQueryHelper.BuildJoinClause(joinTableName, "prod"));
     }
 
-        
+
     public abstract string BuildUpdateClauseForRow(string sourceAlias, string destAlias);
     public abstract string BuildInsertClause();
 }

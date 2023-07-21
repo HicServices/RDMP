@@ -54,14 +54,14 @@ public class ConnectionStringsYamlFile
         var deserializer = new Deserializer();
         var toReturn = deserializer.Deserialize<ConnectionStringsYamlFile>(File.ReadAllText(f.FullName));
 
-        if(toReturn == null || string.IsNullOrWhiteSpace(toReturn.CatalogueConnectionString))
-        {
-            throw new Exception($"{nameof(CatalogueConnectionString)} is missing from the RDMP connection strings file: '{f.FullName}'");
-        }
+        if (toReturn == null || string.IsNullOrWhiteSpace(toReturn.CatalogueConnectionString))
+            throw new Exception(
+                $"{nameof(CatalogueConnectionString)} is missing from the RDMP connection strings file: '{f.FullName}'");
 
         toReturn.FileLoaded = f;
         return toReturn;
     }
+
     public static bool TryLoadFrom(FileInfo f, out ConnectionStringsYamlFile result)
     {
         try

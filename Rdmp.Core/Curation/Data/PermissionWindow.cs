@@ -26,34 +26,35 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private string _name;
     private string _description;
     private bool _requiresSynchronousAccess;
-        
+
     /// <inheritdoc/>
     [NotNull]
     [Unique]
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <inheritdoc/>
     public bool RequiresSynchronousAccess
     {
         get => _requiresSynchronousAccess;
-        set => SetField(ref  _requiresSynchronousAccess, value);
+        set => SetField(ref _requiresSynchronousAccess, value);
     }
-        
+
     /// <summary>
     /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
     /// </summary>
-    public string PermissionPeriodConfig {
+    public string PermissionPeriodConfig
+    {
         get => SerializePermissionWindowPeriods();
         set
         {
@@ -79,7 +80,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
 
     private string SerializePermissionWindowPeriods()
     {
-        var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
+        var serializer = new XmlSerializer(typeof(List<PermissionWindowPeriod>));
         using var output = new StringWriter();
         serializer.Serialize(output, PermissionWindowPeriods);
         return output.ToString();
@@ -88,18 +89,19 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
     {
         if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
+        {
             PermissionWindowPeriods = new List<PermissionWindowPeriod>();
+        }
         else
         {
-            var deserializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-            PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
+            var deserializer = new XmlSerializer(typeof(List<PermissionWindowPeriod>));
+            PermissionWindowPeriods =
+                deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
         }
     }
+
     /// <inheritdoc/>
-    public bool WithinPermissionWindow()
-    {
-        return WithinPermissionWindow(DateTime.UtcNow);
-    }
+    public bool WithinPermissionWindow() => WithinPermissionWindow(DateTime.UtcNow);
 
     /// <inheritdoc/>
     public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
@@ -112,7 +114,6 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
 
     public PermissionWindow()
     {
-
     }
 
     /// <summary>
@@ -121,10 +122,10 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// <param name="repository"></param>
     public PermissionWindow(ICatalogueRepository repository)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"PermissionPeriodConfig", DBNull.Value},
-            {"Name", $"New PermissionWindow{Guid.NewGuid()}" }
+            { "PermissionPeriodConfig", DBNull.Value },
+            { "Name", $"New PermissionWindow{Guid.NewGuid()}" }
         });
     }
 
@@ -136,13 +137,10 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         RequiresSynchronousAccess = Convert.ToBoolean(r["RequiresSynchronousAccess"]);
         PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
     }
-        
+
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
-    }
-        
+    public override string ToString() => $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
+
     /// <inheritdoc/>
     public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
     {

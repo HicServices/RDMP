@@ -46,10 +46,7 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
         _outFile = outFile;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Scripts multiple tables structure to Clipboard (without dependencies)";
-    }
+    public override string GetCommandHelp() => "Scripts multiple tables structure to Clipboard (without dependencies)";
 
     public override void Execute()
     {
@@ -59,26 +56,21 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
         {
             var tbl = tableInfo.Discover(DataAccessContext.InternalDataProcessing);
 
-            var hypotheticalServer = new DiscoveredServer("localhost", _dbName ?? "None", _dbType ?? tableInfo.DatabaseType, null, null);
-            var hypotheticalTable = hypotheticalServer.ExpectDatabase(_dbName ?? tbl.Database.GetRuntimeName()).ExpectTable(tbl.GetRuntimeName());
+            var hypotheticalServer = new DiscoveredServer("localhost", _dbName ?? "None",
+                _dbType ?? tableInfo.DatabaseType, null, null);
+            var hypotheticalTable = hypotheticalServer.ExpectDatabase(_dbName ?? tbl.Database.GetRuntimeName())
+                .ExpectTable(tbl.GetRuntimeName());
 
             var result = tbl.ScriptTableCreation(false, false, false, hypotheticalTable);
             sbScript.AppendLine(result);
             sbScript.AppendLine();
         }
 
-        if(_outFile != null)
-        {
+        if (_outFile != null)
             File.WriteAllText(_outFile.FullName, sbScript.ToString());
-        }    
         else
-        {
             Show($"Script for {_tableInfos.Length} tables", sbScript.ToString());
-        }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.SQL);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.SQL);
 }

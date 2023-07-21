@@ -28,7 +28,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_PopulatesCacheCorrectly()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+            { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -44,7 +45,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         cic.CreateRootContainerIfNotExists();
 
         // create a use of the API as an AggregateConfiguration
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi),cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
+            new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
 
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
         cmd.Execute();
@@ -52,7 +54,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // run the cic
         var source = new CohortIdentificationConfigurationSource();
         source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         // 5 random chi numbers
         Assert.AreEqual(5, dt.Rows.Count);
@@ -82,12 +84,13 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         Assert.AreEqual(results[0], results2[0]);
         Assert.AreEqual(results[1], results2[1]);
-
     }
+
     [Test]
     public void TestIPluginCohortCompiler_TestCloneCic()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+            { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -103,7 +106,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         cic.CreateRootContainerIfNotExists();
 
         // create a use of the API as an AggregateConfiguration
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
+            new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
         cmd.Execute();
         cmd.AggregateCreatedIfAny.Description = "33";
@@ -121,7 +125,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_APIsCantHavePatientIndexTables()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+            { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -137,7 +142,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         cic.CreateRootContainerIfNotExists();
 
         // We need something in the root container otherwise the cic won't build
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
+            new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
         cmd.Execute();
         var regularAggregate = cmd.AggregateCreatedIfAny;
@@ -152,17 +158,19 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var joinables = cic.GetAllJoinables();
 
         // make them join one another
-        var ex = Assert.Throws<NotSupportedException>(()=>
+        var ex = Assert.Throws<NotSupportedException>(() =>
             new JoinableCohortAggregateConfigurationUse(CatalogueRepository, regularAggregate, joinables[0]));
 
-        Assert.AreEqual("API calls cannot join with PatientIndexTables (The API call must be self contained)", ex.Message);
+        Assert.AreEqual("API calls cannot join with PatientIndexTables (The API call must be self contained)",
+            ex.Message);
     }
 
 
     [Test]
     public void TestIPluginCohortCompiler_AsPatientIndexTable()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+            { DisallowInput = true };
 
         // Create a regular normal boring old table that will join into the results of the API call
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
@@ -170,7 +178,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         dt.Columns.Add("chi");
         dt.Rows.Add("0101010101");
 
-        var tbl = db.CreateTable("RegularBoringOldTable",dt);
+        var tbl = db.CreateTable("RegularBoringOldTable", dt);
         var cata = (Catalogue)Import(tbl);
         var eiChi = cata.GetAllExtractionInformation()[0];
 
@@ -191,7 +199,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         cic.CreateRootContainerIfNotExists();
 
         // Add the regular table 
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
+            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
         cmd.Execute();
         var regularAggregate = cmd.AggregateCreatedIfAny;

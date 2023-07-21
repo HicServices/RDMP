@@ -11,13 +11,11 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 /// </summary>
 public class PluginPatcher : Patcher
 {
-    public PluginPatcher():base(3,null)
+    public PluginPatcher() : base(3, null)
     {
-            
     }
 
-    public PluginPatcher(string subdirectory):base(3,subdirectory)
+    public PluginPatcher(string subdirectory) : base(3, subdirectory)
     {
-            
     }
 }

@@ -14,13 +14,10 @@ namespace Rdmp.Core.CommandExecution;
 internal class CommandInvokerValueTypeDelegate : CommandInvokerDelegate
 {
     /// <inheritdoc />
-    public CommandInvokerValueTypeDelegate(Func<RequiredArgument,object> run):base(typeof(object),false,run)
-    {            
+    public CommandInvokerValueTypeDelegate(Func<RequiredArgument, object> run) : base(typeof(object), false, run)
+    {
     }
 
     /// <inheritdoc/>
-    public override bool CanHandle(Type t)
-    {
-        return t.IsValueType && !typeof(Enum).IsAssignableFrom(t);
-    }
+    public override bool CanHandle(Type t) => t.IsValueType && !typeof(Enum).IsAssignableFrom(t);
 }

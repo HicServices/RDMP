@@ -27,18 +27,20 @@ public partial class HomeBoxUI : UserControl
     private bool _doneSetup = false;
     private Type _openType;
 
-    private RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
+    private RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; } = new();
 
     public HomeBoxUI()
     {
         InitializeComponent();
         olvRecent.ItemActivate += OlvRecent_ItemActivate;
     }
-    public void SetUp(IActivateItems activator,string title, Type openType,AtomicCommandUIFactory factory, params IAtomicCommand[] newCommands)
+
+    public void SetUp(IActivateItems activator, string title, Type openType, AtomicCommandUIFactory factory,
+        params IAtomicCommand[] newCommands)
     {
         _openType = openType;
 
-            
+
         if (!_doneSetup)
         {
             _activator = activator;
@@ -56,34 +58,34 @@ public partial class HomeBoxUI : UserControl
             btnOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
             btnOpen.Click += (s, e) =>
             {
-                if(activator.SelectObject(new DialogArgs
-                   {
-                       WindowTitle = "Open"
-                   },activator.GetAll(openType).ToArray(),out var selected))
-                {
+                if (activator.SelectObject(new DialogArgs
+                    {
+                        WindowTitle = "Open"
+                    }, activator.GetAll(openType).ToArray(), out var selected))
                     Open(selected);
-                }
             };
 
-            
+
             //if there's only one command for new
             if (newCommands.Length == 1)
             {
                 //don't use the dropdown
                 toolStrip1.Items.Remove(btnNewDropdown);
-                btnNew.Click += (s,e)=>newCommands.Single().Execute();
+                btnNew.Click += (s, e) => newCommands.Single().Execute();
             }
             else
             {
                 toolStrip1.Items.Remove(btnNew);
-                btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>().ToArray());    
+                btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>()
+                    .ToArray());
             }
 
             olvName.AspectGetter = o => ((HistoryEntry)o).Object.ToString();
-            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
-            {
-                SuppressChildrenAdder = true
-            });
+            CommonTreeFunctionality.SetUp(RDMPCollection.None, olvRecent, activator, olvName, olvName,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    SuppressChildrenAdder = true
+                });
 
             _doneSetup = true;
         }
@@ -94,12 +96,12 @@ public partial class HomeBoxUI : UserControl
     private void RefreshHistory()
     {
         olvRecent.ClearObjects();
-        olvRecent.AddObjects(_activator.HistoryProvider.History.Where(h=>h.Object.GetType() == _openType).ToArray());
+        olvRecent.AddObjects(_activator.HistoryProvider.History.Where(h => h.Object.GetType() == _openType).ToArray());
     }
 
     private void Open(IMapsDirectlyToDatabaseTable o)
     {
-        if (!((DatabaseEntity) o).Exists())
+        if (!((DatabaseEntity)o).Exists())
         {
             if (_activator.YesNo($"'{o}' no longer exists, remove from Recent list?", "No longer exists"))
             {

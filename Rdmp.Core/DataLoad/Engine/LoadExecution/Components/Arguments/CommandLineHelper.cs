@@ -44,39 +44,30 @@ public class CommandLineHelper
             return CreateArgString(name, value.ToString());
 
         if (value is DiscoveredDatabase dbInfo)
-        {
             return
                 $"{CreateArgString("DatabaseName", dbInfo.GetRuntimeName())} {CreateArgString("DatabaseServer", dbInfo.Server.Name)}";
-        }
-                        
+
         return $"-{ConvertArgNameToString(name)}={GetValueString(value)}";
     }
 
-    public static string ConvertArgNameToString(string name)
-    {
+    public static string ConvertArgNameToString(string name) =>
         // Will split on capitals without breaking up capital sequences
         // e.g. 'TestArg' => 'test-arg' and 'TestTLAArg' => 'test-tla-arg'
-        return Regex.Replace(name, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @"-$1").ToLower();
-    }
+        Regex.Replace(name, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @"-$1").ToLower();
 
     public static string GetValueString(object value)
     {
         if (value is string s)
             if (s.ToString().Contains(' '))
-                return $@"""{value}""";//<- looks like a snake (or a golf club? GM)
+                return $@"""{value}"""; //<- looks like a snake (or a golf club? GM)
             else
                 return s;
 
         if (value is DateTime dt)
-        {
             return
                 $"\"{(dt.TimeOfDay.TotalSeconds.Equals(0) ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss"))}\"";
-        }
 
-        if (value is FileInfo fi)
-        {
-            return $"\"{fi.FullName}\"";
-        }
+        if (value is FileInfo fi) return $"\"{fi.FullName}\"";
 
         throw new ArgumentException($"Cannot create a value string from an object of type {value.GetType().FullName}");
     }

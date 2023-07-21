@@ -12,17 +12,15 @@ namespace Rdmp.Core.Curation.Data.ImportExport;
 /// <summary>
 /// Thrown when there are problems importing or exporting objects from RDMP (either in gathering dependencies or loading <see cref="ShareDefinition"/>
 /// </summary>
-public class SharingException:Exception
+public class SharingException : Exception
 {
     /// <inheritdoc/>
     public SharingException(string msg) : base(msg)
     {
-            
     }
 
     /// <inheritdoc/>
-    public SharingException(string msg, Exception ex):base(msg,ex)
+    public SharingException(string msg, Exception ex) : base(msg, ex)
     {
-            
     }
 }

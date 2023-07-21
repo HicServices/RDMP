@@ -19,32 +19,30 @@ internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecu
     {
     }
 
-    public override bool CanActivate(CatalogueItemsNode target)
-    {
-        return false;
-    }
+    public override bool CanActivate(CatalogueItemsNode target) => false;
 
     public override void Activate(CatalogueItemsNode target)
     {
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target,
+        InsertOption insertOption = InsertOption.Default)
     {
         if (cmd is ColumnInfoCombineable colInfo)
-            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo) { Category = target.Category };
+            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo)
+                { Category = target.Category };
 
         if (cmd is TableInfoCombineable tableInfo)
-            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, tableInfo.TableInfo.ColumnInfos) { Category = target.Category };
+            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
+                tableInfo.TableInfo.ColumnInfos) { Category = target.Category };
 
         // when dropping onto Core or Supplemental etc
-        if(cmd is CatalogueItemCombineable ciCombine && target.Category != null)
-        {
+        if (cmd is CatalogueItemCombineable ciCombine && target.Category != null)
             // drag to a new category to change the extractability
-            return new ExecuteCommandChangeExtractionCategory(ItemActivator, 
+            return new ExecuteCommandChangeExtractionCategory(ItemActivator,
                 ciCombine.CatalogueItems.Select(ci => ci.ExtractionInformation)
                     .Where(e => e != null).ToArray(),
                 target.Category);
-        }
 
         return null;
     }

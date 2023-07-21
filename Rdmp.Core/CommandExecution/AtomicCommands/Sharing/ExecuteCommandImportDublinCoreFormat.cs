@@ -27,7 +27,8 @@ public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtom
     {
         base.Execute();
 
-        if ((_toImport ??= BasicActivator.SelectFile("Enter Dublin Core Xml File Path:","Dublin Core Xml","*.xml")) == null)
+        if ((_toImport ??= BasicActivator.SelectFile("Enter Dublin Core Xml File Path:", "Dublin Core Xml", "*.xml")) ==
+            null)
             return;
 
         var dc = new DublinCoreDefinition();

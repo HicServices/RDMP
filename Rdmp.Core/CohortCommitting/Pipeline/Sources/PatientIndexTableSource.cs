@@ -32,10 +32,11 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipelineRequirement<ExtractableCohort>
 {
     private ExtractableCohort _extractableCohort;
-        
-    protected override  string GetSQL()
+
+    protected override string GetSQL()
     {
-        var builder = new CohortQueryBuilder(AggregateConfiguration,CohortIdentificationConfigurationIfAny.GetAllParameters(),null);
+        var builder = new CohortQueryBuilder(AggregateConfiguration,
+            CohortIdentificationConfigurationIfAny.GetAllParameters(), null);
 
         var sql = builder.SQL;
 
@@ -55,11 +56,12 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         //if there isn't a group by
         if (insertionPoint == -1)
             return sql + Environment.NewLine + impromptuSql;
-            
+
         //there is a group by
-        return sql[..insertionPoint] + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
+        return sql[..insertionPoint] + Environment.NewLine + impromptuSql + Environment.NewLine +
+               sql.Substring(insertionPoint, sql.Length - insertionPoint);
     }
-        
+
     public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)
     {
         _extractableCohort = value;

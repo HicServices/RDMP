@@ -51,7 +51,8 @@ public partial class ArgumentCollectionUI : UserControl
     /// <param name="parent"></param>
     /// <param name="argumentsAreForUnderlyingType"></param>
     /// <param name="catalogueRepository"></param>
-    public void Setup(IActivateItems activator,IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
+    public void Setup(IActivateItems activator, IArgumentHost parent, Type argumentsAreForUnderlyingType,
+        ICatalogueRepository catalogueRepository)
     {
         _parent = parent;
         _argumentsAreFor = argumentsAreForUnderlyingType;
@@ -85,7 +86,6 @@ public partial class ArgumentCollectionUI : UserControl
 
             RefreshArgumentList();
         }
-
     }
 
     private void RefreshArgumentList()
@@ -104,7 +104,7 @@ public partial class ArgumentCollectionUI : UserControl
 
         float maxArgNameWidth = 0;
 
-        if(DemandDictionary.Any())
+        if (DemandDictionary.Any())
         {
             var g = CreateGraphics();
             maxArgNameWidth = DemandDictionary.Select(a =>
@@ -135,13 +135,14 @@ public partial class ArgumentCollectionUI : UserControl
         return label;
     }
 
-    private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
+    private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required,
+        float maxArgNameWidth)
     {
-
         var name = new Label();
 
         var helpIcon = new HelpIcon();
-        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())?? $"Unrecognised Type:{argument.Type}", required.Demand.Description);
+        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()) ?? $"Unrecognised Type:{argument.Type}",
+            required.Demand.Description);
         helpIcon.Dock = DockStyle.Right;
 
         var spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
@@ -149,7 +150,7 @@ public partial class ArgumentCollectionUI : UserControl
         name.Text = spaceSeparatedArgumentName;
         name.TextAlign = ContentAlignment.MiddleLeft;
         name.Dock = DockStyle.Left;
-        name.Width = (int)maxArgNameWidth+3 /*padding*/;
+        name.Width = (int)maxArgNameWidth + 3 /*padding*/;
 
         var ragSmiley = new RAGSmiley();
 
@@ -165,7 +166,6 @@ public partial class ArgumentCollectionUI : UserControl
 
         try
         {
-
             args.InitialValue = argument.GetValueAsSystemType();
         }
         catch (Exception e)
@@ -190,12 +190,12 @@ public partial class ArgumentCollectionUI : UserControl
 
                 argument.GetValueAsSystemType();
 
-                if(required.Demand.Mandatory && (v == null  || string.IsNullOrWhiteSpace(v.ToString())))
+                if (required.Demand.Mandatory && (v == null || string.IsNullOrWhiteSpace(v.ToString())))
                     ragSmiley.Fatal(new Exception($"Property {argument.Name} is Mandatory"));
             }
             catch (Exception ex)
             {
-                ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly",CheckResult.Fail,ex));
+                ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly", CheckResult.Fail, ex));
             }
         };
         args.Fatal = ragSmiley.Fatal;
@@ -209,7 +209,7 @@ public partial class ArgumentCollectionUI : UserControl
             Dock = DockStyle.Top
         };
 
-        name.Location = new Point(0,0);
+        name.Location = new Point(0, 0);
         p.Controls.Add(name);
 
         helpIcon.Left = name.Right;

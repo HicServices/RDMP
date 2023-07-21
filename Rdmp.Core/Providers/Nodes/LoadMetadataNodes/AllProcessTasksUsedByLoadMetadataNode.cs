@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class AllProcessTasksUsedByLoadMetadataNode : Node,IOrderable
+public class AllProcessTasksUsedByLoadMetadataNode : Node, IOrderable
 {
     public LoadMetadata LoadMetadata { get; private set; }
 
@@ -18,29 +18,23 @@ public class AllProcessTasksUsedByLoadMetadataNode : Node,IOrderable
         LoadMetadata = loadMetadata;
     }
 
-    public override string ToString()
-    {
-        return "Process Tasks";
-    }
+    public override string ToString() => "Process Tasks";
 
-    protected bool Equals(AllProcessTasksUsedByLoadMetadataNode other)
-    {
-        return Equals(LoadMetadata, other.LoadMetadata);
-    }
+    protected bool Equals(AllProcessTasksUsedByLoadMetadataNode other) => Equals(LoadMetadata, other.LoadMetadata);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((AllProcessTasksUsedByLoadMetadataNode) obj);
+        return Equals((AllProcessTasksUsedByLoadMetadataNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+
+    public int Order
     {
-        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+        get => 2;
+        set { }
     }
-
-    public int Order { get => 2;
-        set{} }
 }

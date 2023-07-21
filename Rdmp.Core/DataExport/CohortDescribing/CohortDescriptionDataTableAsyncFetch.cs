@@ -39,21 +39,16 @@ public class CohortDescriptionDataTableAsyncFetch
             using (var con = server.GetConnection())
             {
                 con.Open();
-                using(var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
+                using (var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
                 {
                     cmd.CommandTimeout = 120; //give it up to 2 minutes
                     server.GetDataAdapter(cmd).Fill(DataTable);
-                }   
+                }
             }
-                
         });
 
-        Task.ContinueWith(s =>
-        {
-            Finished?.Invoke();
-        });
+        Task.ContinueWith(s => { Finished?.Invoke(); });
 
         Task.Start();
     }
-
 }

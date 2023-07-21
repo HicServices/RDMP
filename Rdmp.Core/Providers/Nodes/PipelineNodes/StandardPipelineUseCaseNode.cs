@@ -15,18 +15,19 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 /// <summary>
 /// Collection of all the Pipelines compatible with a given use case. 
 /// </summary>
-public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
+public class StandardPipelineUseCaseNode : SingletonNode, IKnowWhatIAm
 {
     private readonly CommentStore _commentStore;
     public PipelineUseCase UseCase { get; set; }
-    public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
+    public List<Pipeline> Pipelines { get; } = new();
 
-    public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase,CommentStore commentStore) : base(caption)
+    public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase, CommentStore commentStore) :
+        base(caption)
     {
         _commentStore = commentStore;
         UseCase = useCase;
     }
-        
+
     public string WhatIsThis()
     {
         var useCaseType = UseCase.GetType();

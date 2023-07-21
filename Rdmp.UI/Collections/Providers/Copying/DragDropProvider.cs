@@ -22,13 +22,14 @@ namespace Rdmp.UI.Collections.Providers.Copying;
 /// Provides UI code for drag and drop in <see cref="TreeListView"/>.  The code for what is/isn't draggable onto what is determined
 /// by the <see cref="ICommandExecutionFactory"/>.
 /// </summary>
-public class DragDropProvider:SimpleDragSource
+public class DragDropProvider : SimpleDragSource
 {
     private readonly ICombineableFactory _commandFactory;
     private readonly ICommandExecutionFactory _commandExecutionFactory;
     private readonly TreeListView _treeView;
 
-    public DragDropProvider(ICombineableFactory commandFactory, ICommandExecutionFactory commandExecutionFactory, TreeListView treeView)
+    public DragDropProvider(ICombineableFactory commandFactory, ICommandExecutionFactory commandExecutionFactory,
+        TreeListView treeView)
     {
         _commandFactory = commandFactory;
         _commandExecutionFactory = commandExecutionFactory;
@@ -38,7 +39,7 @@ public class DragDropProvider:SimpleDragSource
         _treeView.DragSource = this;
 
         _treeView.IsSimpleDropSink = true;
-            
+
         ((SimpleDropSink)_treeView.DropSink).CanDrop += DragDropProvider_CanDrop;
         ((SimpleDropSink)_treeView.DropSink).Dropped += DragDropProvider_Dropped;
 
@@ -50,17 +51,16 @@ public class DragDropProvider:SimpleDragSource
     {
         var dropTargetModel = e.DropTargetItem?.RowObject;
 
-        if(e.DataObject is not DataObject dataObject)
+        if (e.DataObject is not DataObject dataObject)
             return;
 
-        if(dataObject is OLVDataObject)
+        if (dataObject is OLVDataObject)
             return; //should be handled by ModelCanDrop
 
-        var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject,dropTargetModel);
+        var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject, dropTargetModel);
 
-        if(execution != null)
+        if (execution != null)
             DisplayFeedback(execution, e);
-
     }
 
     private void ModelCanDrop(object sender, ModelDropEventArgs e)
@@ -81,22 +81,21 @@ public class DragDropProvider:SimpleDragSource
         var execution = _commandExecutionFactory.Create(cmd, e.TargetModel, GetDropLocation(e));
 
         DisplayFeedback(execution, e);
-
     }
 
     private void DragDropProvider_Dropped(object sender, OlvDropEventArgs e)
     {
         try
         {
-            var dataObject = (DataObject) e.DataObject;
+            var dataObject = (DataObject)e.DataObject;
 
-            if(dataObject is OLVDataObject)
-                return;  //should be handled by ModelDropped
+            if (dataObject is OLVDataObject)
+                return; //should be handled by ModelDropped
 
             //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop
             var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject, e.DropTargetItem.RowObject);
 
-            if(execution != null && !execution.IsImpossible)
+            if (execution != null && !execution.IsImpossible)
                 execution.Execute();
         }
         catch (Exception exception)
@@ -124,7 +123,8 @@ public class DragDropProvider:SimpleDragSource
             }
             catch (Exception exception)
             {
-                ExceptionViewer.Show($"ExecuteCommand {execution.GetType().Name} failed, See Exception for details", exception);
+                ExceptionViewer.Show($"ExecuteCommand {execution.GetType().Name} failed, See Exception for details",
+                    exception);
             }
     }
 
@@ -157,12 +157,12 @@ public class DragDropProvider:SimpleDragSource
 
     public override object StartDrag(ObjectListView olv, MouseButtons button, OLVListItem item)
     {
-        var rowObject = item.RowObject;//get the dragged object
-            
-        if(olv.SelectedObjects.Count > 1)
+        var rowObject = item.RowObject; //get the dragged object
+
+        if (olv.SelectedObjects.Count > 1)
             rowObject = olv.SelectedObjects.Cast<object>().ToArray();
 
-        if(rowObject != null)
+        if (rowObject != null)
         {
             //get the drag operation data object olv does
             var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
@@ -171,7 +171,7 @@ public class DragDropProvider:SimpleDragSource
             var command = _commandFactory.Create(toReturn);
 
             if (command == null)
-                return null;//it couldn't become a command so leave it as a model object
+                return null; //it couldn't become a command so leave it as a model object
 
             //yes, let's hot swap the data object in the drag command, that couldn't possibly go wrong right?
             toReturn.ModelObjects.Clear();
@@ -181,7 +181,6 @@ public class DragDropProvider:SimpleDragSource
 
         return base.StartDrag(olv, button, item);
     }
-
 
 
     private static void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
@@ -220,5 +219,4 @@ public class DragDropProvider:SimpleDragSource
 
         return InsertOption.Default;
     }
-
 }

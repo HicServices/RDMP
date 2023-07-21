@@ -14,7 +14,7 @@ public abstract class PluginTicketingSystem : ICheckable, ITicketingSystem
 {
     protected IDataAccessCredentials Credentials { get; set; }
     protected string Url { get; set; }
-        
+
     protected PluginTicketingSystem(TicketingSystemConstructorParameters parameters)
     {
         Credentials = parameters.Credentials;
@@ -25,6 +25,8 @@ public abstract class PluginTicketingSystem : ICheckable, ITicketingSystem
     public abstract bool IsValidTicketName(string ticketName);
     public abstract void NavigateToTicket(string ticketName);
 
-    public abstract TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket, string releaseTicket, out string reason, out Exception exception);
+    public abstract TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket,
+        string requestTicket, string releaseTicket, out string reason, out Exception exception);
+
     public abstract string GetProjectFolderName(string masterTicket);
 }

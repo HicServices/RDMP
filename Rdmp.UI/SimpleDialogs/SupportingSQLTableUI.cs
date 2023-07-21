@@ -18,7 +18,6 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs;
@@ -51,6 +50,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         InitializeComponent();
 
         #region Query Editor setup
+
         if (VisualStudioDesignMode)
             return;
 
@@ -59,6 +59,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         QueryPreview.TextChanged += new EventHandler(QueryPreview_TextChanged);
 
         pSQL.Controls.Add(QueryPreview);
+
         #endregion
 
         tcTicket.TicketTextChanged += TcTicketOnTicketTextChanged;
@@ -68,7 +69,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 
     public override void SetDatabaseObject(IActivateItems activator, SupportingSQLTable databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         _supportingSQLTable = databaseObject;
 
         _bLoading = true;
@@ -94,11 +95,11 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",s=>s.ID);
-        Bind(tbName,"Text","Name",s=>s.Name);
-        Bind(tbDescription,"Text","Description",s=>s.Description);
-        Bind(cbExtractable,"Checked","Extractable",s=>s.Extractable);
-        Bind(cbGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
+        Bind(tbID, "Text", "ID", s => s.ID);
+        Bind(tbName, "Text", "Name", s => s.Name);
+        Bind(tbDescription, "Text", "Description", s => s.Description);
+        Bind(cbExtractable, "Checked", "Extractable", s => s.Extractable);
+        Bind(cbGlobal, "Checked", "IsGlobal", s => s.IsGlobal);
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -112,7 +113,8 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     {
         ddExternalServers.Items.Clear();
         ddExternalServers.Items.Add(NoExternalServer);
-        ddExternalServers.Items.AddRange(_supportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>().ToArray());
+        ddExternalServers.Items.AddRange(_supportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>()
+            .ToArray());
 
         if (_supportingSQLTable != null)
             ddExternalServers.SelectedItem = _supportingSQLTable.ExternalDatabaseServer;
@@ -128,13 +130,15 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 
     private void cbGlobal_CheckedChanged(object sender, EventArgs e)
     {
-        if(_bLoading)
+        if (_bLoading)
             return;
 
         if (_supportingSQLTable != null)
         {
             if (cbGlobal.Checked)
+            {
                 _supportingSQLTable.IsGlobal = true;
+            }
             else
             {
                 if (
@@ -145,20 +149,19 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
                 else
                     cbGlobal.Checked = true;
             }
-
         }
     }
 
     private void tbDescription_KeyPress(object sender, KeyPressEventArgs e)
     {
         //apparently that is S when the control key is held down
-        if(e.KeyChar == 19 && ModifierKeys == Keys.Control)
+        if (e.KeyChar == 19 && ModifierKeys == Keys.Control)
             e.Handled = true;
     }
 
     private void ddExternalServers_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(_supportingSQLTable == null)
+        if (_supportingSQLTable == null)
             return;
 
         //user selected NONE
@@ -184,6 +187,6 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingSQLTableUI_Design, UserControl>))]
-public abstract class SupportingSQLTableUI_Design:RDMPSingleDatabaseObjectControl<SupportingSQLTable>
+public abstract class SupportingSQLTableUI_Design : RDMPSingleDatabaseObjectControl<SupportingSQLTable>
 {
 }

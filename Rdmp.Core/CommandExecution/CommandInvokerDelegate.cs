@@ -27,7 +27,7 @@ public class CommandInvokerDelegate
     /// <summary>
     /// The method to run when it is time to pick an object for the give <see cref="RequiredArgument"/>
     /// </summary>
-    public Func<RequiredArgument,object> Run { get; }
+    public Func<RequiredArgument, object> Run { get; }
 
     /// <summary>
     /// Set to true to require <see cref="HandledType"/> to exactly match candidates.  False to identify
@@ -53,8 +53,5 @@ public class CommandInvokerDelegate
     /// </summary>
     /// <param name="t">The type of object you need</param>
     /// <returns></returns>
-    public virtual bool CanHandle(Type t)
-    {
-        return HandledType==t || (!RequireExactMatch && HandledType.IsAssignableTo(t));
-    }
+    public virtual bool CanHandle(Type t) => HandledType == t || (!RequireExactMatch && HandledType.IsAssignableTo(t));
 }

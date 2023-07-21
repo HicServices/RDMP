@@ -17,30 +17,28 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogueIfKnown;
     private readonly TableInfo _lookupTableInfoIfKnown;
 
-    public ExecuteCommandAddNewLookupTableRelationship(IActivateItems activator, Catalogue catalogueIfKnown, TableInfo lookupTableInfoIfKnown) : base(activator)
+    public ExecuteCommandAddNewLookupTableRelationship(IActivateItems activator, Catalogue catalogueIfKnown,
+        TableInfo lookupTableInfoIfKnown) : base(activator)
     {
         _catalogueIfKnown = catalogueIfKnown;
         _lookupTableInfoIfKnown = lookupTableInfoIfKnown;
 
-        if(catalogueIfKnown != null && catalogueIfKnown.IsApiCall())
-        {
+        if (catalogueIfKnown != null && catalogueIfKnown.IsApiCall())
             SetImpossible("Lookups cannot be configured on API Catalogues");
-        }
-                
 
-        if(catalogueIfKnown == null && lookupTableInfoIfKnown == null)
-            throw new NotSupportedException("You must know either the lookup table or the Catalogue you want to configure it on");
+
+        if (catalogueIfKnown == null && lookupTableInfoIfKnown == null)
+            throw new NotSupportedException(
+                "You must know either the lookup table or the Catalogue you want to configure it on");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Tells RDMP that a table contains code/description mappings for one of the columns in your dataset and that you (may) want them linked in when extracting the dataset";
-    }
+    public override string GetCommandHelp() =>
+        "Tells RDMP that a table contains code/description mappings for one of the columns in your dataset and that you (may) want them linked in when extracting the dataset";
 
     public override void Execute()
     {
@@ -48,25 +46,25 @@ public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecuti
 
         var cata = _catalogueIfKnown;
         if (cata == null)
-        {
             try
             {
                 //make sure they really wanted to do this?
-                if (YesNo( GetLookupConfirmationText(), "Create Lookup"))
-                { 
+                if (YesNo(GetLookupConfirmationText(), "Create Lookup"))
+                {
                     //get them to pick a Catalogue the table provides descriptions for
-                    if(!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
+                    if (!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
                         return;
                 }
                 else
+                {
                     return;
+                }
             }
             catch (Exception exception)
             {
                 ExceptionViewer.Show("Error creating Lookup", exception);
                 return;
             }
-        }
 
         //they now deifnetly have a Catalogue!
         var t = Activator.Activate<LookupConfigurationUI, Catalogue>(cata);
@@ -75,15 +73,10 @@ public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecuti
             t.SetLookupTableInfo(_lookupTableInfoIfKnown);
     }
 
-    private string GetLookupConfirmationText()
-    {
-        return 
-            $@"You have chosen to make '{_lookupTableInfoIfKnown }' a Lookup Table (e.g T = Tayside, F=Fife etc).  In order to do this you will need to pick which Catalogue the column
+    private string GetLookupConfirmationText() =>
+        $@"You have chosen to make '{_lookupTableInfoIfKnown}' a Lookup Table (e.g T = Tayside, F=Fife etc).  In order to do this you will need to pick which Catalogue the column
 provides a description for (a given TableInfo can be a Lookup for many columns in many datasets).";
-    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
 }

@@ -25,6 +25,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 {
     private List<IMapsDirectlyToDatabaseTable> favourites = new();
     private bool _firstTime = true;
+
     public FavouritesCollectionUI()
     {
         InitializeComponent();
@@ -34,7 +35,8 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     {
         base.SetItemActivator(activator);
 
-        CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,Activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings());
+        CommonTreeFunctionality.SetUp(RDMPCollection.Favourites, tlvFavourites, Activator, olvName, olvName,
+            new RDMPCollectionCommonFunctionalitySettings());
         CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
             a => new IAtomicCommand[]
@@ -43,15 +45,14 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 new ExecuteCommandClearFavourites(a)
             };
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
-            
+
         RefreshFavourites();
 
-        if(_firstTime)
+        if (_firstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8b0481e-378c-4996-9400-cb039c2efc5c"));
             _firstTime = false;
         }
-
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -61,8 +62,8 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private void RefreshFavourites()
     {
-        var actualRootFavourites = FindRootObjects(Activator,IncludeObject);
-            
+        var actualRootFavourites = FindRootObjects(Activator, IncludeObject);
+
         //no change in root favouratism
         if (favourites.SequenceEqual(actualRootFavourites))
             return;
@@ -86,9 +87,11 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     /// <param name="activator"></param>
     /// <param name="condition"></param>
     /// <returns></returns>
-    public static List<IMapsDirectlyToDatabaseTable> FindRootObjects(IActivateItems activator, Func<IMapsDirectlyToDatabaseTable, bool> condition)
+    public static List<IMapsDirectlyToDatabaseTable> FindRootObjects(IActivateItems activator,
+        Func<IMapsDirectlyToDatabaseTable, bool> condition)
     {
-        var potentialRootFavourites = activator.CoreChildProvider.GetAllSearchables().Where(k=>condition(k.Key)).ToArray();
+        var potentialRootFavourites =
+            activator.CoreChildProvider.GetAllSearchables().Where(k => condition(k.Key)).ToArray();
 
         var hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -96,7 +99,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         foreach (var currentFavourite in potentialRootFavourites)
         {
             //current favourite is an absolute root object Type (no parents)
-            if(currentFavourite.Value == null)
+            if (currentFavourite.Value == null)
                 continue;
 
             //if any of the current favourites parents
@@ -104,16 +107,14 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 //are favourites
                 if (potentialRootFavourites.Any(kvp => kvp.Key.Equals(parent)))
                     //then this is not a favourite it's a collision (already favourited under another node)
-                    hierarchyCollisions.Add(currentFavourite.Key);    
+                    hierarchyCollisions.Add(currentFavourite.Key);
         }
 
         var actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
 
         foreach (var currentFavourite in potentialRootFavourites)
-        {
             if (!hierarchyCollisions.Contains(currentFavourite.Key))
                 actualRootFavourites.Add(currentFavourite.Key);
-        }
 
         return actualRootFavourites;
     }
@@ -124,14 +125,10 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    protected virtual bool IncludeObject(IMapsDirectlyToDatabaseTable key)
-    {
-        return Activator.FavouritesProvider.IsFavourite(key);
-    }
+    protected virtual bool IncludeObject(IMapsDirectlyToDatabaseTable key) =>
+        Activator.FavouritesProvider.IsFavourite(key);
 
-    public static bool IsRootObject(IActivateItems activator, object root)
-    {
+    public static bool IsRootObject(IActivateItems activator, object root) =>
         //never favourite
-        return false;
-    }
+        false;
 }

@@ -18,7 +18,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 public class ToMemoryCheckNotifier : ICheckNotifier
 {
     private readonly ICheckNotifier _childToPassEventsTo;
-    public List<CheckEventArgs> Messages { get; } = new List<CheckEventArgs>();
+    public List<CheckEventArgs> Messages { get; } = new();
 
     private readonly object _lockList = new();
 
@@ -48,7 +48,7 @@ public class ToMemoryCheckNotifier : ICheckNotifier
             fix = _childToPassEventsTo.OnCheckPerformed(args);
 
             //if child accepted the fix
-            if(fix && !string.IsNullOrWhiteSpace(args.ProposedFix) && args.Result == CheckResult.Fail)
+            if (fix && !string.IsNullOrWhiteSpace(args.ProposedFix) && args.Result == CheckResult.Fail)
                 args.Result = CheckResult.Warning;
         }
 

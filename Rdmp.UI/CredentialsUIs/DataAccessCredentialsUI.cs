@@ -26,18 +26,18 @@ public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, I
 
         AssociatedCollection = RDMPCollection.Tables;
     }
-        
+
     protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
     {
         base.SetBindings(rules, databaseObject);
-            
-        Bind(tbName,"Text","Name",c=>c.Name);
+
+        Bind(tbName, "Text", "Name", c => c.Name);
         Bind(tbUsername, "Text", "Username", c => c.Username);
         Bind(tbPassword, "Text", "Password", c => c.Password);
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataAccessCredentialsUI_Design, UserControl>))]
-public abstract class DataAccessCredentialsUI_Design:RDMPSingleDatabaseObjectControl<DataAccessCredentials>
+public abstract class DataAccessCredentialsUI_Design : RDMPSingleDatabaseObjectControl<DataAccessCredentials>
 {
 }

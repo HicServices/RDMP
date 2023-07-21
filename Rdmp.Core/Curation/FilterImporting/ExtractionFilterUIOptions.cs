@@ -20,25 +20,16 @@ public class ExtractionFilterUIOptions : FilterUIOptions
     {
         var c = masterCatalogueFilter.ExtractionInformation.CatalogueItem.Catalogue;
 
-        var colInfo = masterCatalogueFilter.GetColumnInfoIfExists() ?? throw new MissingColumnInfoException($"No ColumnInfo found for filter '{masterCatalogueFilter}'");
+        var colInfo = masterCatalogueFilter.GetColumnInfoIfExists() ??
+                      throw new MissingColumnInfoException($"No ColumnInfo found for filter '{masterCatalogueFilter}'");
         _globals = colInfo.TableInfo.GetAllParameters();
         _tables = c.GetTableInfoList(false);
         _columns = c.GetAllExtractionInformation(ExtractionCategory.Any);
-
     }
 
-    public override ITableInfo[] GetTableInfos()
-    {
-        return _tables;
-    }
+    public override ITableInfo[] GetTableInfos() => _tables;
 
-    public override ISqlParameter[] GetGlobalParametersInFilterScope()
-    {
-        return _globals;
-    }
+    public override ISqlParameter[] GetGlobalParametersInFilterScope() => _globals;
 
-    public override IColumn[] GetIColumnsInFilterScope()
-    {
-        return _columns;
-    }
+    public override IColumn[] GetIColumnsInFilterScope() => _columns;
 }

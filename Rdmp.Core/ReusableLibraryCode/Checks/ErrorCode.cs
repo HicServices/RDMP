@@ -14,7 +14,6 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 /// </summary>
 public sealed class ErrorCode
 {
-
     /// <summary>
     /// A fixed code for uniquely identifying this error type
     /// </summary>
@@ -38,8 +37,5 @@ public sealed class ErrorCode
         DefaultTreatment = defaultTreatment;
     }
 
-    public override string ToString()
-    {
-        return Code;
-    }
+    public override string ToString() => Code;
 }

@@ -22,6 +22,6 @@ public interface IPipelineSelectionUI
 {
     event EventHandler PipelineChanged;
     IPipeline Pipeline { get; set; }
-        
+
     void CollapseToSingleLineMode();
 }

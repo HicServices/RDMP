@@ -28,18 +28,21 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 {
     private bool _haveServedResult = false;
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
+        DemandType.Unspecified, true)]
     public bool MakeHeaderNamesSane { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         if (toProcess == null)
             return null;
-            
-        if(_haveServedResult)
-            throw new NotSupportedException("Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable");
-            
-        if(toProcess.Rows.Count == 0 || toProcess.Columns.Count == 0)
+
+        if (_haveServedResult)
+            throw new NotSupportedException(
+                "Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable");
+
+        if (toProcess.Rows.Count == 0 || toProcess.Columns.Count == 0)
             throw new NotSupportedException(
                 $"DataTable toProcess had {toProcess.Rows.Count} rows and {toProcess.Columns.Count} columns, thus it cannot be transposed");
 
@@ -50,17 +53,14 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public void Check(ICheckNotifier notifier)
     {
-
     }
 
     private DataTable GenerateTransposedTable(DataTable inputTable)
@@ -95,6 +95,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
                 var colValue = inputTable.Rows[cCount][rCount].ToString();
                 newRow[cCount + 1] = colValue;
             }
+
             outputTable.Rows.Add(newRow);
         }
 

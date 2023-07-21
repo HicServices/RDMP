@@ -22,11 +22,10 @@ public class SaveEventArgs : EventArgs
     /// <summary>
     /// The object that is about to be saved to database/disk
     /// </summary>
-    public IMapsDirectlyToDatabaseTable BeingSaved { get;}
+    public IMapsDirectlyToDatabaseTable BeingSaved { get; }
 
     public SaveEventArgs(IMapsDirectlyToDatabaseTable o)
     {
         BeingSaved = o;
     }
-
 }

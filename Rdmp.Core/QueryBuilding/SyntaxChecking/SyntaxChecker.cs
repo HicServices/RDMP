@@ -36,7 +36,9 @@ public abstract class SyntaxChecker : ICheckable
         //it has select sql
         if (string.IsNullOrWhiteSpace(sql)) return;
         for (var i = 0; i < openingCharacters.Length; i++)
-            if (openingCharacters[i] == closingCharacters[i]) //if the opening and closing characters are the same character then there should be an even number of them
+            if (openingCharacters[i] ==
+                closingCharacters
+                    [i]) //if the opening and closing characters are the same character then there should be an even number of them
             {
                 //if it is not an even number of them
                 if (sql.Count(c => c == openingCharacters[i]) % 2 == 1)
@@ -45,8 +47,10 @@ public abstract class SyntaxChecker : ICheckable
             }
             else //opening and closing characters are different e.g. '('  and ')', there should be the same number of each of them
             if (sql.Count(c => c == openingCharacters[i]) != sql.Count(c => c == closingCharacters[i]))
+            {
                 throw new SyntaxErrorException(
                     $"Mismatch in the number of opening '{openingCharacters[i]}' and closing '{closingCharacters[i]}'");
+            }
     }
 
     /// <summary>
@@ -55,7 +59,6 @@ public abstract class SyntaxChecker : ICheckable
     /// <param name="parameter"></param>
     public static void CheckSyntax(ISqlParameter parameter)
     {
-
         if (string.IsNullOrWhiteSpace(parameter.Value))
             throw new SyntaxErrorException($"Parameter {parameter.ParameterName} does not have a value");
 
@@ -88,13 +91,13 @@ public abstract class SyntaxChecker : ICheckable
         }
         catch (SyntaxErrorException exception)
         {
-            throw new SyntaxErrorException($"Failed to validate the bracket parity of parameter {parameter}", exception);
+            throw new SyntaxErrorException($"Failed to validate the bracket parity of parameter {parameter}",
+                exception);
         }
 
 
         if (!parameter.GetQuerySyntaxHelper().IsValidParameterName(parameter.ParameterSQL))
             throw new SyntaxErrorException($"parameterSQL is not valid \"{parameter.ParameterSQL}\"");
-
     }
 
     /// <summary>

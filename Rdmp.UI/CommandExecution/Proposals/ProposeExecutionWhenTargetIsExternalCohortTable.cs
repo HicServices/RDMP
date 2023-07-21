@@ -11,24 +11,19 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsExternalCohortTable:RDMPCommandExecutionProposal<ExternalCohortTable>
+internal class ProposeExecutionWhenTargetIsExternalCohortTable : RDMPCommandExecutionProposal<ExternalCohortTable>
 {
     public ProposeExecutionWhenTargetIsExternalCohortTable(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(ExternalCohortTable target)
-    {
-        return true;
-    }
+    public override bool CanActivate(ExternalCohortTable target) => true;
 
     public override void Activate(ExternalCohortTable target)
     {
         ItemActivator.Activate<ExternalCohortTableUI, ExternalCohortTable>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalCohortTable target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalCohortTable target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

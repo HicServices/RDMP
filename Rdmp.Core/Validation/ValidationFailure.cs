@@ -14,7 +14,6 @@ namespace Rdmp.Core.Validation;
 /// </summary>
 public class ValidationFailure
 {
-        
     public ItemValidator SourceItemValidator { get; set; }
     public IConstraint SourceConstraint { get; set; }
 
@@ -27,24 +26,20 @@ public class ValidationFailure
         Message = message;
     }
 
-    public ValidationFailure(string message, IConstraint sender) :this(message)
+    public ValidationFailure(string message, IConstraint sender) : this(message)
     {
         SourceConstraint = sender;
     }
 
-    public ValidationFailure(string message, ItemValidator sender): this(message)
+    public ValidationFailure(string message, ItemValidator sender) : this(message)
     {
-            
         SourceItemValidator = sender;
     }
 
-    public ValidationFailure(string message, List<ValidationFailure> e): this(message)
+    public ValidationFailure(string message, List<ValidationFailure> e) : this(message)
     {
         eList = e;
     }
 
-    public List<ValidationFailure> GetExceptionList()
-    {
-        return eList;
-    } 
+    public List<ValidationFailure> GetExceptionList() => eList;
 }

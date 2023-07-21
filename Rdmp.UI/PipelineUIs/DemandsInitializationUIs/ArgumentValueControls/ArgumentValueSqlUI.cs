@@ -49,7 +49,6 @@ public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
 
     private void btnSetSQL_Click(object sender, System.EventArgs e)
     {
-
         var dialog = new SetSQLDialog((string)_args.InitialValue, new RDMPCombineableFactory());
         var d = dialog.ShowDialog();
 
