@@ -13,62 +13,61 @@ using System.Xml.Linq;
 namespace Rdmp.Core.Reports.DublinCore;
 
 /// <summary>
-/// Class describing the RDMP exposed attributes defined in Dublin Core metadata format.
+///     Class describing the RDMP exposed attributes defined in Dublin Core metadata format.
 /// </summary>
 public class DublinCoreDefinition
 {
     /// <summary>
-    /// A name given to the resource. See http://www.dublincore.org/documents/dces/
+    ///     A name given to the resource. See http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Title { get; set; }
 
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Alternative { get; set; }
 
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Subject { get; set; }
 
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Description { get; set; }
-        
+
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Publisher { get; set; }
 
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public Uri IsPartOf { get; set; }
 
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public Uri Identifier { get; set; }
-        
+
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public DateTime? Modified { get; set; }
 
     /// <summary>
-    /// Dublin Core property see http://www.dublincore.org/documents/dces/
+    ///     Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Format { get; set; }
 
     /// <summary>
-    /// Writes the defintion in the format listed in http://dublincore.org/documents/dc-xml-guidelines/
+    ///     Writes the defintion in the format listed in http://dublincore.org/documents/dc-xml-guidelines/
     /// </summary>
     /// <param name="to"></param>
     public void WriteXml(Stream to)
     {
-
         XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
         XNamespace dc = "http://purl.org/dc/elements/1.1/";
         XNamespace dcterms = "http://purl.org/dc/terms/";
@@ -76,9 +75,9 @@ public class DublinCoreDefinition
 
         var xsiAttr = new XAttribute(XNamespace.Xmlns + "xsi", xsi);
         var dcAttr = new XAttribute(XNamespace.Xmlns + "dc", dc);
-        var dctermsAttr = new XAttribute(XNamespace.Xmlns + "dcterms",dcterms);
+        var dctermsAttr = new XAttribute(XNamespace.Xmlns + "dcterms", dcterms);
 
-        var doc = new XDocument(new XElement("metadata",xsiAttr,dcAttr,dctermsAttr));
+        var doc = new XDocument(new XElement("metadata", xsiAttr, dcAttr, dctermsAttr));
         doc.Root.Add(new XElement(dc + "title", Title));
         doc.Root.Add(new XElement(dcterms + "alternative", Alternative));
         doc.Root.Add(new XElement(dc + "subject", Subject));
@@ -90,33 +89,37 @@ public class DublinCoreDefinition
 
         //<dcterms:modified xsi:type="dcterms:W3CDTF">
         if (Modified.HasValue)
-            doc.Root.Add(new XElement(dcterms + "modified", new XAttribute(xsi + "type", "dcterms:W3CDTF"), Modified.Value.ToString("yyyy-MM-dd")));
+            doc.Root.Add(new XElement(dcterms + "modified", new XAttribute(xsi + "type", "dcterms:W3CDTF"),
+                Modified.Value.ToString("yyyy-MM-dd")));
 
         doc.Root.Add(new XElement(dc + "format", new XAttribute(xsi + "type", "dcterms:IMT"), Format));
-            
-        using(var sw = new StreamWriter(to))
+
+        using (var sw = new StreamWriter(to))
+        {
             sw.Write(doc.ToString(SaveOptions.None));
+        }
     }
 
     /// <summary>
-    /// Parses elements such as title, subject, description etc out of a metadata tag expected to follow the Dublin Core Xml guidlines ( http://dublincore.org/documents/dc-xml-guidelines/)
+    ///     Parses elements such as title, subject, description etc out of a metadata tag expected to follow the Dublin Core
+    ///     Xml guidlines ( http://dublincore.org/documents/dc-xml-guidelines/)
     /// </summary>
     /// <param name="element"></param>
     public void LoadFrom(XElement element)
     {
-        if(element.Name != "metadata")
+        if (element.Name != "metadata")
             throw new XmlSyntaxException($"Expected metadata element but got {element}");
 
         var descendants = element.Descendants().ToArray();
-        Title = GetElement(descendants, "title",true);
-        Alternative = GetElement(descendants, "alternative",false);
+        Title = GetElement(descendants, "title", true);
+        Alternative = GetElement(descendants, "alternative", false);
         Subject = GetElement(descendants, "subject", false);
         Description = GetElement(descendants, "description", false);
         Publisher = GetElement(descendants, "publisher", false);
-        IsPartOf = GetElementUri(descendants, "ispartof",false);
-        Identifier = GetElementUri(descendants, "identifier",false);
-        Modified = GetElementDateTime(descendants, "modified",false);
-        Format = GetElement(descendants, "format",false);
+        IsPartOf = GetElementUri(descendants, "ispartof", false);
+        Identifier = GetElementUri(descendants, "identifier", false);
+        Modified = GetElementDateTime(descendants, "modified", false);
+        Format = GetElement(descendants, "format", false);
     }
 
     private static DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
@@ -139,10 +142,11 @@ public class DublinCoreDefinition
 
     private static string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
     {
-        var match = descendants.FirstOrDefault(e => e.Name.LocalName.Equals(tagLocalName,StringComparison.CurrentCultureIgnoreCase));
+        var match = descendants.FirstOrDefault(e =>
+            e.Name.LocalName.Equals(tagLocalName, StringComparison.CurrentCultureIgnoreCase));
 
         if (match == null)
-            if(mandatory)
+            if (mandatory)
                 throw new XmlSyntaxException($"Failed to find mandatory tag {tagLocalName}");
             else
                 return null;

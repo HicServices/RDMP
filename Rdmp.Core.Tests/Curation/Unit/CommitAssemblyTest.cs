@@ -12,6 +12,14 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 [Category("Unit")]
 public class CommitAssemblyTest
 {
+    public enum ScheduleStrategy
+    {
+        NotSet,
+        Override,
+        Test,
+        Continuous
+    }
+
     [Test]
     public void TestGetTypeByName()
     {
@@ -19,14 +27,7 @@ public class CommitAssemblyTest
         Console.Write(s.GetType().FullName);
 
         var t = Type.GetType(s.GetType().AssemblyQualifiedName);
-            
-        Assert.AreEqual(s.GetType(),t);
-    }
-    public enum ScheduleStrategy
-    {
-        NotSet,
-        Override,
-        Test,
-        Continuous
+
+        Assert.AreEqual(s.GetType(), t);
     }
 }

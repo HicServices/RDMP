@@ -14,29 +14,21 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 
 /// <summary>
-/// Line on a <see cref="Chart"/> indicating how much progress has been made towards various <see cref="LoadProgress"/> / <see cref="CacheProgressUI"/>
-/// goals.
+///     Line on a <see cref="Chart" /> indicating how much progress has been made towards various
+///     <see cref="LoadProgress" /> / <see cref="CacheProgressUI" />
+///     goals.
 /// </summary>
 internal class LoadProgressAnnotation
 {
-    private readonly LoadProgress _lp;
     private readonly DataTable _dt;
+    private readonly LoadProgress _lp;
 
-    public  LineAnnotation LineAnnotationOrigin { get; private set; }
-    public TextAnnotation TextAnnotationOrigin { get; private set; }
-
-    public LineAnnotation LineAnnotationFillProgress { get; private set; }
-    public TextAnnotation TextAnnotationFillProgress { get; private set; }
-
-    public LineAnnotation LineAnnotationCacheProgress { get; private set; }
-    public TextAnnotation TextAnnotationCacheProgress { get; private set; }
-
-    public LoadProgressAnnotation(LoadProgress lp,DataTable dt, Chart chart)
+    public LoadProgressAnnotation(LoadProgress lp, DataTable dt, Chart chart)
     {
         _lp = lp;
         _dt = dt;
 
-        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out var line, out var text);
+        GetAnnotations("OriginDate", 0.9, lp.OriginDate, chart, out var line, out var text);
         LineAnnotationOrigin = line;
         TextAnnotationOrigin = text;
 
@@ -47,17 +39,25 @@ internal class LoadProgressAnnotation
 
         var cp = lp.CacheProgress;
 
-        if(cp != null)
+        if (cp != null)
         {
             GetAnnotations("Cache Fill", 0.50, cp.CacheFillProgress, chart, out var line3, out var text3);
             LineAnnotationCacheProgress = line3;
             TextAnnotationCacheProgress = text3;
         }
-
-
     }
 
-    private void GetAnnotations(string label, double fractionalHeightOfLabel,DateTime? date, Chart chart, out LineAnnotation line, out TextAnnotation text)
+    public LineAnnotation LineAnnotationOrigin { get; }
+    public TextAnnotation TextAnnotationOrigin { get; private set; }
+
+    public LineAnnotation LineAnnotationFillProgress { get; }
+    public TextAnnotation TextAnnotationFillProgress { get; private set; }
+
+    public LineAnnotation LineAnnotationCacheProgress { get; }
+    public TextAnnotation TextAnnotationCacheProgress { get; private set; }
+
+    private void GetAnnotations(string label, double fractionalHeightOfLabel, DateTime? date, Chart chart,
+        out LineAnnotation line, out TextAnnotation text)
     {
         string originText;
         double anchorX;
@@ -107,8 +107,6 @@ internal class LoadProgressAnnotation
             ForeColor = date == null ? Color.Red : Color.Green
         };
         text.Font = new Font(text.Font, FontStyle.Bold);
-
-
     }
 
     private static int GetXForDate(DataTable dt, DateTime value)
@@ -159,7 +157,8 @@ internal class LoadProgressAnnotation
         {
             var newDate = GetDateFromX((int)LineAnnotationOrigin.X);
 
-            if (MessageBox.Show($"Set new LoadProgress Origin date to {newDate}?", "Change Origin Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Set new LoadProgress Origin date to {newDate}?", "Change Origin Date?",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _lp.OriginDate = newDate;
                 _lp.SaveToDatabase();
@@ -170,7 +169,8 @@ internal class LoadProgressAnnotation
         {
             var newDate = GetDateFromX((int)LineAnnotationFillProgress.X);
 
-            if (MessageBox.Show($"Set new LoadProgress Fill date to {newDate}?", "Change Fill Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Set new LoadProgress Fill date to {newDate}?", "Change Fill Date?",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 _lp.DataLoadProgress = newDate;
                 _lp.SaveToDatabase();
@@ -181,12 +181,13 @@ internal class LoadProgressAnnotation
         {
             var cp = _lp.CacheProgress;
 
-            if(cp == null)
+            if (cp == null)
                 return;
 
             var newDate = GetDateFromX((int)LineAnnotationCacheProgress.X);
 
-            if (MessageBox.Show($"Set new CacheProgress date to {newDate}?", "Change Cache Progress Date?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"Set new CacheProgress date to {newDate}?", "Change Cache Progress Date?",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 cp.CacheFillProgress = newDate;
                 cp.SaveToDatabase();
@@ -196,13 +197,13 @@ internal class LoadProgressAnnotation
 
     private DateTime? GetDateFromX(int x)
     {
-        x = Math.Max(0, x - 1);//subtract 1 because X axis on chart starts at 1 but data table starts at 0, also prevents them dragging it super negative
+        x = Math.Max(0,
+            x - 1); //subtract 1 because X axis on chart starts at 1 but data table starts at 0, also prevents them dragging it super negative
         x = Math.Min(x, _dt.Rows.Count - 1);
 
         var year = Convert.ToInt32(_dt.Rows[x]["Year"]);
         var month = Convert.ToInt32(_dt.Rows[x]["Month"]);
 
-        return  new DateTime(year, month, 1);
-
+        return new DateTime(year, month, 1);
     }
 }

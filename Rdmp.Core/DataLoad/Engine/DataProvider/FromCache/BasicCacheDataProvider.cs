@@ -12,14 +12,14 @@ using Rdmp.Core.DataLoad.Engine.Job;
 namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 
 /// <summary>
-/// Simple implementation of abstract CachedFileRetriever which unzips/copies data out of the cache into the ForLoading directory according to
-/// the current IDataLoadJob coverage dates (workload).
+///     Simple implementation of abstract CachedFileRetriever which unzips/copies data out of the cache into the ForLoading
+///     directory according to
+///     the current IDataLoadJob coverage dates (workload).
 /// </summary>
 public class BasicCacheDataProvider : CachedFileRetriever
 {
     public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
     }
 
     public override ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)

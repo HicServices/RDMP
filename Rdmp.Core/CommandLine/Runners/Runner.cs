@@ -19,27 +19,29 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Abstract base implementation of <see cref="IRunner"/> with convenience methods
+///     Abstract base implementation of <see cref="IRunner" /> with convenience methods
 /// </summary>
-public abstract class Runner: IRunner
+public abstract class Runner : IRunner
 {
-    public abstract int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token);
+    public abstract int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token);
 
     /// <summary>
-    /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can 
-    /// just be the ID e.g. "5" or could be an RDMP command line expression e.g. "LoadMetadata:*Load*Biochemistry*"
+    ///     Translates a string <paramref name="arg" /> into an object of type <typeparamref name="T" />.  String can
+    ///     just be the ID e.g. "5" or could be an RDMP command line expression e.g. "LoadMetadata:*Load*Biochemistry*"
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="locator"></param>
     /// <param name="arg"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentException">Thrown if it is not possible to parse <paramref name="arg"/> into an existing object</exception>
-    protected static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+    /// <exception cref="ArgumentException">
+    ///     Thrown if it is not possible to parse <paramref name="arg" /> into an existing
+    ///     object
+    /// </exception>
+    protected static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
+        where T : IMapsDirectlyToDatabaseTable
     {
-        if(string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
-        {
-            return default;
-        }
+        if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0")) return default;
 
         if (int.TryParse(arg, out var id))
         {
@@ -49,28 +51,29 @@ public abstract class Runner: IRunner
 
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
         if (!picker[0].HasValueOfType(typeof(T)))
-            throw new ArgumentException($"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
+            throw new ArgumentException(
+                $"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
 
         return (T)picker[0].GetValueForParameterOfType(typeof(T));
     }
 
-    protected static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
+    protected static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator,
+        string arg) where T : IMapsDirectlyToDatabaseTable
     {
-        if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
-        {
-            return Enumerable.Empty<T>();
-        }
+        if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0")) return Enumerable.Empty<T>();
 
         // if it is IDs only
-        if (Regex.IsMatch(arg,"^[0-9, ]+$"))
+        if (Regex.IsMatch(arg, "^[0-9, ]+$"))
         {
             var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
-            return repo.GetAllObjectsInIDList<T>(arg.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray());
+            return repo.GetAllObjectsInIDList<T>(arg.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
+                .ToArray());
         }
 
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
         if (!picker[0].HasValueOfType(typeof(T[])))
-            throw new ArgumentException($"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
+            throw new ArgumentException(
+                $"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
 
         return (T[])picker[0].GetValueForParameterOfType(typeof(T[])) ?? Enumerable.Empty<T>();
     }

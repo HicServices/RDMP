@@ -9,10 +9,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataFlowPipeline;
 
 /// <summary>
-/// MEF discoverable version of IDataFlowSource
+///     MEF discoverable version of IDataFlowSource
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IPluginDataFlowSource<T>:IDataFlowSource<T>,ICheckable
+public interface IPluginDataFlowSource<T> : IDataFlowSource<T>, ICheckable
 {
-        
 }

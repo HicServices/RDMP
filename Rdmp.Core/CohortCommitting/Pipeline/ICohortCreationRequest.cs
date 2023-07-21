@@ -15,8 +15,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// See CohortCreationRequest
-///  </summary>
+///     See CohortCreationRequest
+/// </summary>
 public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
 {
     IProject Project { get; }

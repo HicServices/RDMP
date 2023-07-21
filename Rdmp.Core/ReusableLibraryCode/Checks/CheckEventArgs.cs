@@ -11,27 +11,23 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// Created when an ICheckable performs a check to indicate whether the check passed or not and whether there is an Exception or ProposedFix.  ProposedFix
-/// is a string that suggests how a problem can be resolved but where the resolution might be undesireable under certain circumstances (hence the choice).
-/// 
-/// <para>The workflow is:
-/// 1. ICheckable has its Check method called with an ICheckNotifier
-/// 2. Check logic performed
-/// 3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
-/// 4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you should not catch/suppress).
-/// 5. If OnCheckPerformed compeltes without Exception evaluate the bool return if there was a ProposedFix and apply the fix if it is true</para>
-/// 
+///     Created when an ICheckable performs a check to indicate whether the check passed or not and whether there is an
+///     Exception or ProposedFix.  ProposedFix
+///     is a string that suggests how a problem can be resolved but where the resolution might be undesireable under
+///     certain circumstances (hence the choice).
+///     <para>
+///         The workflow is:
+///         1. ICheckable has its Check method called with an ICheckNotifier
+///         2. Check logic performed
+///         3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
+///         4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you
+///         should not catch/suppress).
+///         5. If OnCheckPerformed compeltes without Exception evaluate the bool return if there was a ProposedFix and
+///         apply the fix if it is true
+///     </para>
 /// </summary>
-public partial class CheckEventArgs : IHasSummary
+public class CheckEventArgs : IHasSummary
 {
-    public string Message { get; set; }
-    public CheckResult Result { get; set; }
-    public Exception Ex { get; set; }
-    public string ProposedFix { get; set; }
-    public string StackTrace { get; set; }
-
-    public DateTime EventDate { get; private set; }
-
     public CheckEventArgs(string message, CheckResult result, Exception ex = null, string proposedFix = null)
     {
         Message = message;
@@ -51,19 +47,19 @@ public partial class CheckEventArgs : IHasSummary
         }
     }
 
-    public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code,null,null,formatStringArgs)
+    public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code, null, null, formatStringArgs)
     {
-
     }
 
-    public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null, formatStringArgs)
+    public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null,
+        formatStringArgs)
     {
-
     }
 
     /// <summary>
-    /// Reports an event from the standard list in <see cref="ErrorCodes"/> at the <see cref="ErrorCode.DefaultTreatment"/> check
-    /// level (or the customised reporting level in <see cref="UserSettings"/>).
+    ///     Reports an event from the standard list in <see cref="ErrorCodes" /> at the
+    ///     <see cref="ErrorCode.DefaultTreatment" /> check
+    ///     level (or the customised reporting level in <see cref="UserSettings" />).
     /// </summary>
     /// <param name="code"></param>
     /// <param name="ex"></param>
@@ -86,7 +82,22 @@ public partial class CheckEventArgs : IHasSummary
         {
             //Stack trace not available ah well
         }
+    }
 
+    public string Message { get; set; }
+    public CheckResult Result { get; set; }
+    public Exception Ex { get; set; }
+    public string ProposedFix { get; set; }
+    public string StackTrace { get; set; }
+
+    public DateTime EventDate { get; private set; }
+
+    public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
+    {
+        title = "Check Result";
+        body = Message;
+        stackTrace = StackTrace;
+        level = Result;
     }
 
     public override string ToString()
@@ -97,7 +108,7 @@ public partial class CheckEventArgs : IHasSummary
     public NotifyEventArgs ToNotifyEventArgs()
     {
         ProgressEventType status;
-            
+
         switch (Result)
         {
             case CheckResult.Success:
@@ -113,14 +124,6 @@ public partial class CheckEventArgs : IHasSummary
                 throw new ArgumentOutOfRangeException();
         }
 
-        return new NotifyEventArgs(status, Message,Ex);
-    }
-
-    public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
-    {
-        title = "Check Result";
-        body = Message;
-        stackTrace= StackTrace;
-        level = Result;
+        return new NotifyEventArgs(status, Message, Ex);
     }
 }

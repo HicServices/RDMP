@@ -12,19 +12,24 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 /// <summary>
-/// Collection of all the <see cref="Catalogue"/>s which are currently associated with a given <see cref="Curation.Data.DataLoad.LoadMetadata"/>.  This governs
-/// which tables are created in RAW=>STAGING=>LIVE.
+///     Collection of all the <see cref="Catalogue" />s which are currently associated with a given
+///     <see cref="Curation.Data.DataLoad.LoadMetadata" />.  This governs
+///     which tables are created in RAW=>STAGING=>LIVE.
 /// </summary>
 public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; private set; }
-    public int Order { get => 1;
-        set { } }
-    public List<Catalogue> UsedCatalogues { get; set; }
-
     public AllCataloguesUsedByLoadMetadataNode(LoadMetadata lmd)
     {
         LoadMetadata = lmd;
+    }
+
+    public LoadMetadata LoadMetadata { get; }
+    public List<Catalogue> UsedCatalogues { get; set; }
+
+    public int Order
+    {
+        get => 1;
+        set { }
     }
 
     public override string ToString()
@@ -42,7 +47,7 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((AllCataloguesUsedByLoadMetadataNode) obj);
+        return Equals((AllCataloguesUsedByLoadMetadataNode)obj);
     }
 
     public override int GetHashCode()

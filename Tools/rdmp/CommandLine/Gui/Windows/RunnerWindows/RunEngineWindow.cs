@@ -4,36 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
-using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.Startup;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.Startup;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
 internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
 {
-    private Process process;
-    private ListView _results;
     protected readonly IBasicActivateItems BasicActivator;
     private readonly Func<T> commandGetter;
+    private readonly ColorScheme _red;
+    private readonly ListView _results;
+    private readonly ColorScheme _white;
+    private readonly ColorScheme _yellow;
+    private readonly List<string> consoleOutput = new();
 
-    private object lockList = new();
-    private List<string> consoleOutput = new();
-    private ColorScheme _red;
-    private ColorScheme _yellow;
-    private ColorScheme _white;
+    private readonly object lockList = new();
+    private Process process;
 
-    public int Count => consoleOutput.Count;
-    public int Length => consoleOutput.Count;
     public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
     {
         _red = ColorSettings.Instance.Red;
@@ -60,10 +58,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         Add(abort);
 
         var close = new Button("Cl_ose") { X = Pos.Right(abort) };
-        close.Clicked += () =>
-        {
-            Application.RequestStop();
-        };
+        close.Clicked += () => { Application.RequestStop(); };
 
         Add(close);
 
@@ -73,6 +68,49 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
         BasicActivator = activator;
         this.commandGetter = commandGetter;
+    }
+
+    public int Count => consoleOutput.Count;
+    public int Length => consoleOutput.Count;
+
+    public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width,
+        int start = 0)
+    {
+        lock (lockList)
+        {
+            if (item >= consoleOutput.Count) return;
+
+            var str = consoleOutput[item];
+
+            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
+
+            _results.Move(col, line);
+
+            ColorScheme scheme;
+            if (str.Contains("ERROR"))
+                scheme = _red;
+            else if (str.Contains("WARN"))
+                scheme = _yellow;
+            else
+                scheme = _white;
+
+            driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
+            driver.AddStr(str);
+        }
+    }
+
+    public bool IsMarked(int item)
+    {
+        return false;
+    }
+
+    public void SetMark(int item, bool value)
+    {
+    }
+
+    public IList ToList()
+    {
+        return consoleOutput;
     }
 
     private void Results_KeyPress(KeyEventEventArgs obj)
@@ -91,6 +129,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
             obj.Handled = true;
         }
     }
+
     private void ClearOutput()
     {
         lock (lockList)
@@ -131,12 +170,11 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     }
 
     /// <summary>
-    /// Override in subclasses to get last minute choices e.g. what pipeline to use for an extraction
+    ///     Override in subclasses to get last minute choices e.g. what pipeline to use for an extraction
     /// </summary>
     /// <param name="opts"></param>
     protected virtual void AdjustCommand(T opts, CommandLineActivity activity)
     {
-
     }
 
     private void Check()
@@ -166,16 +204,15 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
 
         if (!File.Exists(binary))
-        {
             // the program that launched this code isn't rdmp.exe.  Maybe rdmp is in the current directory though
             binary = $"./{expectedFileName}";
-        }
 
         if (!File.Exists(binary))
         {
             MessageBox.ErrorQuery("Could not find rdmp binary", $"Could not find {binary}", "Ok");
             return;
         }
+
         var cmd = new ExecuteCommandGenerateRunCommand(BasicActivator, commandGetter);
         var args = cmd.GetCommandText(true);
 
@@ -199,60 +236,12 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
             {
                 var line = process.StandardOutput.ReadLine().Trim();
 
-                lock(lockList)
+                lock (lockList)
                 {
-                    consoleOutput.Insert(0,line);
-                    Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
+                    consoleOutput.Insert(0, line);
+                    Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
                 }
-
             }
         });
-    }
-
-    public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
-    {
-
-        lock (lockList)
-        {
-            if (item >= consoleOutput.Count)
-            {
-                return;
-            }
-
-            var str = consoleOutput[item];
-
-            str = str.Length > width ? str[..width] : str.PadRight(width,' ');
-
-            _results.Move(col, line);
-
-            ColorScheme scheme;
-            if (str.Contains("ERROR"))
-            {
-                scheme = _red;
-            }
-            else if (str.Contains("WARN"))
-            {
-                scheme = _yellow;
-            }
-            else
-                scheme = _white;
-
-            driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
-            driver.AddStr(str);
-        }
-    }
-
-    public bool IsMarked(int item)
-    {
-        return false;
-    }
-
-    public void SetMark(int item, bool value)
-    {
-    }
-
-    public IList ToList()
-    {
-        return consoleOutput;
     }
 }

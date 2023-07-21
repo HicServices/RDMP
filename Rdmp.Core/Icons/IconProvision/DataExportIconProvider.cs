@@ -5,22 +5,24 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision;
 
 public class DataExportIconProvider : CatalogueIconProvider
 {
-    public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
+    public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
     {
         //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once
-        StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(OverlayProvider,CatalogueStateBasedIconProvider));
+        StateBasedIconProviders.Add(
+            new ExtractableDataSetStateBasedIconProvider(OverlayProvider, CatalogueStateBasedIconProvider));
         StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
     }
 
@@ -42,7 +44,9 @@ public class DataExportIconProvider : CatalogueIconProvider
         {
             var cic = association.CohortIdentificationConfiguration;
             //return image based on cic (will include frozen graphic if frozen)
-            return cic != null ? GetImageImpl(cic, OverlayKind.Link) :
+            return cic != null
+                ? GetImageImpl(cic, OverlayKind.Link)
+                :
                 //it's an orphan or user cannot fetch the cic for some reason
                 GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
         }

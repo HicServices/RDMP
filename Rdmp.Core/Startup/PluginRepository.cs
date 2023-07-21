@@ -14,24 +14,32 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Repository for constructing/saving/deleting <see cref="DatabaseEntity"/> objects that are are stored in your plugin database.
-/// The assembly containing your <see cref="PluginRepository"/> must be the same assembly that contains the class definitions.
+///     Repository for constructing/saving/deleting <see cref="DatabaseEntity" /> objects that are are stored in your
+///     plugin database.
+///     The assembly containing your <see cref="PluginRepository" /> must be the same assembly that contains the class
+///     definitions.
 /// </summary>
-public abstract class PluginRepository:TableRepository
+public abstract class PluginRepository : TableRepository
 {
-    public ExternalDatabaseServer ExternalDatabaseServer { get; set; }
+    private readonly ObjectConstructor _constructor = new();
 
     /// <summary>
-    /// Sets up the repository for reading and writing objects out of the given <paramref name="externalDatabaseServer"/>.  
+    ///     Sets up the repository for reading and writing objects out of the given <paramref name="externalDatabaseServer" />.
     /// </summary>
     /// <param name="externalDatabaseServer">The database to connect to</param>
-    /// <param name="dependencyFinder">Optional class that can forbid deleting objects because you have dependencies on them in your database (e.g. if your custom object has a field Catalogue_ID)</param>
-    protected PluginRepository(ExternalDatabaseServer externalDatabaseServer, IObscureDependencyFinder dependencyFinder):base(dependencyFinder,externalDatabaseServer.Discover(DataAccessContext.InternalDataProcessing).Server.Builder)
+    /// <param name="dependencyFinder">
+    ///     Optional class that can forbid deleting objects because you have dependencies on them in
+    ///     your database (e.g. if your custom object has a field Catalogue_ID)
+    /// </param>
+    protected PluginRepository(ExternalDatabaseServer externalDatabaseServer, IObscureDependencyFinder dependencyFinder)
+        : base(dependencyFinder,
+            externalDatabaseServer.Discover(DataAccessContext.InternalDataProcessing).Server.Builder)
     {
         ExternalDatabaseServer = externalDatabaseServer;
     }
 
-    private readonly ObjectConstructor _constructor = new();
+    public ExternalDatabaseServer ExternalDatabaseServer { get; set; }
+
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
         return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t, this, reader);

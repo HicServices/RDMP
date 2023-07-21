@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
@@ -19,22 +19,22 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
 {
     private readonly ExternalCohortTable _externalCohortTable;
     private readonly IProject specificProject;
-    private int? _explicitOriginIDToImport;
+    private readonly int? _explicitOriginIDToImport;
 
-    public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, IProject specificProject):base(activator)
+    public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator,
+        ExternalCohortTable externalCohortTable, IProject specificProject) : base(activator)
     {
         _externalCohortTable = externalCohortTable;
         this.specificProject = specificProject;
 
-        if(specificProject != null && specificProject.ProjectNumber == null)
-        {
+        if (specificProject != null && specificProject.ProjectNumber == null)
             SetImpossible("Project does not have a ProjectNumber yet");
-        }
     }
 
-        
+
     [UseWithObjectConstructor]
-    public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, int originIDToImport)  : this(activator,externalCohortTable,null)
+    public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator,
+        ExternalCohortTable externalCohortTable, int originIDToImport) : this(activator, externalCohortTable, null)
     {
         _explicitOriginIDToImport = originIDToImport;
     }
@@ -48,30 +48,33 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         if (ect == null)
         {
             var available = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
-            if(!SelectOne(available,out ect,null,true))
-            {
-                return;
-            }   
+            if (!SelectOne(available, out ect, null, true)) return;
         }
 
 
         var newId = _explicitOriginIDToImport ?? GetWhichCohortToImport(ect);
 
-            
-        if(newId.HasValue)
+
+        if (newId.HasValue)
         {
             new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
             Publish(ect);
         }
     }
 
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
+    }
+
     private int? GetWhichCohortToImport(ExternalCohortTable ect)
     {
         // the cohorts in the database
-        var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(c=>c.ID.HasValue).ToArray();
+        var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(c => c.ID.HasValue).ToArray();
 
         // the ones we already know about
-        var existing = new HashSet<int>(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>().Select(c=>c.OriginID));
+        var existing = new HashSet<int>(BasicActivator.RepositoryLocator.DataExportRepository
+            .GetAllObjects<ExtractableCohort>().Select(c => c.OriginID));
 
         // new ones we don't know about yet
         available = available.Where(c => !existing.Contains(c.ID.Value)).ToArray();
@@ -79,7 +82,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         // if there are no new ones
         if (!available.Any())
         {
-            BasicActivator.Show($"There are no new cohorts");
+            BasicActivator.Show("There are no new cohorts");
             return null;
         }
 
@@ -88,24 +91,17 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         {
             available = available.Where(a => a.ProjectNumber == specificProject.ProjectNumber).ToArray();
 
-            if(!available.Any())
+            if (!available.Any())
             {
-                BasicActivator.Show($"There are no new cohorts to import for ProjectNumber {specificProject.ProjectNumber}");
+                BasicActivator.Show(
+                    $"There are no new cohorts to import for ProjectNumber {specificProject.ProjectNumber}");
                 return null;
             }
         }
 
         // pick which one to import
-        if(BasicActivator.SelectObject("Import Cohort",available, out var cd))
-        {
-            return cd.ID;
-        }
+        if (BasicActivator.SelectObject("Import Cohort", available, out var cd)) return cd.ID;
 
         return null;
-    }
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
     }
 }

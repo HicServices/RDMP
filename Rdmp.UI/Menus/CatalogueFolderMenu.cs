@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -12,12 +13,11 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 internal class CatalogueFolderMenu : RDMPContextMenuStrip
 {
     public CatalogueFolderMenu(RDMPContextMenuStripArgs args, string folder) : base(args, folder)
     {
-
         //Things that are always visible regardless
         Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
         {
@@ -29,6 +29,7 @@ internal class CatalogueFolderMenu : RDMPContextMenuStrip
 
         args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
-        Add(new ExecuteCommandGenerateMetadataReport(_activator, _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
+        Add(new ExecuteCommandGenerateMetadataReport(_activator,
+            _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
     }
 }

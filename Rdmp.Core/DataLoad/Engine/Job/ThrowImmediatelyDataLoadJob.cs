@@ -19,11 +19,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-/// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc 
+///     Empty implementation of IDataLoadJob that can be used during Checking / Tests etc
 /// </summary>
-public class ThrowImmediatelyDataLoadJob: IDataLoadJob
+public class ThrowImmediatelyDataLoadJob : IDataLoadJob
 {
     private readonly IDataLoadEventListener _listener;
+
+    private readonly List<NotifyEventArgs> _crashAtEnd = new();
 
     public ThrowImmediatelyDataLoadJob()
     {
@@ -40,6 +42,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     {
         _listener = listener;
     }
+
     public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
     {
         _listener = new ThrowImmediatelyDataLoadEventListener();
@@ -47,15 +50,16 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
         Configuration = configuration;
     }
 
-    public string Description { get; private set; }
+    public bool DisposeImmediately { get; }
+
+    public string Description { get; }
     public IDataLoadInfo DataLoadInfo { get; set; }
     public ILoadDirectory LoadDirectory { get; set; }
     public int JobID { get; set; }
     public ILoadMetadata LoadMetadata { get; set; }
-    public bool DisposeImmediately { get; private set; }
-    public string ArchiveFilepath { get; private set; }
-    public List<ITableInfo> RegularTablesToLoad { get; set; } = new List<ITableInfo>();
-    public List<ITableInfo> LookupTablesToLoad { get; set; } = new List<ITableInfo>();
+    public string ArchiveFilepath { get; }
+    public List<ITableInfo> RegularTablesToLoad { get; set; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; set; } = new();
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
     public void StartLogging()
@@ -71,15 +75,9 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     public object Payload { get; set; }
     public bool PersistentRaw { get; set; }
 
-    private List<NotifyEventArgs> _crashAtEnd = new();
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 
-
-    public static void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
-    {
-    }
     public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
     {
     }
@@ -90,26 +88,32 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
     }
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        _listener.OnNotify(sender,e);
+        _listener.OnNotify(sender, e);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        _listener.OnProgress(sender,e);
-    }
-    public ColumnInfo[] GetAllColumns()
-    {
-        return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        _listener.OnProgress(sender, e);
     }
 
-    /// <inheritdoc/>
+    public ColumnInfo[] GetAllColumns()
+    {
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
+    }
+
+    /// <inheritdoc />
     public void CrashAtEnd(NotifyEventArgs because)
     {
         _crashAtEnd.Add(because);
+    }
+
+
+    public static void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
+    {
     }
 }

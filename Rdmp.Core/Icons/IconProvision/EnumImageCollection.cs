@@ -6,39 +6,39 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using System.Resources;
-using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Rdmp.Core.Icons.IconProvision;
 
 public class EnumImageCollection<T> where T : struct, Enum, IConvertible
 {
-    private readonly Dictionary<T,Image<Rgba32>> _images = new();
-
-    private static Image<Rgba32> LoadImage(byte [] ba)
-    {
-        return ba == null ? null : Image.Load<Rgba32>(ba);
-    }
+    private readonly Dictionary<T, Image<Rgba32>> _images = new();
 
     public EnumImageCollection(ResourceManager resourceManager)
     {
-        _images=Enum.GetValues<T>().ToDictionary(s=>s,s=>LoadImage(resourceManager.GetObject(s.ToString()) as byte[]));
+        _images = Enum.GetValues<T>()
+            .ToDictionary(s => s, s => LoadImage(resourceManager.GetObject(s.ToString()) as byte[]));
         var missingImages = _images.Where(i => i.Value is null).Select(p => p.Key).ToList();
-        if(missingImages.Any())
+        if (missingImages.Any())
             throw new IconProvisionException(
                 $"The following expected images were missing from {resourceManager.BaseName}.resx{Environment.NewLine}{string.Join($",{Environment.NewLine}", missingImages)}");
     }
 
     public Image<Rgba32> this[T index] => _images[index];
 
+    private static Image<Rgba32> LoadImage(byte[] ba)
+    {
+        return ba == null ? null : Image.Load<Rgba32>(ba);
+    }
+
     public Dictionary<string, Image<Rgba32>> ToStringDictionary(int newSizeInPixels = -1)
     {
         return _images.ToDictionary(
             k => k.Key.ToString(),
-            v => newSizeInPixels==-1 ? v.Value : v.Value.Clone(x=>x.Resize(newSizeInPixels,newSizeInPixels)));
+            v => newSizeInPixels == -1 ? v.Value : v.Value.Clone(x => x.Resize(newSizeInPixels, newSizeInPixels)));
     }
-
 }

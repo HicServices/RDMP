@@ -13,22 +13,23 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.CohortDescribing;
 
 /// <summary>
-/// Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a cohort database (ExternalCohortTable)
+///     Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a
+///     cohort database (ExternalCohortTable)
 /// </summary>
 public class CohortDescriptionDataTableAsyncFetch
 {
-    public ExternalCohortTable Source { get; private set; }
-    public DataTable DataTable { get; private set; }
-    public Task Task { get; private set; }
-
-
-    public event Action Finished;
-
     public CohortDescriptionDataTableAsyncFetch(ExternalCohortTable source)
     {
         Source = source;
         DataTable = new DataTable();
     }
+
+    public ExternalCohortTable Source { get; }
+    public DataTable DataTable { get; }
+    public Task Task { get; private set; }
+
+
+    public event Action Finished;
 
 
     public void Begin()
@@ -39,21 +40,16 @@ public class CohortDescriptionDataTableAsyncFetch
             using (var con = server.GetConnection())
             {
                 con.Open();
-                using(var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
+                using (var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
                 {
                     cmd.CommandTimeout = 120; //give it up to 2 minutes
                     server.GetDataAdapter(cmd).Fill(DataTable);
-                }   
+                }
             }
-                
         });
 
-        Task.ContinueWith(s =>
-        {
-            Finished?.Invoke();
-        });
+        Task.ContinueWith(s => { Finished?.Invoke(); });
 
         Task.Start();
     }
-
 }

@@ -4,26 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.IO;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAtomicCommand
 {
     private readonly GovernancePeriod _period;
-    private FileInfo _file;
+    private readonly FileInfo _file;
 
-    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator,GovernancePeriod period) : base(activator)
+    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period) :
+        base(activator)
     {
         _period = period;
     }
 
-    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period,FileInfo file): base(activator)
+    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period, FileInfo file)
+        : base(activator)
     {
         _period = period;
         _file = file;
@@ -36,27 +38,23 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAto
         var p = _period;
         var f = _file;
 
-        if(p == null)
+        if (p == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-                {
-                    WindowTitle = "Add Governance Document",
-                    TaskDescription = "Select which GovernancePeriod you want to attach the document to."
-
-                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(), out var selected))
-            {
+                    {
+                        WindowTitle = "Add Governance Document",
+                        TaskDescription = "Select which GovernancePeriod you want to attach the document to."
+                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
+                    out var selected))
                 p = selected;
-            }
             else
-            {
                 // user cancelled selecting a Catalogue
                 return;
-            }
         }
 
         f ??= BasicActivator.SelectFile("Document to add");
 
-        if(f == null)
+        if (f == null)
             return;
 
         var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);

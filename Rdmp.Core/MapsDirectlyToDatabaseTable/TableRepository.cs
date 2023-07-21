@@ -26,16 +26,50 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// See ITableRepository
+///     See ITableRepository
 /// </summary>
 public abstract class TableRepository : ITableRepository
 {
+    private static readonly object _oLockUpdateCommands = new();
+
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private readonly Dictionary<Thread, IManagedConnection> ongoingConnections = new();
+    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
+
+    private Type[] _compatibleTypes;
+
     //fields
     protected DbConnectionStringBuilder _connectionStringBuilder;
-    public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-    private static object _oLockUpdateCommands = new();
-    private UpdateCommandStore _updateCommandStore = new();
+    private readonly Dictionary<Type, bool> _knownSupportedTypes = new();
+    private readonly Lazy<DiscoveredTable[]> _tables;
+    private readonly UpdateCommandStore _updateCommandStore = new();
+
+    /// <summary>
+    ///     Constructors for quickly resolving <see cref="ConstructEntity" /> calls rather than relying on reflection e.g.
+    ///     ObjectConstructor
+    /// </summary>
+    protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
+
+    private readonly object oLockKnownTypes = new();
+
+    private readonly object ongoingConnectionsLock = new();
+
+    //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
+    public TableRepository()
+    {
+        _tables = new Lazy<DiscoveredTable[]>(() => DiscoveredServer.GetCurrentDatabase().DiscoverTables(false));
+    }
+
+    public TableRepository(IObscureDependencyFinder obscureDependencyFinder,
+        DbConnectionStringBuilder connectionStringBuilder) : this()
+    {
+        ObscureDependencyFinder = obscureDependencyFinder;
+        _connectionStringBuilder = connectionStringBuilder;
+        DiscoveredServer = new DiscoveredServer(connectionStringBuilder);
+    }
+
+    public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
     public bool SupportsCommits => true;
 
     //'accessors'
@@ -44,39 +78,20 @@ public abstract class TableRepository : ITableRepository
 
     public DiscoveredServer DiscoveredServer { get; protected set; }
 
-    /// <summary>
-    /// Constructors for quickly resolving <see cref="ConstructEntity"/> calls rather than relying on reflection e.g. ObjectConstructor
-    /// </summary>
-    protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
-
-    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-    private Lazy<DiscoveredTable[]> _tables;
-
-    //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
-    public TableRepository()
-    {
-        _tables = new Lazy<DiscoveredTable[]>(()=>DiscoveredServer.GetCurrentDatabase().DiscoverTables(false));
-    }
-
-    public TableRepository(IObscureDependencyFinder obscureDependencyFinder, DbConnectionStringBuilder connectionStringBuilder):this()
-    {
-        ObscureDependencyFinder = obscureDependencyFinder;
-        _connectionStringBuilder = connectionStringBuilder;
-        DiscoveredServer = new DiscoveredServer(connectionStringBuilder);
-    }
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         //do not log information about access credentials
-        if(oTableWrapperObject is not IDataAccessCredentials)
+        if (oTableWrapperObject is not IDataAccessCredentials)
             _logger.Debug(
                 $"Deleted,{oTableWrapperObject.GetType().Name},{oTableWrapperObject.ID},{oTableWrapperObject}");
-            
+
         lock (_oLockUpdateCommands)
         {
             //if the repository has obscure dependencies
-            ObscureDependencyFinder?.ThrowIfDeleteDisallowed(oTableWrapperObject);//confirm that deleting the object is allowed by the dependencies
+            ObscureDependencyFinder
+                ?.ThrowIfDeleteDisallowed(
+                    oTableWrapperObject); //confirm that deleting the object is allowed by the dependencies
 
             using var con = GetConnection();
             using (var cmd = DatabaseCommandHelper.GetCommand(
@@ -86,7 +101,7 @@ public abstract class TableRepository : ITableRepository
                 DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
                 cmd.ExecuteNonQuery();
             }
-                    
+
             //likewise if there are obscure dependency handlers let them handle cascading this delete into the mists of their obscure functionality (e.g. deleting a Catalogue in CatalogueRepository would delete all Evaluations of that Catalogue in the DQE repository because they would then be orphans)
             ObscureDependencyFinder?.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
         }
@@ -94,8 +109,9 @@ public abstract class TableRepository : ITableRepository
         Deleting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(oTableWrapperObject));
     }
 
-    /// <inheritdoc/>
-    public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
+    /// <inheritdoc />
+    public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2>
+        where T2 : IMapsDirectlyToDatabaseTable
     {
         var toReturn = GetAllObjectsWithParent<T>(parent);
         foreach (var v in toReturn)
@@ -104,19 +120,18 @@ public abstract class TableRepository : ITableRepository
         return toReturn;
     }
 
-        
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        var r = (IRevertable) oTableWrapperObject;
+        var r = (IRevertable)oTableWrapperObject;
         var changes = r.HasLocalChanges();
-            
-        if(changes.Evaluation == ChangeDescription.NoChanges)
+
+        if (changes.Evaluation == ChangeDescription.NoChanges)
             return;
 
-        var e =new SaveEventArgs(oTableWrapperObject);
-        Saving?.Invoke(this,e);
+        var e = new SaveEventArgs(oTableWrapperObject);
+        Saving?.Invoke(this, e);
 
         if (e.Cancel)
             return;
@@ -130,8 +145,8 @@ public abstract class TableRepository : ITableRepository
             using var managedConnection = GetConnection();
             var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType(), managedConnection);
 
-            PopulateUpdateCommandValuesWithCurrentState(cmd,oTableWrapperObject);
-                    
+            PopulateUpdateCommandValuesWithCurrentState(cmd, oTableWrapperObject);
+
             cmd.Connection = managedConnection.Connection;
 
             //change the transaction of the update comand to the specified transaction but only long enough to run it
@@ -147,53 +162,19 @@ public abstract class TableRepository : ITableRepository
             finally
             {
                 //reset the transaction to whatever it was before
-                cmd.Transaction = transactionBefore;    
+                cmd.Transaction = transactionBefore;
             }
-                    
-                    
+
+
             if (affectedRows != 1)
-            {
                 throw new Exception(
                     $"Attempted to update {oTableWrapperObject.GetType().Name} with ID {oTableWrapperObject.ID} but the UPDATE command resulted in {affectedRows} affected rows");
-            }
         }
     }
 
-    protected static void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
-    {
-        foreach (DbParameter p in cmd.Parameters)
-        {
-            var prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
-
-            var propValue = prop.GetValue(oTableWrapperObject, null);
-                
-            //if it is a complex type but IConvertible e.g. CatalogueFolder
-            if(!prop.PropertyType.IsValueType && propValue is IConvertible c)
-                if(c.GetTypeCode() == TypeCode.String)
-                    propValue = c.ToString();
-
-            SetParameterToValue(p, propValue);
-        }
-
-        cmd.Parameters["@ID"].Value = oTableWrapperObject.ID;
-    }
-
-    private static void SetParameterToValue(DbParameter p, object propValue)
-    {
-        p.Value = propValue switch
-        {
-            null => DBNull.Value,
-            string value when string.IsNullOrWhiteSpace(value) => DBNull.Value,
-            Uri => propValue.ToString(),
-            TimeSpan => propValue.ToString(),
-            Version => propValue.ToString(),
-            _ => propValue
-        };
-    }
-        
     public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
     {
-        return StillExists(typeof(T),id);
+        return StillExists(typeof(T), id);
     }
 
     public bool StillExists(IMapsDirectlyToDatabaseTable o)
@@ -206,12 +187,14 @@ public abstract class TableRepository : ITableRepository
         //go to database to see if it exists
         using var connection = GetConnection();
         using var selectCommand = DatabaseCommandHelper.GetCommand(
-            $"SELECT case when exists(select * FROM {Wrap(type.Name)} WHERE ID= {id}) then 1 else 0 end", connection.Connection, connection.Transaction);
+            $"SELECT case when exists(select * FROM {Wrap(type.Name)} WHERE ID= {id}) then 1 else 0 end",
+            connection.Connection, connection.Transaction);
         return Convert.ToBoolean(selectCommand.ExecuteScalar());
     }
 
     /// <summary>
-    /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
+    ///     Get's all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that
+    ///     for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="parent"></param>
@@ -219,15 +202,16 @@ public abstract class TableRepository : ITableRepository
     public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
     {
         //no cached result so fallback on regular method
-        return GetAllObjectsWhere<T>($"{parent.GetType().Name}_ID", parent.ID );
+        return GetAllObjectsWhere<T>($"{parent.GetType().Name}_ID", parent.ID);
     }
 
-    public T GetObjectByID<T>(int id) where T:IMapsDirectlyToDatabaseTable
+    public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
     {
         if (typeof(T).IsInterface)
-            throw new Exception("GetObjectByID<T> requires a proper class not an interface so that it can access the correct table");
+            throw new Exception(
+                "GetObjectByID<T> requires a proper class not an interface so that it can access the correct table");
 
-        return (T) GetObjectByID(typeof (T), id);
+        return (T)GetObjectByID(typeof(T), id);
     }
 
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
@@ -238,33 +222,13 @@ public abstract class TableRepository : ITableRepository
         var typename = Wrap(type.Name);
 
         using var connection = GetConnection();
-        using var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename} WHERE ID={id}", connection.Connection, connection.Transaction);
+        using var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename} WHERE ID={id}",
+            connection.Connection, connection.Transaction);
         using var r = selectCommand.ExecuteReader();
         if (!r.HasRows)
             throw new KeyNotFoundException($"Could not find {type.Name} with ID {id}");
         r.Read();
-        return ConstructEntity(type,r);
-    }
-
-    public string Wrap(string name)
-    {
-        return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
-    }
-
-    protected abstract IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader);
-
-    private T ConstructEntity<T>(DbDataReader reader) where T : IMapsDirectlyToDatabaseTable
-    {
-        ArgumentNullException.ThrowIfNull(reader);
-
-        try
-        {
-            return (T) ConstructEntity(typeof (T), reader);
-        }
-        catch (Exception e)
-        {
-            throw new Exception($"Could not construct '{typeof(T).Name}' with ID={reader["ID"]}",e);
-        }
+        return ConstructEntity(type, r);
     }
 
     public virtual T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
@@ -272,36 +236,13 @@ public abstract class TableRepository : ITableRepository
         return GetAllObjects<T>(null);
     }
 
-    public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
-    {
-        var typename = Wrap(typeof (T).Name);
-
-        //if there is whereSQL make sure it is a legit SQL where
-        if (!string.IsNullOrWhiteSpace(whereSQL))
-            if(!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
-                throw new ArgumentException($"whereSQL did not start with the word 'WHERE', it was:{whereSQL}");
-
-        var toReturn = new List<T>();
-
-        using var opener = GetConnection();
-        var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename} {whereSQL??""}", opener.Connection, opener.Transaction);
-
-        using var r = selectCommand.ExecuteReader();
-        while (r.Read())
-            toReturn.Add(ConstructEntity<T>(r));
-        return toReturn.ToArray();
-    }
-
-    public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-    {
-        return GetAllObjects(typeof(T), whereSQL, parameters).Cast<T>().ToArray();
-    }
     public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
     {
-        return GetAllObjectsWhere<T>($"WHERE {property} = @val",new Dictionary<string, object> {{"@val",value1}} );
+        return GetAllObjectsWhere<T>($"WHERE {property} = @val", new Dictionary<string, object> { { "@val", value1 } });
     }
 
-    public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,object value2) where T : IMapsDirectlyToDatabaseTable
+    public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,
+        object value2) where T : IMapsDirectlyToDatabaseTable
     {
         var @operator = operand switch
         {
@@ -318,24 +259,6 @@ public abstract class TableRepository : ITableRepository
             });
     }
 
-    public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
-    {
-        var typename = Wrap(t.Name);
-
-        // if there is whereSQL make sure it is a legit SQL where
-        if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
-            throw new ArgumentException($"whereSQL did not start with the word 'WHERE', it was:{whereSQL}");
-
-        var toReturn = new List<IMapsDirectlyToDatabaseTable>();
-        using var opener = GetConnection();
-        var selectCommand = PrepareCommand($"SELECT * FROM {typename} {whereSQL}", parameters, opener.Connection, opener.Transaction);
-
-        using var r = selectCommand.ExecuteReader();
-        while (r.Read())
-            toReturn.Add(ConstructEntity(t,r));
-
-        return toReturn.ToArray();
-    }
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
     {
         var typename = Wrap(t.Name);
@@ -343,21 +266,14 @@ public abstract class TableRepository : ITableRepository
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
         using var opener = GetConnection();
-        var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename}", opener.Connection, opener.Transaction);
+        var selectCommand =
+            DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename}", opener.Connection, opener.Transaction);
 
         using var r = selectCommand.ExecuteReader();
         while (r.Read())
             toReturn.Add(ConstructEntity(t, r));
 
         return toReturn;
-    }
-
-    private DbCommand GetUpdateCommandFromStore(Type type, IManagedConnection managedConnection)
-    {
-        if (!_updateCommandStore.ContainsKey(type))
-            _updateCommandStore.Add(type, _connectionStringBuilder, managedConnection.Connection, managedConnection.Transaction);
-
-        return _updateCommandStore[type];
     }
 
     public Version GetVersion()
@@ -367,7 +283,7 @@ public abstract class TableRepository : ITableRepository
 
     public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
     {
-        return GetAllObjectsInIDList(typeof (T), ids).Cast<T>();
+        return GetAllObjectsInIDList(typeof(T), ids).Cast<T>();
     }
 
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
@@ -380,7 +296,7 @@ public abstract class TableRepository : ITableRepository
         return GetAllObjects(elementType, $" WHERE ID in ({inList})");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2)
     {
         if (obj1 == null && obj2 != null)
@@ -389,38 +305,28 @@ public abstract class TableRepository : ITableRepository
         if (obj2 == null && obj1 != null)
             return false;
 
-        if(obj1 == null && obj2 == null)
-            throw new NotSupportedException("Why are you comparing two null things against one another with this method?");
+        if (obj1 == null && obj2 == null)
+            throw new NotSupportedException(
+                "Why are you comparing two null things against one another with this method?");
 
         if (obj1.GetType() == obj2.GetType())
-        {
-            return obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
-        }
+            return obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID &&
+                   obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
 
         return false;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
     {
-        return obj1.GetType().GetHashCode()*obj1.ID;
+        return obj1.GetType().GetHashCode() * obj1.ID;
     }
 
-    /// <summary>
-    /// Gets all public properties of the class that are not decorated with [<see cref="NoMappingToDatabase"/>]
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    public static PropertyInfo[] GetPropertyInfos(Type type)
-    {
-        return type.GetProperties().Where(prop =>!Attribute.IsDefined(prop, typeof (NoMappingToDatabase))).ToArray();
-    }
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable localCopy)
     {
         //get new copy out of database
-        var databaseState = GetObjectByID(localCopy.GetType(),localCopy.ID);
+        var databaseState = GetObjectByID(localCopy.GetType(), localCopy.ID);
 
         Debug.Assert(localCopy.GetType() == databaseState.GetType());
 
@@ -433,13 +339,13 @@ public abstract class TableRepository : ITableRepository
 
             propertyInfo.SetValue(localCopy, propertyInfo.GetValue(databaseState));
         }
-            
+
         //Mark any cached data as out of date
-        if(localCopy is IInjectKnown inject) 
+        if (localCopy is IInjectKnown inject)
             inject.ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable localCopy)
     {
         IMapsDirectlyToDatabaseTable dbCopy;
@@ -473,7 +379,7 @@ public abstract class TableRepository : ITableRepository
 
             if (!Equals(local, db))
             {
-                toReturn.Differences.Add(new RevertablePropertyDifference(propertyInfo,local,db));
+                toReturn.Differences.Add(new RevertablePropertyDifference(propertyInfo, local, db));
                 toReturn.Evaluation = ChangeDescription.DatabaseCopyDifferent;
             }
         }
@@ -481,212 +387,15 @@ public abstract class TableRepository : ITableRepository
         return toReturn;
     }
 
-
-    #region new
-        
-        
-    public void TestConnection()
-    {
-        try
-        {
-            using var con = GetConnection();
-            if (con.Connection.State != ConnectionState.Open)
-                throw new Exception($"State of connection was {con.Connection.State}");
-        }
-        catch (Exception e)
-        {
-
-            var msg = _connectionStringBuilder.ConnectionString;
-
-            var pass = DiscoveredServer.Helper.GetExplicitPasswordIfAny(_connectionStringBuilder);
-
-            if(!string.IsNullOrWhiteSpace(pass))
-                msg = msg.Replace(pass,"****");
-                
-            throw new Exception($"Testing connection failed, connection string was '{msg}'", e);
-        }
-    }
-
-    public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID= null) where T : IMapsDirectlyToDatabaseTable
-    {
-        columnWithObjectID ??= $"{typeof(T).Name}_ID";
-
-        using (var opener = GetConnection())
-        {
-            var idsToReturn = new List<int>();
-            using (var cmd = DatabaseCommandHelper.GetCommand(selectQuery, opener.Connection, opener.Transaction))
-            {
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                    {
-                        idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
-                    }
-                }
-            }
-
-            if (!idsToReturn.Any())
-                return Enumerable.Empty<T>();
-
-            return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
-        }
-    }
-    /// <summary>
-    /// Runs the selectQuery (which must be a FULL QUERY) and uses @parameters for each of the kvps in the dictionary.  It expects the query result set to include
-    /// a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a dbNullSubstition (which must also be of type
-    /// T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the returned list instead.  
-    /// 
-    /// <para>IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into your select query </para>
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="selectQuery"></param>
-    /// <param name="parameters"></param>
-    /// <param name="columnWithObjectID"></param>
-    /// <param name="dbNullSubstition"></param>
-    /// <returns></returns>
-    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default) where T : IMapsDirectlyToDatabaseTable
-    {
-        columnWithObjectID ??= $"{typeof(T).Name}_ID";
-
-        if (selectQuery.ToLower().Contains("order by "))
-            throw new Exception("Select Query contained an ORDER BY statment in it!");
-
-        var nullsFound = 0;
-
-        using (var opener = GetConnection())
-        {
-            var idsToReturn = new List<int>();
-            var cmd = PrepareCommand(selectQuery, parameters, opener.Connection, opener.Transaction);
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                {
-                    if (r[columnWithObjectID] == DBNull.Value)
-                    {
-                        nullsFound++;
-                        continue;
-                    }
-
-                    idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
-                }
-            }
-
-            if (!idsToReturn.Any())
-                return Enumerable.Empty<T>();
-
-
-            var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
-
-            //this bit of hackery is if your a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
-            if(dbNullSubstition != null)
-                for (var i = 0; i < nullsFound; i++)
-                    toReturn.Add(dbNullSubstition);
-
-            return toReturn;
-        }
-    }
-        
-        
-
-        
-    private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-    {
-        using (var opener = GetConnection())
-        {
-            var query = CreateInsertStatement<T>(parameters);
-
-            query += ";SELECT @@IDENTITY;";
-
-            var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
-            return int.Parse(cmd.ExecuteScalar().ToString());
-        }
-    }
-
-    private string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
-    {
-        _logger.Info($"Created New,{typeof(T).Name}");
-
-        var query = $"INSERT INTO {Wrap(typeof(T).Name)}";
-        if (parameters != null && parameters.Any())
-        {
-            if (parameters.Any(kvp => kvp.Key.StartsWith("@")))
-                throw new InvalidOperationException(
-                    $"Invalid parameters for {typeof(T).Name} INSERT. Do not use @ when specifying parameter names, this is SQL-specific and will be added when required: {string.Join(", ", parameters.Where(kvp => kvp.Key.StartsWith("@")))}");
-
-            var columnString = string.Join(", ", parameters.Select(kvp => Wrap(kvp.Key)));
-            var parameterString = string.Join(", ", parameters.Select(kvp => $"@{kvp.Key}"));
-            query += $"({columnString}) VALUES ({parameterString})";
-        }
-        else
-            query += " DEFAULT VALUES";
-            
-        return query;
-    }
-
-        
-
-    public int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true)
-    {
-        using (var opener = GetConnection())
-        {
-            var cmd = PrepareCommand(deleteQuery, parameters, opener.Connection, opener.Transaction);
-            var affectedRows = cmd.ExecuteNonQuery();
-                
-            if (affectedRows == 0 && throwOnZeroAffectedRows)
-                throw new Exception($"Deleted failed, resulted in {affectedRows} affected rows");
-
-            return affectedRows;
-        }
-    }
-
-    public int Update(string updateQuery, Dictionary<string, object> parameters)
-    {
-        using (var opener = GetConnection())
-        {
-            var cmd = PrepareCommand(updateQuery, parameters, opener.Connection, opener.Transaction);
-            return cmd.ExecuteNonQuery();
-        }
-    }
-
-    public static DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
-    {
-        var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
-        if (parameters == null) return cmd;
-
-        return PrepareCommand(cmd, parameters);
-    }
-
-    public static DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
-    {
-        foreach (var kvp in parameters)
-        {
-            var paramName = kvp.Key.StartsWith("@") ? kvp.Key : $"@{kvp.Key}";
-
-            // Check that this parameter name actually exists in the sql
-            if (!cmd.CommandText.Contains(paramName))
-                throw new InvalidOperationException(
-                    $"Parameter '{paramName}' does not exist in the SQL command ({cmd.CommandText})");
-
-            //if it isn't yet in the command add it
-            if (!cmd.Parameters.Contains(paramName))
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter(paramName, cmd));
-
-            //set its value
-            SetParameterToValue(cmd.Parameters[paramName], kvp.Value);
-        }
-        return cmd;
-    }
-
-    #endregion
-        
-    public void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
+    public void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
+        where T : IMapsDirectlyToDatabaseTable
     {
         var id = InsertAndReturnID<T>(constructorParameters);
 
         var actual = GetObjectByID<T>(id);
-            
+
         //.Repository does not get included in this list because it is [NoMappingToDatabase]
-        foreach (var prop in GetPropertyInfos(typeof (T)))
+        foreach (var prop in GetPropertyInfos(typeof(T)))
             prop.SetValue(toCreate, prop.GetValue(actual));
 
         toCreate.Repository = actual.Repository;
@@ -696,18 +405,16 @@ public abstract class TableRepository : ITableRepository
         Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
     }
 
-    private object ongoingConnectionsLock = new();
-    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new();
-    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
-
 
     public IManagedConnection GetConnection()
     {
         //any existing ongoing connection found on this Thread
         GetOngoingActivitiesFromThreadsDictionary(out var ongoingConnection, out var ongoingTransaction);
-            
+
         //if we are in the middle of doing stuff we can just reuse the ongoing one
-        if (ongoingConnection != null && ongoingConnection.Connection.State == ConnectionState.Open)//as long as it hasn't timed out or been disposed etc
+        if (ongoingConnection != null &&
+            ongoingConnection.Connection.State ==
+            ConnectionState.Open) //as long as it hasn't timed out or been disposed etc
             if (ongoingConnection.CloseOnDispose)
             {
                 var clone = ongoingConnection.Clone();
@@ -715,7 +422,9 @@ public abstract class TableRepository : ITableRepository
                 return clone;
             }
             else
+            {
                 return ongoingConnection;
+            }
 
         ongoingConnection = DiscoveredServer.GetManagedConnection(ongoingTransaction);
 
@@ -725,44 +434,20 @@ public abstract class TableRepository : ITableRepository
         return ongoingConnection;
     }
 
-    private void GetOngoingActivitiesFromThreadsDictionary(out IManagedConnection ongoingConnection, out IManagedTransaction ongoingTransaction)
-    {
-        lock (ongoingConnectionsLock)
-        {
-            //see if Thread dictionary has it
-            if (ongoingConnections.TryGetValue(Thread.CurrentThread, out var connection))
-                ongoingConnection = connection;
-            else
-            {
-                ongoingConnections.Add(Thread.CurrentThread, null);
-                ongoingConnection = null;
-            }
-
-
-            //see if Thread dictionary has it
-            if (ongoingTransactions.TryGetValue(Thread.CurrentThread, out var transaction))
-                ongoingTransaction = transaction;
-            else
-            {
-                ongoingTransactions.Add(Thread.CurrentThread, null);
-                ongoingTransaction = null;
-            }
-        }
-    }
-
     public IManagedConnection BeginNewTransactedConnection()
     {
         GetOngoingActivitiesFromThreadsDictionary(out _, out var ongoingTransaction);
 
         if (ongoingTransaction != null)
-            throw new NotSupportedException("There is already an ongoing transaction on this Thread! Call EndTransactedConnection on the last one first");
+            throw new NotSupportedException(
+                "There is already an ongoing transaction on this Thread! Call EndTransactedConnection on the last one first");
 
-        var toReturn =  DiscoveredServer.BeginNewTransactedConnection();
+        var toReturn = DiscoveredServer.BeginNewTransactedConnection();
         ongoingTransaction = toReturn.ManagedTransaction;
         ongoingTransactions[Thread.CurrentThread] = ongoingTransaction;
 
         if (!ongoingConnections.ContainsKey(Thread.CurrentThread))
-            ongoingConnections.Add(Thread.CurrentThread,toReturn);
+            ongoingConnections.Add(Thread.CurrentThread, toReturn);
         else
             ongoingConnections[Thread.CurrentThread] = toReturn;
         if (DiscoveredServer.DatabaseType == DatabaseType.MicrosoftSQLServer)
@@ -772,19 +457,21 @@ public abstract class TableRepository : ITableRepository
             cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
             cmd.ExecuteNonQuery();
         }
+
         return toReturn;
     }
 
     /// <summary>
-    /// True to commit, false to abandon
+    ///     True to commit, false to abandon
     /// </summary>
     /// <param name="commit"></param>
     public void EndTransactedConnection(bool commit)
     {
         GetOngoingActivitiesFromThreadsDictionary(out _, out var ongoingTransaction);
 
-        if(ongoingTransaction == null)
-            throw new NotSupportedException("There is no ongoing transaction on this Thread, did you try to close the Transaction from another Thread? or did you maybe never start one in the first place?");
+        if (ongoingTransaction == null)
+            throw new NotSupportedException(
+                "There is no ongoing transaction on this Thread, did you try to close the Transaction from another Thread? or did you maybe never start one in the first place?");
 
         if (commit)
             ongoingTransaction.CommitAndCloseConnection();
@@ -820,25 +507,24 @@ public abstract class TableRepository : ITableRepository
         return (DateTime)o;
     }
 
-    private Dictionary<Type,bool> _knownSupportedTypes = new();
-    private object oLockKnownTypes = new();
-
     public bool SupportsObjectType(Type type)
     {
         if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            throw new NotSupportedException("This method can only be passed Types derrived from IMapsDirectlyToDatabaseTable");
-            
+            throw new NotSupportedException(
+                "This method can only be passed Types derrived from IMapsDirectlyToDatabaseTable");
+
         lock (oLockKnownTypes)
         {
             if (!_knownSupportedTypes.ContainsKey(type))
-                _knownSupportedTypes.Add(type,DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
-            
+                _knownSupportedTypes.Add(type, DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
+
             return _knownSupportedTypes[type];
         }
     }
 
 
-    public void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName, object propertyValue)
+    public void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,
+        object propertyValue)
     {
         var prop = entity.GetType().GetProperty(propertyName);
         prop.SetValue(entity, propertyValue);
@@ -847,10 +533,11 @@ public abstract class TableRepository : ITableRepository
         if (prop.PropertyType.IsEnum)
             propertyValue = propertyValue.ToString();
 
-        Update($"UPDATE {Wrap(entity.GetType().Name)} SET {propertyName}=@val WHERE ID = {entity.ID}", new Dictionary<string, object>
-        {
-            {"@val", propertyValue??DBNull.Value}
-        });
+        Update($"UPDATE {Wrap(entity.GetType().Name)} SET {propertyName}=@val WHERE ID = {entity.ID}",
+            new Dictionary<string, object>
+            {
+                { "@val", propertyValue ?? DBNull.Value }
+            });
     }
 
     public int Insert(string sql, Dictionary<string, object> parameters)
@@ -864,11 +551,10 @@ public abstract class TableRepository : ITableRepository
         }
     }
 
-    private Type[] _compatibleTypes;
-
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
+
     public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
@@ -882,15 +568,14 @@ public abstract class TableRepository : ITableRepository
             }
             catch (Exception e)
             {
-                throw new Exception($"Failed to GetAllObjects of Type '{type}'",e);
+                throw new Exception($"Failed to GetAllObjects of Type '{type}'", e);
             }
 
         return toReturn.ToArray();
     }
 
-        
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Type[] GetCompatibleTypes()
     {
         return
@@ -898,36 +583,16 @@ public abstract class TableRepository : ITableRepository
                 .Where(
                     t =>
                         typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)
-                        && !t.IsAbstract 
-                        && !t.IsInterface 
-                            
+                        && !t.IsAbstract
+                        && !t.IsInterface
+
                         //nothing called spontaneous
-                        && !t.Name.Contains("Spontaneous") 
-                            
+                        && !t.Name.Contains("Spontaneous")
+
                         //or with a spontaneous base class
-                        &&(t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
+                        && (t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
                         && IsCompatibleType(t)
-                            
-                            
-                            
                 ).ToArray();
-    }
-
-    /// <summary>
-    /// Returns True if the type is one for objects that are held in the database.  Types will come from your repository assembly
-    /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces.  Types are only 
-    /// compatible if an accompanying <see cref="DiscoveredTable"/> exists in the database to store the objects.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    protected virtual bool IsCompatibleType(Type type)
-    {
-        return _tables.Value.Any(t=>t.GetRuntimeName().Equals(type.Name));
-    }
-
-    public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable
-    {
-        return GetAllObjects<T>();
     }
 
     public IDisposable BeginNewTransaction()
@@ -939,4 +604,380 @@ public abstract class TableRepository : ITableRepository
     {
         EndTransactedConnection(commit);
     }
+
+    protected static void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd,
+        IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    {
+        foreach (DbParameter p in cmd.Parameters)
+        {
+            var prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
+
+            var propValue = prop.GetValue(oTableWrapperObject, null);
+
+            //if it is a complex type but IConvertible e.g. CatalogueFolder
+            if (!prop.PropertyType.IsValueType && propValue is IConvertible c)
+                if (c.GetTypeCode() == TypeCode.String)
+                    propValue = c.ToString();
+
+            SetParameterToValue(p, propValue);
+        }
+
+        cmd.Parameters["@ID"].Value = oTableWrapperObject.ID;
+    }
+
+    private static void SetParameterToValue(DbParameter p, object propValue)
+    {
+        p.Value = propValue switch
+        {
+            null => DBNull.Value,
+            string value when string.IsNullOrWhiteSpace(value) => DBNull.Value,
+            Uri => propValue.ToString(),
+            TimeSpan => propValue.ToString(),
+            Version => propValue.ToString(),
+            _ => propValue
+        };
+    }
+
+    public string Wrap(string name)
+    {
+        return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
+    }
+
+    protected abstract IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader);
+
+    private T ConstructEntity<T>(DbDataReader reader) where T : IMapsDirectlyToDatabaseTable
+    {
+        ArgumentNullException.ThrowIfNull(reader);
+
+        try
+        {
+            return (T)ConstructEntity(typeof(T), reader);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Could not construct '{typeof(T).Name}' with ID={reader["ID"]}", e);
+        }
+    }
+
+    public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
+    {
+        var typename = Wrap(typeof(T).Name);
+
+        //if there is whereSQL make sure it is a legit SQL where
+        if (!string.IsNullOrWhiteSpace(whereSQL))
+            if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
+                throw new ArgumentException($"whereSQL did not start with the word 'WHERE', it was:{whereSQL}");
+
+        var toReturn = new List<T>();
+
+        using var opener = GetConnection();
+        var selectCommand = DatabaseCommandHelper.GetCommand($"SELECT * FROM {typename} {whereSQL ?? ""}",
+            opener.Connection, opener.Transaction);
+
+        using var r = selectCommand.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(ConstructEntity<T>(r));
+        return toReturn.ToArray();
+    }
+
+    public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
+        where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjects(typeof(T), whereSQL, parameters).Cast<T>().ToArray();
+    }
+
+    public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL,
+        Dictionary<string, object> parameters = null)
+    {
+        var typename = Wrap(t.Name);
+
+        // if there is whereSQL make sure it is a legit SQL where
+        if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
+            throw new ArgumentException($"whereSQL did not start with the word 'WHERE', it was:{whereSQL}");
+
+        var toReturn = new List<IMapsDirectlyToDatabaseTable>();
+        using var opener = GetConnection();
+        var selectCommand = PrepareCommand($"SELECT * FROM {typename} {whereSQL}", parameters, opener.Connection,
+            opener.Transaction);
+
+        using var r = selectCommand.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(ConstructEntity(t, r));
+
+        return toReturn.ToArray();
+    }
+
+    private DbCommand GetUpdateCommandFromStore(Type type, IManagedConnection managedConnection)
+    {
+        if (!_updateCommandStore.ContainsKey(type))
+            _updateCommandStore.Add(type, _connectionStringBuilder, managedConnection.Connection,
+                managedConnection.Transaction);
+
+        return _updateCommandStore[type];
+    }
+
+    /// <summary>
+    ///     Gets all public properties of the class that are not decorated with [<see cref="NoMappingToDatabase" />]
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static PropertyInfo[] GetPropertyInfos(Type type)
+    {
+        return type.GetProperties().Where(prop => !Attribute.IsDefined(prop, typeof(NoMappingToDatabase))).ToArray();
+    }
+
+    private void GetOngoingActivitiesFromThreadsDictionary(out IManagedConnection ongoingConnection,
+        out IManagedTransaction ongoingTransaction)
+    {
+        lock (ongoingConnectionsLock)
+        {
+            //see if Thread dictionary has it
+            if (ongoingConnections.TryGetValue(Thread.CurrentThread, out var connection))
+            {
+                ongoingConnection = connection;
+            }
+            else
+            {
+                ongoingConnections.Add(Thread.CurrentThread, null);
+                ongoingConnection = null;
+            }
+
+
+            //see if Thread dictionary has it
+            if (ongoingTransactions.TryGetValue(Thread.CurrentThread, out var transaction))
+            {
+                ongoingTransaction = transaction;
+            }
+            else
+            {
+                ongoingTransactions.Add(Thread.CurrentThread, null);
+                ongoingTransaction = null;
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Returns True if the type is one for objects that are held in the database.  Types will come from your repository
+    ///     assembly
+    ///     and will include only <see cref="IMapsDirectlyToDatabaseTable" /> Types that are not abstract/interfaces.  Types
+    ///     are only
+    ///     compatible if an accompanying <see cref="DiscoveredTable" /> exists in the database to store the objects.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    protected virtual bool IsCompatibleType(Type type)
+    {
+        return _tables.Value.Any(t => t.GetRuntimeName().Equals(type.Name));
+    }
+
+    public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjects<T>();
+    }
+
+
+    #region new
+
+    public void TestConnection()
+    {
+        try
+        {
+            using var con = GetConnection();
+            if (con.Connection.State != ConnectionState.Open)
+                throw new Exception($"State of connection was {con.Connection.State}");
+        }
+        catch (Exception e)
+        {
+            var msg = _connectionStringBuilder.ConnectionString;
+
+            var pass = DiscoveredServer.Helper.GetExplicitPasswordIfAny(_connectionStringBuilder);
+
+            if (!string.IsNullOrWhiteSpace(pass))
+                msg = msg.Replace(pass, "****");
+
+            throw new Exception($"Testing connection failed, connection string was '{msg}'", e);
+        }
+    }
+
+    public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null)
+        where T : IMapsDirectlyToDatabaseTable
+    {
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
+
+        using (var opener = GetConnection())
+        {
+            var idsToReturn = new List<int>();
+            using (var cmd = DatabaseCommandHelper.GetCommand(selectQuery, opener.Connection, opener.Transaction))
+            {
+                using (var r = cmd.ExecuteReader())
+                {
+                    while (r.Read()) idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
+                }
+            }
+
+            if (!idsToReturn.Any())
+                return Enumerable.Empty<T>();
+
+            return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
+        }
+    }
+
+    /// <summary>
+    ///     Runs the selectQuery (which must be a FULL QUERY) and uses @parameters for each of the kvps in the dictionary.  It
+    ///     expects the query result set to include
+    ///     a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a
+    ///     dbNullSubstition (which must also be of type
+    ///     T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the
+    ///     returned list instead.
+    ///     <para>
+    ///         IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into
+    ///         your select query
+    ///     </para>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="selectQuery"></param>
+    /// <param name="parameters"></param>
+    /// <param name="columnWithObjectID"></param>
+    /// <param name="dbNullSubstition"></param>
+    /// <returns></returns>
+    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null,
+        Dictionary<string, object> parameters = null, T dbNullSubstition = default)
+        where T : IMapsDirectlyToDatabaseTable
+    {
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
+
+        if (selectQuery.ToLower().Contains("order by "))
+            throw new Exception("Select Query contained an ORDER BY statment in it!");
+
+        var nullsFound = 0;
+
+        using (var opener = GetConnection())
+        {
+            var idsToReturn = new List<int>();
+            var cmd = PrepareCommand(selectQuery, parameters, opener.Connection, opener.Transaction);
+            using (var r = cmd.ExecuteReader())
+            {
+                while (r.Read())
+                {
+                    if (r[columnWithObjectID] == DBNull.Value)
+                    {
+                        nullsFound++;
+                        continue;
+                    }
+
+                    idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
+                }
+            }
+
+            if (!idsToReturn.Any())
+                return Enumerable.Empty<T>();
+
+
+            var toReturn = GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
+
+            //this bit of hackery is if your a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
+            if (dbNullSubstition != null)
+                for (var i = 0; i < nullsFound; i++)
+                    toReturn.Add(dbNullSubstition);
+
+            return toReturn;
+        }
+    }
+
+
+    private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null)
+        where T : IMapsDirectlyToDatabaseTable
+    {
+        using (var opener = GetConnection())
+        {
+            var query = CreateInsertStatement<T>(parameters);
+
+            query += ";SELECT @@IDENTITY;";
+
+            var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
+            return int.Parse(cmd.ExecuteScalar().ToString());
+        }
+    }
+
+    private string CreateInsertStatement<T>(Dictionary<string, object> parameters)
+        where T : IMapsDirectlyToDatabaseTable
+    {
+        _logger.Info($"Created New,{typeof(T).Name}");
+
+        var query = $"INSERT INTO {Wrap(typeof(T).Name)}";
+        if (parameters != null && parameters.Any())
+        {
+            if (parameters.Any(kvp => kvp.Key.StartsWith("@")))
+                throw new InvalidOperationException(
+                    $"Invalid parameters for {typeof(T).Name} INSERT. Do not use @ when specifying parameter names, this is SQL-specific and will be added when required: {string.Join(", ", parameters.Where(kvp => kvp.Key.StartsWith("@")))}");
+
+            var columnString = string.Join(", ", parameters.Select(kvp => Wrap(kvp.Key)));
+            var parameterString = string.Join(", ", parameters.Select(kvp => $"@{kvp.Key}"));
+            query += $"({columnString}) VALUES ({parameterString})";
+        }
+        else
+        {
+            query += " DEFAULT VALUES";
+        }
+
+        return query;
+    }
+
+
+    public int Delete(string deleteQuery, Dictionary<string, object> parameters = null,
+        bool throwOnZeroAffectedRows = true)
+    {
+        using (var opener = GetConnection())
+        {
+            var cmd = PrepareCommand(deleteQuery, parameters, opener.Connection, opener.Transaction);
+            var affectedRows = cmd.ExecuteNonQuery();
+
+            if (affectedRows == 0 && throwOnZeroAffectedRows)
+                throw new Exception($"Deleted failed, resulted in {affectedRows} affected rows");
+
+            return affectedRows;
+        }
+    }
+
+    public int Update(string updateQuery, Dictionary<string, object> parameters)
+    {
+        using (var opener = GetConnection())
+        {
+            var cmd = PrepareCommand(updateQuery, parameters, opener.Connection, opener.Transaction);
+            return cmd.ExecuteNonQuery();
+        }
+    }
+
+    public static DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con,
+        DbTransaction transaction = null)
+    {
+        var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
+        if (parameters == null) return cmd;
+
+        return PrepareCommand(cmd, parameters);
+    }
+
+    public static DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
+    {
+        foreach (var kvp in parameters)
+        {
+            var paramName = kvp.Key.StartsWith("@") ? kvp.Key : $"@{kvp.Key}";
+
+            // Check that this parameter name actually exists in the sql
+            if (!cmd.CommandText.Contains(paramName))
+                throw new InvalidOperationException(
+                    $"Parameter '{paramName}' does not exist in the SQL command ({cmd.CommandText})");
+
+            //if it isn't yet in the command add it
+            if (!cmd.Parameters.Contains(paramName))
+                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter(paramName, cmd));
+
+            //set its value
+            SetParameterToValue(cmd.Parameters[paramName], kvp.Value);
+        }
+
+        return cmd;
+    }
+
+    #endregion
 }

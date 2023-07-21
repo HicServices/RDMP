@@ -14,32 +14,23 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Runs checks on a Project to make sure it has an extraction folder, project number etc.  Also checks ExtractionConfigurations that are part of the project
-/// to see if valid queries can be built and rows read.
+///     Runs checks on a Project to make sure it has an extraction folder, project number etc.  Also checks
+///     ExtractionConfigurations that are part of the project
+///     to see if valid queries can be built and rows read.
 /// </summary>
-public class ProjectChecker:ICheckable
+public class ProjectChecker : ICheckable
 {
-    private readonly IProject _project;
     private readonly IBasicActivateItems _activator;
+    private readonly IProject _project;
     private IExtractionConfiguration[] _extractionConfigurations;
     private DirectoryInfo _projectDirectory;
 
     /// <summary>
-    /// True to fetch all <see cref="IExtractionConfiguration"/> and check with <see cref="ExtractionConfigurationChecker"/>
-    /// </summary>
-    public bool CheckConfigurations { get; set; }
-
-    /// <summary>
-    /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
-    /// </summary>
-    public bool CheckDatasets { get; set; }
-
-    /// <summary>
-    /// Sets up the class to check the state of the <paramref name="project"/>
+    ///     Sets up the class to check the state of the <paramref name="project" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="project"></param>
-    public ProjectChecker(IBasicActivateItems activator,IProject project)
+    public ProjectChecker(IBasicActivateItems activator, IProject project)
     {
         _project = project;
         _activator = activator;
@@ -48,18 +39,32 @@ public class ProjectChecker:ICheckable
     }
 
     /// <summary>
-    /// Checks the <see cref="IProject"/> has a valid <see cref="IProject.ExtractionDirectory"/>, <see cref="IProject.ProjectNumber"/> etc and runs additional 
-    /// checkers (See <see cref="CheckConfigurations"/> and <see cref="CheckDatasets"/>).
+    ///     True to fetch all <see cref="IExtractionConfiguration" /> and check with
+    ///     <see cref="ExtractionConfigurationChecker" />
+    /// </summary>
+    public bool CheckConfigurations { get; set; }
+
+    /// <summary>
+    ///     True to fetch all <see cref="ISelectedDataSets" /> and check with <see cref="SelectedDataSetsChecker" />
+    /// </summary>
+    public bool CheckDatasets { get; set; }
+
+    /// <summary>
+    ///     Checks the <see cref="IProject" /> has a valid <see cref="IProject.ExtractionDirectory" />,
+    ///     <see cref="IProject.ProjectNumber" /> etc and runs additional
+    ///     checkers (See <see cref="CheckConfigurations" /> and <see cref="CheckDatasets" />).
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        notifier.OnCheckPerformed(new CheckEventArgs($"About to check project {_project.Name} (ID={_project.ID})", CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"About to check project {_project.Name} (ID={_project.ID})",
+            CheckResult.Success));
 
         _extractionConfigurations = _project.ExtractionConfigurations;
 
         if (!_extractionConfigurations.Any())
-            notifier.OnCheckPerformed(new CheckEventArgs("Project does not have any ExtractionConfigurations yet",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Project does not have any ExtractionConfigurations yet",
+                CheckResult.Fail));
 
         if (_project.ProjectNumber == null)
             notifier.OnCheckPerformed(
@@ -69,7 +74,8 @@ public class ProjectChecker:ICheckable
 
         //check to see if there is an extraction directory
         if (string.IsNullOrWhiteSpace(_project.ExtractionDirectory))
-            notifier.OnCheckPerformed(new CheckEventArgs("Project does not have an ExtractionDirectory",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Project does not have an ExtractionDirectory",
+                CheckResult.Fail));
         try
         {
             //see if they punched the keyboard instead of typing a legit folder
@@ -78,34 +84,36 @@ public class ProjectChecker:ICheckable
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') is not a valid directory name ", CheckResult.Fail, e));
+                $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') is not a valid directory name ",
+                CheckResult.Fail, e));
             return;
         }
 
         //tell them whether it exists or not
         notifier.OnCheckPerformed(new CheckEventArgs(
-            $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') {(_projectDirectory.Exists ? "Exists" : "Does Not Exist")}", _projectDirectory.Exists?CheckResult.Success : CheckResult.Fail));
+            $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') {(_projectDirectory.Exists ? "Exists" : "Does Not Exist")}",
+            _projectDirectory.Exists ? CheckResult.Success : CheckResult.Fail));
 
         if (CheckConfigurations)
             foreach (var extractionConfiguration in _extractionConfigurations)
             {
-                var extractionConfigurationChecker = new ExtractionConfigurationChecker(_activator, extractionConfiguration) { CheckDatasets = CheckDatasets };
+                var extractionConfigurationChecker =
+                    new ExtractionConfigurationChecker(_activator, extractionConfiguration)
+                        { CheckDatasets = CheckDatasets };
                 extractionConfigurationChecker.Check(notifier);
             }
 
 
         foreach (var assoc in _project.ProjectCohortIdentificationConfigurationAssociations)
-        {
             if (assoc.CohortIdentificationConfiguration == null)
                 if (notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Project contains a reference to a CohortIdentificationConfiguration which does not exist anymore",
-                            CheckResult.Fail, null, "Delete orphan ProjectCohortIdentificationConfigurationAssociation?")))
-                {
+                            CheckResult.Fail, null,
+                            "Delete orphan ProjectCohortIdentificationConfigurationAssociation?")))
                     assoc.DeleteInDatabase();
-                }
-        }
 
-        notifier.OnCheckPerformed(new CheckEventArgs("All Project Checks Finished (Not necessarily without errors)", CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs("All Project Checks Finished (Not necessarily without errors)",
+            CheckResult.Success));
     }
 }

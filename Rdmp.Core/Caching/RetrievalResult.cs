@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Caching;
 
 /// <summary>
-/// The results of an attempt to start a Caching action.
+///     The results of an attempt to start a Caching action.
 /// </summary>
 public enum RetrievalResult
 {

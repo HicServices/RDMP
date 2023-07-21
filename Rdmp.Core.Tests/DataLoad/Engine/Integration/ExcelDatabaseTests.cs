@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
+using System.Linq;
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data.Pipelines;
-using System.IO;
-using System.Linq;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
@@ -23,7 +24,7 @@ public class ExcelDatabaseTests : DatabaseTests
         var trailingDotsFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TrailingDots....xlsx");
         FileAssert.Exists(trailingDotsFile);
 
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
         var creator = new CataloguePipelinesAndReferencesCreation(
@@ -31,7 +32,8 @@ public class ExcelDatabaseTests : DatabaseTests
         creator.CreatePipelines();
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID).FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
+        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
 
         // run an import of the file using the pipeline
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
@@ -46,9 +48,9 @@ public class ExcelDatabaseTests : DatabaseTests
 
         var cols = tbl.DiscoverColumns();
         Assert.AreEqual(2, cols.Length);
-        Assert.AreEqual("Field1",cols[0].GetRuntimeName());
+        Assert.AreEqual("Field1", cols[0].GetRuntimeName());
         Assert.AreEqual("Field2", cols[1].GetRuntimeName());
-                        
+
         Assert.AreEqual(2, tbl.GetRowCount());
     }
 }

@@ -4,27 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-
-using System.Linq;
-using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
 internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
 {
-    public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator): base(itemActivator)
+    public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
     public override void Activate(Pipeline target)
     {
-        if(ItemActivator.SelectObject(new DialogArgs
-           {
-               TaskDescription = $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?)."
-           }, ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(), out var selected))
+        if (ItemActivator.SelectObject(new DialogArgs
+            {
+                TaskDescription =
+                    $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?)."
+            }, ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(), out var selected))
         {
             var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator, target, selected.UseCase);
             cmd.Execute();
@@ -36,7 +36,8 @@ internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionPropos
         return true;
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

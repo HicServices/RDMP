@@ -11,24 +11,26 @@ using System.Globalization;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values (if present) in a column must be within a certain range of dates.  This can include referencing another column.  For example you could specify that
-///  Date of Birth must have an Inclusive Upper bound of Date of Death.
+///     Values (if present) in a column must be within a certain range of dates.  This can include referencing another
+///     column.  For example you could specify that
+///     Date of Birth must have an Inclusive Upper bound of Date of Death.
 /// </summary>
 public class BoundDate : Bound
 {
-    [Description("Optional, Requires the value being validated to be AFTER this date")]
-    public DateTime? Lower { get; set; }
-    [Description("Optional, Requires the value being validated to be BEFORE this date")]
-    public DateTime? Upper { get; set; }
-
     public BoundDate()
     {
         Inclusive = true;
     }
 
+    [Description("Optional, Requires the value being validated to be AFTER this date")]
+    public DateTime? Lower { get; set; }
+
+    [Description("Optional, Requires the value being validated to be BEFORE this date")]
+    public DateTime? Upper { get; set; }
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        if(value == null)
+        if (value == null)
             return null;
 
         if (value is string s)
@@ -42,10 +44,10 @@ public class BoundDate : Bound
         var d = (DateTime)value;
 
         if (value != null && !IsWithinRange(d))
-            return new ValidationFailure(CreateViolationReportUsingDates(d),this);
-            
-        if (value != null && !IsWithinRange(d,otherColumns, otherColumnNames))
-            return new ValidationFailure(CreateViolationReportUsingFieldNames(d),this);
+            return new ValidationFailure(CreateViolationReportUsingDates(d), this);
+
+        if (value != null && !IsWithinRange(d, otherColumns, otherColumnNames))
+            return new ValidationFailure(CreateViolationReportUsingFieldNames(d), this);
 
         return null;
     }
@@ -116,11 +118,12 @@ public class BoundDate : Bound
             {
                 lookupFieldNamed = DateTime.Parse(named);
             }
-            catch (InvalidCastException )
+            catch (InvalidCastException)
             {
-                return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
+                return
+                    null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
             }
-            catch (FormatException )
+            catch (FormatException)
             {
                 return null;
             }
@@ -139,7 +142,7 @@ public class BoundDate : Bound
         if (Lower != null)
             return GreaterThanMessage(d, Lower.ToString());
 
-        if (Upper!= null)
+        if (Upper != null)
             return LessThanMessage(d, Upper.ToString());
 
         throw new InvalidOperationException("Illegal state.");
@@ -185,14 +188,14 @@ public class BoundDate : Bound
     public override string GetHumanReadableDescriptionOfValidation()
     {
         var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";
-            
-        if (Lower != null )
-            if(Inclusive)
+
+        if (Lower != null)
+            if (Inclusive)
                 result += $" >={Lower}";
             else
                 result += $" >{Lower}";
-            
-        if(Upper != null)
+
+        if (Upper != null)
             if (Inclusive)
                 result += $" <={Upper}";
             else

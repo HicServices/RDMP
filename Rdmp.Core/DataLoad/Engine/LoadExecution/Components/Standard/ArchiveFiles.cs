@@ -16,13 +16,16 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 
 /// <summary>
-/// Copies all files in ForLoading directory of a DLE load into the ForArchiving folder zipped up in a file named x.zip where x is the ID of the data load run
-/// (unique logging number for the data load execution).
+///     Copies all files in ForLoading directory of a DLE load into the ForArchiving folder zipped up in a file named x.zip
+///     where x is the ID of the data load run
+///     (unique logging number for the data load execution).
 /// </summary>
 public class ArchiveFiles : DataLoadComponent
 {
     public static string TempArchiveDirName = "__temp_for_archiving__";
     public static string HiddenFromArchiver = "__hidden_from_archiver__";
+
+    private static readonly string[] DirsToIgnore = { TempArchiveDirName, HiddenFromArchiver };
 
     public ArchiveFiles(HICLoadConfigurationFlags loadConfigurationFlags)
     {
@@ -32,12 +35,12 @@ public class ArchiveFiles : DataLoadComponent
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        if (Skip(job)) 
+        if (Skip(job))
             return ExitCodeType.Success;
 
         var datasetID = job.DataLoadInfo.ID;
         var destFile = Path.Combine(job.LoadDirectory.ForArchiving.FullName, $"{datasetID}.zip");
-            
+
         // If there is nothing in the forLoadingDirectory then 
         // There may be a HiddenFromArchiver directory with data that may be processed by another component, but this component should *always* archive *something* even if it is just some metadata about the load (if, for example, imaging data is being loaded which is too large to archive)
         if (!FoundFilesOrDirsToArchive(job))
@@ -63,8 +66,6 @@ public class ArchiveFiles : DataLoadComponent
         return ExitCodeType.Success;
     }
 
-    private static readonly string[] DirsToIgnore = { TempArchiveDirName, HiddenFromArchiver };
-
     private static bool FoundFilesOrDirsToArchive(IDataLoadJob job)
     {
         //if there are any files
@@ -77,7 +78,8 @@ public class ArchiveFiles : DataLoadComponent
 
     private static void MoveDirectories(IDataLoadJob job, DirectoryInfo zipDir)
     {
-        var dirsToMove = job.LoadDirectory.ForLoading.EnumerateDirectories().Where(info => !DirsToIgnore.Contains(info.Name)).ToList();
+        var dirsToMove = job.LoadDirectory.ForLoading.EnumerateDirectories()
+            .Where(info => !DirsToIgnore.Contains(info.Name)).ToList();
         foreach (var toMove in dirsToMove)
             toMove.MoveTo(Path.Combine(zipDir.FullName, toMove.Name));
     }
@@ -89,7 +91,7 @@ public class ArchiveFiles : DataLoadComponent
             toMove.MoveTo(Path.Combine(zipDir.FullName, toMove.Name));
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
     }
 }

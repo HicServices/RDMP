@@ -4,33 +4,35 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
 using System.Linq;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Starts a new scoped session for one or more objects in the GUI
+///     Starts a new scoped session for one or more objects in the GUI
 /// </summary>
 public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
 {
     public const string FindResultsTitle = "Find Results";
     private readonly string _sessionName;
-    private IMapsDirectlyToDatabaseTable[] _initialSelection;
+    private readonly IMapsDirectlyToDatabaseTable[] _initialSelection;
 
-    /// <summary>
-    /// True if the command was cancelled before finishing <see cref="Execute"/>
-    /// </summary>
-    public bool Cancelled { get; set; } = true;
-    public string InitialSearch { get; set; }
-
-    public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
+    public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection,
+        string sessionName) : base(activator)
     {
         _initialSelection = initialSelection;
         _sessionName = sessionName;
     }
+
+    /// <summary>
+    ///     True if the command was cancelled before finishing <see cref="Execute" />
+    /// </summary>
+    public bool Cancelled { get; set; } = true;
+
+    public string InitialSearch { get; set; }
 
     public override void Execute()
     {

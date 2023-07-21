@@ -10,7 +10,7 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// See ExtractionDirectory
+///     See ExtractionDirectory
 /// </summary>
 public interface IExtractionDirectory
 {

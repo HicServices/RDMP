@@ -5,17 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Ticketing;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly Dictionary<Releaseability,Image<Rgba32>> _images;
     private readonly Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>> _environmentImages;
+    private readonly Dictionary<Releaseability, Image<Rgba32>> _images;
 
     public ReleaseabilityStateBasedIconProvider()
     {
@@ -23,7 +23,10 @@ public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvide
         {
             { Releaseability.Undefined, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
 
-            { Releaseability.ExceptionOccurredWhileEvaluatingReleaseability, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            {
+                Releaseability.ExceptionOccurredWhileEvaluatingReleaseability,
+                Image.Load<Rgba32>(CatalogueIcons.TinyRed)
+            },
             { Releaseability.NeverBeenSuccessfullyExecuted, Image.Load<Rgba32>(CatalogueIcons.Failed) },
             { Releaseability.ExtractFilesMissing, Image.Load<Rgba32>(CatalogueIcons.FileMissing) },
             { Releaseability.ExtractionSQLDesynchronisation, Image.Load<Rgba32>(CatalogueIcons.Diff) },
@@ -34,12 +37,21 @@ public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvide
 
         _environmentImages = new Dictionary<TicketingReleaseabilityEvaluation, Image<Rgba32>>
         {
-            { TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-            { TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
+            {
+                TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer,
+                Image.Load<Rgba32>(CatalogueIcons.TinyRed)
+            },
+            {
+                TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer,
+                Image.Load<Rgba32>(CatalogueIcons.TinyRed)
+            },
             { TicketingReleaseabilityEvaluation.NotReleaseable, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
             { TicketingReleaseabilityEvaluation.Releaseable, Image.Load<Rgba32>(CatalogueIcons.TinyGreen) },
             { TicketingReleaseabilityEvaluation.TicketingLibraryCrashed, Image.Load<Rgba32>(CatalogueIcons.TinyRed) },
-            { TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly, Image.Load<Rgba32>(CatalogueIcons.TinyYellow) }
+            {
+                TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly,
+                Image.Load<Rgba32>(CatalogueIcons.TinyYellow)
+            }
         };
     }
 

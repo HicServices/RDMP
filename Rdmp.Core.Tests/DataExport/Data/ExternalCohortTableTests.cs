@@ -15,40 +15,41 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.Data;
 
-internal class ExternalCohortTableTests:UnitTests
+internal class ExternalCohortTableTests : UnitTests
 {
     /// <summary>
-    /// Demonstrates the minimum properties required to create a <see cref="ExternalCohortTable"/>.  See <see cref="CreateNewCohortDatabaseWizard"/>
-    /// for how to create one of these based on the datasets currently held in rdmp.
+    ///     Demonstrates the minimum properties required to create a <see cref="ExternalCohortTable" />.  See
+    ///     <see cref="CreateNewCohortDatabaseWizard" />
+    ///     for how to create one of these based on the datasets currently held in rdmp.
     /// </summary>
     [Test]
     public void Create_ExternalCohortTable_Manually()
     {
         var repository = new MemoryDataExportRepository();
         var table = new ExternalCohortTable(repository, "My Cohort Database", DatabaseType.MicrosoftSQLServer)
-            {
-                Database = "mydb",
-                PrivateIdentifierField = "chi",
-                ReleaseIdentifierField = "release",
-                DefinitionTableForeignKeyField = "c_id",
-                TableName = "Cohorts",
-                DefinitionTableName = "InventoryTable",
-                Server = "superfastdatabaseserver\\sqlexpress"
-            };
+        {
+            Database = "mydb",
+            PrivateIdentifierField = "chi",
+            ReleaseIdentifierField = "release",
+            DefinitionTableForeignKeyField = "c_id",
+            TableName = "Cohorts",
+            DefinitionTableName = "InventoryTable",
+            Server = "superfastdatabaseserver\\sqlexpress"
+        };
         table.SaveToDatabase();
 
-        var ex = Assert.Throws<Exception>(()=>table.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Could not connect to Cohort database called 'My Cohort Database'",ex.Message);
+        var ex = Assert.Throws<Exception>(() => table.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Could not connect to Cohort database called 'My Cohort Database'", ex.Message);
     }
 
     /// <summary>
-    /// Demonstrates how to get a hydrated instance during unit tests.  This will not map to an actually existing database
+    ///     Demonstrates how to get a hydrated instance during unit tests.  This will not map to an actually existing database
     /// </summary>
     [Test]
     public void Create_ExternalCohortTable_InTests()
     {
         var tbl = WhenIHaveA<ExternalCohortTable>();
-            
+
         Assert.IsNotNull(tbl);
         Assert.IsNotNull(tbl.PrivateIdentifierField);
         Assert.IsNotNull(tbl.ReleaseIdentifierField);
@@ -57,7 +58,8 @@ internal class ExternalCohortTableTests:UnitTests
     [Test]
     public void TestExternalCohortTableProperties_BasicValues()
     {
-        var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"ffff",DatabaseType.MicrosoftSQLServer);
+        var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository, "ffff",
+            DatabaseType.MicrosoftSQLServer);
 
         Assert.IsNull(table.Database);
         Assert.IsNull(table.Server);
@@ -73,19 +75,21 @@ internal class ExternalCohortTableTests:UnitTests
         table.ReleaseIdentifierField = "rel";
         table.DefinitionTableForeignKeyField = "fk";
 
-        Assert.AreEqual("mydb",table.Database);
-        Assert.AreEqual("myserver",table.Server);
-        Assert.AreEqual("[mydb]..[mytbl]",table.TableName);
+        Assert.AreEqual("mydb", table.Database);
+        Assert.AreEqual("myserver", table.Server);
+        Assert.AreEqual("[mydb]..[mytbl]", table.TableName);
         Assert.IsNull(table.DefinitionTableName);
 
-        Assert.AreEqual("[mydb]..[mytbl].[priv]",table.PrivateIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[rel]",table.ReleaseIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[fk]",table.DefinitionTableForeignKeyField);
+        Assert.AreEqual("[mydb]..[mytbl].[priv]", table.PrivateIdentifierField);
+        Assert.AreEqual("[mydb]..[mytbl].[rel]", table.ReleaseIdentifierField);
+        Assert.AreEqual("[mydb]..[mytbl].[fk]", table.DefinitionTableForeignKeyField);
     }
+
     [Test]
     public void TestExternalCohortTableProperties_SetFullValues()
     {
-        var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"ffff",DatabaseType.MicrosoftSQLServer);
+        var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository, "ffff",
+            DatabaseType.MicrosoftSQLServer);
 
         Assert.IsNull(table.Database);
         Assert.IsNull(table.Server);
@@ -101,13 +105,13 @@ internal class ExternalCohortTableTests:UnitTests
         table.Server = "myserver";
         table.TableName = "[mydb]..[mytbl]";
 
-        Assert.AreEqual("mydb",table.Database);
-        Assert.AreEqual("myserver",table.Server);
-        Assert.AreEqual("[mydb]..[mytbl]",table.TableName);
+        Assert.AreEqual("mydb", table.Database);
+        Assert.AreEqual("myserver", table.Server);
+        Assert.AreEqual("[mydb]..[mytbl]", table.TableName);
         Assert.IsNull(table.DefinitionTableName);
 
-        Assert.AreEqual("[mydb]..[mytbl].[priv]",table.PrivateIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[rel]",table.ReleaseIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[fk]",table.DefinitionTableForeignKeyField);
+        Assert.AreEqual("[mydb]..[mytbl].[priv]", table.PrivateIdentifierField);
+        Assert.AreEqual("[mydb]..[mytbl].[rel]", table.ReleaseIdentifierField);
+        Assert.AreEqual("[mydb]..[mytbl].[fk]", table.DefinitionTableForeignKeyField);
     }
 }

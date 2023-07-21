@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 namespace Rdmp.UI.Menus.MenuItems;
 
 /// <summary>
-/// <see cref="ToolStripButton"/> depicting a single <see cref="IAtomicCommand"/>
+///     <see cref="ToolStripButton" /> depicting a single <see cref="IAtomicCommand" />
 /// </summary>
 public class AtomicCommandToolStripItem : ToolStripButton
 {
@@ -35,7 +35,7 @@ public class AtomicCommandToolStripItem : ToolStripButton
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-            
+
         _command.Execute();
     }
 }

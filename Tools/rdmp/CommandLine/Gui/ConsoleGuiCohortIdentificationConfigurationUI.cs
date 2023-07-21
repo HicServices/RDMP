@@ -4,46 +4,46 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Providers;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-public partial class ConsoleGuiCohortIdentificationConfigurationUI {
+public partial class ConsoleGuiCohortIdentificationConfigurationUI
+{
     private readonly IBasicActivateItems _activator;
-    private CohortIdentificationConfigurationUICommon Common = new();
+    private bool _contextMenuShowing;
     private bool _isDisposed;
-    private List<object> RowObjects = new();
-    private bool _contextMenuShowing = false;
+    private readonly CohortIdentificationConfigurationUICommon Common = new();
+    private readonly List<object> RowObjects = new();
 
-    public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
+    public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic)
+    {
         InitializeComponent();
-            
+
         Modal = true;
 
         _activator = activator;
         Common.Activator = activator;
-            
+
         Common.Compiler.CoreChildProvider = activator.CoreChildProvider;
 
         Common.Configuration = cic;
         Common.Compiler.CohortIdentificationConfiguration = cic;
 
-        cbCumulativeTotals.Toggled += e =>
-        {
-            Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked);
-        };
+        cbCumulativeTotals.Toggled += e => { Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked); };
         btnClearCache.Clicked += () =>
         {
             var cmd = new ExecuteCommandClearQueryCache(activator, Common.Configuration);
@@ -55,38 +55,24 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         tableview1.KeyPress += Tableview1_KeyPress;
         tbTimeout.TextChanged += s =>
         {
-            if (int.TryParse(tbTimeout.Text.ToString(), out var t))
-            {
-                Common.Timeout = t;
-            }
+            if (int.TryParse(tbTimeout.Text.ToString(), out var t)) Common.Timeout = t;
         };
 
-        btnRun.Clicked += () =>
-        {
-            Common.StartAll(() => { }, RunnerOnPhaseChanged);
-        };
+        btnRun.Clicked += () => { Common.StartAll(() => { }, RunnerOnPhaseChanged); };
         btnClose.Clicked += () =>
         {
             if (!Common.ConsultAboutClosing())
                 Application.RequestStop();
         };
-        btnAbort.Clicked += () =>
-        {
-            Common.CancelAll();
-        };
+        btnAbort.Clicked += () => { Common.CancelAll(); };
         btnCommitCohort.Clicked += () =>
         {
             var cmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null)
                 .SetTarget(cic);
-            if(!cmd.IsImpossible)
-            {
+            if (!cmd.IsImpossible)
                 cmd.Execute();
-            }
             else
-            {
                 MessageBox.ErrorQuery("Cannot Commit", cmd.ReasonCommandImpossible);
-            }
-                
         };
         Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), RefreshTableCallback);
 
@@ -112,6 +98,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
                 if (key != null)
                     Common.Compiler.CancelTask(key, true);
             }
+
             //TODO: this doesn't clear the compiler
             Common.RecreateAllTasks();
         }
@@ -130,7 +117,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         if (obj.KeyEvent.Key == Key.DeleteChar && o is IDeleteable d)
         {
             var cmdDelete = new ExecuteCommandDelete(_activator, d);
-            if(!cmdDelete.IsImpossible)
+            if (!cmdDelete.IsImpossible)
                 cmdDelete.Execute();
         }
     }
@@ -141,7 +128,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         {
             lblState.Text = UsefulStuff.PascalCaseStringToHumanReadable(Common.Runner.ExecutionPhase.ToString());
         });
-            
+
         Common.RecreateAllTasks(false);
     }
 
@@ -159,8 +146,8 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         {
             var factory = new ConsoleGuiContextMenuFactory(_activator);
             var menu = factory.Create(Array.Empty<object>(), o);
-                
-            if(menu != null)
+
+            if (menu != null)
             {
                 var p = tableview1.CellToScreen(obj.Col, obj.Row);
 
@@ -184,10 +171,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
             }
         }
 
-        if (col.ColumnName.Equals("Execute"))
-        {
-            Common.ExecuteOrCancel(o);
-        }
+        if (col.ColumnName.Equals("Execute")) Common.ExecuteOrCancel(o);
     }
 
     private bool IsValidSelection(int col, int row)
@@ -206,6 +190,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         _isDisposed = true;
         base.Dispose(disposing);
     }
+
     private bool RefreshTableCallback(MainLoop m)
     {
         // suspend rebuilding the table while other views are showing
@@ -240,7 +225,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         var r = tbl.Rows.Add();
         RowObjects.Add(o);
 
-        r["Name"] = new string(' ',indents) + o.ToString();
+        r["Name"] = new string(' ', indents) + o;
         r["Execute"] = Common.ExecuteAspectGetter(o);
         r["Cached"] = Common.Cached_AspectGetter(o);
         r["Count"] = Common.Count_AspectGetter(o);
@@ -253,9 +238,6 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         var children = childProvider.GetChildren(o).ToList();
         children.Sort(new OrderableComparer(null));
 
-        foreach (var c in children)
-        {
-            AddToTable(tbl, c, childProvider, indents++);
-        }
+        foreach (var c in children) AddToTable(tbl, c, childProvider, indents++);
     }
 }

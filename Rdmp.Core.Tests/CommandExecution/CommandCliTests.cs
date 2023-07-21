@@ -20,8 +20,9 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.CommandExecution;
 
 /// <summary>
-/// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
-/// classes
+///     Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution" />
+///     derrived
+///     classes
 /// </summary>
 public abstract class CommandCliTests : UnitTests
 {
@@ -34,15 +35,15 @@ public abstract class CommandCliTests : UnitTests
 
     protected CommandInvoker GetInvoker()
     {
-        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
         {
             DisallowInput = true
         });
-        invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
+        invoker.CommandImpossible += (s, c) => throw new Exception(c.Command.ReasonCommandImpossible);
 
         return invoker;
     }
-        
+
     protected Mock<IBasicActivateItems> GetMockActivator()
     {
         var mock = new Mock<IBasicActivateItems>();
@@ -53,7 +54,7 @@ public abstract class CommandCliTests : UnitTests
     }
 
     /// <summary>
-    /// Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd
+    ///     Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd
     /// </summary>
     /// <param name="command">1 string per piece following rdmp cmd.  Element 0 should be the Type of command to run</param>
     /// <returns></returns>

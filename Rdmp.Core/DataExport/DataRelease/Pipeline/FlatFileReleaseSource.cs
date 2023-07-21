@@ -13,12 +13,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Prepares the Source Global Folder for the ReleaseEngine.
+///     Prepares the Source Global Folder for the ReleaseEngine.
 /// </summary>
 /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
 public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 {
-    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         return flowData ?? new ReleaseAudit
         {
@@ -38,7 +39,6 @@ public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
     protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
     {
-            
     }
 
     protected override DirectoryInfo PrepareSourceGlobalFolder()

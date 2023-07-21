@@ -12,7 +12,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-public class ProposeExecutionWhenTargetIsDataAccessCredentialUsageNode :RDMPCommandExecutionProposal<DataAccessCredentialUsageNode>
+public class
+    ProposeExecutionWhenTargetIsDataAccessCredentialUsageNode : RDMPCommandExecutionProposal<
+        DataAccessCredentialUsageNode>
 {
     public ProposeExecutionWhenTargetIsDataAccessCredentialUsageNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -25,7 +27,7 @@ public class ProposeExecutionWhenTargetIsDataAccessCredentialUsageNode :RDMPComm
 
     public override void Activate(DataAccessCredentialUsageNode target)
     {
-        ItemActivator.Activate<DataAccessCredentialsUI,DataAccessCredentials>(target.Credentials);
+        ItemActivator.Activate<DataAccessCredentialsUI, DataAccessCredentials>(target.Credentials);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentialUsageNode target,

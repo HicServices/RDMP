@@ -7,13 +7,13 @@
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 
 /// <summary>
-/// Pipelines are sequences of tailorable components which achieve a given goal (e.g. load a cohort).  This node is a collection of all
-/// common use cases for pipelines.
+///     Pipelines are sequences of tailorable components which achieve a given goal (e.g. load a cohort).  This node is a
+///     collection of all
+///     common use cases for pipelines.
 /// </summary>
-public class AllPipelinesNode:SingletonNode
+public class AllPipelinesNode : SingletonNode
 {
     public AllPipelinesNode() : base("Pipelines")
     {
-
     }
 }

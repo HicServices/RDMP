@@ -9,26 +9,29 @@ using Rdmp.Core.CohortCreation.Execution;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Describes the usability of a cohort query cache when building a cohort in a <see cref="CohortCompiler"/>.  This depends primarily on whether
-/// the cache is on the same server as the other datasets being built
+///     Describes the usability of a cohort query cache when building a cohort in a <see cref="CohortCompiler" />.  This
+///     depends primarily on whether
+///     the cache is on the same server as the other datasets being built
 /// </summary>
 public enum CacheUsage
 {
     /// <summary>
-    /// The cache must be used and all Dependencies must be cached.  This happens if dependencies are on different servers / data access
-    /// credentials.  Or the query being built involves SET operations which are not supported by the DBMS of the dependencies (e.g. MySql UNION / INTERSECT etc).
+    ///     The cache must be used and all Dependencies must be cached.  This happens if dependencies are on different servers
+    ///     / data access
+    ///     credentials.  Or the query being built involves SET operations which are not supported by the DBMS of the
+    ///     dependencies (e.g. MySql UNION / INTERSECT etc).
     /// </summary>
     MustUse,
 
     /// <summary>
-    /// All dependencies are on the same server as the cache.  Therefore we can mix and match where we fetch tables from
-    /// (live table or cache) depending on whether the cache contains an entry for it or not.
+    ///     All dependencies are on the same server as the cache.  Therefore we can mix and match where we fetch tables from
+    ///     (live table or cache) depending on whether the cache contains an entry for it or not.
     /// </summary>
     Opportunistic,
 
     /// <summary>
-    /// All dependencies are on the same server but the cache is on a different server.  Therefore we can either
-    /// run a fully cached set of queries or we cannot run any cached queries
+    ///     All dependencies are on the same server but the cache is on a different server.  Therefore we can either
+    ///     run a fully cached set of queries or we cannot run any cached queries
     /// </summary>
     AllOrNothing
 }

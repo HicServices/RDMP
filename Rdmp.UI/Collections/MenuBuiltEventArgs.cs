@@ -10,23 +10,23 @@ using System.Windows.Forms;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Event args for the when a context menu is finished building
+///     Event args for the when a context menu is finished building
 /// </summary>
 public class MenuBuiltEventArgs : EventArgs
 {
-    /// <summary>
-    /// The right click context menu that has just been built
-    /// </summary>
-    public ContextMenuStrip Menu { get; }
-
-    /// <summary>
-    /// The object for which the <see cref="Menu"/> was built
-    /// </summary>
-    public object Obj { get; }
-
     public MenuBuiltEventArgs(ContextMenuStrip menu, object obj)
     {
         Menu = menu;
         Obj = obj;
     }
+
+    /// <summary>
+    ///     The right click context menu that has just been built
+    /// </summary>
+    public ContextMenuStrip Menu { get; }
+
+    /// <summary>
+    ///     The object for which the <see cref="Menu" /> was built
+    /// </summary>
+    public object Obj { get; }
 }

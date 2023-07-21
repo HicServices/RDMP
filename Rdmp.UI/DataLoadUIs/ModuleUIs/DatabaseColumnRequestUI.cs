@@ -14,7 +14,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs;
 public partial class DatabaseColumnRequestUI : UserControl
 {
     private readonly DatabaseColumnRequest _column;
-    private bool bLoaded = false;
+    private readonly bool bLoaded;
 
     public DatabaseColumnRequestUI(DatabaseColumnRequest column)
     {
@@ -42,7 +42,7 @@ public partial class DatabaseColumnRequestUI : UserControl
         }
 
         tbExplicitDbType.Text = column.ExplicitDbType;
-            
+
         bLoaded = true;
         ResetVisibility();
     }
@@ -98,7 +98,7 @@ public partial class DatabaseColumnRequestUI : UserControl
     private void tbExplicitDbType_TextChanged(object sender, EventArgs e)
     {
         ResetVisibility();
-            
+
         if (!bLoaded)
             return;
 
@@ -112,8 +112,8 @@ public partial class DatabaseColumnRequestUI : UserControl
         if (!bLoaded)
             return;
 
-        if(_column.TypeRequested != null)
-            _column.TypeRequested.CSharpType = (Type) ddManagedType.SelectedItem;
+        if (_column.TypeRequested != null)
+            _column.TypeRequested.CSharpType = (Type)ddManagedType.SelectedItem;
     }
 
     private void n_ValueChanged(object sender, EventArgs e)
@@ -123,11 +123,11 @@ public partial class DatabaseColumnRequestUI : UserControl
         if (!bLoaded)
             return;
 
-        var n = (NumericUpDown) sender;
+        var n = (NumericUpDown)sender;
 
         if (_column.TypeRequested != null)
         {
-            if(n == nLength)
+            if (n == nLength)
                 _column.TypeRequested.Width = (int)n.Value;
 
             if (n == nAfterDecimal)

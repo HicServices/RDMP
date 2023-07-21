@@ -12,14 +12,17 @@ using System.Windows.Forms;
 namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 
 /// <summary>
-/// Part of ViewInsertsAndUpdatesDialog (in the Updates tab), this control shows a sample of the updates that occurred as part of a data load.  The data load engine operates a 'newer
-/// data is better' policy when loading data such that if a record with the same primary key comes in the old values for the record are moved into the archive table and the new
-/// values are used to update the dataset (See 'Archive Tables' in UserManual.md.  This control lets you see the before and after values side by side.
+///     Part of ViewInsertsAndUpdatesDialog (in the Updates tab), this control shows a sample of the updates that occurred
+///     as part of a data load.  The data load engine operates a 'newer
+///     data is better' policy when loading data such that if a record with the same primary key comes in the old values
+///     for the record are moved into the archive table and the new
+///     values are used to update the dataset (See 'Archive Tables' in UserManual.md.  This control lets you see the before
+///     and after values side by side.
 /// </summary>
 public partial class DiffDataTables : UserControl
 {
-    private string DifferenceSymbol = "-|-";
-    private string WhitespaceDifference = "(WHITESPACE DIFFERENCE!)";
+    private readonly string DifferenceSymbol = "-|-";
+    private readonly string WhitespaceDifference = "(WHITESPACE DIFFERENCE!)";
 
     public DiffDataTables()
     {
@@ -34,11 +37,11 @@ public partial class DiffDataTables : UserControl
 
         foreach (DataColumn col in dt1.Columns)
             dtResult.Columns.Add(col.ColumnName);
-            
-        if(dt1.Columns.Count != dt2.Columns.Count)
+
+        if (dt1.Columns.Count != dt2.Columns.Count)
             throw new NotSupportedException("Exected DataTables to have the same number of columns");
-         
-        if(dt1.Rows.Count != dt2.Rows.Count)
+
+        if (dt1.Rows.Count != dt2.Rows.Count)
             throw new NotSupportedException("Exected DataTables to have the same number of rows");
 
         for (var r = 0; r < dt1.Rows.Count; r++)
@@ -47,19 +50,18 @@ public partial class DiffDataTables : UserControl
 
             for (var c = 0; c < dt1.Columns.Count; c++)
             {
-                var val1 = dt1.Rows[r][c] != null ?dt1.Rows[r][c].ToString():"";
+                var val1 = dt1.Rows[r][c] != null ? dt1.Rows[r][c].ToString() : "";
                 var val2 = dt2.Rows[r][c] != null ? dt2.Rows[r][c].ToString() : "";
 
-                if(val1.Equals(val2))
-                    copyToRow[c] = val1;//regular difference
-                else
-                if (val1.Trim().Equals(val2.Trim()))//whitespace difference
+                if (val1.Equals(val2))
+                    copyToRow[c] = val1; //regular difference
+                else if (val1.Trim().Equals(val2.Trim())) //whitespace difference
                     copyToRow[c] = val1 + WhitespaceDifference;
                 else
                     copyToRow[c] = val1 + DifferenceSymbol + val2;
             }
         }
-            
+
         dataGridView1.DataSource = dtResult;
     }
 
@@ -67,12 +69,11 @@ public partial class DiffDataTables : UserControl
     {
         foreach (DataGridViewRow r in dataGridView1.Rows)
         foreach (DataGridViewCell c in r.Cells)
-            if (c.Value != null )
-                if(c.Value.ToString().Contains(DifferenceSymbol))
+            if (c.Value != null)
+                if (c.Value.ToString().Contains(DifferenceSymbol))
                     c.Style.BackColor = Color.PaleGreen;
                 else if (c.Value.ToString().Contains(WhitespaceDifference))
                     c.Style.BackColor = Color.Red;
-
     }
 
     public void Clear()
@@ -82,7 +83,7 @@ public partial class DiffDataTables : UserControl
 
     private void dataGridView1_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.Escape)
+        if (e.KeyCode == Keys.Escape)
             dataGridView1.ClearSelection();
     }
 }

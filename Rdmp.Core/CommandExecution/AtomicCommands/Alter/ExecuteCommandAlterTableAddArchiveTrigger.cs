@@ -13,17 +13,18 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-/// Creates a backup trigger and accompanying _Archive table on the live database for a given table
+///     Creates a backup trigger and accompanying _Archive table on the live database for a given table
 /// </summary>
 public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecution
 {
     private readonly ITriggerImplementer _triggerImplementer;
 
-    public ExecuteCommandAlterTableAddArchiveTrigger(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
+    public ExecuteCommandAlterTableAddArchiveTrigger(IBasicActivateItems activator, TableInfo tableInfo) : base(
+        activator, tableInfo)
     {
-        if(IsImpossible)
+        if (IsImpossible)
             return;
-                
+
         if (!Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
         {
             SetImpossible(GlobalStrings.TableHasNoPrimaryKey);
@@ -35,25 +36,24 @@ public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecut
         var currentStatus = _triggerImplementer.GetTriggerStatus();
 
         if (currentStatus != TriggerStatus.Missing)
-            SetImpossible(GlobalStrings.TriggerStatusIsCurrently , currentStatus.S());
+            SetImpossible(GlobalStrings.TriggerStatusIsCurrently, currentStatus.S());
     }
 
     public override void Execute()
     {
         base.Execute();
-            
+
         if (!Synchronize())
             return;
-           
+
         if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
         {
             _triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
-            Show(GlobalStrings.CreateArchiveTableSuccess , $"{TableInfo.GetRuntimeName()}_Archive ");
+            Show(GlobalStrings.CreateArchiveTableSuccess, $"{TableInfo.GetRuntimeName()}_Archive ");
         }
 
         Synchronize();
 
         Publish(TableInfo);
     }
-
 }

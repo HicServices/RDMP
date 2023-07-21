@@ -9,19 +9,23 @@ using System;
 namespace Rdmp.Core.Curation.Data.EntityNaming;
 
 /// <summary>
-/// Used when there is a single staging database used for multiple different Catalogues. The name of the database being loaded is prepended to the staging table name.
+///     Used when there is a single staging database used for multiple different Catalogues. The name of the database being
+///     loaded is prepended to the staging table name.
 /// </summary>
 public class FixedStagingDatabaseNamer : SuffixBasedNamer
 {
-    private readonly string _stagingDatabaseName;
     private readonly string _databaseName;
+    private readonly string _stagingDatabaseName;
 
     /// <summary>
-    /// <para>---</para>
-    /// <para>For 'Staging', returns the table name prefixed with <paramref name="databaseName"/> and suffixed with _STAGING</para>
-    /// <para>---</para>
-    /// <para>For others, appends:</para>
-    /// <para>_Archive for Archive</para>
+    ///     <para>---</para>
+    ///     <para>
+    ///         For 'Staging', returns the table name prefixed with <paramref name="databaseName" /> and suffixed with
+    ///         _STAGING
+    ///     </para>
+    ///     <para>---</para>
+    ///     <para>For others, appends:</para>
+    ///     <para>_Archive for Archive</para>
     /// </summary>
     public FixedStagingDatabaseNamer(string databaseName, string stagingDatabaseName = "DLE_STAGING")
     {
@@ -29,7 +33,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
         _stagingDatabaseName = EnsureValueIsNotWrapped(stagingDatabaseName);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override string GetName(string tableName, LoadBubble convention)
     {
         if (convention == LoadBubble.Staging)
@@ -37,8 +41,8 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
 
         return base.GetName(tableName, convention);
     }
-        
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public override string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
     {
         if (stage == LoadBubble.Staging)
@@ -48,7 +52,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
     }
 
     /// <summary>
-    /// Returns the unwrapped value of <paramref name="s"/> by trimming brackets and quotes
+    ///     Returns the unwrapped value of <paramref name="s" /> by trimming brackets and quotes
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
@@ -57,7 +61,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
         if (s == null)
             return null;
 
-        var toReturn = s.Trim(new char[] { '[', ']', '`' ,'"'});
+        var toReturn = s.Trim('[', ']', '`', '"');
 
         if (
             toReturn.Contains('[') ||

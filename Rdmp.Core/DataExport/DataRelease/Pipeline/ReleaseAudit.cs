@@ -9,7 +9,7 @@ using System.IO;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Nothing to see here
+///     Nothing to see here
 /// </summary>
 public class ReleaseAudit
 {

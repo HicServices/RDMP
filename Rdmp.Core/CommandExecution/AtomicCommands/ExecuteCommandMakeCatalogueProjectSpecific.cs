@@ -5,29 +5,31 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,IAtomicCommandWithTarget
+public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution, IAtomicCommandWithTarget
 {
     private ICatalogue _catalogue;
     private IProject _project;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator,ICatalogue catalogue, IProject project):this(itemActivator)
+    public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
+        IProject project) : this(itemActivator)
     {
         SetCatalogue(catalogue);
         _project = project;
     }
-    public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator): base(itemActivator)
+
+    public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator) : base(itemActivator)
     {
         UseTripleDotSuffix = true;
     }
@@ -39,21 +41,22 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     public override void Execute()
     {
-        if(_catalogue == null)
+        if (_catalogue == null)
             SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
 
         _project ??= SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        if(_project == null || _catalogue == null)
+        if (_project == null || _catalogue == null)
             return;
-            
+
         base.Execute();
 
-        var eds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
+        var eds = BasicActivator.RepositoryLocator.DataExportRepository
+            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
 
         var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
 
-        if(alreadyInConfiguration != null)
+        if (alreadyInConfiguration != null)
             throw new Exception(
                 $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
 
@@ -63,6 +66,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
             ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             ei.SaveToDatabase();
         }
+
         eds.SaveToDatabase();
 
         Publish(_catalogue);
@@ -111,7 +115,9 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if (ei.Count(e => e.IsExtractionIdentifier) != 1)
             SetImpossible("Catalogue must have exactly 1 IsExtractionIdentifier column");
 
-        if (ei.Any(e => e.ExtractionCategory != ExtractionCategory.Core && e.ExtractionCategory != ExtractionCategory.ProjectSpecific))
+        if (ei.Any(e =>
+                e.ExtractionCategory != ExtractionCategory.Core &&
+                e.ExtractionCategory != ExtractionCategory.ProjectSpecific))
             SetImpossible("All existing ExtractionInformations must be ExtractionCategory.Core");
     }
 }

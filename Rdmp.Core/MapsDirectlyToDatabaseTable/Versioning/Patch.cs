@@ -7,25 +7,44 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
-/// Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher"/>.  Used during patching
-/// to ensure that the live database that is about to be patched is in the expected state and ready for new patches to be applied.
+///     Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher" />.  Used
+///     during patching
+///     to ensure that the live database that is about to be patched is in the expected state and ready for new patches to
+///     be applied.
 /// </summary>
 public class Patch : IComparable
 {
+    /// <summary>
+    ///     Describes the state of a database schema when compared to the <see cref="IPatcher" /> which manages its schema
+    /// </summary>
+    public enum PatchingState
+    {
+        /// <summary>
+        ///     Indicates that the running <see cref="IPatcher" /> has not detected any patches that require to be run on
+        ///     the database schema
+        /// </summary>
+        NotRequired,
+
+        /// <summary>
+        ///     Indicates that the running <see cref="IPatcher" /> has identified patches that should be applied to the
+        ///     database schema
+        /// </summary>
+        Required,
+
+        /// <summary>
+        ///     Indicates that the running <see cref="IPatcher" /> is older than the current database schema that is being
+        ///     connected to
+        /// </summary>
+        SoftwareBehindDatabase
+    }
+
     public const string VersionKey = "--Version:";
     public const string DescriptionKey = "--Description:";
-
-    public string EntireScript { get; set; }
-    public string locationInAssembly { get; private set; }
-
-    public Version DatabaseVersionNumber { get; set; }
-    public string Description { get; set; }
 
 
     public Patch(string scriptName, string entireScriptContents)
@@ -36,28 +55,42 @@ public class Patch : IComparable
         ExtractDescriptionAndVersionFromScriptContents();
     }
 
+    public string EntireScript { get; set; }
+    public string locationInAssembly { get; }
+
+    public Version DatabaseVersionNumber { get; set; }
+    public string Description { get; set; }
+
+    public int CompareTo(object obj)
+    {
+        if (obj is Patch patch)
+            return -string.Compare(patch.locationInAssembly, locationInAssembly,
+                StringComparison.Ordinal); //sort alphabetically (reverse)
+
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
+    }
+
     public override string ToString()
     {
         if (string.IsNullOrWhiteSpace(Description))
             return $"Patch {DatabaseVersionNumber}";
 
-        if(Description.Length> 100)
+        if (Description.Length > 100)
             return $"Patch {DatabaseVersionNumber}({Description[..100]}...)";
 
         return $"Patch {DatabaseVersionNumber}({Description})";
-
     }
 
     private void ExtractDescriptionAndVersionFromScriptContents()
     {
-        var lines = EntireScript.Split(new []{'\r', '\n'},StringSplitOptions.RemoveEmptyEntries);
+        var lines = EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         var idx = lines[0].IndexOf(VersionKey);
 
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
 
-        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':',' ','\n','\r','/','*');
+        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
 
         try
         {
@@ -66,24 +99,25 @@ public class Patch : IComparable
         catch (Exception e)
         {
             throw new InvalidPatchException(locationInAssembly,
-                $"Could not process the scripts --Version: entry ('{versionNumber}') into a valid C# Version object",e);
+                $"Could not process the scripts --Version: entry ('{versionNumber}') into a valid C# Version object",
+                e);
         }
 
-        if(lines.Length >=2)
+        if (lines.Length >= 2)
         {
             idx = lines[1].IndexOf(DescriptionKey);
 
-            if (idx == -1 )
+            if (idx == -1)
                 throw new InvalidPatchException(locationInAssembly,
                     $"Second line of patch scripts must start with {DescriptionKey}");
 
             var description = lines[1][(idx + DescriptionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
             Description = description;
-        } 
+        }
     }
 
     /// <summary>
-    /// Returns the body without the header text "--Version:1.2.0 etc".
+    ///     Returns the body without the header text "--Version:1.2.0 etc".
     /// </summary>
     /// <returns></returns>
     public string GetScriptBody()
@@ -96,6 +130,7 @@ public class Patch : IComparable
     {
         return locationInAssembly.GetHashCode();
     }
+
     public override bool Equals(object obj)
     {
         var x = this;
@@ -112,43 +147,12 @@ public class Patch : IComparable
         if (x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber))
             return true;
         throw new InvalidPatchException(x.locationInAssembly,
-            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers", null);
-    }
-    public int CompareTo(object obj)
-    {
-        if (obj is Patch patch)
-        {
-            return -string.Compare(patch.locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
-        }
-
-        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
+            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers");
     }
 
-    /// <summary>
-    /// Describes the state of a database schema when compared to the <see cref="IPatcher"/> which manages its schema
-    /// </summary>
-    public enum PatchingState
-    {
-        /// <summary>
-        /// Indicates that the running <see cref="IPatcher"/> has not detected any patches that require to be run on
-        /// the database schema
-        /// </summary>
-        NotRequired,
-
-        /// <summary>
-        /// Indicates that the running <see cref="IPatcher"/> has identified patches that should be applied to the
-        /// database schema
-        /// </summary>
-        Required,
-
-        /// <summary>
-        /// Indicates that the running <see cref="IPatcher"/> is older than the current database schema that is being
-        /// connected to
-        /// </summary>
-        SoftwareBehindDatabase
-    }
-
-    public static PatchingState IsPatchingRequired(DiscoveredDatabase database, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
+    public static PatchingState IsPatchingRequired(DiscoveredDatabase database, IPatcher patcher,
+        out Version databaseVersion, out Patch[] patchesInDatabase,
+        out SortedDictionary<string, Patch> allPatchesInAssembly)
     {
         databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(database);
 
@@ -158,7 +162,7 @@ public class Patch : IComparable
         allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database);
 
         var databaseAssemblyName = patcher.GetDbAssembly().GetName();
-            
+
         if (databaseAssemblyName.Version < databaseVersion)
             return PatchingState.SoftwareBehindDatabase;
 
@@ -166,6 +170,8 @@ public class Patch : IComparable
         return
             allPatchesInAssembly.Values
                 .Except(patchesInDatabase)
-                .Any() ? PatchingState.Required:PatchingState.NotRequired;
+                .Any()
+                ? PatchingState.Required
+                : PatchingState.NotRequired;
     }
 }

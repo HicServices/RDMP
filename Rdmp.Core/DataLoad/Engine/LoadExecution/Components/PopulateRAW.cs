@@ -18,14 +18,16 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 /// <summary>
-/// DLE component responsible for creating the RAW (first database in the RAW=>STAGING=>LIVE model of DLE loading) database (if required).  Also runs
-/// all LoadStage.Mounting and components.
+///     DLE component responsible for creating the RAW (first database in the RAW=>STAGING=>LIVE model of DLE loading)
+///     database (if required).  Also runs
+///     all LoadStage.Mounting and components.
 /// </summary>
 public class PopulateRAW : CompositeDataLoadComponent
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
-        
-    public PopulateRAW(List<IRuntimeTask> collection,HICDatabaseConfiguration databaseConfiguration):base(collection.Cast<IDataLoadComponent>().ToList())
+
+    public PopulateRAW(List<IRuntimeTask> collection, HICDatabaseConfiguration databaseConfiguration) : base(
+        collection.Cast<IDataLoadComponent>().ToList())
     {
         _databaseConfiguration = databaseConfiguration;
         Description = "Populate RAW";
@@ -40,7 +42,7 @@ public class PopulateRAW : CompositeDataLoadComponent
         CreateRawDatabaseIfRequired(job);
 
         var toReturn = base.Run(job, cancellationToken);
-            
+
         if (toReturn == ExitCodeType.Success)
             // Verify that we have put something into the database
             VerifyExistenceOfRawData(job);
@@ -60,7 +62,8 @@ public class PopulateRAW : CompositeDataLoadComponent
         {
             // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
             var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
-            var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
+            var numAttachersRequiringDbCreation =
+                attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
             if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
                 throw new Exception(
@@ -75,17 +78,16 @@ public class PopulateRAW : CompositeDataLoadComponent
         // Ask the runtime process host if we need to create the RAW database
         if (!MustCreateRawDatabase()) return;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that we must create the RAW database tables..."));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information,
+                "Determined that we must create the RAW database tables..."));
 
         var cloner = new DatabaseCloner(_databaseConfiguration);
 
-        if(!job.PersistentRaw)
-        {
-            cloner.CreateDatabaseForStage(LoadBubble.Raw);
-        }
-                
+        if (!job.PersistentRaw) cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
-        job.CreateTablesInStage(cloner,LoadBubble.Raw);
+
+        job.CreateTablesInStage(cloner, LoadBubble.Raw);
     }
 
     // Check that either Raw database exists and is populated, or that 'forLoading' is not empty
@@ -98,14 +100,12 @@ public class PopulateRAW : CompositeDataLoadComponent
                 $"The Mounting stage has not created the {raw.GetRuntimeName()} database."));
 
         var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
-            
-        if (_databaseConfiguration.ExpectTables(job,LoadBubble.Raw,true).All(t=>t.IsEmpty()))
+
+        if (_databaseConfiguration.ExpectTables(job, LoadBubble.Raw, true).All(t => t.IsEmpty()))
         {
             var message = $"The Mounting stage has not populated the RAW database ({rawDbInfo}) with any data";
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, message));
             throw new Exception(message);
-                
         }
     }
-
 }

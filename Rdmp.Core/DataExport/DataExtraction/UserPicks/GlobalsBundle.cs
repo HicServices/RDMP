@@ -12,14 +12,12 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-/// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need
-/// to be extracted/copied to the output ExtractionDirectory.
+///     Bundle containing references to all the globally extractable (supplied with every project extraction regardless of
+///     dataset) documents and tables that need
+///     to be extracted/copied to the output ExtractionDirectory.
 /// </summary>
-public class GlobalsBundle:Bundle
+public class GlobalsBundle : Bundle
 {
-    public List<SupportingDocument> Documents { get; private set; }
-    public List<SupportingSQLTable> SupportingSQL { get; private set; }
-
     public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
         base(
             Array.Empty<object>().Union(documents).Union(supportingSQL).ToArray()
@@ -29,6 +27,9 @@ public class GlobalsBundle:Bundle
         Documents = documents.ToList();
         SupportingSQL = supportingSQL.ToList();
     }
+
+    public List<SupportingDocument> Documents { get; }
+    public List<SupportingSQLTable> SupportingSQL { get; }
 
     public bool Any()
     {
@@ -52,6 +53,5 @@ public class GlobalsBundle:Bundle
 
 
         throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
-
     }
 }

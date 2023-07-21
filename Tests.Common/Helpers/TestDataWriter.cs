@@ -16,17 +16,18 @@ namespace Tests.Common.Helpers;
 
 public class TestDataWriter : CacheFilesystemDestination
 {
-    public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         var layout = CreateCacheLayout();
 
         var toCreateFilesIn = layout.Resolver.GetLoadCacheDirectory(CacheDirectory);
-            
+
         foreach (var file in toProcess.Files)
         {
             var destination = Path.Combine(toCreateFilesIn.FullName, file.Name);
 
-            if(File.Exists(destination))
+            if (File.Exists(destination))
                 File.Delete(destination);
 
             file.MoveTo(destination);
@@ -35,7 +36,8 @@ public class TestDataWriter : CacheFilesystemDestination
         return null;
     }
 
-    public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         return ProcessPipelineData((TestDataWriterChunk)toProcess, listener, cancellationToken);
     }
@@ -47,13 +49,12 @@ public class TestDataWriter : CacheFilesystemDestination
 
     public override void Abort(IDataLoadEventListener listener)
     {
-            
     }
 
     public override void Check(ICheckNotifier notifier)
     {
         if (CacheDirectory == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("PreInitialize was not called? (CacheDirectory == null)", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("PreInitialize was not called? (CacheDirectory == null)",
+                CheckResult.Fail));
     }
-
 }

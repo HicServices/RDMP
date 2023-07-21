@@ -14,27 +14,74 @@ using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.UI.Wizard;
 
 /// <summary>
-/// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to view and edit the parameters (if any) of a Filter you have added (or was Mandatory) on a dataset.  For example if
-/// you have a Filter 'Drug Prescribed' on the dataset 'Prescribing' typing "'Paracetamol'" into the parameter will likely restrict the cohort to matching only those patients who have ever
-/// been prescribed Paracetamol.
-/// 
-/// <para>If the control is Readonly (disabled / greyed out) then it is probably a Mandatory filter on your dataset and you will not be able to remove it.</para>
-/// 
-/// <para>This UI is a simplified version of ExtractionFilterUI</para>
+///     Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to view and edit the parameters (if any) of a
+///     Filter you have added (or was Mandatory) on a dataset.  For example if
+///     you have a Filter 'Drug Prescribed' on the dataset 'Prescribing' typing "'Paracetamol'" into the parameter will
+///     likely restrict the cohort to matching only those patients who have ever
+///     been prescribed Paracetamol.
+///     <para>
+///         If the control is Readonly (disabled / greyed out) then it is probably a Mandatory filter on your dataset and
+///         you will not be able to remove it.
+///     </para>
+///     <para>This UI is a simplified version of ExtractionFilterUI</para>
 /// </summary>
 public partial class SimpleFilterUI : UserControl
 {
     private readonly IActivateItems _activator;
     private readonly ExtractionFilter _filter;
+    private bool _mandatory;
 
-    public event Action RequestDeletion;
+    private bool _settingAKnownGoodValue;
 
-    private int rowHeight = 30;
+    private readonly List<SimpleParameterUI> parameterUis = new();
+
+    private readonly int rowHeight = 30;
+
+    public SimpleFilterUI(IActivateItems activator, ExtractionFilter filter)
+    {
+        _activator = activator;
+        _filter = filter;
+        InitializeComponent();
+
+        lblFilterName.Text = filter.Name;
+        pbFlter.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
+
+        var parameters = filter.ExtractionFilterParameters.ToArray();
+
+        SetupKnownGoodValues();
+
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var currentRowPanel = new Panel
+            {
+                Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                Margin = Padding.Empty
+            };
+
+            var p = new SimpleParameterUI(activator, parameters[i]);
+            currentRowPanel.Controls.Add(p);
+            p.tbValue.TextChanged += (s, e) =>
+            {
+                //we are here because user is selecting a value from the dropdown not because he is editting the text field manually
+                if (_settingAKnownGoodValue)
+                    return;
+
+                //user is manually editting a Parameters so it no longer matches a Known value
+                ddKnownGoodValues.SelectedItem = "";
+            };
+            parameterUis.Add(p);
+
+            tableLayoutPanel1.Controls.Add(currentRowPanel, 0, i + 1);
+            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
+        }
+
+        Height = 50 + parameters.Length * rowHeight;
+    }
 
     public IFilter Filter => _filter;
 
@@ -55,60 +102,16 @@ public partial class SimpleFilterUI : UserControl
                 btnDelete.Enabled = true;
                 lblFilterName.Enabled = true;
             }
-
-
         }
     }
 
-    private List<SimpleParameterUI>  parameterUis = new();
-    private bool _mandatory;
-
-    public SimpleFilterUI(IActivateItems activator,ExtractionFilter filter)
-    {
-        _activator = activator;
-        _filter = filter;
-        InitializeComponent();
-
-        lblFilterName.Text = filter.Name;
-        pbFlter.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
-
-        var parameters = filter.ExtractionFilterParameters.ToArray();
-
-        SetupKnownGoodValues();
-            
-        for (var i = 0; i < parameters.Length; i++)
-        {
-            var currentRowPanel = new Panel
-            {
-                Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight),
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                Margin = Padding.Empty
-            };
-
-            var p = new SimpleParameterUI(activator,parameters[i]);
-            currentRowPanel.Controls.Add(p);
-            p.tbValue.TextChanged += (s, e) =>
-            {
-                //we are here because user is selecting a value from the dropdown not because he is editting the text field manually
-                if(_settingAKnownGoodValue)
-                    return;
-
-                //user is manually editting a Parameters so it no longer matches a Known value
-                ddKnownGoodValues.SelectedItem = "";
-            };
-            parameterUis.Add(p);
-
-            tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
-            tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-        }
-
-        Height = 50 + parameters.Length*rowHeight;
-    }
+    public event Action RequestDeletion;
 
     private void SetupKnownGoodValues()
     {
-        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
-            
+        var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository
+            .GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
+
         if (knownGoodValues.Any())
         {
             pbKnownValueSets.Visible = true;
@@ -126,15 +129,12 @@ public partial class SimpleFilterUI : UserControl
 
             pbKnownValueSets.Left = lblFilterName.Right;
             ddKnownGoodValues.Left = pbKnownValueSets.Right;
-
         }
         else
         {
             pbKnownValueSets.Visible = false;
             ddKnownGoodValues.Visible = false;
         }
- 
-
     }
 
     private void btnDelete_Click(object sender, EventArgs e)
@@ -144,10 +144,7 @@ public partial class SimpleFilterUI : UserControl
 
     private void lblFilterName_Click(object sender, EventArgs e)
     {
-
     }
-
-    private bool _settingAKnownGoodValue = false;
 
     private void ddKnownGoodValues_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -159,19 +156,19 @@ public partial class SimpleFilterUI : UserControl
         _settingAKnownGoodValue = false;
     }
 
-    public IFilter CreateFilter(IFilterFactory factory ,IContainer filterContainer, IFilter[] alreadyExisting)
+    public IFilter CreateFilter(IFilterFactory factory, IContainer filterContainer, IFilter[] alreadyExisting)
     {
         var importer = new FilterImporter(factory, null);
-        var newFilter = importer.ImportFilter(filterContainer,_filter, alreadyExisting);
-            
+        var newFilter = importer.ImportFilter(filterContainer, _filter, alreadyExisting);
+
         foreach (var parameterUi in parameterUis)
             parameterUi.HandleSettingParameters(newFilter);
 
         //if there are known good values
         if (ddKnownGoodValues.SelectedItem != null && ddKnownGoodValues.SelectedItem as string != string.Empty)
             newFilter.Name += $"_{ddKnownGoodValues.SelectedItem}";
-            
-           
+
+
         newFilter.FilterContainer_ID = filterContainer.ID;
         newFilter.SaveToDatabase();
 

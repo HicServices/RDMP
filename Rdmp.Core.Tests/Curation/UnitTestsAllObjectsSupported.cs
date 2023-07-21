@@ -18,31 +18,34 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
 
-internal class UnitTestsAllObjectsSupported:UnitTests
+internal class UnitTestsAllObjectsSupported : UnitTests
 {
     /// <summary>
-    /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except
-    /// those listed in <see cref="UnitTests.SkipTheseTypes"/>) and returns a valid value.
+    ///     Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()" /> supports all
+    ///     <see cref="DatabaseEntity" /> classes (except
+    ///     those listed in <see cref="UnitTests.SkipTheseTypes" />) and returns a valid value.
     /// </summary>
     [Test]
     public void TestAllSupported()
     {
         //load all DatabaseEntity types
         var mef = new MEF();
-        mef.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
+        mef.Setup(
+            new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
 
         var types = mef.GetAllTypes()
-            .Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            .Where(t => typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
 
         var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
         var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
         var notSupported = new List<Type>();
-            
+
         foreach (var t in types)
         {
             //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") || typeof(SpontaneousObject).IsAssignableFrom(t))
+            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
+                typeof(SpontaneousObject).IsAssignableFrom(t))
                 continue;
 
             DatabaseEntity instance = null;
@@ -63,20 +66,18 @@ internal class UnitTestsAllObjectsSupported:UnitTests
 
             //if the instance returned by MakeGenericMethod does not pass checks that's a dealbreaker!
             if (instance != null)
-            {
                 try
                 {
                     //and that it returns an instance
                     Assert.IsNotNull(instance);
                     Assert.IsTrue(instance.Exists());
-                    Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation,"Type was '" + t.Name+"'");
+                    Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation,
+                        "Type was '" + t.Name + "'");
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"Implementation of WhenIHaveA<{t.Name}> is flawed",e);
+                    throw new Exception($"Implementation of WhenIHaveA<{t.Name}> is flawed", e);
                 }
-            }
-
         }
 
         Assert.IsEmpty(notSupported,

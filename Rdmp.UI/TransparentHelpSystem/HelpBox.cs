@@ -11,15 +11,15 @@ using System.Windows.Forms;
 namespace Rdmp.UI.TransparentHelpSystem;
 
 /// <summary>
-/// Describes why a given region is highlighted in TransparentHelpForm.  Describes what the user should do next and optionally can give the user alternate options to change the 
-/// help path being taken.
+///     Describes why a given region is highlighted in TransparentHelpForm.  Describes what the user should do next and
+///     optionally can give the user alternate options to change the
+///     help path being taken.
 /// </summary>
 public partial class HelpBox : UserControl
 {
-    private readonly HelpWorkflow _workFlow;
     public const int FixedFormWidth = 400;
+    private readonly HelpWorkflow _workFlow;
 
-    public event Action OptionTaken;
     public HelpBox(HelpWorkflow workFlow, string text, string optionIfAny)
     {
         _workFlow = workFlow;
@@ -30,29 +30,27 @@ public partial class HelpBox : UserControl
             text = "Some useful text which will help guide the user to perform an activity";
             optionIfAny = "Some alternate option button the user can click";
         }
-            
+
         lblHelp.Text = text;
 
         btnOption1.Text = optionIfAny;
         btnOption1.Visible = !string.IsNullOrWhiteSpace(optionIfAny);
 
         if (string.IsNullOrWhiteSpace(optionIfAny))
-        {
             //make label fill whole form
             lblHelp.Height = panel1.Height;
-        }
 
-        btnOption1.Click += (s, e) =>
-        {
-            OptionTaken?.Invoke();
-        };
-            
-        Size = GetSizeOfHelpBoxFor(text,!string.IsNullOrWhiteSpace(optionIfAny));
+        btnOption1.Click += (s, e) => { OptionTaken?.Invoke(); };
+
+        Size = GetSizeOfHelpBoxFor(text, !string.IsNullOrWhiteSpace(optionIfAny));
     }
+
+    public event Action OptionTaken;
 
     private Size GetSizeOfHelpBoxFor(string text, bool hasOptionButtons)
     {
-        var basicSize =  TextRenderer.MeasureText(text, SystemFonts.DefaultFont, new Size(FixedFormWidth, 0),TextFormatFlags.WordBreak);
+        var basicSize = TextRenderer.MeasureText(text, SystemFonts.DefaultFont, new Size(FixedFormWidth, 0),
+            TextFormatFlags.WordBreak);
 
         //if there's an option button and very little text then widen the box
         if (btnOption1.Visible)

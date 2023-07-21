@@ -11,15 +11,14 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using Tests.Common;
-using Color = SixLabors.ImageSharp.Color;
 
 namespace Rdmp.Core.Tests.Reports;
 
-internal class DocumentationReportDatabaseEntitiesTests:UnitTests
+internal class DocumentationReportDatabaseEntitiesTests : UnitTests
 {
     [Test]
     public void Test_DocumentationReportDatabaseEntities_Normal()
@@ -32,12 +31,10 @@ internal class DocumentationReportDatabaseEntitiesTests:UnitTests
         var reporter = new DocumentationReportDatabaseEntities();
 
         Image img = new Image<Rgba32>(19, 19);
-        img.Mutate(x=>x.Fill(Color.DarkMagenta));
+        img.Mutate(x => x.Fill(Color.DarkMagenta));
 
-        var iconProvider = Mock.Of<IIconProvider>(m=>m.GetImage(It.IsAny<object>(),It.IsAny<OverlayKind>()) == img);
+        var iconProvider = Mock.Of<IIconProvider>(m => m.GetImage(It.IsAny<object>(), It.IsAny<OverlayKind>()) == img);
 
-        reporter.GenerateReport(store, new ThrowImmediatelyCheckNotifier(), iconProvider, MEF,false);
-
-
+        reporter.GenerateReport(store, new ThrowImmediatelyCheckNotifier(), iconProvider, MEF, false);
     }
 }

@@ -14,19 +14,18 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
 /// <summary>
-/// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the 
-/// RAW => STAGING => LIVE model rdmp uses for data loading.
+///     Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE
+///     where each database is etc in the
+///     RAW => STAGING => LIVE model rdmp uses for data loading.
 /// </summary>
 public class LoadArgsDictionary
 {
-    private readonly ILoadMetadata _loadMetadata;
     private readonly StandardDatabaseHelper _dbDeployInfo;
-        
-    public Dictionary<LoadStage, IStageArgs> LoadArgs { get; private set; }
+    private readonly ILoadMetadata _loadMetadata;
 
     public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
     {
-        if(string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        if (string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
             throw new Exception(
                 $@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {loadMetadata.Name}");
 
@@ -35,10 +34,10 @@ public class LoadArgsDictionary
 
         LoadArgs = new Dictionary<LoadStage, IStageArgs>();
         foreach (LoadStage loadStage in Enum.GetValues(typeof(LoadStage)))
-        {
             LoadArgs.Add(loadStage, CreateLoadArgs(loadStage));
-        }
     }
+
+    public Dictionary<LoadStage, IStageArgs> LoadArgs { get; }
 
     protected IStageArgs CreateLoadArgs(LoadStage loadStage)
     {

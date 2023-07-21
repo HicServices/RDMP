@@ -12,13 +12,19 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-/// Factory for generating a consistent representation in a <see cref="ToolStrip"/> of a user configurable timeout period.
+///     Factory for generating a consistent representation in a <see cref="ToolStrip" /> of a user configurable timeout
+///     period.
 /// </summary>
 public class ToolStripTimeout
 {
-    private ToolStripLabel timeoutLabel = new("Timeout:");
-    private ToolStripTextBox tbTimeout = new() { Text = "300"};
     private int _timeout;
+    private readonly ToolStripTextBox tbTimeout = new() { Text = "300" };
+    private readonly ToolStripLabel timeoutLabel = new("Timeout:");
+
+    public ToolStripTimeout()
+    {
+        tbTimeout.TextChanged += tbTimeout_TextChanged;
+    }
 
     public int Timeout
     {
@@ -30,10 +36,6 @@ public class ToolStripTimeout
         }
     }
 
-    public ToolStripTimeout()
-    {
-        tbTimeout.TextChanged += tbTimeout_TextChanged;
-    }
     public IEnumerable<ToolStripItem> GetControls()
     {
         yield return timeoutLabel;

@@ -16,20 +16,24 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
 /// <summary>
-/// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems
+///     Opens a <see cref="ShareDefinition" /> (which must be a share of a <see cref="Catalogue" />) and imports all
+///     descriptions including for CatalogueItems
 /// </summary>
 public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
 {
     private readonly Catalogue _targetCatalogue;
 
-    public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection, Catalogue targetCatalogue) : base(activator, sourceFileCollection)
+    public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator,
+        FileCollectionCombineable sourceFileCollection, Catalogue targetCatalogue) : base(activator,
+        sourceFileCollection)
     {
         _targetCatalogue = targetCatalogue;
         UseTripleDotSuffix = true;
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator, Catalogue targetCatalogue) : base(activator, null)
+    public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator, Catalogue targetCatalogue)
+        : base(activator, null)
     {
         _targetCatalogue = targetCatalogue;
         UseTripleDotSuffix = true;
@@ -44,7 +48,8 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
 
         if (_targetCatalogue.Name != (string)first.Properties["Name"])
             if (!YesNo(
-                    $"Catalogue Name is '{_targetCatalogue.Name}' but ShareDefinition is for, '{first.Properties["Name"]}'.  Import Anyway?", "Import Anyway?"))
+                    $"Catalogue Name is '{_targetCatalogue.Name}' but ShareDefinition is for, '{first.Properties["Name"]}'.  Import Anyway?",
+                    "Import Anyway?"))
                 return;
 
         ShareManager.ImportPropertiesOnly(_targetCatalogue, first);
@@ -60,7 +65,9 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
 
             var shareName = (string)sd.Properties["Name"];
 
-            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ?? new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _targetCatalogue, shareName);
+            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ??
+                                new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
+                                    _targetCatalogue, shareName);
             ShareManager.ImportPropertiesOnly(existingMatch, sd);
             existingMatch.SaveToDatabase();
         }

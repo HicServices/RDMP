@@ -11,49 +11,19 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>
+///     The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated
+///     <see cref="ExtractionConfiguration" />
 /// </summary>
-public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
+public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
 {
-    public IExtractionConfiguration Configuration { get; set; }
-    public IExtractableCohort Cohort { get; set; }
-
     public LinkedCohortNode(IExtractionConfiguration configuration, IExtractableCohort cohort)
     {
         Configuration = configuration;
         Cohort = cohort;
     }
 
-    public override string ToString()
-    {
-        return Cohort.ToString();
-    }
-
-    public object MasqueradingAs()
-    {
-        return Cohort;
-    }
-
-    protected bool Equals(LinkedCohortNode other)
-    {
-        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (obj is null) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LinkedCohortNode) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return ((Configuration != null ? Configuration.GetHashCode() : 0)*397) ^ (Cohort != null ? Cohort.GetHashCode() : 0);
-        }
-    }
+    public IExtractionConfiguration Configuration { get; set; }
+    public IExtractableCohort Cohort { get; set; }
 
     public void DeleteInDatabase()
     {
@@ -66,9 +36,41 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
         return $"remove cohort from ExtractionConfiguration '{Configuration}'";
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetDeleteVerb()
     {
         return "Remove";
+    }
+
+    public object MasqueradingAs()
+    {
+        return Cohort;
+    }
+
+    public override string ToString()
+    {
+        return Cohort.ToString();
+    }
+
+    protected bool Equals(LinkedCohortNode other)
+    {
+        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LinkedCohortNode)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return ((Configuration != null ? Configuration.GetHashCode() : 0) * 397) ^
+                   (Cohort != null ? Cohort.GetHashCode() : 0);
+        }
     }
 }

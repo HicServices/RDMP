@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// Enum indicating one of the logging tables in the logging relational database
+///     Enum indicating one of the logging tables in the logging relational database
 /// </summary>
 public enum LoggingTables
 {

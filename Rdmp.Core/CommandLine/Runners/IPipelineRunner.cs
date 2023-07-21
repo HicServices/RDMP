@@ -11,18 +11,18 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Runner that executes a single <see cref="IPipeline"/> under the given <see cref="IPipelineUseCase"/>
+///     Runner that executes a single <see cref="IPipeline" /> under the given <see cref="IPipelineUseCase" />
 /// </summary>
 public interface IPipelineRunner : IRunner
 {
     /// <summary>
-    /// Called when the pipeline has finished executing
+    ///     Called when the pipeline has finished executing
     /// </summary>
     event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
 
     /// <summary>
-    /// Adds an additional listener to report events to when the runner is executed
+    ///     Adds an additional listener to report events to when the runner is executed
     /// </summary>
     /// <param name="toAdd"></param>
     void SetAdditionalProgressListener(IDataLoadEventListener toAdd);

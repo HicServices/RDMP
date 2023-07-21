@@ -24,18 +24,18 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class TableVarcharMaxerTests : DatabaseTests
 {
-    [TestCase(DatabaseType.MySql,true)]
+    [TestCase(DatabaseType.MySql, true)]
     [TestCase(DatabaseType.MySql, false)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,false)]
-    public void TestTableVarcharMaxer(DatabaseType dbType,bool allDataTypes)
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+    public void TestTableVarcharMaxer(DatabaseType dbType, bool allDataTypes)
     {
         var db = GetCleanedServer(dbType);
 
-        var tbl = db.CreateTable("Fish",new[]
+        var tbl = db.CreateTable("Fish", new[]
         {
-            new DatabaseColumnRequest("Dave",new DatabaseTypeRequest(typeof(string),100)), 
-            new DatabaseColumnRequest("Frank",new DatabaseTypeRequest(typeof(int))) 
+            new DatabaseColumnRequest("Dave", new DatabaseTypeRequest(typeof(string), 100)),
+            new DatabaseColumnRequest("Frank", new DatabaseTypeRequest(typeof(int)))
         });
 
         Import(tbl, out var ti, out var cols);
@@ -44,30 +44,31 @@ public class TableVarcharMaxerTests : DatabaseTests
         {
             AllDataTypes = allDataTypes,
             TableRegexPattern = new Regex(".*"),
-            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue))
+            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater
+                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue))
         };
 
-        maxer.Initialize(db,LoadStage.AdjustRaw);
-        maxer.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
+        maxer.Initialize(db, LoadStage.AdjustRaw);
+        maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
 
-        var job = Mock.Of<IDataLoadJob>(x => 
-            x.RegularTablesToLoad==new List<ITableInfo> {ti} &&
-            x.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
+        var job = Mock.Of<IDataLoadJob>(x =>
+            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
+            x.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
 
         maxer.Mutilate(job);
 
         switch (dbType)
         {
             case DatabaseType.MicrosoftSQLServer:
-                Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Dave").DataType.SQLType);
+                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Dave").DataType.SQLType);
                 Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                 break;
             case DatabaseType.MySql:
-                Assert.AreEqual("text",tbl.DiscoverColumn("Dave").DataType.SQLType);
+                Assert.AreEqual("text", tbl.DiscoverColumn("Dave").DataType.SQLType);
                 Assert.AreEqual(allDataTypes ? "text" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                 break;
             case DatabaseType.Oracle:
-                Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Dave").DataType.SQLType);
+                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Dave").DataType.SQLType);
                 Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                 break;
             default:
@@ -81,10 +82,10 @@ public class TableVarcharMaxerTests : DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        var tbl = db.CreateTable("Fi ; '`sh",new[]
+        var tbl = db.CreateTable("Fi ; '`sh", new[]
         {
-            new DatabaseColumnRequest("Da'   ,,;ve",new DatabaseTypeRequest(typeof(string),100)), 
-            new DatabaseColumnRequest("Frrrrr ##' ank",new DatabaseTypeRequest(typeof(int))) 
+            new DatabaseColumnRequest("Da'   ,,;ve", new DatabaseTypeRequest(typeof(string), 100)),
+            new DatabaseColumnRequest("Frrrrr ##' ank", new DatabaseTypeRequest(typeof(int)))
         });
 
         Import(tbl, out var ti, out var cols);
@@ -92,16 +93,17 @@ public class TableVarcharMaxerTests : DatabaseTests
         var maxer = new TableVarcharMaxer
         {
             TableRegexPattern = new Regex(".*"),
-            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue))
+            DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater
+                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue))
         };
 
-        maxer.Initialize(db,LoadStage.AdjustRaw);
-        maxer.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
+        maxer.Initialize(db, LoadStage.AdjustRaw);
+        maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
 
         var job = new ThrowImmediatelyDataLoadJob
         {
-            RegularTablesToLoad = new List<ITableInfo> {ti},
-            Configuration = new HICDatabaseConfiguration(db.Server,null,null,null)
+            RegularTablesToLoad = new List<ITableInfo> { ti },
+            Configuration = new HICDatabaseConfiguration(db.Server)
         };
 
         maxer.Mutilate(job);
@@ -109,13 +111,13 @@ public class TableVarcharMaxerTests : DatabaseTests
         switch (dbType)
         {
             case DatabaseType.MicrosoftSQLServer:
-                Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
                 break;
             case DatabaseType.MySql:
-                Assert.AreEqual("text",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.AreEqual("text", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
                 break;
             case DatabaseType.Oracle:
-                Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(dbType));

@@ -13,35 +13,40 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core.DataLoad.Engine.Migration;
 
 /// <summary>
-/// IMigrationFieldProcessor for StagingBackfillMutilator (See StagingBackfillMutilator).
+///     IMigrationFieldProcessor for StagingBackfillMutilator (See StagingBackfillMutilator).
 /// </summary>
 public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
 {
-    public bool NoBackupTrigger 
-    { 
+    public bool NoBackupTrigger
+    {
         get => false;
-        set 
+        set
         {
-            if(!value)
+            if (!value)
                 throw new NotSupportedException("NoBackupTrigger must be false to perform this migration");
         }
     }
 
     public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
     {
-        if (!sourceFields.Any(c=>c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID,StringComparison.CurrentCultureIgnoreCase)))
+        if (!sourceFields.Any(c =>
+                c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
             throw new MissingFieldException(SpecialFieldNames.DataLoadRunID);
 
 
-        if (!sourceFields.Any(c => c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom, StringComparison.CurrentCultureIgnoreCase)))
+        if (!sourceFields.Any(c =>
+                c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom, StringComparison.CurrentCultureIgnoreCase)))
             throw new MissingFieldException(SpecialFieldNames.ValidFrom);
     }
 
-    public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
+    public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff,
+        List<DiscoveredColumn> fieldsToUpdate)
     {
         //it is a hic internal field but not one of the overwritten, standard ones
         if (SpecialFieldNames.IsHicPrefixed(field))
+        {
             fieldsToUpdate.Add(field);
+        }
         else
         {
             //it is not a hic internal field

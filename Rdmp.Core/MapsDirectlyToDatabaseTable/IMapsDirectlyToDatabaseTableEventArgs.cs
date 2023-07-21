@@ -9,14 +9,14 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Describes an event taking place on a database <see cref="Object"/>
+///     Describes an event taking place on a database <see cref="Object" />
 /// </summary>
 public class IMapsDirectlyToDatabaseTableEventArgs : EventArgs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; }
-
     public IMapsDirectlyToDatabaseTableEventArgs(IMapsDirectlyToDatabaseTable o)
     {
         Object = o;
     }
+
+    public IMapsDirectlyToDatabaseTable Object { get; }
 }

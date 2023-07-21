@@ -17,9 +17,8 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.Curation.Integration;
 
 [TestFixture]
-public class AllKeywordsDescribedTest :DatabaseTests
+public class AllKeywordsDescribedTest : DatabaseTests
 {
-
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
     {
@@ -36,21 +35,23 @@ public class AllKeywordsDescribedTest :DatabaseTests
 
         var problems = new List<string>();
 
-        var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
-            
+        var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t =>
+            typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract &&
+            !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
+
         foreach (var type in databaseTypes)
         {
-            var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore[$"I{type.Name}"];
-                
-            if(string.IsNullOrWhiteSpace(docs))
+            var docs = CatalogueRepository.CommentStore[type.Name] ?? CatalogueRepository.CommentStore[$"I{type.Name}"];
+
+            if (string.IsNullOrWhiteSpace(docs))
                 problems.Add(
                     $"Type {type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
-                
         }
+
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
-        Assert.AreEqual(0,problems.Count);
+        Assert.AreEqual(0, problems.Count);
     }
 
     [Test]
@@ -67,11 +68,9 @@ public class AllKeywordsDescribedTest :DatabaseTests
 
         var problems = new List<string>();
         foreach (var fkName in allKeys)
-        {
             if (!CatalogueRepository.CommentStore.ContainsKey(fkName))
                 problems.Add($"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText");
-        }
-            
+
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
@@ -92,16 +91,13 @@ public class AllKeywordsDescribedTest :DatabaseTests
 
         var problems = new List<string>();
         foreach (var idx in allIndexes)
-        {
             if (!CatalogueRepository.CommentStore.ContainsKey(idx))
                 problems.Add($"{idx} is an index but does not have any HelpText");
-        }
-            
+
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
-        Assert.AreEqual(0,problems.Count,@"Add a description for each of these to KeywordHelp.txt");
-            
+        Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
     }
 
     private static IEnumerable<string> GetForeignKeys(DiscoveredServer server)
@@ -109,7 +105,8 @@ public class AllKeywordsDescribedTest :DatabaseTests
         using (var con = server.GetConnection())
         {
             con.Open();
-            var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con).ExecuteReader();
+            var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con)
+                .ExecuteReader();
 
             while (r.Read())
                 yield return (string)r["name"];

@@ -10,7 +10,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.DataExport.DataRelease.Audit;
 
 /// <summary>
-/// See ReleaseLogEntry
+///     See ReleaseLogEntry
 /// </summary>
 public interface IReleaseLog : IMapsDirectlyToDatabaseTable
 {

@@ -4,16 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
+using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Runs the SQL in <see cref="SupportingSQLTable"/> and displays output (if a single table is returned)
+///     Runs the SQL in <see cref="SupportingSQLTable" /> and displays output (if a single table is returned)
 /// </summary>
 public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
 {
@@ -36,7 +36,6 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         if (string.IsNullOrWhiteSpace(SupportingSQLTable.SQL))
         {
             SetImpossible($"No SQL is defined for {SupportingSQLTable}");
-            return;
         }
     }
 
@@ -50,18 +49,14 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
             BasicActivator.IsWinForms)
         {
-
             // does the query look dangerous, if so give them a choice to back out
             var requireConfirm = RiskySql().IsMatch(SupportingSQLTable.SQL);
 
             if (requireConfirm)
-            {
                 if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
-                {
                     return null;
-                }
-            }
         }
+
         return collection;
     }
 

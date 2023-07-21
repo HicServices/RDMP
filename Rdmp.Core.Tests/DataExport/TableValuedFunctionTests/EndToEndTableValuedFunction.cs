@@ -9,7 +9,6 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
@@ -24,6 +23,7 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -31,25 +31,27 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests;
 
-public class EndToEndTableValuedFunction:DatabaseTests
+public class EndToEndTableValuedFunction : DatabaseTests
 {
-    private ExtractionInformation _nonTvfExtractionIdentifier;
-    private ICatalogue _nonTvfCatalogue;
-    private ITableInfo _nonTvfTableInfo;
-    private ExternalCohortTable _externalCohortTable;
-    private ICatalogue _tvfCatalogue;
-    private ITableInfo _tvfTableInfo;
+    private AggregateConfiguration _aggregate;
 
-    //the cohort database
-    private DiscoveredDatabase _discoveredCohortDatabase;
+    private CohortIdentificationConfiguration _cic;
+
+    private AggregateConfiguration _cicAggregate;
+
     //the data database (with the tvf in it)
     private DiscoveredDatabase _database;
 
-    private CohortIdentificationConfiguration _cic;
-    private Project _project;
+    //the cohort database
+    private DiscoveredDatabase _discoveredCohortDatabase;
+    private ExternalCohortTable _externalCohortTable;
+    private ICatalogue _nonTvfCatalogue;
+    private ExtractionInformation _nonTvfExtractionIdentifier;
+    private ITableInfo _nonTvfTableInfo;
     private Pipeline _pipe;
-    private AggregateConfiguration _aggregate;
-    private AggregateConfiguration _cicAggregate;
+    private Project _project;
+    private ICatalogue _tvfCatalogue;
+    private ITableInfo _tvfTableInfo;
 
     [SetUp]
     protected override void SetUp()
@@ -63,21 +65,23 @@ public class EndToEndTableValuedFunction:DatabaseTests
     public void EndToEndTest()
     {
         var cohortDatabaseNameWillBe = TestDatabaseNames.GetConsistentName("TbvCohort");
-        _discoveredCohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseNameWillBe);
+        _discoveredCohortDatabase =
+            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseNameWillBe);
 
         //cleanup
-        if(_discoveredCohortDatabase.Exists())
+        if (_discoveredCohortDatabase.Exists())
             _discoveredCohortDatabase.Drop();
 
         //create a normal catalogue
         CreateANormalCatalogue();
 
         //create a cohort database using wizard
-        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
+        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase, CatalogueRepository,
+            DataExportRepository, false);
 
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
-            ,new ThrowImmediatelyCheckNotifier());
+            , new ThrowImmediatelyCheckNotifier());
 
         //create a table valued function
         CreateTvfCatalogue(cohortDatabaseNameWillBe);
@@ -137,15 +141,17 @@ public class EndToEndTableValuedFunction:DatabaseTests
         _cic.CreateRootContainerIfNotExists();
 
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
-        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> { throw new Exception("Did not expect there to be more than 1!"); });
+        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,
+            (s, e) => { throw new Exception("Did not expect there to be more than 1!"); });
 
         var root = _cic.RootCohortAggregateContainer;
-        root.AddChild(newAggregate,0);
+        root.AddChild(newAggregate, 0);
 
         //create a pipeline for executing this CIC and turning it into a cohort
         _pipe = new Pipeline(CatalogueRepository, "CREATE COHORT:By Executing CIC");
 
-        var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
+        var source = new PipelineComponent(CatalogueRepository, _pipe, typeof(CohortIdentificationConfigurationSource),
+            0, "CIC Source");
 
         _project = new Project(DataExportRepository, "TvfProject")
         {
@@ -154,7 +160,8 @@ public class EndToEndTableValuedFunction:DatabaseTests
         };
         _project.SaveToDatabase();
 
-        var destination = new PipelineComponent(CatalogueRepository, _pipe, typeof(BasicCohortDestination), 1, "Destination");
+        var destination =
+            new PipelineComponent(CatalogueRepository, _pipe, typeof(BasicCohortDestination), 1, "Destination");
 
         _pipe.SourcePipelineComponent_ID = source.ID;
         _pipe.DestinationPipelineComponent_ID = destination.ID;
@@ -165,11 +172,13 @@ public class EndToEndTableValuedFunction:DatabaseTests
         destination.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
 
         //create pipeline initialization objects
-        var request = new CohortCreationRequest(_project, new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository, "Here goes nothing")
-            {
-                CohortIdentificationConfiguration = _cic
-            };
-        var engine = request.GetEngine(_pipe,new ThrowImmediatelyDataLoadEventListener());
+        var request = new CohortCreationRequest(_project,
+            new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository,
+            "Here goes nothing")
+        {
+            CohortIdentificationConfiguration = _cic
+        };
+        var engine = request.GetEngine(_pipe, new ThrowImmediatelyDataLoadEventListener());
         engine.ExecutePipeline(new GracefulCancellationToken());
     }
 
@@ -215,11 +224,9 @@ end
         Assert.AreEqual("chi", eis[0].GetRuntimeName());
         eis[0].IsExtractionIdentifier = true;
         eis[0].SaveToDatabase();
-            
+
         _tvfCatalogue = cata;
         _tvfTableInfo = tbl;
-
-
     }
 
     private void CreateANormalCatalogue()
@@ -228,7 +235,7 @@ end
         using (var con = svr.GetConnection())
         {
             con.Open();
-            svr.GetCommand("CREATE TABLE NonTVFTable ( chi varchar(10))",con).ExecuteNonQuery();
+            svr.GetCommand("CREATE TABLE NonTVFTable ( chi varchar(10))", con).ExecuteNonQuery();
             svr.GetCommand("INSERT INTO NonTVFTable VALUES ('0101010101')", con).ExecuteNonQuery();
             svr.GetCommand("INSERT INTO NonTVFTable VALUES ('0202020202')", con).ExecuteNonQuery();
             svr.GetCommand("INSERT INTO NonTVFTable VALUES ('0303030303')", con).ExecuteNonQuery();
@@ -236,17 +243,18 @@ end
 
         var importer = new TableInfoImporter(CatalogueRepository, svr.Name,
             _database.GetRuntimeName(), "NonTVFTable",
-            DatabaseType.MicrosoftSQLServer,_database.Server.ExplicitUsernameIfAny,_database.Server.ExplicitPasswordIfAny);
+            DatabaseType.MicrosoftSQLServer, _database.Server.ExplicitUsernameIfAny,
+            _database.Server.ExplicitPasswordIfAny);
 
         importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
         engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
-            
-        _nonTvfExtractionIdentifier  = eis.Single();
+
+        _nonTvfExtractionIdentifier = eis.Single();
         _nonTvfExtractionIdentifier.IsExtractionIdentifier = true;
         _nonTvfExtractionIdentifier.SaveToDatabase();
-            
+
         _nonTvfCatalogue = cata;
         _nonTvfTableInfo = tbl;
     }
@@ -291,17 +299,16 @@ end
                 Assert.NotNull(r["definitionID"]);
             }
 
-            Assert.AreEqual(rowsReturned,5);
+            Assert.AreEqual(rowsReturned, 5);
         }
     }
 
     private void TestUsingTvfForAggregates()
     {
+        _aggregate = new AggregateConfiguration(CatalogueRepository, _tvfCatalogue, "tvfAggregate");
 
-
-        _aggregate = new AggregateConfiguration(CatalogueRepository, _tvfCatalogue,"tvfAggregate");
-
-        var ei = _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => !e.IsExtractionIdentifier);
+        var ei = _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Single(e => !e.IsExtractionIdentifier);
         _aggregate.AddDimension(ei);
 
         //change the parameter to 10
@@ -316,18 +323,18 @@ end
          * DECLARE @numberOfRecords AS int;
          * SET @numberOfRecords=10;
          * tvfAggregate
-         * SELECT 
+         * SELECT
          * GetTopXRandom.[definitionID],
          * count(*)
-         * FROM 
+         * FROM
          * [TestDbName_ScratchArea]..GetTopXRandom(@numberOfRecords) AS GetTopXRandom
-         * group by 
+         * group by
          * GetTopXRandom.[definitionID]
-         * order by 
-         * GetTopXRandom.[definitionID] 
-         * 
-         * --Since we only imported 1 cohort we should have 1 row and the count should be the number we requested 
-         * 
+         * order by
+         * GetTopXRandom.[definitionID]
+         *
+         * --Since we only imported 1 cohort we should have 1 row and the count should be the number we requested
+         *
          * */
 
         var sql = qb.SQL;
@@ -340,16 +347,16 @@ end
 
             Assert.IsTrue(r.Read());
 
-            Assert.AreEqual(r[1],10);
+            Assert.AreEqual(r[1], 10);
 
             Assert.IsFalse(r.Read());
         }
 
         //create a global overriding parameter on the aggregate
         var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int;")
-            {
-                Value = "1"
-            };
+        {
+            Value = "1"
+        };
         global.SaveToDatabase();
 
 
@@ -363,7 +370,7 @@ end
 
             Assert.IsTrue(r.Read());
 
-            Assert.AreEqual(r[1], 1);//should now only have 1 record being retrned and counted when executing
+            Assert.AreEqual(r[1], 1); //should now only have 1 record being retrned and counted when executing
 
             Assert.IsFalse(r.Read());
         }
@@ -382,7 +389,7 @@ end
         Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
 
         //add the new cic to the container
-        root.AddChild(_cicAggregate,2);
+        root.AddChild(_cicAggregate, 2);
 
         //So container is:
         // EXCEPT
@@ -390,7 +397,7 @@ end
         //People in _tvfCatalogue (with @numberOfRecords = 1) (1)
 
         //result should be 2
-        var qb = new CohortQueryBuilder(_cic,null);
+        var qb = new CohortQueryBuilder(_cic, null);
 
         var sql = qb.SQL;
 
@@ -423,12 +430,13 @@ end
         //make all columns part of the extraction
         foreach (var e in _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             config.AddColumnToExtraction(tvfExtractable, e);
-            
+
         //the default value should be 10
-        Assert.AreEqual("10",_tvfTableInfo.GetAllParameters().Single().Value);
+        Assert.AreEqual("10", _tvfTableInfo.GetAllParameters().Single().Value);
 
         //configure an extraction specific global of 1 so that only 1 chi number is fetched (which will be in the cohort)
-        var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
+        var globalP =
+            new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
             {
                 Value = "1"
             };
@@ -441,13 +449,13 @@ end
         source.PreInitialize(extractionCommand, new ThrowImmediatelyDataLoadEventListener());
 
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-            
-        Assert.AreEqual(1,dt.Rows.Count);
 
-        Assert.AreEqual("ReleaseId",dt.Columns[0].ColumnName);
+        Assert.AreEqual(1, dt.Rows.Count);
+
+        Assert.AreEqual("ReleaseId", dt.Columns[0].ColumnName);
 
         //should be a guid
-        Assert.IsTrue(dt.Rows[0][0].ToString().Length>10);
+        Assert.IsTrue(dt.Rows[0][0].ToString().Length > 10);
         Assert.IsTrue(dt.Rows[0][0].ToString().Contains('-'));
 
         selected.DeleteInDatabase();
@@ -455,6 +463,5 @@ end
         config.DeleteInDatabase();
 
         tvfExtractable.DeleteInDatabase();
-
     }
 }

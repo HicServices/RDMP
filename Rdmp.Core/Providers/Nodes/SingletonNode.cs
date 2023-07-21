@@ -7,10 +7,11 @@
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// <see cref="Node"/> of which there can only ever be one in the RDMP object hierarchy e.g. <see cref="AllCohortsNode"/>.  By convention
-/// these classes should normally start with the prefix "All"
+///     <see cref="Node" /> of which there can only ever be one in the RDMP object hierarchy e.g.
+///     <see cref="AllCohortsNode" />.  By convention
+///     these classes should normally start with the prefix "All"
 /// </summary>
-public abstract class SingletonNode:Node
+public abstract class SingletonNode : Node
 {
     protected readonly string Caption;
 

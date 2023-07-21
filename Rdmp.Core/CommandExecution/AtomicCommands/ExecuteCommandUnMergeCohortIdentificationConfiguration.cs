@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -17,12 +17,15 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
     private readonly CohortAggregateContainer _target;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) :
-        this(activator,cic?.RootCohortAggregateContainer)
+    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic) :
+        this(activator, cic?.RootCohortAggregateContainer)
     {
         Weight = 0.3f;
     }
-    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,CohortAggregateContainer container): base(activator)
+
+    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortAggregateContainer container) : base(activator)
     {
         _target = container;
 
@@ -33,23 +36,22 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
             SetImpossible("No root container");
             return;
         }
-            
-        if(!_target.IsRootContainer())
-        { 
+
+        if (!_target.IsRootContainer())
+        {
             SetImpossible("Only root containers can be unmerged");
             return;
         }
 
-        if(_target.GetAggregateConfigurations().Any())
-        { 
+        if (_target.GetAggregateConfigurations().Any())
+        {
             SetImpossible("Container must contain only subcontainers (i.e. no aggregate sets)");
             return;
         }
 
-        if(_target.GetSubContainers().Length <= 1)
-        { 
+        if (_target.GetSubContainers().Length <= 1)
+        {
             SetImpossible("Container must have 2 or more immediate subcontainers for unmerging");
-            return;
         }
     }
 
@@ -57,17 +59,18 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
     {
         base.Execute();
 
-        if(!BasicActivator.Confirm("Generate new Cohort Identification Configurations for each container?", "Confirm UnMerge"))
-        {
-            return;
-        }
+        if (!BasicActivator.Confirm("Generate new Cohort Identification Configurations for each container?",
+                "Confirm UnMerge")) return;
 
-        var merger = new CohortIdentificationConfigurationMerger((CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
+        var merger =
+            new CohortIdentificationConfigurationMerger(
+                (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
         var results = merger.UnMerge(_target);
 
-        if(results != null && results.Any())
+        if (results != null && results.Any())
         {
-            BasicActivator.Show($"Created {results.Length} new configurations:{Environment.NewLine} {string.Join(Environment.NewLine,results.Select(r=>r.Name))}");
+            BasicActivator.Show(
+                $"Created {results.Length} new configurations:{Environment.NewLine} {string.Join(Environment.NewLine, results.Select(r => r.Name))}");
             Publish(results.First());
             Emphasise(results.First());
         }

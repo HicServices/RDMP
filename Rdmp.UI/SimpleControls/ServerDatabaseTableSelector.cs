@@ -23,13 +23,58 @@ namespace Rdmp.UI.SimpleControls;
 
 public delegate void IntegratedSecurityUseChangedHandler(bool use);
 
-
 /// <summary>
-/// Lets you select a server database or table.  Includes auto population of database/table lists.  This is a reusable component.
+///     Lets you select a server database or table.  Includes auto population of database/table lists.  This is a reusable
+///     component.
 /// </summary>
 public partial class ServerDatabaseTableSelector : UserControl
 {
+    private const string CancelConnection = "Cancel Connection";
+    private const string ConnectionFailed = "Connection Failed";
+    private IBasicActivateItems _activator;
     private bool _allowTableValuedFunctionSelection;
+
+    private bool _clearingTable;
+    private Exception _exception;
+    private IDiscoveredServerHelper _helper;
+    private string[] _listDatabasesAsyncResult;
+    private List<DiscoveredTable> _listTablesAsyncResult;
+
+    private readonly BackgroundWorker _workerRefreshDatabases = new();
+    private CancellationTokenSource _workerRefreshDatabasesToken;
+
+    private readonly BackgroundWorker _workerRefreshTables = new();
+    private CancellationTokenSource _workerRefreshTablesToken;
+
+    private string oldUsername;
+
+    //constructor
+    public ServerDatabaseTableSelector()
+    {
+        InitializeComponent();
+
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+            return;
+
+        _workerRefreshDatabases.DoWork += UpdateDatabaseListAsync;
+        _workerRefreshDatabases.WorkerSupportsCancellation = true;
+        _workerRefreshDatabases.RunWorkerCompleted += UpdateDatabaseAsyncCompleted;
+
+        _workerRefreshTables.DoWork += UpdateTablesListAsync;
+        _workerRefreshTables.WorkerSupportsCancellation = true;
+        _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
+
+        var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
+        RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxServer);
+
+        var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
+        RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxDatabase);
+
+        _helper = DatabaseCommandHelper.For(DatabaseType);
+
+        btnPickCredentials.Image = CatalogueIcons.DataAccessCredentials.ImageToBitmap();
+        btnPickCredentials.Enabled = false;
+    }
 
     public string Server
     {
@@ -63,216 +108,21 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private string TableValuedFunction => cbxTableValueFunctions.Text;
 
-    public event Action SelectionChanged;
-    private IDiscoveredServerHelper _helper;
-
-    private BackgroundWorker _workerRefreshDatabases = new();
-    private CancellationTokenSource _workerRefreshDatabasesToken;
-    private string[] _listDatabasesAsyncResult;
-
-    private BackgroundWorker _workerRefreshTables = new();
-    private CancellationTokenSource _workerRefreshTablesToken;
-    private List<DiscoveredTable> _listTablesAsyncResult;
-
-    private const string CancelConnection = "Cancel Connection";
-    private const string ConnectionFailed = "Connection Failed";
-
-    //constructor
-    public ServerDatabaseTableSelector()
-    {
-        InitializeComponent();
-
-        if(LicenseManager.UsageMode == LicenseUsageMode.Designtime)
-            return;
-
-        _workerRefreshDatabases.DoWork += UpdateDatabaseListAsync;
-        _workerRefreshDatabases.WorkerSupportsCancellation = true;
-        _workerRefreshDatabases.RunWorkerCompleted+=UpdateDatabaseAsyncCompleted;
-
-        _workerRefreshTables.DoWork += UpdateTablesListAsync;
-        _workerRefreshTables.WorkerSupportsCancellation = true;
-        _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
-
-        var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
-        RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxServer);
-
-        var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
-        RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxDatabase);
-
-        _helper = DatabaseCommandHelper.For(DatabaseType);
-
-        btnPickCredentials.Image = CatalogueIcons.DataAccessCredentials.ImageToBitmap();
-        btnPickCredentials.Enabled = false;
-    }
-
-        
-    #region Async Stuff
-
-    private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
-    {
-        var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-        var database = (string)((object[])e.Argument)[1];
-
-        var discoveredDatabase = new DiscoveredServer(builder).ExpectDatabase(database);
-        var databaseHelper = discoveredDatabase.Helper;
-
-        _workerRefreshTablesToken = new CancellationTokenSource();
-
-        var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
-        try
-        {
-            using (var con = discoveredDatabase.Server.GetConnection())
-            {
-                var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
-                openTask.Wait(_workerRefreshTablesToken.Token);
-
-                var result = new List<DiscoveredTable>();
-
-                result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
-                result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
-
-                _listTablesAsyncResult = result;
-            }
-        }
-        catch (OperationCanceledException)//user cancels
-        {
-            _listTablesAsyncResult = new List<DiscoveredTable>();
-        }
-    }
-
-    private void UpdateTablesAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-
-        //success?
-        ResetState();
-
-        if (e.Error != null)
-        {
-            SetState(e.Error);
-        }
-        else
-        if (!e.Cancelled)
-        {
-            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction).ToArray());
-            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(static t => t is DiscoveredTableValuedFunction).ToArray());
-        }
-                
-
-        SetLoading(false);
-
-        cbxTable.Focus();
-    }
-
-        
-
-
-    //do work
-    private void UpdateDatabaseListAsync(object sender, DoWorkEventArgs e)
-    {
-        var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-
-        ResetState();
-
-        _workerRefreshDatabasesToken = new CancellationTokenSource();
-        try
-        {
-            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            _listDatabasesAsyncResult = Array.Empty<string>();
-        }
-        catch (AggregateException ex )//user cancels
-        {
-            if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
-                _listDatabasesAsyncResult = Array.Empty<string>();
-            else
-            {
-                SetState(ex);
-                _listDatabasesAsyncResult = Array.Empty<string>();
-            }   
-        }
-    }
-
-    private void ResetState()
-    {
-        _exception = null;
-        SetText(CancelConnection);
-    }
-    private void SetState(Exception ex)
-    {
-        _exception = ex;
-        SetText(ConnectionFailed);
-    }
-
-    private void SetText(string v)
-    {
-
-        if (llLoading.InvokeRequired)
-        {
-            llLoading.Invoke(new MethodInvoker(() => llLoading.Text = v));
-        }
-        else
-        {
-            llLoading.Text = v;
-        }
-    }
-
-    //handle complete
-    private void UpdateDatabaseAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        if (e.Error != null)
-        {
-            SetState(e.Error);
-        }
-        else if (!e.Cancelled)
-            cbxDatabase.Items.AddRange(_listDatabasesAsyncResult);
-        else
-        {
-            // user cancelled
-            ResetState();
-        }
-
-        SetLoading(false);
-        cbxDatabase.Focus();
-    }
-        
-    //aborting
-    private void AbortWorkers()
-    {
-        if (_workerRefreshDatabases.IsBusy)
-        {
-            _workerRefreshDatabases.CancelAsync();
-            _workerRefreshDatabasesToken?.Cancel();
-        }
-
-        if (_workerRefreshTables.IsBusy)
-        {
-            _workerRefreshTables.CancelAsync();
-            _workerRefreshTablesToken?.Cancel();
-        }
-    }
-    #endregion
-
-    public void SetDefaultServers(string[] defaultServers)
-    {
-        cbxServer.Items.AddRange(defaultServers);
-    }
-
     public bool AllowTableValuedFunctionSelection
     {
         get => _allowTableValuedFunctionSelection;
         set
         {
             _allowTableValuedFunctionSelection = value;
-                
+
             lblOr.Visible = value;
             lblTableValuedFunction.Visible = value;
             cbxTableValueFunctions.Visible = value;
         }
     }
 
-    public DatabaseType DatabaseType {
+    public DatabaseType DatabaseType
+    {
         get => databaseTypeUI1.DatabaseType;
         set => databaseTypeUI1.DatabaseType = value;
     }
@@ -286,6 +136,13 @@ public partial class ServerDatabaseTableSelector : UserControl
             cbxTable.AutoCompleteMode = value ? AutoCompleteMode.None : AutoCompleteMode.Suggest;
             cbxTableValueFunctions.AutoCompleteMode = value ? AutoCompleteMode.None : AutoCompleteMode.Suggest;
         }
+    }
+
+    public event Action SelectionChanged;
+
+    public void SetDefaultServers(string[] defaultServers)
+    {
+        cbxServer.Items.AddRange(defaultServers);
     }
 
     private void cbxServer_SelectedIndexChanged(object sender, EventArgs e)
@@ -302,7 +159,6 @@ public partial class ServerDatabaseTableSelector : UserControl
         UpdateTableList();
     }
 
-    private bool _clearingTable = false;
     private void cbxTable_SelectedIndexChanged(object sender, EventArgs e)
     {
         //don't clear both!
@@ -341,7 +197,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         UpdateDatabaseList();
     }
-        
+
     private void UpdateTableList()
     {
         if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))
@@ -383,7 +239,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         SelectionChanged?.Invoke();
 
 
-        if(!_workerRefreshDatabases.IsBusy)
+        if (!_workerRefreshDatabases.IsBusy)
             _workerRefreshDatabases.RunWorkerAsync(new object[]
             {
                 GetBuilder()
@@ -400,14 +256,9 @@ public partial class ServerDatabaseTableSelector : UserControl
         databaseTypeUI1.Enabled = !isLoading;
         btnRefreshDatabases.Enabled = !isLoading;
         btnRefreshTables.Enabled = !isLoading;
-
     }
 
     public event IntegratedSecurityUseChangedHandler IntegratedSecurityUseChanged;
-
-    private string oldUsername = null;
-    private IBasicActivateItems _activator;
-    private Exception _exception;
 
     private void tbUsername_TextChanged(object sender, EventArgs e)
     {
@@ -457,11 +308,11 @@ public partial class ServerDatabaseTableSelector : UserControl
             return null;
 
         //They made up a table that may or may not exist 
-        if(!string.IsNullOrWhiteSpace(Table))
+        if (!string.IsNullOrWhiteSpace(Table))
             return db.ExpectTable(Table);
 
         //They made up a table valued function which may or may not exist
-        if(!string.IsNullOrWhiteSpace(TableValuedFunction))
+        if (!string.IsNullOrWhiteSpace(TableValuedFunction))
             return db.ExpectTableValuedFunction(TableValuedFunction);
 
         //they haven't entered anything
@@ -472,22 +323,17 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         return _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
     }
-        
+
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        if(llLoading.Text == CancelConnection)
+        if (llLoading.Text == CancelConnection)
         {
             AbortWorkers();
         }
         else
         {
-            if(_exception != null)
-            {
-                ExceptionViewer.Show(_exception);
-            }
-                
+            if (_exception != null) ExceptionViewer.Show(_exception);
         }
-            
     }
 
     private void btnRefreshDatabases_Click(object sender, EventArgs e)
@@ -540,22 +386,18 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void btnPickCredentials_Click(object sender, EventArgs e)
     {
-        if(_activator == null)
-        {
-            return;
-        }
+        if (_activator == null) return;
 
         var creds = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
 
-        if(!creds.Any())
+        if (!creds.Any())
         {
             _activator.Show("You do not have any DataAccessCredentials configured");
             return;
         }
 
         var cred = (DataAccessCredentials)_activator.SelectOne("Select Credentials", creds);
-        if(cred != null)
-        {
+        if (cred != null)
             try
             {
                 tbUsername.Text = cred.Username;
@@ -565,6 +407,148 @@ public partial class ServerDatabaseTableSelector : UserControl
             {
                 _activator.ShowException("Error decrypting password", ex);
             }
+    }
+
+
+    #region Async Stuff
+
+    private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
+    {
+        var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
+        var database = (string)((object[])e.Argument)[1];
+
+        var discoveredDatabase = new DiscoveredServer(builder).ExpectDatabase(database);
+        var databaseHelper = discoveredDatabase.Helper;
+
+        _workerRefreshTablesToken = new CancellationTokenSource();
+
+        var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
+        try
+        {
+            using (var con = discoveredDatabase.Server.GetConnection())
+            {
+                var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
+                openTask.Wait(_workerRefreshTablesToken.Token);
+
+                var result = new List<DiscoveredTable>();
+
+                result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
+                result.AddRange(
+                    databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
+
+                _listTablesAsyncResult = result;
+            }
+        }
+        catch (OperationCanceledException) //user cancels
+        {
+            _listTablesAsyncResult = new List<DiscoveredTable>();
         }
     }
+
+    private void UpdateTablesAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        //success?
+        ResetState();
+
+        if (e.Error != null)
+        {
+            SetState(e.Error);
+        }
+        else if (!e.Cancelled)
+        {
+            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction)
+                .ToArray());
+            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult
+                .Where(static t => t is DiscoveredTableValuedFunction).ToArray());
+        }
+
+
+        SetLoading(false);
+
+        cbxTable.Focus();
+    }
+
+
+    //do work
+    private void UpdateDatabaseListAsync(object sender, DoWorkEventArgs e)
+    {
+        var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
+
+        ResetState();
+
+        _workerRefreshDatabasesToken = new CancellationTokenSource();
+        try
+        {
+            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            _listDatabasesAsyncResult = Array.Empty<string>();
+        }
+        catch (AggregateException ex) //user cancels
+        {
+            if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
+            {
+                _listDatabasesAsyncResult = Array.Empty<string>();
+            }
+            else
+            {
+                SetState(ex);
+                _listDatabasesAsyncResult = Array.Empty<string>();
+            }
+        }
+    }
+
+    private void ResetState()
+    {
+        _exception = null;
+        SetText(CancelConnection);
+    }
+
+    private void SetState(Exception ex)
+    {
+        _exception = ex;
+        SetText(ConnectionFailed);
+    }
+
+    private void SetText(string v)
+    {
+        if (llLoading.InvokeRequired)
+            llLoading.Invoke(new MethodInvoker(() => llLoading.Text = v));
+        else
+            llLoading.Text = v;
+    }
+
+    //handle complete
+    private void UpdateDatabaseAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        if (e.Error != null)
+            SetState(e.Error);
+        else if (!e.Cancelled)
+            cbxDatabase.Items.AddRange(_listDatabasesAsyncResult);
+        else
+            // user cancelled
+            ResetState();
+
+        SetLoading(false);
+        cbxDatabase.Focus();
+    }
+
+    //aborting
+    private void AbortWorkers()
+    {
+        if (_workerRefreshDatabases.IsBusy)
+        {
+            _workerRefreshDatabases.CancelAsync();
+            _workerRefreshDatabasesToken?.Cancel();
+        }
+
+        if (_workerRefreshTables.IsBusy)
+        {
+            _workerRefreshTables.CancelAsync();
+            _workerRefreshTablesToken?.Cancel();
+        }
+    }
+
+    #endregion
 }

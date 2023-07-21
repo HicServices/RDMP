@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -17,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Checks;
 
 /// <summary>
-/// Checks that the table definitions match the class definitions for all <see cref="DatabaseEntity"/>
+///     Checks that the table definitions match the class definitions for all <see cref="DatabaseEntity" />
 /// </summary>
 public class MissingFieldsChecker : ICheckable
 {
@@ -27,20 +25,20 @@ public class MissingFieldsChecker : ICheckable
     {
         _repository = repository;
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         var server = _repository.DiscoveredServer;
-        if(!server.Exists())
+        if (!server.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server", CheckResult.Fail));
             return;
         }
 
         var db = server.GetCurrentDatabase();
-        if(!db.Exists())
+        if (!db.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}", CheckResult.Fail));
             return;
         }
 
@@ -51,14 +49,15 @@ public class MissingFieldsChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks the object representation (Type) is perfectly synched with the underlying database (table must exist with matching name and all parameters must be column names with no unmapped fields)
+    ///     Checks the object representation (Type) is perfectly synched with the underlying database (table must exist with
+    ///     matching name and all parameters must be column names with no unmapped fields)
     /// </summary>
     /// <param name="notifier"></param>
     /// <param name="type"></param>
     /// <param name="tables"></param>
     private static void CheckEntities(ICheckNotifier notifier, Type type, DiscoveredTable[] tables)
     {
-        if(type.IsInterface)
+        if (type.IsInterface)
             return;
 
         if (type.IsAbstract)
@@ -67,11 +66,11 @@ public class MissingFieldsChecker : ICheckable
         if (typeof(SpontaneousObject).IsAssignableFrom(type))
             return;
 
-        if(type.Name.StartsWith("Spontaneous"))
+        if (type.Name.StartsWith("Spontaneous"))
             return;
 
         //make sure argument was IMaps..
-        if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
+        if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
             throw new ArgumentException($"Type {type.Name} passed into method was not an IMapsDirectlyToDatabaseTable");
 
         //make sure table exists with exact same name as class
@@ -80,11 +79,12 @@ public class MissingFieldsChecker : ICheckable
         if (table == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",CheckResult.Fail, null));
-            return;   
+                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",
+                CheckResult.Fail));
+            return;
         }
-            
-        notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
+
+        notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success));
 
 
         //get columns from underlying database table
@@ -103,12 +103,12 @@ public class MissingFieldsChecker : ICheckable
         var problems = false;
         foreach (var missingProperty in missingProperties)
         {
-            if(missingProperty.GetRuntimeName().Equals("RowVer"))
+            if (missingProperty.GetRuntimeName().Equals("RowVer"))
                 continue;
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Missing property {missingProperty} on class definition {type.FullName}, the underlying table contains this field but the class does not", CheckResult.Fail,
-                null));
+                $"Missing property {missingProperty} on class definition {type.FullName}, the underlying table contains this field but the class does not",
+                CheckResult.Fail));
             problems = true;
         }
 
@@ -116,12 +116,12 @@ public class MissingFieldsChecker : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Missing field in database table {table} when compared to class definition {type.FullName} property was called {missingDatabaseField.Name} and was of type {missingDatabaseField.PropertyType}{(typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType) ? "(An Enum)" : "")}"
-                , CheckResult.Warning,
-                null));
+                , CheckResult.Warning));
             problems = true;
         }
-            
+
         if (!problems)
-            notifier.OnCheckPerformed(new CheckEventArgs($"All fields present and correct in Type/Table {table}",CheckResult.Success,null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"All fields present and correct in Type/Table {table}",
+                CheckResult.Success));
     }
 }

@@ -33,19 +33,18 @@ internal class DataTableExtensionsTests
             @"Phrase,Car
 ""omg,why me!"",Ferrari
 ");
-
     }
 
     [Test]
     public void TestEscaping_CommaAndQuotesInCell()
     {
-        var path = Path.Combine(TestContext.CurrentContext.TestDirectory,"out.csv");
+        var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
 
         using var dt = new DataTable();
         dt.Columns.Add("Phrase");
         dt.Columns.Add("Car");
 
-        dt.Rows.Add("omg,\"why\" me!","Ferrari");
+        dt.Rows.Add("omg,\"why\" me!", "Ferrari");
 
         dt.SaveAsCsv(path);
 

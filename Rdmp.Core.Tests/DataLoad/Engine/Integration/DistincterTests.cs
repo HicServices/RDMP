@@ -45,9 +45,9 @@ public class DistincterTests : DatabaseTests
         for (var i = 0; i < batchCount; i++)
         {
             var randInt = r.Next(int.MaxValue);
-                
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
+
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
         }
 
         var tbl = db.CreateTable(dt.TableName, dt);
@@ -68,13 +68,15 @@ public class DistincterTests : DatabaseTests
         };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
-        var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo })&& p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
+        var job = Mock.Of<IDataLoadJob>(p =>
+            p.RegularTablesToLoad == new List<ITableInfo>(new[] { tableInfo }) &&
+            p.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
 
         distincter.Mutilate(job);
 
         var rowsAfter = tbl.GetRowCount();
 
-        Assert.AreEqual(rowsBefore/2,rowsAfter);
+        Assert.AreEqual(rowsBefore / 2, rowsAfter);
 
         db.Drop();
     }
@@ -101,8 +103,8 @@ public class DistincterTests : DatabaseTests
         {
             var randInt = r.Next(int.MaxValue);
 
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt+1 });
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
+            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt + 1);
         }
 
         var tbl = db.CreateTable(dt.TableName, dt);
@@ -123,7 +125,9 @@ public class DistincterTests : DatabaseTests
         };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
-        var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo }) && p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
+        var job = Mock.Of<IDataLoadJob>(p =>
+            p.RegularTablesToLoad == new List<ITableInfo>(new[] { tableInfo }) &&
+            p.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
 
         distincter.Mutilate(job);
 

@@ -9,7 +9,7 @@ using Rdmp.Core.ReusableLibraryCode.Extensions;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class PluginManager : IPluginManager
 {
     private readonly ICatalogueRepository _repository;
@@ -21,8 +21,8 @@ public class PluginManager : IPluginManager
     }
 
     /// <summary>
-    /// Returns the latest version of each plugin which is compatible with the running RDMP software version (as determined
-    /// by the listed <see cref="Curation.Data.Plugin.RdmpVersion"/>)
+    ///     Returns the latest version of each plugin which is compatible with the running RDMP software version (as determined
+    ///     by the listed <see cref="Curation.Data.Plugin.RdmpVersion" />)
     /// </summary>
     /// <returns></returns>
     public Curation.Data.Plugin[] GetCompatiblePlugins()
@@ -30,12 +30,13 @@ public class PluginManager : IPluginManager
         var runningSoftwareVersion = typeof(PluginManager).Assembly.GetName().Version;
 
         //nupkg that are compatible with the running software
-        var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));
+        var plugins = _repository.GetAllObjects<Curation.Data.Plugin>()
+            .Where(a => a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion, 2));
 
         //latest versions
         var latestVersionsOfPlugins = plugins.GroupBy(static p => p.GetShortName())
             .Select(static grp => grp.MaxBy(static p => p.PluginVersion));
-                        
+
         return latestVersionsOfPlugins.ToArray();
     }
 }

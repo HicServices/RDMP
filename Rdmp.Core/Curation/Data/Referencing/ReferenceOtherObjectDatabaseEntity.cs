@@ -12,50 +12,51 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Referencing;
 
 /// <summary>
-/// Abstract base class for all database objects that reference a single other arbitrary database object e.g. <see cref="Favourite"/>.
+///     Abstract base class for all database objects that reference a single other arbitrary database object e.g.
+///     <see cref="Favourite" />.
 /// </summary>
 public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjectWithPersist
 {
-    private string _referencedObjectType;
     private int _referencedObjectID;
     private string _referencedObjectRepositoryType;
+    private string _referencedObjectType;
 
-    /// <inheritdoc/>
-    public string ReferencedObjectType
+    /// <inheritdoc />
+    protected ReferenceOtherObjectDatabaseEntity()
     {
-        get => _referencedObjectType;
-        set => SetField(ref _referencedObjectType, value);
     }
 
-    /// <inheritdoc/>
-    public int ReferencedObjectID
-    {
-        get => _referencedObjectID;
-        set => SetField(ref _referencedObjectID, value);
-    }
-
-    /// <inheritdoc/>
-    public string ReferencedObjectRepositoryType
-    {
-        get => _referencedObjectRepositoryType;
-        set => SetField(ref _referencedObjectRepositoryType, value);
-    }
-
-    /// <inheritdoc/>
-    protected ReferenceOtherObjectDatabaseEntity():base()
-    {
-            
-    }
-    /// <inheritdoc/>
-    protected ReferenceOtherObjectDatabaseEntity(IRepository repository,DbDataReader r):base(repository,r)
+    /// <inheritdoc />
+    protected ReferenceOtherObjectDatabaseEntity(IRepository repository, DbDataReader r) : base(repository, r)
     {
         ReferencedObjectType = r["ReferencedObjectType"].ToString();
         ReferencedObjectID = Convert.ToInt32(r["ReferencedObjectID"]);
         ReferencedObjectRepositoryType = r["ReferencedObjectRepositoryType"].ToString();
     }
 
+    /// <inheritdoc />
+    public string ReferencedObjectType
+    {
+        get => _referencedObjectType;
+        set => SetField(ref _referencedObjectType, value);
+    }
+
+    /// <inheritdoc />
+    public int ReferencedObjectID
+    {
+        get => _referencedObjectID;
+        set => SetField(ref _referencedObjectID, value);
+    }
+
+    /// <inheritdoc />
+    public string ReferencedObjectRepositoryType
+    {
+        get => _referencedObjectRepositoryType;
+        set => SetField(ref _referencedObjectRepositoryType, value);
+    }
+
     /// <summary>
-    /// True if the object referenced by this class is of Type <paramref name="type"/>
+    ///     True if the object referenced by this class is of Type <paramref name="type" />
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -63,9 +64,9 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
     {
         return AreProbablySameType(ReferencedObjectType, type);
     }
-        
+
     /// <summary>
-    /// True if the <paramref name="o"/> is the object that is explicitly referenced by this class instance
+    ///     True if the <paramref name="o" /> is the object that is explicitly referenced by this class instance
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -84,25 +85,27 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
             storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
             storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
     }
-        
+
     /// <summary>
-    /// Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
+    ///     Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public virtual IMapsDirectlyToDatabaseTable GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public virtual IMapsDirectlyToDatabaseTable GetReferencedObject(
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
+        return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType,
+            ReferencedObjectID);
     }
-        
+
     /// <summary>
-    /// Returns true if the object referenced by this class still exists in the database
+    ///     Returns true if the object referenced by this class still exists in the database
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
     public bool ReferencedObjectExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        return repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
+        return repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType,
+            ReferencedObjectID);
     }
-
 }

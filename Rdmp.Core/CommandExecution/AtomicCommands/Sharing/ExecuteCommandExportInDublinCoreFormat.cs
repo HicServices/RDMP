@@ -13,8 +13,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAtomicCommand
 {
     private readonly DublinCoreDefinition _definition;
-    private FileInfo _toExport;
     private readonly DublinCoreTranslater _translater = new();
+    private FileInfo _toExport;
 
     public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
@@ -30,6 +30,8 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
             return;
 
         using (var stream = File.OpenWrite(_toExport.FullName))
+        {
             _definition.WriteXml(stream);
+        }
     }
 }

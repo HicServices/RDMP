@@ -9,20 +9,22 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables
+///     Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and
+///     SupportingSQLTables
 /// </summary>
-public class DocumentationNode:Node
+public class DocumentationNode : Node
 {
-    public Catalogue Catalogue { get; set; }
-    public SupportingDocument[] SupportingDocuments { get; set; }
-    public SupportingSQLTable[] SupportingSQLTables { get; set; }
-
-    public DocumentationNode(Catalogue catalogue, SupportingDocument[] supportingDocuments, SupportingSQLTable[] supportingSQLTables)
+    public DocumentationNode(Catalogue catalogue, SupportingDocument[] supportingDocuments,
+        SupportingSQLTable[] supportingSQLTables)
     {
         Catalogue = catalogue;
         SupportingDocuments = supportingDocuments;
         SupportingSQLTables = supportingSQLTables;
     }
+
+    public Catalogue Catalogue { get; set; }
+    public SupportingDocument[] SupportingDocuments { get; set; }
+    public SupportingSQLTable[] SupportingSQLTables { get; set; }
 
     public override string ToString()
     {
@@ -38,8 +40,8 @@ public class DocumentationNode:Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof (DocumentationNode)) return false;
-        return Equals((DocumentationNode) obj);
+        if (obj.GetType() != typeof(DocumentationNode)) return false;
+        return Equals((DocumentationNode)obj);
     }
 
     public override int GetHashCode()

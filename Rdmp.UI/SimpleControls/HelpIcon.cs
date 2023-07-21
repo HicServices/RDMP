@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TransparentHelpSystem;
@@ -12,53 +11,55 @@ using Rdmp.UI.TransparentHelpSystem;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-/// Hovering over this control displays helpful information that relates to a nearby control.
+///     Hovering over this control displays helpful information that relates to a nearby control.
 /// </summary>
 public partial class HelpIcon : UserControl
 {
     public const int MaxHoverTextLength = 150;
 
-    /// <summary>
-    /// Returns the text that will be displayed when the user hovers over the control (this may be truncated if the text provided to <see cref="SetHelpText"/> was very long)
-    /// </summary>
-    public string HoverText => _hoverText;
-
-    private string _hoverText;
+    private string _originalHoverText;
 
     private string _title;
     private HelpWorkflow _workFlow;
-    private string _originalHoverText;
     private ToolTip tt;
-    public bool SuppressClick{get;set;}
 
     public HelpIcon()
     {
         InitializeComponent();
     }
 
+    /// <summary>
+    ///     Returns the text that will be displayed when the user hovers over the control (this may be truncated if the text
+    ///     provided to <see cref="SetHelpText" /> was very long)
+    /// </summary>
+    public string HoverText { get; private set; }
+
+    public bool SuppressClick { get; set; }
+
     public void SetHelpText(string title, string hoverText, HelpWorkflow workflow = null)
     {
         _workFlow = workflow;
         _title = title;
-        _hoverText = hoverText;
+        HoverText = hoverText;
         _originalHoverText = hoverText;
-        Visible = !string.IsNullOrWhiteSpace(_hoverText);
+        Visible = !string.IsNullOrWhiteSpace(HoverText);
 
-        _hoverText = GetShortText(_hoverText);
+        HoverText = GetShortText(HoverText);
 
         //If TT is null create new tooltip
         tt ??= new ToolTip
         {
-            AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
+            AutoPopDelay = 15000, // Warning! MSDN states this is Int32, but anything over 32767 will fail.
             ShowAlways = true,
             ToolTipTitle = _title,
             InitialDelay = 200,
             ReshowDelay = 200,
             UseAnimation = true
         };
-        tt.SetToolTip(this, _hoverText);
+        tt.SetToolTip(this, HoverText);
         Cursor = Cursors.Hand;
     }
+
     public void ClearHelpText()
     {
         SetHelpText(null, null);
@@ -66,7 +67,7 @@ public partial class HelpIcon : UserControl
 
     private string GetShortText(string hoverText)
     {
-        if(string.IsNullOrWhiteSpace(_hoverText))
+        if (string.IsNullOrWhiteSpace(HoverText))
             return null;
 
         if (hoverText.Length <= MaxHoverTextLength)
@@ -78,11 +79,10 @@ public partial class HelpIcon : UserControl
 
     private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
     {
-        if(!SuppressClick)
+        if (!SuppressClick)
             if (_workFlow != null)
                 _workFlow.Start(true);
-            else
-            if(_title != null && _originalHoverText != null)
+            else if (_title != null && _originalHoverText != null)
                 WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
     }
 }

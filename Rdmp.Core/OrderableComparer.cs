@@ -14,11 +14,14 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core;
 
 /// <summary>
-/// Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.  This class can wrap
-/// another IComparer that looks out for IOrderable objects passing through and enforces that order.
-/// 
-/// <para>This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts, the order of IOrderable nodes is always
-/// Ascending</para>
+///     Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.
+///     This class can wrap
+///     another IComparer that looks out for IOrderable objects passing through and enforces that order.
+///     <para>
+///         This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts,
+///         the order of IOrderable nodes is always
+///         Ascending
+///     </para>
 /// </summary>
 public class OrderableComparer : IComparer, IComparer<object>
 {
@@ -30,8 +33,10 @@ public class OrderableComparer : IComparer, IComparer<object>
     }
 
     /// <summary>
-    /// Decides the order to use.  This overrides the users settings when certain situations arise e.g. two <see cref="IOrderable"/> objects are
-    /// next to each other in the tree at the same branch (in this case reordering them could be very confusing to the user).
+    ///     Decides the order to use.  This overrides the users settings when certain situations arise e.g. two
+    ///     <see cref="IOrderable" /> objects are
+    ///     next to each other in the tree at the same branch (in this case reordering them could be very confusing to the
+    ///     user).
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -62,19 +67,17 @@ public class OrderableComparer : IComparer, IComparer<object>
 
     private static int? GetOrderIfAny(object o)
     {
-        if(o is IOrderable orderable)
+        if (o is IOrderable orderable)
             return orderable.Order;
 
-        if(o is ISqlParameter)
-        {
-            return -5000;
-        }
+        if (o is ISqlParameter) return -5000;
 
         return null;
     }
 
     /// <summary>
-    /// Return true if the object should never be reordered and always ordered alphabetically based on its <see cref="INamed.Name"/>
+    ///     Return true if the object should never be reordered and always ordered alphabetically based on its
+    ///     <see cref="INamed.Name" />
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>

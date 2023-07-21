@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Comments;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subclass of <see cref="CommentStore"/> which also loads KeywordHelp.txt
+///     Subclass of <see cref="CommentStore" /> which also loads KeywordHelp.txt
 /// </summary>
 public class CommentStoreWithKeywords : CommentStore
 {
@@ -21,7 +21,7 @@ public class CommentStoreWithKeywords : CommentStore
 
         var keywords = new FileInfo("./Curation/KeywordHelp.txt");
 
-        if(keywords.Exists)
+        if (keywords.Exists)
             AddToHelp(File.ReadAllText(keywords.FullName));
     }
 

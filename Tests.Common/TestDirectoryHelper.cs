@@ -13,12 +13,13 @@ namespace Tests.Common;
 public class TestDirectoryHelper
 {
     private readonly Type _type;
-    public DirectoryInfo Directory { get; private set; }
 
     public TestDirectoryHelper(Type type)
     {
         _type = type;
     }
+
+    public DirectoryInfo Directory { get; private set; }
 
     public void SetUp()
     {
@@ -32,7 +33,8 @@ public class TestDirectoryHelper
     public void TearDown()
     {
         if (Directory == null)
-            throw new Exception("You have called TearDown without calling SetUp (the directory has not been initialised)");
+            throw new Exception(
+                "You have called TearDown without calling SetUp (the directory has not been initialised)");
 
         Directory.Delete(true);
     }

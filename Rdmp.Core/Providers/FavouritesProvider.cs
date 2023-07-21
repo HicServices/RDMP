@@ -15,20 +15,22 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Determines whether objects are a <see cref="Favourite"/> of the current user and handles creating/deleting them.
+///     Determines whether objects are a <see cref="Favourite" /> of the current user and handles creating/deleting them.
 /// </summary>
 public class FavouritesProvider
 {
     private readonly IBasicActivateItems _activator;
     private readonly ICatalogueRepository _catalogueRepository;
-    public List<Favourite> CurrentFavourites { get; set; }
 
     public FavouritesProvider(IBasicActivateItems activator)
     {
         _activator = activator;
         _catalogueRepository = _activator.RepositoryLocator.CatalogueRepository;
-        CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName).ToList();
+        CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username", Environment.UserName)
+            .ToList();
     }
+
+    public List<Favourite> CurrentFavourites { get; set; }
 
     public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)
     {

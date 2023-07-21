@@ -16,28 +16,17 @@ namespace Rdmp.Core.Curation.FilterImporting;
 public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector, string parameterName);
 
 /// <summary>
-/// Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
-/// with it (handled by a <see cref="ParameterManager"/>).
+///     Models a <see cref="Collector" /> who has 0 or more <see cref="ISqlParameter" /> associated
+///     with it (handled by a <see cref="ParameterManager" />).
 /// </summary>
 public class ParameterCollectionUIOptions
 {
-    public ICollectSqlParameters Collector { get; set; }
-
-    /// <summary>
-    /// True if the <see cref="Collector"/> is <see cref="IMightBeReadOnly"/> and is readonly
-    /// </summary>
-    public bool ReadOnly { get; set; }
-    public ParameterLevel CurrentLevel { get; set; }
-    public ParameterManager ParameterManager { get; set; }
-    private CreateNewSqlParameterHandler _createNewParameterDelegate;
-
     public readonly ParameterRefactorer Refactorer = new();
+    private readonly CreateNewSqlParameterHandler _createNewParameterDelegate;
 
-    public string UseCase { get; private set; }
-
-    public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel, ParameterManager parameterManager, CreateNewSqlParameterHandler createNewParameterDelegate = null)
+    public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel,
+        ParameterManager parameterManager, CreateNewSqlParameterHandler createNewParameterDelegate = null)
     {
-
         UseCase = useCase;
         Collector = collector;
         CurrentLevel = currentLevel;
@@ -52,10 +41,21 @@ public class ParameterCollectionUIOptions
             ReadOnly = ro.ShouldBeReadOnly(out _);
     }
 
+    public ICollectSqlParameters Collector { get; set; }
+
+    /// <summary>
+    ///     True if the <see cref="Collector" /> is <see cref="IMightBeReadOnly" /> and is readonly
+    /// </summary>
+    public bool ReadOnly { get; set; }
+
+    public ParameterLevel CurrentLevel { get; set; }
+    public ParameterManager ParameterManager { get; set; }
+
+    public string UseCase { get; private set; }
 
 
     /// <summary>
-    /// Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
+    ///     Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
     /// </summary>
     /// <returns></returns>
     private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
@@ -64,10 +64,11 @@ public class ParameterCollectionUIOptions
             parameterName = $"@{parameterName}";
 
         var entity = (IMapsDirectlyToDatabaseTable)collector;
-        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName))
-            {
-                Value = AnyTableSqlParameter.DefaultValue
-            };
+        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity,
+            AnyTableSqlParameter.GetDefaultDeclaration(parameterName))
+        {
+            Value = AnyTableSqlParameter.DefaultValue
+        };
         newParam.SaveToDatabase();
         return newParam;
     }

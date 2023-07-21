@@ -21,6 +21,13 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 public class AllUIsDocumentedTest : UnitTests
 {
+    private readonly string[] _exemptNamespaces =
+    {
+        "System.ComponentModel.Design",
+        "System.Windows.Forms",
+        "Rdmp.UI.ScintillaHelper"
+    };
+
     [Test]
     public void EveryClassInAppropriateNamespace()
     {
@@ -35,13 +42,13 @@ public class AllUIsDocumentedTest : UnitTests
             "CommandExecution",
             "CommandExecution.AtomicCommands",
             "CommandExecution.AtomicCommands.PluginCommands",
-            "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
+            "CommandExecution.AtomicCommands.WindowArranging")); //legal namespaces
 
-        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand), 
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand),
             "CommandExecution",
             "CommandExecution.AtomicCommands",
             "CommandExecution.AtomicCommands.PluginCommands",
-            "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
+            "CommandExecution.AtomicCommands.WindowArranging")); //legal namespaces
 
         //proposals
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecutionProposal), "CommandExecution.Proposals"));
@@ -49,26 +56,19 @@ public class AllUIsDocumentedTest : UnitTests
         //menus
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ContextMenuStrip), "Menus"));
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ToolStripMenuItem), "Menus.MenuItems"));
-            
+
         foreach (var error in Errors)
             Console.WriteLine($"FATAL NAMESPACE ERROR FAILURE:{error}");
 
-        Assert.AreEqual(Errors.Count,0);
+        Assert.AreEqual(Errors.Count, 0);
     }
-
-    private string[] _exemptNamespaces = {
-        "System.ComponentModel.Design",
-        "System.Windows.Forms",
-        "Rdmp.UI.ScintillaHelper"
-    };
 
     private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
     {
-
         SetupMEF();
         foreach (var type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
         {
-            if (type.Namespace == null) 
+            if (type.Namespace == null)
                 continue;
 
             //don't validate classes in testing code
@@ -79,7 +79,7 @@ public class AllUIsDocumentedTest : UnitTests
             if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
                 continue;
 
-            if (!legalNamespaces.Any(ns=>type.Namespace.Contains(ns)))
+            if (!legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
                 yield return
                     $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'";
         }

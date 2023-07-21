@@ -10,7 +10,6 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -24,8 +23,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
     [Test]
     public void CrossServerExtraction()
     {
-
-        Execute(out ExtractionPipelineUseCase execute, out var result);
+        Execute(out var execute, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
@@ -39,26 +37,33 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
     protected override Pipeline SetupPipeline()
     {
         var pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
-        var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteDatasetExtractionFlatFileDestination), 0, "Destination");
-        var arguments = component.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionFlatFileDestination>().ToArray();
+        var component = new PipelineComponent(CatalogueRepository, pipeline,
+            typeof(ExecuteDatasetExtractionFlatFileDestination), 0, "Destination");
+        var arguments = component.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionFlatFileDestination>()
+            .ToArray();
 
         if (arguments.Length < 3)
-            throw new Exception("Expected only 2 arguments for type ExecuteDatasetExtractionFlatFileDestination, did somebody add another [DemandsInitialization]? if so handle it below");
+            throw new Exception(
+                "Expected only 2 arguments for type ExecuteDatasetExtractionFlatFileDestination, did somebody add another [DemandsInitialization]? if so handle it below");
 
         arguments.Single(a => a.Name.Equals("DateFormat")).SetValue("yyyy-MM-dd");
         arguments.Single(a => a.Name.Equals("DateFormat")).SaveToDatabase();
 
-        arguments.Single(a=>a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
-        arguments.Single(a=>a.Name.Equals("FlatFileType")).SaveToDatabase();
-            
+        arguments.Single(a => a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
+        arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
+
         AdjustPipelineComponentDelegate?.Invoke(component);
 
-        var component2 = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
-        var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
-        arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
-        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase(); 
-        arguments2.Single(a => a.Name.Equals(nameof(ExecuteCrossServerDatasetExtractionSource.TemporaryTableName))).SetValue("");
-        arguments2.Single(a => a.Name.Equals(nameof(ExecuteCrossServerDatasetExtractionSource.TemporaryTableName))).SaveToDatabase();
+        var component2 = new PipelineComponent(CatalogueRepository, pipeline,
+            typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
+        var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>()
+            .ToArray();
+        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
+        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
+        arguments2.Single(a => a.Name.Equals(nameof(ExecuteCrossServerDatasetExtractionSource.TemporaryTableName)))
+            .SetValue("");
+        arguments2.Single(a => a.Name.Equals(nameof(ExecuteCrossServerDatasetExtractionSource.TemporaryTableName)))
+            .SaveToDatabase();
         AdjustPipelineComponentDelegate?.Invoke(component2);
 
 
@@ -100,7 +105,8 @@ WHERE
         var ect = (ExternalCohortTable)_request.ExtractableCohort.ExternalCohortTable;
         ect.Server = "bob";
 
-        var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
+        var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort
+            .ExternalCohortTable_ID);
         var origValue = e.Database;
 
         e.Database = CohortDatabaseName;
@@ -112,9 +118,10 @@ WHERE
                 TemporaryDatabaseName = "tempdb"
             };
             s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true });
+            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL,
+                new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true });
 
-            Assert.AreEqual(expectedOutput.Trim(),hacked.Trim());
+            Assert.AreEqual(expectedOutput.Trim(), hacked.Trim());
         }
         finally
         {
@@ -122,9 +129,4 @@ WHERE
             e.SaveToDatabase();
         }
     }
-
-
-
-
-
 }

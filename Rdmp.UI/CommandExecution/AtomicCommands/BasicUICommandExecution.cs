@@ -11,14 +11,13 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.UI.ItemActivation;
 
-
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public abstract class BasicUICommandExecution:BasicCommandExecution
+public abstract class BasicUICommandExecution : BasicCommandExecution
 {
     protected readonly IActivateItems Activator;
 
-    protected BasicUICommandExecution(IActivateItems activator):base(activator)
+    protected BasicUICommandExecution(IActivateItems activator) : base(activator)
     {
         Activator = activator;
     }
@@ -47,14 +46,15 @@ public abstract class BasicUICommandExecution:BasicCommandExecution
         return null;
     }
 
-    internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault, bool askYesNo)
+    internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault,
+        bool askYesNo)
     {
         var defaults = Activator.RepositoryLocator.CatalogueRepository;
 
         var current = defaults.GetDefaultFor(permissableDefault);
-            
-        if(current == null)
-            if(!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
-                defaults.SetDefault(permissableDefault,newServer);
+
+        if (current == null)
+            if (!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
+                defaults.SetDefault(permissableDefault, newServer);
     }
 }

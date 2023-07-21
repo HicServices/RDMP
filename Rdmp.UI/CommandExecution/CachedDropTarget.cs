@@ -8,14 +8,14 @@ namespace Rdmp.UI.CommandExecution;
 
 internal class CachedDropTarget
 {
-    public object Target { get; private set; }
-    public InsertOption RelativeLocation { get; private set; }
-
     public CachedDropTarget(object target, InsertOption relativeLocation)
     {
         Target = target;
         RelativeLocation = relativeLocation;
     }
+
+    public object Target { get; }
+    public InsertOption RelativeLocation { get; }
 
     protected bool Equals(CachedDropTarget other)
     {
@@ -27,14 +27,14 @@ internal class CachedDropTarget
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((CachedDropTarget) obj);
+        return Equals((CachedDropTarget)obj);
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            return ((Target != null ? Target.GetHashCode() : 0)*397) ^ (int) RelativeLocation;
+            return ((Target != null ? Target.GetHashCode() : 0) * 397) ^ (int)RelativeLocation;
         }
     }
 }

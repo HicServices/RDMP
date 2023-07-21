@@ -24,11 +24,12 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Release pipeline must start with a Fixed Source that will run checks and prepare the source folder.
-/// Extraction Destinations will return an implementation of this class based on the extraction method used.
+///     Release pipeline must start with a Fixed Source that will run checks and prepare the source folder.
+///     Extraction Destinations will return an implementation of this class based on the extraction method used.
 /// </summary>
 /// <typeparam name="T">The type which is passed around in the pipeline</typeparam>
-public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<ReleaseData>, IDataFlowSource<T> where T : ReleaseAudit
+public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<ReleaseData>, IDataFlowSource<T>
+    where T : ReleaseAudit
 {
     protected readonly T flowData;
     protected ReleaseData _releaseData;
@@ -37,6 +38,11 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
     public FixedReleaseSource(T flowData = null)
     {
         this.flowData = flowData;
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        Check(notifier, false);
     }
 
     public T GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -51,12 +57,10 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
         return null;
     }
 
-    protected abstract T GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
-
     public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
 
     public abstract void Abort(IDataLoadEventListener listener);
-        
+
     public T TryGetPreview()
     {
         return null;
@@ -67,13 +71,17 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
         _releaseData = value;
     }
 
+    protected abstract T GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+
     private void Check(ICheckNotifier notifier, bool isRunTime)
     {
         if (isRunTime)
         {
             var allPotentials = _releaseData.ConfigurationsForRelease.SelectMany(c => c.Value).ToList();
             var staleDatasets = allPotentials.Where(
-                p => p.DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted).ToArray();
+                    p => p.DatasetExtractionResult.HasLocalChanges().Evaluation ==
+                         ChangeDescription.DatabaseCopyWasDeleted)
+                .ToArray();
 
             if (staleDatasets.Any())
                 throw new Exception(
@@ -113,7 +121,9 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
             foreach (var environmentPotential in _releaseData.EnvironmentPotentials.Values)
             {
                 environmentPotential.Check(notifier);
-                if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable && environmentPotential.Assesment != TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly)
+                if (environmentPotential.Assesment != TicketingReleaseabilityEvaluation.Releaseable &&
+                    environmentPotential.Assesment != TicketingReleaseabilityEvaluation
+                        .TicketingLibraryMissingOrNotConfiguredCorrectly)
                     throw new Exception(
                         $"Ticketing system decided that the Environment is not ready for release. Reason: {environmentPotential.Reason}");
             }
@@ -121,17 +131,14 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
         var projects = _releaseData.ConfigurationsForRelease.Keys.Select(cfr => cfr.Project_ID).Distinct().ToList();
         if (projects.Count != 1)
-            notifier.OnCheckPerformed(new CheckEventArgs("How is it possible that you are doing a release for multiple different projects?", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "How is it possible that you are doing a release for multiple different projects?", CheckResult.Fail));
 
         if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Key.Project_ID != projects.First()))
-            notifier.OnCheckPerformed(new CheckEventArgs("Mismatch between project passed into constructor and DoRelease projects", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Mismatch between project passed into constructor and DoRelease projects", CheckResult.Fail));
 
         RunSpecificChecks(notifier, isRunTime);
-    }
-
-    public void Check(ICheckNotifier notifier)
-    {
-        Check(notifier, false);
     }
 
     protected abstract void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime);
@@ -148,9 +155,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
             var firstGlobal = globalDirectoriesFound.First();
 
             foreach (var directoryInfo in globalDirectoriesFound.Distinct(new DirectoryInfoComparer()))
-            {
                 UsefulStuff.ConfirmContentsOfDirectoryAreTheSame(firstGlobal, directoryInfo);
-            }
 
             return firstGlobal;
         }
@@ -158,14 +163,17 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
         return null;
     }
 
-    protected IEnumerable<DirectoryInfo> GetAllGlobalFolders(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected IEnumerable<DirectoryInfo> GetAllGlobalFolders(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         const string folderName = ExtractionDirectory.GLOBALS_DATA_NAME;
 
         foreach (var releasePotential in toRelease.Value)
         {
-            Debug.Assert(releasePotential.ExtractDirectory.Parent != null, "releasePotential.ExtractDirectory.Parent != null");
-            var globalFolderForThisExtract = releasePotential.ExtractDirectory.Parent.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).SingleOrDefault();
+            Debug.Assert(releasePotential.ExtractDirectory.Parent != null,
+                "releasePotential.ExtractDirectory.Parent != null");
+            var globalFolderForThisExtract = releasePotential.ExtractDirectory.Parent
+                .EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).SingleOrDefault();
 
             if (globalFolderForThisExtract == null) //this particular release didn't include globals/custom data at all
                 continue;

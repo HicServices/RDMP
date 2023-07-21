@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
-using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
 
-internal class QueryBuilderUnitTests:UnitTests
+internal class QueryBuilderUnitTests : UnitTests
 {
     [Test]
     public void Test_IsPrimaryExtractionTable_TwoTables()
@@ -27,12 +27,15 @@ internal class QueryBuilderUnitTests:UnitTests
         c2.TableInfo.SaveToDatabase();
 
         var builder = new QueryBuilder(null, null);
-        builder.AddColumn(new ColumnInfoToIColumn(Repository,c1));
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
-        var ex = Assert.Throws<QueryBuildingException>(()=>{ var s = builder.SQL;});
+        var ex = Assert.Throws<QueryBuildingException>(() =>
+        {
+            var s = builder.SQL;
+        });
 
-        StringAssert.Contains("There are multiple tables marked as IsPrimaryExtractionTable",ex.Message);
+        StringAssert.Contains("There are multiple tables marked as IsPrimaryExtractionTable", ex.Message);
     }
 
     [Test]
@@ -67,7 +70,7 @@ internal class QueryBuilderUnitTests:UnitTests
         c1.Name = "c1";
         c1.SaveToDatabase();
         c1.TableInfo.Name = "t1";
-        c1.TableInfo.IsPrimaryExtractionTable = true;  //t1 is primary
+        c1.TableInfo.IsPrimaryExtractionTable = true; //t1 is primary
         c1.TableInfo.SaveToDatabase();
 
         var c2 = WhenIHaveA<ColumnInfo>();
@@ -93,11 +96,11 @@ internal class QueryBuilderUnitTests:UnitTests
          *     /    \
          *   c1      c4
          *     \   /
-         *       c3 
-         * 
+         *       c3
+         *
          * */
 
-        var j1 = new JoinInfo(Repository,c2,c1,ExtractionJoinType.Inner,null);
+        var j1 = new JoinInfo(Repository, c2, c1, ExtractionJoinType.Inner, null);
         var j2 = new JoinInfo(Repository, c3, c1, ExtractionJoinType.Inner, null);
         var j3 = new JoinInfo(Repository, c4, c2, ExtractionJoinType.Inner, null);
         var j4 = new JoinInfo(Repository, c4, c3, ExtractionJoinType.Inner, null);
@@ -105,7 +108,7 @@ internal class QueryBuilderUnitTests:UnitTests
 
         var builder = new QueryBuilder(null, null);
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
-        builder.AddColumn(new ColumnInfoToIColumn(Repository, c2)); 
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c3));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c4));
 
@@ -113,7 +116,7 @@ internal class QueryBuilderUnitTests:UnitTests
 
         //should be using only 3 of the 4 joins because we already have a route to c4 without a fourth join
         Assert.AreEqual(3, builder.JoinsUsedInQuery.Count);
-        Assert.Contains(j1,builder.JoinsUsedInQuery);
+        Assert.Contains(j1, builder.JoinsUsedInQuery);
         Assert.Contains(j2, builder.JoinsUsedInQuery);
         Assert.Contains(j3, builder.JoinsUsedInQuery);
     }

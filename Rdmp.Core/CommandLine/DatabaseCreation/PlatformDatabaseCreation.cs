@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -16,8 +16,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 /// <summary>
-/// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
-/// pipelines for common activities.
+///     Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates
+///     initial
+///     pipelines for common activities.
 /// </summary>
 public class PlatformDatabaseCreation
 {
@@ -27,7 +28,7 @@ public class PlatformDatabaseCreation
     public const string DefaultLoggingDatabaseName = "Logging";
 
     /// <summary>
-    /// Creates new databases on the given server for RDMP platform databases
+    ///     Creates new databases on the given server for RDMP platform databases
     /// </summary>
     /// <param name="options"></param>
     public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
@@ -50,16 +51,18 @@ public class PlatformDatabaseCreation
             creator.Create();
         }
 
-        if(options.ExampleDatasets || options.Nightmare)
+        if (options.ExampleDatasets || options.Nightmare)
         {
-            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
+            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo), repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
-                
-            examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier {WriteToConsole = true },options);
+
+            examples.Create(server.GetCurrentDatabase(), new ThrowImmediatelyCheckNotifier { WriteToConsole = true },
+                options);
         }
     }
 
-    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher,
+        PlatformDatabaseCreationOptions options)
     {
         SqlConnection.ClearAllPools();
 
@@ -77,9 +80,9 @@ public class PlatformDatabaseCreation
         {
             BinaryCollation = options.BinaryCollation
         };
-        executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
-            
+
         return builder;
     }
 }

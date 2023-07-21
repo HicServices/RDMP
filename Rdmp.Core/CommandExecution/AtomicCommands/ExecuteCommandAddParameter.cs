@@ -4,28 +4,29 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Adds a new SqlParameter to an <see cref="ICollectSqlParameters"/>
+///     Adds a new SqlParameter to an <see cref="ICollectSqlParameters" />
 /// </summary>
 public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
 {
-    private readonly ICollectSqlParameters _collector;
-    private readonly string _parameterName;
-    private readonly string _datatype;
-    private readonly string _value;
     private const float DEFAULT_WEIGHT = 2.1f;
+    private readonly ICollectSqlParameters _collector;
+    private readonly string _datatype;
+    private readonly string _parameterName;
+    private readonly string _value;
 
-    public ExecuteCommandAddParameter(IBasicActivateItems activator, ICollectSqlParameters collector, string parameterName, string datatype, string value) : base(activator)
+    public ExecuteCommandAddParameter(IBasicActivateItems activator, ICollectSqlParameters collector,
+        string parameterName, string datatype, string value) : base(activator)
     {
         Weight = DEFAULT_WEIGHT;
         _collector = collector;
@@ -34,10 +35,7 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
         _value = value;
         UseTripleDotSuffix = true;
 
-        if (collector is IMightBeReadOnly r)
-        {
-            SetImpossibleIfReadonly(r);
-        }
+        if (collector is IMightBeReadOnly r) SetImpossibleIfReadonly(r);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -60,18 +58,15 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
             if (BasicActivator.TypeText(new DialogArgs
                 {
                     EntryLabel = "Name",
-                    TaskDescription = "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
+                    TaskDescription =
+                        "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
                     WindowTitle = "Add Paramater"
-                }, 99,"@myVariable", out var name,false))
-            {
+                }, 99, "@myVariable", out var name, false))
                 // user did type a name
                 n = name;
-            }
             else
-            {
                 // user cancelled typing the parameter name
                 return;
-            }
         }
 
 
@@ -84,15 +79,11 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
                     TaskDescription = "What data type are you storing in the parameter (e.g. datetime2)",
                     WindowTitle = "Parameter Data Type"
                 }, 99, "varchar(10)", out var datatype, false))
-            {
                 // user did type
                 d = datatype;
-            }
             else
-            {
                 // user cancelled typing
                 return;
-            }
         }
 
         if (v == null)
@@ -101,28 +92,22 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
             if (BasicActivator.TypeText(new DialogArgs
                 {
                     EntryLabel = "Value",
-                    TaskDescription = "What value should the parameter have.  Ensure if you are using text that it is appropriately quoted",
+                    TaskDescription =
+                        "What value should the parameter have.  Ensure if you are using text that it is appropriately quoted",
                     WindowTitle = "Parameter Value"
                 }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out var value, false))
-            {
                 // user did type
                 v = value;
-            }
             else
-            {
                 // user cancelled typing
                 return;
-            }
         }
+
         var p = options.CreateNewParameter(n);
         p.ParameterSQL = $"DECLARE {p.ParameterName} as {d}";
         p.Value = v;
         p.SaveToDatabase();
 
-        if (_collector is DatabaseEntity de)
-        {
-            Publish(de);
-        }
-
+        if (_collector is DatabaseEntity de) Publish(de);
     }
 }

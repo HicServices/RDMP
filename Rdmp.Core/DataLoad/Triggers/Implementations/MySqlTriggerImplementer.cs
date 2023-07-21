@@ -15,11 +15,12 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
-/// <inheritdoc/>
-internal class MySqlTriggerImplementer:TriggerImplementer
+/// <inheritdoc />
+internal class MySqlTriggerImplementer : TriggerImplementer
 {
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
+    public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
+        createDataLoadRunIDAlso)
     {
     }
 
@@ -34,7 +35,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
             {
                 con.Open();
 
-                using(var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
+                using (var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
@@ -61,7 +62,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand(sql, con))
+            using (var cmd = _server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
@@ -89,7 +90,6 @@ internal class MySqlTriggerImplementer:TriggerImplementer
             con.Open();
             return UseOldDateTimeDefaultMethod(table.GetCommand("SELECT VERSION()", con).ExecuteScalar()?.ToString());
         }
-
     }
 
     public static bool UseOldDateTimeDefaultMethod(string version)
@@ -97,7 +97,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         if (string.IsNullOrWhiteSpace(version))
             return false;
 
-        var match = Regex.Match(version,@"(\d+)\.(\d+)");
+        var match = Regex.Match(version, @"(\d+)\.(\d+)");
 
         //If the version string doesn't start with numbers we have bigger problems than creating a default constraint
         if (!match.Success)
@@ -123,7 +123,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
 
     public override TriggerStatus GetTriggerStatus()
     {
-        return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
+        return string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
     }
 
     protected virtual string GetTriggerBody()
@@ -132,13 +132,13 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
-            using(var r = cmd.ExecuteReader())
+            using (var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
+            using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
-                {
                     if (r["Trigger"].Equals(GetTriggerName()))
-                        return (string) r["Statement"];
-                }
+                        return (string)r["Statement"];
+            }
         }
 
         return null;
@@ -157,14 +157,15 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         var sqlThen = GetTriggerBody();
         var sqlNow = CreateTriggerBody();
 
-        AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
+        AssertTriggerBodiesAreEqual(sqlThen, sqlNow);
 
         return true;
     }
 
     protected virtual void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if(!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlNow,sqlThen);
+        if (!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql", sqlNow,
+                sqlThen);
     }
 }

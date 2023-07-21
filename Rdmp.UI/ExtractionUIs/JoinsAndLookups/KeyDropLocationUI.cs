@@ -13,14 +13,23 @@ using Rdmp.Core.Icons.IconProvision;
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
 /// <summary>
-/// Part of JoinConfiguration and LookupConfiguration, allows you to drop a ColumnInfo into it to declare it as a key in a relationship being built (either a Lookup or a JoinInfo). Clicking
-/// the garbage can will clear the control.
+///     Part of JoinConfiguration and LookupConfiguration, allows you to drop a ColumnInfo into it to declare it as a key
+///     in a relationship being built (either a Lookup or a JoinInfo). Clicking
+///     the garbage can will clear the control.
 /// </summary>
 public partial class KeyDropLocationUI : UserControl
 {
     private JoinKeyType _keyType;
+
+    public KeyDropLocationUI()
+    {
+        InitializeComponent();
+        btnClear.Image = FamFamFamIcons.delete.ImageToBitmap();
+        btnClear.Enabled = false;
+    }
+
     public ColumnInfo SelectedColumn { get; private set; }
-        
+
     public JoinKeyType KeyType
     {
         get => _keyType;
@@ -37,19 +46,12 @@ public partial class KeyDropLocationUI : UserControl
     }
 
     /// <summary>
-    /// Set this to allow dragging only certain items onto the control.  Return true to allow drop and false to prevent it.
+    ///     Set this to allow dragging only certain items onto the control.  Return true to allow drop and false to prevent it.
     /// </summary>
     public Func<ColumnInfo, bool> IsValidGetter { get; set; }
 
     public event Action SelectedColumnChanged;
 
-    public KeyDropLocationUI()
-    {
-        InitializeComponent();
-        btnClear.Image = FamFamFamIcons.delete.ImageToBitmap();
-        btnClear.Enabled = false;
-    }
-        
     private void tbPk1_DragEnter(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.None;
@@ -59,10 +61,10 @@ public partial class KeyDropLocationUI : UserControl
         if (col == null)
             return;
 
-        if(IsValidGetter != null && !IsValidGetter(col))
+        if (IsValidGetter != null && !IsValidGetter(col))
             return;
-            
-        if(col != null)
+
+        if (col != null)
             e.Effect = DragDropEffects.Copy;
     }
 
@@ -103,6 +105,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumnChanged?.Invoke();
     }
 }
+
 public enum JoinKeyType
 {
     PrimaryKey,

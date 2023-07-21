@@ -4,31 +4,36 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Globalization;
+using System.Resources;
 using System.Windows.Forms;
 using Rdmp.UI.Theme;
 using WeifenLuo.WinFormsUI.Docking;
+using WeifenLuo.WinFormsUI.ThemeVS2015;
 
 namespace ResearchDataManagementPlatform.Theme;
 
 //These classes should not be moved.  They are referenced by name in UserSettingsFileUI and UserSettings
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
 {
-    private ThemeExtender _extender;
-    public bool ApplyThemeToMenus { get; set; }
-        
+    private readonly ThemeExtender _extender;
+
     public MyVS2015BlueTheme()
     {
-        var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);
-        var bytes = (byte[]) manager.GetObject("vs2015blue_vstheme",CultureInfo.CurrentCulture);
+        var manager =
+            new ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(VS2015ThemeBase).Assembly);
+        var bytes = (byte[])manager.GetObject("vs2015blue_vstheme", CultureInfo.CurrentCulture);
 
         _extender = new ThemeExtender(Decompress(bytes));
     }
 
+    public bool ApplyThemeToMenus { get; set; }
+
     public new void ApplyTo(ToolStrip item)
     {
-        if(ApplyThemeToMenus)
+        if (ApplyThemeToMenus)
         {
             base.ApplyTo(item);
             _extender.ApplyTo(item);
@@ -38,16 +43,18 @@ public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
 
 public class MyVS2015DarkTheme : VS2015DarkTheme, ITheme
 {
-    private ThemeExtender _extender;
-    public bool ApplyThemeToMenus { get; set; }
+    private readonly ThemeExtender _extender;
 
     public MyVS2015DarkTheme()
     {
-        var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);
+        var manager =
+            new ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(VS2015ThemeBase).Assembly);
         var bytes = (byte[])manager.GetObject("vs2015dark_vstheme", CultureInfo.CurrentCulture);
 
         _extender = new ThemeExtender(Decompress(bytes));
     }
+
+    public bool ApplyThemeToMenus { get; set; }
 
     public new void ApplyTo(ToolStrip item)
     {
@@ -61,16 +68,18 @@ public class MyVS2015DarkTheme : VS2015DarkTheme, ITheme
 
 public class MyVS2015LightTheme : VS2015LightTheme, ITheme
 {
-    private ThemeExtender _extender;
-    public bool ApplyThemeToMenus { get; set; }
+    private readonly ThemeExtender _extender;
 
     public MyVS2015LightTheme()
     {
-        var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);
+        var manager =
+            new ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(VS2015ThemeBase).Assembly);
         var bytes = (byte[])manager.GetObject("vs2015light_vstheme", CultureInfo.CurrentCulture);
 
         _extender = new ThemeExtender(Decompress(bytes));
     }
+
+    public bool ApplyThemeToMenus { get; set; }
 
     public new void ApplyTo(ToolStrip item)
     {

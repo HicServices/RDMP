@@ -16,63 +16,64 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.CatalogueSummary;
 
 /// <summary>
-/// Shows a longitudinal breakdown of all Data Quality Engine runs on the dataset including the ability to 'rewind' to look at the dataset quality graphs of previous
-/// runs of the DQE over time (e.g. before and after a data load).
+///     Shows a longitudinal breakdown of all Data Quality Engine runs on the dataset including the ability to 'rewind' to
+///     look at the dataset quality graphs of previous
+///     runs of the DQE over time (e.g. before and after a data load).
 /// </summary>
 public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
 {
+    private Evaluation _lastSelected;
+
     public CatalogueDQEResultsUI()
     {
         InitializeComponent();
 
-        dqePivotCategorySelector1.PivotCategorySelectionChanged += dqePivotCategorySelector1_PivotCategorySelectionChanged;
+        dqePivotCategorySelector1.PivotCategorySelectionChanged +=
+            dqePivotCategorySelector1_PivotCategorySelectionChanged;
 
         AssociatedCollection = RDMPCollection.Catalogue;
         DoubleBuffered = true;
     }
-        
+
     private void ClearDQEGraphs()
     {
         timePeriodicityChart1.ClearGraph();
         columnStatesChart1.ClearGraph();
     }
 
-    private Evaluation _lastSelected;
     private void evaluationTrackBar1_EvaluationSelected(object sender, Evaluation evaluation)
     {
         dqePivotCategorySelector1.LoadOptions(evaluation);
 
         var category = dqePivotCategorySelector1.SelectedPivotCategory;
-            
-        timePeriodicityChart1.SelectEvaluation(evaluation,category??"ALL");
+
+        timePeriodicityChart1.SelectEvaluation(evaluation, category ?? "ALL");
         columnStatesChart1.SelectEvaluation(evaluation, category ?? "ALL");
         _lastSelected = evaluation;
     }
 
     private void dqePivotCategorySelector1_PivotCategorySelectionChanged()
     {
-        if(_lastSelected ==  null)
+        if (_lastSelected == null)
             return;
 
         var category = dqePivotCategorySelector1.SelectedPivotCategory;
 
         timePeriodicityChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
         columnStatesChart1.SelectEvaluation(_lastSelected, category ?? "ALL");
-
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         timePeriodicityChart1.SetItemActivator(activator);
 
         //clear old DQE graphs
         ClearDQEGraphs();
-            
+
         DQERepository dqeRepository = null;
         try
         {
@@ -94,18 +95,19 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
             evaluationTrackBar1.Evaluations = evaluations;
         }
 
-        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
-        CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject), "Run Data Quality Engine...");
+        CommonFunctionality.Add(
+            new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
+        CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject),
+            "Run Data Quality Engine...");
     }
 
     public override string GetTabName()
     {
         return $"DQE:{base.GetTabName()}";
-            
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueSummaryScreen_Design, UserControl>))]
-public abstract class CatalogueSummaryScreen_Design:RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class CatalogueSummaryScreen_Design : RDMPSingleDatabaseObjectControl<Catalogue>
 {
 }

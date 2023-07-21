@@ -9,11 +9,11 @@ using System;
 namespace Rdmp.Core.DataFlowPipeline;
 
 /// <summary>
-/// Exception thrown when an <see cref="DataFlowPipelineEngine{T}"/> crashes with a fatal exception
+///     Exception thrown when an <see cref="DataFlowPipelineEngine{T}" /> crashes with a fatal exception
 /// </summary>
 public class PipelineCrashedException : Exception
 {
-    public PipelineCrashedException(string msg, Exception innerException):base(msg,innerException)
+    public PipelineCrashedException(string msg, Exception innerException) : base(msg, innerException)
     {
     }
 }

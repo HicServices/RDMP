@@ -21,7 +21,7 @@ namespace Rdmp.UI.Menus;
 internal class LoadStageNodeMenu : RDMPContextMenuStrip
 {
     private readonly LoadStageNode _loadStageNode;
-    private MEF _mef;
+    private readonly MEF _mef;
 
     public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode) : base(args, loadStageNode)
     {
@@ -29,9 +29,9 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
         _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
 
         args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
-            
-        AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
-        AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
+
+        AddMenu<IDataProvider>("Add Cached Data Provider", t => typeof(ICachedDataProvider).IsAssignableFrom(t));
+        AddMenu<IDataProvider>("Add Data Provider", t => !typeof(ICachedDataProvider).IsAssignableFrom(t));
 
         AddMenu<IAttacher>("Add Attacher");
         AddMenu<IMutilateDataTables>("Add Mutilator");
@@ -46,8 +46,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
 
         if (typeof(T) == typeof(IDataProvider))
             taskType = ProcessTaskType.DataProvider;
-        else
-        if (typeof(T) == typeof(IAttacher))
+        else if (typeof(T) == typeof(IAttacher))
             taskType = ProcessTaskType.Attacher;
         else if (typeof(T) == typeof(IMutilateDataTables))
             taskType = ProcessTaskType.MutilateDataTable;
@@ -76,10 +75,10 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
     }
 
 
-
     private void AddTypeIntoStage(Type type)
     {
-        var cmd = new ExecuteCommandCreateNewClassBasedProcessTask(_activator, _loadStageNode.LoadMetadata, _loadStageNode.LoadStage, type);
+        var cmd = new ExecuteCommandCreateNewClassBasedProcessTask(_activator, _loadStageNode.LoadMetadata,
+            _loadStageNode.LoadStage, type);
         cmd.Execute();
     }
 }

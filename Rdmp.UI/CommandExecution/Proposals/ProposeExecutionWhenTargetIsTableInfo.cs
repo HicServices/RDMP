@@ -28,7 +28,8 @@ internal class ProposeExecutionWhenTargetIsTableInfo : RDMPCommandExecutionPropo
         ItemActivator.Activate<TableInfoUI, TableInfo>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, TableInfo target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, TableInfo target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

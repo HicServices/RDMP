@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -16,10 +17,10 @@ internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconP
 {
     private readonly Image<Rgba32> _basic;
     private readonly Image<Rgba32> _core;
-    private readonly Image<Rgba32> _internal;
-    private readonly Image<Rgba32> _supplemental;
-    private readonly Image<Rgba32> _special;
     private readonly Image<Rgba32> _deprecated;
+    private readonly Image<Rgba32> _internal;
+    private readonly Image<Rgba32> _special;
+    private readonly Image<Rgba32> _supplemental;
 
     public CatalogueItemsNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
     {
@@ -41,11 +42,11 @@ internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconP
 
         return cin.Category.Value switch
         {
-            Curation.Data.ExtractionCategory.Core => _core,
-            Curation.Data.ExtractionCategory.Supplemental => _supplemental,
-            Curation.Data.ExtractionCategory.SpecialApprovalRequired => _special,
-            Curation.Data.ExtractionCategory.Internal => _internal,
-            Curation.Data.ExtractionCategory.Deprecated => _deprecated,
+            ExtractionCategory.Core => _core,
+            ExtractionCategory.Supplemental => _supplemental,
+            ExtractionCategory.SpecialApprovalRequired => _special,
+            ExtractionCategory.Internal => _internal,
+            ExtractionCategory.Deprecated => _deprecated,
             _ => _basic
         };
     }

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -11,13 +12,13 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-[System.ComponentModel.DesignerCategory("")]
-internal class LoadMetadataMenu:RDMPContextMenuStrip
+[DesignerCategory("")]
+internal class LoadMetadataMenu : RDMPContextMenuStrip
 {
     public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
     {
         Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
         Add(new ExecuteCommandViewLoadDiagram(_activator, loadMetadata));
-        ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
+        ReBrandActivateAs("Check and Execute", RDMPConcept.LoadMetadata, OverlayKind.Execute);
     }
 }

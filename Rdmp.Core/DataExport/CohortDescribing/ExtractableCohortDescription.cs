@@ -12,11 +12,14 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.CohortDescribing;
 
 /// <summary>
-/// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases
-/// for a patient - 2 private identifiers map to the same release identifier).
-/// 
-/// <para>Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may start out null/0 and become populated
-/// after the CohortDescriptionDataTableAsyncFetch completes.</para>
+///     Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount
+///     (can differ if there are aliases
+///     for a patient - 2 private identifiers map to the same release identifier).
+///     <para>
+///         Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may
+///         start out null/0 and become populated
+///         after the CohortDescriptionDataTableAsyncFetch completes.
+///     </para>
 /// </summary>
 public class ExtractableCohortDescription
 {
@@ -24,24 +27,20 @@ public class ExtractableCohortDescription
     public readonly CohortDescriptionDataTableAsyncFetch Fetch;
     public int Count;
     public int CountDistinct;
-
-    public string SourceName;
-    public string ReleaseIdentifier;
-    public string PrivateIdentifier;
-
-    public int ProjectNumber;
-    public int Version;
     public string Description;
 
     public int OriginID;
+    public string PrivateIdentifier;
 
-    public Exception Exception { get; private set; }
+    public int ProjectNumber;
+    public string ReleaseIdentifier;
 
-    public DateTime? CreationDate { get; set; }
+    public string SourceName;
+    public int Version;
 
 
     /// <summary>
-    /// Creates a non async cohort description, this will block until counts are available for the cohort
+    ///     Creates a non async cohort description, this will block until counts are available for the cohort
     /// </summary>
     /// <param name="cohort"></param>
     public ExtractableCohortDescription(ExtractableCohort cohort)
@@ -68,9 +67,9 @@ public class ExtractableCohortDescription
             Exception = e;
             throw;
         }
+
         OriginID = cohort.OriginID;
 
-            
 
         try
         {
@@ -96,16 +95,17 @@ public class ExtractableCohortDescription
         CreationDate = externalData.ExternalCohortCreationDate;
         ProjectNumber = externalData.ExternalProjectNumber;
         Description = externalData.ExternalDescription;
-
     }
 
 
     /// <summary>
-    /// Creates a new description based on the async fetch request for all cohorts including row counts etc (which might have already completed btw).  If you
-    /// use this constructor then the properties will start out with text like "Loading..." but it will perform much faster, when the fetch completes the
-    /// values will be populated.  In general if you want to use this feature you should probably use CohortDescriptionFactory and only use it if you are
-    /// trying to get all the cohorts at once.
-    ///  
+    ///     Creates a new description based on the async fetch request for all cohorts including row counts etc (which might
+    ///     have already completed btw).  If you
+    ///     use this constructor then the properties will start out with text like "Loading..." but it will perform much
+    ///     faster, when the fetch completes the
+    ///     values will be populated.  In general if you want to use this feature you should probably use
+    ///     CohortDescriptionFactory and only use it if you are
+    ///     trying to get all the cohorts at once.
     /// </summary>
     /// <param name="cohort"></param>
     /// <param name="fetch"></param>
@@ -117,7 +117,7 @@ public class ExtractableCohortDescription
         Count = -1;
         CountDistinct = -1;
         SourceName = fetch.Source.Name;
-            
+
         try
         {
             ReleaseIdentifier = cohort.GetReleaseIdentifier(true);
@@ -126,7 +126,7 @@ public class ExtractableCohortDescription
         {
             ReleaseIdentifier = "Unknown";
         }
-            
+
         try
         {
             PrivateIdentifier = cohort.GetPrivateIdentifier(true);
@@ -135,7 +135,7 @@ public class ExtractableCohortDescription
         {
             PrivateIdentifier = "Unknown";
         }
-            
+
         ProjectNumber = -1;
         Version = -1;
         Description = "Loading...";
@@ -147,6 +147,9 @@ public class ExtractableCohortDescription
             fetch.Finished += FetchOnFinished;
     }
 
+    public Exception Exception { get; private set; }
+
+    public DateTime? CreationDate { get; set; }
 
 
     private void FetchOnFinished()
@@ -155,14 +158,15 @@ public class ExtractableCohortDescription
         {
             if (Fetch.Task.IsFaulted)
                 throw new Exception(
-                    $"Fetch cohort data failed for source {Fetch.Source} see inner Exception for details",Fetch.Task.Exception);
+                    $"Fetch cohort data failed for source {Fetch.Source} see inner Exception for details",
+                    Fetch.Task.Exception);
 
             if (Fetch.DataTable == null)
                 throw new Exception($"IsFaulted was false but DataTable was not populated for fetch {Fetch.Source}");
 
-            var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
-                    $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
-
+            var row = Fetch.DataTable.Rows.Cast<DataRow>()
+                .FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID) ?? throw new Exception(
+                $"No row found for Origin ID {OriginID} in fetched cohort description table for source {Fetch.Source}");
 
 
             //it's overriden ugh, got to go the slow way
@@ -176,12 +180,11 @@ public class ExtractableCohortDescription
                 //it's a proper not overriden release identifier so we can use the DataTable value
                 Count = Convert.ToInt32(row["Count"]);
                 CountDistinct = Convert.ToInt32(row["CountDistinct"]);
-
             }
 
             ProjectNumber = Convert.ToInt32(row["ProjectNumber"]);
             Version = Convert.ToInt32(row["Version"]);
-            Description =  row["Description"] as string;
+            Description = row["Description"] as string;
             CreationDate = ObjectToNullableDateTime(row["dtCreated"]);
         }
         catch (Exception e)
@@ -203,5 +206,4 @@ public class ExtractableCohortDescription
 
         return (DateTime)o;
     }
-
 }

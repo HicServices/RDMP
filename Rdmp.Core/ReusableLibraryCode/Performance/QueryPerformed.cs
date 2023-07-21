@@ -7,14 +7,14 @@
 namespace Rdmp.Core.ReusableLibraryCode.Performance;
 
 /// <summary>
-/// Documents an SQL query logged by ComprehensiveQueryPerformanceCounter including the number of times the query was constructed 
-/// 
-/// <para>See ComprehensiveQueryPerformanceCounter / DatabaseCommandHelper for more info.</para>
+///     Documents an SQL query logged by ComprehensiveQueryPerformanceCounter including the number of times the query was
+///     constructed
+///     <para>See ComprehensiveQueryPerformanceCounter / DatabaseCommandHelper for more info.</para>
 /// </summary>
 public class QueryPerformed
 {
     public string QueryText;
-    public int TimesSeen = 0;
+    public int TimesSeen;
 
     public QueryPerformed(string queryText)
     {
@@ -25,5 +25,4 @@ public class QueryPerformed
     {
         TimesSeen++;
     }
-
 }

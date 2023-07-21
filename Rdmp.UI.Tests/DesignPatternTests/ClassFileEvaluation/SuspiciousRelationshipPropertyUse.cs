@@ -23,7 +23,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 public class SuspiciousRelationshipPropertyUse
 {
     private readonly MEF mef;
-    private List<string>  _fails = new();
+    private readonly List<string> _fails = new();
 
     public SuspiciousRelationshipPropertyUse(MEF mef)
     {
@@ -40,21 +40,24 @@ public class SuspiciousRelationshipPropertyUse
         foreach (var type in types)
         {
             //if it's a spont object ignore it
-            if(typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) || type == typeof(SpontaneouslyInventedFilter))
+            if (typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) ||
+                type == typeof(SpontaneouslyInventedFilter))
                 continue;
 
             //Find the C sharp code for the class
             var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
 
             var expectedFileName = $"{type.Name}.cs";
-            var files = csFilesFound.Where(f => f.EndsWith($"\\{expectedFileName}",StringComparison.CurrentCultureIgnoreCase)).ToArray();
+            var files = csFilesFound
+                .Where(f => f.EndsWith($"\\{expectedFileName}", StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             if (files.Length == 0)
             {
                 _fails.Add($"FAIL: Could not find a csFile called '{expectedFileName}'");
                 continue;
             }
-            if(files.Length > 1)
+
+            if (files.Length > 1)
             {
                 _fails.Add($"FAIL: found multiple csFiles called '{expectedFileName}'");
                 continue;
@@ -63,7 +66,7 @@ public class SuspiciousRelationshipPropertyUse
             //Find the #region Relationships bit should contain all the properties which get; database objects or enumerates database objects (These shouldn't have a set;)
             var classSourceCode = File.ReadAllText(files[0]);
 
-            var r = new Regex("#region Relationships(.*)#endregion",RegexOptions.Singleline);
+            var r = new Regex("#region Relationships(.*)#endregion", RegexOptions.Singleline);
 
             string relationshipsRegion = null;
 
@@ -80,14 +83,14 @@ public class SuspiciousRelationshipPropertyUse
                 if (relationshipProperty.Name.Equals("ID"))
                     continue;
 
-                if (relationshipProperty.CustomAttributes.All(c => c.AttributeType != typeof (NoMappingToDatabase)))
+                if (relationshipProperty.CustomAttributes.All(c => c.AttributeType != typeof(NoMappingToDatabase)))
                 {
                     _fails.Add(
                         $"FAIL: Class {type.FullName} has readonly property {relationshipProperty} which is not decorated with NoMapping");
                     continue;
                 }
 
-                if(!IsRelationshipProperty(relationshipProperty.PropertyType))
+                if (!IsRelationshipProperty(relationshipProperty.PropertyType))
                 {
                     Console.WriteLine(
                         $"SKIPPED: Property {relationshipProperty} is ReadOnly and [NoMapping] but doesn't look like it serves up related objects");
@@ -95,8 +98,10 @@ public class SuspiciousRelationshipPropertyUse
                 }
 
                 if (relationshipsRegion == null)
+                {
                     _fails.Add(
                         $"FAIL: Class {type.FullName} has no '#region Relationships' blocks but has a relationship style Property called {relationshipProperty.Name}");
+                }
                 else
                 {
                     var expectedString =
@@ -109,7 +114,8 @@ public class SuspiciousRelationshipPropertyUse
             }
 
 
-            var databaseProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.CanRead && p.CanWrite);
+            var databaseProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && p.CanWrite);
 
             var suggestedFieldDeclarations = "";
             var suggestedMethodWrappers = "";
@@ -117,25 +123,25 @@ public class SuspiciousRelationshipPropertyUse
             foreach (var p in databaseProperties)
             {
                 //its a NoMapping
-                if (p.CustomAttributes.Any(c => c.AttributeType == typeof (NoMappingToDatabase)))
+                if (p.CustomAttributes.Any(c => c.AttributeType == typeof(NoMappingToDatabase)))
                     continue;
 
                 //special case, let this one pass, nobody should be changing it as a user anyway
-                if(p.Name.Equals("ID"))
+                if (p.Name.Equals("ID"))
                     continue;
 
 
                 var setMethod = p.GetSetMethod(false);
 
-                if(setMethod == null)
+                if (setMethod == null)
                 {
-                    Console.WriteLine($"WARNING: Property {p.Name} on Type {type.Name} has no set or it is not public;");
+                    Console.WriteLine(
+                        $"WARNING: Property {p.Name} on Type {type.Name} has no set or it is not public;");
                     continue;
                 }
 
                 if (MightBeCouldBeMaybeAutoGeneratedInstanceProperty(p))
                 {
-
                     var firstLetter = p.Name.ToLower()[0];
                     var fieldName = $"_{firstLetter}{p.Name[1..]}";
                     var typeName = p.PropertyType.Name;
@@ -147,10 +153,10 @@ public class SuspiciousRelationshipPropertyUse
                     if (typeName == "Boolean")
                         typeName = "bool";
 
-                    if (p.PropertyType == typeof (int?))
+                    if (p.PropertyType == typeof(int?))
                         typeName = "int?";
 
-                    if (p.PropertyType == typeof (DateTime?))
+                    if (p.PropertyType == typeof(DateTime?))
                         typeName = "DateTime?";
 
                     suggestedFieldDeclarations += $"private {typeName} {fieldName};{Environment.NewLine}";
@@ -162,12 +168,12 @@ public class SuspiciousRelationshipPropertyUse
                     suggestedMethodWrappers += $"}}{Environment.NewLine}";
                 }
 
-                if(!setMethod.IsAbstract)
+                if (!setMethod.IsAbstract)
                 {
                     /*var instructions = setMethod.GetInstructions();
 
                     bool foundINotify = false;
-                
+
                     foreach (Instruction instruction in instructions)
                     {
                         MethodInfo methodInfo = instruction.Operand as MethodInfo;
@@ -179,13 +185,13 @@ public class SuspiciousRelationshipPropertyUse
 
                     if(!foundINotify)
                         _fails.Add("FAIL:Set Method for property " + p.Name + " on Type " + type.Name + " does not include an Instruction calling method 'SetField' or 'OnPropertyChanged'");
-                    
+
                     */
                 }
             }
 
 
-            if(!string.IsNullOrWhiteSpace(suggestedMethodWrappers))
+            if (!string.IsNullOrWhiteSpace(suggestedMethodWrappers))
             {
                 Console.WriteLine($"CODE SUGGESTION FOR {type.Name}");
                 Console.WriteLine("#region Database Properties");
@@ -195,7 +201,6 @@ public class SuspiciousRelationshipPropertyUse
 
                 Console.WriteLine("#endregion");
             }
-
         }
 
         AnalyseRelationshipPropertyUsages();
@@ -220,10 +225,10 @@ public class SuspiciousRelationshipPropertyUse
             if (toStringMethod == null)
                 continue;
 
-            if (toStringMethod.DeclaringType == typeof (object))
+            if (toStringMethod.DeclaringType == typeof(object))
                 continue;
 
-            if (toStringMethod.DeclaringType == typeof (MarshalByRefObject))
+            if (toStringMethod.DeclaringType == typeof(MarshalByRefObject))
                 continue;
             /*
             IList<Instruction> instructions = null;
@@ -271,16 +276,16 @@ public class SuspiciousRelationshipPropertyUse
     private static bool IsRelationshipProperty(Type propertyType)
     {
         //If the Property is a maps directly to database object type
-        if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(propertyType))
+        if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(propertyType))
             return true;
 
         //If the Property is an array of them e.g. Catalogue[]
         if (propertyType.IsArray)
-            return typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(propertyType.GetElementType());
+            return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(propertyType.GetElementType());
 
         //or it's a generic collection of them e.g. IEnumerable<Catalogue>
         if (propertyType.IsGenericType &&
-            propertyType.GetGenericArguments().Any(g => typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(g)))
+            propertyType.GetGenericArguments().Any(g => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(g)))
             return true;
 
         return false;
@@ -294,10 +299,7 @@ public class SuspiciousRelationshipPropertyUse
                 true
             )
             .Any();
-        if (!mightBe)
-        {
-            return false;
-        }
+        if (!mightBe) return false;
 
 
         var maybe = info.DeclaringType

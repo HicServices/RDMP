@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// An object that helps understanding a <see cref="Catalogue"/>
+///     An object that helps understanding a <see cref="Catalogue" />
 /// </summary>
 public interface ISupportingObject
 {

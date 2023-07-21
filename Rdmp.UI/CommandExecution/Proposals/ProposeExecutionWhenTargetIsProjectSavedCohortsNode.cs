@@ -13,7 +13,8 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
+internal class
+    ProposeExecutionWhenTargetIsProjectSavedCohortsNode : RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
 {
     public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -26,26 +27,29 @@ internal class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandEx
 
     public override void Activate(ProjectSavedCohortsNode target)
     {
-            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target,
+        InsertOption insertOption = InsertOption.Default)
     {
         //drop a cic on a Saved Cohorts Node to commit it to that project
         if (cmd is CohortIdentificationConfigurationCommand cicCommand)
             return
-                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator,null).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
-            
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator, null)
+                    .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
+
         //drop a file on the SavedCohorts node to commit it
-        if(cmd is FileCollectionCombineable fileCommand && fileCommand.Files.Length == 1)
-            return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
+        if (cmd is FileCollectionCombineable fileCommand && fileCommand.Files.Length == 1)
+            return new ExecuteCommandCreateNewCohortFromFile(ItemActivator, fileCommand.Files[0], null).SetTarget(
+                target.Project);
 
         //drop a Project Specific Catalogue onto it
         if (cmd is CatalogueCombineable catalogueCombineable)
-            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
+            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue)
+                .SetTarget(target.Project);
 
         if (cmd is ColumnCombineable columnCommand && columnCommand.Column is ExtractionInformation column)
-            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,column);
+            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, column);
 
         return null;
     }

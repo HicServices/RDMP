@@ -9,12 +9,11 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Dynamically created collection of 'servers' produced from all currently configured <see cref="TableInfo"/>.
+///     Dynamically created collection of 'servers' produced from all currently configured <see cref="TableInfo" />.
 /// </summary>
-public class AllServersNode:SingletonNode
+public class AllServersNode : SingletonNode
 {
-    public AllServersNode():base("Data Repository Servers")
+    public AllServersNode() : base("Data Repository Servers")
     {
-            
     }
 }

@@ -14,8 +14,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
 {
     private readonly Image<Rgba32> _exception;
-    private readonly Image<Rgba32> _warning;
     private readonly Image<Rgba32> _tick;
+    private readonly Image<Rgba32> _warning;
 
     public CheckResultStateBasedIconProvider()
     {
@@ -23,7 +23,7 @@ public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
         _warning = Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
         _tick = Image.Load<Rgba32>(CatalogueIcons.TinyGreen);
     }
-        
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is not CheckResult result)

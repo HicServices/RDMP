@@ -18,26 +18,28 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
-public abstract class ManyRunner: Runner
+public abstract class ManyRunner : Runner
 {
-    private readonly ConcurrentRDMPCommandLineOptions _options;
-
-    protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-    protected GracefulCancellationToken Token { get;private set; }
-
     private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new();
 
     /// <summary>
-    /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
+    ///     Lock for all operations that read or write to <see cref="_checksDictionary" />.  Use it if you want to enumerate /
+    ///     read the results
     /// </summary>
     private readonly object _oLock = new();
+
+    private readonly ConcurrentRDMPCommandLineOptions _options;
 
     protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
     {
         _options = options;
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+    protected GracefulCancellationToken Token { get; private set; }
+
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         RepositoryLocator = repositoryLocator;
         Token = token;
@@ -48,7 +50,7 @@ public abstract class ManyRunner: Runner
             semaphore = new Semaphore(_options.MaxConcurrentExtractions.Value, _options.MaxConcurrentExtractions.Value);
 
         Initialize();
-            
+
         switch (_options.Command)
         {
             case CommandLineActivity.none:
@@ -79,7 +81,9 @@ public abstract class ManyRunner: Runner
             case CommandLineActivity.check:
 
                 lock (_oLock)
+                {
                     _checksDictionary.Clear();
+                }
 
                 var checkables = GetCheckables(checkNotifier);
                 foreach (var checkable in checkables)
@@ -90,7 +94,9 @@ public abstract class ManyRunner: Runner
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
 
                     lock (_oLock)
+                    {
                         _checksDictionary.Add(checkable1, memory);
+                    }
 
                     tasks.Add(Task.Run(() =>
                     {
@@ -109,7 +115,7 @@ public abstract class ManyRunner: Runner
             default:
                 throw new ArgumentOutOfRangeException();
         }
-            
+
         Task.WaitAll(tasks.ToArray());
 
         AfterRun();
@@ -121,17 +127,16 @@ public abstract class ManyRunner: Runner
     protected abstract void AfterRun();
 
     protected abstract ICheckable[] GetCheckables(ICheckNotifier checkNotifier);
-        
+
     protected abstract object[] GetRunnables();
     protected abstract void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener);
 
 
     /// <summary>
-    /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in the dictionary e.g. a globals checker).
-    /// 
-    /// <para>Use GetCheckerResults to get multiple </para>
-    /// 
-    /// <para>Returns null if there are no checkers of the given Type</para>
+    ///     Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in
+    ///     the dictionary e.g. a globals checker).
+    ///     <para>Use GetCheckerResults to get multiple </para>
+    ///     <para>Returns null if there are no checkers of the given Type</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
@@ -142,9 +147,8 @@ public abstract class ManyRunner: Runner
     }
 
     /// <summary>
-    /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type which matches the func.
-    /// 
-    /// <para>Returns null if there are no checkers of the given Type matching the func</para>
+    ///     Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type which matches the func.
+    ///     <para>Returns null if there are no checkers of the given Type matching the func</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
@@ -166,20 +170,25 @@ public abstract class ManyRunner: Runner
     }
 
     /// <summary>
-    /// Returns the results for the given <see cref="ICheckable"/> type which match the function
+    ///     Returns the results for the given <see cref="ICheckable" /> type which match the function
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="func"></param>
     /// <returns></returns>
-    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>(Func<T, bool> func) where T : ICheckable
+    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>(Func<T, bool> func)
+        where T : ICheckable
     {
         lock (_oLock)
-            return GetCheckerResults<T>().Where(kvp=>func((T) kvp.Key)).ToArray();
+        {
+            return GetCheckerResults<T>().Where(kvp => func((T)kvp.Key)).ToArray();
+        }
     }
 
-    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>() where T:ICheckable
+    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>() where T : ICheckable
     {
         lock (_oLock)
+        {
             return _checksDictionary.Where(kvp => kvp.Key is T).ToArray();
+        }
     }
 }

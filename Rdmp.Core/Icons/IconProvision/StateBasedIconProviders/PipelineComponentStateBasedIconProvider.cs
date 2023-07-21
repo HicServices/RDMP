@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Pipelines;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
@@ -13,8 +13,8 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProvider
 {
     private readonly Image<Rgba32> _component;
-    private readonly Image<Rgba32> _source;
     private readonly Image<Rgba32> _destination;
+    private readonly Image<Rgba32> _source;
 
     public PipelineComponentStateBasedIconProvider()
     {
@@ -22,6 +22,7 @@ public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProv
         _source = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentSource);
         _destination = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentDestination);
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is not PipelineComponent pc) return null;
@@ -32,6 +33,5 @@ public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProv
             return _destination;
 
         return _component;
-
     }
 }

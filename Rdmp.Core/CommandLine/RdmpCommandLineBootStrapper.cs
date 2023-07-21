@@ -4,33 +4,38 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.IO;
+using CommandLine;
 using NLog;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
-using System;
-using System.IO;
-using YamlDotNet.Serialization;
-using CommandLine;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.Startup;
+using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.CommandLine;
 
 /// <summary>
-/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses
-/// and runs appropriate <see cref="Runners.Runner"/>
+///     Parses strings into relevant <see cref="RDMPCommandLineOptions" /> subclasses
+///     and runs appropriate <see cref="Runners.Runner" />
 /// </summary>
 public class RdmpCommandLineBootStrapper
 {
+    /// <summary>
+    ///     The error to return when there is a problem contacting the repository databases
+    /// </summary>
+    public const int REPO_ERROR = 7;
 
-    public static int HandleArgumentsWithStandardRunner(string[] args, Logger logger,IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+    public static int HandleArgumentsWithStandardRunner(string[] args, Logger logger,
+        IRDMPPlatformRepositoryServiceLocator existingLocator = null)
     {
         try
         {
@@ -45,7 +50,7 @@ public class RdmpCommandLineBootStrapper
                     ExecuteCommandOptions>(args)
                 .MapResult(
                     //Add new verbs as options here and invoke relevant runner
-                    (DleOptions opts) => Run(opts,null, existingLocator),
+                    (DleOptions opts) => Run(opts, null, existingLocator),
                     (DqeOptions opts) => Run(opts, null, existingLocator),
                     (CacheOptions opts) => Run(opts, null, existingLocator),
                     (ExtractionOptions opts) => Run(opts, null, existingLocator),
@@ -95,10 +100,11 @@ public class RdmpCommandLineBootStrapper
             }
         }
 
-        return Run((RDMPCommandLineOptions)opts,null, existingLocator);
+        return Run(opts, null, existingLocator);
     }
 
-    public static int Run(RDMPCommandLineOptions opts, IRunner explicitRunner = null, IRDMPPlatformRepositoryServiceLocator existingLocator = null)
+    public static int Run(RDMPCommandLineOptions opts, IRunner explicitRunner = null,
+        IRDMPPlatformRepositoryServiceLocator existingLocator = null)
     {
         // if we have already done startup great!
         var repositoryLocator = existingLocator;
@@ -116,20 +122,19 @@ public class RdmpCommandLineBootStrapper
             // where RDMP objects are stored
             repositoryLocator = opts.GetRepositoryLocator();
 
-            if(repositoryLocator == null || repositoryLocator.CatalogueRepository == null)
+            if (repositoryLocator == null || repositoryLocator.CatalogueRepository == null)
             {
-                listener.OnNotify(typeof(RdmpCommandLineBootStrapper), new NotifyEventArgs(ProgressEventType.Error, "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
+                listener.OnNotify(typeof(RdmpCommandLineBootStrapper),
+                    new NotifyEventArgs(ProgressEventType.Error,
+                        "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
                 return REPO_ERROR;
             }
 
 
-            if (!CheckRepo(repositoryLocator))
-            {
-                return REPO_ERROR;
-            }
+            if (!CheckRepo(repositoryLocator)) return REPO_ERROR;
 
             CatalogueRepository.SuppressHelpLoading = false;
-            opts.DoStartup(GetEnvironmentInfo(), opts.LogStartup ? (ICheckNotifier)checker : new IgnoreAllErrorsCheckNotifier());
+            opts.DoStartup(GetEnvironmentInfo(), opts.LogStartup ? checker : new IgnoreAllErrorsCheckNotifier());
         }
 
         //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
@@ -164,49 +169,41 @@ public class RdmpCommandLineBootStrapper
         return 0;
     }
 
-    /// <summary>
-    /// The error to return when there is a problem contacting the repository databases
-    /// </summary>
-    public const int REPO_ERROR = 7;
-
     public static EnvironmentInfo GetEnvironmentInfo()
     {
         return new EnvironmentInfo(PluginFolders.Main);
     }
+
     public static bool CheckRepo(IRDMPPlatformRepositoryServiceLocator repo)
     {
         var logger = LogManager.GetCurrentClassLogger();
         if (repo is LinkedRepositoryProvider l)
         {
             if (l.CatalogueRepository is TableRepository c)
-            {
                 try
                 {
                     c.DiscoveredServer.TestConnection(15_000);
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                    logger.Error(ex,
+                        $"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
                     return false;
                 }
-            }
 
             if (l.DataExportRepository is TableRepository d)
-            {
                 try
                 {
                     d.DiscoveredServer.TestConnection();
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                    logger.Error(ex,
+                        $"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
                     return false;
-
                 }
-            }
         }
 
         return true;
     }
-
 }

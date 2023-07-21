@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -11,19 +12,26 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Tree Node for documenting the allowed usage of a specific DataAccessCredentials (username / password) under a given DataAccessContext (loading, extracting etc).
+///     Tree Node for documenting the allowed usage of a specific DataAccessCredentials (username / password) under a given
+///     DataAccessContext (loading, extracting etc).
 /// </summary>
-public class DataAccessCredentialUsageNode:Node, IDeleteable
+public class DataAccessCredentialUsageNode : Node, IDeleteable
 {
-    public DataAccessCredentials Credentials { get; private set; }
-    public ITableInfo TableInfo { get; private set; }
-    public DataAccessContext Context { get; private set; }
-
-    public DataAccessCredentialUsageNode(DataAccessCredentials credentials,ITableInfo tableInfo,DataAccessContext context)
+    public DataAccessCredentialUsageNode(DataAccessCredentials credentials, ITableInfo tableInfo,
+        DataAccessContext context)
     {
         Credentials = credentials;
         TableInfo = tableInfo;
         Context = context;
+    }
+
+    public DataAccessCredentials Credentials { get; }
+    public ITableInfo TableInfo { get; }
+    public DataAccessContext Context { get; }
+
+    public void DeleteInDatabase()
+    {
+        TableInfo.CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(Credentials, TableInfo, Context);
     }
 
     public override string ToString()
@@ -41,16 +49,11 @@ public class DataAccessCredentialUsageNode:Node, IDeleteable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((DataAccessCredentialUsageNode) obj);
+        return Equals((DataAccessCredentialUsageNode)obj);
     }
 
     public override int GetHashCode()
     {
-        return System.HashCode.Combine(Credentials, TableInfo, Context);
-    }
-
-    public void DeleteInDatabase()
-    {
-        TableInfo.CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(Credentials, TableInfo, Context);
+        return HashCode.Combine(Credentials, TableInfo, Context);
     }
 }

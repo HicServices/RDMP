@@ -23,13 +23,13 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
     private Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator,Catalogue catalogue)
+    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator, Catalogue catalogue)
         : base(activator)
     {
         SetTarget(catalogue);
     }
 
-    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator):base(activator)
+    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator) : base(activator)
     {
     }
 
@@ -45,8 +45,8 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue) target;
-            
+        _catalogue = (Catalogue)target;
+
         //must have both of these things to be DQEd
         if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)
         {

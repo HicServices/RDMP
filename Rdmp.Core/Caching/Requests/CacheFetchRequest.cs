@@ -13,27 +13,13 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Caching.Requests;
 
 /// <summary>
-/// Describes a normal caching request for a period of days/hours for an ICacheSource to request.  This includes start / end date which will be the next logical period
-/// of time to fetch to advance the head of an ICacheProgress (fetch the next date range and update the progress pointer).
+///     Describes a normal caching request for a period of days/hours for an ICacheSource to request.  This includes start
+///     / end date which will be the next logical period
+///     of time to fetch to advance the head of an ICacheProgress (fetch the next date range and update the progress
+///     pointer).
 /// </summary>
 public class CacheFetchRequest : ICacheFetchRequest
 {
-    [NoMappingToDatabase]
-    public IRepository Repository { get; set; }
-
-    public DateTime Start { get; set; }
-    public DateTime End => Start.Add(ChunkPeriod);
-    public TimeSpan ChunkPeriod { get; set; }
-    public IPermissionWindow PermissionWindow { get; set; }
-    public ICacheProgress CacheProgress { get; set; }
-    public ICacheFetchFailure PreviousFailure { get; set; }
-
-
-    /// <summary>
-    /// Is this CacheFetchRequest a retry of a previously failed fetch request?
-    /// </summary>
-    public bool IsRetry => PreviousFailure != null;
-
     public CacheFetchRequest(IRepository repository, DateTime start)
     {
         Repository = repository;
@@ -41,12 +27,12 @@ public class CacheFetchRequest : ICacheFetchRequest
         PreviousFailure = null;
     }
 
-    public CacheFetchRequest(IRepository repository): this(repository,DateTime.MinValue)
+    public CacheFetchRequest(IRepository repository) : this(repository, DateTime.MinValue)
     {
     }
 
     /// <summary>
-    /// Creates a CacheFetchRequest from a previous failure.
+    ///     Creates a CacheFetchRequest from a previous failure.
     /// </summary>
     /// <param name="cacheFetchFailure"></param>
     /// <param name="cacheProgress"></param>
@@ -58,6 +44,22 @@ public class CacheFetchRequest : ICacheFetchRequest
         PermissionWindow = cacheProgress.PermissionWindow;
         PreviousFailure = cacheFetchFailure;
     }
+
+    public ICacheFetchFailure PreviousFailure { get; set; }
+
+    [NoMappingToDatabase] public IRepository Repository { get; set; }
+
+    public DateTime Start { get; set; }
+    public DateTime End => Start.Add(ChunkPeriod);
+    public TimeSpan ChunkPeriod { get; set; }
+    public IPermissionWindow PermissionWindow { get; set; }
+    public ICacheProgress CacheProgress { get; set; }
+
+
+    /// <summary>
+    ///     Is this CacheFetchRequest a retry of a previously failed fetch request?
+    /// </summary>
+    public bool IsRetry => PreviousFailure != null;
 
     public void SaveCacheFillProgress(DateTime cacheFillProgress)
     {
@@ -74,7 +76,7 @@ public class CacheFetchRequest : ICacheFetchRequest
         }
         else
         {
-            new CacheFetchFailure((ICatalogueRepository) Repository, CacheProgress,Start,End, e);
+            new CacheFetchFailure((ICatalogueRepository)Repository, CacheProgress, Start, End, e);
         }
     }
 
@@ -87,7 +89,7 @@ public class CacheFetchRequest : ICacheFetchRequest
     }
 
     /// <summary>
-    /// Factory method which creates the 'next' logical fetch request using the request's chunk period
+    ///     Factory method which creates the 'next' logical fetch request using the request's chunk period
     /// </summary>
     /// <returns></returns>
     public ICacheFetchRequest GetNext()

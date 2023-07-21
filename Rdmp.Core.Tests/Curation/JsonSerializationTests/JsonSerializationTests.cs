@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.JsonSerializationTests;
 
-public class JsonSerializationTests:DatabaseTests
+public class JsonSerializationTests : DatabaseTests
 {
     [Test]
     public void TestSerialization_Catalogue()
@@ -23,20 +23,21 @@ public class JsonSerializationTests:DatabaseTests
         if (CatalogueRepository is not TableRepository)
             Assert.Inconclusive("This test does not apply for non db repos");
 
-        var c = new Catalogue(RepositoryLocator.CatalogueRepository,"Fish");
+        var c = new Catalogue(RepositoryLocator.CatalogueRepository, "Fish");
 
         var mySerializeable = new MySerializeableTestClass(new ShareManager(RepositoryLocator))
- {
-     SelectedCatalogue = c,
-     Title = "War and Pieces"
- };
+        {
+            SelectedCatalogue = c,
+            Title = "War and Pieces"
+        };
 
         var dbConverter = new DatabaseEntityJsonConverter(RepositoryLocator);
         var lazyConverter = new PickAnyConstructorJsonConverter(RepositoryLocator);
 
 
-        var asString = JsonConvert.SerializeObject(mySerializeable, dbConverter,lazyConverter);
-        var mySerializeableAfter = (MySerializeableTestClass)JsonConvert.DeserializeObject(asString, typeof(MySerializeableTestClass), new JsonConverter[] { dbConverter, lazyConverter });
+        var asString = JsonConvert.SerializeObject(mySerializeable, dbConverter, lazyConverter);
+        var mySerializeableAfter = (MySerializeableTestClass)JsonConvert.DeserializeObject(asString,
+            typeof(MySerializeableTestClass), dbConverter, lazyConverter);
 
         Assert.AreNotEqual(mySerializeable, mySerializeableAfter);
         Assert.AreEqual(mySerializeable.SelectedCatalogue, mySerializeableAfter.SelectedCatalogue);
@@ -44,29 +45,28 @@ public class JsonSerializationTests:DatabaseTests
         Assert.AreEqual("War and Pieces", mySerializeableAfter.Title);
         mySerializeableAfter.SelectedCatalogue.Name = "Cannon balls";
         mySerializeableAfter.SelectedCatalogue.SaveToDatabase();
-            
+
         Assert.AreNotEqual(mySerializeable.SelectedCatalogue.Name, mySerializeableAfter.SelectedCatalogue.Name);
     }
 
     //todo null Catalogue test case
 }
-    
-    
+
 public class MySerializeableTestClass
 {
-    public string Title { get; set; }
-
-    public Catalogue SelectedCatalogue { get; set; }
-
     private readonly ShareManager _sm;
 
     public MySerializeableTestClass(IRDMPPlatformRepositoryServiceLocator locator)
     {
         _sm = new ShareManager(locator);
     }
-        
+
     public MySerializeableTestClass(ShareManager sm)
     {
         _sm = sm;
     }
+
+    public string Title { get; set; }
+
+    public Catalogue SelectedCatalogue { get; set; }
 }

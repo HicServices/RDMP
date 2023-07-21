@@ -10,14 +10,10 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="CohortAggregateContainer" />
 /// </summary>
 public class CohortAggregateContainerCombineable : ICombineToMakeCommand
 {
-    public CohortAggregateContainer ParentContainerIfAny { get; private set; }
-    public CohortAggregateContainer AggregateContainer { get; private set; }
-    public List<CohortAggregateContainer> AllSubContainersRecursively  { get; private set; }
-
     public CohortAggregateContainerCombineable(CohortAggregateContainer aggregateContainer)
     {
         AggregateContainer = aggregateContainer;
@@ -26,7 +22,10 @@ public class CohortAggregateContainerCombineable : ICombineToMakeCommand
         ParentContainerIfAny = AggregateContainer.GetParentContainerIfAny();
     }
 
-        
+    public CohortAggregateContainer ParentContainerIfAny { get; private set; }
+    public CohortAggregateContainer AggregateContainer { get; }
+    public List<CohortAggregateContainer> AllSubContainersRecursively { get; private set; }
+
 
     public string GetSqlString()
     {

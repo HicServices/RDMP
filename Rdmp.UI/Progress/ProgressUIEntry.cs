@@ -8,24 +8,16 @@ using System;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.SimpleDialogs;
 
-
 namespace Rdmp.UI.Progress;
 
 /// <summary>
-/// Represents a single <see cref="NotifyEventArgs"/> with supplemental data such as the date and sender.  This is the object
-/// shown in <see cref="ProgressUI"/>.
+///     Represents a single <see cref="NotifyEventArgs" /> with supplemental data such as the date and sender.  This is the
+///     object
+///     shown in <see cref="ProgressUI" />.
 /// </summary>
 public class ProgressUIEntry
 {
-    public string Sender { get; private set; }
-    public string Message { get; private set; }
-    public ProgressEventType ProgressEventType { get; }
-    public DateTime EventDate { get; private set; }
-
-    public NotifyEventArgs Args { get;private set; }
-    public Exception Exception { get; set; }
-
-    public ProgressUIEntry(object sender,DateTime eventDate, NotifyEventArgs args)
+    public ProgressUIEntry(object sender, DateTime eventDate, NotifyEventArgs args)
     {
         Sender = FormatSender(sender);
         Message = args.Message;
@@ -34,6 +26,14 @@ public class ProgressUIEntry
         Exception = args.Exception;
         Args = args;
     }
+
+    public string Sender { get; private set; }
+    public string Message { get; private set; }
+    public ProgressEventType ProgressEventType { get; }
+    public DateTime EventDate { get; private set; }
+
+    public NotifyEventArgs Args { get; private set; }
+    public Exception Exception { get; set; }
 
     private static string FormatSender(object sender)
     {

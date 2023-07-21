@@ -28,48 +28,57 @@ using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.DataRelease;
 
 /// <summary>
-/// The ultimate end point of the Data Export Manager is the provision of a packaged up Release of all the anonymised datasets for all the cohort(s) (e.g. 'Cases' and 'Controls') in
-/// a research project.  There is no going back once you have sent the package to the researcher, if you have accidentally included the wrong datasets or supplied identifiable data
-/// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
-/// 
-/// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well
-/// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to its state.</para>
-/// 
-/// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
-/// early datasets have been changed or the files deleted etc.  The status of each extracted dataset is shown in the list box.  You can only do an extraction once all the datasets in
-/// the configuration are releasable.</para>
-/// 
-/// <para>In addition to verifying the datasets you can tie the RDMP into your ticketing system.  For example if you have tickets for each project extraction with stages for validation
-/// (so that data analysts can log time against validation and sign off on it etc) then you can setup Data Export Manager when the 'Release' Ticket is at a certain state (e.g. validated).
-/// To configure a ticketing system see TicketingSystemConfigurationUI.</para>
-/// 
-/// <para>If you haven't configured a Ticketing System then you shouldn't have to worry about the Environment State.</para>
-/// 
-/// <para> Once you have selected all the configurations you want to release click Release.</para>
+///     The ultimate end point of the Data Export Manager is the provision of a packaged up Release of all the anonymised
+///     datasets for all the cohort(s) (e.g. 'Cases' and 'Controls') in
+///     a research project.  There is no going back once you have sent the package to the researcher, if you have
+///     accidentally included the wrong datasets or supplied identifiable data
+///     (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly
+///     controlled sequence which the RDMP undertakes to try to reduce error.
+///     <para>
+///         In this control you will see all the currently selected datasets in a project's configuration(s) and the state
+///         of the dataset extraction (from the RDMP's perspective) as well
+///         as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options
+///         appropriate to its state.
+///     </para>
+///     <para>
+///         Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is
+///         possible that by the time you come to release a project some of the
+///         early datasets have been changed or the files deleted etc.  The status of each extracted dataset is shown in
+///         the list box.  You can only do an extraction once all the datasets in
+///         the configuration are releasable.
+///     </para>
+///     <para>
+///         In addition to verifying the datasets you can tie the RDMP into your ticketing system.  For example if you have
+///         tickets for each project extraction with stages for validation
+///         (so that data analysts can log time against validation and sign off on it etc) then you can setup Data Export
+///         Manager when the 'Release' Ticket is at a certain state (e.g. validated).
+///         To configure a ticketing system see TicketingSystemConfigurationUI.
+///     </para>
+///     <para>If you haven't configured a Ticketing System then you shouldn't have to worry about the Environment State.</para>
+///     <para> Once you have selected all the configurations you want to release click Release.</para>
 /// </summary>
 public partial class DataReleaseUI : DataReleaseUI_Design
 {
-    private Project _project;
-
-    private bool _isFirstTime = true;
-
-    private IPipelineSelectionUI _pipelineSelectionUI1;
-    private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
+    private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
+    private IEnumerable<ExtractionConfiguration> _configurations = Array.Empty<ExtractionConfiguration>();
+    private IMapsDirectlyToDatabaseTable[] _globals;
 
-    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
+    private readonly ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME, -500);
 
 
     private bool _isExecuting;
-    private RDMPCollectionCommonFunctionality _commonFunctionality;
-    private IEnumerable<ExtractionConfiguration> _configurations = Array.Empty<ExtractionConfiguration>();
-    private IEnumerable<ISelectedDataSets> _selectedDataSets = Array.Empty<ISelectedDataSets>();
+
+    private bool _isFirstTime = true;
 
     private ToolStripControlHost _pipelinePanel;
+
+    private IPipelineSelectionUI _pipelineSelectionUI1;
+    private Project _project;
+    private IEnumerable<ISelectedDataSets> _selectedDataSets = Array.Empty<ISelectedDataSets>();
 
     public DataReleaseUI()
     {
@@ -97,10 +106,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         tlvReleasePotentials.RefreshObjects(tlvReleasePotentials.Objects.Cast<object>().ToArray());
 
         if (_isExecuting && !checkAndExecuteUI1.IsExecuting)
-        {
             //if it was executing before and now no longer executing the status of the ExtractionConfigurations / Projects might have changed
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
-        }
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_project));
 
         _isExecuting = checkAndExecuteUI1.IsExecuting;
     }
@@ -146,10 +153,14 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         {
             Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
             Configurations = ToIdList(
-                _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
+                _configurations
+                    .Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c))
+                    .Select(ec => ec.ID).ToArray()
             ),
             SelectedDataSets = ToIdList(
-                _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+                _selectedDataSets.All(tlvReleasePotentials.IsChecked)
+                    ? Array.Empty<int>()
+                    : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
             ),
             Command = activityRequested,
             ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode)
@@ -174,6 +185,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
         return null;
     }
+
     private bool CanExpandGetter(object model)
     {
         var c = ChildrenGetter(model);
@@ -184,18 +196,20 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
-            
-        if(!_commonFunctionality.IsSetup)
+
+        if (!_commonFunctionality.IsSetup)
         {
-            _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
-            {
-                AddFavouriteColumn = false,
-                SuppressChildrenAdder = true,
-                AddCheckColumn = false
-            });
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    AddFavouriteColumn = false,
+                    SuppressChildrenAdder = true,
+                    AddCheckColumn = false
+                });
 
             _commonFunctionality.SetupColumnTracking(olvName, new Guid("2d09c1d2-b4a7-400f-9003-d23e43cd3d75"));
-            _commonFunctionality.SetupColumnTracking(olvReleaseability, new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
+            _commonFunctionality.SetupColumnTracking(olvReleaseability,
+                new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
         }
 
         _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
@@ -208,7 +222,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         if (_pipelineSelectionUI1 == null)
         {
             var context = ReleaseUseCase.DesignTime();
-            _pipelineSelectionUI1 = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(Activator,"Release", DockStyle.Fill);
+            _pipelineSelectionUI1 =
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(
+                    Activator, "Release", DockStyle.Fill);
             _pipelineSelectionUI1.CollapseToSingleLineMode();
             _pipelineSelectionUI1.Pipeline = null;
             _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
@@ -218,8 +234,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
         CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
         CommonFunctionality.Add(_pipelinePanel);
-        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artifacts and assemble them into a single release folder/database. This will start with a source component that gathers the artifacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
-            
+        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline",
+            "The sequence of components that will be executed in order to gather the extracted artifacts and assemble them into a single release folder/database. This will start with a source component that gathers the artifacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
+
         checkAndExecuteUI1.SetItemActivator(activator);
 
         var checkedBefore = tlvReleasePotentials.CheckedObjects;
@@ -228,7 +245,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         tlvReleasePotentials.AddObject(_globalsNode);
         tlvReleasePotentials.AddObject(_project);
         tlvReleasePotentials.ExpandAll();
-            
+
         if (_isFirstTime)
             tlvReleasePotentials.CheckAll();
         else if (checkedBefore.Count > 0)
@@ -272,9 +289,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     }
 }
 
-
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
 public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
 {
-
 }

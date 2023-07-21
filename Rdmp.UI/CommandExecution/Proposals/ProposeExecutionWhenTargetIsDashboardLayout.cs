@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsDashboardLayout:RDMPCommandExecutionProposal<DashboardLayout>
+internal class ProposeExecutionWhenTargetIsDashboardLayout : RDMPCommandExecutionProposal<DashboardLayout>
 {
     public ProposeExecutionWhenTargetIsDashboardLayout(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,7 +27,8 @@ internal class ProposeExecutionWhenTargetIsDashboardLayout:RDMPCommandExecutionP
         ItemActivator.Activate<DashboardLayoutUI, DashboardLayout>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DashboardLayout target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DashboardLayout target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

@@ -20,14 +20,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Extraction component that will generate share definition files for the catalogues involved in the extraction.
-/// 
-/// <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
+///     Extraction component that will generate share definition files for the catalogues involved in the extraction.
+///     <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
 /// </summary>
-public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<IBasicActivateItems>
+public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>,
+    IPipelineRequirement<IBasicActivateItems>
 {
-    private IExtractCommand _request;
     private IBasicActivateItems _activator;
+    private IExtractCommand _request;
 
     [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
          $p - Project Name ('e.g. My Project')
@@ -41,7 +41,18 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
          ", Mandatory = true, DefaultValue = "$d")]
     public string MetadataNamingPattern { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+    {
+        _activator = value;
+    }
+
+    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    {
+        _request = value;
+    }
+
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         toProcess.TableName = GetTableName();
         toProcess.ExtendedProperties.Add("ProperlyNamed", true);
@@ -50,7 +61,9 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         {
             var catalogue = extractDatasetCommand.Catalogue;
 
-            var sourceFolder = _request.GetExtractionDirectory() ?? throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
+            var sourceFolder = _request.GetExtractionDirectory() ??
+                               throw new Exception(
+                                   "Could not find Source Folder. Does the project have an Extraction Directory defined?");
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));
 
@@ -58,9 +71,26 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
             var cmd = new ExecuteCommandExportObjectsToFile(_activator, catalogue, outputFile);
             cmd.Execute();
             catalogue.RevertToDatabaseState();
-
         }
+
         return toProcess;
+    }
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
+            if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a",
+                    CheckResult.Fail));
     }
 
     public string GetTableName()
@@ -85,35 +115,5 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         }
 
         return tblName;
-    }
-
-    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-    {
-            
-    }
-
-    public void Abort(IDataLoadEventListener listener)
-    {
-            
-    }
-
-    public void Check(ICheckNotifier notifier)
-    {
-        if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
-        {
-            if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
-        }
-    }
-
-    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
-    {
-        _request = value;
-    }
-
-    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
-    {
-        _activator = value;
     }
 }

@@ -13,14 +13,13 @@ using Rdmp.Core.DataLoad.Modules.Exceptions;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character positions of each named field and date
-/// format (where applicable).
+///     User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character
+///     positions of each named field and date
+///     format (where applicable).
 /// </summary>
 public class FixedWidthFormatFile
 {
     private readonly FileInfo _pathToFormatFile;
-
-    public FixedWidthColumn[] FormatColumns { get; private set; }
 
     public FixedWidthFormatFile(FileInfo pathToFormatFile)
     {
@@ -33,7 +32,7 @@ public class FixedWidthFormatFile
 
         //get rid of blank lines
         readAllLines = readAllLines.Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
-            
+
         //create a format field for each line in the format file
         FormatColumns = new FixedWidthColumn[readAllLines.Length - 1];
 
@@ -49,10 +48,13 @@ public class FixedWidthFormatFile
             FormatColumns[index].Size = int.Parse(cellsOnRowAsSplitString[3]);
 
             //It's ok to ommmit this column for specific rows (that aren't dates)
-            if (cellsOnRowAsSplitString.Length >4)
-                FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
+            if (cellsOnRowAsSplitString.Length > 4)
+                FormatColumns[index].DateFormat =
+                    cellsOnRowAsSplitString[4]
+                        .Replace("ccyy",
+                            "yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
 
-            if (FormatColumns[index].From + FormatColumns[index].Size -1 != FormatColumns[index].To)
+            if (FormatColumns[index].From + FormatColumns[index].Size - 1 != FormatColumns[index].To)
                 throw new FlatFileLoadException(
                     $"Problem with format of field {FormatColumns[index].Field} From + Size -1 does not equal To");
 
@@ -64,10 +66,13 @@ public class FixedWidthFormatFile
                 catch (Exception e)
                 {
                     throw new FlatFileLoadException(
-                        $"Problem with flat file format which announced the date format as {FormatColumns[index].DateFormat} which C# says isn't a valid format",e);
+                        $"Problem with flat file format which announced the date format as {FormatColumns[index].DateFormat} which C# says isn't a valid format",
+                        e);
                 }
         }
     }
+
+    public FixedWidthColumn[] FormatColumns { get; }
 
 
     public DataTable GetDataTableFromFlatFile(FileInfo f)
@@ -81,10 +86,9 @@ public class FixedWidthFormatFile
             var dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
 
             if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
-                dataColumn.DataType = typeof (DateTime);
+                dataColumn.DataType = typeof(DateTime);
 
             dataColumn.AllowDBNull = true;
-
         }
 
         var lineNumber = 0;
@@ -101,13 +105,13 @@ public class FixedWidthFormatFile
             //foreach expected fixed width column
             foreach (var fixedWidthColumn in FormatColumns)
             {
-                if(readAllLine.Length < fixedWidthColumn.To)
+                if (readAllLine.Length < fixedWidthColumn.To)
                     throw new FlatFileLoadException(
                         $"Error on line {lineNumber} of file {f.Name}, the format file ({_pathToFormatFile.FullName}) specified that a column {fixedWidthColumn.Field} would be found between character positions {fixedWidthColumn.From} and {fixedWidthColumn.To} but the current line is only {readAllLine.Length} characters long");
 
                 //substring in order to get cell data
-                var value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
-                      
+                var value = readAllLine.Substring(fixedWidthColumn.From - 1, fixedWidthColumn.Size);
+
                 //if its a null
                 if (string.IsNullOrWhiteSpace(value))
                     dataRow[fixedWidthColumn.Field] = DBNull.Value;
@@ -116,13 +120,13 @@ public class FixedWidthFormatFile
                 if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
                     try
                     {
-                        dataRow[fixedWidthColumn.Field] = DateTime.ParseExact(value, fixedWidthColumn.DateFormat,null);
+                        dataRow[fixedWidthColumn.Field] = DateTime.ParseExact(value, fixedWidthColumn.DateFormat, null);
                     }
                     catch (Exception e)
                     {
-                            
                         throw new Exception(
-                            $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",e);
+                            $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",
+                            e);
                     }
                 else //its not a date
                     dataRow[fixedWidthColumn.Field] = value.Trim();
@@ -134,15 +138,11 @@ public class FixedWidthFormatFile
 
     private void EnsureHeaderIntact(string header)
     {
-
         //From	To	Field	Size	DateFormat
-        var expected = string.Join(",",typeof(FixedWidthColumn).GetFields().Select(f=>f.Name));
+        var expected = string.Join(",", typeof(FixedWidthColumn).GetFields().Select(f => f.Name));
 
-        if(!header.TrimEnd().Equals(expected))
+        if (!header.TrimEnd().Equals(expected))
             throw new FlatFileLoadException(
                 $"Format file headers in file {_pathToFormatFile.FullName} WAS: {header} WE EXPECTED: {expected}");
-
-
-
     }
 }

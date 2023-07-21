@@ -14,21 +14,20 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
 
 /// <summary>
-/// Pipeline which processes a single job through all stages before accepting another.  Execution involves running each DataLoadComponent with the current 
-/// IDataLoadJob and then disposing them. 
+///     Pipeline which processes a single job through all stages before accepting another.  Execution involves running each
+///     DataLoadComponent with the current
+///     IDataLoadJob and then disposing them.
 /// </summary>
 public class SingleJobExecution : IDataLoadExecution
 {
-    public List<IDataLoadComponent> Components { get; set; }
-   
-
     public SingleJobExecution(List<IDataLoadComponent> components)
     {
         Components = components;
     }
 
+    public List<IDataLoadComponent> Components { get; set; }
+
     /// <summary>
-    /// 
     /// </summary>
     /// <returns></returns>
     /// <exception cref="OperationCanceledException"></exception>
@@ -51,7 +50,7 @@ public class SingleJobExecution : IDataLoadExecution
 
                     //run current component
                     var exitCodeType = component.Run(job, cancellationToken);
-                        
+
                     //current component failed so jump out, either because load not nessesary or crash
                     if (exitCodeType == ExitCodeType.OperationNotRequired)
                     {
@@ -82,20 +81,19 @@ public class SingleJobExecution : IDataLoadExecution
             TryDispose(ExitCodeType.Success, job);
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Completed job {job.JobID}"));
-                
-            if(job.CrashAtEndMessages.Count > 0)
+
+            if (job.CrashAtEndMessages.Count > 0)
             {
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                     $"There were {job.CrashAtEndMessages.Count} {nameof(IDataLoadJob.CrashAtEndMessages)} registered for job {job.JobID}"));
 
                 // pop the messages into the handler
-                foreach (var m in job.CrashAtEndMessages)
-                {
-                    job.OnNotify(job, m);  // depending on the listener these may break flow of control (e.g. 
-                }
+                foreach (var m in
+                         job.CrashAtEndMessages)
+                    job.OnNotify(job, m); // depending on the listener these may break flow of control (e.g. 
 
                 // return failed (even if the messages are all warnings)
-                return ExitCodeType.Error;                    
+                return ExitCodeType.Error;
             }
 
             return ExitCodeType.Success;
@@ -111,7 +109,7 @@ public class SingleJobExecution : IDataLoadExecution
         }
     }
 
-    private void TryDispose(ExitCodeType exitCode,IDataLoadJob job)
+    private void TryDispose(ExitCodeType exitCode, IDataLoadJob job)
     {
         try
         {

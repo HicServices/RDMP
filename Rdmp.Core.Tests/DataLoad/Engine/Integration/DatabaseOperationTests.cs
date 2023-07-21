@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using FAnsi;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 internal class DatabaseOperationTests : DatabaseTests
 {
-    private Stack<IDeleteable> toCleanUp = new();
+    private readonly Stack<IDeleteable> toCleanUp = new();
 
     [Test]
     // This no longer copies between servers, but the original test didn't guarantee that would happen anyway
@@ -35,7 +35,7 @@ internal class DatabaseOperationTests : DatabaseTests
         var testDb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName);
         var raw = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase($"{testLiveDatabaseName}_RAW");
 
-        foreach (var db in new[] { raw ,testDb})
+        foreach (var db in new[] { raw, testDb })
             if (db.Exists())
             {
                 foreach (var table in db.DiscoverTables(true))
@@ -43,20 +43,22 @@ internal class DatabaseOperationTests : DatabaseTests
 
                 db.Drop();
             }
-        
+
         DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testLiveDatabaseName);
         Assert.IsTrue(testDb.Exists());
 
-        testDb.CreateTable("Table_1", new[] {new DatabaseColumnRequest("Id", "int")});
+        testDb.CreateTable("Table_1", new[] { new DatabaseColumnRequest("Id", "int") });
 
 
         //clone the builder
-        var builder = new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)
-        {
-            InitialCatalog = testLiveDatabaseName
-        };
+        var builder =
+            new SqlConnectionStringBuilder(
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)
+            {
+                InitialCatalog = testLiveDatabaseName
+            };
 
-        var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder),null,CatalogueRepository);
+        var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder), null, CatalogueRepository);
 
         var cloner = new DatabaseCloner(dbConfiguration);
         try
@@ -68,15 +70,15 @@ internal class DatabaseOperationTests : DatabaseTests
                 $"{testLiveDatabaseName}_RAW").Exists());
 
             //now create a catalogue and wire it SetUp to the table TEST on the test database server 
-            var cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1"); 
+            var cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1");
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(), tableInfo, LoadBubble.Raw);
-                
+                cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(), tableInfo,
+                    LoadBubble.Raw);
+
             Assert.IsTrue(raw.Exists());
             Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
-
         }
         finally
         {
@@ -99,7 +101,8 @@ internal class DatabaseOperationTests : DatabaseTests
     {
         //create a new catalogue for test data (in the test data catalogue)
         var cat = new Catalogue(CatalogueRepository, "DeleteMe");
-        var importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table, DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
+        var importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table,
+            DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
         importer.DoImport(out var tableInfo, out var columnInfos);
 
         toCleanUp.Push(cat);
@@ -108,15 +111,16 @@ internal class DatabaseOperationTests : DatabaseTests
         var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
         if (creds != null)
             toCleanUp.Push(creds);
-            
+
         //and the TableInfo
         toCleanUp.Push(tableInfo);
-            
+
         //for each column we will add a new one to the 
         foreach (var col in columnInfos)
         {
             //create it with the same name
-            var cataItem = new CatalogueItem(CatalogueRepository, cat, col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`'));
+            var cataItem = new CatalogueItem(CatalogueRepository, cat,
+                col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`'));
             toCleanUp.Push(cataItem);
 
             cataItem.SetColumnInfo(col);

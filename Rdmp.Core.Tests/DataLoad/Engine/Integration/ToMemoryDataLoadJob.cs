@@ -22,23 +22,25 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
 {
-    private List<NotifyEventArgs> _crashAtEnd = new();
-    /// <inheritdoc/>
-    public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+    private readonly List<NotifyEventArgs> _crashAtEnd = new();
 
-    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true): base(throwOnErrorEvents)
+    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true) : base(throwOnErrorEvents)
     {
     }
 
-    public string Description { get; private set; }
-    public IDataLoadInfo DataLoadInfo { get; private set; }
+    public bool DisposeImmediately { get; }
+
+    /// <inheritdoc />
+    public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+
+    public string Description { get; }
+    public IDataLoadInfo DataLoadInfo { get; }
     public ILoadDirectory LoadDirectory { get; set; }
     public int JobID { get; set; }
-    public ILoadMetadata LoadMetadata { get; private set; }
-    public bool DisposeImmediately { get; private set; }
-    public string ArchiveFilepath { get; private set; }
-    public List<ITableInfo> RegularTablesToLoad { get; private set; } = new List<ITableInfo>();
-    public List<ITableInfo> LookupTablesToLoad { get; private set; } = new List<ITableInfo>();
+    public ILoadMetadata LoadMetadata { get; }
+    public string ArchiveFilepath { get; }
+    public List<ITableInfo> RegularTablesToLoad { get; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; } = new();
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
     public void StartLogging()
@@ -49,7 +51,7 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     {
     }
 
-    public HICDatabaseConfiguration Configuration { get; private set; }
+    public HICDatabaseConfiguration Configuration { get; }
 
     public object Payload { get; set; }
     public bool PersistentRaw { get; set; }
@@ -65,11 +67,14 @@ public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
     }
+
     public ColumnInfo[] GetAllColumns()
     {
-        return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
     }
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public void CrashAtEnd(NotifyEventArgs because)
     {
         _crashAtEnd.Add(because);

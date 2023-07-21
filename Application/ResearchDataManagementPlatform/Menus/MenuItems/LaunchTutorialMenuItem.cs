@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Tutorials;
@@ -12,18 +13,19 @@ using Rdmp.UI.Tutorials;
 namespace ResearchDataManagementPlatform.Menus.MenuItems;
 
 /// <summary>
-/// Launches the given Tutorial, Tutorials which the user has already been exposed to will be marked (Seen)
+///     Launches the given Tutorial, Tutorials which the user has already been exposed to will be marked (Seen)
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class LaunchTutorialMenuItem : ToolStripMenuItem
 {
-    private IActivateItems _activator;
-    private readonly Tutorial _tutorial;
     private readonly TutorialTracker _tracker;
+    private readonly Tutorial _tutorial;
+    private IActivateItems _activator;
 
-    public LaunchTutorialMenuItem(ToolStripMenuItem parent,IActivateItems activator, Tutorial tutorial, TutorialTracker tracker)
+    public LaunchTutorialMenuItem(ToolStripMenuItem parent, IActivateItems activator, Tutorial tutorial,
+        TutorialTracker tracker)
     {
-        parent.DropDownOpening += parent_DropDownOpening; 
+        parent.DropDownOpening += parent_DropDownOpening;
         _activator = activator;
         _tutorial = tutorial;
         _tracker = tracker;

@@ -26,54 +26,16 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Sharing.Dependency;
 using Rdmp.Core.Validation.Dependency;
-using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in
-/// dictionaries and arrays in memory instead of the database.
+///     Memory only implementation of <see cref="ICatalogueRepository" /> in which all objects are created in
+///     dictionaries and arrays in memory instead of the database.
 /// </summary>
-public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
+public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, ITableInfoCredentialsManager,
+    IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
 {
-    public IAggregateForcedJoinManager AggregateForcedJoinManager => this;
-    public IGovernanceManager GovernanceManager => this;
-    public ITableInfoCredentialsManager TableInfoCredentialsManager => this;
-    public ICohortContainerManager CohortContainerManager => this;
-    public IEncryptionManager EncryptionManager { get; private set; }
-
-    public IFilterManager FilterManager => this;
-    public IPluginManager PluginManager { get; private set; }
-
-    public IJoinManager JoinManager { get; private set; }
-
-    public MEF MEF
-    {
-        get => _mef;
-        set
-        {
-            _mef = value;
-
-            if(ObscureDependencyFinder is CatalogueObscureDependencyFinder odf && this is IDataExportRepository dxm)
-                odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dxm));
-        }
-    }
-
-    public CommentStore CommentStore { get; set; }
-
-    public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
-    public static string ConnectionString => null;
-    public static DbConnectionStringBuilder ConnectionStringBuilder => null;
-    public static DiscoveredServer DiscoveredServer => null;
-
-    /// <summary>
-    /// Path to RSA private key encryption certificate for decrypting encrypted credentials.
-    /// </summary>
-    public string EncryptionKeyPath { get; protected set; }
-
-    protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } =
-        new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
-
     public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
     {
         JoinManager = new JoinManager(this);
@@ -82,9 +44,11 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         EncryptionManager = new PasswordEncryptionKeyLocation(this);
 
         //we need to know what the default servers for stuff are
-        foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
-            if(currentDefaults == null)
+        foreach (PermissableDefaults value in Enum.GetValues(typeof(PermissableDefaults)))
+            if (currentDefaults == null)
+            {
                 Defaults.Add(value, null); //we have no defaults to import
+            }
             else
             {
                 //we have defaults to import so get the default
@@ -92,9 +56,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
                 //if it's not null we must be able to return it with GetObjectByID
                 if (defaultServer != null)
-                    Objects.TryAdd(defaultServer,0);
+                    Objects.TryAdd(defaultServer, 0);
 
-                Defaults.Add(value,defaultServer);
+                Defaults.Add(value, defaultServer);
             }
 
         //start IDs with the maximum id of any default to avoid collisions
@@ -104,14 +68,55 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         var dependencyFinder = new CatalogueObscureDependencyFinder(this);
 
-        if(this is IDataExportRepository dxm)
+        if (this is IDataExportRepository dxm)
         {
-            dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(new RepositoryProvider(dxm));
-            dependencyFinder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(new RepositoryProvider(dxm));
+            dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(
+                new RepositoryProvider(dxm));
+            dependencyFinder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(
+                new RepositoryProvider(dxm));
         }
 
         ObscureDependencyFinder = dependencyFinder;
     }
+
+    public static string ConnectionString => null;
+    public static DbConnectionStringBuilder ConnectionStringBuilder => null;
+    public static DiscoveredServer DiscoveredServer => null;
+
+    /// <summary>
+    ///     Path to RSA private key encryption certificate for decrypting encrypted credentials.
+    /// </summary>
+    public string EncryptionKeyPath { get; protected set; }
+
+    protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } = new();
+
+    public IAggregateForcedJoinManager AggregateForcedJoinManager => this;
+    public IGovernanceManager GovernanceManager => this;
+    public ITableInfoCredentialsManager TableInfoCredentialsManager => this;
+    public ICohortContainerManager CohortContainerManager => this;
+    public IEncryptionManager EncryptionManager { get; }
+
+    public IFilterManager FilterManager => this;
+    public IPluginManager PluginManager { get; }
+
+    public IJoinManager JoinManager { get; }
+
+    public MEF MEF
+    {
+        get => _mef;
+        set
+        {
+            _mef = value;
+
+            if (ObscureDependencyFinder is CatalogueObscureDependencyFinder odf && this is IDataExportRepository dxm)
+                odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(
+                    new RepositoryProvider(dxm));
+        }
+    }
+
+    public CommentStore CommentStore { get; set; }
+
+    public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
 
     public LogManager GetDefaultLogManager()
@@ -163,10 +168,10 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
                             ci => ci.ColumnInfo_ID != null && ci.ColumnInfo.TableInfo_ID == tableInfo.ID)).ToArray();
     }
 
-    public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
+    public ExternalDatabaseServer[] GetAllDatabases<T>() where T : IPatcher, new()
     {
         IPatcher p = new T();
-        return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(p)).ToArray();
+        return GetAllObjects<ExternalDatabaseServer>().Where(s => s.WasCreatedBy(p)).ToArray();
     }
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
@@ -187,6 +192,28 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
             Defaults.Add(toChange, externalDatabaseServer);
     }
 
+    /// <inheritdoc />
+    public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj)
+    {
+        return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName)
+            .Where(r => r.IsReferenceTo(obj));
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName)
+    {
+        return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName);
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<ExtendedProperty> GetExtendedProperties(IMapsDirectlyToDatabaseTable obj)
+    {
+        // First pass use SQL to pull only those with ReferencedObjectID ID that match our object
+        return GetAllObjectsWhere<ExtendedProperty>("ReferencedObjectID", obj.ID)
+            // Second pass make sure the object/repo match
+            .Where(r => r.IsReferenceTo(obj));
+    }
+
     public override void Clear()
     {
         base.Clear();
@@ -198,25 +225,63 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         Defaults.Clear();
     }
 
+    protected override void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    {
+        base.CascadeDeletes(oTableWrapperObject);
+
+        if (oTableWrapperObject is Catalogue catalogue)
+            foreach (var ci in catalogue.CatalogueItems)
+                ci.DeleteInDatabase();
+
+        if (oTableWrapperObject is ExtractionInformation extractionInformation)
+            extractionInformation.CatalogueItem.ClearAllInjections();
+
+        // when deleting a TableInfo
+        if (oTableWrapperObject is TableInfo t)
+        {
+            // forget about its credentials usages
+            CredentialsDictionary.Remove(t);
+
+            foreach (var c in t.ColumnInfos) c.DeleteInDatabase();
+        }
+
+        // when deleting a ColumnInfo
+        if (oTableWrapperObject is ColumnInfo columnInfo)
+            foreach (var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci => ci.ColumnInfo_ID == columnInfo.ID))
+            {
+                ci.ColumnInfo_ID = null;
+                ci.ClearAllInjections();
+                ci.SaveToDatabase();
+            }
+
+        if (oTableWrapperObject is CatalogueItem catalogueItem) catalogueItem.ExtractionInformation?.DeleteInDatabase();
+    }
+
     #region ITableInfoToCredentialsLinker
 
     /// <summary>
-    /// records which credentials can be used to access the table under which contexts
+    ///     records which credentials can be used to access the table under which contexts
     /// </summary>
-    protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } =
-        new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
-
-    public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    protected Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary
     {
-        if(!CredentialsDictionary.ContainsKey(tableInfo))
-            CredentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
+        get;
+        set;
+    } =
+        new();
 
-        CredentialsDictionary[tableInfo].Add(context,credentials);
+    public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+        DataAccessContext context)
+    {
+        if (!CredentialsDictionary.ContainsKey(tableInfo))
+            CredentialsDictionary.Add(tableInfo, new Dictionary<DataAccessContext, DataAccessCredentials>());
+
+        CredentialsDictionary[tableInfo].Add(context, credentials);
 
         tableInfo.ClearAllInjections();
     }
 
-    public virtual void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    public virtual void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+        DataAccessContext context)
     {
         if (!CredentialsDictionary.ContainsKey(tableInfo))
             return;
@@ -228,10 +293,11 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public virtual void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
-        if(!CredentialsDictionary.ContainsKey(tableInfo))
+        if (!CredentialsDictionary.ContainsKey(tableInfo))
             return;
 
-        var toRemove = CredentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
+        var toRemove = CredentialsDictionary[tableInfo].Where(v => Equals(v.Value, credentials)).Select(k => k.Key)
+            .ToArray();
 
         foreach (var context in toRemove)
             CredentialsDictionary[tableInfo].Remove(context);
@@ -239,12 +305,12 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
-        if(CredentialsDictionary.TryGetValue(tableInfo,out var creds))
+        if (CredentialsDictionary.TryGetValue(tableInfo, out var creds))
         {
-            if (creds.TryGetValue(context,out var cred))
+            if (creds.TryGetValue(context, out var cred))
                 return cred;
 
-            if (creds.TryGetValue(DataAccessContext.Any,out cred))
+            if (creds.TryGetValue(DataAccessContext.Any, out cred))
                 return cred;
         }
 
@@ -260,7 +326,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         return null;
     }
 
-    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
+    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
+        DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
     {
         var toreturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
@@ -275,12 +342,13 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         return toreturn;
     }
 
-    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
+    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(
+        DataAccessCredentials credentials)
     {
         var toreturn = new Dictionary<DataAccessContext, List<ITableInfo>>();
 
         //add the keys
-        foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
+        foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
             toreturn.Add(context, new List<ITableInfo>());
 
         foreach (var kvp in CredentialsDictionary)
@@ -292,14 +360,15 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
     {
-        return GetAllObjects<DataAccessCredentials>().FirstOrDefault(c=>Equals(c.Username,username) && Equals(c.GetDecryptedPassword(),password));
+        return GetAllObjects<DataAccessCredentials>().FirstOrDefault(c =>
+            Equals(c.Username, username) && Equals(c.GetDecryptedPassword(), password));
     }
 
     #endregion
 
     #region IAggregateForcedJoin
-    protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } =
-        new Dictionary<AggregateConfiguration, HashSet<ITableInfo>>();
+
+    protected Dictionary<AggregateConfiguration, HashSet<ITableInfo>> ForcedJoins { get; set; } = new();
 
     public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
     {
@@ -326,29 +395,31 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public virtual void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
     {
         if (!ForcedJoins.ContainsKey(configuration))
-            ForcedJoins.Add(configuration,new HashSet<ITableInfo>());
+            ForcedJoins.Add(configuration, new HashSet<ITableInfo>());
 
         ForcedJoins[configuration].Add(tableInfo);
     }
+
     #endregion
 
     #region ICohortContainerLinker
+
     protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
         new();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
         //if it is in the contents of a container
-        if (CohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child)))
+        if (CohortContainerContents.Any(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)))
             return CohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key;
 
         return null;
     }
 
-    public virtual void Add(CohortAggregateContainer parent,AggregateConfiguration child,int order)
+    public virtual void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order)
     {
         //make sure we know about the container
-        if(!CohortContainerContents.ContainsKey(parent))
+        if (!CohortContainerContents.ContainsKey(parent))
             CohortContainerContents.Add(parent, new HashSet<CohortContainerContent>());
 
         CohortContainerContents[parent].Add(new CohortContainerContent(child, order));
@@ -362,20 +433,21 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public class CohortContainerContent
     {
-        public IOrderable Orderable { get; private set; }
-
-        public int Order { get; set; }
-
         public CohortContainerContent(IOrderable orderable, int order)
         {
             Orderable = orderable;
             Order = order;
         }
+
+        public IOrderable Orderable { get; }
+
+        public int Order { get; set; }
     }
 
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
-        var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
+        var o = CohortContainerContents.SelectMany(kvp => kvp.Value)
+            .SingleOrDefault(c => c.Orderable.Equals(configuration));
 
         return o?.Order;
     }
@@ -390,7 +462,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public CohortAggregateContainer GetParent(CohortAggregateContainer child)
     {
-        var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
+        var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child)))
+            .Select(kvp => kvp.Key).ToArray();
         if (match.Length > 0)
             return match.Single();
 
@@ -416,24 +489,22 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public virtual void Add(CohortAggregateContainer parent, CohortAggregateContainer child)
     {
-        if(!CohortContainerContents.ContainsKey(parent))
-            CohortContainerContents.Add(parent,new HashSet<CohortContainerContent>());
+        if (!CohortContainerContents.ContainsKey(parent))
+            CohortContainerContents.Add(parent, new HashSet<CohortContainerContent>());
 
         CohortContainerContents[parent].Add(new CohortContainerContent(child, child.Order));
     }
-
 
     #endregion
 
 
     #region IFilterContainerManager
 
-    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } =
-        new Dictionary<IContainer, HashSet<IContainer>>();
+    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new();
 
     public IContainer[] GetSubContainers(IContainer container)
     {
-        if(!WhereSubContainers.ContainsKey(container))
+        if (!WhereSubContainers.ContainsKey(container))
             return Array.Empty<IContainer>();
 
         return WhereSubContainers[container].ToArray();
@@ -457,7 +528,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IFilter[] GetFilters(IContainer container)
     {
-        return GetAllObjects<IFilter>().Where(f =>f is not ExtractionFilter && f.FilterContainer_ID == container.ID).ToArray();
+        return GetAllObjects<IFilter>().Where(f => f is not ExtractionFilter && f.FilterContainer_ID == container.ID)
+            .ToArray();
     }
 
     public void AddChild(IContainer container, IFilter filter)
@@ -478,14 +550,14 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region IGovernanceManager
 
-    protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } =
-        new Dictionary<GovernancePeriod, HashSet<ICatalogue>>();
+    protected Dictionary<GovernancePeriod, HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new();
+
     private MEF _mef;
 
     public virtual void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
-        if(!GovernanceCoverage.ContainsKey(governancePeriod))
-            GovernanceCoverage.Add(governancePeriod,new HashSet<ICatalogue>());
+        if (!GovernanceCoverage.ContainsKey(governancePeriod))
+            GovernanceCoverage.Add(governancePeriod, new HashSet<ICatalogue>());
 
         GovernanceCoverage[governancePeriod].Remove(catalogue);
     }
@@ -500,7 +572,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods()
     {
-        return  GovernanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
+        return GovernanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
     }
 
     public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
@@ -529,69 +601,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         EncryptionKeyPath = null;
     }
+
     #endregion
-    protected override void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
-    {
-        base.CascadeDeletes(oTableWrapperObject);
-
-        if (oTableWrapperObject is Catalogue catalogue)
-        {
-            foreach (var ci in catalogue.CatalogueItems)
-            {
-                ci.DeleteInDatabase();
-            }
-        }
-
-        if (oTableWrapperObject is ExtractionInformation extractionInformation)
-        {
-            extractionInformation.CatalogueItem.ClearAllInjections();
-        }
-
-        // when deleting a TableInfo
-        if (oTableWrapperObject is TableInfo t)
-        {
-            // forget about its credentials usages
-            CredentialsDictionary.Remove(t);
-
-            foreach(var c in t.ColumnInfos)
-            {
-                c.DeleteInDatabase();
-            }
-        }
-
-        // when deleting a ColumnInfo
-        if (oTableWrapperObject is ColumnInfo columnInfo)
-        {
-            foreach(var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci=>ci.ColumnInfo_ID == columnInfo.ID))
-            {
-                ci.ColumnInfo_ID = null;
-                ci.ClearAllInjections();
-                ci.SaveToDatabase();
-            }
-        }
-
-        if (oTableWrapperObject is CatalogueItem catalogueItem)
-        {
-            catalogueItem.ExtractionInformation?.DeleteInDatabase();
-        }
-    }
-    /// <inheritdoc/>
-    public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj)
-    {
-        return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName)
-            .Where(r => r.IsReferenceTo(obj));
-    }
-    /// <inheritdoc/>
-    public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName)
-    {
-        return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName);
-    }
-    /// <inheritdoc/>
-    public IEnumerable<ExtendedProperty> GetExtendedProperties(IMapsDirectlyToDatabaseTable obj)
-    {
-        // First pass use SQL to pull only those with ReferencedObjectID ID that match our object
-        return GetAllObjectsWhere<ExtendedProperty>("ReferencedObjectID", obj.ID)
-            // Second pass make sure the object/repo match
-            .Where(r => r.IsReferenceTo(obj));
-    }
 }

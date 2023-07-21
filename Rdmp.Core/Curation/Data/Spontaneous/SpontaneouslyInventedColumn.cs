@@ -12,18 +12,18 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of IColumn.
+///     Spontaneous (memory only) implementation of IColumn.
 /// </summary>
-public class SpontaneouslyInventedColumn : ConcreteColumn,IColumn
+public class SpontaneouslyInventedColumn : ConcreteColumn, IColumn
 {
     public SpontaneouslyInventedColumn(MemoryRepository repo, string alias, string selectSQl)
     {
-        if(string.IsNullOrWhiteSpace(alias))
+        if (string.IsNullOrWhiteSpace(alias))
             throw new Exception("Column must have an alias");
         Alias = alias;
         SelectSQL = selectSQl;
-            
-        repo.InsertAndHydrate(this,new Dictionary<string, object>());
+
+        repo.InsertAndHydrate(this, new Dictionary<string, object>());
     }
 
     public override ColumnInfo ColumnInfo => null;

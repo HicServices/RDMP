@@ -16,10 +16,17 @@ namespace Rdmp.UI.SimpleControls;
 
 public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 {
+    private IActivateItems _activator;
     private List<IMapsDirectlyToDatabaseTable> _available;
     private bool _settingUp;
-    public event EventHandler<EventArgs> SelectedItemChanged;
-    private IActivateItems _activator;
+
+    public SelectIMapsDirectlyToDatabaseTableComboBox()
+    {
+        InitializeComponent();
+
+        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>" : o.ToString());
+        suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
+    }
 
     public IMapsDirectlyToDatabaseTable SelectedItem
     {
@@ -33,37 +40,31 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
             }
 
             //avoids circular event calls
-            if(!Equals(suggestComboBox1.SelectedItem,value))
+            if (!Equals(suggestComboBox1.SelectedItem, value))
             {
                 if (value != null)
                     suggestComboBox1.SelectedItem = value;
                 else
                     suggestComboBox1.SelectedIndex = -1;
 
-                suggestComboBox1_SelectedIndexChanged(this,EventArgs.Empty);
+                suggestComboBox1_SelectedIndexChanged(this, EventArgs.Empty);
             }
         }
     }
+
+    public event EventHandler<EventArgs> SelectedItemChanged;
 
     public void SetItemActivator(IActivateItems activator)
     {
         _activator = activator;
     }
 
-    public SelectIMapsDirectlyToDatabaseTableComboBox()
-    {
-        InitializeComponent();
-
-        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>": o.ToString());
-        suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
-    }
-
     private void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(_settingUp)
+        if (_settingUp)
             return;
 
-        SelectedItemChanged?.Invoke(this,EventArgs.Empty);
+        SelectedItemChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetUp(IEnumerable<IMapsDirectlyToDatabaseTable> available)
@@ -77,7 +78,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
             suggestComboBox1.DataSource = available;
 
             //if it was clear before don't take item 0
-            if(before == -1)
+            if (before == -1)
                 suggestComboBox1.SelectedIndex = -1;
         }
         finally
@@ -88,21 +89,16 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     private void lPick_Click(object sender, EventArgs e)
     {
-        if(_activator.SelectObject(new DialogArgs
-           {
-               WindowTitle = "Select New Value"
-           }, _available.ToArray(),out var selected))
-        {
+        if (_activator.SelectObject(new DialogArgs
+            {
+                WindowTitle = "Select New Value"
+            }, _available.ToArray(), out var selected))
             suggestComboBox1.SelectedItem = selected;
-        }
     }
 
     private void suggestComboBox1_TextUpdate(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(suggestComboBox1.Text))
             suggestComboBox1.SelectedIndex = -1;
-
     }
-
-
 }

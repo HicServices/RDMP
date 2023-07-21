@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsExtractionInformation:RDMPCommandExecutionProposal<ExtractionInformation>
+internal class ProposeExecutionWhenTargetIsExtractionInformation : RDMPCommandExecutionProposal<ExtractionInformation>
 {
     public ProposeExecutionWhenTargetIsExtractionInformation(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,7 +27,8 @@ internal class ProposeExecutionWhenTargetIsExtractionInformation:RDMPCommandExec
         ItemActivator.Activate<ExtractionInformationUI, ExtractionInformation>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionInformation target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionInformation target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

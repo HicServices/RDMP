@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Rdmp.Core.Curation.Data;
@@ -15,20 +14,16 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// Extraction command for the data export engine which mandates the extraction of all global (not dataset specific) files in an <see cref="ExtractionConfiguration"/> (e.g.
-/// <see cref="SupportingSQLTable"/>)
+///     Extraction command for the data export engine which mandates the extraction of all global (not dataset specific)
+///     files in an <see cref="ExtractionConfiguration" /> (e.g.
+///     <see cref="SupportingSQLTable" />)
 /// </summary>
 public class ExtractGlobalsCommand : ExtractCommand
 {
     private readonly IProject project;
 
-    public GlobalsBundle Globals { get; set; }
-
-    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
-    public List<IExtractionResults> ExtractionResults { get; private set; }
-
-    public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project, ExtractionConfiguration configuration, GlobalsBundle globals):base(configuration)
+    public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project,
+        ExtractionConfiguration configuration, GlobalsBundle globals) : base(configuration)
     {
         RepositoryLocator = repositoryLocator;
         this.project = project;
@@ -36,6 +31,12 @@ public class ExtractGlobalsCommand : ExtractCommand
 
         ExtractionResults = new List<IExtractionResults>();
     }
+
+    public GlobalsBundle Globals { get; set; }
+
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+
+    public List<IExtractionResults> ExtractionResults { get; private set; }
 
     public override DirectoryInfo GetExtractionDirectory()
     {

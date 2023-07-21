@@ -13,40 +13,42 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode'
+///     Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration" /> that are
+///     running in 'graph mode'
 /// </summary>
 public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetTitleTextPrefix(AggregateConfiguration aggregate)
     {
-        if(aggregate.IsExtractable)
+        if (aggregate.IsExtractable)
             return "Extractable 'Group By' Aggregate:";
 
         return "'Group By' Aggregate:";
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
     {
         var existingDimensions = aggregate.AggregateDimensions.Select(d => d.ExtractionInformation).ToArray();
 
-        return aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any) //all columns of any extraction category
-            .Except(existingDimensions)//except those that have already been added
-            .Where(e => !e.IsExtractionIdentifier)//don't advertise IsExtractionIdentifier columns for use in basic aggregates
+        return aggregate.Catalogue
+            .GetAllExtractionInformation(ExtractionCategory.Any) //all columns of any extraction category
+            .Except(existingDimensions) //except those that have already been added
+            .Where(e => !e
+                .IsExtractionIdentifier) //don't advertise IsExtractionIdentifier columns for use in basic aggregates
             .Cast<IColumn>()
             .ToArray();
-
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate)
     {
         //for this basic case the WHERE columns can be anything
         return aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
     {
         switch (section)
@@ -57,7 +59,9 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
                 //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries
                 return aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null;
             case AggregateEditorSection.PIVOT:
-                return aggregate.GetAxisIfAny() != null || aggregate.AggregateDimensions.Length==2;//can only pivot if there is an axis or exactly 2 dimensions (+ count)
+                return aggregate.GetAxisIfAny() != null ||
+                       aggregate.AggregateDimensions.Length ==
+                       2; //can only pivot if there is an axis or exactly 2 dimensions (+ count)
             case AggregateEditorSection.AXIS:
                 return true;
             default:
@@ -65,12 +69,12 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
             .Select(e => e.ColumnInfo?.TableInfo)
-            .Where( t=> t != null)
+            .Where(t => t != null)
             .Distinct();
 
         var implicitJoins =
@@ -79,6 +83,18 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
 
         //return all TableInfos that are not already force joined
         return availableTables.Except(implicitJoins).Cast<IMapsDirectlyToDatabaseTable>().ToArray();
+    }
+
+    /// <inheritdoc />
+    public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate)
+    {
+        return aggregate.GetAllParameters();
+    }
+
+    /// <inheritdoc />
+    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
+    {
+        return CountColumnRequirement.MustHaveOne;
     }
 
     private static bool CanMakeExtractable(AggregateConfiguration aggregate)
@@ -92,17 +108,5 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         }
 
         return true;
-    }
-
-    /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate)
-    {
-        return aggregate.GetAllParameters();
-    }
-
-    /// <inheritdoc/>
-    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
-    {
-        return CountColumnRequirement.MustHaveOne;
     }
 }

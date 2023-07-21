@@ -14,18 +14,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
 {
-    private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
-    private CohortAggregateContainer _parentContainer;
-        
-    private IOrderable _targetOrder;
     private readonly InsertOption _insertOption;
+    private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
+    private readonly CohortAggregateContainer _parentContainer;
 
-    public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(activator,targetAggregateConfiguration,insertOption)
+    private readonly IOrderable _targetOrder;
+
+    public ExecuteCommandReOrderAggregate(IActivateItems activator,
+        AggregateConfigurationCombineable sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration,
+        InsertOption insertOption) : this(activator, targetAggregateConfiguration, insertOption)
     {
         _sourceAggregateCommand = sourceAggregateCommand;
         _parentContainer = targetAggregateConfiguration.GetCohortAggregateContainerIfAny();
 
-        if(_parentContainer == null)
+        if (_parentContainer == null)
         {
             SetImpossible(
                 $"Target Aggregate {targetAggregateConfiguration} is not part of any cohort identification set containers");
@@ -34,29 +36,33 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
 
         if (!sourceAggregateCommand.ContainerIfAny.Equals(_parentContainer))
         {
-            SetImpossible("Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
-            return;
+            SetImpossible(
+                "Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
         }
     }
 
-    public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
+    public ExecuteCommandReOrderAggregate(IActivateItems activator,
+        AggregateConfigurationCombineable sourceAggregateCommand,
+        CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption) : this(activator,
+        targetCohortAggregateContainer, insertOption)
     {
         _sourceAggregateCommand = sourceAggregateCommand;
         _parentContainer = targetCohortAggregateContainer.GetParentContainerIfAny();
-            
+
         if (!sourceAggregateCommand.ContainerIfAny.Equals(_parentContainer))
         {
-            SetImpossible("Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
-            return;
+            SetImpossible(
+                "Cannot ReOrder, you should first move both objects into the same container (UNION / EXCEPT / INTERSECT)");
         }
     }
 
-    private ExecuteCommandReOrderAggregate(IActivateItems activator, IOrderable target, InsertOption insertOption):base(activator)
+    private ExecuteCommandReOrderAggregate(IActivateItems activator, IOrderable target, InsertOption insertOption) :
+        base(activator)
     {
         _targetOrder = target;
         _insertOption = insertOption;
-            
-        if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
+
+        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -68,13 +74,11 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
         _sourceAggregateCommand.ContainerIfAny.RemoveChild(source);
 
         var targetOrder = _targetOrder.Order;
-            
-        _parentContainer.CreateInsertionPointAtOrder(source,targetOrder , _insertOption == InsertOption.InsertAbove);
+
+        _parentContainer.CreateInsertionPointAtOrder(source, targetOrder, _insertOption == InsertOption.InsertAbove);
         _parentContainer.AddChild(source, targetOrder);
 
         //refresh the parent container
         Publish(_parentContainer);
-            
-
     }
 }

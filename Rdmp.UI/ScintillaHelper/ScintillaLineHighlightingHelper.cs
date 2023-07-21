@@ -10,7 +10,7 @@ using ScintillaNET;
 namespace Rdmp.UI.ScintillaHelper;
 
 /// <summary>
-/// Helper for highlighting specific lines of a <see cref="Scintilla"/> text editor.
+///     Helper for highlighting specific lines of a <see cref="Scintilla" /> text editor.
 /// </summary>
 public class ScintillaLineHighlightingHelper
 {

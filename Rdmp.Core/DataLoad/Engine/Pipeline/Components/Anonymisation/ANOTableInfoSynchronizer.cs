@@ -12,8 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
-/// Checker for validating the anonymisation configuration of a TableInfo.  This includes iterating all columns which have ANOTables configured (See ANOTable)
-/// and checking that the database has the correct columns / datatypes etc).  Also checks the IdentifierDumper.
+///     Checker for validating the anonymisation configuration of a TableInfo.  This includes iterating all columns which
+///     have ANOTables configured (See ANOTable)
+///     and checking that the database has the correct columns / datatypes etc).  Also checks the IdentifierDumper.
 /// </summary>
 public class ANOTableInfoSynchronizer
 {
@@ -38,19 +39,20 @@ public class ANOTableInfoSynchronizer
                 new CheckEventArgs(
                     "There are no ANOTables configured for this table so skipping ANOTable checking",
                     CheckResult.Success));
-            
+
         foreach (var columnInfoWithANOTransform in columnInfosWithANOTransforms)
         {
             var anoTable = columnInfoWithANOTransform.ANOTable;
             anoTable.Check(new ThrowImmediatelyCheckNotifier());
-                
-            if(!anoTable.GetRuntimeDataType(LoadStage.PostLoad).Equals(columnInfoWithANOTransform.Data_type))
+
+            if (!anoTable.GetRuntimeDataType(LoadStage.PostLoad).Equals(columnInfoWithANOTransform.Data_type))
                 throw new ANOConfigurationException(
                     $"Mismatch between anoTable.GetRuntimeDataType(LoadStage.PostLoad) = {anoTable.GetRuntimeDataType(LoadStage.PostLoad)} and column {columnInfoWithANOTransform} datatype = {columnInfoWithANOTransform.Data_type}");
-                
+
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"ANOTable {anoTable} has shared compatible datatype {columnInfoWithANOTransform.Data_type} with ColumnInfo {columnInfoWithANOTransform}", CheckResult.Success));
+                    $"ANOTable {anoTable} has shared compatible datatype {columnInfoWithANOTransform.Data_type} with ColumnInfo {columnInfoWithANOTransform}",
+                    CheckResult.Success));
         }
     }
 
@@ -63,6 +65,5 @@ public class ANOTableInfoSynchronizer
         if (duplicates.Any())
             throw new ANOConfigurationException(
                 $"The following columns exist both in their identifiable state and ANO state in TableInfo {_tableToSync} (this is not allowed).  The offending column(s) are:{string.Join(",", duplicates.Select(s => $"'{s}' & '{ANOTable.ANOPrefix}{s}'"))}");
-
     }
 }

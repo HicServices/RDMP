@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Tutorials;
@@ -12,9 +13,9 @@ using Rdmp.UI.Tutorials;
 namespace ResearchDataManagementPlatform.Menus.MenuItems;
 
 /// <summary>
-/// Disables displaying Tutorials in RDMP
+///     Disables displaying Tutorials in RDMP
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class DisableTutorialsMenuItem : ToolStripMenuItem
 {
     private readonly TutorialTracker _tracker;

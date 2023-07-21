@@ -16,27 +16,26 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
-public class CohortSummaryQueryBuilderTests:DatabaseTests
+public class CohortSummaryQueryBuilderTests : DatabaseTests
 {
+    private AggregateConfiguration acCohort;
+    private AggregateConfiguration acDataset;
     private Catalogue c;
     private CatalogueItem ci;
     private CatalogueItem ci2;
 
-    private TableInfo t;
+    private CohortIdentificationConfiguration cic;
     private ColumnInfo col;
     private ColumnInfo col2;
-
-    private AggregateConfiguration acCohort;
-    private AggregateConfiguration acDataset;
+    private AggregateFilterContainer container1;
+    private AggregateFilterContainer container2;
     private ExtractionInformation ei_Chi;
-        
-    private CohortIdentificationConfiguration cic;
     private ExtractionInformation ei_Year;
 
     private ISqlParameter parama1;
     private ISqlParameter parama2;
-    private AggregateFilterContainer container1;
-    private AggregateFilterContainer container2;
+
+    private TableInfo t;
 
 
     [SetUp]
@@ -51,7 +50,7 @@ public class CohortSummaryQueryBuilderTests:DatabaseTests
         col = new ColumnInfo(CatalogueRepository, "mycol", "varchar(10)", t);
         col2 = new ColumnInfo(CatalogueRepository, "myOtherCol", "varchar(10)", t);
 
-           
+
         acCohort = new AggregateConfiguration(CatalogueRepository, c,
             $"{CohortIdentificationConfiguration.CICPrefix}Agg1_Cohort");
         acDataset = new AggregateConfiguration(CatalogueRepository, c, "Agg2_Dataset");
@@ -76,48 +75,8 @@ public class CohortSummaryQueryBuilderTests:DatabaseTests
 
         cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
         cic.CreateRootContainerIfNotExists();
-        cic.RootCohortAggregateContainer.AddChild(acCohort,0);
+        cic.RootCohortAggregateContainer.AddChild(acCohort, 0);
     }
-    #region Constructor Arguments
-    [Test]
-    public void ConstructorArguments_SameAggregateTwice()
-    {
-        var ex = Assert.Throws<ArgumentException>(()=>new CohortSummaryQueryBuilder(acCohort,acCohort,null));
-        Assert.AreEqual("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers",ex.Message);
-    }
-
-    [Test]
-    public void ConstructorArguments_Param1AccidentallyACohort()
-    {
-        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acCohort, acDataset,null));
-        Assert.AreEqual("The first argument to constructor CohortSummaryQueryBuilder should be a basic AggregateConfiguration (i.e. not a cohort) but the argument you passed ('cic_Agg1_Cohort') was a cohort identification configuration aggregate", ex.Message);
-    }
-    [Test]
-    public void ConstructorArguments_Param2AccidentallyAnAggregate()
-    {
-        //change it in memory so it doesn't look like a cohort aggregate anymore
-        acCohort.Name = "RegularAggregate";
-        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset,acCohort,null));
-        Assert.AreEqual("The second argument to constructor CohortSummaryQueryBuilder should be a cohort identification aggregate (i.e. have a single AggregateDimension marked IsExtractionIdentifier and have a name starting with cic_) but the argument you passed ('RegularAggregate') was NOT a cohort identification configuration aggregate", ex.Message);
-        acCohort.RevertToDatabaseState();
-    }
-
-    [Test]
-    public void ConstructorArguments_DifferentDatasets()
-    {
-        acCohort.Catalogue_ID = -999999;
-        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset, acCohort,null));
-
-        Assert.IsTrue(ex.Message.StartsWith("Constructor arguments to CohortSummaryQueryBuilder must belong to the same dataset"));
-        acCohort.RevertToDatabaseState();
-    }
-
-    [Test]
-    public void ConstructorArguments_Normal()
-    {
-        Assert.DoesNotThrow(() => new CohortSummaryQueryBuilder(acDataset, acCohort,null));
-    }
-    #endregion
 
 
     [Test]
@@ -140,9 +99,10 @@ Year", sql);
     [Test]
     public void QueryGeneration_WithLinkedCohort_WHERECHIIN()
     {
-        var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort,null);
+        var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort, null);
 
-        var ex = Assert.Throws<NotSupportedException>(() => csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
+        var ex = Assert.Throws<NotSupportedException>(() =>
+            csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
 
         Assert.AreEqual("No Query Caching Server configured", ex.Message);
     }
@@ -150,15 +110,16 @@ Year", sql);
     [Test]
     public void QueryGeneration_Parameters_DifferentValues_WHERECHIIN()
     {
-        CreateParameters("'bob'","'fish'");
+        CreateParameters("'bob'", "'fish'");
 
         try
         {
-            var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort,null);
+            var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort, null);
 
-            var ex = Assert.Throws<NotSupportedException>(() => csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
+            var ex = Assert.Throws<NotSupportedException>(() =>
+                csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
 
-            Assert.AreEqual("No Query Caching Server configured",ex.Message);
+            Assert.AreEqual("No Query Caching Server configured", ex.Message);
         }
         finally
         {
@@ -167,11 +128,10 @@ Year", sql);
     }
 
 
-
     [Test]
     public void QueryGeneration_NoCohortWhereLogic()
     {
-        var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort,null);
+        var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort, null);
 
         var builder = csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereRecordsIn);
 
@@ -201,7 +161,7 @@ Year", builder.SQL);
         try
         {
             ((IDeleteable)parama1).DeleteInDatabase();
-            var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort,null);
+            var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort, null);
 
             var builder = csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereRecordsIn);
 
@@ -230,7 +190,6 @@ group by
 Year
 order by 
 Year"), CollapseWhitespace(builder.SQL));
-
         }
         finally
         {
@@ -238,6 +197,7 @@ Year"), CollapseWhitespace(builder.SQL));
             DestroyParameters();
         }
     }
+
     private void DestroyParameters()
     {
         container1.GetFilters()[0].DeleteInDatabase();
@@ -247,7 +207,7 @@ Year"), CollapseWhitespace(builder.SQL));
         container2.DeleteInDatabase();
     }
 
-    private void CreateParameters(string param1Value,string param2Value)
+    private void CreateParameters(string param1Value, string param2Value)
     {
         container1 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         acDataset.RootFilterContainer_ID = container1.ID;
@@ -281,6 +241,57 @@ Year"), CollapseWhitespace(builder.SQL));
         parama2 = filter2.GetAllParameters()[0];
         parama2.Value = param2Value;
         parama2.SaveToDatabase();
-            
     }
+
+    #region Constructor Arguments
+
+    [Test]
+    public void ConstructorArguments_SameAggregateTwice()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acCohort, acCohort, null));
+        Assert.AreEqual(
+            "Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers",
+            ex.Message);
+    }
+
+    [Test]
+    public void ConstructorArguments_Param1AccidentallyACohort()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acCohort, acDataset, null));
+        Assert.AreEqual(
+            "The first argument to constructor CohortSummaryQueryBuilder should be a basic AggregateConfiguration (i.e. not a cohort) but the argument you passed ('cic_Agg1_Cohort') was a cohort identification configuration aggregate",
+            ex.Message);
+    }
+
+    [Test]
+    public void ConstructorArguments_Param2AccidentallyAnAggregate()
+    {
+        //change it in memory so it doesn't look like a cohort aggregate anymore
+        acCohort.Name = "RegularAggregate";
+        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset, acCohort, null));
+        Assert.AreEqual(
+            "The second argument to constructor CohortSummaryQueryBuilder should be a cohort identification aggregate (i.e. have a single AggregateDimension marked IsExtractionIdentifier and have a name starting with cic_) but the argument you passed ('RegularAggregate') was NOT a cohort identification configuration aggregate",
+            ex.Message);
+        acCohort.RevertToDatabaseState();
+    }
+
+    [Test]
+    public void ConstructorArguments_DifferentDatasets()
+    {
+        acCohort.Catalogue_ID = -999999;
+        var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset, acCohort, null));
+
+        Assert.IsTrue(
+            ex.Message.StartsWith(
+                "Constructor arguments to CohortSummaryQueryBuilder must belong to the same dataset"));
+        acCohort.RevertToDatabaseState();
+    }
+
+    [Test]
+    public void ConstructorArguments_Normal()
+    {
+        Assert.DoesNotThrow(() => new CohortSummaryQueryBuilder(acDataset, acCohort, null));
+    }
+
+    #endregion
 }

@@ -4,19 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecution, IAtomicCommand
 {
-    private ExtractionConfiguration _extractionConfiguration;
+    private readonly ExtractionConfiguration _extractionConfiguration;
 
-    public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+    public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
 
@@ -28,6 +29,7 @@ internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecuti
     {
         return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
     }
+
     public override void Execute()
     {
         base.Execute();

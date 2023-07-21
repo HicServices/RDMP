@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -16,28 +15,26 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Autocomplete;
 
 /// <summary>
-/// Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo"/>)
+///     Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo" />)
 /// </summary>
 public class AutoCompleteProvider : IAutoCompleteProvider
 {
-    public HashSet<string> Items { get; set; }  = new HashSet<string>();
-
-    /// <summary>
-    /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
-    /// this array to get the image out
-    /// </summary>
-    public Image<Rgba32>[] Images;
-    public Dictionary<string,int> ItemsWithImages { get; set; } = new Dictionary<string, int> ();
-
     private const int TABLE_INFO_IDX = 0;
     private const int COLUMN_INFO_IDX = 1;
     private const int SQL_IDX = 2;
     private const int PARAMETER_IDX = 3;
+
+    /// <summary>
+    ///     Array of images that items can be depicted with.  Use <see cref="ItemsWithImages" /> to index into
+    ///     this array to get the image out
+    /// </summary>
+    public Image<Rgba32>[] Images;
 
     public AutoCompleteProvider()
     {
@@ -48,16 +45,54 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         Images[SQL_IDX] = Image.Load<Rgba32>(CatalogueIcons.SQL);
         Images[PARAMETER_IDX] = Image.Load<Rgba32>(CatalogueIcons.ParametersNode);
     }
-    public AutoCompleteProvider(IQuerySyntaxHelper helper) :this()
+
+    public AutoCompleteProvider(IQuerySyntaxHelper helper) : this()
     {
-        if(helper != null)
+        if (helper != null) AddSQLKeywords(helper);
+    }
+
+    public HashSet<string> Items { get; set; } = new();
+    public Dictionary<string, int> ItemsWithImages { get; set; } = new();
+
+    public void Add(ITableInfo tableInfo)
+    {
+        Add(tableInfo, LoadStage.PostLoad);
+    }
+
+    public void Add(ColumnInfo columnInfo)
+    {
+        AddUnlessDuplicate(columnInfo.GetFullyQualifiedName());
+        AddUnlessDuplicateImage(columnInfo.GetFullyQualifiedName(), COLUMN_INFO_IDX);
+    }
+
+    public void Add(DiscoveredTable discoveredTable)
+    {
+        AddUnlessDuplicate(discoveredTable.GetFullyQualifiedName());
+        AddUnlessDuplicateImage(discoveredTable.GetFullyQualifiedName(), TABLE_INFO_IDX);
+
+        DiscoveredColumn[] columns = null;
+        try
         {
-            AddSQLKeywords(helper);
+            if (discoveredTable.Exists())
+                columns = discoveredTable.DiscoverColumns();
         }
+        catch (Exception)
+        {
+            //couldn't load nevermind
+        }
+
+        if (columns != null)
+            foreach (var col in columns)
+                Add(col);
+    }
+
+    public void Add(AggregateConfiguration aggregateConfiguration)
+    {
+        Add(aggregateConfiguration.Catalogue);
     }
 
     /// <summary>
-    /// Splits <paramref name="arg"/> into individual autocomplete words for suggestions
+    ///     Splits <paramref name="arg" /> into individual autocomplete words for suggestions
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
@@ -69,13 +104,9 @@ public class AutoCompleteProvider : IAutoCompleteProvider
             yield return m.Value;
     }
 
-    public void Add(ITableInfo tableInfo)
-    {
-        Add(tableInfo, LoadStage.PostLoad);
-    }
 
-
-    public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
+    public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage,
+        IQuerySyntaxHelper syntaxHelper)
     {
         var col = columnInfo.GetRuntimeName(stage);
         var table = tableInfo.GetRuntimeName(stage);
@@ -87,16 +118,11 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         AddUnlessDuplicateImage(fullySpecified, COLUMN_INFO_IDX);
     }
 
-    public void Add(ColumnInfo columnInfo)
-    {
-        AddUnlessDuplicate(columnInfo.GetFullyQualifiedName());
-        AddUnlessDuplicateImage(columnInfo.GetFullyQualifiedName(), COLUMN_INFO_IDX);
-    }
-
     private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
     {
         var colName = discardedColumn.GetRuntimeName();
-        var representation = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName);
+        var representation = tableInfo.GetQuerySyntaxHelper()
+            .EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName);
         AddUnlessDuplicate(representation);
         AddUnlessDuplicateImage(representation, COLUMN_INFO_IDX);
     }
@@ -126,6 +152,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     {
         ItemsWithImages.TryAdd(fullySpecified, idx);
     }
+
     public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
     {
         if (syntaxHelper == null)
@@ -141,7 +168,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     public void Add(ISqlParameter parameter)
     {
         AddUnlessDuplicate(parameter.ParameterName);
-        AddUnlessDuplicateImage(parameter.ParameterName,PARAMETER_IDX);
+        AddUnlessDuplicateImage(parameter.ParameterName, PARAMETER_IDX);
     }
 
     public void Add(ITableInfo tableInfo, LoadStage loadStage)
@@ -158,7 +185,6 @@ public class AutoCompleteProvider : IAutoCompleteProvider
 
 
         foreach (var o in tableInfo.GetColumnsAtStage(loadStage))
-        {
             switch (o)
             {
                 case PreLoadDiscardedColumn preDiscarded:
@@ -171,31 +197,9 @@ public class AutoCompleteProvider : IAutoCompleteProvider
                     throw new Exception(
                         $"Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '{o.GetType().Name}'");
             }
-        }
 
         AddUnlessDuplicate(fullSql);
-        AddUnlessDuplicateImage(fullSql,TABLE_INFO_IDX);
-    }
-
-    public void Add(DiscoveredTable discoveredTable)
-    {
-        AddUnlessDuplicate(discoveredTable.GetFullyQualifiedName());
-        AddUnlessDuplicateImage(discoveredTable.GetFullyQualifiedName(), TABLE_INFO_IDX);
-
-        DiscoveredColumn[] columns = null;
-        try
-        {
-            if (discoveredTable.Exists())
-                columns = discoveredTable.DiscoverColumns();
-        }
-        catch (Exception)
-        {
-            //couldn't load nevermind
-        }
-
-        if (columns != null)
-            foreach (var col in columns)
-                Add(col);
+        AddUnlessDuplicateImage(fullSql, TABLE_INFO_IDX);
     }
 
     private void Add(DiscoveredColumn discoveredColumn)
@@ -212,11 +216,6 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     public void Add(Type type)
     {
         Items.Add(type.Name);
-    }
-
-    public void Add(AggregateConfiguration aggregateConfiguration)
-    {
-        Add(aggregateConfiguration.Catalogue);
     }
 
     public void Add(ICatalogue catalogue)

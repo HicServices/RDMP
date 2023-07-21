@@ -13,13 +13,14 @@ namespace Rdmp.UI.Collections;
 
 public partial class CatalogueCollectionFilterUI : UserControl
 {
-    private bool _loading = true;
+    private readonly bool _loading = true;
+
     public CatalogueCollectionFilterUI()
     {
         InitializeComponent();
 
         cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
-        cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
+        cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues;
         cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
         cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
         cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
@@ -31,7 +32,7 @@ public partial class CatalogueCollectionFilterUI : UserControl
 
     private void OnCheckboxChanged(object sender, EventArgs e)
     {
-        if(_loading)
+        if (_loading)
             return;
 
         UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
@@ -40,7 +41,7 @@ public partial class CatalogueCollectionFilterUI : UserControl
         UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
         UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
 
-        FiltersChanged?.Invoke(this,EventArgs.Empty);
+        FiltersChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void EnsureVisible(Catalogue c)
@@ -55,17 +56,17 @@ public partial class CatalogueCollectionFilterUI : UserControl
 
         var isExtractable = c.GetExtractabilityStatus(null);
 
-        cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
-
+        cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null ||
+                                       isExtractable.IsExtractable == false;
     }
 
     /// <summary>
-    /// Checks the current values in <see cref="UserSettings"/> and updates the UI state to match.
-    /// This will trigger checked change events if any are out of sync
+    ///     Checks the current values in <see cref="UserSettings" /> and updates the UI state to match.
+    ///     This will trigger checked change events if any are out of sync
     /// </summary>
     public void CheckForChanges()
     {
-        if(cbShowInternal.Checked != UserSettings.ShowInternalCatalogues)
+        if (cbShowInternal.Checked != UserSettings.ShowInternalCatalogues)
             cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
 
         if (cbShowDeprecated.Checked != UserSettings.ShowDeprecatedCatalogues)

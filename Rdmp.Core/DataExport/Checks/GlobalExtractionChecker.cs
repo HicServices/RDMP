@@ -19,27 +19,32 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Checks that all the globals (<see cref="SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an
-/// <see cref="ExtractionConfiguration"/> are accessible.
+///     Checks that all the globals (<see cref="SupportingDocument" /> / <see cref="SupportingSQLTable" />) that would be
+///     fetched as part of an
+///     <see cref="ExtractionConfiguration" /> are accessible.
 /// </summary>
 public class GlobalExtractionChecker : ICheckable
 {
-    private readonly ExtractionConfiguration _configuration;
-    private readonly ExtractGlobalsCommand _command;
-    private readonly IPipeline _alsoCheckPipeline;
     private readonly IBasicActivateItems _activator;
+    private readonly IPipeline _alsoCheckPipeline;
+    private readonly ExtractGlobalsCommand _command;
+    private readonly ExtractionConfiguration _configuration;
 
     /// <summary>
-    /// Prepares to check the globals extractable artifacts that should be fetched when extracting the <paramref name="configuration"/>
+    ///     Prepares to check the globals extractable artifacts that should be fetched when extracting the
+    ///     <paramref name="configuration" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="configuration"></param>
-    public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration) : this (activator,configuration, null, null)
-    { }
+    public GlobalExtractionChecker(IBasicActivateItems activator, ExtractionConfiguration configuration) : this(
+        activator, configuration, null, null)
+    {
+    }
 
 
-    /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
-    public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
+    /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)" />
+    public GlobalExtractionChecker(IBasicActivateItems activator, ExtractionConfiguration configuration,
+        ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
     {
         _configuration = configuration;
         _command = command;
@@ -48,8 +53,9 @@ public class GlobalExtractionChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker"/> and <see cref="SupportingDocumentsFetcher"/>) and that
-    /// the <see cref="Pipeline"/> (if any) is capable of extracting the globals.
+    ///     Checks that all globals pass thier respective checkers (<see cref="SupportingSQLTableChecker" /> and
+    ///     <see cref="SupportingDocumentsFetcher" />) and that
+    ///     the <see cref="Pipeline" /> (if any) is capable of extracting the globals.
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -62,7 +68,8 @@ public class GlobalExtractionChecker : ICheckable
 
         if (_alsoCheckPipeline != null && _command != null)
         {
-            var engine = new ExtractionPipelineUseCase(_activator,_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
+            var engine = new ExtractionPipelineUseCase(_activator, _configuration.Project, _command, _alsoCheckPipeline,
+                    DataLoadInfo.Empty)
                 .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
             engine.Check(notifier);
         }

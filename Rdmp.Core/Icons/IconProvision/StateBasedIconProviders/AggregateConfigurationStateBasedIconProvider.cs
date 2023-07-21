@@ -5,19 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
-    private readonly Image<Rgba32> _cohortAggregates;
     private readonly Image<Rgba32> _aggregates;
+    private readonly Image<Rgba32> _cohortAggregates;
+    private readonly IconOverlayProvider _overlayProvider;
     private readonly Image<Rgba32> _patientIndexTable;
 
     public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
@@ -30,7 +30,7 @@ public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIco
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is Type && o.Equals(typeof (AggregateConfiguration)))
+        if (o is Type && o.Equals(typeof(AggregateConfiguration)))
             return _aggregates;
 
         if (o is not AggregateConfiguration ac)
@@ -45,7 +45,7 @@ public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIco
             img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
         if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-            img =_overlayProvider.GetOverlay(img, OverlayKind.Shortcut);
+            img = _overlayProvider.GetOverlay(img, OverlayKind.Shortcut);
 
         if (ac.Catalogue.IsApiCall())
             img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);

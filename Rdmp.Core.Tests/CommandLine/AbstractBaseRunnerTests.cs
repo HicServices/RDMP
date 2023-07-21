@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -26,7 +26,7 @@ public class AbstractBaseRunnerTests : UnitTests
     {
         SetupMEF();
     }
-        
+
     [SetUp]
     public void CleanRemnants()
     {
@@ -41,7 +41,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
-        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator,c.ID.ToString()));
+        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, c.ID.ToString()));
     }
 
     [Test]
@@ -81,8 +81,8 @@ public class AbstractBaseRunnerTests : UnitTests
     }
 
     /// <summary>
-    /// Tests that things the user might enter for a parameter (or default parameter values specified in RDMP
-    /// are going to be interpreted as null correctly
+    ///     Tests that things the user might enter for a parameter (or default parameter values specified in RDMP
+    ///     are going to be interpreted as null correctly
     /// </summary>
     /// <param name="expression"></param>
     [TestCase(null)]
@@ -102,7 +102,7 @@ public class AbstractBaseRunnerTests : UnitTests
     }
 
     /// <summary>
-    /// This test is for the IEnumerable version
+    ///     This test is for the IEnumerable version
     /// </summary>
     /// <param name="expression"></param>
     [TestCase(null)]
@@ -130,7 +130,8 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
 
-        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator,$"{c.ID},{c2.ID}").ToArray();
+        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, $"{c.ID},{c2.ID}")
+            .ToArray();
 
         Assert.AreEqual(2, results.Length);
         Assert.AreSame(c, results[0]);
@@ -147,32 +148,35 @@ public class AbstractBaseRunnerTests : UnitTests
         var c2 = WhenIHaveA<Catalogue>();
         c2.Name = "go hard";
         c2.SaveToDatabase();
-            
+
         WhenIHaveA<Catalogue>();
 
         var r = new TestRunner();
-        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*").ToArray();
+        var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*")
+            .ToArray();
 
         Assert.AreEqual(2, results.Length);
-        Assert.Contains(c,results);
+        Assert.Contains(c, results);
         Assert.Contains(c2, results);
     }
 
     private class TestRunner : Runner
     {
-        public new static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+        public new static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
+            where T : IMapsDirectlyToDatabaseTable
         {
             return Runner.GetObjectFromCommandLineString<T>(locator, arg);
         }
 
-        public new static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+        public new static IEnumerable<T> GetObjectsFromCommandLineString<T>(
+            IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
             return Runner.GetObjectsFromCommandLineString<T>(locator, arg);
         }
 
-        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+            IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-                
             return 0;
         }
     }

@@ -20,36 +20,46 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution.Joinables;
 
 /// <summary>
-/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The 
-/// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
-/// result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
+///     A single AggregateConfiguration being executed by a CohortCompiler which is defined as a
+///     JoinableCohortAggregateConfiguration.  The
+///     AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where
+///     ...'.  The  query
+///     result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the
+///     CachedAggregateConfigurationResultsManager.
 /// </summary>
-public class JoinableTask:CacheableTask
+public class JoinableTask : CacheableTask
 {
-    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private AggregateConfiguration _aggregate;
-    private string _catalogueName;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly string _catalogueName;
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
 
-    public JoinableCohortAggregateConfiguration Joinable { get; private set; }
 
-        
     public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
     {
-            
         Joinable = joinable;
         _aggregate = Joinable.AggregateConfiguration;
-        _cohortIdentificationConfiguration =_aggregate.GetCohortIdentificationConfigurationIfAny();
-            
+        _cohortIdentificationConfiguration = _aggregate.GetCohortIdentificationConfigurationIfAny();
+
         _catalogueName = Joinable.AggregateConfiguration.Catalogue.Name;
         RefreshIsUsedState();
     }
+
+    public JoinableCohortAggregateConfiguration Joinable { get; }
+
+    public override IMapsDirectlyToDatabaseTable Child => Joinable;
+
+    public override int Order
+    {
+        get => Joinable.ID;
+        set => throw new NotSupportedException();
+    }
+
+    public bool IsUnused { get; private set; }
 
     public override string GetCatalogueName()
     {
         return _catalogueName;
     }
-
-    public override IMapsDirectlyToDatabaseTable Child => Joinable;
 
     public override IDataAccessPoint[] GetDataAccessPoints()
     {
@@ -63,7 +73,6 @@ public class JoinableTask:CacheableTask
 
     public override string ToString()
     {
-
         var name = _aggregate.Name;
 
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
@@ -73,27 +82,23 @@ public class JoinableTask:CacheableTask
 
         return name;
     }
-        
+
     public override AggregateConfiguration GetAggregateConfiguration()
     {
         return Joinable.AggregateConfiguration;
     }
 
-    public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
+    public override CacheCommitArguments GetCacheArguments(string sql, DataTable results,
+        DatabaseColumnRequest[] explicitTypes)
     {
-        return new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes, Timeout);
+        return new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes,
+            Timeout);
     }
 
     public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
     {
         manager.DeleteCacheEntryIfAny(Joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery);
     }
-
-    public override int Order { get => Joinable.ID;
-        set => throw new NotSupportedException();
-    }
-
-    public bool IsUnused { get; private set; }
 
     public void RefreshIsUsedState()
     {

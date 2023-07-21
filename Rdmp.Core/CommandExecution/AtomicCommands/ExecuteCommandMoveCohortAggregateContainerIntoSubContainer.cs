@@ -14,25 +14,28 @@ public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicC
 {
     private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
-        
-    [UseWithObjectConstructor]
-    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into) 
-        : this(activator,new CohortAggregateContainerCombineable(toMove),into)
-    {
 
+    [UseWithObjectConstructor]
+    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator,
+        CohortAggregateContainer toMove, CohortAggregateContainer into)
+        : this(activator, new CohortAggregateContainerCombineable(toMove), into)
+    {
     }
-    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
-    {    
+
+    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator,
+        CohortAggregateContainerCombineable sourceCohortAggregateContainer,
+        CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+    {
         _sourceCohortAggregateContainer = sourceCohortAggregateContainer;
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-        if(_sourceCohortAggregateContainer.AllSubContainersRecursively.Contains(_targetCohortAggregateContainer))
+        if (_sourceCohortAggregateContainer.AllSubContainersRecursively.Contains(_targetCohortAggregateContainer))
             SetImpossible("Cannot move a container into one of its own subcontainers");
 
-        if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
+        if (_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
             SetImpossible("Cannot move a container into itself");
-            
-        if(_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+
+        if (_targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 

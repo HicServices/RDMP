@@ -12,28 +12,30 @@ using Rdmp.Core.Curation.Data.EntityNaming;
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 
 /// <summary>
-/// Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
+///     Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
 /// </summary>
 public class StandardDatabaseHelper
 {
-    public INameDatabasesAndTablesDuringLoads DatabaseNamer { get; set; }
-
     public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new();
 
     //Constructor
-    internal StandardDatabaseHelper(DiscoveredDatabase liveDatabase, INameDatabasesAndTablesDuringLoads namer,DiscoveredServer rawServer)
+    internal StandardDatabaseHelper(DiscoveredDatabase liveDatabase, INameDatabasesAndTablesDuringLoads namer,
+        DiscoveredServer rawServer)
     {
         DatabaseNamer = namer;
 
-            
 
-        foreach (var stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live })
+        foreach (var stage in new[] { LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live })
         {
             var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
-            DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));
-                
+            DatabaseInfoList.Add(stage,
+                stage == LoadBubble.Raw
+                    ? rawServer.ExpectDatabase(stageName)
+                    : liveDatabase.Server.ExpectDatabase(stageName));
         }
     }
+
+    public INameDatabasesAndTablesDuringLoads DatabaseNamer { get; set; }
 
 
     // Indexer declaration.

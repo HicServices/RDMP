@@ -11,14 +11,15 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Checks that a given <see cref="SupportingSQLTable"/> is reachable by the current user and that the <see cref="SupportingSQLTable.SQL"/> can be executed and returns data.
+///     Checks that a given <see cref="SupportingSQLTable" /> is reachable by the current user and that the
+///     <see cref="SupportingSQLTable.SQL" /> can be executed and returns data.
 /// </summary>
-public class SupportingSQLTableChecker:ICheckable
+public class SupportingSQLTableChecker : ICheckable
 {
     private readonly SupportingSQLTable _table;
 
     /// <summary>
-    /// Sets up checking of the supplied
+    ///     Sets up checking of the supplied
     /// </summary>
     /// <param name="table"></param>
     public SupportingSQLTableChecker(SupportingSQLTable table)
@@ -27,14 +28,15 @@ public class SupportingSQLTableChecker:ICheckable
     }
 
     /// <summary>
-    /// Checks that the table can be reached on its listed server and that at least one row can be read from it.
+    ///     Checks that the table can be reached on its listed server and that at least one row can be read from it.
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
         try
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found SupportingSQLTable {_table} about to check it", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found SupportingSQLTable {_table} about to check it",
+                CheckResult.Success));
 
             var supportingSQLServer = _table.GetServer();
 
@@ -46,11 +48,13 @@ public class SupportingSQLTableChecker:ICheckable
             {
                 con.Open();
 
-                notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}", CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}",
+                    CheckResult.Success));
 
                 using (var cmd = supportingSQLServer.GetCommand(_table.SQL, con))
                 {
-                    using(var reader = cmd.ExecuteReader())
+                    using (var reader = cmd.ExecuteReader())
+                    {
                         if (reader.Read())
                             notifier.OnCheckPerformed(
                                 new CheckEventArgs(
@@ -59,6 +63,7 @@ public class SupportingSQLTableChecker:ICheckable
                         else
                             notifier.OnCheckPerformed(new CheckEventArgs(
                                 $"No data was successfully read from SupportingSQLTable {_table}", CheckResult.Fail));
+                    }
                 }
             }
         }

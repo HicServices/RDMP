@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,8 +14,8 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
@@ -24,17 +23,16 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 {
     public ExecuteCommandImportShareDefinitionList(IBasicActivateItems activator) : base(activator)
     {
-
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        var selected = BasicActivator.SelectFiles("Select ShareDefinitions to import","Sharing Definition File","*.sd");
+        var selected =
+            BasicActivator.SelectFiles("Select ShareDefinitions to import", "Sharing Definition File", "*.sd");
 
         if (selected != null && selected.Any())
-        {
             try
             {
                 var shareManager = new ShareManager(BasicActivator.RepositoryLocator)
@@ -44,23 +42,30 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 
                 foreach (var f in selected)
                     using (var stream = File.Open(f.FullName, FileMode.Open))
+                    {
                         shareManager.ImportSharedObject(stream);
+                    }
             }
             catch (Exception e)
             {
                 BasicActivator.ShowException("Error importing file(s)", e);
             }
-        }
     }
-
 
 
     public override string GetCommandHelp()
     {
-        return "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
+        return
+            "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
     }
 
-    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    }
+
+    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,
+        ShareDefinition shareDefinition)
     {
         BasicActivator.Show(
             $"Choose a local object for '{property}' on {Environment.NewLine}{string.Join(Environment.NewLine, shareDefinition.Properties.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}");
@@ -69,23 +74,20 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 
         if (BasicActivator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
         {
-            var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
+            var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType)
+                .Cast<DatabaseEntity>().ToArray());
             if (selected != null)
                 return selected.ID;
         }
 
         if (BasicActivator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
         {
-            var selected = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
+            var selected = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType)
+                .Cast<DatabaseEntity>().ToArray());
             if (selected != null)
                 return selected.ID;
         }
 
         return null;
-    }
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
     }
 }

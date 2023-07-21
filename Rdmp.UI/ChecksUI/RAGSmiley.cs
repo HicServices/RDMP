@@ -14,10 +14,35 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.ChecksUI;
 
-/// <inheritdoc cref="IRAGSmiley"/>
+/// <inheritdoc cref="IRAGSmiley" />
 public partial class RAGSmiley : UserControl, IRAGSmiley
 {
     private bool _alwaysShowHandCursor;
+    private Task _checkTask;
+    private Exception _exception;
+    private CheckResult _state;
+    private readonly Timer _timer;
+
+    private ToMemoryCheckNotifier memoryCheckNotifier = new();
+    private readonly object oTaskLock = new();
+
+    public RAGSmiley()
+    {
+        InitializeComponent();
+
+        BackColor = Color.Transparent;
+
+        pbGreen.Visible = true;
+        pbYellow.Visible = false;
+        pbRed.Visible = false;
+
+        _timer = new Timer
+        {
+            Interval = 500
+        };
+        _timer.Tick += Timer_Tick;
+        _timer.Start();
+    }
 
     public bool AlwaysShowHandCursor
     {
@@ -39,46 +64,86 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         return pbRed.Visible;
     }
 
+    public void Warning(Exception ex)
+    {
+        if (_state == CheckResult.Fail) return;
+
+        _state = CheckResult.Warning;
+        _exception = ex;
+    }
+
+    public void Fatal(Exception ex)
+    {
+        _state = CheckResult.Fail;
+        _exception = ex;
+    }
+
+    public void Reset()
+    {
+        //reset the checks too so as not to leave old check results kicking about
+        memoryCheckNotifier = new ToMemoryCheckNotifier();
+        _state = CheckResult.Success;
+        _exception = null;
+    }
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        //record in memory
+        memoryCheckNotifier.OnCheckPerformed(args);
+
+        ElevateState(args.Result);
+
+        if (args.Ex != null) _exception = args.Ex;
+
+        return false;
+    }
+
+    public void StartChecking(ICheckable checkable)
+    {
+        lock (oTaskLock)
+        {
+            //if there is already a Task and it has not completed
+            if (_checkTask != null && !_checkTask.IsCompleted)
+                return;
+
+            //else start a new Task
+            Reset();
+            _checkTask = new Task(() =>
+                {
+                    try
+                    {
+                        checkable.Check(this);
+                    }
+                    catch (Exception ex)
+                    {
+                        Fatal(new Exception("Entire Checking Process Failed", ex));
+                    }
+                }
+            );
+            _checkTask.Start();
+        }
+    }
+
     private void SetCorrectCursor()
     {
         if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
             Cursor = Cursors.Hand;
-        else
-        if (pbYellow.Tag != null || pbRed.Tag != null)
+        else if (pbYellow.Tag != null || pbRed.Tag != null)
             Cursor = Cursors.Hand;
         else
             Cursor = Cursors.Arrow;
     }
 
-    public RAGSmiley()
-    {
-        InitializeComponent();
-
-        BackColor = Color.Transparent;
-            
-        pbGreen.Visible = true;
-        pbYellow.Visible = false;
-        pbRed.Visible = false;
-
-        _timer = new Timer
-        {
-            Interval = 500
-        };
-        _timer.Tick += Timer_Tick;
-        _timer.Start();
-    }
-
     private void Timer_Tick(object sender, EventArgs e)
     {
-
-        if(IsDisposed)
+        if (IsDisposed)
         {
             _timer.Stop();
             _timer.Dispose();
             return;
         }
 
-        switch(_state)
+        switch (_state)
         {
             case CheckResult.Success:
                 pbGreen.Visible = true;
@@ -116,7 +181,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     protected override void OnEnabledChanged(EventArgs e)
     {
         base.OnEnabledChanged(e);
-            
+
         pbGrey.Visible = !Enabled;
     }
 
@@ -128,58 +193,12 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     private void pb_Click(object sender, EventArgs e)
     {
         var tag = ((Control)sender).Tag as Exception ?? _exception;
-            
+
         if (PopupMessagesIfAny(tag))
             return;
 
-        if(tag != null)
+        if (tag != null)
             ExceptionViewer.Show(tag);
-    }
-
-    public void Warning(Exception ex)
-    {
-        if(_state == CheckResult.Fail)
-        {
-            return;
-        }    
-
-        _state = CheckResult.Warning;
-        _exception = ex;
-    }
-    public void Fatal(Exception ex)
-    {
-        _state = CheckResult.Fail;
-        _exception = ex;
-    }
-
-    public void Reset()
-    {
-        //reset the checks too so as not to leave old check results kicking about
-        memoryCheckNotifier = new ToMemoryCheckNotifier();
-        _state = CheckResult.Success;
-        _exception = null;
-    }
-
-    private ToMemoryCheckNotifier memoryCheckNotifier = new();
-    private Task _checkTask;
-    private object oTaskLock = new();
-    private Timer _timer;
-    private CheckResult _state;
-    private Exception _exception;
-
-    public bool OnCheckPerformed(CheckEventArgs args)
-    {            
-        //record in memory
-        memoryCheckNotifier.OnCheckPerformed(args);
-
-        ElevateState(args.Result);
-
-        if(args.Ex!= null)
-        {
-            _exception = args.Ex;
-        }
-
-        return false;
     }
 
     public void ElevateState(CheckResult result)
@@ -206,7 +225,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
             var popup = new PopupChecksUI("Record of events", false);
             new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
-            if(tag != null)
+            if (tag != null)
                 popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
             return true;
         }
@@ -219,37 +238,11 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     {
         if (InvokeRequired)
         {
-            Invoke(new MethodInvoker(()=> SetVisible(visible)));
+            Invoke(new MethodInvoker(() => SetVisible(visible)));
             return;
         }
+
         BringToFront();
         Visible = visible;
-    }
-
-    public void StartChecking(ICheckable checkable)
-    {
-        lock (oTaskLock)
-        {
-
-            //if there is already a Task and it has not completed
-            if (_checkTask != null && !_checkTask.IsCompleted)
-                return;
-
-            //else start a new Task
-            Reset();
-            _checkTask = new Task(() =>
-                {
-                    try
-                    {
-                        checkable.Check(this);
-                    }
-                    catch (Exception ex)
-                    {
-                        Fatal(new Exception("Entire Checking Process Failed",ex));
-                    }
-                }
-            );
-            _checkTask.Start();
-        }
     }
 }

@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
-using System.IO;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
@@ -16,13 +16,10 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
     public void TestCreateNewDataLoadDirectory_CreateDeepFolder_NoLmd()
     {
         var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "abc");
-        if(Directory.Exists(root))
-        {
-            Directory.Delete(root, true);
-        }
+        if (Directory.Exists(root)) Directory.Delete(root, true);
         var toCreate = Path.Combine(root, "def", "ghi");
 
-        Run("CreateNewDataLoadDirectory","null", toCreate);
+        Run("CreateNewDataLoadDirectory", "null", toCreate);
 
         Assert.IsTrue(Directory.Exists(root));
     }
@@ -31,10 +28,7 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
     public void TestCreateNewDataLoadDirectory_WithLoadMetadata()
     {
         var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "def");
-        if (Directory.Exists(root))
-        {
-            Directory.Delete(root, true);
-        }
+        if (Directory.Exists(root)) Directory.Delete(root, true);
         var lmd = WhenIHaveA<LoadMetadata>();
 
         Assert.IsNull(lmd.LocationOfFlatFiles);
@@ -42,6 +36,6 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
         Run("CreateNewDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root);
 
         Assert.IsTrue(Directory.Exists(root));
-        Assert.AreEqual(root,lmd.LocationOfFlatFiles);
+        Assert.AreEqual(root, lmd.LocationOfFlatFiles);
     }
 }

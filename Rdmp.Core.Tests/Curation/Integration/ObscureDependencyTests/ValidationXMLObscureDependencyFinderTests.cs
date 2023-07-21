@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -21,20 +22,20 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests;
 
-public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
+public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
 {
     [Test]
     public void TestGettingTheUsualSuspects()
     {
-        var finder = new ValidationXMLObscureDependencyFinder( RepositoryLocator);
-            
+        var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
+
         //forces call to initialize
         finder.ThrowIfDeleteDisallowed(null);
 
         //this guy should be a usual suspect!
         Assert.IsTrue(finder.TheUsualSuspects.Any(s => s.Type == typeof(ReferentialIntegrityConstraint)));
 
-        var testXML = 
+        var testXML =
             @"<?xml version=""1.0"" encoding=""utf-16""?>
 <Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <ItemValidators>
@@ -56,12 +57,12 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         {
             var pattern = string.Format(suspect.Pattern, 10029);
 
-            kaizerSoze = Regex.IsMatch(testXML, pattern,RegexOptions.Singleline);
+            kaizerSoze = Regex.IsMatch(testXML, pattern, RegexOptions.Singleline);
 
             if (kaizerSoze)
                 break;
         }
-            
+
         Assert.IsTrue(kaizerSoze);
     }
 
@@ -84,14 +85,15 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 
             //we expect the validation XML to find the reference
             var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
-                
+
             //and explode
             Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
-                
-            Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
+
+            Assert.AreEqual(0, finder.CataloguesWithBrokenValidationXml.Count);
 
             //now clear the validation XML
-            testData.catalogue.ValidatorXML = testData.catalogue.ValidatorXML.Insert(100,"I've got a lovely bunch of coconuts!");
+            testData.catalogue.ValidatorXML =
+                testData.catalogue.ValidatorXML.Insert(100, "I've got a lovely bunch of coconuts!");
             testData.catalogue.SaveToDatabase();
 
             //column info should be deleteable but only because we got ourselves onto the forbidlist
@@ -109,11 +111,11 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
             testData.DeleteCatalogue();
         }
     }
-        
+
     [Test]
     public void Test_DeleteAColumnInfoThatIsReferenced()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        var startup = new Startup.Startup(new EnvironmentInfo(), RepositoryLocator);
         startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
         var testData = SetupTestData(out var l2ColumnInfo);
@@ -121,7 +123,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         try
         {
             //should fail because of the validation constraint being dependent on it
-            Assert.Throws<ValidationXmlDependencyException>(()=>l2ColumnInfo.DeleteInDatabase());
+            Assert.Throws<ValidationXmlDependencyException>(() => l2ColumnInfo.DeleteInDatabase());
         }
         finally
         {
@@ -135,19 +137,19 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void TestRunningSetupMultipleTimes()
     {
-
-        var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        var startup = new Startup.Startup(new EnvironmentInfo(), RepositoryLocator);
         try
         {
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
         }
         catch (InvalidPatchException patchException)
         {
-            throw new Exception($"Problem in patch {patchException.ScriptName}",patchException);
+            throw new Exception($"Problem in patch {patchException.ScriptName}", patchException);
         }
+
         //there should be all the obscure dependencies we need done with only the first call to this function
         var numberAfterFirstRun =
-            ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
+            ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count;
 
         startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
@@ -156,10 +158,8 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 
         //there should not be any replication! and doubling SetUp!
         Assert.AreEqual(numberAfterFirstRun,
-            ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
+            ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count);
-            
-            
     }
 
     #region setup test data with some validation rule
@@ -167,7 +167,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
     private BulkTestsData SetupTestData(out ColumnInfo l2ColumnInfo)
     {
         //Setup test data
-        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer));
         testData.SetupTestData();
         testData.ImportAsCatalogue();
 
@@ -196,5 +196,6 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 
         return testData;
     }
+
     #endregion
 }

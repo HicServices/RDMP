@@ -18,19 +18,20 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Sharing.Dependency.Gathering;
 
 /// <summary>
-/// Gathers dependencies of a given object in a more advanced/selective way than simply using methods of IHasDependencies
+///     Gathers dependencies of a given object in a more advanced/selective way than simply using methods of
+///     IHasDependencies
 /// </summary>
 public class Gatherer
 {
-    private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
     private readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new();
+    private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
     public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         _repositoryLocator = repositoryLocator;
 
         _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
-        _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
+        _functions.Add(typeof(ColumnInfo), o => GatherDependencies((ColumnInfo)o));
         _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
         _functions.Add(typeof(Curation.Data.Plugin), o => GatherDependencies((Curation.Data.Plugin)o));
 
@@ -49,8 +50,8 @@ public class Gatherer
     }
 
     /// <summary>
-    /// Invokes the relevant overload if it exists. 
-    /// <seealso cref="CanGatherDependencies"/>
+    ///     Invokes the relevant overload if it exists.
+    ///     <seealso cref="CanGatherDependencies" />
     /// </summary>
     /// <param name="databaseEntity"></param>
     /// <returns></returns>
@@ -78,7 +79,7 @@ public class Gatherer
 
         foreach (var lma in plugin.LoadModuleAssemblies)
             root.Children.Add(new GatheredObject(lma));
-            
+
         return root;
     }
 
@@ -88,7 +89,7 @@ public class Gatherer
         var root = new GatheredObject(loadMetadata);
 
         //and the catalogues behind the load
-        foreach (var cata in loadMetadata.GetAllCatalogues()) 
+        foreach (var cata in loadMetadata.GetAllCatalogues())
             root.Children.Add(GatherDependencies(cata));
 
         //and the load operations
@@ -113,24 +114,26 @@ public class Gatherer
 
         foreach (var cis in catalogue.CatalogueItems)
             root.Children.Add(new GatheredObject(cis));
-            
+
         return root;
     }
-        
+
     public static GatheredObject GatherDependencies(IFilter filter)
     {
         var root = new GatheredObject(filter);
-            
+
         foreach (var param in filter.GetAllParameters())
-            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
-            
+            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable)param));
+
         return root;
     }
 
     /// <summary>
-    /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
-    /// which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should share its
-    /// runtime name e.g. CatalogueItem and ExtractionInformation.
+    ///     Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue
+    ///     databases
+    ///     which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should
+    ///     share its
+    ///     runtime name e.g. CatalogueItem and ExtractionInformation.
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
@@ -141,13 +144,13 @@ public class Gatherer
         var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
 
         var root = new GatheredObject(c);
-            
+
         foreach (var o in allObjects)
         {
             //don't add a reference to the thing we are gathering dependencies on!
-            if(Equals(o,c))
+            if (Equals(o, c))
                 continue;
-                
+
             foreach (var propertyInfo in propertyFinder.GetProperties(o))
             {
                 var sql = (string)propertyInfo.GetValue(o);
@@ -156,8 +159,7 @@ public class Gatherer
                     root.Children.Add(new GatheredObject(o));
             }
         }
-            
+
         return root;
     }
-
 }

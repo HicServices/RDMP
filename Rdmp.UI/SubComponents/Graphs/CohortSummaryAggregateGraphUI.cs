@@ -17,22 +17,30 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.SubComponents.Graphs;
 
 /// <summary>
-/// Allows you to execute a Frankenstein AggregateGraph that combines the dimensions, pivots, joins etc of a regular Aggregate Chart with the results of a 'Cohort Set'.  This allows you
-/// to compare live vs cohort and easily visualise cohorts you are building in a CohortIdentificationConfiguration.  For example if you have an 'Aggregate Chart' which shows demography
-/// records for 5 healthboards over time then you combine it with a 'cohort set' "People who have lived in Tayside or Fife for at least 5 years" you should expect to see the graph only
-/// show Tayside and Fife records.
-/// 
-/// <para>There are 2 ways of combining the two queries (cohort and original graph):
-/// WhereExtractionIdentifiersIn - provides an identical query to the original graph with an extra restriction that the patient identifier must appear in the 'Cohort Set'.  This lets you
-/// have a 'Cohort Set' "Prescriptions for Morphine" but generate a graph of "All drug prescriptions over time" and have it show all the drugs that those patients are on over time (this
-/// should show a high favouritism for Morphine but also show other drugs Morphine users also take).</para>
-/// 
-/// <para>WhereRecordsIn - provides an identical query to the original graph but also applies the Filters that are on the 'Cohort Set'.  This means that the same 'Cohort Set' "Prescriptions for
-/// Morphine" combined with the 'Aggregate Chart' "All drug prescriptions over time" would show ONLY Morphine prescriptions (since that is what the records that are returned by the cohort
-/// query).</para>
-///  
+///     Allows you to execute a Frankenstein AggregateGraph that combines the dimensions, pivots, joins etc of a regular
+///     Aggregate Chart with the results of a 'Cohort Set'.  This allows you
+///     to compare live vs cohort and easily visualise cohorts you are building in a CohortIdentificationConfiguration.
+///     For example if you have an 'Aggregate Chart' which shows demography
+///     records for 5 healthboards over time then you combine it with a 'cohort set' "People who have lived in Tayside or
+///     Fife for at least 5 years" you should expect to see the graph only
+///     show Tayside and Fife records.
+///     <para>
+///         There are 2 ways of combining the two queries (cohort and original graph):
+///         WhereExtractionIdentifiersIn - provides an identical query to the original graph with an extra restriction that
+///         the patient identifier must appear in the 'Cohort Set'.  This lets you
+///         have a 'Cohort Set' "Prescriptions for Morphine" but generate a graph of "All drug prescriptions over time" and
+///         have it show all the drugs that those patients are on over time (this
+///         should show a high favouritism for Morphine but also show other drugs Morphine users also take).
+///     </para>
+///     <para>
+///         WhereRecordsIn - provides an identical query to the original graph but also applies the Filters that are on the
+///         'Cohort Set'.  This means that the same 'Cohort Set' "Prescriptions for
+///         Morphine" combined with the 'Aggregate Chart' "All drug prescriptions over time" would show ONLY Morphine
+///         prescriptions (since that is what the records that are returned by the cohort
+///         query).
+///     </para>
 /// </summary>
-public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionControl
+public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollectionControl
 {
     private CohortSummaryAggregateGraphObjectCollection _collection;
 
@@ -43,26 +51,23 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        _collection.RevertIfMatchedInCollectionObjects(e.Object,out var shouldCloseInstead);
+        _collection.RevertIfMatchedInCollectionObjects(e.Object, out var shouldCloseInstead);
 
         if (shouldCloseInstead)
-        {
             ParentForm?.Close();
-        }
         else
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();
-            
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
     {
-        _collection = (CohortSummaryAggregateGraphObjectCollection) collection;
+        _collection = (CohortSummaryAggregateGraphObjectCollection)collection;
         SetItemActivator(activator);
-            
+
         BuildMenu(activator);
 
-        SetAggregate(activator,_collection.Graph);
+        SetAggregate(activator, _collection.Graph);
         LoadGraphAsync();
     }
 
@@ -73,10 +78,10 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     public override string GetTabName()
     {
-        if(_collection.CohortIfAny != null)
+        if (_collection.CohortIfAny != null)
             return $"Cohort Graph {_collection.CohortIfAny}({_collection.Adjustment})";
 
-        if(_collection.CohortContainerIfAny != null)
+        if (_collection.CohortContainerIfAny != null)
             return $"Cohort Container Graph {_collection.CohortContainerIfAny}";
 
         return "Loading...";
@@ -104,7 +109,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     protected override object[] GetRibbonObjects()
     {
-        return new object[]{ GetAdjustmentDescription(_collection.Adjustment)};
+        return new object[] { GetAdjustmentDescription(_collection.Adjustment) };
     }
 
     private static string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
@@ -123,7 +128,6 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny, Activator.CoreChildProvider)
             : new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
 
-        return builder.GetAdjustedAggregateBuilder(_collection.Adjustment,_collection.SingleFilterOnly);
+        return builder.GetAdjustedAggregateBuilder(_collection.Adjustment, _collection.SingleFilterOnly);
     }
-
 }

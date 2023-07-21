@@ -10,9 +10,10 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.UI.Rules;
 
 /// <summary>
-/// Interface for implementations of <see cref="Binding"/> validation based upon a relevant attribute (e.g. <see cref="NotNullAttribute"/>)
+///     Interface for implementations of <see cref="Binding" /> validation based upon a relevant attribute (e.g.
+///     <see cref="NotNullAttribute" />)
 /// </summary>
 public interface IBinderRule
 {
-    ErrorProvider ErrorProvider { get;}
+    ErrorProvider ErrorProvider { get; }
 }

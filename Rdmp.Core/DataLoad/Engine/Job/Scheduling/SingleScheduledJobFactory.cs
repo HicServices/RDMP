@@ -15,15 +15,18 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 /// <summary>
-/// Return a ScheduledDataLoadJob hydrated with appropriate dates for the LoadProgress supplied (e.g. load the next 5 days of Load Progress 'Tayside Biochem
-/// Loading').
+///     Return a ScheduledDataLoadJob hydrated with appropriate dates for the LoadProgress supplied (e.g. load the next 5
+///     days of Load Progress 'Tayside Biochem
+///     Loading').
 /// </summary>
 public class SingleScheduledJobFactory : ScheduledJobFactory
 {
-    private readonly ILoadProgress _loadProgress;
     private readonly IJobDateGenerationStrategy _jobDateGenerationStrategy;
+    private readonly ILoadProgress _loadProgress;
 
-    public SingleScheduledJobFactory(ILoadProgress loadProgress, IJobDateGenerationStrategy jobDateGenerationStrategy, int overrideNumberOfDaysToLoad , ILoadMetadata loadMetadata, ILogManager logManager) : base(overrideNumberOfDaysToLoad, loadMetadata, logManager)
+    public SingleScheduledJobFactory(ILoadProgress loadProgress, IJobDateGenerationStrategy jobDateGenerationStrategy,
+        int overrideNumberOfDaysToLoad, ILoadMetadata loadMetadata, ILogManager logManager) : base(
+        overrideNumberOfDaysToLoad, loadMetadata, logManager)
     {
         _loadProgress = loadProgress;
         _jobDateGenerationStrategy = jobDateGenerationStrategy;
@@ -31,16 +34,21 @@ public class SingleScheduledJobFactory : ScheduledJobFactory
 
     public override bool HasJobs()
     {
-        return _jobDateGenerationStrategy.GetTotalNumberOfJobs(OverrideNumberOfDaysToLoad??_loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0;
+        return _jobDateGenerationStrategy.GetTotalNumberOfJobs(
+            OverrideNumberOfDaysToLoad ?? _loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0;
     }
 
-    protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+    protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
     {
         var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        return new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)
+        return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
+            listener, configuration)
         {
             LoadProgress = _loadProgress,
-            DatesToRetrieve = _jobDateGenerationStrategy.GetDates(OverrideNumberOfDaysToLoad??_loadProgress.DefaultNumberOfDaysToLoadEachTime, false)
+            DatesToRetrieve =
+                _jobDateGenerationStrategy.GetDates(
+                    OverrideNumberOfDaysToLoad ?? _loadProgress.DefaultNumberOfDaysToLoadEachTime, false)
         };
     }
 }

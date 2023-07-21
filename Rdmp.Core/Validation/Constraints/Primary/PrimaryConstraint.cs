@@ -9,20 +9,21 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Validation.Constraints.Primary;
 
 /// <summary>
-/// A rule for validating the data in a column.  Each column can have a single <see cref="IPrimaryConstraint"/> but many
-/// <see cref="ISecondaryConstraint"/>
+///     A rule for validating the data in a column.  Each column can have a single <see cref="IPrimaryConstraint" /> but
+///     many
+///     <see cref="ISecondaryConstraint" />
 /// </summary>
 public abstract class PrimaryConstraint : IPrimaryConstraint
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Consequence? Consequence { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract void RenameColumn(string originalName, string newName);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract string GetHumanReadableDescriptionOfValidation();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract ValidationFailure Validate(object value);
 }

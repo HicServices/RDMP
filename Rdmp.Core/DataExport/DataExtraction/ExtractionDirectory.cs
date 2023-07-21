@@ -15,29 +15,29 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when
-/// an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from when it bundles together a
-/// release package.
+///     The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project
+///     extracts will appear when
+///     an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from
+///     when it bundles together a
+///     release package.
 /// </summary>
 public class ExtractionDirectory : IExtractionDirectory
 {
-    private readonly DirectoryInfo root;
-
     public const string EXTRACTION_SUB_FOLDER_NAME = "Extractions";
     public const string STANDARD_EXTRACTION_PREFIX = "Extr_";
     public const string GLOBALS_DATA_NAME = "Globals";
     public const string CUSTOM_COHORT_DATA_FOLDER_NAME = "CohortCustomData";
     public const string MASTER_DATA_FOLDER_NAME = "MasterData";
     public const string METADATA_FOLDER_NAME = "MetadataShareDefs";
-
-    public DirectoryInfo ExtractionDirectoryInfo { get; private set; }
+    private readonly DirectoryInfo root;
 
     public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
         : this(rootExtractionDirectory, configuration, DateTime.Now)
     {
     }
 
-    private ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration, DateTime extractionDate)
+    private ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration,
+        DateTime extractionDate)
     {
         if (string.IsNullOrWhiteSpace(rootExtractionDirectory))
             throw new NullReferenceException("Extraction Directory not set");
@@ -57,18 +57,15 @@ public class ExtractionDirectory : IExtractionDirectory
             : root.CreateSubdirectory(subdirectoryName);
     }
 
-    public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
-    {
-        return STANDARD_EXTRACTION_PREFIX + configuration.ID;
-    }
+    public DirectoryInfo ExtractionDirectoryInfo { get; }
 
     public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
     {
-        if(dataset.ToString().Equals(CUSTOM_COHORT_DATA_FOLDER_NAME))
+        if (dataset.ToString().Equals(CUSTOM_COHORT_DATA_FOLDER_NAME))
             throw new Exception(
                 $"You cannot call a dataset '{CUSTOM_COHORT_DATA_FOLDER_NAME}' because this string is reserved for cohort custom data the system spits out itself");
 
-        if(!Catalogue.IsAcceptableName(dataset.Catalogue.Name,out var reason))
+        if (!Catalogue.IsAcceptableName(dataset.Catalogue.Name, out var reason))
             throw new NotSupportedException(
                 $"Cannot extract dataset {dataset} because it points at Catalogue with an invalid name, name is invalid because:{reason}");
 
@@ -80,13 +77,24 @@ public class ExtractionDirectory : IExtractionDirectory
         catch (Exception e)
         {
             throw new Exception(
-                $"Could not create a directory called '{datasetDirectory}' as a subfolder of Project extraction directory {ExtractionDirectoryInfo.Root}",e);
+                $"Could not create a directory called '{datasetDirectory}' as a subfolder of Project extraction directory {ExtractionDirectoryInfo.Root}",
+                e);
         }
     }
 
     public DirectoryInfo GetGlobalsDirectory()
     {
         return ExtractionDirectoryInfo.CreateSubdirectory(GLOBALS_DATA_NAME);
+    }
+
+    public DirectoryInfo GetDirectoryForCohortCustomData()
+    {
+        return ExtractionDirectoryInfo.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
+    }
+
+    public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
+    {
+        return STANDARD_EXTRACTION_PREFIX + configuration.ID;
     }
 
     public static bool IsOwnerOf(IExtractionConfiguration configuration, DirectoryInfo directory)
@@ -104,19 +112,16 @@ public class ExtractionDirectory : IExtractionDirectory
         return directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
     }
 
-    public DirectoryInfo GetDirectoryForCohortCustomData()
-    {
-        return ExtractionDirectoryInfo.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
-    }
-
     public DirectoryInfo GetDirectoryForMasterData()
     {
         return ExtractionDirectoryInfo.CreateSubdirectory(MASTER_DATA_FOLDER_NAME);
     }
 
-    public static void CleanupExtractionDirectory(object sender, string extractionDirectory, IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
+    public static void CleanupExtractionDirectory(object sender, string extractionDirectory,
+        IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)
     {
-        var projectExtractionDirectory = new DirectoryInfo(Path.Combine(extractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
+        var projectExtractionDirectory =
+            new DirectoryInfo(Path.Combine(extractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
         var directoriesToDelete = new List<DirectoryInfo>();
         var filesToDelete = new List<FileInfo>();
 
@@ -160,11 +165,13 @@ public class ExtractionDirectory : IExtractionDirectory
         }
     }
 
-    private static void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot, List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
+    private static void AddDirectoryToCleanupList(DirectoryInfo toCleanup, bool isRoot,
+        List<DirectoryInfo> directoriesToDelete, List<FileInfo> filesToDelete)
     {
         //only add root folders to the delete queue
         if (isRoot)
-            if (!directoriesToDelete.Any(dir => dir.FullName.Equals(toCleanup.FullName))) //don't add the same folder twice
+            if (!directoriesToDelete.Any(dir =>
+                    dir.FullName.Equals(toCleanup.FullName))) //don't add the same folder twice
                 directoriesToDelete.Add(toCleanup);
 
         filesToDelete.AddRange(toCleanup.EnumerateFiles());

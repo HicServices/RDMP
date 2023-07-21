@@ -4,19 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExecution, IAtomicCommand
 {
     public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
     {
-        if(BasicActivator.RepositoryLocator.DataExportRepository == null)
+        if (BasicActivator.RepositoryLocator.DataExportRepository == null)
             SetImpossible("Data export database is not setup");
 
         UseTripleDotSuffix = true;
@@ -30,7 +30,7 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecut
     public override void Execute()
     {
         base.Execute();
-            
+
         if (TypeText("Name for package", "Name", 500, null, out var name))
         {
             var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);

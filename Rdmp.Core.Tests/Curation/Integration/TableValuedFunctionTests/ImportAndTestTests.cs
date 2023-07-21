@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -19,15 +20,15 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests;
 
 public class ImportAndTestTests : DatabaseTests
 {
-    private TestableTableValuedFunction _function = new();
     private DiscoveredDatabase _database;
+    private readonly TestableTableValuedFunction _function = new();
 
     [SetUp]
     protected override void SetUp()
     {
         base.SetUp();
 
-        _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         _function.Create(_database, CatalogueRepository);
     }
 
@@ -38,7 +39,7 @@ public class ImportAndTestTests : DatabaseTests
         using (var con = server.GetConnection())
         {
             con.Open();
-            var r = server.GetCommand("Select * from dbo.MyAwesomeFunction(5,10,'Fish')",con).ExecuteReader();
+            var r = server.GetCommand("Select * from dbo.MyAwesomeFunction(5,10,'Fish')", con).ExecuteReader();
 
             r.Read();
             Assert.AreEqual(5, r["Number"]);
@@ -69,7 +70,7 @@ public class ImportAndTestTests : DatabaseTests
         }
     }
 
-        
+
     [Test]
     public void ImportFunctionIntoCatalogue()
     {
@@ -81,18 +82,19 @@ public class ImportAndTestTests : DatabaseTests
     public void TestDiscovery()
     {
         var db = _database;
-            
+
         using (var con = db.Server.BeginNewTransactedConnection())
         {
-                
             //drop function - outside of transaction
             db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
             //create it within the scope of the transaction
-            var cmd = db.Server.GetCommand(_function.CreateFunctionSQL[(_function.CreateFunctionSQL.IndexOf("GO") + 3)..], con);
+            var cmd = db.Server.GetCommand(
+                _function.CreateFunctionSQL[(_function.CreateFunctionSQL.IndexOf("GO") + 3)..], con);
             cmd.ExecuteNonQuery();
 
-            Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction).Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
+            Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction)
+                .Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
             Assert.IsTrue(db.ExpectTableValuedFunction("MyAwesomeFunction").Exists(con.ManagedTransaction));
 
             var cols = db.ExpectTableValuedFunction("MyAwesomeFunction").DiscoverColumns(con.ManagedTransaction);
@@ -114,17 +116,18 @@ public class ImportAndTestTests : DatabaseTests
         var expectedMessage =
             "MyAwesomeFunction is a Table Valued Function, in the Catalogue it has a parameter called @fish but this parameter no longer appears in the underlying database";
 
-        var excessParameter = new AnyTableSqlParameter(CatalogueRepository, _function.TableInfoCreated, "DECLARE @fish as int");
+        var excessParameter =
+            new AnyTableSqlParameter(CatalogueRepository, _function.TableInfoCreated, "DECLARE @fish as int");
         var checker = new ToMemoryCheckNotifier();
         _function.TableInfoCreated.Check(checker);
-            
-        Assert.IsTrue(checker.Messages.Any(m=>m.Result == CheckResult.Fail 
-                                              &&
-                                              m.Message.Contains(expectedMessage)));
+
+        Assert.IsTrue(checker.Messages.Any(m => m.Result == CheckResult.Fail
+                                                &&
+                                                m.Message.Contains(expectedMessage)));
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
-        var ex = Assert.Throws<Exception>(()=>syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
         Assert.IsTrue(ex.Message.Contains(expectedMessage));
 
         //no changes yet
@@ -135,15 +138,16 @@ public class ImportAndTestTests : DatabaseTests
 
         //now parameter shouldnt be there
         Assert.IsTrue(excessParameter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
-
     }
 
     [Test]
     public void Synchronization_MissingParameter()
     {
-        var expectedMessage = "MyAwesomeFunction is a Table Valued Function but it does not have a record of the parameter @startNumber which appears in the underlying database";
+        var expectedMessage =
+            "MyAwesomeFunction is a Table Valued Function but it does not have a record of the parameter @startNumber which appears in the underlying database";
 
-        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
+        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters()
+            .Single(p => p.ParameterName.Equals("@startNumber"));
         parameter.DeleteInDatabase();
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
@@ -159,7 +163,6 @@ public class ImportAndTestTests : DatabaseTests
 
         //now parameter should have reappeared due to accepthing change
         Assert.IsTrue(_function.TableInfoCreated.GetAllParameters().Any(p => p.ParameterName.Equals("@startNumber")));
-            
     }
 
     [Test]
@@ -168,14 +171,15 @@ public class ImportAndTestTests : DatabaseTests
         var expectedMessage =
             "Parameter @startNumber is declared as 'DECLARE @startNumber AS int;' but in the Catalogue it appears as 'DECLARE @startNumber AS datetime;'";
 
-        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
+        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters()
+            .Single(p => p.ParameterName.Equals("@startNumber"));
         parameter.ParameterSQL = "DECLARE @startNumber AS datetime;";
         parameter.SaveToDatabase();
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
         var ex = Assert.Throws<Exception>(() => syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains(expectedMessage,ex.Message);
+        StringAssert.Contains(expectedMessage, ex.Message);
 
         //no changes should yet have taken place since we didn't accept it yet
         Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
@@ -183,26 +187,24 @@ public class ImportAndTestTests : DatabaseTests
         //sync should have proposed to adjusting the datatype
         Assert.IsTrue(syncer.Synchronize(new AcceptAllCheckNotifier()));
 
-        if(CatalogueRepository is not TableRepository)
-        {
+        if (CatalogueRepository is not TableRepository)
             // with a Yaml repository there is only one copy of the object so no need
             // to check for differences in db
             return;
-        }
 
         //now parameter should have the correct datatype
         Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
         var diff = parameter.HasLocalChanges().Differences.Single();
 
-        Assert.AreEqual("DECLARE @startNumber AS datetime;",diff.LocalValue);
+        Assert.AreEqual("DECLARE @startNumber AS datetime;", diff.LocalValue);
         Assert.AreEqual("DECLARE @startNumber AS int;", diff.DatabaseValue);
-
     }
 
     [Test]
     public void Synchronization_ParameterRenamed()
     {
-        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters().Single(p => p.ParameterName.Equals("@startNumber"));
+        var parameter = (AnyTableSqlParameter)_function.TableInfoCreated.GetAllParameters()
+            .Single(p => p.ParameterName.Equals("@startNumber"));
         parameter.ParameterSQL = "DECLARE @startNum AS int";
         parameter.SaveToDatabase();
 
@@ -217,8 +219,7 @@ public class ImportAndTestTests : DatabaseTests
         Assert.IsTrue(after.Any(p => p.ParameterName.Equals("@startNumber")));
 
         //still there should only be 3 parameters
-        Assert.AreEqual(3,after.Length);
-
+        Assert.AreEqual(3, after.Length);
     }
 
 
@@ -227,7 +228,7 @@ public class ImportAndTestTests : DatabaseTests
     {
         _function.TableInfoCreated.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
     }
-        
+
     [Test]
     public void CatalogueCheckingWorks()
     {

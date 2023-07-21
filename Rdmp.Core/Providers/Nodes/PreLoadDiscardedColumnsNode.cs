@@ -10,17 +10,18 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// All virtual columns in this <see cref="Curation.Data.TableInfo"/> which appear in the data load (RAW) but do not exist in the live database (or are diluted).  This enables
-/// anonymisation or dropping of columns during the data load (See <see cref="PreLoadDiscardedColumn"/>)
+///     All virtual columns in this <see cref="Curation.Data.TableInfo" /> which appear in the data load (RAW) but do not
+///     exist in the live database (or are diluted).  This enables
+///     anonymisation or dropping of columns during the data load (See <see cref="PreLoadDiscardedColumn" />)
 /// </summary>
-public class PreLoadDiscardedColumnsNode:Node
+public class PreLoadDiscardedColumnsNode : Node
 {
-    public TableInfo TableInfo { get; private set; }
-
     public PreLoadDiscardedColumnsNode(TableInfo tableInfo)
     {
         TableInfo = tableInfo;
     }
+
+    public TableInfo TableInfo { get; }
 
     public override string ToString()
     {
@@ -37,13 +38,11 @@ public class PreLoadDiscardedColumnsNode:Node
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PreLoadDiscardedColumnsNode) obj);
+        return Equals((PreLoadDiscardedColumnsNode)obj);
     }
 
     public override int GetHashCode()
     {
         return TableInfo != null ? TableInfo.GetHashCode() : 0;
     }
-
-
 }

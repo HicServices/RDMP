@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
@@ -11,12 +12,11 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using System;
 
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// RDMP Collection which shows all the Cohorts that have been committed to RDMP accross all Projects / Cohort Sources.
+///     RDMP Collection which shows all the Cohorts that have been committed to RDMP accross all Projects / Cohort Sources.
 /// </summary>
 public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
@@ -28,6 +28,11 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         olvVersion.AspectGetter = AspectGetter_Version;
         olvVersion.IsEditable = false;
         olvProjectNumber.IsEditable = false;
+    }
+
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+        SetupToolStrip();
     }
 
     private object AspectGetter_Version(object rowObject)
@@ -48,29 +53,27 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     {
         base.SetItemActivator(activator);
 
-        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,Activator,olvName,olvName);
-            
+        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts, Activator, olvName, olvName);
+
         tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 
         SetupToolStrip();
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-        CommonTreeFunctionality.SetupColumnTracking( olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
-        CommonTreeFunctionality.SetupColumnTracking( olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
-        CommonTreeFunctionality.SetupColumnTracking( olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
-    }
-
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-    {
-        SetupToolStrip();
+        CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
+        CommonTreeFunctionality.SetupColumnTracking(olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
+        CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
     }
 
     private void SetupToolStrip()
     {
         CommonFunctionality.ClearToolStrip();
-        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator,null),GlobalStrings.FromFile,null,"New...");
-        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),"From Query",null,"New...");
+        CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator, null), GlobalStrings.FromFile,
+            null, "New...");
+        CommonFunctionality.Add(
+            new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null),
+            "From Query", null, "New...");
     }
 
     public static bool IsRootObject(object root)

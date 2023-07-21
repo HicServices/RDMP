@@ -29,49 +29,51 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.AggregationUIs.Advanced;
 
 /// <summary>
-/// Allows you to pick which columns are used to build an AggregateConfiguration.  This includes all AggregateDimensions (and the count column) as well as all available columns which could
-/// be included.  This UI handles column selection / editing for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
-/// objects anyway). 
-/// 
-/// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change its
-/// SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column and modify it then untick it you will loose the changes.</para>
-/// 
-/// <para>The count column appears in Wheat background color and can be modified to any GROUP BY aggregate function e.g. max(dt)</para>
+///     Allows you to pick which columns are used to build an AggregateConfiguration.  This includes all
+///     AggregateDimensions (and the count column) as well as all available columns which could
+///     be included.  This UI handles column selection / editing for both regular Aggregate Graphs, Cohort Sets and Patient
+///     Index Tables (because they are all actually just AggregateConfiguration
+///     objects anyway).
+///     <para>
+///         Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an
+///         ExtractionInformation it will become an AggregateDimension which means when you change its
+///         SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column
+///         and modify it then untick it you will loose the changes.
+///     </para>
+///     <para>
+///         The count column appears in Wheat background color and can be modified to any GROUP BY aggregate function
+///         e.g. max(dt)
+///     </para>
 /// </summary>
 public partial class SelectColumnUI : RDMPUserControl
 {
-    private IAggregateBuilderOptions _options;
-    private AggregateConfiguration _aggregate;
-        
-    private List<IColumn> _availableColumns;
-    private List<IColumn> _includedColumns;
-
-    internal IReadOnlyCollection<IColumn> AvailableColumns => new ReadOnlyCollection<IColumn>(_availableColumns);
-    internal IReadOnlyCollection<IColumn> IncludedColumns => new ReadOnlyCollection<IColumn>(_includedColumns);
-
-    public QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
-
     private readonly Bitmap _add;
     private readonly Bitmap _delete;
+    private AggregateConfiguration _aggregate;
+
+    private readonly List<IColumn> _availableColumns;
     private CountColumnRequirement _countColumnRequirement;
+    private readonly List<IColumn> _includedColumns;
+    private IAggregateBuilderOptions _options;
+
+    public QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
     public SelectColumnUI()
     {
         InitializeComponent();
-            
+
         olvSelectColumns.ButtonClick += ButtonClick;
-            
+
         _availableColumns = new List<IColumn>();
         _includedColumns = new List<IColumn>();
 
         olvEditInPopup.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
-        olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject)?"Edit...":null;
-            
-        olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject)? "Included": "Not Included";
+        olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Edit..." : null;
+
+        olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Included" : "Not Included";
         olvSelectColumns.AlwaysGroupByColumn = olvIncluded;
         olvSelectColumns.RowFormatter += RowFormatter;
 
@@ -80,11 +82,13 @@ public partial class SelectColumnUI : RDMPUserControl
 
         olvAddRemove.ImageGetter += ImageGetter;
         olvSelectColumns.CellClick += olvSelectColumns_CellClick;
-            
+
         _add = FamFamFamIcons.add.ImageToBitmap();
         _delete = FamFamFamIcons.delete.ImageToBitmap();
-
     }
+
+    internal IReadOnlyCollection<IColumn> AvailableColumns => new ReadOnlyCollection<IColumn>(_availableColumns);
+    internal IReadOnlyCollection<IColumn> IncludedColumns => new ReadOnlyCollection<IColumn>(_includedColumns);
 
     private void olvSelectColumns_CellClick(object sender, CellClickEventArgs e)
     {
@@ -95,7 +99,8 @@ public partial class SelectColumnUI : RDMPUserControl
             var dimensionColumn = e.Model as AggregateDimension;
 
             if (countColumn == null && importableColumn == null && dimensionColumn == null)
-                throw new Exception($"Object in list view of type that wasn't IColumn, it was {e.Model.GetType().Name}");
+                throw new Exception(
+                    $"Object in list view of type that wasn't IColumn, it was {e.Model.GetType().Name}");
 
             //if it is an add
             if (_availableColumns.Contains(e.Model))
@@ -103,17 +108,16 @@ public partial class SelectColumnUI : RDMPUserControl
                 //count column added
                 if (countColumn != null)
                     if (_options.GetCountColumnRequirement(_aggregate) == CountColumnRequirement.CannotHaveOne)
-                    {
-                        WideMessageBox.Show("Cohort Sets cannot have count columns","A count column is a SELECT column with an aggregate function (count(*), sum(x) etc).  The SELECT component for cohort identification must be the patient id column only.");
-                    }
+                        WideMessageBox.Show("Cohort Sets cannot have count columns",
+                            "A count column is a SELECT column with an aggregate function (count(*), sum(x) etc).  The SELECT component for cohort identification must be the patient id column only.");
                     else
                         Save(countColumn);
 
                 //regular column added
                 if (importableColumn != null)
                 {
-
-                    var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueRepository, importableColumn, _aggregate);
+                    var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueRepository,
+                        importableColumn, _aggregate);
 
                     _availableColumns.Remove(importableColumn);
                     _includedColumns.Add(dimension);
@@ -125,7 +129,6 @@ public partial class SelectColumnUI : RDMPUserControl
                     Save(dimension);
 
                     //object doesn't exist, that might cause problems
-                    return;
                 }
             }
             else
@@ -185,7 +188,6 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private Bitmap ImageGetter(object rowObject)
     {
-            
         if (_availableColumns.Contains(rowObject))
             return _add;
 
@@ -198,7 +200,7 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private void CellEditFinished(object sender, CellEditEventArgs cellEditEventArgs)
     {
-        var col = (IColumn) cellEditEventArgs.RowObject;
+        var col = (IColumn)cellEditEventArgs.RowObject;
 
         //user deleted its value
         if (string.IsNullOrWhiteSpace(col.SelectSQL) && col.ColumnInfo != null)
@@ -209,7 +211,6 @@ public partial class SelectColumnUI : RDMPUserControl
 
         if (cellEditEventArgs.RowObject != null)
             Save(col);
-
     }
 
     private void CellEditStarting(object sender, CellEditEventArgs cellEditEventArgs)
@@ -234,9 +235,8 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private void ButtonClick(object sender, CellClickEventArgs cellClickEventArgs)
     {
-        if(cellClickEventArgs.Column == olvEditInPopup)
-        {
-            if(cellClickEventArgs.Model is IColumn col)
+        if (cellClickEventArgs.Column == olvEditInPopup)
+            if (cellClickEventArgs.Model is IColumn col)
             {
                 var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCombineableFactory());
 
@@ -247,18 +247,17 @@ public partial class SelectColumnUI : RDMPUserControl
                 autoComplete.Add(_aggregate);
 
                 autoComplete.RegisterForEvents(dialog.QueryEditor);
-                    
+
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     col.SelectSQL = dialog.Result;
                     Save(col);
                 }
             }
-        }
     }
 
     /// <summary>
-    /// saves changes to an IColumn made by the user and publishes that the AggregateConfiguration has changed
+    ///     saves changes to an IColumn made by the user and publishes that the AggregateConfiguration has changed
     /// </summary>
     /// <param name="col"></param>
     private void Save(IColumn col)
@@ -267,7 +266,7 @@ public partial class SelectColumnUI : RDMPUserControl
         {
             _aggregate.CountSQL = countCol.GetFullSelectLineStringForSavingIntoAnAggregate();
             _aggregate.SaveToDatabase();
-            if(!_includedColumns.Contains(countCol))
+            if (!_includedColumns.Contains(countCol))
             {
                 _includedColumns.Add(countCol);
                 _availableColumns.Remove(countCol);
@@ -276,7 +275,7 @@ public partial class SelectColumnUI : RDMPUserControl
                 olvSelectColumns.AddObject(countCol);
                 olvSelectColumns.EnsureModelVisible(countCol);
             }
-                
+
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
             return;
         }
@@ -285,7 +284,7 @@ public partial class SelectColumnUI : RDMPUserControl
         saveable?.SaveToDatabase();
 
         _aggregate.SaveToDatabase();
-        Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+        Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
     }
 
 
@@ -296,7 +295,7 @@ public partial class SelectColumnUI : RDMPUserControl
         _options = options;
         _countColumnRequirement = _options.GetCountColumnRequirement(aggregate);
         _aggregate = aggregate;
-            
+
         _availableColumns.Clear();
         _includedColumns.Clear();
         olvSelectColumns.ClearObjects();
@@ -319,7 +318,8 @@ public partial class SelectColumnUI : RDMPUserControl
                 countCol = new AggregateCountColumn("count(*) as CountColumn");
                 _availableColumns.Add(countCol);
             }
-            countCol.SetQuerySyntaxHelper(_querySyntaxHelper,true);
+
+            countCol.SetQuerySyntaxHelper(_querySyntaxHelper, true);
         }
 
         olvSelectColumns.AddObjects(_includedColumns);
@@ -329,6 +329,7 @@ public partial class SelectColumnUI : RDMPUserControl
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         olvSelectColumns.UseFiltering = true;
-        olvSelectColumns.ModelFilter = new TextMatchFilterWithAlwaysShowList(_includedColumns,olvSelectColumns,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
+        olvSelectColumns.ModelFilter = new TextMatchFilterWithAlwaysShowList(_includedColumns, olvSelectColumns,
+            tbFilter.Text, StringComparison.CurrentCultureIgnoreCase);
     }
 }

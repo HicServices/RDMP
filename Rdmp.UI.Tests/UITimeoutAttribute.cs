@@ -9,21 +9,22 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Commands;
+using OSPlatform = System.Runtime.InteropServices.OSPlatform;
 
 namespace Rdmp.UI.Tests;
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method, Inherited = false)]
 internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 {
     private readonly int _timeout;
 
     /// <summary>
-    /// Allows <paramref name="timeout"/> for the test to complete before calling <see cref="Process.CloseMainWindow"/> and failing the test
+    ///     Allows <paramref name="timeout" /> for the test to complete before calling <see cref="Process.CloseMainWindow" />
+    ///     and failing the test
     /// </summary>
     /// <param name="timeout">timeout in milliseconds</param>
     public UITimeoutAttribute(int timeout)
@@ -31,7 +32,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
         _timeout = timeout;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public TestCommand Wrap(TestCommand command)
     {
         return new TimeoutCommand(command, _timeout);
@@ -39,9 +40,14 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
     private partial class TimeoutCommand : DelegatingTestCommand
     {
+        private const uint WM_CLOSE = 0x0010;
+        private const uint WM_COMMAND = 0x0111;
         private int _timeout;
+        private readonly int IDNO = 7;
 
-        public TimeoutCommand(TestCommand innerCommand, int timeout): base(innerCommand)
+        private readonly string YesNoDialog = "#32770";
+
+        public TimeoutCommand(TestCommand innerCommand, int timeout) : base(innerCommand)
         {
             _timeout = timeout;
         }
@@ -54,12 +60,6 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
         [LibraryImport("user32.dll")]
         private static partial IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
-
-        private string YesNoDialog = "#32770";
-
-        private const uint WM_CLOSE = 0x0010;
-        private const uint WM_COMMAND = 0x0111;
-        private int IDNO = 7;
 
 
         public override TestResult Execute(TestExecutionContext context)
@@ -78,17 +78,15 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     threadException = ex;
                 }
             });
-            if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
 
             try
             {
-                while (thread.IsAlive && (_timeout > 0  || Debugger.IsAttached))
-                {
+                while (thread.IsAlive && (_timeout > 0 || Debugger.IsAttached))
                     if (!thread.Join(_timeout) && !Debugger.IsAttached)
                         _timeout = 0;
-                }
 
                 var closeAttempts = 10;
 
@@ -100,9 +98,9 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     //if it still has a window handle then presumably needs further treatment
                     IntPtr handle;
 
-                    while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
+                    while ((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
                     {
-                        if(closeAttempts-- <=0)
+                        if (closeAttempts-- <= 0)
                             throw new Exception("Failed to close all windows even after multiple attempts");
 
                         var sbClass = new StringBuilder(100);
@@ -124,7 +122,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                 if (threadException != null)
                     throw threadException;
 
-                if(result == null)
+                if (result == null)
                     throw new Exception("UI test did not produce a result");
 
                 return result;

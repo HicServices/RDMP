@@ -10,18 +10,23 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.MainFormUITabs;
 
 /// <summary>
-/// RDMP supports extracting all your metadata into DITA format (http://dita.xml.org/ - DITA OASIS Standard).  This is an XML standard with good tool support.  This form lets you
-/// export your entire metadata descriptive database into a collection of DITA files.  This might be useful to you for some reason (e.g. to produce offline PDFs etc) but really 
-/// the recommended route is to use the built in metadata reports (e.g. MetadataReportUI).  Alternatively you can run queries directly on the RDMP Data Catalogue database
-/// which is a super relational database with many tables (Catalogue, CatalogueItem, SupportingDocument etc etc).
-/// 
-/// <para>NOTE: Make sure that you have set a Resource Acronym for each of your datasets (Catalogues) before attempting to extract in DITA format.</para>
+///     RDMP supports extracting all your metadata into DITA format (http://dita.xml.org/ - DITA OASIS Standard).  This is
+///     an XML standard with good tool support.  This form lets you
+///     export your entire metadata descriptive database into a collection of DITA files.  This might be useful to you for
+///     some reason (e.g. to produce offline PDFs etc) but really
+///     the recommended route is to use the built in metadata reports (e.g. MetadataReportUI).  Alternatively you can run
+///     queries directly on the RDMP Data Catalogue database
+///     which is a super relational database with many tables (Catalogue, CatalogueItem, SupportingDocument etc etc).
+///     <para>
+///         NOTE: Make sure that you have set a Resource Acronym for each of your datasets (Catalogues) before attempting
+///         to extract in DITA format.
+///     </para>
 /// </summary>
 public partial class DitaExtractorUI : RDMPUserControl
 {
@@ -33,7 +38,7 @@ public partial class DitaExtractorUI : RDMPUserControl
     private void btnBrowse_Click(object sender, EventArgs e)
     {
         using var ofd = new FolderBrowserDialog();
-        
+
         if (ofd.ShowDialog() is DialogResult.OK or DialogResult.Yes)
             tbExtractionDirectory.Text = ofd.SelectedPath;
     }
@@ -44,11 +49,10 @@ public partial class DitaExtractorUI : RDMPUserControl
         {
             var outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
 
-            if (outputPath.GetFiles("*.dita*").Any() && Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
-            {
+            if (outputPath.GetFiles("*.dita*").Any() && Activator.YesNo(
+                    "There are files already in this directory, do you want to delete them?", "Clear Directory?"))
                 foreach (var file in outputPath.GetFiles("*.dita*"))
                     file.Delete();
-            }
 
             var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
             extractor.Extract(progressBarsUI1);
@@ -57,12 +61,11 @@ public partial class DitaExtractorUI : RDMPUserControl
         {
             MessageBox.Show(ex.Message);
         }
-            
     }
 
     private void btnShowDirectory_Click(object sender, EventArgs e)
     {
-        if(string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
+        if (string.IsNullOrWhiteSpace(tbExtractionDirectory.Text))
             return;
 
         var d = new DirectoryInfo(tbExtractionDirectory.Text);
@@ -71,7 +74,7 @@ public partial class DitaExtractorUI : RDMPUserControl
 
     private void btnCheck_Click(object sender, EventArgs e)
     {
-        var popup = new PopupChecksUI("Checking Dita extraction",false);
+        var popup = new PopupChecksUI("Checking Dita extraction", false);
 
         var extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
         popup.StartChecking(extractor);

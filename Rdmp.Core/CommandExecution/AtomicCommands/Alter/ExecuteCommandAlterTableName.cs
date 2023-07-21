@@ -10,23 +10,23 @@ using Rdmp.Core.Sharing.Refactoring;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-/// Renames a table in the live database
+///     Renames a table in the live database
 /// </summary>
 public class ExecuteCommandAlterTableName : AlterTableCommandExecution
 {
     private SelectSQLRefactorer _refactorer;
 
-    public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,tableInfo)
+    public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,
+        tableInfo)
     {
-        if(IsImpossible)
+        if (IsImpossible)
             return;
-            
+
         _refactorer = new SelectSQLRefactorer();
 
         if (!SelectSQLRefactorer.IsRefactorable(TableInfo))
         {
             SetImpossible($"Cannot rename table because {SelectSQLRefactorer.GetReasonNotRefactorable(TableInfo)}");
-            return;
         }
     }
 

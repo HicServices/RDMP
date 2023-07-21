@@ -15,21 +15,24 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <summary>
-/// Postgres triggers require an accompanying stored procedure.  This class handles creating the proc and trigger
+///     Postgres triggers require an accompanying stored procedure.  This class handles creating the proc and trigger
 /// </summary>
 public class PostgreSqlTriggerImplementer : TriggerImplementer
 {
-    private string _schema;
-    private string _triggerRuntimeName;
-    private string _procedureNameFullyQualified;
-    private string _procedureRuntimeName;
+    private readonly string _procedureNameFullyQualified;
+    private readonly string _procedureRuntimeName;
+    private readonly string _schema;
+    private readonly string _triggerRuntimeName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso):base(table,createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
+    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso) : base(table,
+        createDataLoadRunIDAlso)
     {
-        _schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
+        _schema = string.IsNullOrWhiteSpace(_table.Schema)
+            ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny()
+            : _table.Schema;
         _triggerRuntimeName = $"{_table.GetRuntimeName()}_OnUpdate";
-            
+
         _procedureRuntimeName = $"{_table.GetRuntimeName()}_OnUpdateProc";
         _procedureNameFullyQualified = $"{_schema}.\"{_procedureRuntimeName}\"";
     }
@@ -45,14 +48,15 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
             {
                 con.Open();
 
-                using(var cmd = _server.GetCommand(
-                          $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
+                using (var cmd = _server.GetCommand(
+                           $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}",
+                           con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
                 }
 
-                using(var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
+                using (var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
@@ -75,7 +79,7 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
         CreateProcedure(notifier);
 
         var sql = string.Format(@"CREATE TRIGGER ""{0}"" BEFORE UPDATE ON {1} FOR EACH ROW
-EXECUTE PROCEDURE {2}();", 
+EXECUTE PROCEDURE {2}();",
             _triggerRuntimeName,
             _table.GetFullyQualifiedName(),
             _procedureNameFullyQualified);
@@ -84,12 +88,11 @@ EXECUTE PROCEDURE {2}();",
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand(sql, con))
+            using (var cmd = _server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
             }
-                    
         }
 
         return creationSql;
@@ -103,7 +106,7 @@ $$
 {1}
 $$
 LANGUAGE 'plpgsql';"
-            ,_procedureNameFullyQualified
+            , _procedureNameFullyQualified
             , CreateTriggerBody()
         );
 
@@ -111,12 +114,11 @@ LANGUAGE 'plpgsql';"
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand(sql, con))
+            using (var cmd = _server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
             }
-                    
         }
     }
 
@@ -126,9 +128,12 @@ LANGUAGE 'plpgsql';"
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con))
+            using (var cmd = _server.GetCommand(
+                       $"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con))
             using (var r = cmd.ExecuteReader())
-                return r.Read() ? r["prosrc"] as string:null;
+            {
+                return r.Read() ? r["prosrc"] as string : null;
+            }
         }
     }
 
@@ -139,21 +144,22 @@ LANGUAGE 'plpgsql';"
         var sqlThen = GetTriggerBody();
         var sqlNow = CreateTriggerBody();
 
-        if(sqlThen != null)
-            sqlThen = Regex.Replace(sqlThen,@"\s+", " ").Trim();
+        if (sqlThen != null)
+            sqlThen = Regex.Replace(sqlThen, @"\s+", " ").Trim();
 
-        if(sqlNow != null)
-            sqlNow = Regex.Replace(sqlNow,@"\s+", " ").Trim();
+        if (sqlNow != null)
+            sqlNow = Regex.Replace(sqlNow, @"\s+", " ").Trim();
 
-        AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
+        AssertTriggerBodiesAreEqual(sqlThen, sqlNow);
 
         return true;
     }
 
     private static void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        if(!sqlNow.Equals(sqlThen))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlNow,sqlThen);
+        if (!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql", sqlNow,
+                sqlThen);
     }
 
     private string CreateTriggerBody()
@@ -169,11 +175,10 @@ LANGUAGE 'plpgsql';"
  
             RETURN NEW;
             END;",
-                _archiveTable.GetFullyQualifiedName()                                                                          
-                , string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),         
+                _archiveTable.GetFullyQualifiedName()
+                , string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
                 string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
                 syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
-
     }
 
     public override TriggerStatus GetTriggerStatus()

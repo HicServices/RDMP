@@ -27,7 +27,8 @@ internal class ProposeExecutionWhenTargetIsLookup : RDMPCommandExecutionProposal
         ItemActivator.Activate<LookupUI, Lookup>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Lookup target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Lookup target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

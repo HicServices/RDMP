@@ -13,17 +13,10 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 /// <summary>
-/// Reference to a .sln file in which we can extract all the solution folders and project references.
+///     Reference to a .sln file in which we can extract all the solution folders and project references.
 /// </summary>
 public class VisualStudioSolutionFile
 {
-    public DirectoryInfo SolutionDirectory { get; private set; }
-    public VisualStudioSolutionFolder[] RootFolders { get; set; }
-    public VisualStudioProjectReference[] RootProjects { get; set; }
-
-    public List<VisualStudioProjectReference> Projects { get; private set; }
-    public List<VisualStudioSolutionFolder> Folders { get; private set; }
-
     public VisualStudioSolutionFile(DirectoryInfo solutionDirectory, FileInfo slnFile)
     {
         SolutionDirectory = solutionDirectory;
@@ -31,9 +24,14 @@ public class VisualStudioSolutionFile
         var slnFileContents = File.ReadAllText(slnFile.FullName);
 
         //                                                           Group 1             Group 2                       Group4
-        var projReg = new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""(.*\.(cs|vcx|vb)proj)\"", \""({[\w-]*\})\""", RegexOptions.Compiled);
+        var projReg =
+            new Regex(
+                @"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""(.*\.(cs|vcx|vb)proj)\"", \""({[\w-]*\})\""",
+                RegexOptions.Compiled);
         //                                                           Group 1                Group 2            Group3
-        var folderReg = new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""([\w\.]*)\"", \""({[\w-]*\})\""", RegexOptions.Compiled);
+        var folderReg =
+            new Regex(@"Project\(\""\{[\w-]*\}\""\) = \""([\w _]*.*)\"", \""([\w\.]*)\"", \""({[\w-]*\})\""",
+                RegexOptions.Compiled);
 
         Projects = new List<VisualStudioProjectReference>();
         Folders = new List<VisualStudioSolutionFolder>();
@@ -44,7 +42,7 @@ public class VisualStudioSolutionFile
 
         foreach (Match m in folderReg.Matches(slnFileContents))
         {
-            if(!m.Groups[1].Value.Equals(m.Groups[2].Value))
+            if (!m.Groups[1].Value.Equals(m.Groups[2].Value))
                 throw new Exception(
                     $"Expected folder name to be the same as folder text when evaluating the projects in solution {slnFile.FullName} (Regex matches were'{m.Groups[1].Value}' and '{m.Groups[2].Value}')");
 
@@ -84,15 +82,18 @@ GlobalSection(NestedProjects) = preSolution
                 var folderInside = Folders.SingleOrDefault(f => f.Guid.Equals(thingInside));
                 var folderHoldingIt = Folders.SingleOrDefault(f => f.Guid.Equals(thingHoldingIt));
 
-                if(folderHoldingIt == null)
+                if (folderHoldingIt == null)
                     continue;
 
                 if (folderInside != null)
+                {
                     folderHoldingIt.ChildrenFolders.Add(folderInside);
+                }
                 else
                 {
                     var visualStudioProjectReferenceInside = Projects.Single(p => p.Guid.Equals(thingInside));
-                    Folders.Single(f => f.Guid.Equals(thingHoldingIt)).ChildrenProjects.Add(visualStudioProjectReferenceInside);
+                    Folders.Single(f => f.Guid.Equals(thingHoldingIt)).ChildrenProjects
+                        .Add(visualStudioProjectReferenceInside);
                 }
             }
         }
@@ -101,5 +102,10 @@ GlobalSection(NestedProjects) = preSolution
         RootProjects = Projects.Where(p => !Folders.Any(f => f.ChildrenProjects.Contains(p))).ToArray();
     }
 
-        
+    public DirectoryInfo SolutionDirectory { get; private set; }
+    public VisualStudioSolutionFolder[] RootFolders { get; set; }
+    public VisualStudioProjectReference[] RootProjects { get; set; }
+
+    public List<VisualStudioProjectReference> Projects { get; }
+    public List<VisualStudioSolutionFolder> Folders { get; }
 }

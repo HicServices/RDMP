@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
@@ -17,35 +16,36 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.Sharing.Dependency.Gathering;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Gathers dependencies of the supplied objects and extracts the share definitions to a directory.  This will have the side effect of creating an ObjectExport declaration
-/// if none yet exists which will prevent accidental deletion of the object and enable updating people who receive the definition later on via the sharing Guid.
+///     Gathers dependencies of the supplied objects and extracts the share definitions to a directory.  This will have the
+///     side effect of creating an ObjectExport declaration
+///     if none yet exists which will prevent accidental deletion of the object and enable updating people who receive the
+///     definition later on via the sharing Guid.
 /// </summary>
 public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
 {
+    private readonly Gatherer _gatherer;
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+
+    private readonly ShareManager _shareManager;
     private readonly IMapsDirectlyToDatabaseTable[] _toExport;
 
     public DirectoryInfo TargetDirectoryInfo;
     public FileInfo TargetFileInfo;
 
-    private readonly ShareManager _shareManager;
-    private readonly Gatherer _gatherer;
-
-    public bool ShowInExplorer { get; set; }
-
-    public bool IsSingleObject => _toExport.Length == 1;
-
-    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable toExport, FileInfo targetFileInfo = null) : this(activator, new[] { toExport })
+    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable toExport,
+        FileInfo targetFileInfo = null) : this(activator, new[] { toExport })
     {
         TargetFileInfo = targetFileInfo;
     }
 
-    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport, DirectoryInfo targetDirectoryInfo = null) : base(activator)
+    public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport,
+        DirectoryInfo targetDirectoryInfo = null) : base(activator)
     {
         _toExport = toExport;
         ShowInExplorer = true;
@@ -62,6 +62,7 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             SetImpossible("No objects exist to be exported");
             return;
         }
+
         _gatherer = new Gatherer(_repositoryLocator);
 
         var incompatible = toExport.FirstOrDefault(o => !_gatherer.CanGatherDependencies(o));
@@ -69,6 +70,10 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
         if (incompatible != null)
             SetImpossible($"Object {incompatible.GetType()} is not supported by Gatherer");
     }
+
+    public bool ShowInExplorer { get; set; }
+
+    public bool IsSingleObject => _toExport.Length == 1;
 
     public override string GetCommandHelp()
     {
@@ -96,7 +101,8 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             //Extract a single object (to file)
             if (TargetFileInfo == null && BasicActivator.IsInteractive)
             {
-                TargetFileInfo = BasicActivator.SelectFile("Path to output share definition to", "Share Definition", "*.sd");
+                TargetFileInfo =
+                    BasicActivator.SelectFile("Path to output share definition to", "Share Definition", "*.sd");
 
                 if (TargetFileInfo == null)
                     return;

@@ -13,21 +13,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution, IAtomicCommand
 {
-    private DataAccessCredentialUsageNode _node;
     private readonly DataAccessContext _newContext;
+    private readonly DataAccessCredentialUsageNode _node;
 
-    public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator, DataAccessCredentialUsageNode node, DataAccessContext newContext, Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials): base(activator)
+    public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator,
+        DataAccessCredentialUsageNode node, DataAccessContext newContext,
+        Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials) : base(activator)
     {
         _node = node;
         _newContext = newContext;
 
         //if context is same as before
-        if(newContext == node.Context)
+        if (newContext == node.Context)
         {
             SetImpossible("This is the current usage context declared");
             return;
         }
-            
+
         //if there's already another credential for that context (other than this one)
         if (existingCredentials.TryGetValue(newContext, out var credential))
             SetImpossible(

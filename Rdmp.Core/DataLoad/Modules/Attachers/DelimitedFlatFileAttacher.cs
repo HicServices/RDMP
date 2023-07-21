@@ -11,7 +11,6 @@ using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
@@ -20,18 +19,28 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// See AnySeparatorFileAttacher
+///     See AnySeparatorFileAttacher
 /// </summary>
 public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
 {
+    private FileInfo _currentFile;
+
+    private IDataLoadEventListener _listener;
     protected DelimitedFlatFileDataFlowSource _source;
-        
+
+
+    protected DelimitedFlatFileAttacher(char separator)
+    {
+        SetupSource(separator);
+    }
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
-    public string ForceHeaders {
+    public string ForceHeaders
+    {
         get => _source.ForceHeaders;
         set => _source.ForceHeaders = value;
     }
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
     public bool IgnoreQuotes
     {
@@ -40,7 +49,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBlankLines_DemandDescription)]
-    public bool IgnoreBlankLines {
+    public bool IgnoreBlankLines
+    {
         get => _source.IgnoreBlankLines;
         set => _source.IgnoreBlankLines = value;
     }
@@ -59,7 +69,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         set => _source.IgnoreColumns = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,DefaultValue = BadDataHandlingStrategy.ThrowException)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,
+        DefaultValue = BadDataHandlingStrategy.ThrowException)]
     public BadDataHandlingStrategy BadDataHandlingStrategy
     {
         get => _source.BadDataHandlingStrategy;
@@ -72,22 +83,23 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         get => _source.IgnoreBadReads;
         set => _source.IgnoreBadReads = value;
     }
-        
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription, DefaultValue = true)]
     public bool ThrowOnEmptyFiles
     {
         get => _source.ThrowOnEmptyFiles;
         set => _source.ThrowOnEmptyFiles = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription, DefaultValue = false)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription,
+        DefaultValue = false)]
     public bool AttemptToResolveNewLinesInRecords
     {
         get => _source.AttemptToResolveNewLinesInRecords;
         set => _source.AttemptToResolveNewLinesInRecords = value;
     }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription,DefaultValue = 100)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
     public int MaximumErrorsToReport
     {
         get => _source.MaximumErrorsToReport;
@@ -98,16 +110,17 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     public string AddFilenameColumnNamed { get; set; }
 
     [DemandsInitialization(Culture_DemandDescription)]
-    public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
+    public override CultureInfo Culture
+    {
+        get => _source.Culture;
+        set => _source.Culture = value;
+    }
 
     [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
-    public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
-
-
-    protected DelimitedFlatFileAttacher(char separator)
+    public override string ExplicitDateTimeFormat
     {
-        SetupSource(separator);
-
+        get => _source.ExplicitDateTimeFormat;
+        set => _source.ExplicitDateTimeFormat = value;
     }
 
     private void SetupSource(char separator)
@@ -120,10 +133,8 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         };
     }
 
-    private IDataLoadEventListener _listener;
-    private FileInfo _currentFile;
-
-    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken)
+    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
+        GracefulCancellationToken cancellationToken)
     {
         _source.MaxBatchSize = maxBatchSize;
         _source.SetDataTable(dt);
@@ -132,19 +143,20 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         //if we are adding a column to the data read which contains the file path
         if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
         {
-            if(!dt.Columns.Contains(AddFilenameColumnNamed))
+            if (!dt.Columns.Contains(AddFilenameColumnNamed))
                 throw new FlatFileLoadException(
                     $"AddFilenameColumnNamed is set to '{AddFilenameColumnNamed}' but the column did not exist in RAW");
 
             foreach (DataRow row in dt.Rows)
                 if (row[AddFilenameColumnNamed] == DBNull.Value)
                     row[AddFilenameColumnNamed] = _currentFile.FullName;
-                
         }
+
         return dt.Rows.Count;
     }
 
-    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         _source.StronglyTypeInput = false;
         _source.StronglyTypeInputBatchSize = 0;

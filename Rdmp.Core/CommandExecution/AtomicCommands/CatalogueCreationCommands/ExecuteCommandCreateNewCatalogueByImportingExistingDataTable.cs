@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -12,19 +11,22 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 /// <summary>
-/// Creates a new <see cref="Catalogue"/> reference in the RDMP database pointing to a table (which must already exist) in a relational database
+///     Creates a new <see cref="Catalogue" /> reference in the RDMP database pointing to a table (which must already
+///     exist) in a relational database
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : CatalogueCreationCommandExecution
 {
-    private DiscoveredTable _importTable;
+    private readonly DiscoveredTable _importTable;
 
 
-    public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : this(activator,null,null,null)
+    public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : this(activator,
+        null, null, null)
     {
         UseTripleDotSuffix = true;
     }
@@ -35,9 +37,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         DiscoveredTable existingTable,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         IProject projectSpecific,
-            
-        [DemandsInitialization(Desc_TargetFolder,DefaultValue = "\\")]
-        string targetFolder = "\\") : base(activator,projectSpecific, targetFolder)
+        [DemandsInitialization(Desc_TargetFolder, DefaultValue = "\\")]
+        string targetFolder = "\\") : base(activator, projectSpecific, targetFolder)
     {
         _importTable = existingTable;
     }
@@ -46,25 +47,23 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
     {
         base.Execute();
 
-        var tbl = _importTable ?? BasicActivator.SelectTable(false,"Table to import");
+        var tbl = _importTable ?? BasicActivator.SelectTable(false, "Table to import");
 
-        if(tbl == null)
+        if (tbl == null)
             return;
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
-        importer.DoImport(out var ti,out _);
+        importer.DoImport(out var ti, out _);
 
-        var c = BasicActivator.CreateAndConfigureCatalogue(ti,null,"Existing table",ProjectSpecific,TargetFolder);
+        var c = BasicActivator.CreateAndConfigureCatalogue(ti, null, "Existing table", ProjectSpecific, TargetFolder);
 
-        if(c == null || !c.Exists())
-        {
-            if(BasicActivator.IsInteractive 
-               && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out var chosen)
-               && chosen)
-            {
+        if (c == null || !c.Exists())
+            if (BasicActivator.IsInteractive
+                && BasicActivator.YesNo(
+                    "You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?",
+                    "Delete TableInfo", out var chosen)
+                && chosen)
                 ti.DeleteInDatabase();
-            }
-        }
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

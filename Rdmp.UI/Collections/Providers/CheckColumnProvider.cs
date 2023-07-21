@@ -16,15 +16,20 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.UI.Collections.Providers;
 
 /// <summary>
-/// Handles creating the Checks column in a tree list view where the value is populated for all models that are ICheckable and you have decided to
-/// run the checks.
+///     Handles creating the Checks column in a tree list view where the value is populated for all models that are
+///     ICheckable and you have decided to
+///     run the checks.
 /// </summary>
 public class CheckColumnProvider
 {
-    private readonly TreeListView _tree;
-    private readonly ICoreIconProvider _iconProvider;
-
     public const string ChecksColumnName = "Checks";
+    private readonly ICoreIconProvider _iconProvider;
+    private readonly TreeListView _tree;
+
+    private Task checkingTask;
+    private Dictionary<ICheckable, CheckResult> checkResultsDictionary = new();
+
+    private readonly object ocheckResultsDictionaryLock = new();
 
     public CheckColumnProvider(TreeListView tree, ICoreIconProvider iconProvider)
     {
@@ -44,7 +49,6 @@ public class CheckColumnProvider
         return toReturn;
     }
 
-    private Task checkingTask;
     public void CheckCheckables()
     {
         if (checkingTask != null && !checkingTask.IsCompleted)
@@ -62,13 +66,15 @@ public class CheckColumnProvider
         checkingTask = new Task(() =>
         {
             //only check the items that are visible int he listview
-            foreach (var checkable in GetCheckables())//make copy to prevent synchronization issues
+            foreach (var checkable in GetCheckables()) //make copy to prevent synchronization issues
             {
                 var notifier = new ToMemoryCheckNotifier();
                 checkable.Check(notifier);
 
                 lock (ocheckResultsDictionaryLock)
+                {
                     checkResultsDictionary.Add(checkable, notifier.GetWorst());
+                }
             }
         });
 
@@ -88,7 +94,7 @@ public class CheckColumnProvider
             return;
         }
 
-        var checksCol = _tree.AllColumns.FirstOrDefault(c=>string.Equals(c.Text,ChecksColumnName));
+        var checksCol = _tree.AllColumns.FirstOrDefault(c => string.Equals(c.Text, ChecksColumnName));
 
         if (checksCol != null && !checksCol.IsVisible)
         {
@@ -96,9 +102,6 @@ public class CheckColumnProvider
             _tree.RebuildColumns();
         }
     }
-
-    private object ocheckResultsDictionaryLock = new();
-    private Dictionary<ICheckable, CheckResult> checkResultsDictionary = new();
 
     public void RecordWorst(ICheckable o, CheckResult result)
     {
@@ -124,8 +127,8 @@ public class CheckColumnProvider
         {
             if (checkResultsDictionary.TryGetValue(checkable, out var value))
                 return _iconProvider.GetImage(value).ImageToBitmap();
-
         }
+
         //not been checked yet
         return null;
     }

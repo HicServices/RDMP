@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Threading.Tasks;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -13,35 +12,37 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Progress;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private Project _project;
+    private readonly Project _project;
 
-    public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+    public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
         _project = (Project)_extractionConfiguration.Project;
-            
-        if(extractionConfiguration.Cohort_ID == null)
+
+        if (extractionConfiguration.Cohort_ID == null)
             SetImpossible("No Cohort Set");
 
         if (extractionConfiguration.CohortRefreshPipeline_ID == null)
             SetImpossible("No Refresh Pipeline Set");
 
-        if(!_project.ProjectNumber.HasValue)
+        if (!_project.ProjectNumber.HasValue)
             SetImpossible($"Project '{_project}' does not have a Project Number");
     }
 
     public override string GetCommandHelp()
     {
-        return "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query). " +
-               "This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
+        return
+            "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query). " +
+            "This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
     }
 
     public override void Execute()
@@ -53,15 +54,13 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         progressUi.ApplyTheme(Activator.Theme);
 
         progressUi.Text = $"Refreshing Cohort ({_extractionConfiguration})";
-        Activator.ShowWindow(progressUi,true);
+        Activator.ShowWindow(progressUi, true);
 
         var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);
         Task.Run(
-
             //run the pipeline in a Thread
             () =>
             {
-
                 progressUi.ShowRunning(true);
                 engine.Execute();
             }
@@ -70,13 +69,12 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
             progressUi.ShowRunning(false);
 
             //then on the UI thread 
-            if(s.IsFaulted)
+            if (s.IsFaulted)
                 return;
 
             //issue save and refresh
             if (engine.Request.CohortCreatedIfAny != null)
                 Publish(_extractionConfiguration);
-
         }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 

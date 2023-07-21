@@ -9,27 +9,27 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Represents that a given <see cref="Lookup"/> is used by a <see cref="Catalogue"/> at least once
+///     Represents that a given <see cref="Lookup" /> is used by a <see cref="Catalogue" /> at least once
 /// </summary>
 public class CatalogueLookupUsageNode : IMasqueradeAs
 {
-    public Catalogue Catalogue { get; set; }
-
-    public Lookup Lookup { get; set; }
-
     public CatalogueLookupUsageNode(Catalogue c, Lookup l)
     {
         Catalogue = c;
         Lookup = l;
     }
 
-    public override string ToString()
-    {
-        return Lookup.ToString();
-    }
+    public Catalogue Catalogue { get; set; }
+
+    public Lookup Lookup { get; set; }
 
     public object MasqueradingAs()
     {
         return Lookup;
+    }
+
+    public override string ToString()
+    {
+        return Lookup.ToString();
     }
 }

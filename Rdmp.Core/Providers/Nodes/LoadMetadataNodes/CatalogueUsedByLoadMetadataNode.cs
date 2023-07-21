@@ -11,10 +11,11 @@ using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMetadata,Catalogue>,IDeletableWithCustomMessage
+public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadMetadata, Catalogue>,
+    IDeletableWithCustomMessage
 {
-
-    public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue):base(loadMetadata,catalogue)
+    public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue) : base(loadMetadata,
+        catalogue)
     {
     }
 
@@ -30,7 +31,7 @@ public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMet
         return $"remove Catalogue '{ObjectBeingUsed}' from Load";
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetDeleteVerb()
     {
         return "Remove";

@@ -21,65 +21,49 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 
 /// <summary>
-/// Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load execution).  This class exists for two reasons
-/// 
-/// <para>Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear magically during DLE execution (e.g. by attaching
-/// an MDF file).</para>
-/// 
-/// <para>Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to have RAW on a different server to LIVE/STAGING
-/// in order to reduce the risk incorrectly referencing tables in LIVE in Adjust RAW scripts etc.</para>
+///     Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load
+///     execution).  This class exists for two reasons
+///     <para>
+///         Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear
+///         magically during DLE execution (e.g. by attaching
+///         an MDF file).
+///     </para>
+///     <para>
+///         Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to
+///         have RAW on a different server to LIVE/STAGING
+///         in order to reduce the risk incorrectly referencing tables in LIVE in Adjust RAW scripts etc.
+///     </para>
 /// </summary>
 public class HICDatabaseConfiguration
 {
-    public StandardDatabaseHelper DeployInfo { get; set; }
-    public bool RequiresStagingTableCreation { get; set; }
-
-    public INameDatabasesAndTablesDuringLoads DatabaseNamer => DeployInfo.DatabaseNamer;
-
     /// <summary>
-    /// Optional Regex for fields which will be ignored at migration time between STAGING and LIVE (e.g. hic_ columns).  This prevents incidental fields like
-    /// valid from, data load run id etc from resulting in live table UPDATEs.
-    /// 
-    /// <para>hic_ columns will always be ignored regardless of this setting</para>
-    /// </summary>
-    public Regex UpdateButDoNotDiff { get; set; }
-
-    /// <summary>
-    /// Optional Regex for fields which will be completedly ignored at STAGING=>LIVE migration
-    /// </summary>
-    public Regex IgnoreColumns { get; internal set; }
-
-    /// <summary>
-    /// Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the LoadMetadata, also respects the ServerDefaults for RAW override (if any)
+    ///     Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the
+    ///     LoadMetadata, also respects the ServerDefaults for RAW override (if any)
     /// </summary>
     /// <param name="lmd"></param>
     /// <param name="namer"></param>
-    public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
-        this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository,lmd.OverrideRAWServer)
+    public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null) :
+        this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository, lmd.OverrideRAWServer)
     {
         var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
 
-        if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
+        if (globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
             IgnoreColumns = new Regex(globalIgnorePattern.Regex);
-
-    }
-
-    public static StandardRegex GetGlobalIgnorePatternIfAny(ICatalogueRepository repository)
-    {
-        return repository.GetAllObjects<StandardRegex>().OrderBy(r=>r.ID).FirstOrDefault(r=>r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
     }
 
     /// <summary>
-    /// Constructor for use in tests, if possible use the LoadMetadata constructor instead
+    ///     Constructor for use in tests, if possible use the LoadMetadata constructor instead
     /// </summary>
     /// <param name="liveServer">The live server where the data is held, IMPORTANT: this must contain InitialCatalog parameter</param>
     /// <param name="namer">optionally lets you specify how to pick database names for the temporary bubbles STAGING and RAW</param>
     /// <param name="defaults">optionally specifies the location to get RAW default server from</param>
     /// <param name="overrideRAWServer">optionally specifies an explicit server to use for RAW</param>
-    public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
+    public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null,
+        IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
     {
         //respects the override of LIVE server
-        var liveDatabase = liveServer.GetCurrentDatabase() ?? throw new Exception("Cannot load live without having a unique live named database");
+        var liveDatabase = liveServer.GetCurrentDatabase() ??
+                           throw new Exception("Cannot load live without having a unique live named database");
 
         // Default namer
         //create the DLE tables on the live database because postgres can't handle cross database references
@@ -89,22 +73,49 @@ public class HICDatabaseConfiguration
 
         //if there are defaults
         if (overrideRAWServer == null && defaults != null)
-            overrideRAWServer = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
+            overrideRAWServer =
+                defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer); //get the raw default if there is one
 
         DiscoveredServer rawServer;
         //if there was defaults and a raw default server
-        rawServer = overrideRAWServer != null ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false) : //get the raw server connection
+        rawServer = overrideRAWServer != null
+            ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false)
+            : //get the raw server connection
             liveServer; //there is no raw override so we will have to use the live server for RAW too.
 
         //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
-        DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);
+        DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer, rawServer);
 
         RequiresStagingTableCreation = true;
     }
 
+    public StandardDatabaseHelper DeployInfo { get; set; }
+    public bool RequiresStagingTableCreation { get; set; }
+
+    public INameDatabasesAndTablesDuringLoads DatabaseNamer => DeployInfo.DatabaseNamer;
 
     /// <summary>
-    /// Returns all tables in the load as they would be named in the given <paramref name="stage"/>
+    ///     Optional Regex for fields which will be ignored at migration time between STAGING and LIVE (e.g. hic_ columns).
+    ///     This prevents incidental fields like
+    ///     valid from, data load run id etc from resulting in live table UPDATEs.
+    ///     <para>hic_ columns will always be ignored regardless of this setting</para>
+    /// </summary>
+    public Regex UpdateButDoNotDiff { get; set; }
+
+    /// <summary>
+    ///     Optional Regex for fields which will be completedly ignored at STAGING=>LIVE migration
+    /// </summary>
+    public Regex IgnoreColumns { get; internal set; }
+
+    public static StandardRegex GetGlobalIgnorePatternIfAny(ICatalogueRepository repository)
+    {
+        return repository.GetAllObjects<StandardRegex>().OrderBy(r => r.ID)
+            .FirstOrDefault(r => r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
+    }
+
+
+    /// <summary>
+    ///     Returns all tables in the load as they would be named in the given <paramref name="stage" />
     /// </summary>
     /// <param name="job">DLE job</param>
     /// <param name="stage"></param>
@@ -117,7 +128,7 @@ public class HICDatabaseConfiguration
         foreach (var t in job.RegularTablesToLoad)
             yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
 
-        if(includeLookups)
+        if (includeLookups)
             foreach (var t in job.LookupTablesToLoad)
                 yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
     }

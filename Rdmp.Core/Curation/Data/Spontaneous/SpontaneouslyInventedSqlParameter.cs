@@ -14,29 +14,30 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of ISqlParameter.  This class is used extensively when there is a need to inject new ISqlParameters into an ISqlQueryBuilder
-/// at runtime (or a ParameterManager).  The most common use case for this is merging two or more ISqlParameters that have the exact same declaration/value into a single
-/// new one (which will be SpontaneouslyInventedSqlParameter to prevent changes to the originals).
+///     Spontaneous (memory only) implementation of ISqlParameter.  This class is used extensively when there is a need to
+///     inject new ISqlParameters into an ISqlQueryBuilder
+///     at runtime (or a ParameterManager).  The most common use case for this is merging two or more ISqlParameters that
+///     have the exact same declaration/value into a single
+///     new one (which will be SpontaneouslyInventedSqlParameter to prevent changes to the originals).
 /// </summary>
 public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
 {
     private readonly IQuerySyntaxHelper _syntaxHelper;
 
-    [Sql]
-    public string ParameterSQL { get; set; }
-
-    [Sql]
-    public string Value { get; set; }
-        
-    public string Comment { get; set; }
-
-    public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper):base(repo)
+    public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment,
+        IQuerySyntaxHelper syntaxHelper) : base(repo)
     {
         _syntaxHelper = syntaxHelper;
         ParameterSQL = declarationSql;
         Value = value;
         Comment = comment;
     }
+
+    [Sql] public string ParameterSQL { get; set; }
+
+    [Sql] public string Value { get; set; }
+
+    public string Comment { get; set; }
 
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -13,18 +14,18 @@ using Rdmp.UI.Refreshing;
 
 namespace Rdmp.UI.Menus.MenuItems;
 
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public abstract class RDMPToolStripMenuItem : ToolStripMenuItem
 {
-    protected AtomicCommandUIFactory AtomicCommandUIFactory;
     protected IActivateItems _activator;
+    protected AtomicCommandUIFactory AtomicCommandUIFactory;
 
-    protected RDMPToolStripMenuItem(IActivateItems activator,string text):base(text)
+    protected RDMPToolStripMenuItem(IActivateItems activator, string text) : base(text)
     {
         _activator = activator;
         AtomicCommandUIFactory = new AtomicCommandUIFactory(activator);
     }
-        
+
     protected void Activate(DatabaseEntity o)
     {
         var cmd = new ExecuteCommandActivate(_activator, o);
@@ -37,7 +38,7 @@ public abstract class RDMPToolStripMenuItem : ToolStripMenuItem
     }
 
     /// <summary>
-    /// Adds the given command to the drop down item list of this tool strip menu item
+    ///     Adds the given command to the drop down item list of this tool strip menu item
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="shortcutKey"></param>

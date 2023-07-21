@@ -16,47 +16,47 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.UI.SubComponents.Graphs;
 
 /// <summary>
-/// Input/Persistence object for <see cref="CohortSummaryAggregateGraphUI"/> which records which filter (if any) should be shown for patients
-/// matching the <see cref="CohortContainerIfAny"/> or <see cref="CohortIfAny"/> in the graph.
+///     Input/Persistence object for <see cref="CohortSummaryAggregateGraphUI" /> which records which filter (if any)
+///     should be shown for patients
+///     matching the <see cref="CohortContainerIfAny" /> or <see cref="CohortIfAny" /> in the graph.
 /// </summary>
-public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollection
+public class CohortSummaryAggregateGraphObjectCollection : PersistableObjectCollection
 {
     public CohortSummaryAdjustment Adjustment;
-    public AggregateFilter SingleFilterOnly => DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault();
-
-    public CohortAggregateContainer CohortContainerIfAny => DatabaseObjects[0] as CohortAggregateContainer;
-    public AggregateConfiguration CohortIfAny => DatabaseObjects[0] as AggregateConfiguration;
-
-    public AggregateConfiguration Graph => (AggregateConfiguration)DatabaseObjects[1];
 
     /// <summary>
-    /// Do not use this constructor, it is used only for deserialization during persistence on form loading after application closing
+    ///     Do not use this constructor, it is used only for deserialization during persistence on form loading after
+    ///     application closing
     /// </summary>
     public CohortSummaryAggregateGraphObjectCollection()
     {
     }
 
     /// <summary>
-    /// Use this constructor at runtime
+    ///     Use this constructor at runtime
     /// </summary>
     /// <param name="cohort"></param>
     /// <param name="graph"></param>
     /// <param name="adjustment"></param>
-    public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,CohortSummaryAdjustment adjustment):this()
+    public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,
+        CohortSummaryAdjustment adjustment) : this()
     {
-        if(!cohort.IsCohortIdentificationAggregate)
+        if (!cohort.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)",nameof(cohort));
+                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)",
+                nameof(cohort));
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", nameof(graph));
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)",
+                nameof(graph));
 
         DatabaseObjects.Add(cohort);
         DatabaseObjects.Add(graph);
         Adjustment = adjustment;
     }
+
     /// <summary>
-    /// Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
+    ///     Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
     /// </summary>
     /// <param name="container"></param>
     /// <param name="graph"></param>
@@ -65,17 +65,26 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", nameof(graph));
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)",
+                nameof(graph));
 
         DatabaseObjects.Add(container);
         DatabaseObjects.Add(graph);
         Adjustment = CohortSummaryAdjustment.WhereExtractionIdentifiersIn;
     }
 
-    public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph, CohortSummaryAdjustment adjustment, AggregateFilter singleFilterOnly):this(cohort,graph,adjustment)
+    public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,
+        CohortSummaryAdjustment adjustment, AggregateFilter singleFilterOnly) : this(cohort, graph, adjustment)
     {
         DatabaseObjects.Add(singleFilterOnly);
     }
+
+    public AggregateFilter SingleFilterOnly => DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault();
+
+    public CohortAggregateContainer CohortContainerIfAny => DatabaseObjects[0] as CohortAggregateContainer;
+    public AggregateConfiguration CohortIfAny => DatabaseObjects[0] as AggregateConfiguration;
+
+    public AggregateConfiguration Graph => (AggregateConfiguration)DatabaseObjects[1];
 
     public override string SaveExtraText()
     {
@@ -84,7 +93,7 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
 
     public override void LoadExtraText(string s)
     {
-        if(!Enum.TryParse(s, out CohortSummaryAdjustment a))
+        if (!Enum.TryParse(s, out CohortSummaryAdjustment a))
             throw new Exception($"Could not parse '{s}' into a valid CohortSummaryAdjustment");
 
         Adjustment = a;
@@ -95,12 +104,10 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
         shouldClose = false;
 
         //matched object in our collection
-        if(DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
-            if (matchingObject.Exists()) 
+        if (DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
+            if (matchingObject.Exists())
                 matchingObject.RevertToDatabaseState();
             else
-                shouldClose = true;//object doesn't exist anymore so close control
-
-            
+                shouldClose = true; //object doesn't exist anymore so close control
     }
 }

@@ -13,30 +13,29 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.SimpleDialogs.NavigateTo;
 
 /// <summary>
-/// Allows you to search through and run any command (<see cref="IAtomicCommand"/>) in RDMP and lets you pick which object(s) to apply it to.
+///     Allows you to search through and run any command (<see cref="IAtomicCommand" />) in RDMP and lets you pick which
+///     object(s) to apply it to.
 /// </summary>
 public partial class RunUI : RDMPForm
 {
+    private readonly CommandInvoker _commandCaller;
     private readonly Dictionary<string, Type> _commandsDictionary;
 
-    private readonly CommandInvoker _commandCaller;
-                
-    public RunUI(IActivateItems activator):base(activator)
+    public RunUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
-            
+
         _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
 
         _commandCaller = new CommandInvoker(activator);
-        _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);
+        _commandCaller.CommandImpossible += (s, e) => MessageBox.Show(e.Command.ReasonCommandImpossible);
         _commandCaller.CommandCompleted += (s, e) => Close();
 
         var commands = _commandCaller.GetSupportedCommands();
-            
+
         foreach (var c in commands)
         {
             var name = BasicCommandExecution.GetCommandName(c.Name);
@@ -46,21 +45,21 @@ public partial class RunUI : RDMPForm
 
         comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());
     }
+
     public static void OnCommandExecutionException(IAtomicCommand instance, Exception exception)
     {
         ExceptionViewer.Show(exception);
     }
+
     private void comboBox1_KeyUp(object sender, KeyEventArgs e)
     {
         var key = (string)comboBox1.SelectedItem;
 
         if (key == null)
             return;
-            
+
         if (e.KeyCode == Keys.Enter)
-        {
             if (_commandsDictionary.TryGetValue(key, out var type))
-            {
                 try
                 {
                     _commandCaller.ExecuteCommand(type, null);
@@ -72,7 +71,5 @@ public partial class RunUI : RDMPForm
                 {
                     ExceptionViewer.Show(ex);
                 }
-            }
-        }
     }
 }

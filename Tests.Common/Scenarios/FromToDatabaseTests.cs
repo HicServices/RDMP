@@ -11,23 +11,24 @@ using NUnit.Framework;
 namespace Tests.Common.Scenarios;
 
 /// <summary>
-/// Tests which require two test databases and handles moving data from one to the other
+///     Tests which require two test databases and handles moving data from one to the other
 /// </summary>
-public class FromToDatabaseTests:DatabaseTests
+public class FromToDatabaseTests : DatabaseTests
 {
     private readonly string _suffix;
     protected DiscoveredDatabase From;
     protected DiscoveredDatabase To;
 
-    /// <summary>
-    /// The runtime name of <see cref="To"/>.  This is the same as calling <see cref="DiscoveredDatabase.GetRuntimeName()"/>
-    /// </summary>
-    protected string DatabaseName => To.GetRuntimeName();
-
     public FromToDatabaseTests(string suffix = "_STAGING")
     {
         _suffix = suffix;
     }
+
+    /// <summary>
+    ///     The runtime name of <see cref="To" />.  This is the same as calling
+    ///     <see cref="DiscoveredDatabase.GetRuntimeName()" />
+    /// </summary>
+    protected string DatabaseName => To.GetRuntimeName();
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -38,18 +39,19 @@ public class FromToDatabaseTests:DatabaseTests
     }
 
     /// <summary>
-    /// Sets up the databases <see cref="From"/> and <see cref="To"/> on the test database server of the given
-    /// <paramref name="dbType"/>.  This method is automatically called with <see cref="DatabaseType.MicrosoftSQLServer"/>
-    /// in <see cref="OneTimeSetUp()"/> (nunit automatically fires it).
+    ///     Sets up the databases <see cref="From" /> and <see cref="To" /> on the test database server of the given
+    ///     <paramref name="dbType" />.  This method is automatically called with
+    ///     <see cref="DatabaseType.MicrosoftSQLServer" />
+    ///     in <see cref="OneTimeSetUp()" /> (nunit automatically fires it).
     /// </summary>
     /// <param name="dbType"></param>
     protected void SetupFromTo(DatabaseType dbType)
     {
         To = GetCleanedServer(dbType);
         From = To.Server.ExpectDatabase(To.GetRuntimeName() + _suffix);
-            
+
         // ensure the test staging and live databases are empty
-        if(!From.Exists())
+        if (!From.Exists())
             From.Create();
         else
             DeleteTables(From);

@@ -11,9 +11,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsIDirectoryInfoNode:RDMPCommandExecutionProposal<IDirectoryInfoNode>
+internal class ProposeExecutionWhenTargetIsIDirectoryInfoNode : RDMPCommandExecutionProposal<IDirectoryInfoNode>
 {
-    public ProposeExecutionWhenTargetIsIDirectoryInfoNode(IActivateItems itemActivator): base(itemActivator)
+    public ProposeExecutionWhenTargetIsIDirectoryInfoNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
@@ -24,10 +24,11 @@ internal class ProposeExecutionWhenTargetIsIDirectoryInfoNode:RDMPCommandExecuti
 
     public override void Activate(IDirectoryInfoNode target)
     {
-        new ExecuteCommandOpenInExplorer(ItemActivator,target.GetDirectoryInfoIfAny()).Execute();
+        new ExecuteCommandOpenInExplorer(ItemActivator, target.GetDirectoryInfoIfAny()).Execute();
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IDirectoryInfoNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IDirectoryInfoNode target,
+        InsertOption insertOption = InsertOption.Default)
     {
         //no drag and drop support
         return null;

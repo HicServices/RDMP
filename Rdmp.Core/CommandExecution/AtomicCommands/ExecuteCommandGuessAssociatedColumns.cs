@@ -4,14 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
 using System;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Automatically associates <see cref="CatalogueItem"/> in a <see cref="Catalogue"/> with underlying columns in a given <see cref="TableInfo"/> based on name
+///     Automatically associates <see cref="CatalogueItem" /> in a <see cref="Catalogue" /> with underlying columns in a
+///     given <see cref="TableInfo" /> based on name
 /// </summary>
 public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
 {
@@ -19,14 +20,17 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
     private readonly ITableInfo _tableInfo;
 
     public bool _allowPartial;
-    public bool PromptForPartialMatching { get; set; } = false;
 
-    public ExecuteCommandGuessAssociatedColumns(IBasicActivateItems activator,ICatalogue catalogue,ITableInfo tableInfo, bool allowPartial = true):base(activator)
+    public ExecuteCommandGuessAssociatedColumns(IBasicActivateItems activator, ICatalogue catalogue,
+        ITableInfo tableInfo, bool allowPartial = true) : base(activator)
     {
         _catalogue = catalogue;
         _tableInfo = tableInfo;
         _allowPartial = allowPartial;
     }
+
+    public bool PromptForPartialMatching { get; set; } = false;
+
     public override void Execute()
     {
         base.Execute();
@@ -36,9 +40,10 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
         var successCount = 0;
         var failCount = 0;
 
-        var selectedTableInfo = _tableInfo ?? (ITableInfo)BasicActivator.SelectOne("Map to table",BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>());
+        var selectedTableInfo = _tableInfo ?? (ITableInfo)BasicActivator.SelectOne("Map to table",
+            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>());
 
-        if(selectedTableInfo  == null)
+        if (selectedTableInfo == null)
             return;
 
         //get all columns for the selected parent
@@ -47,10 +52,13 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
         // copy to local variable to keep Command immutable
         var partial = _allowPartial;
 
-        if(BasicActivator.IsInteractive && PromptForPartialMatching)
-        {
-            partial = BasicActivator.YesNo(new DialogArgs { WindowTitle = "Allow Partial Matches", TaskDescription = "Do you want to allow partial matches (contains).  This may result in incorrect mappings." });
-        }
+        if (BasicActivator.IsInteractive && PromptForPartialMatching)
+            partial = BasicActivator.YesNo(new DialogArgs
+            {
+                WindowTitle = "Allow Partial Matches",
+                TaskDescription =
+                    "Do you want to allow partial matches (contains).  This may result in incorrect mappings."
+            });
 
         foreach (var catalogueItem in _catalogue.CatalogueItems)
         {
@@ -75,19 +83,18 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
                 //note that this else branch also deals with case where guesses is empty
 
                 var acceptedOne = false;
-                    
+
                 for (var i = 0; i < guesses.Length; i++)
-                {
                     //ask confirmation 
                     if (!BasicActivator.IsInteractive || BasicActivator.YesNo(
-                            $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}", "Multiple matched guesses"))
+                            $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",
+                            "Multiple matched guesses"))
                     {
                         catalogueItem.SetColumnInfo(guesses[i]);
                         successCount++;
                         acceptedOne = true;
                         break;
                     }
-                }
 
                 if (!acceptedOne)
                     failCount++;

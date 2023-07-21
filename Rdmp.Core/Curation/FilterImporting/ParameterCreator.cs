@@ -14,40 +14,54 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using TypeGuesser;
-using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Handles the creation of new ISqlParameters based on the current WHERE SQL of a given IFilter.  This involves parsing the WHERE SQL for variables (@myVar).  This class
-/// also takes into account any globals that exist and supports the use of template parameter values for new ISqlParameter created (importFromIfAny)
-/// 
-/// <para>globals are ISqlParameters which exist in the same scope as the IFilter being edited, if the WHERE Sql contains a parameter with the same name as a global then no new
-/// ISqlParameter will be created.  For example if you have an IFilter "myfilter" with WhereSQL "@bob = 'bob'" and there are not already any parameters for the filter with the
-/// name @bob then a new one will be created (unless there is a global with the name @bob).</para>
-/// 
-/// <para>importFromIfAny is a collection of template parameters that contain appropriate values to assign to newly created parameters.  The use case for this is when you are importing
-/// a Catalogue filter (E.g. ExtractionFilter) into a lower level (e.g. DeployedExtractionFilter) and you want to propagate down all the appropriate parameters to the new level.
-/// In this use case the WhereSQL is parsed and any matching parameter names have the values copied into the newly created parameters.</para>
-/// 
-/// <para>This class relies on a delegate for creation of the actual parameter instances (See CreateAll method) </para>
+///     Handles the creation of new ISqlParameters based on the current WHERE SQL of a given IFilter.  This involves
+///     parsing the WHERE SQL for variables (@myVar).  This class
+///     also takes into account any globals that exist and supports the use of template parameter values for new
+///     ISqlParameter created (importFromIfAny)
+///     <para>
+///         globals are ISqlParameters which exist in the same scope as the IFilter being edited, if the WHERE Sql contains
+///         a parameter with the same name as a global then no new
+///         ISqlParameter will be created.  For example if you have an IFilter "myfilter" with WhereSQL "@bob = 'bob'" and
+///         there are not already any parameters for the filter with the
+///         name @bob then a new one will be created (unless there is a global with the name @bob).
+///     </para>
+///     <para>
+///         importFromIfAny is a collection of template parameters that contain appropriate values to assign to newly
+///         created parameters.  The use case for this is when you are importing
+///         a Catalogue filter (E.g. ExtractionFilter) into a lower level (e.g. DeployedExtractionFilter) and you want to
+///         propagate down all the appropriate parameters to the new level.
+///         In this use case the WhereSQL is parsed and any matching parameter names have the values copied into the newly
+///         created parameters.
+///     </para>
+///     <para>This class relies on a delegate for creation of the actual parameter instances (See CreateAll method) </para>
 /// </summary>
 public class ParameterCreator
 {
     private readonly IFilterFactory _factory;
-    private ISqlParameter[] _importFromIfAny;
-    private ISqlParameter[] _globals;
+    private readonly ISqlParameter[] _globals;
+    private readonly ISqlParameter[] _importFromIfAny;
 
     /// <summary>
-    /// Sets up the factory to create parameters of the appropriate type (See <see cref="IFilterFactory.CreateNewParameter"/>) while respecting any global overriding parameters
-    /// and any explicit <paramref name="importFromIfAny"/>
+    ///     Sets up the factory to create parameters of the appropriate type (See
+    ///     <see cref="IFilterFactory.CreateNewParameter" />) while respecting any global overriding parameters
+    ///     and any explicit <paramref name="importFromIfAny" />
     /// </summary>
-    /// <param name="factory">Decides the Type of <see cref="ISqlParameter"/> created</param>
-    /// <param name="globals">Globally overriding parameters, if a filter requires a parameter that matches a global no <see cref="ISqlParameter"/> is created</param>
-    /// <param name="importFromIfAny">Desired parameter values, if a filter requires a parameter that matches importFromIfAny then it will get the value from here</param>
+    /// <param name="factory">Decides the Type of <see cref="ISqlParameter" /> created</param>
+    /// <param name="globals">
+    ///     Globally overriding parameters, if a filter requires a parameter that matches a global no
+    ///     <see cref="ISqlParameter" /> is created
+    /// </param>
+    /// <param name="importFromIfAny">
+    ///     Desired parameter values, if a filter requires a parameter that matches importFromIfAny
+    ///     then it will get the value from here
+    /// </param>
     public ParameterCreator(IFilterFactory factory, IEnumerable<ISqlParameter> globals, ISqlParameter[] importFromIfAny)
     {
-        if(globals != null)
+        if (globals != null)
             _globals = globals.ToArray();
 
         _factory = factory;
@@ -56,15 +70,17 @@ public class ParameterCreator
 
 
     /// <summary>
-    /// Creates all the <see cref="ISqlParameter"/> required for the given <paramref name="filterToCreateFor"/> (based on its WHERE Sql).  Will perform rename operations
-    /// where there is already a conflicting <see cref="ISqlParameter"/> declared in the same scope (See <paramref name="existingParametersInScope"/>)
+    ///     Creates all the <see cref="ISqlParameter" /> required for the given <paramref name="filterToCreateFor" /> (based on
+    ///     its WHERE Sql).  Will perform rename operations
+    ///     where there is already a conflicting <see cref="ISqlParameter" /> declared in the same scope (See
+    ///     <paramref name="existingParametersInScope" />)
     /// </summary>
     /// <param name="filterToCreateFor"></param>
     /// <param name="existingParametersInScope"></param>
     public void CreateAll(IFilter filterToCreateFor, ISqlParameter[] existingParametersInScope)
     {
         //get what parameter exists
-        var sqlParameters = filterToCreateFor.GetAllParameters()??Array.Empty<ISqlParameter>();
+        var sqlParameters = filterToCreateFor.GetAllParameters() ?? Array.Empty<ISqlParameter>();
 
         //all parameters in the Select SQL
         var parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);
@@ -76,7 +92,6 @@ public class ParameterCreator
 
         //find new parameters that we don't have
         foreach (var requiredParameterName in parametersRequiredByWhereSQL)
-        {
             if (!sqlParameters.Any(p => p.ParameterName.Equals(requiredParameterName)))
             {
                 ISqlParameter matchingTemplateFilter = null;
@@ -84,16 +99,20 @@ public class ParameterCreator
 
                 //now we might be in the process of cloning another IFilter in which case we want the filters to match the templates ones
                 if (_importFromIfAny != null)
-                    matchingTemplateFilter = _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
+                    matchingTemplateFilter =
+                        _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
 
                 var proposedNewParameterName = requiredParameterName;
                 var proposedAliasNumber = 2;
 
                 //Figure out of there are any collisions with existing parameters
-                if(existingParametersInScope != null)
-                    if(existingParametersInScope.Any(e => e.ParameterName.Equals(proposedNewParameterName)))//there is a conflict between the parameter you are importing and one that already exists in scope
+                if (existingParametersInScope != null)
+                    if (existingParametersInScope.Any(e =>
+                            e.ParameterName.Equals(
+                                proposedNewParameterName))) //there is a conflict between the parameter you are importing and one that already exists in scope
                     {
-                        while (existingParametersInScope.Any(e => e.ParameterName.Equals(proposedNewParameterName + proposedAliasNumber)))
+                        while (existingParametersInScope.Any(e =>
+                                   e.ParameterName.Equals(proposedNewParameterName + proposedAliasNumber)))
                             proposedAliasNumber++;
 
                         //Naming conflict has been resolved! (by adding the proposed alias number on) so record that this is the new name
@@ -103,12 +122,13 @@ public class ParameterCreator
                 //The final name is different e.g. bob2 instead of bob so propagate into the WHERE SQL of the filter
                 if (!proposedNewParameterName.Equals(requiredParameterName))
                 {
-                    filterToCreateFor.WhereSQL = RenameParameterInSQL(filterToCreateFor.WhereSQL,requiredParameterName, proposedNewParameterName);
+                    filterToCreateFor.WhereSQL = RenameParameterInSQL(filterToCreateFor.WhereSQL, requiredParameterName,
+                        proposedNewParameterName);
                     filterToCreateFor.SaveToDatabase();
                 }
 
                 //If there is a matching Template Filter
-                if(matchingTemplateFilter != null)
+                if (matchingTemplateFilter != null)
                 {
                     var toCreate = matchingTemplateFilter.ParameterSQL;
 
@@ -117,15 +137,16 @@ public class ParameterCreator
                         toCreate = toCreate.Replace(requiredParameterName, proposedNewParameterName);
 
                     //construct it as a match to the existing parameter declared at the template level (see below for full match propogation)
-                    newParameter = _factory.CreateNewParameter(filterToCreateFor,toCreate);
+                    newParameter = _factory.CreateNewParameter(filterToCreateFor, toCreate);
                 }
                 else
                 {
                     var syntaxHelper = filterToCreateFor.GetQuerySyntaxHelper();
                     //its not got a template match so just create it as varchar(50)
-                    var declaration = syntaxHelper.GetParameterDeclaration(proposedNewParameterName,new DatabaseTypeRequest(typeof(string),50));
+                    var declaration = syntaxHelper.GetParameterDeclaration(proposedNewParameterName,
+                        new DatabaseTypeRequest(typeof(string), 50));
 
-                    newParameter = _factory.CreateNewParameter(filterToCreateFor,declaration);
+                    newParameter = _factory.CreateNewParameter(filterToCreateFor, declaration);
 
                     if (newParameter != null)
                     {
@@ -133,9 +154,10 @@ public class ParameterCreator
                         newParameter.SaveToDatabase();
                     }
                 }
-                if (newParameter == null)
-                    throw new NullReferenceException("Parameter construction method returned null, expected it to return an ISqlParameter");
 
+                if (newParameter == null)
+                    throw new NullReferenceException(
+                        "Parameter construction method returned null, expected it to return an ISqlParameter");
 
 
                 //We have a template so copy across the remaining values
@@ -145,19 +167,24 @@ public class ParameterCreator
                     newParameter.Comment = matchingTemplateFilter.Comment;
                     newParameter.SaveToDatabase();
                 }
-
             }
-        }
     }
 
     /// <summary>
-    /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" unless
-    /// there is already a global parameter called @bob.  globals is optional, pass in null if there aren't any
+    ///     Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" unless
+    ///     there is already a global parameter called @bob.  globals is optional, pass in null if there aren't any
     /// </summary>
-    /// <param name="whereSql">the SQL filter WHERE section you want to determine the parameter names in, does.  Should not nclude WHERE (only the boolean logic bit)</param>
-    /// <param name="globals">optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global parametetrs)</param>
+    /// <param name="whereSql">
+    ///     the SQL filter WHERE section you want to determine the parameter names in, does.  Should not
+    ///     nclude WHERE (only the boolean logic bit)
+    /// </param>
+    /// <param name="globals">
+    ///     optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global
+    ///     parametetrs)
+    /// </param>
     /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
-    private static HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
+    private static HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql,
+        IEnumerable<ISqlParameter> globals)
     {
         var toReturn = QuerySyntaxHelper.GetAllParameterNamesFromQuery(whereSql);
 
@@ -171,7 +198,8 @@ public class ParameterCreator
     }
 
     /// <summary>
-    /// Renames all references to a given parameter e.g. @myParam to the supplied <paramref name="parameterNameReplacement"/> e.g. @myParam2
+    ///     Renames all references to a given parameter e.g. @myParam to the supplied
+    ///     <paramref name="parameterNameReplacement" /> e.g. @myParam2
     /// </summary>
     /// <param name="haystack">The Sql to find parameter references in</param>
     /// <param name="parameterName">The parameter name to replace</param>

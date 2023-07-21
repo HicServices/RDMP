@@ -9,10 +9,12 @@ using System.Collections.Generic;
 namespace Rdmp.Core.ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 /// <summary>
-/// A solution folder defined in a .sln file (See VisualStudioSolutionFile)
+///     A solution folder defined in a .sln file (See VisualStudioSolutionFile)
 /// </summary>
 public class VisualStudioSolutionFolder
 {
+    public List<VisualStudioSolutionFolder> ChildrenFolders = new();
+    public List<VisualStudioProjectReference> ChildrenProjects = new();
     public string Guid;
     public string Name;
 
@@ -21,7 +23,4 @@ public class VisualStudioSolutionFolder
         Name = name.Trim();
         Guid = guid.Trim();
     }
-
-    public List<VisualStudioSolutionFolder> ChildrenFolders = new();
-    public List<VisualStudioProjectReference> ChildrenProjects = new();
 }

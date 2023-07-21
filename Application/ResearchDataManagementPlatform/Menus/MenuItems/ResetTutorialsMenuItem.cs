@@ -5,15 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.Tutorials;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems;
 
 /// <summary>
-/// Clears all user progress on Tutorials
+///     Clears all user progress on Tutorials
 /// </summary>
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 public class ResetTutorialsMenuItem : ToolStripMenuItem
 {
     private readonly TutorialTracker _tracker;
@@ -36,6 +37,4 @@ public class ResetTutorialsMenuItem : ToolStripMenuItem
     {
         Enabled = _tracker.IsClearable();
     }
-
-
 }

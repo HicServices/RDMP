@@ -9,12 +9,12 @@ using System;
 namespace Rdmp.Core.Curation.Data.DataLoad.Extensions;
 
 /// <summary>
-/// Static type extensions for Enum <see cref="LoadBubble"/>
+///     Static type extensions for Enum <see cref="LoadBubble" />
 /// </summary>
 public static class LoadBubbleExtensions
 {
     /// <summary>
-    /// Converts a <see cref="LoadBubble"/> into a <see cref="LoadStage"/>
+    ///     Converts a <see cref="LoadBubble" /> into a <see cref="LoadStage" />
     /// </summary>
     /// <param name="bubble"></param>
     /// <returns></returns>

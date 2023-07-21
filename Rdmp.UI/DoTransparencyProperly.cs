@@ -10,13 +10,13 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-/// Helper for positioning controls on top of one another (with transparent backgrounds)
+///     Helper for positioning controls on top of one another (with transparent backgrounds)
 /// </summary>
 public class DoTransparencyProperly
 {
     /// <summary>
-    /// Positions <paramref name="controlThatHovers"/> on top of <paramref name="whatItHoversOver"/> and
-    /// sets the background colour of the controlThatHovers to Transparent.
+    ///     Positions <paramref name="controlThatHovers" /> on top of <paramref name="whatItHoversOver" /> and
+    ///     sets the background colour of the controlThatHovers to Transparent.
     /// </summary>
     /// <param name="controlThatHovers"></param>
     /// <param name="whatItHoversOver"></param>

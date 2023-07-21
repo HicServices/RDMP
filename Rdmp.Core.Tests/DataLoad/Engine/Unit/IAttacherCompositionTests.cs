@@ -14,6 +14,5 @@ public class IAttacherCompositionTests
     [Test]
     public void AllIAttachersMustHaveTwoArgumentConstructors()
     {
-            
     }
 }

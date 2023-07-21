@@ -22,12 +22,12 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane;
 
 /// <summary>
-/// The starting page of RDMP.  Provides a single easy access entry point into RDMP functionality for common tasks e.g. Data Management, Project Extraction etc.  Click the links of commands
-/// you want to carry out to access wizards that offer streamlined access to the RDMP functionality.
-/// 
-/// <para>You can access the HomeUI at any time by clicking the home icon in the top left of the RDMP tool bar.</para>
+///     The starting page of RDMP.  Provides a single easy access entry point into RDMP functionality for common tasks e.g.
+///     Data Management, Project Extraction etc.  Click the links of commands
+///     you want to carry out to access wizards that offer streamlined access to the RDMP functionality.
+///     <para>You can access the HomeUI at any time by clicking the home icon in the top left of the RDMP tool bar.</para>
 /// </summary>
-public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
+public partial class HomeUI : RDMPUserControl, ILifetimeSubscriber
 {
     private readonly IActivateItems _activator;
     private readonly AtomicCommandUIFactory _uiFactory;
@@ -39,9 +39,14 @@ public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
         InitializeComponent();
     }
 
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+        BuildCommandLists();
+    }
+
     private void BuildCommandLists()
     {
-        boxCatalogue.SetUp(Activator,"Catalogue",typeof(Catalogue),_uiFactory,
+        boxCatalogue.SetUp(Activator, "Catalogue", typeof(Catalogue), _uiFactory,
             new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {
                 OverrideCommandName = GlobalStrings.FromFile
@@ -50,36 +55,32 @@ public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
             {
                 OverrideCommandName = GlobalStrings.FromDatabase
             });
-        boxProject.SetUp(Activator,"Project",typeof(Project),_uiFactory, new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            
-        boxCohort.SetUp(Activator,"Cohort Builder", typeof(CohortIdentificationConfiguration),_uiFactory,
+        boxProject.SetUp(Activator, "Project", typeof(Project), _uiFactory,
+            new ExecuteCommandCreateNewDataExtractionProject(_activator));
+
+        boxCohort.SetUp(Activator, "Cohort Builder", typeof(CohortIdentificationConfiguration), _uiFactory,
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Cohort Builder Query",
                 PromptToPickAProject = true
-
             },
-            new ExecuteCommandCreateNewCohortFromFile(_activator,null,null)
+            new ExecuteCommandCreateNewCohortFromFile(_activator, null, null)
             {
                 OverrideCommandName = GlobalStrings.FromFile
             }
         );
-        boxDataLoad.SetUp(Activator,"Data Load",typeof(LoadMetadata),_uiFactory,new ExecuteCommandCreateNewLoadMetadata(_activator));
+        boxDataLoad.SetUp(Activator, "Data Load", typeof(LoadMetadata), _uiFactory,
+            new ExecuteCommandCreateNewLoadMetadata(_activator));
     }
-        
+
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-            
+
         SetItemActivator(_activator);
 
         BuildCommandLists();
 
         _activator.RefreshBus.EstablishLifetimeSubscription(this);
-    }
-
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-    {
-        BuildCommandLists();
     }
 }

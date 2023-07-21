@@ -4,18 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 internal class ColumnInfoMenu : RDMPContextMenuStrip
 {
     public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
-    {            
-        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
+    {
+        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, columnInfo.TableInfo));
 
         Items.Add(new ToolStripSeparator());
 

@@ -10,7 +10,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Listeners;
 
 /// <summary>
-/// A simple DataLoadEventListener to be used during extraction so that the state can be moved to "crashed" if any component raises an error without an exception.
+///     A simple DataLoadEventListener to be used during extraction so that the state can be moved to "crashed" if any
+///     component raises an error without an exception.
 /// </summary>
 public class ElevateStateListener : IDataLoadEventListener
 {

@@ -9,13 +9,13 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// If you are a wrapper masquerading as another class e.g. <see cref="CatalogueUsedByLoadMetadataNode"/>
-///  is a class masquerading as an <see cref="Catalogue"/>
+///     If you are a wrapper masquerading as another class e.g. <see cref="CatalogueUsedByLoadMetadataNode" />
+///     is a class masquerading as an <see cref="Catalogue" />
 /// </summary>
 public interface IMasqueradeAs
 {
     /// <summary>
-    /// Gets the object that the <see cref="IMasqueradeAs"/> is pretending to be (wrapping).
+    ///     Gets the object that the <see cref="IMasqueradeAs" /> is pretending to be (wrapping).
     /// </summary>
     /// <returns></returns>
     object MasqueradingAs();

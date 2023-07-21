@@ -4,29 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Collections.Generic;
-using SixLabors.ImageSharp;
-using System.Linq;
-using System.Reflection;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Adds new <see cref="PipelineComponent"/> to an existing <see cref="Pipeline"/>
+///     Adds new <see cref="PipelineComponent" /> to an existing <see cref="Pipeline" />
 /// </summary>
 public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
 {
+    private readonly int? _order;
     private readonly IPipeline _pipeline;
     private readonly Type _toAdd;
-    private readonly int? _order;
     private readonly IPipelineUseCase _useCaseIfAny;
 
     [UseWithObjectConstructor]
@@ -43,7 +42,8 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         _order = order;
     }
 
-    public ExecuteCommandAddPipelineComponent(IBasicActivateItems activator, IPipeline pipeline, IPipelineUseCase useCaseIfAny) : base(activator)
+    public ExecuteCommandAddPipelineComponent(IBasicActivateItems activator, IPipeline pipeline,
+        IPipelineUseCase useCaseIfAny) : base(activator)
     {
         _pipeline = pipeline;
         _useCaseIfAny = useCaseIfAny;
@@ -51,7 +51,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return iconProvider.GetImage(RDMPConcept.PipelineComponent,OverlayKind.Add);
+        return iconProvider.GetImage(RDMPConcept.PipelineComponent, OverlayKind.Add);
     }
 
     public override void Execute()
@@ -67,16 +67,19 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
-            bool filter(Type t, object o) => t.IsGenericType &&
-                                          (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
-                                           t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            bool filter(Type t, object o)
+            {
+                return t.IsGenericType &&
+                       (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
+                        t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            }
 
             //get any source and flow components compatible with any context
             offer.AddRange(
                 mef.GetAllTypes()
                     .Where(t => !t.IsInterface && !t.IsAbstract)
                     .Where(t => t.FindInterfaces(filter, null).Any())
-                    .Where(t=> context == null || context.IsAllowable(t))
+                    .Where(t => context == null || context.IsAllowable(t))
             );
 
             if (!BasicActivator.SelectObject("Add", offer.ToArray(), out add))
@@ -87,10 +90,15 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         if (add == null) return;
 
         // check if it is a source or destination (or if both are false it is a middle component)
-        bool sourceFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
-        bool destFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        bool sourceFilter(Type t, object o)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+        }
+
+        bool destFilter(Type t, object o)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        }
 
         var isSource = add.FindInterfaces(sourceFilter, null).Any();
         var isDest = add.FindInterfaces(destFilter, null).Any();
@@ -99,31 +107,23 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         {
             order = int.MinValue;
             if (_pipeline.SourcePipelineComponent_ID.HasValue)
-            {
                 throw new Exception($"Pipeline '{_pipeline}' already has a source");
-            }
         }
 
         if (isDest)
         {
             order = int.MaxValue;
             if (_pipeline.DestinationPipelineComponent_ID.HasValue)
-            {
                 throw new Exception($"Pipeline '{_pipeline}' already has a destination");
-            }
         }
 
         // if we don't know the order yet and it's important
         if (!order.HasValue && !isDest && !isSource)
         {
             if (BasicActivator.SelectValueType("Order", typeof(int), 0, out var chosen))
-            {
                 order = (int)chosen;
-            }
             else
-            {
                 return;
-            }
         }
 
         var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline,

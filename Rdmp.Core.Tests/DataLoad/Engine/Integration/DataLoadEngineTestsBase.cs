@@ -21,7 +21,8 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 /// <summary>
-/// Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load configuration and running it
+///     Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load
+///     configuration and running it
 /// </summary>
 internal class DataLoadEngineTestsBase : DatabaseTests
 {
@@ -30,16 +31,17 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         var o = row[SpecialFieldNames.DataLoadRunID];
 
         Assert.IsNotNull(o, "A row which was expected to have a hic_dataLoadRunID had null instead");
-        Assert.AreNotEqual(DBNull.Value, o, "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
+        Assert.AreNotEqual(DBNull.Value, o,
+            "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
         Assert.GreaterOrEqual((int)o, 0);
 
         var d = row[SpecialFieldNames.ValidFrom];
         Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
-        Assert.AreNotEqual(DBNull.Value, d, "A row which was expected to have a hic_validFrom had DBNull.Value instead");
+        Assert.AreNotEqual(DBNull.Value, d,
+            "A row which was expected to have a hic_validFrom had DBNull.Value instead");
 
         //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
         Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2, 0, 0)));
-
     }
 
     protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
@@ -62,7 +64,9 @@ internal class DataLoadEngineTestsBase : DatabaseTests
 
     protected static LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
     {
-        var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
+        var projectDirectory =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                "MyLoadDir", true);
         lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
         lmd.SaveToDatabase();
 

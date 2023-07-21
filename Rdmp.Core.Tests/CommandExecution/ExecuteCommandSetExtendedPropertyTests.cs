@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using System.Linq;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
@@ -19,11 +19,12 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
     {
         var c1 = WhenIHaveA<Catalogue>();
 
-        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { c1 },"blarg","fff");
+        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { c1 }, "blarg", "fff");
 
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.StartsWith("blarg is not a known property.  Known properties are:", cmd.ReasonCommandImpossible);
     }
+
     [Test]
     public void SetIsTemplate_OnMultipleObjects()
     {
@@ -36,17 +37,17 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
         Assert.IsEmpty(
             Repository.CatalogueRepository.GetExtendedProperties(ac2));
 
-        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1,ac2 },
-            ExtendedProperty.IsTemplate,"true");
+        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1, ac2 },
+            ExtendedProperty.IsTemplate, "true");
 
-        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 
         var declaration1 = Repository.CatalogueRepository.GetExtendedProperties(ac1).Single();
         var declaration2 = Repository.CatalogueRepository.GetExtendedProperties(ac2).Single();
 
-        foreach(var dec in new[] { declaration1,declaration2})
+        foreach (var dec in new[] { declaration1, declaration2 })
         {
             Assert.AreEqual("IsTemplate", dec.Name);
             Assert.AreEqual("true", dec.Value);
@@ -66,6 +67,5 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
             Repository.CatalogueRepository.GetExtendedProperties(ac1));
         Assert.IsEmpty(
             Repository.CatalogueRepository.GetExtendedProperties(ac2));
-
     }
 }

@@ -15,9 +15,11 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values being validated are expected to pass the Regex pattern.  The pattern itself is a reference to a StandardRegex which is a central curated definition
-/// pattern in the Catalogue database.  This allows you to have multiple columns/validation rules in multiple datasets share the same regex without having to
-/// create copies (and allows you to update the definition in one place).
+///     Values being validated are expected to pass the Regex pattern.  The pattern itself is a reference to a
+///     StandardRegex which is a central curated definition
+///     pattern in the Catalogue database.  This allows you to have multiple columns/validation rules in multiple datasets
+///     share the same regex without having to
+///     create copies (and allows you to update the definition in one place).
 /// </summary>
 public class StandardRegexConstraint : SecondaryConstraint
 {
@@ -27,7 +29,7 @@ public class StandardRegexConstraint : SecondaryConstraint
     private int _standardRegexID;
 
     /// <summary>
-    /// Only for XmlSerializer, do not use otherwise
+    ///     Only for XmlSerializer, do not use otherwise
     /// </summary>
     public StandardRegexConstraint()
     {
@@ -52,7 +54,8 @@ public class StandardRegexConstraint : SecondaryConstraint
         }
     }
 
-    [Description("The Regular Expression pattern that MUST match the value being validated.  This is a centralised definition of a Concept stored in the Catalogue (Click the RegEx button to edit these)")]
+    [Description(
+        "The Regular Expression pattern that MUST match the value being validated.  This is a centralised definition of a Concept stored in the Catalogue (Click the RegEx button to edit these)")]
     [XmlIgnore]
     public StandardRegex CatalogueStandardRegex
     {
@@ -70,14 +73,13 @@ public class StandardRegexConstraint : SecondaryConstraint
             _regex = new Regex(value.Regex);
 
             //check is not redundant because assigning the field has repercusions and would result in circular reference! (Blame XMLSerialization for this cluster F*)
-            if(StandardRegexID != value.ID)
+            if (StandardRegexID != value.ID)
                 StandardRegexID = value.ID;
         }
     }
 
     public override void RenameColumn(string originalName, string newName)
     {
-
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
@@ -86,7 +88,8 @@ public class StandardRegexConstraint : SecondaryConstraint
             return
                 $"Checks that the value conforms to the agency specific StandardRegex concept '{CatalogueStandardRegex.ConceptName}' defined in the Catalogue";
 
-        return "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
+        return
+            "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
     }
 
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
@@ -94,15 +97,14 @@ public class StandardRegexConstraint : SecondaryConstraint
         if (value == null || value == DBNull.Value)
             return null;
 
-        if(string.IsNullOrWhiteSpace(value.ToString()))
+        if (string.IsNullOrWhiteSpace(value.ToString()))
             return null;
 
         if (_regex.IsMatch(value.ToString()))
             return null;
 
         return new ValidationFailure(
-            $"Value {value} did not match pattern for StandardRegex concept '{CatalogueStandardRegex.ConceptName}'", this);
-
+            $"Value {value} did not match pattern for StandardRegex concept '{CatalogueStandardRegex.ConceptName}'",
+            this);
     }
-
 }

@@ -22,74 +22,20 @@ using YamlDotNet.Serialization;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// This entity stores the large binary blob for the <see cref="Plugin"/> class.  The <see cref="Bin"/> can be written to disk
-/// as a nuget file which can be loaded at runtime to add plugin functionality for rdmp.
+///     This entity stores the large binary blob for the <see cref="Plugin" /> class.  The <see cref="Bin" /> can be
+///     written to disk
+///     as a nuget file which can be loaded at runtime to add plugin functionality for rdmp.
 /// </summary>
 public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 {
-    #region Database Properties
-    private byte[] _bin;
-    private string _committer;
-    private DateTime _uploadDate;
-    private int _plugin_ID;
-    private Lazy<Plugin> _knownPlugin;
-
-
-    /// <summary>
-    /// The assembly (dll) file as a Byte[], use File.WriteAllBytes to write it to disk
-    /// </summary>
-    [YamlIgnore]
-    public byte[] Bin
-    {
-        get => _bin;
-        set => SetField(ref _bin,value);
-    }
-
-    /// <summary>
-    /// The user who uploaded the dll
-    /// </summary>
-    public string Committer
-    {
-        get => _committer;
-        set => SetField(ref _committer,value);
-    }
-
-    /// <summary>
-    /// The date the dll was uploaded
-    /// </summary>
-    public DateTime UploadDate
-    {
-        get => _uploadDate;
-        set => SetField(ref _uploadDate,value);
-    }
-
-    /// <summary>
-    /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of its dependencies)
-    /// </summary>
-    [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
-    public int Plugin_ID
-    {
-        get => _plugin_ID;
-        set => SetField(ref _plugin_ID,value);
-    }
-
-    #endregion
-
-    #region Relationships
-
-    /// <inheritdoc cref="Plugin_ID"/>
-    [NoMappingToDatabase]
-    public Plugin Plugin => _knownPlugin.Value;
-
-    #endregion
-
     public LoadModuleAssembly()
     {
         ClearAllInjections();
     }
 
     /// <summary>
-    /// Uploads the given dll file to the catalogue database ready for use as a plugin within RDMP (also uploads any pdb file in the same dir)
+    ///     Uploads the given dll file to the catalogue database ready for use as a plugin within RDMP (also uploads any pdb
+    ///     file in the same dir)
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="f"></param>
@@ -101,7 +47,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         //so we can reference it in fetch requests to check for duplication (normally Repository is set during hydration by the repo)
         Repository = repository;
 
-        Repository.InsertAndHydrate(this,dictionaryParameters);
+        Repository.InsertAndHydrate(this, dictionaryParameters);
         ClearAllInjections();
     }
 
@@ -121,22 +67,41 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         ClearAllInjections();
     }
 
+    #region Relationships
+
+    /// <inheritdoc cref="Plugin_ID" />
+    [NoMappingToDatabase]
+    public Plugin Plugin => _knownPlugin.Value;
+
+    #endregion
+
+    public void InjectKnown(Plugin instance)
+    {
+        _knownPlugin = new Lazy<Plugin>(instance);
+    }
+
+    public void ClearAllInjections()
+    {
+        _knownPlugin = new Lazy<Plugin>(() => Repository.GetObjectByID<Plugin>(Plugin_ID));
+    }
+
 
     /// <summary>
-    /// Downloads the plugin nupkg to the given directory
+    ///     Downloads the plugin nupkg to the given directory
     /// </summary>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        var targetDirectory = downloadDirectory.FullName ?? throw new Exception("Could not get currently executing assembly directory");
+        var targetDirectory = downloadDirectory.FullName ??
+                              throw new Exception("Could not get currently executing assembly directory");
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 
         var targetFile = Path.Combine(targetDirectory, Plugin.Name);
-            
+
         //file already exists
         if (File.Exists(targetFile))
-            if(AreEqual(File.ReadAllBytes(targetFile), Bin))
+            if (AreEqual(File.ReadAllBytes(targetFile), Bin))
                 return targetFile;
 
         var timeout = 5000;
@@ -163,16 +128,16 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 
     private static Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
     {
-        if(f.Extension != PackPluginRunner.PluginPackageSuffix)
+        if (f.Extension != PackPluginRunner.PluginPackageSuffix)
             throw new Exception($"Expected LoadModuleAssembly file to be a {PackPluginRunner.PluginPackageSuffix}");
 
         var allBytes = File.ReadAllBytes(f.FullName);
 
         var dictionaryParameters = new Dictionary<string, object>
         {
-            {"Bin",allBytes},
-            {"Committer",Environment.UserName},
-            {"Plugin_ID",plugin.ID}
+            { "Bin", allBytes },
+            { "Committer", Environment.UserName },
+            { "Plugin_ID", plugin.ID }
         };
 
         return dictionaryParameters;
@@ -186,19 +151,59 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         return !dll.Where((t, i) => !readAllBytes[i].Equals(t)).Any();
     }
 
-    public void InjectKnown(Plugin instance)
-    {
-        _knownPlugin = new Lazy<Plugin>(instance);
-    }
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"LoadModuleAssembly_{ID}";
     }
 
-    public void ClearAllInjections()
+    #region Database Properties
+
+    private byte[] _bin;
+    private string _committer;
+    private DateTime _uploadDate;
+    private int _plugin_ID;
+    private Lazy<Plugin> _knownPlugin;
+
+
+    /// <summary>
+    ///     The assembly (dll) file as a Byte[], use File.WriteAllBytes to write it to disk
+    /// </summary>
+    [YamlIgnore]
+    public byte[] Bin
     {
-        _knownPlugin = new Lazy<Plugin>(() => Repository.GetObjectByID<Plugin>(Plugin_ID));
+        get => _bin;
+        set => SetField(ref _bin, value);
     }
+
+    /// <summary>
+    ///     The user who uploaded the dll
+    /// </summary>
+    public string Committer
+    {
+        get => _committer;
+        set => SetField(ref _committer, value);
+    }
+
+    /// <summary>
+    ///     The date the dll was uploaded
+    /// </summary>
+    public DateTime UploadDate
+    {
+        get => _uploadDate;
+        set => SetField(ref _uploadDate, value);
+    }
+
+    /// <summary>
+    ///     The plugin this file forms a part of (each <see cref="Plugin" /> will usually have multiple dlls as part of its
+    ///     dependencies)
+    /// </summary>
+    [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
+    public int Plugin_ID
+    {
+        get => _plugin_ID;
+        set => SetField(ref _plugin_ID, value);
+    }
+
+    #endregion
 }

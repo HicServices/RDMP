@@ -4,31 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using BrightIdeasSoftware;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Providers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
 
 namespace Rdmp.UI.SimpleDialogs;
 
 internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 {
-    private List<IMapsDirectlyToDatabaseTable> _scoringObjects;
+    private readonly List<IMapsDirectlyToDatabaseTable> _scoringObjects;
 
-    public IEnumerable<object> AlwaysShow { get; }
-    public CancellationToken CancellationToken { get; }
-
-    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow, IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text,int maxToTake, CancellationToken cancellationToken) 
+    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow,
+        IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text, int maxToTake,
+        CancellationToken cancellationToken)
     {
         AlwaysShow = alwaysShow;
         CancellationToken = cancellationToken;
 
-        if(string.IsNullOrEmpty(text))
+        if (string.IsNullOrEmpty(text))
         {
             _scoringObjects = allObjects.Take(maxToTake).ToList();
         }
@@ -38,9 +37,10 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 
             var scorer = new SearchablesMatchScorer
             {
-                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(),
+                    StringComparer.CurrentCultureIgnoreCase)
             };
-            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
+            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken, null);
 
             // we were cancelled
             if (matches == null)
@@ -51,8 +51,10 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 
             _scoringObjects = SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
         }
-
     }
+
+    public IEnumerable<object> AlwaysShow { get; }
+    public CancellationToken CancellationToken { get; }
 
 
     public IEnumerable Filter(IEnumerable modelObjects)

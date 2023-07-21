@@ -16,32 +16,32 @@ namespace Rdmp.UI.TestsAndSetup;
 
 public class RDMPBootStrapper<T> where T : RDMPForm, new()
 {
-    private readonly EnvironmentInfo _environmentInfo;
-    private string catalogueConnection;
-    private string dataExportConnection;
-        
     /// <summary>
-    /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
-    /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
+    ///     The last used connection string arguments when launching using this factory class.  Typically the boot strapper
+    ///     should only ever be used once so you can safely query this field but best to check that it is not null anyway.
     /// </summary>
     public static ResearchDataManagementPlatformOptions ApplicationArguments;
-    private readonly ResearchDataManagementPlatformOptions _args;
-    private T _mainForm;
 
-        
+    private readonly ResearchDataManagementPlatformOptions _args;
+    private readonly EnvironmentInfo _environmentInfo;
+
+    private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase)
+    {
+        // This error seems to come from ObjectTreeView but seems harmless
+        "Value cannot be null. (Parameter 'owningItem')"
+    };
+
+    private T _mainForm;
+    private string catalogueConnection;
+    private string dataExportConnection;
+
+
     public RDMPBootStrapper(EnvironmentInfo environmentInfo, ResearchDataManagementPlatformOptions args)
     {
         ApplicationArguments = args;
         _args = args;
         _environmentInfo = environmentInfo;
-
     }
-
-    private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){ 
-            
-        // This error seems to come from ObjectTreeView but seems harmless
-        "Value cannot be null. (Parameter 'owningItem')"
-    };
 
     public void Show(bool requiresDataExportDatabaseToo)
     {
@@ -49,15 +49,12 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         Application.SetCompatibleTextRenderingDefault(false);
 
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
-        Application.ThreadException += (s,e)=>{
-
+        Application.ThreadException += (s, e) =>
+        {
             var msg = e.Exception?.Message;
-            if(msg != null && IgnoreExceptions.Contains(msg))
-            {
-                return;
-            }
+            if (msg != null && IgnoreExceptions.Contains(msg)) return;
 
-            GlobalExceptionHandler.Instance.Handle(s,e);
+            GlobalExceptionHandler.Instance.Handle(s, e);
         };
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
@@ -70,13 +67,18 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         }
         catch (Exception ex)
         {
-            if(!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
+            if (!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
             {
-                var viewer = new ExceptionViewer("Failed to get connection strings", $"ConnectionStringsFile was '{_args.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}", ex);
+                var viewer = new ExceptionViewer("Failed to get connection strings",
+                    $"ConnectionStringsFile was '{_args.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}",
+                    ex);
                 viewer.ShowDialog();
             }
             else
+            {
                 ExceptionViewer.Show("Failed to get connection strings", ex);
+            }
+
             return;
         }
 
@@ -85,12 +87,12 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
             //show the startup dialog
             var startup = new Startup(_environmentInfo) { SkipPatching = _args.SkipPatching };
 
-            if(!string.IsNullOrWhiteSpace(_args.Dir))
+            if (!string.IsNullOrWhiteSpace(_args.Dir))
             {
                 startup.RepositoryLocator = _args.GetRepositoryLocator();
             }
-            else
-            if (!string.IsNullOrWhiteSpace(catalogueConnection) && !string.IsNullOrWhiteSpace(dataExportConnection))
+            else if (!string.IsNullOrWhiteSpace(catalogueConnection) &&
+                     !string.IsNullOrWhiteSpace(dataExportConnection))
             {
                 startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
                 startup.RepositoryLocator.CatalogueRepository.TestConnection();
@@ -109,7 +111,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
             //launch the main application form T
             _mainForm = new T();
 
-            typeof (T).GetMethod("SetRepositoryLocator").Invoke(_mainForm,new object[]{startup.RepositoryLocator});
+            typeof(T).GetMethod("SetRepositoryLocator").Invoke(_mainForm, new object[] { startup.RepositoryLocator });
 
             if (startupUI.DoNotContinue)
                 return;
@@ -119,12 +121,9 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         catch (Exception e)
         {
             if (!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
-            {
-                ExceptionViewer.Show($"Startup failed for '{_args.ConnectionStringsFile}'",e);
-            }
+                ExceptionViewer.Show($"Startup failed for '{_args.ConnectionStringsFile}'", e);
             else
                 ExceptionViewer.Show(e);
-            return;
         }
     }
 }

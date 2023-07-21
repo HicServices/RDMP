@@ -10,11 +10,10 @@ using Rdmp.UI.LocationsMenu;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandConfigureDefaultServers : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandConfigureDefaultServers : BasicUICommandExecution, IAtomicCommand
 {
     public ExecuteCommandConfigureDefaultServers(IActivateItems activator) : base(activator)
     {
-
     }
 
     public override string GetCommandHelp()

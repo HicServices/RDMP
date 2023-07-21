@@ -12,8 +12,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.UI.PluginManagement.CodeGeneration;
 
 /// <summary>
-/// Generates template code for a <see cref="IMapsDirectlyToDatabaseTable"/> implementation class which
-/// models the data in the table (like a budget version of entity framework).
+///     Generates template code for a <see cref="IMapsDirectlyToDatabaseTable" /> implementation class which
+///     models the data in the table (like a budget version of entity framework).
 /// </summary>
 public class MapsDirectlyToDatabaseTableClassCodeGenerator
 {
@@ -29,7 +29,8 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
         var columns = _table.DiscoverColumns();
 
         if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
-            throw new CodeGenerationException("Table must have an ID automnum column to become an IMapsDirectlyToDatabaseTable class");
+            throw new CodeGenerationException(
+                "Table must have an ID automnum column to become an IMapsDirectlyToDatabaseTable class");
 
         var classStart = new StringBuilder();
 
@@ -66,10 +67,10 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
         constructors.AppendLine(
             $"\tpublic {_table.GetRuntimeName()}(IRepository repository, DbDataReader r): base(repository, r)");
         constructors.AppendLine("\t{");
-            
-        foreach (var col in columns.Where(c=>c.GetRuntimeName() != "ID"))
+
+        foreach (var col in columns.Where(c => c.GetRuntimeName() != "ID"))
         {
-            var type = GetCSharpTypeFor(col,out var setCode);
+            var type = GetCSharpTypeFor(col, out var setCode);
             var propertyName = col.GetRuntimeName();
             var fieldString = col.GetRuntimeName();
 
@@ -89,7 +90,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         databaseFields.AppendLine("\t#endregion");
         databaseFields.AppendLine();
-            
+
         constructors.AppendLine("\t}");
 
         if (isINamed)
@@ -99,10 +100,9 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
     }");
 
         return $"{classStart}{databaseFields}{databaseProperties}{constructors}}}";
-
     }
 
-    private static string GetCSharpTypeFor(DiscoveredColumn col,out string setCode)
+    private static string GetCSharpTypeFor(DiscoveredColumn col, out string setCode)
     {
         var r = $"r[\"{col.GetRuntimeName()}\"]";
 
@@ -136,7 +136,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
                 setCode = $"Convert.ToInt32({r});";
                 return "int";
             }
-            
+
         if (col.DataType.SQLType.Contains("bit"))
             if (col.AllowNulls)
             {
@@ -148,7 +148,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
                 setCode = $"Convert.ToBoolean({r});";
                 return "bool";
             }
-            
+
 
         setCode = "TODO Unrecognised Type";
         return "TODO  Unrecognised Type";

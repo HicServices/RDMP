@@ -13,27 +13,22 @@ using System.Windows.Forms;
 namespace Rdmp.UI.TransparentHelpSystem;
 
 /// <summary>
-/// Overlay message box which appears next to a given <see cref="HighlightControl"/> and describes how the user might interact
-/// with it.
+///     Overlay message box which appears next to a given <see cref="HighlightControl" /> and describes how the user might
+///     interact
+///     with it.
 /// </summary>
 public class HelpStage
 {
     private readonly Func<bool> _moveOnWhenConditionMet;
     private readonly int _pollMilliseconds;
-    public readonly Control HighlightControl;
     public readonly string HelpText;
-
-    /// <summary>
-    /// If true then HostLocationForStageBox will be ignored and the positioning of hte HelpBox will be decided based on the location of the highlighted control and the
-    /// surrounding available placement space on the host Form.
-    /// </summary>
-    public bool UseDefaultPosition { get; set; }
+    public readonly Control HighlightControl;
     public readonly Point HostLocationForStageBox;
+
+    public HelpStage Next;
 
     public string OptionButtonText;
     public HelpStage OptionDestination;
-
-    public HelpStage Next;
 
 
     public HelpStage(Control highlightControl, string helpText, params HelpStage[] nextStagesInOrder)
@@ -45,7 +40,8 @@ public class HelpStage
         HandleParams(nextStagesInOrder);
     }
 
-    public HelpStage(Control highlightControl, string helpText, Point hostLocationForStageBox, params HelpStage[] nextStagesInOrder)
+    public HelpStage(Control highlightControl, string helpText, Point hostLocationForStageBox,
+        params HelpStage[] nextStagesInOrder)
     {
         HighlightControl = highlightControl;
         HelpText = helpText;
@@ -55,25 +51,36 @@ public class HelpStage
         HandleParams(nextStagesInOrder);
     }
 
-    public HelpStage(Control highlightControl, string helpText, Func<bool> moveOnWhenConditionMet,int pollMilliseconds = 300, params HelpStage[] nextStagesInOrder):this(highlightControl,helpText,nextStagesInOrder)
+    public HelpStage(Control highlightControl, string helpText, Func<bool> moveOnWhenConditionMet,
+        int pollMilliseconds = 300, params HelpStage[] nextStagesInOrder) : this(highlightControl, helpText,
+        nextStagesInOrder)
     {
         _moveOnWhenConditionMet = moveOnWhenConditionMet;
         _pollMilliseconds = pollMilliseconds;
     }
 
     /// <summary>
-    /// If there is moveOnWhenConditionMet set up in this HelpStage then this will start polling for the condition.  If the condition is met before cancellation true
-    /// is returned (i.e. show the next stage).  Returns false if there is no moveOnCondition set up or the CancellationToken is cancelled.
+    ///     If true then HostLocationForStageBox will be ignored and the positioning of hte HelpBox will be decided based on
+    ///     the location of the highlighted control and the
+    ///     surrounding available placement space on the host Form.
+    /// </summary>
+    public bool UseDefaultPosition { get; set; }
+
+    /// <summary>
+    ///     If there is moveOnWhenConditionMet set up in this HelpStage then this will start polling for the condition.  If the
+    ///     condition is met before cancellation true
+    ///     is returned (i.e. show the next stage).  Returns false if there is no moveOnCondition set up or the
+    ///     CancellationToken is cancelled.
     /// </summary>
     /// <param name="token"></param>
     /// <returns></returns>
     public async Task<bool> Await(CancellationToken token)
     {
-        if(_moveOnWhenConditionMet == null)
+        if (_moveOnWhenConditionMet == null)
             return false;
 
         while (!token.IsCancellationRequested && !_moveOnWhenConditionMet())
-            await Task.Delay(_pollMilliseconds,token);
+            await Task.Delay(_pollMilliseconds, token);
 
         return !token.IsCancellationRequested;
     }

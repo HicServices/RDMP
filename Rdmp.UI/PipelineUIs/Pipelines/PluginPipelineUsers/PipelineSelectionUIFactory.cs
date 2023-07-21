@@ -14,14 +14,15 @@ using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 
 /// <summary>
-/// Factory for <see cref="IPipelineSelectionUI"/> instances based on <see cref="PipelineUseCase"/> (what activity the pipelines
-/// are intended for use in). 
+///     Factory for <see cref="IPipelineSelectionUI" /> instances based on <see cref="PipelineUseCase" /> (what activity
+///     the pipelines
+///     are intended for use in).
 /// </summary>
 public class PipelineSelectionUIFactory
 {
     private readonly ICatalogueRepository _repository;
-    private readonly IPipelineUser _user;
     private readonly IPipelineUseCase _useCase;
+    private readonly IPipelineUser _user;
 
     private IPipelineSelectionUI _pipelineSelectionUIInstance;
 
@@ -32,7 +33,8 @@ public class PipelineSelectionUIFactory
         _useCase = useCase;
     }
 
-    public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement, ArgumentValueUIArgs args, object demanderInstance)
+    public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement,
+        ArgumentValueUIArgs args, object demanderInstance)
     {
         _repository = repository;
 
@@ -41,16 +43,17 @@ public class PipelineSelectionUIFactory
         _useCase = pluginUserAndCase;
     }
 
-    public IPipelineSelectionUI Create(IActivateItems activator,string text = null, DockStyle dock = DockStyle.None, Control containerControl = null)
+    public IPipelineSelectionUI Create(IActivateItems activator, string text = null, DockStyle dock = DockStyle.None,
+        Control containerControl = null)
     {
         //setup getter as an event handler for the selection ui
-        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase,_repository);
+        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase, _repository);
 
         if (_user != null)
         {
             _pipelineSelectionUIInstance.Pipeline = _user.Getter();
 
-            _pipelineSelectionUIInstance.PipelineChanged += 
+            _pipelineSelectionUIInstance.PipelineChanged +=
                 (sender, args) =>
                     _user.Setter(((IPipelineSelectionUI)sender).Pipeline as Pipeline);
         }
@@ -69,5 +72,4 @@ public class PipelineSelectionUIFactory
 
         return _pipelineSelectionUIInstance;
     }
-
 }

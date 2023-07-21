@@ -9,7 +9,7 @@ using Rdmp.Core;
 namespace ResearchDataManagementPlatform.WindowManagement.Events;
 
 /// <summary>
-/// Arguments for when an RDMPCollection has been made visible (opened)
+///     Arguments for when an RDMPCollection has been made visible (opened)
 /// </summary>
 public class RDMPCollectionCreatedEventHandlerArgs
 {

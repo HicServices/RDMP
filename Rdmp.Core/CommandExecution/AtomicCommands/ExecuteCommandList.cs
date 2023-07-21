@@ -12,17 +12,18 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Lists all the objects in RDMP that match search term.
+///     Lists all the objects in RDMP that match search term.
 /// </summary>
 [Alias("ls")]
 public class ExecuteCommandList : BasicCommandExecution
 {
-    private IMapsDirectlyToDatabaseTable[] _toList;
+    private readonly IMapsDirectlyToDatabaseTable[] _toList;
 
     [UseWithObjectConstructor]
     public ExecuteCommandList(IBasicActivateItems activator,
-        [DemandsInitialization("The objects you want listed e.g. Catalogue:*bob* or a type e.g. TableInfo or blank to list everything")]
-        IMapsDirectlyToDatabaseTable[] toList = null):base(activator)
+        [DemandsInitialization(
+            "The objects you want listed e.g. Catalogue:*bob* or a type e.g. TableInfo or blank to list everything")]
+        IMapsDirectlyToDatabaseTable[] toList = null) : base(activator)
     {
         _toList = toList;
     }
@@ -31,7 +32,7 @@ public class ExecuteCommandList : BasicCommandExecution
     {
         base.Execute();
 
-        if(_toList == null)
+        if (_toList == null)
         {
             ListEveryone();
             return;
@@ -47,14 +48,10 @@ public class ExecuteCommandList : BasicCommandExecution
     private void ListEveryone()
     {
         var sb = new StringBuilder();
-            
-        foreach(var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
-        {
-            foreach(var o in repo.GetAllObjectsInDatabase())
-            {
-                sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
-            }
-        }
+
+        foreach (var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
+        foreach (var o in repo.GetAllObjectsInDatabase())
+            sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
 
         BasicActivator.Show(sb.ToString());
     }

@@ -10,18 +10,25 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Identifies a database which is used to 'split off' identifiable data (columns) during a data load instead of loading it into the LIVE database (from which you
-/// execute data extractions).
+///     Identifies a database which is used to 'split off' identifiable data (columns) during a data load instead of
+///     loading it into the LIVE database (from which you
+///     execute data extractions).
 /// </summary>
-public class IdentifierDumpServerUsageNode:Node,IDeleteable
+public class IdentifierDumpServerUsageNode : Node, IDeleteable
 {
-    public TableInfo TableInfo { get; private set; }
-    public ExternalDatabaseServer IdentifierDumpServer { get; private set; }
-
     public IdentifierDumpServerUsageNode(TableInfo tableInfo, ExternalDatabaseServer identifierDumpServer)
     {
         TableInfo = tableInfo;
         IdentifierDumpServer = identifierDumpServer;
+    }
+
+    public TableInfo TableInfo { get; }
+    public ExternalDatabaseServer IdentifierDumpServer { get; }
+
+    public void DeleteInDatabase()
+    {
+        TableInfo.IdentifierDumpServer_ID = null;
+        TableInfo.SaveToDatabase();
     }
 
     public override string ToString()
@@ -39,17 +46,11 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((IdentifierDumpServerUsageNode) obj);
+        return Equals((IdentifierDumpServerUsageNode)obj);
     }
 
     public override int GetHashCode()
     {
         return TableInfo != null ? TableInfo.GetHashCode() : 0;
-    }
-
-    public void DeleteInDatabase()
-    {
-        TableInfo.IdentifierDumpServer_ID = null;
-        TableInfo.SaveToDatabase();
     }
 }

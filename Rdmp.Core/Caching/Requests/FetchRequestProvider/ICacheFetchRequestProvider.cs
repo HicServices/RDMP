@@ -9,7 +9,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
 
 /// <summary>
-/// Interface for classes that make descisions about which time periods to request and in what order when caching.
+///     Interface for classes that make descisions about which time periods to request and in what order when caching.
 /// </summary>
 public interface ICacheFetchRequestProvider
 {

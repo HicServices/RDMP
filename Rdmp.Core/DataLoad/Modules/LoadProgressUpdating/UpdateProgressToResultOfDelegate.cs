@@ -11,13 +11,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 
 /// <summary>
-/// UpdateProgressIfLoadsuccessful which executes an arbitrary Func in order to determine what date to update the LoadProgress.DataLoadProgress to 
-/// (See UpdateProgressIfLoadsuccessful).
+///     UpdateProgressIfLoadsuccessful which executes an arbitrary Func in order to determine what date to update the
+///     LoadProgress.DataLoadProgress to
+///     (See UpdateProgressIfLoadsuccessful).
 /// </summary>
 public class UpdateProgressToResultOfDelegate : UpdateProgressIfLoadsuccessful
 {
     private readonly Func<DateTime> _delegateToRun;
-        
+
     public UpdateProgressToResultOfDelegate(ScheduledDataLoadJob job, Func<DateTime> delegateToRun) : base(job)
     {
         _delegateToRun = delegateToRun;
@@ -30,6 +31,5 @@ public class UpdateProgressToResultOfDelegate : UpdateProgressIfLoadsuccessful
             DateToSetProgressTo = _delegateToRun();
 
         base.LoadCompletedSoDispose(exitCode, postLoadEventListener);
-
     }
 }

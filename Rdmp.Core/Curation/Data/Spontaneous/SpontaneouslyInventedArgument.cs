@@ -11,13 +11,13 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of IArgument.
+///     Spontaneous (memory only) implementation of IArgument.
 /// </summary>
 public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
 {
     private readonly object _value;
 
-    public SpontaneouslyInventedArgument(MemoryRepository repo,string name, object value):base(repo)
+    public SpontaneouslyInventedArgument(MemoryRepository repo, string name, object value) : base(repo)
     {
         Name = name;
         _value = value;

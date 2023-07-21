@@ -11,21 +11,23 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
-
-
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-/// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
-/// 
-/// <para>This Control is for setting Properties that are of Type derrived from ICustomUIDrivenClass and require a specific plugin user interface to be displayed in order to let the user edit
-/// the value he wants (e.g. configure a web service endpoint with many properties that should be serialised / configured through a specific UI you have written).</para>
+///     Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization]
+///     decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
+///     <para>
+///         This Control is for setting Properties that are of Type derrived from ICustomUIDrivenClass and require a
+///         specific plugin user interface to be displayed in order to let the user edit
+///         the value he wants (e.g. configure a web service endpoint with many properties that should be serialised /
+///         configured through a specific UI you have written).
+///     </para>
 /// </summary>
 [TechnicalUI]
 public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgumentValueUI
 {
-    private Type _uiType;
     private ArgumentValueUIArgs _args;
+    private Type _uiType;
 
     public ArgumentValueCustomUIDrivenClassUI()
     {
@@ -48,7 +50,8 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             if (_uiType == null)
             {
                 var shortUIClassName = $"{t.Name}UI";
-                var candidates = _args.CatalogueRepository.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
+                var candidates = _args.CatalogueRepository.MEF.GetAllTypes()
+                    .Where(type => type.Name.Equals(shortUIClassName)).ToArray();
 
                 if (candidates.Length > 1)
                     throw new Exception(
@@ -61,7 +64,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
                 _uiType = candidates[0];
             }
 
-    
+
             btnLaunchCustomUI.Text = $"Launch Custom UI ({_uiType.Name})";
             btnLaunchCustomUI.Width = btnLaunchCustomUI.PreferredSize.Width;
         }
@@ -70,7 +73,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             btnLaunchCustomUI.Enabled = false;
         }
     }
-        
+
     private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try
@@ -79,13 +82,13 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var uiInstance = Activator.CreateInstance(_uiType);
 
-            var instanceAsCustomUI = (ICustomUI) uiInstance;
+            var instanceAsCustomUI = (ICustomUI)uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
             instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance);
             var dr = ((Form)instanceAsCustomUI).ShowDialog();
 
-            if(dr != DialogResult.Cancel)
+            if (dr != DialogResult.Cancel)
             {
                 var result = instanceAsCustomUI.GetFinalStateOfUnderlyingObject();
                 _args.Setter(result);

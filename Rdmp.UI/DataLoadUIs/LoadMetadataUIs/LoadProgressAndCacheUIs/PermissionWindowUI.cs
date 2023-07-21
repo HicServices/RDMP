@@ -16,14 +16,16 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 
 /// <summary>
-/// Restricts the times of day in which caching can take place (e.g. from midnight-4am only).  For a description of what caching is see CacheProgressUI or the RDMP user manual.  Format is
-/// in standard TimeSpan.TryParse format (see https://msdn.microsoft.com/en-us/library/3z48198e(v=vs.110).aspx or search online for 'TimeSpan.TryParse c#') each TimeSpan can be followed by
-/// a comma and then another TimeSpan format e.g.  '10:20:00-10:40:00,11:20:00-11:40:00' would create a permission window that could download from the cache between 10:20 AM and 10:40 AM then
-/// caching wouldn't be allowed again until 11:20am to 11:40am.
+///     Restricts the times of day in which caching can take place (e.g. from midnight-4am only).  For a description of
+///     what caching is see CacheProgressUI or the RDMP user manual.  Format is
+///     in standard TimeSpan.TryParse format (see https://msdn.microsoft.com/en-us/library/3z48198e(v=vs.110).aspx or
+///     search online for 'TimeSpan.TryParse c#') each TimeSpan can be followed by
+///     a comma and then another TimeSpan format e.g.  '10:20:00-10:40:00,11:20:00-11:40:00' would create a permission
+///     window that could download from the cache between 10:20 AM and 10:40 AM then
+///     caching wouldn't be allowed again until 11:20am to 11:40am.
 /// </summary>
 public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 {
@@ -61,12 +63,13 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbName,"Text","Name",w=>w.Name);
+        Bind(tbName, "Text", "Name", w => w.Name);
         Bind(tbDescription, "Text", "Description", w => w.Description);
-        Bind(tbID,"Text","ID",w=>w.ID);
+        Bind(tbID, "Text", "ID", w => w.ID);
     }
 
-    private static void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
+    private static void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum,
+        Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
     {
         if (periodsByDay.TryGetValue(dayNum, out var value)) PopulateTextBox(textBox, value);
     }
@@ -80,9 +83,9 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         var listString = textBox.Text;
         var periodList = new List<PermissionWindowPeriod>();
-        foreach (var periodString in listString.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var periodString in listString.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
         {
-            var parts = periodString.Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries);
+            var parts = periodString.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
             if (!TimeSpan.TryParse(parts[0], out var start))
                 throw new Exception($"Could not parse {parts[0]} as a TimeSpan");
 
@@ -94,7 +97,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
         return periodList;
     }
-        
+
     public void RebuildPermissionWindowPeriods()
     {
         var periodList = new List<PermissionWindowPeriod>();
@@ -108,7 +111,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
         _permissionWindow.SetPermissionWindowPeriods(periodList);
     }
-        
+
     private void tbDay_TextChanged(object sender, EventArgs e)
     {
         ragSmiley1.Reset();
@@ -124,7 +127,6 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PermissionWindowUI_Design, UserControl>))]
-public abstract class PermissionWindowUI_Design:RDMPSingleDatabaseObjectControl<PermissionWindow>
+public abstract class PermissionWindowUI_Design : RDMPSingleDatabaseObjectControl<PermissionWindow>
 {
-
 }

@@ -16,20 +16,21 @@ public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
     private readonly IContainer _targetContainer;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, IContainer toMove, IContainer into) 
-        : this(activator,new ContainerCombineable(toMove),into)
+    public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, IContainer toMove, IContainer into)
+        : this(activator, new ContainerCombineable(toMove), into)
     {
-
     }
-    public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, ContainerCombineable containerCombineable, IContainer targetContainer) : base(activator)
+
+    public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator,
+        ContainerCombineable containerCombineable, IContainer targetContainer) : base(activator)
     {
         _containerCombineable = containerCombineable;
         _targetContainer = targetContainer;
 
-        if(containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
+        if (containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
             SetImpossible("You cannot move a container (AND/OR) into one of its own subcontainers");
 
-        if(targetContainer.ShouldBeReadOnly(out var reason))
+        if (targetContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -39,6 +40,6 @@ public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
 
         _containerCombineable.Container.MakeIntoAnOrphan();
         _targetContainer.AddChild(_containerCombineable.Container);
-        Publish((DatabaseEntity) _targetContainer);
+        Publish((DatabaseEntity)_targetContainer);
     }
 }

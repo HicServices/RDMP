@@ -11,15 +11,13 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="ColumnInfo"/>
+///     <see cref="ICombineToMakeCommand" /> for one or more objects of type <see cref="ColumnInfo" />
 /// </summary>
 public class ColumnInfoCombineable : ICombineToMakeCommand
 {
-    public ColumnInfo[] ColumnInfos { get; private set; }
-
     public ColumnInfoCombineable(ColumnInfo columnInfo)
     {
-        ColumnInfos = new []{columnInfo};
+        ColumnInfos = new[] { columnInfo };
     }
 
     public ColumnInfoCombineable(ColumnInfo[] columnInfos)
@@ -27,8 +25,10 @@ public class ColumnInfoCombineable : ICombineToMakeCommand
         ColumnInfos = columnInfos;
     }
 
+    public ColumnInfo[] ColumnInfos { get; }
+
     public string GetSqlString()
     {
-        return string.Join(Environment.NewLine,ColumnInfos.Select(c=>c.Name));
+        return string.Join(Environment.NewLine, ColumnInfos.Select(c => c.Name));
     }
 }

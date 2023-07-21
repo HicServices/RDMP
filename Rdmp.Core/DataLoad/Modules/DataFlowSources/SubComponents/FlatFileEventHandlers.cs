@@ -14,25 +14,29 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for responding to errors processing the file
-/// being loaded according to the <see cref="BadDataHandlingStrategy"/>. It also includes settings for how to respond to empty files.
+///     This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource" />, it is responsible for responding
+///     to errors processing the file
+///     being loaded according to the <see cref="BadDataHandlingStrategy" />. It also includes settings for how to respond
+///     to empty files.
 /// </summary>
 public class FlatFileEventHandlers
 {
-    private readonly FlatFileToLoad _fileToLoad;
     private readonly FlatFileToDataTablePusher _dataPusher;
-    private readonly bool _throwOnEmptyFiles;
-    private readonly BadDataHandlingStrategy _strategy;
-    private readonly IDataLoadEventListener _listener;
-    private int _maximumErrorsToReport;
+    private readonly FlatFileToLoad _fileToLoad;
     private readonly bool _ignoreBadDataEvents;
+    private readonly IDataLoadEventListener _listener;
+    private readonly BadDataHandlingStrategy _strategy;
+    private readonly bool _throwOnEmptyFiles;
+    private int _maximumErrorsToReport;
 
     /// <summary>
-    /// File where we put error rows
+    ///     File where we put error rows
     /// </summary>
     public FileInfo DivertErrorsFile;
 
-    public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher, bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener, int maximumErrorsToReport, bool ignoreBadDataEvents)
+    public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher,
+        bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener,
+        int maximumErrorsToReport, bool ignoreBadDataEvents)
     {
         _fileToLoad = fileToLoad;
         _dataPusher = dataPusher;
@@ -50,7 +54,7 @@ public class FlatFileEventHandlers
 
         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {_fileToLoad} is empty"));
     }
-        
+
     public bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
     {
         var line = new FlatFileLine(args.Exception.Context);
@@ -58,7 +62,7 @@ public class FlatFileEventHandlers
         switch (_strategy)
         {
             case BadDataHandlingStrategy.IgnoreRows:
-                if (_maximumErrorsToReport-- >0)
+                if (_maximumErrorsToReport-- > 0)
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                         $"Ignored ReadingException on {line.GetLineDescription()}", args.Exception));
 
@@ -82,7 +86,7 @@ public class FlatFileEventHandlers
         return true;
     }
 
-    public void BadDataFound(FlatFileLine line, bool isFromCsvHelper=false)
+    public void BadDataFound(FlatFileLine line, bool isFromCsvHelper = false)
     {
         if (_ignoreBadDataEvents && isFromCsvHelper)
             if (_maximumErrorsToReport-- > 0)

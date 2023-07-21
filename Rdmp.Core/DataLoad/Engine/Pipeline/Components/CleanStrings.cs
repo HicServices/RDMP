@@ -18,81 +18,20 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 
 /// <summary>
-/// Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into proper nulls (DBNull.Value).  Columns
-/// are only processed if they are destined to go into a char field in the database (According to the TableInfo being processed).
+///     Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into
+///     proper nulls (DBNull.Value).  Columns
+///     are only processed if they are destined to go into a char field in the database (According to the TableInfo being
+///     processed).
 /// </summary>
 public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
-    private int _rowsProcessed = 0;
+    private int _rowsProcessed;
     private string _taskDescription;
-    private Stopwatch timer = new();
 
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
-    {
-        timer.Start();
+    private readonly List<string> columnsToClean = new();
+    private readonly Stopwatch timer = new();
 
-        StartAgain:
-        foreach (DataRow row in toProcess.Rows)
-        {
-            for (var i = 0; i < columnsToClean.Count; i++)
-            {
-                var toClean = columnsToClean[i];
-                string val = null;
-                try
-                {
-                    var o = row[toClean];
-
-                    if(o == DBNull.Value || o == null)
-                        continue;
-
-                    if(o is not string s)
-                        throw new ArgumentException(
-                            $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
-
-                    val = s;
-                }
-                catch (ArgumentException e)
-                {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,e.Message)); //column could not be found
-                    columnsToClean.Remove(columnsToClean[i]);
-                    goto StartAgain;
-                }
-
-
-                //it is empty
-                if (string.IsNullOrWhiteSpace(val))
-                    row[toClean] = DBNull.Value;
-                else
-                {
-                    //trim it
-                    var valAfterClean = val.Trim();
-
-                    //set it
-                    if (val != valAfterClean)
-                        row[toClean] = valAfterClean;
-                }
-            }
-            _rowsProcessed++;
-        }
-        timer.Stop();
-
-        job.OnProgress(this,new ProgressEventArgs(_taskDescription,new ProgressMeasurement(_rowsProcessed, ProgressType.Records),timer.Elapsed));
-
-        return toProcess;
-    }
-
-    private List<string> columnsToClean = new();
-
-    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-    {
-    }
-
-    public void Abort(IDataLoadEventListener listener)
-    {
-            
-    }
-
-    public void PreInitialize(TableInfo target,IDataLoadEventListener listener)
+    public void PreInitialize(TableInfo target, IDataLoadEventListener listener)
     {
         if (target == null)
             throw new Exception("Without TableInfo we cannot figure out what columns to clean");
@@ -110,9 +49,78 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                 $"Skipping CleanString on table {target.GetRuntimeName()} because there are no String columns in the table"));
     }
 
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job,
+        GracefulCancellationToken cancellationToken)
+    {
+        timer.Start();
+
+        StartAgain:
+        foreach (DataRow row in toProcess.Rows)
+        {
+            for (var i = 0; i < columnsToClean.Count; i++)
+            {
+                var toClean = columnsToClean[i];
+                string val = null;
+                try
+                {
+                    var o = row[toClean];
+
+                    if (o == DBNull.Value || o == null)
+                        continue;
+
+                    if (o is not string s)
+                        throw new ArgumentException(
+                            $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
+
+                    val = s;
+                }
+                catch (ArgumentException e)
+                {
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Warning, e.Message)); //column could not be found
+                    columnsToClean.Remove(columnsToClean[i]);
+                    goto StartAgain;
+                }
+
+
+                //it is empty
+                if (string.IsNullOrWhiteSpace(val))
+                {
+                    row[toClean] = DBNull.Value;
+                }
+                else
+                {
+                    //trim it
+                    var valAfterClean = val.Trim();
+
+                    //set it
+                    if (val != valAfterClean)
+                        row[toClean] = valAfterClean;
+                }
+            }
+
+            _rowsProcessed++;
+        }
+
+        timer.Stop();
+
+        job.OnProgress(this,
+            new ProgressEventArgs(_taskDescription, new ProgressMeasurement(_rowsProcessed, ProgressType.Records),
+                timer.Elapsed));
+
+        return toProcess;
+    }
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
 
     public void Check(ICheckNotifier notifier)
     {
-            
     }
 }

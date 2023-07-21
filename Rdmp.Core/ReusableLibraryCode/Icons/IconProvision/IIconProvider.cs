@@ -10,7 +10,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 /// <summary>
-/// Provides 19x19 pixel images for the given object which could be an RDMPConcept, class instance or Type.
+///     Provides 19x19 pixel images for the given object which could be an RDMPConcept, class instance or Type.
 /// </summary>
 public interface IIconProvider
 {

@@ -19,34 +19,39 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 public abstract class CohortCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    protected const string Desc_ExternalCohortTableParameter = "Destination cohort database in which to store identifiers";
-    protected const string Desc_CohortNameParameter = "Name for cohort.  If the named cohort already exists then a new Version will be assumed e.g. Version 2";
+    protected const string Desc_ExternalCohortTableParameter =
+        "Destination cohort database in which to store identifiers";
+
+    protected const string Desc_CohortNameParameter =
+        "Name for cohort.  If the named cohort already exists then a new Version will be assumed e.g. Version 2";
+
     protected const string Desc_ProjectParameter = "Project to associate cohort with, must have a ProjectNumber";
+    private readonly string _explicitCohortName;
 
     protected ExternalCohortTable ExternalCohortTable;
-    protected IProject Project;
     protected IPipeline Pipeline;
-    private string _explicitCohortName;
+    protected IProject Project;
 
     /// <summary>
-    /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
+    ///     Initialises base class with no targetting parameters, these will be prompted from the user at execution time
+    ///     assuming <see cref="IBasicActivateItems.IsInteractive" />
     /// </summary>
     /// <param name="activator"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator)
         : this(activator, null, null, null, null)
     {
-
     }
 
     /// <summary>
-    /// Initialises common targetting parameters (where to store resulting identifiers etc)
+    ///     Initialises common targetting parameters (where to store resulting identifiers etc)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
     /// <param name="cohortName"></param>
     /// <param name="project"></param>
     /// <param name="pipeline"></param>
-    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline) : base(activator)
+    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable,
+        string cohortName, Project project, IPipeline pipeline) : base(activator)
     {
         //May be null
         _explicitCohortName = cohortName;
@@ -63,65 +68,6 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         if (!dataExport.CohortSources.Any())
             SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
     }
-    protected ICohortCreationRequest GetCohortCreationRequest(string auditLogDescription)
-    {
-        //user wants to create a new cohort
-        var ect = ExternalCohortTable;
-
-        //do we know where it's going to end up?
-        if (ect == null)
-            if (!SelectOne(
-                    GetChooseCohortDialogArgs(),
-                    BasicActivator.RepositoryLocator.DataExportRepository,
-                    out ect)) //not yet, get user to pick one
-            {
-                return null;//user didn't select one and cancelled dialog
-            }
-                    
-
-        //and document the request
-
-        // if we have everything we need to create the cohort right here
-        if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
-            return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription,ect);
-        // otherwise we are going to have to ask the user for it
-
-        //Get a new request for the source they are trying to populate
-        var req = BasicActivator.GetCohortCreationRequest(ect, Project, auditLogDescription);
-
-        Project ??= req?.Project;
-
-        return req;
-    }
-
-    /// <summary>
-    /// Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable"/>
-    /// </summary>
-    /// <returns></returns>
-    public static DialogArgs GetChooseCohortDialogArgs()
-    {
-        return new DialogArgs
-        {
-            WindowTitle = "Choose where to save cohort",
-            TaskDescription = "Select the Cohort Database in which to store the identifiers.  If you have multiple methods of anonymising cohorts or manage different types of identifiers (e.g. CHI lists, ECHI lists and/or BarcodeIDs) then you must pick the Cohort Database that matches your cohort identifier type/anonymisation protocol.",
-            EntryLabel = "Select Cohort Database",
-            AllowAutoSelect = true
-        };
-    }
-
-    private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name, string auditLogDescription,ExternalCohortTable ect)
-    {
-        var existing = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(d => d.Description.Equals(_explicitCohortName)).ToArray();
-        var version = 1;
-
-        // If the user has used this description before then we can just bump the version by 1
-        if (existing != null && existing.Any())
-        {
-            version = existing.Max(v => v.Version) + 1;
-        }
-
-        return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect), BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
-    }
 
     public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -134,17 +80,81 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         return this;
     }
 
+    protected ICohortCreationRequest GetCohortCreationRequest(string auditLogDescription)
+    {
+        //user wants to create a new cohort
+        var ect = ExternalCohortTable;
 
-    protected IPipelineRunner GetConfigureAndExecuteControl(ICohortCreationRequest request, string description, object cohortIsBeingCreatedFrom)
+        //do we know where it's going to end up?
+        if (ect == null)
+            if (!SelectOne(
+                    GetChooseCohortDialogArgs(),
+                    BasicActivator.RepositoryLocator.DataExportRepository,
+                    out ect)) //not yet, get user to pick one
+                return null; //user didn't select one and cancelled dialog
+
+
+        //and document the request
+
+        // if we have everything we need to create the cohort right here
+        if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
+            return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription, ect);
+        // otherwise we are going to have to ask the user for it
+
+        //Get a new request for the source they are trying to populate
+        var req = BasicActivator.GetCohortCreationRequest(ect, Project, auditLogDescription);
+
+        Project ??= req?.Project;
+
+        return req;
+    }
+
+    /// <summary>
+    ///     Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable" />
+    /// </summary>
+    /// <returns></returns>
+    public static DialogArgs GetChooseCohortDialogArgs()
+    {
+        return new DialogArgs
+        {
+            WindowTitle = "Choose where to save cohort",
+            TaskDescription =
+                "Select the Cohort Database in which to store the identifiers.  If you have multiple methods of anonymising cohorts or manage different types of identifiers (e.g. CHI lists, ECHI lists and/or BarcodeIDs) then you must pick the Cohort Database that matches your cohort identifier type/anonymisation protocol.",
+            EntryLabel = "Select Cohort Database",
+            AllowAutoSelect = true
+        };
+    }
+
+    private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name,
+        string auditLogDescription, ExternalCohortTable ect)
+    {
+        var existing = ExtractableCohort.GetImportableCohortDefinitions(ect)
+            .Where(d => d.Description.Equals(_explicitCohortName)).ToArray();
+        var version = 1;
+
+        // If the user has used this description before then we can just bump the version by 1
+        if (existing != null && existing.Any()) version = existing.Max(v => v.Version) + 1;
+
+        return new CohortCreationRequest(Project,
+            new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect),
+            BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
+    }
+
+
+    protected IPipelineRunner GetConfigureAndExecuteControl(ICohortCreationRequest request, string description,
+        object cohortIsBeingCreatedFrom)
     {
         var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs {
+        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs
+        {
             WindowTitle = "Commit Cohort",
-            TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes succesfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
-        },request, Pipeline);
+            TaskDescription =
+                $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes succesfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
+        }, request, Pipeline);
 
-        pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
+        pipelineRunner.PipelineExecutionFinishedsuccessfully +=
+            (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 
         //add in the logging server
         var loggingServer = catalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
@@ -155,7 +165,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
             //create a db listener
-            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
+            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
+                ExtractableCohort.CohortLoggingTask, description);
 
             //make all messages go to both the db and the UI
             pipelineRunner.SetAdditionalProgressListener(toDbListener);

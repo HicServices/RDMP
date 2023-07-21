@@ -11,7 +11,7 @@ using Rdmp.UI.Copying;
 namespace Rdmp.UI.Collections.Providers.Copying;
 
 /// <summary>
-/// Enables Ctrl+C support in <see cref="TreeListView"/>
+///     Enables Ctrl+C support in <see cref="TreeListView" />
 /// </summary>
 public class CopyPasteProvider
 {
@@ -34,6 +34,5 @@ public class CopyPasteProvider
             if (command != null)
                 Clipboard.SetDataObject(command);
         }
-            
     }
 }

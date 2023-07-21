@@ -24,35 +24,45 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
 using SixLabors.ImageSharp.PixelFormats;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace Rdmp.UI.ExtractionUIs;
 
 /// <summary>
-/// Allows you to view the Extraction SQL that is built by the QueryBuilder when extracting or running data quality engine against a dataset (Catalogue).  Includes options for
-/// you to display only Core extraction fields or also supplemental / special approval.
-/// 
-/// <para>If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL implementation.  Because these are master filters and this dialog 
-/// is for previewing only, no AND/OR container trees are included in the WHERE logic (See ExtractionFilterUI for more info about filters).</para>
-/// 
-/// <para>If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
-/// how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration). </para>
+///     Allows you to view the Extraction SQL that is built by the QueryBuilder when extracting or running data quality
+///     engine against a dataset (Catalogue).  Includes options for
+///     you to display only Core extraction fields or also supplemental / special approval.
+///     <para>
+///         If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL
+///         implementation.  Because these are master filters and this dialog
+///         is for previewing only, no AND/OR container trees are included in the WHERE logic (See ExtractionFilterUI for
+///         more info about filters).
+///     </para>
+///     <para>
+///         If for some reason you see an error instead of your extraction SQL then read the description and take the steps
+///         it suggests (e.g. if it is complaining about not knowing
+///         how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration).
+///     </para>
 /// </summary>
 public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
     private Catalogue _catalogue;
-    private ToolStripButton rbCore = new("Core");
-    private ToolStripButton rbSupplemental = new("Supplemental"){Checked = true};
-    private ToolStripButton rbSpecialApproval = new("Special Approval");
-    private ToolStripButton rbInternal = new("Internal");
-    private ToolStripButton btnRun = new("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
-        
-    private Scintilla QueryPreview;
+
+    private bool bLoading;
+    private readonly ToolStripButton btnRun = new("Run", CatalogueIcons.ExecuteArrow.ImageToBitmap());
+
+    private readonly Scintilla QueryPreview;
+    private readonly ToolStripButton rbCore = new("Core");
+    private readonly ToolStripButton rbInternal = new("Internal");
+    private readonly ToolStripButton rbSpecialApproval = new("Special Approval");
+    private readonly ToolStripButton rbSupplemental = new("Supplemental") { Checked = true };
+
     public ViewExtractionSqlUI()
     {
         InitializeComponent();
-            
+
         #region Query Editor setup
-            
+
         QueryPreview = new ScintillaTextEditorFactory().Create();
         QueryPreview.ReadOnly = true;
 
@@ -76,7 +86,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     private void rb_Click(object sender, EventArgs e)
     {
         //treat as radio button
-        foreach (var item in new[] {rbCore, rbSupplemental, rbSpecialApproval, rbInternal})
+        foreach (var item in new[] { rbCore, rbSupplemental, rbSpecialApproval, rbInternal })
             item.Checked = item == sender;
 
         RefreshUIFromDatabase();
@@ -87,8 +97,6 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
     }
 
-    private bool bLoading = false;
-        
 
     private void RefreshUIFromDatabase()
     {
@@ -103,10 +111,10 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             bLoading = true;
 
             var extractionInformations = GetSelectedExtractionInformations();
-                
+
             //add the available filters
             SetupAvailableFilters(extractionInformations);
-                
+
             //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
             QueryPreview.ReadOnly = false;
 
@@ -119,14 +127,13 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         }
         catch (Exception ex)
         {
-            CommonFunctionality.ScintillaGoRed(QueryPreview,ex);
-            CommonFunctionality.Fatal(ex.Message,ex);
+            CommonFunctionality.ScintillaGoRed(QueryPreview, ex);
+            CommonFunctionality.Fatal(ex.Message, ex);
         }
         finally
         {
             bLoading = false;
         }
-
     }
 
     private void SetupAvailableFilters(List<ExtractionInformation> extractionInformations)
@@ -159,16 +166,17 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
 
             if (rbSupplemental.Checked || rbSpecialApproval.Checked)
-                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
+                extractionInformations.AddRange(
+                    _catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
 
             if (rbSpecialApproval.Checked)
-                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
-
+                extractionInformations.AddRange(
+                    _catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
         }
 
         //sort by Default Order
         extractionInformations.Sort();
-                
+
         //add to listbox
         olvExtractionInformations.ClearObjects();
         olvExtractionInformations.AddObjects(extractionInformations.ToArray());
@@ -193,14 +201,16 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
         RefreshUIFromDatabase();
 
         rbCore.Image = CatalogueIcons.ExtractionInformation.ImageToBitmap();
         rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ImageToBitmap();
         rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ImageToBitmap();
-        rbInternal.Image = activator.CoreIconProvider.GetImage(SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal).ImageToBitmap();
+        rbInternal.Image = activator.CoreIconProvider
+            .GetImage(Image.Load<Rgba32>(CatalogueIcons.ExtractionInformation_SpecialApproval), OverlayKind.Internal)
+            .ImageToBitmap();
 
         CommonFunctionality.Add(rbCore);
         CommonFunctionality.Add(rbSupplemental);
@@ -209,9 +219,8 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         CommonFunctionality.Add(btnRun);
 
         CommonFunctionality.AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
-            
     }
-        
+
     public override string GetTabName()
     {
         return $"{base.GetTabName()}(SQL)";
@@ -219,8 +228,8 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
-        if(((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+        if (((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o) { ExpansionDepth = 1 });
     }
 
     private void olvFilters_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -228,6 +237,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         RefreshUIFromDatabase();
     }
 }
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewExtractionSql_Design, UserControl>))]
 public abstract class ViewExtractionSql_Design : RDMPSingleDatabaseObjectControl<Catalogue>
 {

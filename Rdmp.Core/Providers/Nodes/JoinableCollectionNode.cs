@@ -12,26 +12,37 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6
-/// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
+///     Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions
+///     within 6
+///     months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration" />.
 /// </summary>
-public class JoinableCollectionNode:Node,IOrderable
+public class JoinableCollectionNode : Node, IOrderable
 {
-    public CohortIdentificationConfiguration Configuration { get; set; }
-    public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
+    public string ElapsedTime = "";
 
-    public JoinableCollectionNode(CohortIdentificationConfiguration configuration, JoinableCohortAggregateConfiguration[] joinables)
+    public JoinableCollectionNode(CohortIdentificationConfiguration configuration,
+        JoinableCohortAggregateConfiguration[] joinables)
     {
         Configuration = configuration;
         Joinables = joinables;
+    }
+
+    public CohortIdentificationConfiguration Configuration { get; set; }
+    public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
+
+    public static IMapsDirectlyToDatabaseTable Child => null;
+    public int? CumulativeRowCount { set; get; }
+
+    int IOrderable.Order
+    {
+        get => 9999;
+        set { }
     }
 
     public static string GetCatalogueName()
     {
         return "";
     }
-
-    public static IMapsDirectlyToDatabaseTable Child => null;
 
     public static IDataAccessPoint[] GetDataAccessPoints()
     {
@@ -47,7 +58,6 @@ public class JoinableCollectionNode:Node,IOrderable
     {
         return "";
     }
-    public int? CumulativeRowCount { set; get; }
 
 
     public static string GetStateDescription()
@@ -60,8 +70,6 @@ public class JoinableCollectionNode:Node,IOrderable
         return "";
     }
 
-    public string ElapsedTime = "";
-
     public static string GetCachedQueryUseCount()
     {
         return "";
@@ -69,7 +77,6 @@ public class JoinableCollectionNode:Node,IOrderable
 
     public static string DescribePurpose()
     {
-
         return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
 patient specific dates/fields which you need to use in other datasets). For example if you are
 interested in studying hospitalisations for condition X and all other patient identification 
@@ -86,17 +93,11 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((JoinableCollectionNode) obj);
+        return Equals((JoinableCollectionNode)obj);
     }
 
     public override int GetHashCode()
     {
         return (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
-    }
-
-    int IOrderable.Order
-    {
-        get => 9999;
-        set { }
     }
 }

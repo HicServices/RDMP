@@ -57,18 +57,16 @@ internal class DateEuTest : ValidationTests
     [Test]
     public void Validate_InvalidDate_ExceptionContainsRequiredInfo()
     {
-        var result =_date.Validate("banana");
-            
+        var result = _date.Validate("banana");
+
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(typeof(Date), result.SourceConstraint.GetType());
-            
     }
 
     // utility methods
 
     private static IPrimaryConstraint constraint_date()
     {
-        return (IPrimaryConstraint)Validator.CreateConstraint("date",Consequence.Wrong);
+        return (IPrimaryConstraint)Validator.CreateConstraint("date", Consequence.Wrong);
     }
-
 }

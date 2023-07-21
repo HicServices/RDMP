@@ -16,15 +16,17 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-/// Creates <see cref="ICacheLayout"/> instances based on the <see cref="ICachedDataProvider"/>s declared in the load <see cref="ILoadMetadata"/>.  There
-/// can be multiple <see cref="ILoadProgress"/> in a load (e.g. Tayside / Fife) so you will also need to provide which <see cref="ILoadProgress"/> you are 
-/// trying to execute.
+///     Creates <see cref="ICacheLayout" /> instances based on the <see cref="ICachedDataProvider" />s declared in the load
+///     <see cref="ILoadMetadata" />.  There
+///     can be multiple <see cref="ILoadProgress" /> in a load (e.g. Tayside / Fife) so you will also need to provide which
+///     <see cref="ILoadProgress" /> you are
+///     trying to execute.
 /// </summary>
 public class CacheLayoutFactory
 {
     public static ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
     {
-        AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p=>!p.IsDisabled));
+        AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p => !p.IsDisabled));
 
         var cp = loadProgress.CacheProgress;
 
@@ -34,9 +36,11 @@ public class CacheLayoutFactory
         return destination.CreateCacheLayout();
     }
 
-    private static void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
+    private static void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata,
+        IEnumerable<IProcessTask> processTasks)
     {
-        const string whatWeExpected = @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
+        const string whatWeExpected =
+            @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
 
         var incompatibleProviders = new List<ProcessTask>();
         var compatibleProviders = new List<ProcessTask>();
@@ -68,6 +72,5 @@ public class CacheLayoutFactory
         if (compatibleProviders.Count > 1)
             throw new CacheDataProviderFindingException(
                 $"LoadMetadata {metadata} has multiple cache DataProviders tasks ({string.Join(",", compatibleProviders.Select(p => p.ToString()))}), you are only allowed 1");
-
     }
 }

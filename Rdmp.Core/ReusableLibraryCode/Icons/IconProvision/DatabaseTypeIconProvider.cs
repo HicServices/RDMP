@@ -11,25 +11,25 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 /// <summary>
-/// Provides overlay and basic icons for all DatabaseTypes
+///     Provides overlay and basic icons for all DatabaseTypes
 /// </summary>
 public class DatabaseTypeIconProvider
 {
     private readonly Image<Rgba32> _msBig;
     private readonly Image<Rgba32> _msOverlay;
 
-    private readonly Image<Rgba32> _oraBig;
-    private readonly Image<Rgba32> _oraOverlay;
-
     private readonly Image<Rgba32> _mysBig;
     private readonly Image<Rgba32> _mysOverlay;
 
+    private readonly Image<Rgba32> _oraBig;
+    private readonly Image<Rgba32> _oraOverlay;
+
     private readonly Image<Rgba32> _postgresBig;
     private readonly Image<Rgba32> _postgresOverlay;
-        
+
     private readonly Image<Rgba32> _unknownBig;
     private readonly Image<Rgba32> _unknownOverlay;
-        
+
     public DatabaseTypeIconProvider()
     {
         _msBig = Image.Load<Rgba32>(DatabaseProviderIcons.Microsoft);

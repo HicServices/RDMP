@@ -13,9 +13,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
 public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtomicCommand
 {
-    private Catalogue _target;
-    private FileInfo _toImport;
     private readonly DublinCoreTranslater _translater = new();
+    private readonly Catalogue _target;
+    private FileInfo _toImport;
 
     public ExecuteCommandImportDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
@@ -27,7 +27,8 @@ public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtom
     {
         base.Execute();
 
-        if ((_toImport ??= BasicActivator.SelectFile("Enter Dublin Core Xml File Path:","Dublin Core Xml","*.xml")) == null)
+        if ((_toImport ??= BasicActivator.SelectFile("Enter Dublin Core Xml File Path:", "Dublin Core Xml", "*.xml")) ==
+            null)
             return;
 
         var dc = new DublinCoreDefinition();

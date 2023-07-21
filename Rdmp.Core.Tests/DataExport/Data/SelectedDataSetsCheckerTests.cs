@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
-using System;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
@@ -18,7 +18,6 @@ namespace Rdmp.Core.Tests.DataExport.Data;
 
 public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfiguration
 {
-
     [Test]
     public void NormalUseCasePasses()
     {
@@ -33,7 +32,8 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1),100,"mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
+            new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
             ProgressDate = new DateTime(1995, 1, 1) // we are half way through
@@ -41,8 +41,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         ep.SaveToDatabase();
 
-        var ex = Assert.Throws<Exception>(()=>checker.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)", ex.Message);
+        var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual(
+            "R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)",
+            ex.Message);
     }
 
     [Test]
@@ -51,12 +53,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>())
-        {
-            r.DeleteInDatabase();
-        }
+        foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>()) r.DeleteInDatabase();
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
+            new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
             ProgressDate = new DateTime(1995, 1, 1) // we are half way through
@@ -65,13 +65,16 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         ep.SaveToDatabase();
 
         // audit has SQL that does not contain the cohort ID
-        var audit = new CumulativeExtractionResults(DataExportRepository, _configuration, _selectedDataSet.ExtractableDataSet, "select * from [yohoho and a bottle of rum]");
-        audit.CompleteAudit(typeof(ExecuteFullExtractionToDatabaseMSSql), "[over the hills and far away]", 333, true, false);
+        var audit = new CumulativeExtractionResults(DataExportRepository, _configuration,
+            _selectedDataSet.ExtractableDataSet, "select * from [yohoho and a bottle of rum]");
+        audit.CompleteAudit(typeof(ExecuteFullExtractionToDatabaseMSSql), "[over the hills and far away]", 333, true,
+            false);
         audit.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual(
-            $"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '[{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",ex.Message);
+            $"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '[{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",
+            ex.Message);
 
         // tidy up
         ep.DeleteInDatabase();
@@ -83,7 +86,8 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1),
+            new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID)
         {
             ProgressDate = new DateTime(1995, 1, 1) // we are half way through
@@ -91,17 +95,16 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         ep.SaveToDatabase();
 
-        foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>())
-        {
-            r.DeleteInDatabase();
-        }
+        foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>()) r.DeleteInDatabase();
 
 
         // audit has SQL is good, it contains the correct cohort
-        var audit = new CumulativeExtractionResults(DataExportRepository, _configuration, _selectedDataSet.ExtractableDataSet,
+        var audit = new CumulativeExtractionResults(DataExportRepository, _configuration,
+            _selectedDataSet.ExtractableDataSet,
             $"select * from [yohoho and a bottle of rum] WHERE [{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'");
 
-        audit.CompleteAudit(typeof(ExecuteFullExtractionToDatabaseMSSql), "[over the hills and far away]", 333, true, false);
+        audit.CompleteAudit(typeof(ExecuteFullExtractionToDatabaseMSSql), "[over the hills and far away]", 333, true,
+            false);
         audit.SaveToDatabase();
 
         Assert.DoesNotThrow(() => checker.Check(new ThrowImmediatelyCheckNotifier()));

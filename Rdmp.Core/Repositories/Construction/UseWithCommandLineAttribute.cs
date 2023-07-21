@@ -10,19 +10,22 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 namespace Rdmp.Core.Repositories.Construction;
 
 /// <summary>
-/// Indicates a constructor which should be used when instantiating from the command line with an unknown number of arguments.
-/// Constructors decorated with this attribute must take a <see cref="CommandLineObjectPicker"/>
+///     Indicates a constructor which should be used when instantiating from the command line with an unknown number of
+///     arguments.
+///     Constructors decorated with this attribute must take a <see cref="CommandLineObjectPicker" />
 /// </summary>
 [AttributeUsage(AttributeTargets.Constructor)]
 public class UseWithCommandLineAttribute : Attribute
 {
     /// <summary>
-    /// List of the expected arguments the command should take in a format suitable for displaying in CLI help e.g. "&lt;param1&gt; &lt;param2&gt;"
+    ///     List of the expected arguments the command should take in a format suitable for displaying in CLI help e.g. "&lt;
+    ///     param1&gt; &lt;param2&gt;"
     /// </summary>
     public string ParameterHelpList { get; set; } = @"<dynamic>";
 
     /// <summary>
-    /// Help for each parameter listed in <see cref="ParameterHelpList"/> with descriptions of what you expect to be in them (suitable for displaying in CLI)
+    ///     Help for each parameter listed in <see cref="ParameterHelpList" /> with descriptions of what you expect to be in
+    ///     them (suitable for displaying in CLI)
     /// </summary>
     public string ParameterHelpBreakdown { get; set; } = @"Unknown";
 }

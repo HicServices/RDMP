@@ -7,7 +7,7 @@
 namespace Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 
 /// <summary>
-/// Implementation of <see cref="IHelpWorkflowProgressProvider"/> which always returns true (show workflow).
+///     Implementation of <see cref="IHelpWorkflowProgressProvider" /> which always returns true (show workflow).
 /// </summary>
 public class NullHelpWorkflowProgressProvider : IHelpWorkflowProgressProvider
 {

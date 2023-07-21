@@ -5,30 +5,29 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution, IAtomicCommand
 {
-    private CacheProgress _cacheProgress;
-    private ICacheFetchFailure[] _failures;
+    private readonly CacheProgress _cacheProgress;
+    private readonly ICacheFetchFailure[] _failures;
 
-    public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress):base(activator)
+    public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress) : base(activator)
     {
         _cacheProgress = cacheProgress;
 
         _failures = _cacheProgress.CacheFetchFailures.Where(f => f.ResolvedOn == null).ToArray();
 
-        if(!_failures.Any())
+        if (!_failures.Any())
             SetImpossible("There are no unresolved CacheFetchFailures");
     }
 
@@ -48,7 +47,7 @@ public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAto
         foreach (var f in _failures)
             dt.Rows.Add(f.FetchRequestStart, f.FetchRequestEnd, f.ExceptionText, f.LastAttempt, f.ResolvedOn);
 
-        var ui = new DataTableViewerUI(dt,"Cache Failures");
+        var ui = new DataTableViewerUI(dt, "Cache Failures");
         Activator.ShowWindow(ui, true);
     }
 

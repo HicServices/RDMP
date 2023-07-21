@@ -11,11 +11,15 @@ using Rdmp.Core;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// The Tree data model that is served by TreeFactoryGetter in RDMPCollectionCommonFunctionality.  Allows overriding of default TreeListView object model
-/// functionality e.g. sorting.
-/// 
-/// <para>This implementation involves ensuring that ordering tree nodes always respects our OrderableComparer class.  This means that even when you reorder Projects
-/// for example, the order of the subfolders (Cohorts, ExtractionConfigurations) doesn't change (which it would normally if only alphabetical comparing was done).</para>
+///     The Tree data model that is served by TreeFactoryGetter in RDMPCollectionCommonFunctionality.  Allows overriding of
+///     default TreeListView object model
+///     functionality e.g. sorting.
+///     <para>
+///         This implementation involves ensuring that ordering tree nodes always respects our OrderableComparer class.
+///         This means that even when you reorder Projects
+///         for example, the order of the subfolders (Cohorts, ExtractionConfigurations) doesn't change (which it would
+///         normally if only alphabetical comparing was done).
+///     </para>
 /// </summary>
 internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
 {
@@ -24,7 +28,6 @@ internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
 
     public RDMPCollectionCommonFunctionalityTreeHijacker(TreeListView treeView) : base(treeView)
     {
-                
     }
 
     public override void Sort(OLVColumn column, SortOrder order)
@@ -33,11 +36,10 @@ internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
         _lastSortOrder = order;
 
         base.Sort(column, order);
-
     }
 
     protected override TreeListView.BranchComparer GetBranchComparer()
-    {   
+    {
         return new TreeListView.BranchComparer(
             new OrderableComparer(
                 _lastSortColumn != null ? new ModelObjectComparer(_lastSortColumn, _lastSortOrder) : null)

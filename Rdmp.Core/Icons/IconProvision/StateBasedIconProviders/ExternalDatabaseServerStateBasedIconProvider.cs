@@ -5,46 +5,43 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
-    private readonly Image<Rgba32> _default;
-    private readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary =
+    private readonly Dictionary<string, Image<Rgba32>> _assemblyToIconDictionary =
         new();
-    private DatabaseTypeIconProvider _typeSpecificIconsProvider;
-        
+
+    private readonly Image<Rgba32> _default;
+    private readonly IconOverlayProvider _overlayProvider;
+    private readonly DatabaseTypeIconProvider _typeSpecificIconsProvider;
+
     public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
     {
         _overlayProvider = overlayProvider;
         _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
-            
-        _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
-        _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
-        _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
-        _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
-        _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
+
+        _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
+        _assemblyToIconDictionary.Add(new ANOStorePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
+        _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
+        _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache));
+        _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name,
+            Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Logging));
 
         _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
-    }
-
-    public Image<Rgba32> GetIconForAssembly(Assembly assembly)
-    {
-        var assemblyName = assembly.GetName().Name;
-        if (_assemblyToIconDictionary.TryGetValue(assemblyName, out var forAssembly))
-            return forAssembly;
-
-        return _default;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -63,9 +60,10 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
         var toReturn = _default;
 
         //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
-        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
+        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) &&
+            _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
             toReturn = value;
-                
+
         //add the database type overlay
         toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
 
@@ -73,5 +71,14 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Link);
 
         return toReturn;
+    }
+
+    public Image<Rgba32> GetIconForAssembly(Assembly assembly)
+    {
+        var assemblyName = assembly.GetName().Name;
+        if (_assemblyToIconDictionary.TryGetValue(assemblyName, out var forAssembly))
+            return forAssembly;
+
+        return _default;
     }
 }

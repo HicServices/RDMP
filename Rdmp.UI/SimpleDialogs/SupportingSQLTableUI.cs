@@ -18,47 +18,60 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// The RDMP allows you at attach both documents and auxiliary tables (SupportingSQLTable) to your datasets (Catalogue).  These artifacts are then available to data analysts who
-/// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into
-/// project extraction directory for provision to the researcher.
-/// 
-/// <para>If you have Lookup tables (that you don't want to configure as Lookup objects, see LookupConfiguration) or complex dictionary tables etc which are required/helpful in understanding or
-/// processing the data in your dataset then you should configure it as a SupportingSQLTable.  Make sure to put in an appropriate name and description of what is in the table.  You
-/// must select the server on which the SQL should be run (See ManageExternalServers), if you setup a single reference to your data repository with Database='master' and then ensure
-/// that all your SupportingSQLTables are fully qualified (e.g. [MyDb].dbo.[MyTable]) then you can avoid having to create an ExternalDatabaseServer for each different database.</para>
-/// 
-/// <para>If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global lookups that contain cross dataset
-/// codes).  </para>
-/// 
-/// <para>IMPORTANT: Make sure your SQL query DOES NOT return any identifiable data if it is marked as IsExtractable as this SQL is executed 'as is' and does not undergo any project level
-/// anonymisation.</para>
+///     The RDMP allows you at attach both documents and auxiliary tables (SupportingSQLTable) to your datasets
+///     (Catalogue).  These artifacts are then available to data analysts who
+///     want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the
+///     table/document is automatically copied and extracted into
+///     project extraction directory for provision to the researcher.
+///     <para>
+///         If you have Lookup tables (that you don't want to configure as Lookup objects, see LookupConfiguration) or
+///         complex dictionary tables etc which are required/helpful in understanding or
+///         processing the data in your dataset then you should configure it as a SupportingSQLTable.  Make sure to put in
+///         an appropriate name and description of what is in the table.  You
+///         must select the server on which the SQL should be run (See ManageExternalServers), if you setup a single
+///         reference to your data repository with Database='master' and then ensure
+///         that all your SupportingSQLTables are fully qualified (e.g. [MyDb].dbo.[MyTable]) then you can avoid having to
+///         create an ExternalDatabaseServer for each different database.
+///     </para>
+///     <para>
+///         If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers
+///         data request (useful for global lookups that contain cross dataset
+///         codes).
+///     </para>
+///     <para>
+///         IMPORTANT: Make sure your SQL query DOES NOT return any identifiable data if it is marked as IsExtractable as
+///         this SQL is executed 'as is' and does not undergo any project level
+///         anonymisation.
+///     </para>
 /// </summary>
 public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveableUI
 {
-    private Scintilla QueryPreview;
-    private SupportingSQLTable _supportingSQLTable;
-
     private const string NoExternalServer = "<<NONE>>";
+
+    private bool _bLoading;
+    private SupportingSQLTable _supportingSQLTable;
+    private readonly Scintilla QueryPreview;
 
     public SupportingSQLTableUI()
     {
         InitializeComponent();
 
         #region Query Editor setup
+
         if (VisualStudioDesignMode)
             return;
 
         QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
         QueryPreview.ReadOnly = false;
-        QueryPreview.TextChanged += new EventHandler(QueryPreview_TextChanged);
+        QueryPreview.TextChanged += QueryPreview_TextChanged;
 
         pSQL.Controls.Add(QueryPreview);
+
         #endregion
 
         tcTicket.TicketTextChanged += TcTicketOnTicketTextChanged;
@@ -68,7 +81,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 
     public override void SetDatabaseObject(IActivateItems activator, SupportingSQLTable databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         _supportingSQLTable = databaseObject;
 
         _bLoading = true;
@@ -94,11 +107,11 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",s=>s.ID);
-        Bind(tbName,"Text","Name",s=>s.Name);
-        Bind(tbDescription,"Text","Description",s=>s.Description);
-        Bind(cbExtractable,"Checked","Extractable",s=>s.Extractable);
-        Bind(cbGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
+        Bind(tbID, "Text", "ID", s => s.ID);
+        Bind(tbName, "Text", "Name", s => s.Name);
+        Bind(tbDescription, "Text", "Description", s => s.Description);
+        Bind(cbExtractable, "Checked", "Extractable", s => s.Extractable);
+        Bind(cbGlobal, "Checked", "IsGlobal", s => s.IsGlobal);
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -112,13 +125,12 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     {
         ddExternalServers.Items.Clear();
         ddExternalServers.Items.Add(NoExternalServer);
-        ddExternalServers.Items.AddRange(_supportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>().ToArray());
+        ddExternalServers.Items.AddRange(_supportingSQLTable.Repository.GetAllObjects<ExternalDatabaseServer>()
+            .ToArray());
 
         if (_supportingSQLTable != null)
             ddExternalServers.SelectedItem = _supportingSQLTable.ExternalDatabaseServer;
     }
-
-    private bool _bLoading;
 
     private void QueryPreview_TextChanged(object sender, EventArgs e)
     {
@@ -128,13 +140,15 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 
     private void cbGlobal_CheckedChanged(object sender, EventArgs e)
     {
-        if(_bLoading)
+        if (_bLoading)
             return;
 
         if (_supportingSQLTable != null)
         {
             if (cbGlobal.Checked)
+            {
                 _supportingSQLTable.IsGlobal = true;
+            }
             else
             {
                 if (
@@ -145,20 +159,19 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
                 else
                     cbGlobal.Checked = true;
             }
-
         }
     }
 
     private void tbDescription_KeyPress(object sender, KeyPressEventArgs e)
     {
         //apparently that is S when the control key is held down
-        if(e.KeyChar == 19 && ModifierKeys == Keys.Control)
+        if (e.KeyChar == 19 && ModifierKeys == Keys.Control)
             e.Handled = true;
     }
 
     private void ddExternalServers_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(_supportingSQLTable == null)
+        if (_supportingSQLTable == null)
             return;
 
         //user selected NONE
@@ -184,6 +197,6 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingSQLTableUI_Design, UserControl>))]
-public abstract class SupportingSQLTableUI_Design:RDMPSingleDatabaseObjectControl<SupportingSQLTable>
+public abstract class SupportingSQLTableUI_Design : RDMPSingleDatabaseObjectControl<SupportingSQLTable>
 {
 }

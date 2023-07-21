@@ -5,26 +5,28 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
     private readonly string _name;
 
-    public ExecuteCommandAddNewAggregateGraph(IBasicActivateItems activator, Catalogue catalogue, string name = null) : base(activator)
+    public ExecuteCommandAddNewAggregateGraph(IBasicActivateItems activator, Catalogue catalogue, string name = null) :
+        base(activator)
     {
         _catalogue = catalogue;
         _name = name;
-        if (_catalogue != null && _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei=>ei.ColumnInfo == null))
+        if (_catalogue != null && _catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+                .All(ei => ei.ColumnInfo == null))
             SetImpossible("Catalogue has no extractable columns");
     }
 
@@ -46,32 +48,23 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicC
                 {
                     WindowTitle = "Add Aggregate Graph",
                     TaskDescription = "Select which Catalogue you want to add the graph to."
-
                 }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-            {
                 c = selected;
-            }
             else
-            {
                 // user cancelled selecting a Catalogue
                 return;
-            }
         }
 
-        if(name == null && BasicActivator.IsInteractive)
-        {
-            if(!BasicActivator.TypeText(new DialogArgs
-               {
-                   WindowTitle = "Graph Name",
-                   EntryLabel = "Name"
-               },255,null,out name,false))
-            {
+        if (name == null && BasicActivator.IsInteractive)
+            if (!BasicActivator.TypeText(new DialogArgs
+                {
+                    WindowTitle = "Graph Name",
+                    EntryLabel = "Name"
+                }, 255, null, out name, false))
                 // user cancelled typing a name for the graph
                 return;
-            }
-        }
 
-        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,c, name ??
+        var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, c, name ??
             $"New Aggregate {Guid.NewGuid()}");
         Publish(_catalogue);
         Activate(newAggregate);

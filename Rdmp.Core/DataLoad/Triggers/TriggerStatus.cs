@@ -7,22 +7,23 @@
 namespace Rdmp.Core.DataLoad.Triggers;
 
 /// <summary>
-/// Describes the status of the archive trigger on live data tables loaded by the RDMP dle (see <see cref="ITriggerImplementer"/>)
+///     Describes the status of the archive trigger on live data tables loaded by the RDMP dle (see
+///     <see cref="ITriggerImplementer" />)
 /// </summary>
 public enum TriggerStatus
 {
     /// <summary>
-    /// The trigger is present on the live table
+    ///     The trigger is present on the live table
     /// </summary>
     Enabled,
 
     /// <summary>
-    /// The trigger is present but disabled
+    ///     The trigger is present but disabled
     /// </summary>
     Disabled,
 
     /// <summary>
-    /// The trigger does not exist on the live table
+    ///     The trigger does not exist on the live table
     /// </summary>
     Missing
 }

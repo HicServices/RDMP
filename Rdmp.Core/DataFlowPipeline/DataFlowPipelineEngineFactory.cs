@@ -21,30 +21,40 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataFlowPipeline;
 
 /// <summary>
-/// Creates DataFlowPipelineEngines from IPipelines.  An IPipeline is the persistent user configured reusable list of components (and arguments for those components) which
-/// will achieve a given task for the user (e.g. import a csv file).  The DataFlowPipelineContext defines both the Generic flow object of the engine (T) and which IPipelines
-/// will be judged compatible (based on PreInitialize requirements etc).  Some contexts require a specific source/destination component that is available only at runtime
-/// and cannot be changed/configured by the user (FixedDestination/FixedSource).  If the context requires a FixedSource or FixedDestination then you must pass the ExplicitSource
-/// object / ExplicitDestination object into the constructor.
-/// 
-/// <para>In general rather than trying to use this class directly you should package up your requirements/initialization objects into a PipelineUseCase and call GetEngine. </para>
+///     Creates DataFlowPipelineEngines from IPipelines.  An IPipeline is the persistent user configured reusable list of
+///     components (and arguments for those components) which
+///     will achieve a given task for the user (e.g. import a csv file).  The DataFlowPipelineContext defines both the
+///     Generic flow object of the engine (T) and which IPipelines
+///     will be judged compatible (based on PreInitialize requirements etc).  Some contexts require a specific
+///     source/destination component that is available only at runtime
+///     and cannot be changed/configured by the user (FixedDestination/FixedSource).  If the context requires a FixedSource
+///     or FixedDestination then you must pass the ExplicitSource
+///     object / ExplicitDestination object into the constructor.
+///     <para>
+///         In general rather than trying to use this class directly you should package up your
+///         requirements/initialization objects into a PipelineUseCase and call GetEngine.
+///     </para>
 /// </summary>
 public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 {
-    private readonly MEF _mefPlugins;
     private readonly IDataFlowPipelineContext _context;
-    private IPipelineUseCase _useCase;
-    private Type _flowType;
+    private readonly MEF _mefPlugins;
     private ObjectConstructor _constructor;
 
-    private Type _engineType;
+    private readonly Type _engineType;
+    private readonly Type _flowType;
+    private readonly IPipelineUseCase _useCase;
 
     /// <summary>
-    /// Creates a new factory which can translate <see cref="IPipeline"/> blueprints into runnable <see cref="IDataFlowPipelineEngine"/> instances.
+    ///     Creates a new factory which can translate <see cref="IPipeline" /> blueprints into runnable
+    ///     <see cref="IDataFlowPipelineEngine" /> instances.
     /// </summary>
-    /// <param name="useCase">The use case which describes which <see cref="IPipeline"/> are compatible, which objects are available for hydration/preinitialization etc</param>
-    /// <param name="mefPlugins">Class for generating Types by name, use <see cref="ICatalogueRepository.MEF"/> to get this </param>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase,MEF mefPlugins)
+    /// <param name="useCase">
+    ///     The use case which describes which <see cref="IPipeline" /> are compatible, which objects are
+    ///     available for hydration/preinitialization etc
+    /// </param>
+    /// <param name="mefPlugins">Class for generating Types by name, use <see cref="ICatalogueRepository.MEF" /> to get this </param>
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, MEF mefPlugins)
     {
         _mefPlugins = mefPlugins;
         _context = useCase.GetContext();
@@ -53,29 +63,31 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
         _constructor = new ObjectConstructor();
 
-        _engineType = typeof (DataFlowPipelineEngine<>).MakeGenericType(_flowType);
+        _engineType = typeof(DataFlowPipelineEngine<>).MakeGenericType(_flowType);
     }
 
-    /// <inheritdoc/>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline): this(useCase,((ICatalogueRepository)pipeline.Repository).MEF)
+    /// <inheritdoc />
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline) : this(useCase,
+        ((ICatalogueRepository)pipeline.Repository).MEF)
     {
-            
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
     {
         if (!_context.IsAllowable(pipeline, out var reason))
             throw new Exception($"Cannot create pipeline because: {reason}");
 
-        var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline),"destination");
+        var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline), "destination");
         var source = GetBest(_useCase.ExplicitSource, CreateSourceIfExists(pipeline), "source");
 
 
         //new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
 
         //engine (this is the source, target is the destination)
-        var dataFlowEngine = (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline); 
+        var dataFlowEngine =
+            (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination,
+                listener, pipeline);
 
         //now go fetch everything that the user has configured for this particular pipeline
         foreach (PipelineComponent toBuild in pipeline.PipelineComponents)
@@ -99,7 +111,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Returns the thing that is not null or throws an exception because both are blank.  also throws if both are populated
+    ///     Returns the thing that is not null or throws an exception because both are blank.  also throws if both are
+    ///     populated
     /// </summary>
     /// <typeparam name="T2"></typeparam>
     /// <param name="explicitThing"></param>
@@ -110,13 +123,17 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: xplicitThing == null && pipelineConfigurationThing == null
-        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) &&
+            EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
                 $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");
 
         //if one of them only is null - XOR
-        if(EqualityComparer<T2>.Default.Equals(explicitThing, default) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
-            return EqualityComparer<T2>.Default.Equals(explicitThing, default) ? pipelineConfigurationThing : explicitThing; //return the not null one
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) ^
+            EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+            return EqualityComparer<T2>.Default.Equals(explicitThing, default)
+                ? pipelineConfigurationThing
+                : explicitThing; //return the not null one
 
         //both of them are populated
         throw new Exception(
@@ -125,8 +142,9 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
 
     /// <summary>
-    /// Attempts to construct an instance of the class described by <see cref="IPipelineComponent.Class"/> and fulfil its <see cref="DemandsInitializationAttribute"/>.
-    /// Returns null and populates <paramref name="ex"/> if this is not possible/errors.
+    ///     Attempts to construct an instance of the class described by <see cref="IPipelineComponent.Class" /> and fulfil its
+    ///     <see cref="DemandsInitializationAttribute" />.
+    ///     Returns null and populates <paramref name="ex" /> if this is not possible/errors.
     /// </summary>
     /// <param name="component"></param>
     /// <param name="ex"></param>
@@ -156,7 +174,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         //get all possible properties that we could set on the underlying class
         foreach (var propertyInfo in toReturn.GetType().GetProperties())
         {
-            SetPropertyIfDemanded(toBuild,toReturn,propertyInfo,allArguments);
+            SetPropertyIfDemanded(toBuild, toReturn, propertyInfo, allArguments);
 
             //see if any demand nested initialization
             var nestedInit =
@@ -181,14 +199,21 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Sets the value of a property on instance toReturn.
+    ///     Sets the value of a property on instance toReturn.
     /// </summary>
     /// <param name="toBuild">IPipelineComponent which is the persistence record - the template of what to build</param>
-    /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [DemandsNestedInitializationAttribute] a reference to the nested property)</param>
+    /// <param name="toReturn">
+    ///     An instance of the Class referenced by IPipelineComponent.Class (or in the case of
+    ///     [DemandsNestedInitializationAttribute] a reference to the nested property)
+    /// </param>
     /// <param name="propertyInfo">The specific property you are trying to populate on toBuild</param>
     /// <param name="arguments">IArguments of toBuild (the values to populate toReturn with)</param>
-    /// <param name="nestedProperty">If you are populating a sub property of the class then pass the instance of the sub property as toBuild and pass the nesting property as nestedProperty</param>
-    private static void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
+    /// <param name="nestedProperty">
+    ///     If you are populating a sub property of the class then pass the instance of the sub
+    ///     property as toBuild and pass the nesting property as nestedProperty
+    /// </param>
+    private static void SetPropertyIfDemanded(IPipelineComponent toBuild, object toReturn, PropertyInfo propertyInfo,
+        IArgument[] arguments, PropertyInfo nestedProperty = null)
     {
         //see if any demand initialization
         var initialization =
@@ -198,12 +223,13 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
         //this one does
         if (initialization != null)
-        {
             try
             {
                 //look for 'DeleteUsers' if not nested
                 //look for 'Settings.DeleteUsers' if nested in a property called Settings on class
-                var expectedArgumentName = nestedProperty != null ? $"{nestedProperty.Name}.{propertyInfo.Name}" : propertyInfo.Name;
+                var expectedArgumentName = nestedProperty != null
+                    ? $"{nestedProperty.Name}.{propertyInfo.Name}"
+                    : propertyInfo.Name;
 
                 //get the appropriate value from arguments
                 var argument = arguments.SingleOrDefault(n => n.Name.Equals(expectedArgumentName));
@@ -212,12 +238,13 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 if (argument == null)
                     if (initialization.DefaultValue == null && initialization.Mandatory)
                     {
-                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}",
-                            toReturn.GetType().Name ,
-                            propertyInfo.Name ,
+                        var msg = string.Format(
+                            "Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}",
+                            toReturn.GetType().Name,
+                            propertyInfo.Name,
                             toBuild.Name);
 
-                        throw new PropertyDemandNotMetException(msg, toBuild,propertyInfo);
+                        throw new PropertyDemandNotMetException(msg, toBuild, propertyInfo);
                     }
                     else
                     {
@@ -225,24 +252,21 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                         propertyInfo.SetValue(toReturn, initialization.DefaultValue, null);
                     }
                 else
-                {
                     //use reflection to set the value
                     propertyInfo.SetValue(toReturn, argument.GetValueAsSystemType(), null);
-                }
-
-
             }
             catch (NotSupportedException e)
             {
                 throw new Exception(
-                    $"Class {toReturn.GetType().Name} has a property {propertyInfo.Name} but is of unexpected/unsupported type {propertyInfo.GetType()}", e);
+                    $"Class {toReturn.GetType().Name} has a property {propertyInfo.Name} but is of unexpected/unsupported type {propertyInfo.GetType()}",
+                    e);
             }
-        }
     }
 
     /// <summary>
-    /// Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Source"/> if there is one.  Pipelines do not have
-    /// to have a source if the use case requires a fixed source instance generated at runtime.
+    ///     Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Source" /> if there
+    ///     is one.  Pipelines do not have
+    ///     to have a source if the use case requires a fixed source instance generated at runtime.
     /// </summary>
     /// <param name="pipeline"></param>
     /// <returns></returns>
@@ -258,8 +282,9 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Destination"/> if there is one.  Pipelines do not have
-    /// to have a destination if the use case requires a fixed destination instance generated at runtime
+    ///     Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Destination" /> if
+    ///     there is one.  Pipelines do not have
+    ///     to have a destination if the use case requires a fixed destination instance generated at runtime
     /// </summary>
     public static object CreateDestinationIfExists(IPipeline pipeline)
     {
@@ -275,8 +300,9 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Attempts to create an instance of <see cref="IDataFlowPipelineEngine"/> described by the blueprint <paramref name="pipeline"/>.  Components are then checked if they
-    /// support <see cref="ICheckable"/> using the <paramref name="checkNotifier"/> to record the results.
+    ///     Attempts to create an instance of <see cref="IDataFlowPipelineEngine" /> described by the blueprint
+    ///     <paramref name="pipeline" />.  Components are then checked if they
+    ///     support <see cref="ICheckable" /> using the <paramref name="checkNotifier" /> to record the results.
     /// </summary>
     /// <param name="pipeline">The blueprint to attempt to generate</param>
     /// <param name="checkNotifier">The event notifier to record how it went</param>
@@ -288,7 +314,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         try
         {
             dataFlowPipelineEngine = Create(pipeline, new FromCheckNotifierToDataLoadEventListener(checkNotifier));
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("Pipeline successfully constructed in memory", CheckResult.Success));
+            checkNotifier.OnCheckPerformed(new CheckEventArgs("Pipeline successfully constructed in memory",
+                CheckResult.Success));
         }
         catch (Exception exception)
         {
@@ -299,15 +326,15 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
         if (initizationObjects == null)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("initizationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
+            checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                "initizationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
                 CheckResult.Fail));
             return;
         }
-            
-        //Initialize each component with the initialization objects so that they can check themselves (note that this should be preview data, hopefully the components don't run off and start nuking stuff just because they got their GO objects)
-        if(dataFlowPipelineEngine != null)
-        {
 
+        //Initialize each component with the initialization objects so that they can check themselves (note that this should be preview data, hopefully the components don't run off and start nuking stuff just because they got their GO objects)
+        if (dataFlowPipelineEngine != null)
+        {
             try
             {
                 dataFlowPipelineEngine.Initialize(initizationObjects);
@@ -320,7 +347,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             {
                 checkNotifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Pipeline initialization failed, there were {initizationObjects.Length} objects for use in initialization ({string.Join(",", initizationObjects.Select(o => o.ToString()))})", CheckResult.Fail,
+                        $"Pipeline initialization failed, there were {initizationObjects.Length} objects for use in initialization ({string.Join(",", initizationObjects.Select(o => o.ToString()))})",
+                        CheckResult.Fail,
                         exception));
             }
 

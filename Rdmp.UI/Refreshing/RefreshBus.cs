@@ -17,27 +17,33 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Refreshing;
 
 /// <summary>
-/// Dispatcher class for publish events (<see cref="ExecuteCommandRefreshObject"/>)
+///     Dispatcher class for publish events (<see cref="ExecuteCommandRefreshObject" />)
 /// </summary>
 public class RefreshBus
 {
-    /// <summary>
-    /// This event exists so that the IActivateItems can precache data for use by subscribers during publishing refresh events.  Do not subscribe to this event if you just want to
-    /// know when stuff has changed, instead use the Subscribe and Unsubscribe methods
-    /// </summary>
-    public event RefreshObjectEventHandler BeforePublish;
-    public event RefreshObjectEventHandler AfterPublish;
-    private event RefreshObjectEventHandler RefreshObject;
+    private readonly List<object> _selfDestructors = new();
+
+    private readonly object oPublishLock = new();
+
+    private readonly HashSet<IRefreshBusSubscriber> subscribers = new();
 
     public bool PublishInProgress { get; private set; }
 
     public ICoreChildProvider ChildProvider { get; set; }
 
-    private object oPublishLock = new();
+    /// <summary>
+    ///     This event exists so that the IActivateItems can precache data for use by subscribers during publishing refresh
+    ///     events.  Do not subscribe to this event if you just want to
+    ///     know when stuff has changed, instead use the Subscribe and Unsubscribe methods
+    /// </summary>
+    public event RefreshObjectEventHandler BeforePublish;
+
+    public event RefreshObjectEventHandler AfterPublish;
+    private event RefreshObjectEventHandler RefreshObject;
 
     public void Publish(object sender, RefreshObjectEventArgs e)
     {
-        if(PublishInProgress)
+        if (PublishInProgress)
             throw new SubscriptionException(
                 $"Refresh Publish Cascade error.  Subscriber {sender} just attempted a publish during an existing publish execution, cylic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
 
@@ -58,10 +64,8 @@ public class RefreshBus
                 }
                 else
                 {
-                    if(ChildProvider != null && e.DeletedObjectDescendancy == null)
-                    {
+                    if (ChildProvider != null && e.DeletedObjectDescendancy == null)
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
-                    }
                 }
 
                 RefreshObject?.Invoke(sender, e);
@@ -75,14 +79,12 @@ public class RefreshBus
         }
     }
 
-    private HashSet<IRefreshBusSubscriber> subscribers = new();
-
     public void Subscribe(IRefreshBusSubscriber subscriber)
     {
         if (subscribers.Contains(subscriber))
             throw new SubscriptionException(
                 $"You cannot subscribe to the RefreshBus more than once. Subscriber '{subscriber}' just attempted to register a second time its type was({subscriber.GetType().Name})");
-            
+
         RefreshObject += subscriber.RefreshBus_RefreshObject;
 
         subscribers.Add(subscriber);
@@ -90,7 +92,7 @@ public class RefreshBus
 
     public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
     {
-        if(!subscribers.Contains(unsubscriber))
+        if (!subscribers.Contains(unsubscriber))
             throw new SubscriptionException(
                 $"You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '{unsubscriber}' just attempted to unsubscribe when it wasn't subscribed in the first place its type was ({unsubscriber.GetType().Name})");
 
@@ -101,54 +103,61 @@ public class RefreshBus
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c)
     {
         if (c is not IRefreshBusSubscriber subscriber)
-            throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription", nameof(c));
+            throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription",
+                nameof(c));
 
         //ignore double requests for subscription
         if (subscribers.Contains(subscriber))
             return;
 
-        if(c is not ContainerControl containerControl)
+        if (c is not ContainerControl containerControl)
             throw new ArgumentOutOfRangeException();
 
-        var parentForm = containerControl.ParentForm ?? throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",nameof(c));
+        var parentForm = containerControl.ParentForm ?? throw new ArgumentException(
+            "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
+            nameof(c));
         Subscribe(subscriber);
         parentForm.FormClosing += (s, e) => Unsubscribe(subscriber);
     }
 
-    private List<object> _selfDestructors = new();
-
 
     /// <summary>
-    /// Registers your control as a lifetime user of RefreshBus without you having to implement ILifetimeSubscriber.  The implementation instead is the following:
-    /// 1. If the RefreshBus sees a refresh for any object that was not Published by yourself
+    ///     Registers your control as a lifetime user of RefreshBus without you having to implement ILifetimeSubscriber.  The
+    ///     implementation instead is the following:
+    ///     1. If the RefreshBus sees a refresh for any object that was not Published by yourself
     ///     1.1 Refreshbus will check your originalObject still Exists
     ///     1.2 If not then your ParentForm will be .Closed
-    /// 2. If the RefreshBus sees a refresh for your object specifically (that was not published by yourself)
+    ///     2. If the RefreshBus sees a refresh for your object specifically (that was not published by yourself)
     ///     2.1 SetDatabaseObject will be called with the new state (in memory as it was passed to Publish) of the object
-    /// 
-    /// <para>Note: you can subscribe to EstablishSelfDestructProtocol in your SetDatabaseObject method if you want without worrying about repeat subscriptions but know that only
-    /// the first subscription is respected therefore you should NOT change the database object to a different one</para>
-    /// 
+    ///     <para>
+    ///         Note: you can subscribe to EstablishSelfDestructProtocol in your SetDatabaseObject method if you want without
+    ///         worrying about repeat subscriptions but know that only
+    ///         the first subscription is respected therefore you should NOT change the database object to a different one
+    ///     </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="user"></param>
     /// <param name="activator"></param>
     /// <param name="originalObject"></param>
-    public void EstablishSelfDestructProtocol<T>(RDMPSingleDatabaseObjectControl<T> user, IActivateItems activator,T originalObject) where T : DatabaseEntity
+    public void EstablishSelfDestructProtocol<T>(RDMPSingleDatabaseObjectControl<T> user, IActivateItems activator,
+        T originalObject) where T : DatabaseEntity
     {
         //they already subscribed to self destruct protocols - repeat subscriptions can be caused by registering in SetDatabaseObject and then refresh callbacks triggering more calls to SetDatabaseObject within the Controls lifetime
-        var existingSubscription = _selfDestructors.OfType<SelfDestructProtocol<T>>().SingleOrDefault(s => s.User == user);
+        var existingSubscription =
+            _selfDestructors.OfType<SelfDestructProtocol<T>>().SingleOrDefault(s => s.User == user);
 
         //they have subscribed for this before
-        if(existingSubscription != null)
-            if (!existingSubscription.OriginalObject.Equals(originalObject))//wait a minute! they subscribed for a different object!
+        if (existingSubscription != null)
+            if (!existingSubscription.OriginalObject
+                    .Equals(originalObject)) //wait a minute! they subscribed for a different object!
                 throw new ArgumentException(
-                    $"user {user} attempted to subscribe twice for self destruct but with two different objects '{existingSubscription.OriginalObject}' and '{originalObject}'", nameof(user));
+                    $"user {user} attempted to subscribe twice for self destruct but with two different objects '{existingSubscription.OriginalObject}' and '{originalObject}'",
+                    nameof(user));
             else
-                return;//they subscribed for the same object it's all ok
+                return; //they subscribed for the same object it's all ok
 
         //The anonymous refresh callback that updates the user when the object changes or deletes
-        var subscriber = new SelfDestructProtocol<T>(user,activator,originalObject);
+        var subscriber = new SelfDestructProtocol<T>(user, activator, originalObject);
 
         //keep track of the self destructors independently of the subscription list
         _selfDestructors.Add(subscriber);
@@ -156,7 +165,9 @@ public class RefreshBus
         //subscribe them now
         Subscribe(subscriber);
 
-        var parentForm = user.ParentForm ?? throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)", "c");
+        var parentForm = user.ParentForm ?? throw new ArgumentException(
+            "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
+            "c");
 
         //when their parent closes we unsubscribe them
         parentForm.FormClosed += (s, e) =>
@@ -166,5 +177,4 @@ public class RefreshBus
             _selfDestructors.Remove(toRemove);
         };
     }
-
 }

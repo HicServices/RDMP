@@ -18,30 +18,35 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Sometimes you will be called upon to host datasets that are a mile wide (e.g. 200 columns) from which researchers only ever receive/care about 10 or 20.  In this case it can be
-/// very useful to be able to bulk process CatalogueItem/ColumnInfo relationships and create/delete ExtractionInformation on mass.  This dialog lets you do that for a given Catalogue
-/// (dataset).
-/// 
-/// <para>The starting point is to choose which CatalogueItems are to be bulk processed (Apply Transform To).  Either 'All CatalogueItems' or 'Only those matching paste list'.  If you choose
-/// to paste in a list this is done in the left hand listbox.  The window is very flexible about what you can paste in such that you can for example 'Script Select Top 1000' in Microsoft
-/// Sql Management Studio and paste the entire query in and it will work out the columns (it looks for the last bit of text on each line.</para>
-/// 
-/// <para>Once you have configured the bulk process target you can choose what operation to do.  These include:</para>
-/// 
-/// <para>Making all fields Extractable (with the given ExtractionCategory e.g. Core / Supplemental etc)</para>
-/// 
-/// <para>Make all fields Unextractable (Delete Extraction Information)</para>
-/// 
-/// <para>Delete all underlying ColumnInfos (useful if you are trying to migrate your descriptive metadata to a new underlying table in your database e.g. MyDb.Biochemistry to 
-/// MyDb.NewBiochemistry without losing CatalogueItem column descriptions and validation rules etc).</para>
-/// 
-/// <para>Guess New Associated Columns from a given TableInfo (stage 2 in the above example), which will try to match up descriptive CatalogueItems by name to a new underlying TableInfo</para>
-/// 
-/// <para> Delete All CatalogueItems (If you really want to nuke the lot of them!) </para>
+///     Sometimes you will be called upon to host datasets that are a mile wide (e.g. 200 columns) from which researchers
+///     only ever receive/care about 10 or 20.  In this case it can be
+///     very useful to be able to bulk process CatalogueItem/ColumnInfo relationships and create/delete
+///     ExtractionInformation on mass.  This dialog lets you do that for a given Catalogue
+///     (dataset).
+///     <para>
+///         The starting point is to choose which CatalogueItems are to be bulk processed (Apply Transform To).  Either
+///         'All CatalogueItems' or 'Only those matching paste list'.  If you choose
+///         to paste in a list this is done in the left hand listbox.  The window is very flexible about what you can paste
+///         in such that you can for example 'Script Select Top 1000' in Microsoft
+///         Sql Management Studio and paste the entire query in and it will work out the columns (it looks for the last bit
+///         of text on each line.
+///     </para>
+///     <para>Once you have configured the bulk process target you can choose what operation to do.  These include:</para>
+///     <para>Making all fields Extractable (with the given ExtractionCategory e.g. Core / Supplemental etc)</para>
+///     <para>Make all fields Unextractable (Delete Extraction Information)</para>
+///     <para>
+///         Delete all underlying ColumnInfos (useful if you are trying to migrate your descriptive metadata to a new
+///         underlying table in your database e.g. MyDb.Biochemistry to
+///         MyDb.NewBiochemistry without losing CatalogueItem column descriptions and validation rules etc).
+///     </para>
+///     <para>
+///         Guess New Associated Columns from a given TableInfo (stage 2 in the above example), which will try to match
+///         up descriptive CatalogueItems by name to a new underlying TableInfo
+///     </para>
+///     <para> Delete All CatalogueItems (If you really want to nuke the lot of them!) </para>
 /// </summary>
 public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Design
 {
@@ -52,8 +57,8 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         InitializeComponent();
 
         olvName.ImageGetter += ImageGetter;
-            
-        ddExtractionCategory.DataSource = Enum.GetValues(typeof (ExtractionCategory));
+
+        ddExtractionCategory.DataSource = Enum.GetValues(typeof(ExtractionCategory));
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -61,7 +66,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         base.SetDatabaseObject(activator, databaseObject);
 
         _catalogue = databaseObject;
-            
+
         RefreshUIFromDatabase();
     }
 
@@ -83,7 +88,6 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
     private void groupBox2_Enter(object sender, EventArgs e)
     {
-
     }
 
     private void lbPastedColumns_KeyUp(object sender, KeyEventArgs e)
@@ -93,7 +97,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
             case Keys.V when e.Control:
                 lbPastedColumns.Items.AddRange(
                     UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
-                
+
                 UpdateFilter();
                 break;
             case Keys.Delete when lbPastedColumns.SelectedItem != null:
@@ -102,12 +106,12 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 break;
         }
     }
-        
+
     private void btnApplyTransform_Click(object sender, EventArgs e)
     {
-
-        if(rbDelete.Checked)
-            if(MessageBox.Show("Are you sure you want to delete?","Confirm delete",MessageBoxButtons.YesNo) != DialogResult.Yes)
+        if (rbDelete.Checked)
+            if (MessageBox.Show("Are you sure you want to delete?", "Confirm delete", MessageBoxButtons.YesNo) !=
+                DialogResult.Yes)
                 return;
 
         ColumnInfo[] guessPoolColumnInfo = null;
@@ -129,11 +133,10 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         var countOfColumnInfoAssociationsCreated = 0;
 
         foreach (CatalogueItem catalogueItem in olvCatalogueItems.Objects)
-        {
             if (ShouldTransformCatalogueItem(catalogueItem))
             {
                 //bulk operation is delete
-                if(rbDelete.Checked)
+                if (rbDelete.Checked)
                 {
                     catalogueItem.DeleteInDatabase();
                     deleteCount++;
@@ -161,7 +164,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     var guesses = catalogueItem.GuessAssociatedColumn(guessPoolColumnInfo).ToArray();
 
                     //exact matches are straight up accepted
-                    if(guesses.Length == 1)
+                    if (guesses.Length == 1)
                     {
                         catalogueItem.SetColumnInfo(guesses[0]);
                         countOfColumnInfoAssociationsCreated++;
@@ -169,16 +172,17 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     else
                     {
                         //multiple matches so ask the user what one he wants
-                        for (var i = 0; i < guesses.Length; i++) //note that this sneakily also deals with case where guesses is empty
-                        {
+                        for (var i = 0;
+                             i < guesses.Length;
+                             i++) //note that this sneakily also deals with case where guesses is empty
                             if (Activator.YesNo(
-                                    $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}", "Multiple matched guesses"))
+                                    $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",
+                                    "Multiple matched guesses"))
                             {
                                 catalogueItem.SetColumnInfo(guesses[i]);
                                 countOfColumnInfoAssociationsCreated++;
                                 break;
                             }
-                        }
                     }
                 }
 
@@ -196,11 +200,10 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     if (catalogueItem.ExtractionInformation != null)
                     {
                         //unless user wants to do reckless recategorisation
-                        if(cbRecategorise.Checked)
+                        if (cbRecategorise.Checked)
                         {
-
                             var ei = catalogueItem.ExtractionInformation;
-                            ei.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
+                            ei.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
                             ei.SaveToDatabase();
                         }
 
@@ -208,25 +211,25 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     }
 
                     //we got to here so we have a legit 1 column info to cataitem we can enable for extraction
-                    var created = new ExtractionInformation((CatalogueRepository) catalogueItem.Repository, catalogueItem, col, null);
+                    var created = new ExtractionInformation((CatalogueRepository)catalogueItem.Repository,
+                        catalogueItem, col, null);
 
-                    if(ddExtractionCategory.SelectedItem != null)
+                    if (ddExtractionCategory.SelectedItem != null)
                     {
-                        created.ExtractionCategory = (ExtractionCategory) ddExtractionCategory.SelectedItem;
+                        created.ExtractionCategory = (ExtractionCategory)ddExtractionCategory.SelectedItem;
                         created.SaveToDatabase();
                     }
 
                     countExtractionInformationsCreated++;
                 }
             }
-        }
 
         var message = "";
-            
+
         if (deleteCount != 0)
             message += $"Performed {deleteCount} delete operations{Environment.NewLine}";
 
-        if (countExtractionInformationsCreated !=0)
+        if (countExtractionInformationsCreated != 0)
             message += $"Created  {countExtractionInformationsCreated} ExtractionInformations{Environment.NewLine}";
 
         if (countOfColumnInfoAssociationsCreated != 0)
@@ -265,7 +268,6 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
     private void rbMarkExtractable_CheckedChanged(object sender, EventArgs e)
     {
-
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
@@ -288,11 +290,12 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                 filter.RegexOptions = RegexOptions.IgnoreCase;
                 filter.RegexStrings = new List<string> { $"^{item}$" };
             }
+
             orFilters.Add(filter);
         }
-                
 
-        filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text,StringComparison.CurrentCultureIgnoreCase));
+
+        filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text, StringComparison.CurrentCultureIgnoreCase));
 
         if (orFilters.Any())
             filters.Add(new CompositeAnyFilter(orFilters));

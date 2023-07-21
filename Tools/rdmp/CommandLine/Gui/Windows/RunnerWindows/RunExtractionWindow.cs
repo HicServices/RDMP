@@ -4,21 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
-using System;
-using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
 internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 {
-    public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
+    public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator,
+        () => GetRunCommand(ec))
     {
-
     }
 
     private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
@@ -37,14 +37,14 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 
         var useCase = ExtractionPipelineUseCase.DesignTime();
 
-        var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
+        var compatible = useCase
+            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .ToArray();
 
-        if (!compatible.Any())
-        {
-            throw new Exception("No compatible pipelines");
-        }
+        if (!compatible.Any()) throw new Exception("No compatible pipelines");
 
-        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
+        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ??
+                   throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
     }
 }

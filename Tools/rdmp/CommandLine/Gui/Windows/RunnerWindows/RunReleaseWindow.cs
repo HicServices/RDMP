@@ -4,25 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
-using System;
-using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
 internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
 {
-    private IExtractionConfiguration[] configs;
+    private readonly IExtractionConfiguration[] configs;
 
-    public RunReleaseWindow(IBasicActivateItems activator, IProject project):base(activator,()=>new ReleaseOptions())
+    public RunReleaseWindow(IBasicActivateItems activator, IProject project) : base(activator,
+        () => new ReleaseOptions())
     {
         configs = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
     }
-    public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => new ReleaseOptions())
+
+    public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator,
+        () => new ReleaseOptions())
     {
         configs = new IExtractionConfiguration[] { ec };
     }
@@ -34,16 +37,16 @@ internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
 
         var useCase = new ReleaseUseCase();
 
-        var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
+        var compatible = useCase
+            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .ToArray();
 
-        if (!compatible.Any())
-        {
-            throw new Exception("No compatible pipelines");
-        }
+        if (!compatible.Any()) throw new Exception("No compatible pipelines");
 
-        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
+        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ??
+                   throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
-        opts.Configurations = string.Join(",",configs.Select(c=>c.ID.ToString()).ToArray());
+        opts.Configurations = string.Join(",", configs.Select(c => c.ID.ToString()).ToArray());
         opts.ReleaseGlobals = true;
 
         // all datasets

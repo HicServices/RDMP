@@ -30,29 +30,40 @@ using YamlDotNet.Serialization;
 namespace Rdmp.UI.LocationsMenu;
 
 /// <summary>
-/// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about
-/// your datasets (including where they are stored etc).  The Data Export Manager database stores all the extraction configurations you have created for releasing to researchers.
-/// 
-/// <para>This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users settings file.
-/// It is strongly advised that you use Integrated Security (Windows Security) for connecting rather than a username/password as this is the only case where Passwords are not encrypted
-/// (Since the encryption certificate location is stored in the Catalogue! - see PasswordEncryptionKeyLocationUI).</para>
-/// 
-/// <para>Only the Catalogue database is required, if you do not intend to do data extraction at this time then you can skip creating one.  </para>
-/// 
-/// <para>It is a good idea to run Check after configuring your connection string to ensure that the database is accessible and that the tables/columns in the database match the softwares
-/// expectations.  </para>
-/// 
-/// <para>IMPORTANT: if you configure your connection string wrongly it might take up to 30s for windows to timeout the network connection (e.g. if you specify the wrong server name). This is
-/// similar to if you type in a dodgy server name in Microsoft Windows Explorer.</para>
+///     All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical,
+///     descriptive, governance, data load, filtering logic etc about
+///     your datasets (including where they are stored etc).  The Data Export Manager database stores all the extraction
+///     configurations you have created for releasing to researchers.
+///     <para>
+///         This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new
+///         ones.  These connection strings are recorded in each users settings file.
+///         It is strongly advised that you use Integrated Security (Windows Security) for connecting rather than a
+///         username/password as this is the only case where Passwords are not encrypted
+///         (Since the encryption certificate location is stored in the Catalogue! - see PasswordEncryptionKeyLocationUI).
+///     </para>
+///     <para>
+///         Only the Catalogue database is required, if you do not intend to do data extraction at this time then you can
+///         skip creating one.
+///     </para>
+///     <para>
+///         It is a good idea to run Check after configuring your connection string to ensure that the database is
+///         accessible and that the tables/columns in the database match the softwares
+///         expectations.
+///     </para>
+///     <para>
+///         IMPORTANT: if you configure your connection string wrongly it might take up to 30s for windows to timeout the
+///         network connection (e.g. if you specify the wrong server name). This is
+///         similar to if you type in a dodgy server name in Microsoft Windows Explorer.
+///     </para>
 /// </summary>
 public partial class ChoosePlatformDatabasesUI : Form
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-
-    public bool ChangesMade = false;
-    private int _seed = 500;
     private int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
     private int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
+    private int _seed = 500;
+
+    public bool ChangesMade;
 
     public ChoosePlatformDatabasesUI(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -61,13 +72,14 @@ public partial class ChoosePlatformDatabasesUI : Form
         InitializeComponent();
 
         new RecentHistoryOfControls(tbCatalogueConnectionString, new Guid("75e6b0a3-03f2-49fc-9446-ebc1dae9f123"));
-        new RecentHistoryOfControls(tbDataExportManagerConnectionString, new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
+        new RecentHistoryOfControls(tbDataExportManagerConnectionString,
+            new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
 
         SetState(State.PickNewOrExisting);
 
         TableRepository cataDb = null;
         TableRepository dataExportDb = null;
-            
+
         try
         {
             //are we dealing with a database object repository?
@@ -140,13 +152,6 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private enum State
-    {
-        PickNewOrExisting,
-        CreateNew,
-        ConnectToExisting
-    }
-
     private bool SaveConnectionStrings()
     {
         ChangesMade = true;
@@ -162,21 +167,21 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to save connection settings",CheckResult.Fail,exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to save connection settings", CheckResult.Fail,
+                exception));
             return false;
         }
-            
     }
 
     private void ChooseDatabase_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.Enter)
-            btnSaveAndClose_Click(null,null);
+        if (e.KeyCode == Keys.Enter)
+            btnSaveAndClose_Click(null, null);
 
-        if(e.KeyCode == Keys.Escape)
+        if (e.KeyCode == Keys.Escape)
             Close();
-
     }
+
     private void tbCatalogueConnectionString_KeyUp(object sender, KeyEventArgs e)
     {
         //if user is doing a paste
@@ -189,7 +194,8 @@ public partial class ChoosePlatformDatabasesUI : Form
             if (toPaste.Contains(Environment.NewLine))
             {
                 //see if he is trying to paste two lines at once, in whichcase surpress Windows and paste it across the two text boxes
-                var toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(),
+                    StringSplitOptions.RemoveEmptyEntries);
                 if (toPasteArray.Length == 2)
                 {
                     tbCatalogueConnectionString.Text = toPasteArray[0];
@@ -219,7 +225,6 @@ public partial class ChoosePlatformDatabasesUI : Form
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="catalogue">True for catalogue, false for data export</param>
     private void CheckRepository(bool catalogue)
@@ -229,11 +234,13 @@ public partial class ChoosePlatformDatabasesUI : Form
             //save the settings
             SaveConnectionStrings();
 
-            var repo = catalogue?(TableRepository) _repositoryLocator.CatalogueRepository:(TableRepository)_repositoryLocator.DataExportRepository;
+            var repo = catalogue
+                ? (TableRepository)_repositoryLocator.CatalogueRepository
+                : (TableRepository)_repositoryLocator.DataExportRepository;
 
-            if(repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
+            if (repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set",CheckResult.Fail));
+                checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set", CheckResult.Fail));
                 return;
             }
 
@@ -242,13 +249,13 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of Database failed", CheckResult.Fail,exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of Database failed", CheckResult.Fail, exception));
         }
     }
 
     private void ShowNextStageOnChecksComplete(object sender, AllChecksCompleteHandlerArgs args)
     {
-        ((ChecksUI.ChecksUI) sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
+        ((ChecksUI.ChecksUI)sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
     }
 
     private void btnCreateSuite_Click(object sender, EventArgs e)
@@ -271,7 +278,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 NumberOfPeople = _peopleCount,
                 NumberOfRowsPerDataset = _rowCount,
                 OtherKeywords = tbOtherKeywords.Text,
-                CreateDatabaseTimeout = int.TryParse(tbCreateDatabaseTimeout.Text, out var timeout) ? timeout:30
+                CreateDatabaseTimeout = int.TryParse(tbCreateDatabaseTimeout.Text, out var timeout) ? timeout : 30
             };
 
             var failed = false;
@@ -320,13 +327,13 @@ public partial class ChoosePlatformDatabasesUI : Form
             UserSettings.CatalogueConnectionString = cata.ConnectionString;
             UserSettings.DataExportConnectionString = export.ConnectionString;
 
-            if(!failed)
+            if (!failed)
                 RestartApplication();
-
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Database creation failed, check exception for details",CheckResult.Fail, exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Database creation failed, check exception for details",
+                CheckResult.Fail, exception));
         }
         finally
         {
@@ -342,7 +349,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             .FirstOrDefault(p => p.Name == "BULK INSERT: CSV Import File (manual column-type editing)");
         if (bulkInsertCsvPipe != null)
         {
-            var d = (PipelineComponentArgument) bulkInsertCsvPipe.Destination.GetAllArguments()
+            var d = (PipelineComponentArgument)bulkInsertCsvPipe.Destination.GetAllArguments()
                 .Single(a => a.Name.Equals("Adjuster"));
             d.SetValue(typeof(AdjustColumnDataTypesUI));
             d.SaveToDatabase();
@@ -372,12 +379,10 @@ public partial class ChoosePlatformDatabasesUI : Form
 
     private void btnBrowseForCatalogue_Click(object sender, EventArgs e)
     {
-        var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database",false,false,null);
+        var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database", false, false, null);
         dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
         if (dialog.ShowDialog() == DialogResult.OK && dialog.SelectedDatabase != null)
-        {
             tbCatalogueConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
-        }
     }
 
     private void btnBrowseForDataExport_Click(object sender, EventArgs e)
@@ -395,18 +400,18 @@ public partial class ChoosePlatformDatabasesUI : Form
 
         try
         {
-            var result =  int.Parse(tb.Text);
+            var result = int.Parse(tb.Text);
 
-            if(sender == tbSeed)
+            if (sender == tbSeed)
                 _seed = result;
-            else if(sender == tbPeopleCount)
+            else if (sender == tbPeopleCount)
                 _peopleCount = result;
-            else if(sender == tbRowCount)
+            else if (sender == tbRowCount)
                 _rowCount = result;
 
             tb.ForeColor = Color.Black;
         }
-        catch(Exception)
+        catch (Exception)
         {
             tb.ForeColor = Color.Red;
         }
@@ -432,10 +437,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
             };
 
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                File.WriteAllText(sfd.FileName, yaml);
-            }
+            if (sfd.ShowDialog() == DialogResult.OK) File.WriteAllText(sfd.FileName, yaml);
         }
         catch (Exception ex)
         {
@@ -448,4 +450,10 @@ public partial class ChoosePlatformDatabasesUI : Form
         gbExampleDatasets.Enabled = cbCreateExampleDatasets.Checked;
     }
 
+    private enum State
+    {
+        PickNewOrExisting,
+        CreateNew,
+        ConnectToExisting
+    }
 }

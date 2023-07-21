@@ -12,7 +12,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 
 /// <summary>
-/// ILoadProgressSelectionStrategy in which all LoadProgresses are suggested and all are locked.
+///     ILoadProgressSelectionStrategy in which all LoadProgresses are suggested and all are locked.
 /// </summary>
 public class AnyAvailableLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
 {

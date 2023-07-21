@@ -14,22 +14,87 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central
-/// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
-/// messages, Tables loaded etc).  See Logging.cd for more information
+///     Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites
+///     across all areas of the program in a central
+///     place.  You can process these records programatically via LogManager.  This class contains public properties for
+///     each of the sub concepts (Errors, Progress
+///     messages, Tables loaded etc).  See Logging.cd for more information
 /// </summary>
 public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
 {
+    public const int MaxDescriptionLength = 300;
+    private readonly Lazy<List<ArchivalFatalError>> _knownErrors;
+    private readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
+
+    private readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
     private readonly DiscoveredDatabase _loggingDatabase;
 
-    public int ID { get; private set; }
+    /// <summary>
+    ///     Creates a blank unknown instance not associated with a logging database
+    ///     Use this constructor for testing only.
+    /// </summary>
+    internal ArchivalDataLoadInfo()
+    {
+    }
+
+    internal ArchivalDataLoadInfo(DbDataReader r, DiscoveredDatabase loggingDatabase)
+    {
+        _loggingDatabase = loggingDatabase;
+        ID = Convert.ToInt32(r["ID"]);
+        DataLoadTaskID = Convert.ToInt32(r["dataLoadTaskID"]);
+
+        //populate basic facts from the table
+        StartTime = (DateTime)r["startTime"];
+        if (r["endTime"] == null || r["endTime"] == DBNull.Value)
+            EndTime = null;
+        else
+            EndTime = Convert.ToDateTime(r["endTime"]);
+
+        Description = r["description"] as string;
+
+        _knownTableInfos = new Lazy<List<ArchivalTableLoadInfo>>(GetTableInfos);
+        _knownErrors = new Lazy<List<ArchivalFatalError>>(GetErrors);
+        _knownProgress = new Lazy<List<ArchivalProgressLog>>(GetProgress);
+    }
+
     public int DataLoadTaskID { get; set; }
-    public const int MaxDescriptionLength = 300;
 
     public DateTime StartTime { get; internal set; }
     public DateTime? EndTime { get; internal set; }
 
     public bool HasErrors => _knownErrors.Value.Any();
+
+
+    /// <summary>
+    ///     All tables loaded during the run
+    /// </summary>
+    public List<ArchivalTableLoadInfo> TableLoadInfos => _knownTableInfos.Value;
+
+    /// <summary>
+    ///     All errors that occured during the run
+    /// </summary>
+    public List<ArchivalFatalError> Errors => _knownErrors.Value;
+
+    /// <summary>
+    ///     All progress messages recorded during the run
+    /// </summary>
+    public List<ArchivalProgressLog> Progress => _knownProgress.Value;
+
+    public string Description { get; set; }
+
+    public int ID { get; }
+
+
+    public int CompareTo(object obj)
+    {
+        if (obj is ArchivalDataLoadInfo other)
+            if (StartTime == other.StartTime)
+                return 0;
+            else
+                return StartTime > other.StartTime ? 1 : -1;
+
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
+    }
 
     public string ToShortString()
     {
@@ -52,69 +117,6 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
             $"{Description}(ID={ID}) - {StartTime} - {(EndTime != null ? EndTime.ToString() : "<DidNotFinish>")}{elapsed}";
     }
 
-    
-    /// <summary>
-    /// All tables loaded during the run
-    /// </summary>
-    public List<ArchivalTableLoadInfo>  TableLoadInfos => _knownTableInfos.Value;
-
-    /// <summary>
-    /// All errors that occured during the run
-    /// </summary>
-    public List<ArchivalFatalError> Errors => _knownErrors.Value;
-
-    /// <summary>
-    /// All progress messages recorded during the run
-    /// </summary>
-    public List<ArchivalProgressLog> Progress => _knownProgress.Value;
-
-    private readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
-    private readonly Lazy<List<ArchivalFatalError>> _knownErrors;
-    private readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
-        
-    public string Description { get; set; }
-
-    /// <summary>
-    /// Creates a blank unknown instance not associated with a logging database
-    /// Use this constructor for testing only.
-    /// </summary>
-    internal ArchivalDataLoadInfo()
-    {
-
-    }
-        
-    internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
-    {
-        _loggingDatabase = loggingDatabase;
-        ID = Convert.ToInt32(r["ID"]);
-        DataLoadTaskID = Convert.ToInt32(r["dataLoadTaskID"]);
-            
-        //populate basic facts from the table
-        StartTime = (DateTime)r["startTime"];
-        if (r["endTime"] == null || r["endTime"] == DBNull.Value)
-            EndTime = null;
-        else
-            EndTime = Convert.ToDateTime(r["endTime"]);
-
-        Description = r["description"] as string;
-
-        _knownTableInfos = new Lazy<List<ArchivalTableLoadInfo>>(GetTableInfos);
-        _knownErrors = new Lazy<List<ArchivalFatalError>>(GetErrors);
-        _knownProgress = new Lazy<List<ArchivalProgressLog>>(GetProgress);
-    }
-
-
-    public int CompareTo(object obj)
-    {
-        if (obj is ArchivalDataLoadInfo other)
-            if (StartTime == other.StartTime)
-                return 0;
-            else
-                return StartTime > other.StartTime ? 1 : -1;
-
-        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
-    }
-
     private List<ArchivalTableLoadInfo> GetTableInfos()
     {
         var toReturn = new List<ArchivalTableLoadInfo>();
@@ -123,19 +125,20 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         {
             con.Open();
 
-            using(var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
-                while(r.Read())
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}",
+                       con))
+            using (var r = cmd.ExecuteReader())
+            {
+                while (r.Read())
                 {
                     var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
-                        
-                    if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
-                    {
-                        continue;
-                    }
+
+                    if ((audit.Inserts ?? 0) <= 0 && (audit.Updates ?? 0) <= 0 && (audit.Deletes ?? 0) <= 0 &&
+                        UserSettings.HideEmptyTableLoadRunAudits) continue;
 
                     toReturn.Add(audit);
-                }   
+                }
+            }
         }
 
         return toReturn;
@@ -149,10 +152,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         {
             con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}", con))
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}",
+                       con))
             using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
                     toReturn.Add(new ArchivalProgressLog(r));
+            }
         }
 
         return toReturn;
@@ -166,10 +172,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         {
             con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}",
+                       con))
+            using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
                     toReturn.Add(new ArchivalFatalError(r));
+            }
         }
 
         return toReturn;

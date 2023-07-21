@@ -7,8 +7,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -31,13 +31,14 @@ public class MDFAttacherTests : DatabaseTests
     {
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
-        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException",true);
+        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException", true);
 
         try
         {
             var attacher = new MDFAttacher();
-            attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
-            Assert.Throws<FileNotFoundException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+            attacher.Initialize(loadDirectory, GetCleanedServer(DatabaseType.MicrosoftSQLServer));
+            Assert.Throws<FileNotFoundException>(() =>
+                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
         }
         finally
         {
@@ -53,8 +54,8 @@ public class MDFAttacherTests : DatabaseTests
     }
 
     /// <summary>
-    /// RDMPDEV-1550 tests system behaviour of <see cref="MDFAttacher"/> when the MDF file in ForLoading already exists
-    /// in the data path of the server to be loaded
+    ///     RDMPDEV-1550 tests system behaviour of <see cref="MDFAttacher" /> when the MDF file in ForLoading already exists
+    ///     in the data path of the server to be loaded
     /// </summary>
     [Test]
     public void Test_MDFFile_AlreadyExists()
@@ -65,7 +66,7 @@ public class MDFAttacherTests : DatabaseTests
 
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException", true);
-            
+
         try
         {
             // create mdf and ldf files (in ForLoading
@@ -81,16 +82,16 @@ public class MDFAttacherTests : DatabaseTests
                 OverrideMDFFileCopyDestination = data.FullName
             };
 
-            attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+            attacher.Initialize(loadDirectory, GetCleanedServer(DatabaseType.MicrosoftSQLServer));
 
             //should be a warning since overwriting is default behaviour
-            var ex = Assert.Throws<Exception>(()=>
+            var ex = Assert.Throws<Exception>(() =>
                 attacher.Attach(
-                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true})
+                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true })
                     , new GracefulCancellationToken())
             );
 
-            StringAssert.Contains("Overwriting",ex?.Message);
+            StringAssert.Contains("Overwriting", ex?.Message);
         }
         finally
         {
@@ -124,16 +125,20 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf, "fish");
 
             var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
-            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
+            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                serverDatabasePath, null);
 
 
             Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
             Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
 
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf", locations.CopyToLdf);
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.CopyToMdf);
+            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf",
+                locations.CopyToLdf);
+            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf",
+                locations.CopyToMdf);
 
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.AttachMdfPath);
+            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf",
+                locations.AttachMdfPath);
         }
         finally
         {
@@ -164,8 +169,9 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf2, "fish");
 
             var serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
-            Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
-
+            Assert.Throws<MultipleMatchingFilesException>(() =>
+                new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                    serverDatabasePath, null));
         }
         finally
         {
@@ -179,7 +185,9 @@ public class MDFAttacherTests : DatabaseTests
     [Test]
     public void ConnectToServer()
     {
-        var hicProjDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"MDFAttacherTest", true);
+        var hicProjDir =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                "MDFAttacherTest", true);
 
         var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("MyImaginaryDB_RAW");
         Assert.IsFalse(db.Exists());
@@ -190,11 +198,13 @@ public class MDFAttacherTests : DatabaseTests
         {
             var memory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
             mdf.Check(memory);
-            Assert.IsTrue(memory.Messages.Any(m=>m.Message.Contains("Found server DATA folder") && m.Result == CheckResult.Success));
+            Assert.IsTrue(memory.Messages.Any(m =>
+                m.Message.Contains("Found server DATA folder") && m.Result == CheckResult.Success));
         }
         catch (Exception e)
         {
-            if (!e.Message.Contains("Proposed server DATA folder (that we will copy mdf/ldf files to) was not found"))//this message is allowed too if the SQL server is remote and not localhost then it is quite likely that the DATA path is inaccessible from the unit test server
+            if (!e.Message.Contains(
+                    "Proposed server DATA folder (that we will copy mdf/ldf files to) was not found")) //this message is allowed too if the SQL server is remote and not localhost then it is quite likely that the DATA path is inaccessible from the unit test server
                 throw;
         }
 
@@ -202,10 +212,10 @@ public class MDFAttacherTests : DatabaseTests
         mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
         mdf.Check(memory2);
         Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,
-            $@"Found server DATA folder .*{Regex.Escape(TestContext.CurrentContext.WorkDirectory)}") && m.Result == CheckResult.Success));
+                                                    $@"Found server DATA folder .*{Regex.Escape(TestContext.CurrentContext.WorkDirectory)}") &&
+                                                m.Result == CheckResult.Success));
 
         hicProjDir.RootPath.Delete(true);
-
     }
 
     [Test]
@@ -226,7 +236,8 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf, "fish");
 
             var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
-            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, @"//MyDbServer1/Share/Database");
+            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                serverDatabasePath, @"//MyDbServer1/Share/Database");
 
 
             Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
@@ -235,49 +246,13 @@ public class MDFAttacherTests : DatabaseTests
             StringAssert.IsMatch(@"//MyDbServer1/Share/Database[/\\]MyFile_log.ldf", locations.CopyToLdf);
             StringAssert.IsMatch(@"//MyDbServer1/Share/Database[/\\]MyFile.mdf", locations.CopyToMdf);
 
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.AttachMdfPath);
+            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf",
+                locations.AttachMdfPath);
         }
         finally
         {
             File.Delete(mdf);
             File.Delete(ldf);
-        }
-    }
-
-    public class MyClass:IAttacher,ICheckable
-    {
-        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        public void Check(ICheckNotifier notifier)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ILoadDirectory LoadDirectory { get; set; }
-
-        public string DatabaseServer { get; private set; }
-        public string DatabaseName { get; private set; }
-        public bool RequestsExternalDatabaseCreation { get; private set; }
-        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
-        {
-                
-        }
-
-        public static string GetDescription()
-        {
-            return "Test class that does nothing";
-        }
-
-
-
-        public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
-                
         }
     }
 
@@ -292,17 +267,17 @@ public class MDFAttacherTests : DatabaseTests
         var type = Type.GetType(actualName, true, false);
 
         //ensure that the Type implements IAttacher
-        if(!typeof(IAttacher).IsAssignableFrom(type))
+        if (!typeof(IAttacher).IsAssignableFrom(type))
             throw new TypeLoadException($"Type {type} does not implement IAttacher");
 
         //find the blank constructor
-        var constructorInfo = type.GetConstructor(Array.Empty<Type>()) ?? throw new TypeLoadException($"Type {type} does not have a blank constructor");
+        var constructorInfo = type.GetConstructor(Array.Empty<Type>()) ??
+                              throw new TypeLoadException($"Type {type} does not have a blank constructor");
 
         //call the blank constructor and return the reuslts
-        var bob = (IAttacher) constructorInfo.Invoke(Array.Empty<Type>());
-
-        
+        var bob = (IAttacher)constructorInfo.Invoke(Array.Empty<Type>());
     }
+
     [Test]
     public void TestFactory()
     {
@@ -312,9 +287,8 @@ public class MDFAttacherTests : DatabaseTests
 
         try
         {
-
             var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
-            attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+            attacher.Initialize(loadDirectory, GetCleanedServer(DatabaseType.MicrosoftSQLServer));
 
             Assert.IsNotNull(attacher);
             Assert.IsInstanceOf<MDFAttacher>(attacher);
@@ -332,4 +306,37 @@ public class MDFAttacherTests : DatabaseTests
         }
     }
 
+    public class MyClass : IAttacher, ICheckable
+    {
+        public string DatabaseServer { get; }
+        public string DatabaseName { get; }
+
+        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void Check(ICheckNotifier notifier)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILoadDirectory LoadDirectory { get; set; }
+        public bool RequestsExternalDatabaseCreation { get; }
+
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
+        {
+        }
+
+
+        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+        {
+        }
+
+        public static string GetDescription()
+        {
+            return "Test class that does nothing";
+        }
+    }
 }

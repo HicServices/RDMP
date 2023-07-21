@@ -16,8 +16,12 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
 public class RDMPFormInitializationTests
 {
-    private readonly List<string> _rdmpFormClassNames = new();
     private readonly List<string> _fails = new();
+    private readonly List<string> _rdmpFormClassNames = new();
+
+    //match anything on start of line followed by whitespace followed by a method name e.g. Fishfish( where capture group[1] is the method name
+    private Regex methodCalls = new("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
+
     private List<string> methodIgnoreList = new()
     {
         "if",
@@ -25,12 +29,10 @@ public class RDMPFormInitializationTests
         "InitializeComponent"
     };
 
-    //match anything on start of line followed by whitespace followed by a method name e.g. Fishfish( where capture group[1] is the method name
-    private Regex methodCalls = new("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
-    private Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
-    private Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
-        
-    public void FindUninitializedForms(List<string> csFiles )
+    private readonly Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
+    private readonly Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
+
+    public void FindUninitializedForms(List<string> csFiles)
     {
         foreach (var readToEnd in csFiles.Select(File.ReadAllText))
         {
@@ -46,9 +48,9 @@ public class RDMPFormInitializationTests
         sbFindInstantiations.Append(string.Join("|", rdmpFormClassNames.Select(Regex.Escape)));
         sbFindInstantiations.Append(")\\s*\\(");
 
-        if(_fails.Any())
-            Assert.Fail("Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
-            
+        if (_fails.Any())
+            Assert.Fail(
+                "Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
     }
 
     private void DealWithRDMPUserControls(string readToEnd)
@@ -91,11 +93,11 @@ public class RDMPFormInitializationTests
                     if (curlyBracerCount == -1)
                         curlyBracerCount = 1; //first curly bracer
                     else
-                        curlyBracerCount ++;
+                        curlyBracerCount++;
                 }
 
                 if (substring[index] == '}')
-                    curlyBracerCount --;
+                    curlyBracerCount--;
 
                 sbConstructor.Append(substring[index]);
 
@@ -104,7 +106,7 @@ public class RDMPFormInitializationTests
 
             var constructor = sbConstructor.ToString();
 
-            if (Regex.IsMatch(constructor,"[^.]RepositoryLocator") || constructor.Contains("_repositoryLocator"))
+            if (Regex.IsMatch(constructor, "[^.]RepositoryLocator") || constructor.Contains("_repositoryLocator"))
                 Assert.Fail(
                     $"Constructor of class {className} contains a reference to RepositoryLocator, this property cannot be used until OnLoad is called");
         }
@@ -124,5 +126,9 @@ public class RDMPFormInitializationTests
         Console.WriteLine(msg);
         _fails.Add(msg);
     }
-    private static Regex GetConstructorRegex(string className) => new($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
+
+    private static Regex GetConstructorRegex(string className)
+    {
+        return new Regex($"(public|private)\\s+{className}\\s*\\(.*\\{{", RegexOptions.Singleline);
+    }
 }

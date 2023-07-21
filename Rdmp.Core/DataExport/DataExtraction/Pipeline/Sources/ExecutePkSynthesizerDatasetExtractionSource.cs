@@ -21,15 +21,16 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 
 /// <summary>
-/// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="IColumn.IsPrimaryKey"/> of the
-/// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).
-/// 
-/// <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>
+///     Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on
+///     <see cref="IColumn.IsPrimaryKey" /> of the
+///     columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).
+///     <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>
 /// </summary>
 public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtractionSource
 {
     private const string SYNTH_PK_COLUMN = "SynthesizedPk";
-    private bool _synthesizePkCol = false;
+    private bool _synthesizePkCol;
+
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {
         // let's look for primary keys in the Extraction Information
@@ -51,7 +52,8 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
                 var syntaxHelper = Request.Catalogue.GetQuerySyntaxHelper();
 
                 Request.QueryBuilder.AddColumn(
-                    new SpontaneouslyInventedColumn(new MemoryRepository(),SYNTH_PK_COLUMN,syntaxHelper.HowDoWeAchieveMd5(newSql))
+                    new SpontaneouslyInventedColumn(new MemoryRepository(), SYNTH_PK_COLUMN,
+                        syntaxHelper.HowDoWeAchieveMd5(newSql))
                     {
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,
@@ -66,7 +68,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
     private IEnumerable<ITableInfo> GetProperTables()
     {
-        if(Request.QueryBuilder.SQLOutOfDate)
+        if (Request.QueryBuilder.SQLOutOfDate)
             Request.QueryBuilder.RegenerateSQL();
 
         return Request.QueryBuilder.TablesUsedInQuery.Where(ti => !ti.IsLookupTable());
@@ -84,39 +86,46 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
         var catalogueItemPkColumns = GetCatalogueItemPrimaryKeys().Select(c => c.GetRuntimeName()).ToArray();
 
         if (catalogueItemPkColumns.Any())
-            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c => catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
-        else
-        if (_synthesizePkCol)
+            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c =>
+                catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
+        else if (_synthesizePkCol)
             chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
-                
+
         return chunk;
     }
 
     public override void Check(ICheckNotifier notifier)
     {
         base.Check(notifier);
-        if (Request == null || Request == ExtractDatasetCommand.EmptyCommand) // it is the globals, and there is no PK involved in there... although there should be...
+        if (Request == null ||
+            Request == ExtractDatasetCommand
+                .EmptyCommand) // it is the globals, and there is no PK involved in there... although there should be...
             return;
 
         var cataloguePrimaryKeys = GetCatalogueItemPrimaryKeys().ToArray();
         if (!cataloguePrimaryKeys.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"PKSynthesizer:No CatalogueItems marked IsPrimaryKey in '{Request.SelectedDataSets}'",CheckResult.Warning) );
+                $"PKSynthesizer:No CatalogueItems marked IsPrimaryKey in '{Request.SelectedDataSets}'",
+                CheckResult.Warning));
 
             var columnInfoPrimaryKeys = GetColumnInfoPrimaryKeys().ToArray();
 
             if (columnInfoPrimaryKeys.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"PKSynthesizer:Found ColumnInfo(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", columnInfoPrimaryKeys.Select(c => c.Name))}", CheckResult.Success));
+                    $"PKSynthesizer:Found ColumnInfo(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", columnInfoPrimaryKeys.Select(c => c.Name))}",
+                    CheckResult.Success));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'", CheckResult.Fail));
-
+                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'",
+                    CheckResult.Fail));
         }
         else
+        {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"PKSynthesizer:Found CatalogueItem(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", cataloguePrimaryKeys.Select(c => c.GetRuntimeName()))}", CheckResult.Success));
+                $"PKSynthesizer:Found CatalogueItem(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", cataloguePrimaryKeys.Select(c => c.GetRuntimeName()))}",
+                CheckResult.Success));
+        }
     }
 
     private IEnumerable<IColumn> GetCatalogueItemPrimaryKeys()
@@ -134,6 +143,6 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
     private IEnumerable<ColumnInfo> GetColumnInfoPrimaryKeys()
     {
-        return GetProperTables().SelectMany(t=>t.ColumnInfos).Where(column => column.IsPrimaryKey);
+        return GetProperTables().SelectMany(t => t.ColumnInfos).Where(column => column.IsPrimaryKey);
     }
 }

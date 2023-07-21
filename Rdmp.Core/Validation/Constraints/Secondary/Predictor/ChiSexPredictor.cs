@@ -10,22 +10,22 @@ using System.Globalization;
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
-/// Validation rule that checks that the second from last digit in a CHI matches the patient gender.  CHI numbers second last digit should be even for
-/// females and odd for males.
+///     Validation rule that checks that the second from last digit in a CHI matches the patient gender.  CHI numbers
+///     second last digit should be even for
+///     females and odd for males.
 /// </summary>
 public class ChiSexPredictor : PredictionRule
 {
-    public override ValidationFailure Predict(IConstraint parent,object oChi, object oGender)
+    public override ValidationFailure Predict(IConstraint parent, object oChi, object oGender)
     {
-        if(oChi == null || oGender == null) // Null is valid
+        if (oChi == null || oGender == null) // Null is valid
             return null;
 
         char sex;
 
         if (oGender is string s)
             sex = s.ToCharArray()[0];
-        else
-        if (oGender is char gender)
+        else if (oGender is char gender)
             sex = gender;
         else
             throw new ArgumentException($"Gender must be a string or char, gender value is a {oGender.GetType()}");
@@ -39,7 +39,9 @@ public class ChiSexPredictor : PredictionRule
 
             var isvalid = true;
 
-            if (sex.ToString(CultureInfo.InvariantCulture).ToUpper() != "M" && sex.ToString(CultureInfo.InvariantCulture).ToUpper() != "F") // Pass as valid if sex is not strictly specified
+            if (sex.ToString(CultureInfo.InvariantCulture).ToUpper() != "M" &&
+                sex.ToString(CultureInfo.InvariantCulture).ToUpper() !=
+                "F") // Pass as valid if sex is not strictly specified
                 return null;
 
             if (sexDigit % 2 == 0 && sex == 'M')
@@ -50,7 +52,7 @@ public class ChiSexPredictor : PredictionRule
 
             if (!isvalid)
                 return new ValidationFailure(
-                    $"CHI sex indicator ({sexDigit})  did not match associated sex field ({sex})",parent);
+                    $"CHI sex indicator ({sexDigit})  did not match associated sex field ({sex})", parent);
         }
 
         //invalid chi, who cares

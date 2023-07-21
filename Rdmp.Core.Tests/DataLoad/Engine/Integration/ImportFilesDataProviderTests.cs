@@ -7,7 +7,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -20,21 +19,21 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-public class ImportFilesDataProviderTests:DatabaseTests
+public class ImportFilesDataProviderTests : DatabaseTests
 {
     [Test]
     public void CopyFiles()
     {
         var sourceDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("subdir");
         var targetDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("loaddir");
-            
+
         //make sure target is empty
         foreach (var f in targetDir.GetFiles())
             f.Delete();
 
         var originpath = Path.Combine(sourceDir.FullName, "myFile.txt");
 
-        File.WriteAllText(originpath,"fish");
+        File.WriteAllText(originpath, "fish");
 
         var job = new ThrowImmediatelyDataLoadJob();
         var mockProjectDirectory = Mock.Of<ILoadDirectory>(p => p.ForLoading == targetDir);
@@ -46,7 +45,7 @@ public class ImportFilesDataProviderTests:DatabaseTests
 
         //it doesn't know what to load yet
         Assert.Throws<Exception>(() => provider.Check(new ThrowImmediatelyCheckNotifier()));
-            
+
         //now it does
         provider.DirectoryPath = sourceDir.FullName;
 
@@ -105,7 +104,5 @@ public class ImportFilesDataProviderTests:DatabaseTests
         //only forLoading file should exist (in real life that one would be handled by archivng already)
         Assert.AreEqual(1, targetDir.GetFiles().Length);
         Assert.AreEqual(0, sourceDir.GetFiles().Length);
-
     }
-
 }

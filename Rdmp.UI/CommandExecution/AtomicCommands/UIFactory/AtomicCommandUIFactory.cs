@@ -27,12 +27,12 @@ public class AtomicCommandUIFactory
 
     public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
     {
-        return new AtomicCommandMenuItem(command, _activator){Tag = command };
+        return new AtomicCommandMenuItem(command, _activator) { Tag = command };
     }
 
     public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)
     {
-        return new AtomicCommandLinkLabel(_iconProvider,command){Tag = command };
+        return new AtomicCommandLinkLabel(_iconProvider, command) { Tag = command };
     }
 
     public ToolStripItem CreateToolStripItem(IAtomicCommand command)

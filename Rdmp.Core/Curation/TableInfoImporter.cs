@@ -17,173 +17,14 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing
-/// TableInfos (See TableInfoSynchronizer).
+///     Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.
+///     Can also be used to import new ColumnInfos into existing
+///     TableInfos (See TableInfoSynchronizer).
 /// </summary>
-public class TableInfoImporter:ITableInfoImporter
+public class TableInfoImporter : ITableInfoImporter
 {
-    private readonly ICatalogueRepository _repository;
-    private readonly string _importFromServer;
-    private readonly string _importDatabaseName;
-    private readonly string _importTableName;
-
-    private readonly string _username;
-    private readonly string _password;
-    private readonly DataAccessContext _usageContext;
-    private readonly string _importFromSchema;
-
-    private readonly DatabaseType _type;
-
-    private DiscoveredServer _server;
-    private TableType _importTableType;
-
-    #region Construction
-
-    /// <summary>
-    /// Prepares to import the named table as a <see cref="TableInfo"/>
-    /// </summary>
-    /// <param name="repository">Repository to create the <see cref="TableInfo"/>/<see cref="ColumnInfo"/> in</param>
-    /// <param name="importFromServer"></param>
-    /// <param name="importDatabaseName"></param>
-    /// <param name="importTableName"></param>
-    /// <param name="type"></param>
-    /// <param name="username"></param>
-    /// <param name="password"></param>
-    /// <param name="usageContext"></param>
-    /// <param name="importFromSchema"></param>
-    /// <param name="importTableType"></param>
-    public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null,TableType importTableType = TableType.Table)
+    private static readonly string[] ProhibitedNames =
     {
-        var syntax = ImplementationManager.GetImplementation(type).GetQuerySyntaxHelper();
-            
-        _repository = repository;
-        _importFromServer = importFromServer;
-        _importDatabaseName = importDatabaseName;
-        _importTableName = importTableName;
-        _type = type;
-
-        _username = string.IsNullOrWhiteSpace(username) ? null : username;
-        _password = string.IsNullOrWhiteSpace(password) ? null : password;
-        _usageContext = usageContext;
-        _importFromSchema = importFromSchema ?? syntax.GetDefaultSchemaIfAny();
-        _importTableType = importTableType;
-
-        InitializeBuilder();
-    }
-
-    /// <summary>
-    /// Prepares to import a reference to the <paramref name="table"/> as <see cref="TableInfo"/> and <see cref="ColumnInfo"/> in the RDMP <paramref name="catalogueRepository"/>
-    /// </summary>
-    /// <param name="catalogueRepository"></param>
-    /// <param name="table"></param>
-    /// <param name="usageContext"></param>
-    public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table, DataAccessContext usageContext = DataAccessContext.Any)
-        : this(catalogueRepository,
-            table.Database.Server.Name,
-            table.Database.GetRuntimeName(),
-            table.GetRuntimeName(),
-            table.Database.Server.DatabaseType,
-            table.Database.Server.ExplicitUsernameIfAny,
-            table.Database.Server.ExplicitPasswordIfAny,
-            usageContext,
-            table.Schema,
-            table.TableType)
-    {
-        _usageContext = DataAccessContext.Any;
-        InitializeBuilder();
-    }
-
-    private void InitializeBuilder()
-    {
-        _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type,_username, _password);
-    }
-    #endregion
-
-    /// <inheritdoc/>
-    public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
-    {
-        try
-        {
-            _server.TestConnection();
-        }
-        catch (Exception e)
-        {
-            throw new Exception($"Could not reach server {_server.Name}",e);
-        }
-
-        var querySyntaxHelper = _server.GetQuerySyntaxHelper();
-
-        var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
-
-        if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
-            tableName +=
-                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
-        else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
-            tableName += ".";
-        else
-            throw new NotSupportedException($"Unknown Type:{_type}");
-
-        tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
-        var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
-
-        var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
-            .ExpectTable(_importTableName,_importFromSchema, _importTableType)
-            .DiscoverColumns();
-
-        var parent = new TableInfo(_repository, tableName)
-        {
-            DatabaseType = _type,
-            Database = databaseName,
-            Server = _importFromServer,
-            Schema = _importFromSchema,
-            IsView = _importTableType == TableType.View
-
-        };
-
-        parent.SaveToDatabase();
-
-        var newCols = new List<ColumnInfo>();
-
-        foreach (var discoveredColumn in discoveredColumns)
-            newCols.Add(CreateNewColumnInfo(parent,discoveredColumn));
-
-        tableInfoCreated = parent;
-        columnInfosCreated = newCols.ToArray();
-
-        //if there is a username then we need to associate it with the TableInfo we just created
-        if(!string.IsNullOrWhiteSpace(_username) )
-        {
-            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
-            credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
-        }
-    }
-
-    /// <inheritdoc/>
-    public ColumnInfo CreateNewColumnInfo(ITableInfo parent,DiscoveredColumn discoveredColumn)
-    {
-        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
-            {
-                //if it has an explicitly specified format (Collation)
-                Format = discoveredColumn.Format,
-                //if it is a primary key
-                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
-                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
-                Collation = discoveredColumn.Collation
-            };
-
-        col.SaveToDatabase();
-        
-
-        return col;
-    }
-
-    /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])"/>
-    public void DoImport()
-    {
-        DoImport(out _, out _);
-    }
-
-    private static readonly string[] ProhibitedNames = {
         "ADD",
         "EXTERNAL",
         "PROCEDURE",
@@ -371,4 +212,170 @@ public class TableInfoImporter:ITableInfoImporter
         "PROC"
     };
 
+    private readonly string _importDatabaseName;
+    private readonly string _importFromSchema;
+    private readonly string _importFromServer;
+    private readonly string _importTableName;
+    private readonly string _password;
+    private readonly ICatalogueRepository _repository;
+
+    private readonly DatabaseType _type;
+    private readonly DataAccessContext _usageContext;
+
+    private readonly string _username;
+    private readonly TableType _importTableType;
+
+    private DiscoveredServer _server;
+
+    /// <inheritdoc />
+    public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
+    {
+        try
+        {
+            _server.TestConnection();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Could not reach server {_server.Name}", e);
+        }
+
+        var querySyntaxHelper = _server.GetQuerySyntaxHelper();
+
+        var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
+
+        if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
+            tableName +=
+                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
+        else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
+            tableName += ".";
+        else
+            throw new NotSupportedException($"Unknown Type:{_type}");
+
+        tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
+        var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
+
+        var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
+            .ExpectTable(_importTableName, _importFromSchema, _importTableType)
+            .DiscoverColumns();
+
+        var parent = new TableInfo(_repository, tableName)
+        {
+            DatabaseType = _type,
+            Database = databaseName,
+            Server = _importFromServer,
+            Schema = _importFromSchema,
+            IsView = _importTableType == TableType.View
+        };
+
+        parent.SaveToDatabase();
+
+        var newCols = new List<ColumnInfo>();
+
+        foreach (var discoveredColumn in discoveredColumns)
+            newCols.Add(CreateNewColumnInfo(parent, discoveredColumn));
+
+        tableInfoCreated = parent;
+        columnInfosCreated = newCols.ToArray();
+
+        //if there is a username then we need to associate it with the TableInfo we just created
+        if (!string.IsNullOrWhiteSpace(_username))
+        {
+            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
+            credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
+        }
+    }
+
+    /// <inheritdoc />
+    public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
+    {
+        var col = new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
+            discoveredColumn.DataType.SQLType, parent)
+        {
+            //if it has an explicitly specified format (Collation)
+            Format = discoveredColumn.Format,
+            //if it is a primary key
+            IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+            IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+            Collation = discoveredColumn.Collation
+        };
+
+        col.SaveToDatabase();
+
+
+        return col;
+    }
+
+    /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])" />
+    public void DoImport()
+    {
+        DoImport(out _, out _);
+    }
+
+    #region Construction
+
+    /// <summary>
+    ///     Prepares to import the named table as a <see cref="TableInfo" />
+    /// </summary>
+    /// <param name="repository">Repository to create the <see cref="TableInfo" />/<see cref="ColumnInfo" /> in</param>
+    /// <param name="importFromServer"></param>
+    /// <param name="importDatabaseName"></param>
+    /// <param name="importTableName"></param>
+    /// <param name="type"></param>
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    /// <param name="usageContext"></param>
+    /// <param name="importFromSchema"></param>
+    /// <param name="importTableType"></param>
+    public TableInfoImporter(ICatalogueRepository repository, string importFromServer, string importDatabaseName,
+        string importTableName, DatabaseType type, string username = null, string password = null,
+        DataAccessContext usageContext = DataAccessContext.Any, string importFromSchema = null,
+        TableType importTableType = TableType.Table)
+    {
+        var syntax = ImplementationManager.GetImplementation(type).GetQuerySyntaxHelper();
+
+        _repository = repository;
+        _importFromServer = importFromServer;
+        _importDatabaseName = importDatabaseName;
+        _importTableName = importTableName;
+        _type = type;
+
+        _username = string.IsNullOrWhiteSpace(username) ? null : username;
+        _password = string.IsNullOrWhiteSpace(password) ? null : password;
+        _usageContext = usageContext;
+        _importFromSchema = importFromSchema ?? syntax.GetDefaultSchemaIfAny();
+        _importTableType = importTableType;
+
+        InitializeBuilder();
+    }
+
+    /// <summary>
+    ///     Prepares to import a reference to the <paramref name="table" /> as <see cref="TableInfo" /> and
+    ///     <see cref="ColumnInfo" /> in the RDMP <paramref name="catalogueRepository" />
+    /// </summary>
+    /// <param name="catalogueRepository"></param>
+    /// <param name="table"></param>
+    /// <param name="usageContext"></param>
+    public TableInfoImporter(ICatalogueRepository catalogueRepository, DiscoveredTable table,
+        DataAccessContext usageContext = DataAccessContext.Any)
+        : this(catalogueRepository,
+            table.Database.Server.Name,
+            table.Database.GetRuntimeName(),
+            table.GetRuntimeName(),
+            table.Database.Server.DatabaseType,
+            table.Database.Server.ExplicitUsernameIfAny,
+            table.Database.Server.ExplicitPasswordIfAny,
+            usageContext,
+            table.Schema,
+            table.TableType)
+    {
+        _usageContext = DataAccessContext.Any;
+        InitializeBuilder();
+    }
+
+    private void InitializeBuilder()
+    {
+        _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type, _username, _password);
+    }
+
+    #endregion
 }

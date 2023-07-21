@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using System;
-using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -17,15 +17,15 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
 {
-    private string _title;
-    private string _body;
-    private bool _isBad;
+    private readonly string _body;
+    private readonly bool _isBad;
+    private readonly string _title;
 
     public ExecuteCommandShowTooltip(IActivateItems activator, object o) : base(activator)
     {
         Weight = 100.5f;
 
-        var hasOne = RDMPCollectionCommonFunctionality.GetToolTip(activator,o, out _title, out _body, out _isBad);
+        var hasOne = RDMPCollectionCommonFunctionality.GetToolTip(activator, o, out _title, out _body, out _isBad);
 
         if (!hasOne)
             SetImpossible($"{o} does not have a tooltip/problem");
@@ -35,6 +35,7 @@ public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
     {
         return _isBad ? "Show Problem" : "Show Tooltip";
     }
+
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
         return (Image<Rgba32>)(_isBad ? Image.Load(FamFamFamIcons.flag_red) : iconProvider.GetImage(RDMPConcept.Help));
@@ -45,14 +46,9 @@ public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
     {
         base.Execute();
 
-        if(_isBad)
-        {
+        if (_isBad)
             BasicActivator.ShowException(_title, new Exception(_body));
-        }
         else
-        {
             BasicActivator.Show(_title, _body);
-        }
     }
-
 }

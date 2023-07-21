@@ -5,22 +5,28 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all project specific datasets (<see cref="Catalogue"/>s which can only be used with this <see cref="Project"/>).
+///     Collection of all project specific datasets (<see cref="Catalogue" />s which can only be used with this
+///     <see cref="Project" />).
 /// </summary>
-public class ProjectCataloguesNode:Node, IOrderable
+public class ProjectCataloguesNode : Node, IOrderable
 {
-    public Project Project { get; set; }
-    public int Order { get => 5; set{ } }
-
     public ProjectCataloguesNode(Project project)
     {
         Project = project;
+    }
+
+    public Project Project { get; set; }
+
+    public int Order
+    {
+        get => 5;
+        set { }
     }
 
     public override string ToString()
@@ -38,7 +44,7 @@ public class ProjectCataloguesNode:Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCataloguesNode) obj);
+        return Equals((ProjectCataloguesNode)obj);
     }
 
     public override int GetHashCode()

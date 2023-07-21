@@ -14,8 +14,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Pipeline component for renaming a single column in DataTables passing through the component.
-/// <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
+///     Pipeline component for renaming a single column in DataTables passing through the component.
+///     <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
 /// </summary>
 public class ColumnDropper : IPluginDataFlowComponent<DataTable>
 {
@@ -23,12 +23,14 @@ public class ColumnDropper : IPluginDataFlowComponent<DataTable>
     public string ColumnNameToDrop { get; set; }
 
 
-    [DemandsInitialization("In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.", Mandatory = true, DefaultValue = false)]
+    [DemandsInitialization(
+        "In relaxed mode the pipeline will not be crashed if the column does not appear.  Default is false i.e. the column MUST appear.",
+        Mandatory = true, DefaultValue = false)]
     public bool RelaxedMode { get; set; }
 
 
-
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         if (!toProcess.Columns.Contains(ColumnNameToDrop))
             if (RelaxedMode)
@@ -44,17 +46,16 @@ public class ColumnDropper : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(ColumnNameToDrop))
-            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ColumnNameToDrop",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("No value specified for argument ColumnNameToDrop",
+                CheckResult.Fail));
     }
 }

@@ -9,7 +9,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Caching.Requests;
 
 /// <summary>
-/// Cache Chunk used with the other DoNothing classes to test operations
+///     Cache Chunk used with the other DoNothing classes to test operations
 /// </summary>
 public class DoNothingCacheChunk : ICacheChunk
 {
@@ -19,5 +19,5 @@ public class DoNothingCacheChunk : ICacheChunk
     }
 
     public int RunIteration { get; set; }
-    public ICacheFetchRequest Request { get; private set; }
+    public ICacheFetchRequest Request { get; }
 }

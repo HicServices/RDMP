@@ -21,32 +21,34 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
 {
     private readonly LoadStage[] _allowedStages;
-
-    [DemandsInitialization("All tables matching this pattern which have a TableInfo defined in the load will be affected by this mutilation", DefaultValue = ".*")]
-    public Regex TableRegexPattern { get; set; }
-
-    [DemandsInitialization("Overrides TableRegexPattern.  If this is set then the tables chosen will be mutilated instead")]
-    public TableInfo[] OnlyTables { get; set; }
-
-    [DemandsInitialization("How long to allow for each command to execute in seconds", DefaultValue = 600)]
-    public int Timeout { get; set; }
+    private LoadStage _loadStage;
 
     protected DiscoveredDatabase DbInfo;
-    private LoadStage _loadStage;
 
     protected MatchingTablesMutilator(params LoadStage[] allowedStages)
     {
         _allowedStages = allowedStages;
     }
 
+    [DemandsInitialization(
+        "All tables matching this pattern which have a TableInfo defined in the load will be affected by this mutilation",
+        DefaultValue = ".*")]
+    public Regex TableRegexPattern { get; set; }
+
+    [DemandsInitialization(
+        "Overrides TableRegexPattern.  If this is set then the tables chosen will be mutilated instead")]
+    public TableInfo[] OnlyTables { get; set; }
+
+    [DemandsInitialization("How long to allow for each command to execute in seconds", DefaultValue = 600)]
+    public int Timeout { get; set; }
+
     public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
     }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
-        if(_allowedStages!= null && !_allowedStages.Contains(loadStage))
+        if (_allowedStages != null && !_allowedStages.Contains(loadStage))
             throw new NotSupportedException($"Mutilation {GetType()} is not allowed at stage {loadStage}");
 
         _loadStage = loadStage;
@@ -55,23 +57,33 @@ public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
-        if(TableRegexPattern != null)
-            TableRegexPattern = new Regex(TableRegexPattern.ToString(),RegexOptions.IgnoreCase);
+        if (TableRegexPattern != null)
+            TableRegexPattern = new Regex(TableRegexPattern.ToString(), RegexOptions.IgnoreCase);
 
         foreach (var tableInfo in job.RegularTablesToLoad)
             if (OnlyTables != null && OnlyTables.Any())
             {
                 if (OnlyTables.Contains(tableInfo))
-                    FireMutilate(tableInfo,job);
+                    FireMutilate(tableInfo, job);
             }
-            else
-            if (TableRegexPattern == null)
+            else if (TableRegexPattern == null)
+            {
                 throw new Exception("You must specify either TableRegexPattern or OnlyTables");
-            else
-            if( TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
+            }
+            else if (TableRegexPattern.IsMatch(tableInfo.GetRuntimeName()))
+            {
                 FireMutilate(tableInfo, job);
-            
+            }
+
         return ExitCodeType.Success;
+    }
+
+    public virtual void Check(ICheckNotifier notifier)
+    {
+        if (TableRegexPattern == null && (OnlyTables == null || OnlyTables.Length == 0))
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "You must specify either a regex pattern (TableRegexPattern) or set OnlyTables for identifying tables which need to be processed",
+                CheckResult.Fail));
     }
 
     private void FireMutilate(ITableInfo tableInfo, IDataLoadJob job)
@@ -79,8 +91,10 @@ public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
         var tbl = DbInfo.ExpectTable(tableInfo.GetRuntimeName(_loadStage, job.Configuration.DatabaseNamer));
 
         if (!tbl.Exists())
+        {
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                 $"Expected table {tbl} did not exist in RAW"));
+        }
         else
         {
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -95,11 +109,4 @@ public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
     }
 
     protected abstract void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table);
-
-    public virtual void Check(ICheckNotifier notifier)
-    {
-        if (TableRegexPattern == null && (OnlyTables == null || OnlyTables.Length == 0))
-            notifier.OnCheckPerformed(new CheckEventArgs("You must specify either a regex pattern (TableRegexPattern) or set OnlyTables for identifying tables which need to be processed", CheckResult.Fail));
-    }
-
 }

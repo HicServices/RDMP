@@ -1,7 +1,8 @@
 using System.Reflection;
+using System.Runtime.Versioning;
 
 #if WINDOWS
-[assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("windows")]
+[assembly: SupportedOSPlatform("windows")]
 #endif
 
 [assembly: AssemblyCompany("Health Informatics Centre, University of Dundee")]

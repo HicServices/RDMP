@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
 /*
  Test currently requires for LowPrivilegeLoaderAccount (e.g. minion)
  ---------------------------------------------------
- 
+
     create database DLE_STAGING
 
     use DLE_STAGING
@@ -60,21 +60,21 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         AllPrimaryKeys,
         NoTrigger,
         WithNonPrimaryKeyIdentityColumn,
-            
+
         WithCustomTableNamer,
 
         WithDiffColumnIgnoreRegex //tests ability of the system to skip a given column when doing the DLE diff section
     }
 
-    [TestCase(DatabaseType.Oracle,TestCase.Normal)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
-    [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.NoTrigger)]
+    [TestCase(DatabaseType.Oracle, TestCase.Normal)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.Normal)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.NoTrigger)]
     [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithCustomTableNamer)]
     [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)]
     [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
     [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.LowPrivilegeLoaderAccount)]
     [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.AllPrimaryKeys)]
-    [TestCase(DatabaseType.MySql,TestCase.Normal)]
+    [TestCase(DatabaseType.MySql, TestCase.Normal)]
     //[TestCase(DatabaseType.MySql, TestCase.WithNonPrimaryKeyIdentityColumn)] //Not supported by MySql:Incorrect table definition; there can be only one auto column and it must be defined as a key
     [TestCase(DatabaseType.MySql, TestCase.DodgyCollation)]
     [TestCase(DatabaseType.MySql, TestCase.WithCustomTableNamer)]
@@ -90,17 +90,18 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         var db = GetCleanedServer(databaseType);
 
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
-        if(raw.Exists())
+        if (raw.Exists())
             raw.Drop();
-            
+
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
         dt.Columns.Add("FavouriteColour");
-        dt.Rows.Add("Bob", "2001-01-01","Pink");
-        dt.Rows.Add("Frank", "2001-01-01","Orange");
+        dt.Rows.Add("Bob", "2001-01-01", "Pink");
+        dt.Rows.Add("Frank", "2001-01-01", "Orange");
 
-        var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 20), false){IsPrimaryKey = true};
+        var nameCol = new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 20), false)
+            { IsPrimaryKey = true };
 
         if (testCase == TestCase.DodgyCollation)
             nameCol.Collation = databaseType switch
@@ -115,30 +116,38 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         {
             case TestCase.WithNonPrimaryKeyIdentityColumn:
             {
-                tbl = db.CreateTable("MyTable",new []
+                tbl = db.CreateTable("MyTable", new[]
                 {
-                    new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int)),false){IsPrimaryKey = false,IsAutoIncrement = true}, 
-                    nameCol, 
-                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}, 
-                    new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string)))
+                    new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int)), false)
+                        { IsPrimaryKey = false, IsAutoIncrement = true },
+                    nameCol,
+                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                        { IsPrimaryKey = true },
+                    new DatabaseColumnRequest("FavouriteColour", new DatabaseTypeRequest(typeof(string)))
                 });
-                
-                using (var blk = tbl.BeginBulkInsert())
-                    blk.Upload(dt);
 
-                Assert.AreEqual(1,tbl.DiscoverColumns().Count(c=>c.GetRuntimeName().Equals("ID",StringComparison.CurrentCultureIgnoreCase)),"Table created did not contain ID column");
+                using (var blk = tbl.BeginBulkInsert())
+                {
+                    blk.Upload(dt);
+                }
+
+                Assert.AreEqual(1,
+                    tbl.DiscoverColumns().Count(c =>
+                        c.GetRuntimeName().Equals("ID", StringComparison.CurrentCultureIgnoreCase)),
+                    "Table created did not contain ID column");
                 break;
             }
             case TestCase.AllPrimaryKeys:
                 dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
-                tbl = db.CreateTable("MyTable",dt,new []{nameCol}); //upload the column as is 
+                tbl = db.CreateTable("MyTable", dt, new[] { nameCol }); //upload the column as is 
                 Assert.IsTrue(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
                 break;
             default:
                 tbl = db.CreateTable("MyTable", dt, new[]
                 {
                     nameCol,
-                    new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}
+                    new DatabaseColumnRequest("DateOfBirth", new DatabaseTypeRequest(typeof(DateTime)), false)
+                        { IsPrimaryKey = true }
                 });
                 break;
         }
@@ -148,18 +157,18 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         //define a new load configuration
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
-        if(testCase == TestCase.NoTrigger)
+        if (testCase == TestCase.NoTrigger)
         {
             lmd.IgnoreTrigger = true;
             lmd.SaveToDatabase();
         }
 
-        var ti = Import(tbl, lmd,logManager);
+        var ti = Import(tbl, lmd, logManager);
 
         var projectDirectory = SetupLoadDirectory(lmd);
 
-        CreateCSVProcessTask(lmd,ti,"*.csv");
-            
+        CreateCSVProcessTask(lmd, ti, "*.csv");
+
         //create a text file to load where we update Frank's favourite colour (it's a pk field) and we insert a new record (MrMurder)
         File.WriteAllText(
             Path.Combine(projectDirectory.ForLoading.FullName, "LoadMe.csv"),
@@ -171,23 +180,30 @@ MrMurder,2001-01-01,Yella");
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
+        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd),
+            new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
         checker.Check(new AcceptAllCheckNotifier());
 
         //create a reader
         if (testCase == TestCase.LowPrivilegeLoaderAccount)
         {
-            SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
-            SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
+            SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader | TestLowPrivilegePermissions.Writer);
+            SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"), TestLowPrivilegePermissions.All);
         }
 
-        Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
-        Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+        Assert.AreEqual(testCase != TestCase.NoTrigger,
+            tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID),
+            $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+        Assert.AreEqual(testCase != TestCase.NoTrigger,
+            tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom),
+            $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
 
-        var dbConfig = new HICDatabaseConfiguration(lmd,testCase == TestCase.WithCustomTableNamer? new CustomINameDatabasesAndTablesDuringLoads():null);
+        var dbConfig = new HICDatabaseConfiguration(lmd,
+            testCase == TestCase.WithCustomTableNamer ? new CustomINameDatabasesAndTablesDuringLoads() : null);
 
-        if(testCase == TestCase.WithCustomTableNamer)
-            new PreExecutionChecker(lmd, dbConfig).Check(new AcceptAllCheckNotifier()); //handles staging database creation etc
+        if (testCase == TestCase.WithCustomTableNamer)
+            new PreExecutionChecker(lmd, dbConfig).Check(
+                new AcceptAllCheckNotifier()); //handles staging database creation etc
 
         if (testCase == TestCase.WithDiffColumnIgnoreRegex)
             dbConfig.UpdateButDoNotDiff = new Regex("^FavouriteColour"); //do not diff FavouriteColour
@@ -206,60 +222,66 @@ MrMurder,2001-01-01,Yella");
             var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
 
             var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
+                new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
+                    new ThrowImmediatelyDataLoadEventListener(), dbConfig),
                 new GracefulCancellationToken());
 
-            Assert.AreEqual(ExitCodeType.Success,exitCode);
+            Assert.AreEqual(ExitCodeType.Success, exitCode);
 
             if (testCase == TestCase.AllPrimaryKeys)
             {
                 Assert.AreEqual(4, tbl.GetRowCount()); //Bob, Frank, Frank (with also pk Neon) & MrMurder
                 Assert.Pass();
             }
+
             if (testCase == TestCase.WithDiffColumnIgnoreRegex)
             {
                 Assert.AreEqual(3, tbl.GetRowCount()); //Bob, Frank (original since the diff was skipped), & MrMurder
 
                 //frank should be updated to like Neon instead of Orange
                 Assert.AreEqual(3, tbl.GetRowCount());
-                var frankOld =  tbl.GetDataTable().Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+                var frankOld = tbl.GetDataTable().Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
                 Assert.AreEqual("Orange", frankOld["FavouriteColour"]);
                 Assert.Pass();
             }
 
             //frank should be updated to like Neon instead of Orange
-            Assert.AreEqual(3,tbl.GetRowCount());
+            Assert.AreEqual(3, tbl.GetRowCount());
             var result = tbl.GetDataTable();
-            var frank = result.Rows.Cast<DataRow>().Single(r => (string) r["Name"] == "Frank");
-            Assert.AreEqual("Neon",frank["FavouriteColour"]);
-                
-            if(testCase != TestCase.NoTrigger)
+            var frank = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+            Assert.AreEqual("Neon", frank["FavouriteColour"]);
+
+            if (testCase != TestCase.NoTrigger)
                 AssertHasDataLoadRunId(frank);
 
             //MrMurder is a new person who likes Yella
             var mrmurder = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "MrMurder");
             Assert.AreEqual("Yella", mrmurder["FavouriteColour"]);
-            Assert.AreEqual(new DateTime(2001,01,01), mrmurder["DateOfBirth"]);
-                
-            if(testCase != TestCase.NoTrigger)
+            Assert.AreEqual(new DateTime(2001, 01, 01), mrmurder["DateOfBirth"]);
+
+            if (testCase != TestCase.NoTrigger)
                 AssertHasDataLoadRunId(mrmurder);
 
             //bob should be untouched (same values as before and no dataloadrunID)
             var bob = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Bob");
             Assert.AreEqual("Pink", bob["FavouriteColour"]);
             Assert.AreEqual(new DateTime(2001, 01, 01), bob["DateOfBirth"]);
-                
-            if(testCase != TestCase.NoTrigger)
+
+            if (testCase != TestCase.NoTrigger)
             {
-                Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
+                Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.DataLoadRunID]);
 
                 //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
-                if(databaseType == DatabaseType.MicrosoftSQLServer)
+                if (databaseType == DatabaseType.MicrosoftSQLServer)
                     Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
             }
-                    
-            Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
-            Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+
+            Assert.AreEqual(testCase != TestCase.NoTrigger,
+                tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID),
+                $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+            Assert.AreEqual(testCase != TestCase.NoTrigger,
+                tbl.DiscoverColumns().Select(c => c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom),
+                $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
         }
         finally
         {
@@ -275,10 +297,10 @@ MrMurder,2001-01-01,Yella");
                 l.DeleteInDatabase();
         }
 
-        if(testCase == TestCase.WithCustomTableNamer)
+        if (testCase == TestCase.WithCustomTableNamer)
         {
             var db2 = db.Server.ExpectDatabase("BB_STAGING");
-            if(db.Exists())
+            if (db.Exists())
                 db2.Drop();
         }
     }
@@ -294,10 +316,10 @@ MrMurder,2001-01-01,Yella");
         var db = GetCleanedServer(databaseType);
 
         var dtParent = new DataTable();
-        dtParent.Columns.Add("ID",typeof(int));
+        dtParent.Columns.Add("ID", typeof(int));
         dtParent.Columns.Add("Name");
         dtParent.Columns.Add("Height");
-        dtParent.PrimaryKey = new[] {dtParent.Columns[0]};
+        dtParent.PrimaryKey = new[] { dtParent.Columns[0] };
 
         dtParent.Rows.Add("1", "Dave", "3.5");
 
@@ -309,19 +331,19 @@ MrMurder,2001-01-01,Yella");
         dtChild.Columns.Add("Age");
         dtChild.Columns.Add("Height");
 
-        dtChild.Rows.Add("1","1","Child1","2001-01-01","20","3.5");
-        dtChild.Rows.Add("1","2","Child2","2002-01-01","19","3.4");
-            
-        dtChild.PrimaryKey = new[] {dtChild.Columns[0], dtChild.Columns[1]};
+        dtChild.Rows.Add("1", "1", "Child1", "2001-01-01", "20", "3.5");
+        dtChild.Rows.Add("1", "2", "Child2", "2002-01-01", "19", "3.4");
+
+        dtChild.PrimaryKey = new[] { dtChild.Columns[0], dtChild.Columns[1] };
 
         //create the parent table based on the DataTable
-        var parentTbl = db.CreateTable("Parent",dtParent);
+        var parentTbl = db.CreateTable("Parent", dtParent);
 
         //go find the primary key column created
         var pkParentID = parentTbl.DiscoverColumn("ID");
 
         //forward declare this column as part of pk (will be used to specify foreign key
-        var fkParentID = new DatabaseColumnRequest("Parent_ID", "int"){IsPrimaryKey = true};
+        var fkParentID = new DatabaseColumnRequest("Parent_ID", "int") { IsPrimaryKey = true };
 
         var args = new CreateTableArgs(
             db,
@@ -331,7 +353,7 @@ MrMurder,2001-01-01,Yella");
             false,
             new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
-                {fkParentID, pkParentID}
+                { fkParentID, pkParentID }
             },
             true)
         {
@@ -350,11 +372,11 @@ MrMurder,2001-01-01,Yella");
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
 
         var childTableInfo = Import(childTbl, lmd, logManager);
-        var parentTableInfo = Import(parentTbl,lmd,logManager);
+        var parentTableInfo = Import(parentTbl, lmd, logManager);
 
         var projectDirectory = SetupLoadDirectory(lmd);
 
-        CreateCSVProcessTask(lmd,parentTableInfo,"parent.csv");
+        CreateCSVProcessTask(lmd, parentTableInfo, "parent.csv");
         CreateCSVProcessTask(lmd, childTableInfo, "child.csv");
 
         //create a text file to load where we update Frank's favourite colour (it's a pk field) and we insert a new record (MrMurder)
@@ -372,7 +394,8 @@ MrMurder,2001-01-01,Yella");
 
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
+        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd),
+            new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
         checker.Check(new AcceptAllCheckNotifier());
 
         var config = new HICDatabaseConfiguration(lmd);
@@ -389,7 +412,8 @@ MrMurder,2001-01-01,Yella");
             var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
 
             var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory, new ThrowImmediatelyDataLoadEventListener(),config),
+                new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
+                    new ThrowImmediatelyDataLoadEventListener(), config),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -413,13 +437,13 @@ MrMurder,2001-01-01,Yella");
             var newC1 = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "NewC1");
             Assert.AreEqual(2, newC1["Parent_ID"]);
             Assert.AreEqual(1, newC1["ChildNumber"]);
-            Assert.AreEqual(DBNull.Value, newC1["Height"]); //the "null" in the input file should be DBNull.Value in the final database
+            Assert.AreEqual(DBNull.Value,
+                newC1["Height"]); //the "null" in the input file should be DBNull.Value in the final database
             AssertHasDataLoadRunId(newC1);
-
         }
         finally
         {
-            Directory.Delete(lmd.LocationOfFlatFiles,true);
+            Directory.Delete(lmd.LocationOfFlatFiles, true);
 
             foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
@@ -431,10 +455,9 @@ MrMurder,2001-01-01,Yella");
                 l.DeleteInDatabase();
         }
     }
-
 }
 
-internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
+internal class CustomINameDatabasesAndTablesDuringLoads : INameDatabasesAndTablesDuringLoads
 {
     public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
     {

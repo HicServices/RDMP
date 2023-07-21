@@ -12,12 +12,14 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-/// Determines the releasability of global objects (e.g. <see cref="SupportingDocument"/>) that should have been extracted as
-/// part of a project extraction.
+///     Determines the releasability of global objects (e.g. <see cref="SupportingDocument" />) that should have been
+///     extracted as
+///     part of a project extraction.
 /// </summary>
 public class FlatFileGlobalsReleasePotential : GlobalReleasePotential
 {
-    public FlatFileGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+    public FlatFileGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
         : base(repositoryLocator, globalResult, globalToCheck)
     {
     }

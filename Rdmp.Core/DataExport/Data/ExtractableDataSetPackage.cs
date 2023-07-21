@@ -14,53 +14,15 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IExtractableDataSetPackage"/>
-public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackage
+/// <inheritdoc cref="IExtractableDataSetPackage" />
+public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPackage
 {
-    #region Database Properties
-    private string _name;
-    private string _creator;
-    private DateTime _creationDate;
-
-    /// <summary>
-    /// Name for the collection of datasets (e.g. 'Core Datasets').
-    /// </summary>
-    [NotNull]
-    [Unique]
-    public string Name
-    {
-        get => _name;
-        set => SetField(ref _name, value);
-    }
-
-    /// <summary>
-    /// Environment.UserName of the person who created the <see cref="ExtractableDataSetPackage"/>
-    /// </summary>
-    public string Creator
-    {
-        get => _creator;
-        set => SetField(ref _creator, value);
-    }
-
-    /// <summary>
-    /// When the <see cref="ExtractableDataSetPackage"/> was created
-    /// </summary>
-    public DateTime CreationDate
-    {
-        get => _creationDate;
-        set => SetField(ref _creationDate, value);
-    }
-
-    #endregion
-
-
     public ExtractableDataSetPackage()
     {
-
     }
 
     /// <summary>
-    /// Reads an <see cref="ExtractableDataSetPackage"/> out of the data export database
+    ///     Reads an <see cref="ExtractableDataSetPackage" /> out of the data export database
     /// </summary>
     /// <param name="dataExportRepository"></param>
     /// <param name="r"></param>
@@ -74,26 +36,64 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
 
 
     /// <summary>
-    /// Creates a new <see cref="ExtractableDataSetPackage"/> in the data export database with the supplied <paramref name="name"/>
+    ///     Creates a new <see cref="ExtractableDataSetPackage" /> in the data export database with the supplied
+    ///     <paramref name="name" />
     /// </summary>
     /// <param name="dataExportRepository"></param>
     /// <param name="name"></param>
     public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, string name)
     {
-        dataExportRepository.InsertAndHydrate(this,new Dictionary<string, object>
+        dataExportRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name",name},
-            {"Creator",Environment.UserName},
-            {"CreationDate",DateTime.Now }
+            { "Name", name },
+            { "Creator", Environment.UserName },
+            { "CreationDate", DateTime.Now }
         });
     }
 
     /// <summary>
-    /// Returns <see cref="Name"/>
+    ///     Returns <see cref="Name" />
     /// </summary>
     /// <returns></returns>
     public override string ToString()
     {
         return Name;
     }
+
+    #region Database Properties
+
+    private string _name;
+    private string _creator;
+    private DateTime _creationDate;
+
+    /// <summary>
+    ///     Name for the collection of datasets (e.g. 'Core Datasets').
+    /// </summary>
+    [NotNull]
+    [Unique]
+    public string Name
+    {
+        get => _name;
+        set => SetField(ref _name, value);
+    }
+
+    /// <summary>
+    ///     Environment.UserName of the person who created the <see cref="ExtractableDataSetPackage" />
+    /// </summary>
+    public string Creator
+    {
+        get => _creator;
+        set => SetField(ref _creator, value);
+    }
+
+    /// <summary>
+    ///     When the <see cref="ExtractableDataSetPackage" /> was created
+    /// </summary>
+    public DateTime CreationDate
+    {
+        get => _creationDate;
+        set => SetField(ref _creationDate, value);
+    }
+
+    #endregion
 }

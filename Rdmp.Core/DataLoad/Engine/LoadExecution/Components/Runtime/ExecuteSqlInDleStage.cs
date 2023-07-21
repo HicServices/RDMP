@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FAnsi.Discovery;
-using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.DataLoad.Engine.Job;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -22,7 +22,7 @@ internal class ExecuteSqlInDleStage
 {
     private readonly IDataLoadJob _job;
     private readonly LoadStage _loadStage;
-    private Regex _regexEntity = new(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
+    private readonly Regex _regexEntity = new(@"{([CT]):(\d+)}", RegexOptions.IgnoreCase);
 
     public ExecuteSqlInDleStage(IDataLoadJob job, LoadStage loadStage)
     {
@@ -33,11 +33,11 @@ internal class ExecuteSqlInDleStage
     public ExitCodeType Execute(string commandText, DiscoveredDatabase db)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
-        commandText = _regexEntity.Replace(commandText, m=>GetEntityForMatch(m,syntax));
+        commandText = _regexEntity.Replace(commandText, m => GetEntityForMatch(m, syntax));
 
         try
         {
-            Dictionary<int,Stopwatch> performance;
+            Dictionary<int, Stopwatch> performance;
 
 
             using (var con = db.Server.GetConnection())
@@ -58,7 +58,8 @@ internal class ExecuteSqlInDleStage
 
         return ExitCodeType.Success;
     }
-    private string GetEntityForMatch(Match match,IQuerySyntaxHelper syntaxHelper)
+
+    private string GetEntityForMatch(Match match, IQuerySyntaxHelper syntaxHelper)
     {
         if (match.Groups.Count != 3)
             throw new ExecuteSqlFileRuntimeTaskException(
@@ -74,7 +75,8 @@ internal class ExecuteSqlInDleStage
         catch (Exception e)
         {
             throw new ExecuteSqlFileRuntimeTaskException(
-                $"Error performing substitution in Sql File, Failed to replace match {match.Value} due to parse expectations",e);
+                $"Error performing substitution in Sql File, Failed to replace match {match.Value} due to parse expectations",
+                e);
         }
 
         var tables = _job.RegularTablesToLoad.Union(_job.LookupTablesToLoad);
@@ -84,24 +86,25 @@ internal class ExecuteSqlInDleStage
         switch (entity)
         {
             case 'T':
-                var toReturnTable = tables.SingleOrDefault(t => t.ID == id) ?? throw new ExecuteSqlFileRuntimeTaskException(
-                        $"Failed to find a TableInfo in the load with ID {id}.  All TableInfo IDs referenced in script must be part of the LoadMetadata");
+                var toReturnTable = tables.SingleOrDefault(t => t.ID == id) ??
+                                    throw new ExecuteSqlFileRuntimeTaskException(
+                                        $"Failed to find a TableInfo in the load with ID {id}.  All TableInfo IDs referenced in script must be part of the LoadMetadata");
                 return toReturnTable.GetRuntimeName(_loadStage, namer);
 
             case 'C':
 
-                var toReturnColumn = tables.SelectMany(t=>t.ColumnInfos).SingleOrDefault(t => t.ID == id) ?? throw new ExecuteSqlFileRuntimeTaskException(
-                        $"Failed to find a ColumnInfo in the load with ID {id}.  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
+                var toReturnColumn = tables.SelectMany(t => t.ColumnInfos).SingleOrDefault(t => t.ID == id) ??
+                                     throw new ExecuteSqlFileRuntimeTaskException(
+                                         $"Failed to find a ColumnInfo in the load with ID {id}.  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
                 var db = toReturnColumn.TableInfo.GetDatabaseRuntimeName(_loadStage, namer);
                 var tbl = toReturnColumn.TableInfo.GetRuntimeName(_loadStage, namer);
                 var col = toReturnColumn.GetRuntimeName(_loadStage);
 
                 return syntaxHelper.EnsureFullyQualified(db, null, tbl, col);
 
-            default :
+            default:
                 throw new ExecuteSqlFileRuntimeTaskException(
                     $"Error performing substitution in Sql File, Unexpected Type char in regex:{entity}");
         }
     }
-
 }

@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsConcreteFilter:RDMPCommandExecutionProposal<ConcreteFilter>
+internal class ProposeExecutionWhenTargetIsConcreteFilter : RDMPCommandExecutionProposal<ConcreteFilter>
 {
     public ProposeExecutionWhenTargetIsConcreteFilter(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,7 +27,8 @@ internal class ProposeExecutionWhenTargetIsConcreteFilter:RDMPCommandExecutionPr
         ItemActivator.Activate<ExtractionFilterUI, ConcreteFilter>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target,
+        InsertOption insertOption = InsertOption.Default)
     {
         //currently nothing can be dropped onto a filter
         return null;

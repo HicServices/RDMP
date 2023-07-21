@@ -14,31 +14,34 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
-
 namespace Rdmp.UI.Versioning;
 
 /// <summary>
-/// This window appears whenever the RDMP has detected that there is a version mismatch between your database and the RDMP software (or a plugin you have written - See <see cref="PluginPatcher"/>).
-/// The RDMP enforces a strict version policy in which the version of the codebase (the software running) must always match that of the databases it is running on.  Each new version of
-/// the RDMP software will include SQL patches designed to bring your databases up-to-date with the new feature set.
-/// 
-/// <para>This dialog shows you the version number of the database and the version number of the patching assembly (separate version numbers are maintained for the Catalogue Manager Database,
-/// Data Export Database, Logging databases etc).</para>
+///     This window appears whenever the RDMP has detected that there is a version mismatch between your database and the
+///     RDMP software (or a plugin you have written - See <see cref="PluginPatcher" />).
+///     The RDMP enforces a strict version policy in which the version of the codebase (the software running) must always
+///     match that of the databases it is running on.  Each new version of
+///     the RDMP software will include SQL patches designed to bring your databases up-to-date with the new feature set.
+///     <para>
+///         This dialog shows you the version number of the database and the version number of the patching assembly
+///         (separate version numbers are maintained for the Catalogue Manager Database,
+///         Data Export Database, Logging databases etc).
+///     </para>
 /// </summary>
 public partial class PatchingUI : Form
 {
     private readonly DiscoveredDatabase _database;
     private readonly ITableRepository _repository;
+    private readonly IPatcher _patcher;
 
-    private bool _yesToAll = false;
-    private IPatcher _patcher;
+    private bool _yesToAll;
 
     private PatchingUI(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
     {
         _database = database;
         _repository = repository;
         _patcher = patcher;
-            
+
         InitializeComponent();
 
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
@@ -46,7 +49,7 @@ public partial class PatchingUI : Form
 
         var name = $"{patcher.Name} v{patcher.GetDbAssembly().GetName().Version.ToString(3)}";
 
-        tbPatch.Text =  $"{name}";
+        tbPatch.Text = $"{name}";
 
         if (_database == null)
         {
@@ -68,27 +71,28 @@ public partial class PatchingUI : Form
             var mds = new MasterDatabaseScriptExecutor(_database);
 
 
-            mds.PatchDatabase(_patcher,toMem,PreviewPatch,
-                ()=>MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
+            mds.PatchDatabase(_patcher, toMem, PreviewPatch,
+                () => MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
 
             //if it crashed during patching
-            if(toMem.GetWorst() == CheckResult.Fail)
+            if (toMem.GetWorst() == CheckResult.Fail)
             {
                 btnAttemptPatching.Enabled = true;
                 return;
             }
 
-            toMem.OnCheckPerformed(new CheckEventArgs("Patching completed without exception, disabling the patching button", CheckResult.Success, null));
+            toMem.OnCheckPerformed(new CheckEventArgs(
+                "Patching completed without exception, disabling the patching button", CheckResult.Success));
             //patching worked so prevent them doing it again!
             btnAttemptPatching.Enabled = false;
 
             if (_repository != null)
             {
                 _repository.ClearUpdateCommandCache();
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success, null));
+                checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success));
             }
 
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success));
 
             if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 ApplicationRestarter.Restart();
@@ -111,15 +115,15 @@ public partial class PatchingUI : Form
         if (_yesToAll)
             return true;
 
-        var preview = new SQLPreviewWindow(patch.locationInAssembly,"The following SQL Patch will be run:", patch.GetScriptBody());
+        var preview = new SQLPreviewWindow(patch.locationInAssembly, "The following SQL Patch will be run:",
+            patch.GetScriptBody());
         try
         {
-            return preview.ShowDialog()==DialogResult.OK;
+            return preview.ShowDialog() == DialogResult.OK;
         }
         finally
         {
             _yesToAll = preview.YesToAll;
         }
-
     }
 }

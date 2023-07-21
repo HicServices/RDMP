@@ -9,20 +9,16 @@ using System.Threading;
 namespace Rdmp.Core.DataFlowPipeline;
 
 /// <summary>
-/// Source for creating a GracefulCancellationToken.  See GracefulCancellationToken for description of this two level Cancellation strategy.
+///     Source for creating a GracefulCancellationToken.  See GracefulCancellationToken for description of this two level
+///     Cancellation strategy.
 /// </summary>
 public class GracefulCancellationTokenSource
 {
-    private readonly CancellationTokenSource _stopTokenSource;
     private readonly CancellationTokenSource _abortTokenSource;
+    private readonly CancellationTokenSource _stopTokenSource;
 
     /// <summary>
-    /// The object for checking whether stop / abort have been triggered
-    /// </summary>
-    public GracefulCancellationToken Token { get; private set; }
-
-    /// <summary>
-    /// Creates a new source for issuing a <see cref="GracefulCancellationToken"/> and triggering stop/abort later on.
+    ///     Creates a new source for issuing a <see cref="GracefulCancellationToken" /> and triggering stop/abort later on.
     /// </summary>
     public GracefulCancellationTokenSource()
     {
@@ -32,7 +28,12 @@ public class GracefulCancellationTokenSource
     }
 
     /// <summary>
-    /// Triggers the stop flag of <see cref="Token"/> (<see cref="GracefulCancellationToken.StopToken"/>
+    ///     The object for checking whether stop / abort have been triggered
+    /// </summary>
+    public GracefulCancellationToken Token { get; private set; }
+
+    /// <summary>
+    ///     Triggers the stop flag of <see cref="Token" /> (<see cref="GracefulCancellationToken.StopToken" />
     /// </summary>
     public void Stop()
     {
@@ -40,7 +41,7 @@ public class GracefulCancellationTokenSource
     }
 
     /// <summary>
-    /// Triggers the abort flag of <see cref="Token"/> (<see cref="GracefulCancellationToken.AbortToken"/>
+    ///     Triggers the abort flag of <see cref="Token" /> (<see cref="GracefulCancellationToken.AbortToken" />
     /// </summary>
     public void Abort()
     {

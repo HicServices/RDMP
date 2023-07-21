@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
@@ -14,11 +13,12 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.CohortUI;
 using Rdmp.UI.ItemActivation;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAtomicCommand
+internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution, IAtomicCommand
 {
     private readonly string _commandName;
     private readonly ExtractableCohort[] _onlyCohorts;
@@ -29,7 +29,8 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAto
         _commandName = "Show Cohort Summary";
     }
 
-    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator,CohortSourceUsedByProjectNode projectSource) : base(activator)
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, CohortSourceUsedByProjectNode projectSource) :
+        base(activator)
     {
         _commandName = "Show Cohort Summary";
 
@@ -40,10 +41,12 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAto
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) :
+        base(activator)
     {
         _commandName = "Show Detailed Summary of Cohorts";
-        _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>().ToArray();
+        _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>()
+            .ToArray();
     }
 
     public override string GetCommandHelp()

@@ -13,15 +13,18 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 
 /// <summary>
-/// Models a <see cref="ISqlParameter"/> being edited in a <see cref="ParameterEditorScintillaControlUI"/>.  Includes the location whether it
-/// should be editable etc.  Also handles reconciling user edits to the SQL into the <see cref="ISqlParameter"/> (if edit is legal).
+///     Models a <see cref="ISqlParameter" /> being edited in a <see cref="ParameterEditorScintillaControlUI" />.  Includes
+///     the location whether it
+///     should be editable etc.  Also handles reconciling user edits to the SQL into the <see cref="ISqlParameter" /> (if
+///     edit is legal).
 /// </summary>
 public class ParameterEditorScintillaSection
 {
     private readonly ParameterRefactorer _refactorer;
-    private IQuerySyntaxHelper _querySyntaxHelper;
+    private readonly IQuerySyntaxHelper _querySyntaxHelper;
 
-    public ParameterEditorScintillaSection( ParameterRefactorer refactorer, int lineStart, int lineEnd, ISqlParameter parameter, bool editable, string originalText)
+    public ParameterEditorScintillaSection(ParameterRefactorer refactorer, int lineStart, int lineEnd,
+        ISqlParameter parameter, bool editable, string originalText)
     {
         _refactorer = refactorer;
         LineStart = lineStart;
@@ -31,7 +34,7 @@ public class ParameterEditorScintillaSection
         _querySyntaxHelper = parameter.GetQuerySyntaxHelper();
 
         var prototype = ConstantParameter.Parse(originalText, _querySyntaxHelper);
-        if(prototype.Value != parameter.Value)
+        if (prototype.Value != parameter.Value)
             throw new ArgumentException(
                 $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Values");
 
@@ -42,13 +45,12 @@ public class ParameterEditorScintillaSection
         if (prototype.Comment != parameter.Comment)
             throw new ArgumentException(
                 $"Parameter {parameter} was inconsistent with the SQL passed to us based on QueryBuilder.DeconstructStringIntoParameter, they had different Comment");
-
     }
 
-    public int LineStart { get; private set; }
-    public int LineEnd { get; private set; }
+    public int LineStart { get; }
+    public int LineEnd { get; }
 
-    public ISqlParameter Parameter { get; private set; }
+    public ISqlParameter Parameter { get; }
     public bool Editable { get; private set; }
 
     public bool IncludesLine(int lineNumber)
@@ -64,7 +66,7 @@ public class ParameterEditorScintillaSection
 
             var newPrototype = ConstantParameter.Parse(sql, _querySyntaxHelper);
 
-            if (string.Equals(newPrototype.Comment, Parameter.Comment)//can be null you see
+            if (string.Equals(newPrototype.Comment, Parameter.Comment) //can be null you see
                 &&
                 string.Equals(newPrototype.Value, Parameter.Value)
                 &&
@@ -80,7 +82,6 @@ public class ParameterEditorScintillaSection
 
 
             return FreeTextParameterChangeResult.ChangeAccepted;
-
         }
         catch (Exception)
         {

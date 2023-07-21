@@ -7,18 +7,20 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ScintillaHelper;
+using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Allows you to view a given piece of SQL.  This dialog is used whenever the RDMP wants to show you some SQL and includes syntax highlighting.  It may be readonly or editable
-/// depending on the context in which the dialog was launched.
+///     Allows you to view a given piece of SQL.  This dialog is used whenever the RDMP wants to show you some SQL and
+///     includes syntax highlighting.  It may be readonly or editable
+///     depending on the context in which the dialog was launched.
 /// </summary>
 public partial class ShowSQLUI : Form
 {
+    private readonly bool _designMode;
 
-    private ScintillaNET.Scintilla QueryEditor;
-    private bool _designMode;
+    private readonly Scintilla QueryEditor;
 
 
     public ShowSQLUI(string sql, bool isReadOnly = false)
@@ -35,6 +37,5 @@ public partial class ShowSQLUI : Form
         QueryEditor.ReadOnly = isReadOnly;
 
         Controls.Add(QueryEditor);
-
     }
 }

@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Globalization;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -18,22 +17,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 {
-    private LogViewerFilter _filter;
-    private ExternalDatabaseServer[] _loggingServers;
-        
+    private readonly LogViewerFilter _filter;
+    private readonly ExternalDatabaseServer[] _loggingServers;
+
     [UseWithObjectConstructor]
-    public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator,LoggingTables table, int idIfAny)
-        : this(activator,new LogViewerFilter(table,idIfAny <= 0 ? (int?) null:idIfAny))
+    public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LoggingTables table, int idIfAny)
+        : this(activator, new LogViewerFilter(table, idIfAny <= 0 ? null : idIfAny))
     {
-            
     }
 
     public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+        _loggingServers =
+            BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
-        if(!_loggingServers.Any())
+        if (!_loggingServers.Any())
             SetImpossible("There are no logging servers");
     }
 
@@ -44,11 +43,10 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 
     public override void Execute()
     {
-        var db = SelectOne(_loggingServers,null,true);
+        var db = SelectOne(_loggingServers, null, true);
         var server = db.Discover(DataAccessContext.Logging).Server;
-            
+
         if (db != null)
-        {
             using (var con = server.GetConnection())
             {
                 con.Open();
@@ -78,9 +76,8 @@ order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter
 
                 var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
                     CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
-                    
+
                 extract.DoExtraction();
             }
-        }
     }
 }

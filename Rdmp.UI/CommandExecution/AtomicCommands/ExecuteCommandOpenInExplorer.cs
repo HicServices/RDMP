@@ -4,24 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.IO;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandOpenInExplorer:BasicUICommandExecution
+public class ExecuteCommandOpenInExplorer : BasicUICommandExecution
 {
     private readonly FileSystemInfo _info;
-        
-    public ExecuteCommandOpenInExplorer(IActivateItems activator,FileSystemInfo info) : base(activator)
+
+    public ExecuteCommandOpenInExplorer(IActivateItems activator, FileSystemInfo info) : base(activator)
     {
-        _info = info; 
+        _info = info;
 
         if (_info is not { Exists: true })
             SetImpossible("Path not found");
@@ -31,7 +30,7 @@ public class ExecuteCommandOpenInExplorer:BasicUICommandExecution
     {
         base.Execute();
 
-        if(_info != null)
+        if (_info != null)
             UsefulStuff.ShowPathInWindowsExplorer(_info);
     }
 

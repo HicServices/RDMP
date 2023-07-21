@@ -15,24 +15,29 @@ using ScintillaNET;
 namespace Rdmp.UI.SimpleDialogs.Revertable;
 
 /// <summary>
-/// Used by OfferChanceToSaveDialog to tell you about a property difference between an RDMP object that is visible in an RDMP application but which has unaccountably become different
-/// from the database version (for example because another user has modified the record in the database while we had an older copy of it). See OfferChanceToSaveDialog for full details
-/// 
+///     Used by OfferChanceToSaveDialog to tell you about a property difference between an RDMP object that is visible in
+///     an RDMP application but which has unaccountably become different
+///     from the database version (for example because another user has modified the record in the database while we had an
+///     older copy of it). See OfferChanceToSaveDialog for full details
 /// </summary>
 public partial class RevertablePropertyDifferenceUI : RDMPUserControl
 {
     private readonly RevertablePropertyDifference _difference;
-        
+    private Scintilla QueryEditorAfter;
+
+    private Scintilla QueryEditorBefore;
+
     public RevertablePropertyDifferenceUI(RevertablePropertyDifference difference)
     {
         _difference = difference;
         InitializeComponent();
-            
+
         if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
-            
+
         //For documentation/control previewing
-        _difference ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
+        _difference ??=
+            new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
 
         CreateScintillaComponents(
             _difference.DatabaseValue != null ? _difference.DatabaseValue.ToString() : "<Null>",
@@ -41,12 +46,10 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         lblDbProperty.Text = $"{_difference.Property.Name} in Database";
         lblMemoryProperty.Text = $"{_difference.Property.Name} in Memory";
     }
-        
-    private Scintilla QueryEditorBefore;
-    private Scintilla QueryEditorAfter;
 
 
-    public void CreateScintillaComponents(string textBefore, string textAfter, SyntaxLanguage language = SyntaxLanguage.SQL)
+    public void CreateScintillaComponents(string textBefore, string textAfter,
+        SyntaxLanguage language = SyntaxLanguage.SQL)
     {
         QueryEditorBefore = new ScintillaTextEditorFactory().Create();
         QueryEditorBefore.Text = textBefore;
@@ -59,7 +62,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         QueryEditorAfter.ReadOnly = true;
 
         splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
-            
+
         //compute difference
         textBefore ??= "";
         textAfter ??= "";
@@ -74,12 +77,10 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         foreach (var item in Diff.DiffText(textBefore, textAfter))
         {
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i, Color.Pink);
-                    
-            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore, i, Color.Pink);
+
+            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }
-            
     }
-
 }

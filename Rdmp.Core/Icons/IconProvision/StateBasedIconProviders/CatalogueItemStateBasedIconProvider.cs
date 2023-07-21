@@ -5,19 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
 {
+    private readonly IconOverlayProvider _overlayProvider;
     private readonly Image<Rgba32> basicImage;
     private readonly Image<Rgba32> transformImage;
-    private readonly IconOverlayProvider _overlayProvider;
 
     public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
     {
@@ -32,17 +32,17 @@ public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
             return null;
 
         var ei = ci.ExtractionInformation;
-        var toReturn = ei?.IsProperTransform() ?? false ? transformImage: basicImage;
+        var toReturn = ei?.IsProperTransform() ?? false ? transformImage : basicImage;
 
         //it's not extractable:
         if (ei == null) return toReturn;
 
-        if (ei.HashOnDataRelease) 
+        if (ei.HashOnDataRelease)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
         if (ei.IsExtractionIdentifier)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
-                
+
         if (ei.IsPrimaryKey)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
@@ -68,7 +68,6 @@ public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
 
 
         return toReturn;

@@ -16,13 +16,18 @@ public enum CheckResult
 }
 
 /// <summary>
-/// An object that can check its own state for problems and summarise this through the Checking Events system (See CheckEventArgs)
+///     An object that can check its own state for problems and summarise this through the Checking Events system (See
+///     CheckEventArgs)
 /// </summary>
 public interface ICheckable
 {
     /// <summary>
-    /// Use the OnCheckPerformed method on the notifier to inform of all the things you are checking and the results, possible fixes and severity
+    ///     Use the OnCheckPerformed method on the notifier to inform of all the things you are checking and the results,
+    ///     possible fixes and severity
     /// </summary>
-    /// <param name="notifier">The manager that will receive your messages about problems/fixes and decide how/if to present them to the user</param>
+    /// <param name="notifier">
+    ///     The manager that will receive your messages about problems/fixes and decide how/if to present
+    ///     them to the user
+    /// </param>
     void Check(ICheckNotifier notifier);
 }

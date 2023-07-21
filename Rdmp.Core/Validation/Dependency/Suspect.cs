@@ -11,15 +11,14 @@ using System.Reflection;
 namespace Rdmp.Core.Validation.Dependency;
 
 /// <summary>
-/// Regex pattern for finding references in ValidatorXML without having to deserialize it.  This is used to identify rules which reference columns and ensure
-/// that they cannot be deleted (See ValidationXMLObscureDependencyFinder)
+///     Regex pattern for finding references in ValidatorXML without having to deserialize it.  This is used to identify
+///     rules which reference columns and ensure
+///     that they cannot be deleted (See ValidationXMLObscureDependencyFinder)
 /// </summary>
 public class Suspect
 {
-    public string Pattern { get;private set; }
-    public Type Type { get; private set; }
-    public List<PropertyInfo> SuspectProperties = new();
     public List<FieldInfo> SuspectFields = new();
+    public List<PropertyInfo> SuspectProperties = new();
 
     public Suspect(string pattern, Type type, List<PropertyInfo> suspectProperties, List<FieldInfo> suspectFields)
     {
@@ -28,4 +27,7 @@ public class Suspect
         SuspectProperties = suspectProperties;
         SuspectFields = suspectFields;
     }
+
+    public string Pattern { get; private set; }
+    public Type Type { get; private set; }
 }

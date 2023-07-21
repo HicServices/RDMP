@@ -18,93 +18,21 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data;
 
-/// <inheritdoc cref="ILoadProgress"/>
+/// <inheritdoc cref="ILoadProgress" />
 public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
 {
-    #region Database Properties
-    private bool _isDisabled;
-    private string _name;
-    private DateTime? _originDate;
-    private string _loadPeriodicity;
-    private DateTime? _dataLoadProgress;
-    private int _loadMetadata_ID;
-    private int _defaultNumberOfDaysToLoadEachTime;
-
-    /// <inheritdoc/>
-    public bool IsDisabled
-    {
-        get => _isDisabled;
-        set => SetField(ref _isDisabled, value);
-    }
-    /// <inheritdoc/>
-    [NotNull]
-    [Unique]
-    public string Name
-    {
-        get => _name;
-        set => SetField(ref _name, value);
-    }
-    /// <inheritdoc/>
-    public DateTime? OriginDate
-    {
-        get => _originDate;
-        set => SetField(ref _originDate, value);
-    }
-
-    /// <summary>
-    /// Not used
-    /// </summary>
-    [Obsolete("Do not use")]
-    public string LoadPeriodicity
-    {
-        get => _loadPeriodicity;
-        set => SetField(ref _loadPeriodicity, value);
-    }
-    /// <inheritdoc/>
-    public DateTime? DataLoadProgress
-    {
-        get => _dataLoadProgress;
-        set => SetField(ref _dataLoadProgress, value);
-    }
-    /// <inheritdoc/>
-    public int LoadMetadata_ID
-    {
-        get => _loadMetadata_ID;
-        set => SetField(ref _loadMetadata_ID, value);
-    }
-
-    /// <inheritdoc/>
-    public int DefaultNumberOfDaysToLoadEachTime
-    {
-        get => _defaultNumberOfDaysToLoadEachTime;
-        set => SetField(ref _defaultNumberOfDaysToLoadEachTime, value);
-    }
-
-    #endregion
-    #region Relationships
-    /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public ILoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
-
-    /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public ICacheProgress CacheProgress => Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
-
-    #endregion
-
     public LoadProgress()
     {
-
     }
 
-    /// <inheritdoc cref="ILoadProgress"/>
+    /// <inheritdoc cref="ILoadProgress" />
     public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
     {
-        repository.InsertAndHydrate(this,  
+        repository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
-                {"Name", Guid.NewGuid().ToString()},
-                {"LoadMetadata_ID", parent.ID}
+                { "Name", Guid.NewGuid().ToString() },
+                { "LoadMetadata_ID", parent.ID }
             });
     }
 
@@ -119,20 +47,99 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
     }
-        
-    /// <inheritdoc/>
+
+    public void Check(ICheckNotifier notifier)
+    {
+        if (OriginDate != null && OriginDate > DateTime.Now)
+            notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate cannot be in the future ({Name})",
+                CheckResult.Fail));
+
+        if (DataLoadProgress != null && DataLoadProgress > DateTime.Now)
+            notifier.OnCheckPerformed(new CheckEventArgs($"DataLoadProgress cannot be in the future ({Name})",
+                CheckResult.Fail));
+    }
+
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"{Name} ID={ID}";
     }
 
-    public void Check(ICheckNotifier notifier)
+    #region Database Properties
+
+    private bool _isDisabled;
+    private string _name;
+    private DateTime? _originDate;
+    private string _loadPeriodicity;
+    private DateTime? _dataLoadProgress;
+    private int _loadMetadata_ID;
+    private int _defaultNumberOfDaysToLoadEachTime;
+
+    /// <inheritdoc />
+    public bool IsDisabled
     {
-        if(OriginDate != null && OriginDate > DateTime.Now)
-            notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate cannot be in the future ({Name})",CheckResult.Fail));
-
-        if(DataLoadProgress != null && DataLoadProgress > DateTime.Now)
-            notifier.OnCheckPerformed(new CheckEventArgs($"DataLoadProgress cannot be in the future ({Name})",CheckResult.Fail));
-
+        get => _isDisabled;
+        set => SetField(ref _isDisabled, value);
     }
+
+    /// <inheritdoc />
+    [NotNull]
+    [Unique]
+    public string Name
+    {
+        get => _name;
+        set => SetField(ref _name, value);
+    }
+
+    /// <inheritdoc />
+    public DateTime? OriginDate
+    {
+        get => _originDate;
+        set => SetField(ref _originDate, value);
+    }
+
+    /// <summary>
+    ///     Not used
+    /// </summary>
+    [Obsolete("Do not use")]
+    public string LoadPeriodicity
+    {
+        get => _loadPeriodicity;
+        set => SetField(ref _loadPeriodicity, value);
+    }
+
+    /// <inheritdoc />
+    public DateTime? DataLoadProgress
+    {
+        get => _dataLoadProgress;
+        set => SetField(ref _dataLoadProgress, value);
+    }
+
+    /// <inheritdoc />
+    public int LoadMetadata_ID
+    {
+        get => _loadMetadata_ID;
+        set => SetField(ref _loadMetadata_ID, value);
+    }
+
+    /// <inheritdoc />
+    public int DefaultNumberOfDaysToLoadEachTime
+    {
+        get => _defaultNumberOfDaysToLoadEachTime;
+        set => SetField(ref _defaultNumberOfDaysToLoadEachTime, value);
+    }
+
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc />
+    [NoMappingToDatabase]
+    public ILoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
+
+    /// <inheritdoc />
+    [NoMappingToDatabase]
+    public ICacheProgress CacheProgress => Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
+
+    #endregion
 }

@@ -4,20 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandScriptTable : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandScriptTable : BasicCommandExecution, IAtomicCommand
 {
     private readonly TableInfo _tableInfo;
 
-    public ExecuteCommandScriptTable(IBasicActivateItems activator, TableInfo tableInfo):base(activator)
+    public ExecuteCommandScriptTable(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
     {
         _tableInfo = tableInfo;
     }
@@ -29,7 +29,8 @@ public class ExecuteCommandScriptTable : BasicCommandExecution,IAtomicCommand
 
     public override void Execute()
     {
-        Show($"Script for {_tableInfo.GetRuntimeName()}",_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
+        Show($"Script for {_tableInfo.GetRuntimeName()}",
+            _tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false, false, false));
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

@@ -11,14 +11,15 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-/// Specifies how files are laid out by date.  This is the default implementation in which the cache root directory (usually .\Data\Cache) is populated with folders
-/// yyyy-MM-dd which contains unzipped lists of files for that day.
+///     Specifies how files are laid out by date.  This is the default implementation in which the cache root directory
+///     (usually .\Data\Cache) is populated with folders
+///     yyyy-MM-dd which contains unzipped lists of files for that day.
 /// </summary>
-public class BasicCacheLayout:CacheLayout
+public class BasicCacheLayout : CacheLayout
 {
     public BasicCacheLayout(DirectoryInfo rootCacheDirectory)
-        : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.None, CacheFileGranularity.Day, new NoSubdirectoriesCachePathResolver())
+        : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.None, CacheFileGranularity.Day,
+            new NoSubdirectoriesCachePathResolver())
     {
-            
     }
 }

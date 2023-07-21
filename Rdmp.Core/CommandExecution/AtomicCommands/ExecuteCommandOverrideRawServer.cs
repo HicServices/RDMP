@@ -4,29 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicCommand,IAtomicCommandWithTarget
+public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCommand, IAtomicCommandWithTarget
 {
     private readonly LoadMetadata _loadMetadata;
+    private readonly ExternalDatabaseServer[] _available;
     private ExternalDatabaseServer _server;
-    private ExternalDatabaseServer[] _available;
 
-    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator,LoadMetadata loadMetadata) : base(activator)
+    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
         _loadMetadata = loadMetadata;
         _available =
-            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly)).ToArray();
+            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
+                .ToArray();
 
-        if(!_available.Any())
+        if (!_available.Any())
             SetImpossible("There are no compatible servers");
     }
 
@@ -36,7 +37,7 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
 
         if (_server == null)
         {
-            if (SelectOne(_available,out var selected))
+            if (SelectOne(_available, out var selected))
                 _server = selected;
             else
                 return;

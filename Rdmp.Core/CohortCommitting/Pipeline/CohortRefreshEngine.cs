@@ -12,19 +12,21 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// Executes an ExtractionConfiguration's CohortRefreshPipeline which should result in the CohortIdentificationConfiguration associated with the 
-/// ExtractionConfiguration (if any) being recalculated and a new updated set of patient identifiers committed as the next version number in the cohort
-/// database for that ExtractionConfiguration.
-/// 
-/// <para>Use this class if you want to re-run a the patient identifiers of an ExtractionConfiguration without changing the cohort identification configuration
-/// query (say 1 month later you want to generate an extract with the new patients fitting cohort criteria).</para>
+///     Executes an ExtractionConfiguration's CohortRefreshPipeline which should result in the
+///     CohortIdentificationConfiguration associated with the
+///     ExtractionConfiguration (if any) being recalculated and a new updated set of patient identifiers committed as the
+///     next version number in the cohort
+///     database for that ExtractionConfiguration.
+///     <para>
+///         Use this class if you want to re-run a the patient identifiers of an ExtractionConfiguration without changing
+///         the cohort identification configuration
+///         query (say 1 month later you want to generate an extract with the new patients fitting cohort criteria).
+///     </para>
 /// </summary>
 public class CohortRefreshEngine
 {
-    private readonly IDataLoadEventListener _listener;
     private readonly ExtractionConfiguration _configuration;
-
-    public CohortCreationRequest Request { get; private set; }
+    private readonly IDataLoadEventListener _listener;
 
     public CohortRefreshEngine(IDataLoadEventListener listener, ExtractionConfiguration configuration)
     {
@@ -33,18 +35,18 @@ public class CohortRefreshEngine
         Request = new CohortCreationRequest(configuration);
     }
 
+    public CohortCreationRequest Request { get; }
+
     public void Execute()
     {
-        var engine = Request.GetEngine(_configuration.CohortRefreshPipeline,_listener);
+        var engine = Request.GetEngine(_configuration.CohortRefreshPipeline, _listener);
 
         //if the refresh pipeline is a cic source
         if (engine.SourceObject is CohortIdentificationConfigurationSource cicSource)
-        {
             //a cohort identification configuration is a complex query possibly with many cached subqueries, if we are refreshing the cic we will want to clear (and recache) identifiers
             //from the live tables
             cicSource.ClearCohortIdentificationConfigurationCacheBeforeRunning = true;
-        }
-            
+
         engine.ExecutePipeline(new GracefulCancellationToken());
 
         var newCohort = Request.CohortCreatedIfAny;

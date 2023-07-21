@@ -14,23 +14,23 @@ namespace Rdmp.UI.ProjectUI.Datasets.Node;
 
 internal class AvailableForceJoinNode : IMasqueradeAs
 {
-    [CanBeNull]
-    public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
+    public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
+    {
+        TableInfo = tableInfo;
+        IsMandatory = isMandatory;
+    }
+
+    [CanBeNull] public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
 
     public TableInfo TableInfo { get; set; }
     public JoinInfo[] JoinInfos { get; set; }
     public bool IsMandatory { get; set; }
 
     /// <summary>
-    /// The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
+    ///     The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly
+    ///     picked for inclusion by the user (ForcedJoin)
     /// </summary>
     public bool IsIncludedInQuery => ForcedJoin != null || IsMandatory;
-
-    public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
-    {
-        TableInfo = tableInfo;
-        IsMandatory = isMandatory;
-    }
 
     public object MasqueradingAs()
     {
@@ -42,29 +42,8 @@ internal class AvailableForceJoinNode : IMasqueradeAs
         return TableInfo.ToString();
     }
 
-    #region Equality Members
-    protected bool Equals(AvailableForceJoinNode other)
-    {
-        return TableInfo.Equals(other.TableInfo);
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (obj is null) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((AvailableForceJoinNode) obj);
-    }
-
-    public override int GetHashCode()
-    {
-        return TableInfo.GetHashCode();
-    }
-
-    #endregion
-
     /// <summary>
-    /// Populates <see cref="JoinInfos"/> by finding all potential joins to <paramref name="otherNodes"/>
+    ///     Populates <see cref="JoinInfos" /> by finding all potential joins to <paramref name="otherNodes" />
     /// </summary>
     /// <param name="coreChildProvider"></param>
     /// <param name="otherNodes"></param>
@@ -78,15 +57,39 @@ internal class AvailableForceJoinNode : IMasqueradeAs
         foreach (var otherNode in otherNodes)
         {
             //don't look for self joins
-            if(Equals(otherNode , this))
+            if (Equals(otherNode, this))
                 continue;
 
             var theirCols = coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray();
 
 
-            foundJoinInfos.AddRange(TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols, theirCols));
+            foundJoinInfos.AddRange(
+                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
+                    theirCols));
         }
 
         JoinInfos = foundJoinInfos.ToArray();
     }
+
+    #region Equality Members
+
+    protected bool Equals(AvailableForceJoinNode other)
+    {
+        return TableInfo.Equals(other.TableInfo);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((AvailableForceJoinNode)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return TableInfo.GetHashCode();
+    }
+
+    #endregion
 }

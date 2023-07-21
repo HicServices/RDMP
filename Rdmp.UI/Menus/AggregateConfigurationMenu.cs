@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -16,10 +17,11 @@ using Rdmp.UI.SubComponents.Graphs;
 
 namespace Rdmp.UI.Menus;
 
-[System.ComponentModel.DesignerCategory("")]
-internal class AggregateConfigurationMenu :RDMPContextMenuStrip
+[DesignerCategory("")]
+internal class AggregateConfigurationMenu : RDMPContextMenuStrip
 {
-    public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
+    public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate) : base(args,
+        aggregate)
     {
         if (aggregate.IsCohortIdentificationAggregate)
         {
@@ -31,11 +33,11 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
         }
 
         //if it is a cohort aggregate (but not joinables since they don't match patients they match records and select many columns)
-        if ( aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
+        if (aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
         {
             //with a cic (it really should do!)
             var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
-                
+
             if (cic != null)
             {
                 //find other non cohort aggregates (graphs) 
@@ -43,7 +45,8 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
 
                 try
                 {
-                    graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+                    graphsAvailableInCatalogue =
+                        CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
                 }
                 catch (Exception)
                 {
@@ -52,8 +55,10 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
                 }
 
                 //and offer graph generation for the cohort subsets
-                var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
-                var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
+                var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",
+                    _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
+                var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",
+                    _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
                 matchRecords.Enabled = graphsAvailableInCatalogue.Any();
                 matchIdentifiers.Enabled = graphsAvailableInCatalogue.Any() && cic.QueryCachingServer_ID != null;
@@ -61,13 +66,18 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
                 foreach (var graph in graphsAvailableInCatalogue)
                 {
                     //records in
-                    Add(new ExecuteCommandViewCohortAggregateGraph(_activator,new CohortSummaryAggregateGraphObjectCollection(aggregate, graph, CohortSummaryAdjustment.WhereRecordsIn)),
+                    Add(
+                        new ExecuteCommandViewCohortAggregateGraph(_activator,
+                            new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,
+                                CohortSummaryAdjustment.WhereRecordsIn)),
                         Keys.None,
                         matchRecords);
 
                     //extraction identifiers in
                     Add(
-                        new ExecuteCommandViewCohortAggregateGraph(_activator, new CohortSummaryAggregateGraphObjectCollection(aggregate, graph, CohortSummaryAdjustment.WhereExtractionIdentifiersIn)),
+                        new ExecuteCommandViewCohortAggregateGraph(_activator,
+                            new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,
+                                CohortSummaryAdjustment.WhereExtractionIdentifiersIn)),
                         Keys.None,
                         matchIdentifiers
                     );
@@ -80,6 +90,5 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
                 Items.Add(miGraph);
             }
         }
-
     }
 }

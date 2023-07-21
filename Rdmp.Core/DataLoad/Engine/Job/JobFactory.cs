@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-/// Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
+///     Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
 /// </summary>
 public class JobFactory : IJobFactory
 {
@@ -27,10 +27,12 @@ public class JobFactory : IJobFactory
         _logManager = logManager;
     }
 
-    public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
+    public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        HICDatabaseConfiguration configuration)
     {
         var description = _loadMetadata.Name;
         var LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
-        return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, LoadDirectory, listener,configuration);
+        return new DataLoadJob(repositoryLocator, description, _logManager, _loadMetadata, LoadDirectory, listener,
+            configuration);
     }
 }

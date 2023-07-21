@@ -21,21 +21,22 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.ExtractionUIs;
 
 /// <summary>
-/// This form allows partial or complete reordering of a datasets columns based on a list of column names
-/// pasted into the Desired Order listbox.  All items are cleaned such that the user should be able to paste in
-/// a list, the middle section of a SELECT statement or pretty much anything else.
-/// 
-/// <para>Once a desired order is entered the class will attempt to find the first item in the desired order.  Assuming
-/// this item is found then the location of this field becomes the 'insertion' point for reordering and all fields 
-/// that the user pasted in are reordered into this point.</para>
-/// 
-/// <para>At any time you can look at the 'New Order' section to see the new order that columns will be in if you accept the
-/// reordering.</para>
-/// 
+///     This form allows partial or complete reordering of a datasets columns based on a list of column names
+///     pasted into the Desired Order listbox.  All items are cleaned such that the user should be able to paste in
+///     a list, the middle section of a SELECT statement or pretty much anything else.
+///     <para>
+///         Once a desired order is entered the class will attempt to find the first item in the desired order.  Assuming
+///         this item is found then the location of this field becomes the 'insertion' point for reordering and all fields
+///         that the user pasted in are reordered into this point.
+///     </para>
+///     <para>
+///         At any time you can look at the 'New Order' section to see the new order that columns will be in if you accept
+///         the
+///         reordering.
+///     </para>
 /// </summary>
 public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 {
@@ -43,13 +44,16 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
     //the item in the original order that we want to start reordering at
     private int currentOrderStartReorderAtIndex = -1;
-
-    /// <summary>
-    /// This is a collection of all the items found in the desired order and their offset in the desired order relative to the first one
-    /// </summary>
-    private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
     private List<int> desiredColumnIndexesNotFound;
     private int indexOfStartOfReordingInNewOrderListbox;
+
+    /// <summary>
+    ///     This is a collection of all the items found in the desired order and their offset in the desired order relative to
+    ///     the first one
+    /// </summary>
+    private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
+
+    private readonly object oDrawLock = new();
 
     public ReOrderCatalogueItemsUI()
     {
@@ -60,10 +64,12 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             "Instructions: In simple mode you can view your columns and drag and drop them to reorder them.  In Advanced mode you can also Paste (Ctrl + V)  a list of column names into Desired Order (don't worry about trimming commas or table prefixes etc).  The first item in the list should be the point at which you want to start reordering at e.g. CHI or the last record if you want to move columns to the end then paste in the rest of the columns that you want to move after this first item."
         );
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations,olvColumns, new Guid("35946a6e-ebe4-496a-a944-1ddb10b5f8c5"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations, olvOrder, new Guid("d11d4b84-2464-4254-a3cb-b656c55dd0fc"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations, olvColumns,
+            new Guid("35946a6e-ebe4-496a-a944-1ddb10b5f8c5"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations, olvOrder,
+            new Guid("d11d4b84-2464-4254-a3cb-b656c55dd0fc"));
 
-        lbDesiredOrder.SelectedIndexChanged += (s,e)=>lbDesiredOrder.Refresh();
+        lbDesiredOrder.SelectedIndexChanged += (s, e) => lbDesiredOrder.Refresh();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -91,41 +97,37 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     private void lbDesiredOrder_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Delete)
-        {
             lock (oDrawLock)
             {
-                var toDelete = lbDesiredOrder.SelectedIndices.Cast<int>().OrderByDescending(i=>i).ToArray();
+                var toDelete = lbDesiredOrder.SelectedIndices.Cast<int>().OrderByDescending(i => i).ToArray();
 
                 foreach (var r in toDelete)
                     lbDesiredOrder.Items.RemoveAt(r);
 
                 RecomputeOrderAndHighlight();
             }
-        }
-        else
-        if (e.KeyCode == Keys.V && e.Control)
-        {
+        else if (e.KeyCode == Keys.V && e.Control)
             lock (oDrawLock)
             {
-                lbDesiredOrder.Items.AddRange(UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
+                lbDesiredOrder.Items.AddRange(UsefulStuff
+                    .GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray());
                 RecomputeOrderAndHighlight();
             }
-        }
     }
-        
+
     private void RecomputeOrderAndHighlight()
     {
         WorkOutReOrderVariables();
 
-        WorkOutNewOrderAndAddToNewOrderListbox(); 
+        WorkOutNewOrderAndAddToNewOrderListbox();
 
         olvExtractionInformations.Invalidate();
     }
 
     /// <summary>
-    /// Figures out what strings in the users desired order are actually in the extraction and computes 
-    /// currentOrderStartReorderAtIndex and itemsToReOrderAndOfsetRelativeToFirst which are used for
-    /// highlighting and to WorkOutNewOrderAndAddToNewOrderListbox
+    ///     Figures out what strings in the users desired order are actually in the extraction and computes
+    ///     currentOrderStartReorderAtIndex and itemsToReOrderAndOfsetRelativeToFirst which are used for
+    ///     highlighting and to WorkOutNewOrderAndAddToNewOrderListbox
     /// </summary>
     private void WorkOutReOrderVariables()
     {
@@ -140,14 +142,15 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
         //find the location of the first item in the desired order
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-            
+
         for (var i = 0; i < extractionInformations.Length; i++)
         {
             var extractionInformation = extractionInformations[i];
 
             //if either the runtime name or the display (UI) name matches then it is found - may be both of these are the same value sometimes
             //but sometimes people give things wierdo names eh
-            if (extractionInformation.GetRuntimeName().ToLower().Equals(startReorderingHere.ToLower()) || extractionInformation.ToString().ToLower().Equals(startReorderingHere.ToLower()))
+            if (extractionInformation.GetRuntimeName().ToLower().Equals(startReorderingHere.ToLower()) ||
+                extractionInformation.ToString().ToLower().Equals(startReorderingHere.ToLower()))
                 currentOrderStartReorderAtIndex = i;
         }
 
@@ -162,7 +165,6 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             var bFound = false;
 
             foreach (ExtractionInformation info in olvExtractionInformations.Objects)
-            {
                 //if either the runtime name or the display (UI) name matches then it is found - may be both of these are the same value sometimes
                 //but sometimes people give things wierdo names eh
                 if (info.GetRuntimeName().ToLower().Equals(lbDesiredOrder.Items[i].ToString().ToLower())
@@ -171,7 +173,6 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
                     bFound = true;
                     itemsToReOrderAndOffsetRelativeToFirst.Add(info);
                 }
-            }
 
             if (!bFound)
                 desiredColumnIndexesNotFound.Add(i);
@@ -185,7 +186,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
 
         //for all the things that appear above the thing the user wants first in his dream order
-        for (var i = 0;i < currentOrderStartReorderAtIndex;i++)
+        for (var i = 0; i < currentOrderStartReorderAtIndex; i++)
         {
             var considerMoving = extractionInformations[i];
 
@@ -201,7 +202,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         //move the first one in the users dream order across
         lbNewOrder.Items.Add(extractionInformations[currentOrderStartReorderAtIndex]);
         //record the location of the 'start reordering at' item in the new listbox so we can highlight it in the draw method
-        indexOfStartOfReordingInNewOrderListbox = lbNewOrder.Items.Count-1;
+        indexOfStartOfReordingInNewOrderListbox = lbNewOrder.Items.Count - 1;
 
         //move everything in the users dream list
         foreach (var extractionInformation in itemsToReOrderAndOffsetRelativeToFirst)
@@ -226,7 +227,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         {
             var listBox = sender as ListBox;
 
-            if(e.Index == -1)
+            if (e.Index == -1)
                 return;
 
             /*var extractionInformations = olvCurrentOrder.Objects.Cast<ExtractionInformation>().ToArray();
@@ -246,42 +247,39 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             {
                 if (e.Index == indexOfStartOfReordingInNewOrderListbox)
                     e.Graphics.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
-                else
-                if (itemsToReOrderAndOffsetRelativeToFirst != null 
-                    && e.Index <= itemsToReOrderAndOffsetRelativeToFirst.Count + indexOfStartOfReordingInNewOrderListbox
-                    && e.Index > indexOfStartOfReordingInNewOrderListbox)
+                else if (itemsToReOrderAndOffsetRelativeToFirst != null
+                         && e.Index <= itemsToReOrderAndOffsetRelativeToFirst.Count +
+                         indexOfStartOfReordingInNewOrderListbox
+                         && e.Index > indexOfStartOfReordingInNewOrderListbox)
                     e.Graphics.FillRectangle(new SolidBrush(Color.Purple), e.Bounds);
                 else
                     e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
-                
             }
 
-            e.Graphics.DrawString(listBox.Items[e.Index].ToString(), lbDesiredOrder.Font, new SolidBrush(Color.Black), e.Bounds);
-                
+            e.Graphics.DrawString(listBox.Items[e.Index].ToString(), lbDesiredOrder.Font, new SolidBrush(Color.Black),
+                e.Bounds);
         }
     }
 
-    private object oDrawLock = new();
-        
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)
     {
         lock (oDrawLock)
         {
-            if(e.Index == -1)
+            if (e.Index == -1)
                 return;
 
-            if (lbDesiredOrder.SelectedIndex == e.Index || lbDesiredOrder.SelectedIndices.Contains(e.Index) || desiredColumnIndexesNotFound == null)
-                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Highlight),e.Bounds );
+            if (lbDesiredOrder.SelectedIndex == e.Index || lbDesiredOrder.SelectedIndices.Contains(e.Index) ||
+                desiredColumnIndexesNotFound == null)
+                e.Graphics.FillRectangle(new SolidBrush(SystemColors.Highlight), e.Bounds);
+            else if (desiredColumnIndexesNotFound.Contains(e.Index))
+                e.Graphics.FillRectangle(new SolidBrush(Color.Red), e.Bounds);
             else
-            if(desiredColumnIndexesNotFound.Contains(e.Index))
-                e.Graphics.FillRectangle(new SolidBrush(Color.Red),e.Bounds);
-            else
-                e.Graphics.FillRectangle(new SolidBrush(lbDesiredOrder.BackColor),e.Bounds );
+                e.Graphics.FillRectangle(new SolidBrush(lbDesiredOrder.BackColor), e.Bounds);
 
-            e.Graphics.DrawString(lbDesiredOrder.Items[e.Index] as string,lbDesiredOrder.Font,new SolidBrush(lbDesiredOrder.ForeColor),e.Bounds );  
+            e.Graphics.DrawString(lbDesiredOrder.Items[e.Index] as string, lbDesiredOrder.Font,
+                new SolidBrush(lbDesiredOrder.ForeColor), e.Bounds);
         }
-            
     }
 
     private void btnSaveNewOrder_Click(object sender, EventArgs e)
@@ -294,12 +292,13 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
         for (var i = 0; i < lbNewOrder.Items.Count; i++)
         {
-            var info = (ExtractionInformation) lbNewOrder.Items[i];
+            var info = (ExtractionInformation)lbNewOrder.Items[i];
             info.Order = i + 1;
             info.SaveToDatabase();
         }
+
         RefreshUIFromDatabase();
-            
+
         MessageBox.Show("Reorder Applied");
         ClearAdvancedListboxes();
     }
@@ -315,13 +314,10 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             return;
         }
 
-        if (e.DropTargetLocation != DropTargetLocation.AboveItem && e.DropTargetLocation != DropTargetLocation.BelowItem)
-        {
-            return;
-        }
+        if (e.DropTargetLocation != DropTargetLocation.AboveItem &&
+            e.DropTargetLocation != DropTargetLocation.BelowItem) return;
 
         e.Effect = DragDropEffects.Move;
-
     }
 
     private void olvExtractionInformations_ModelDropped(object sender, ModelDropEventArgs e)
@@ -335,9 +331,9 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
         var idxDrop = currentOrder.IndexOf(beingDroppedOnto);
 
-        if(idxDrop == -1)
+        if (idxDrop == -1)
             return;
-            
+
         if (e.DropTargetLocation == DropTargetLocation.AboveItem)
             currentOrder.Insert(idxDrop, beingDragged);
         else if (e.DropTargetLocation == DropTargetLocation.BelowItem)
@@ -364,7 +360,6 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     private void btnClear_Click(object sender, EventArgs e)
     {
         ClearAdvancedListboxes();
-
     }
 
     private void ClearAdvancedListboxes()
@@ -375,12 +370,12 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
     private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
     {
-        if(olvExtractionInformations.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+        if (olvExtractionInformations.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o) { ExpansionDepth = 1 });
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ReOrderCatalogueItems_Design, UserControl>))]
-public abstract class ReOrderCatalogueItems_Design:RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class ReOrderCatalogueItems_Design : RDMPSingleDatabaseObjectControl<Catalogue>
 {
 }

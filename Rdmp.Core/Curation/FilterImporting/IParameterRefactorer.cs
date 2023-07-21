@@ -9,12 +9,12 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Handles changing a <see cref="ISqlParameter.ParameterName"/> and enforcing rules about valid names
+///     Handles changing a <see cref="ISqlParameter.ParameterName" /> and enforcing rules about valid names
 /// </summary>
 public interface IParameterRefactorer
 {
     /// <summary>
-    /// Renames the <paramref name="parameter"/> <see cref="ISqlParameter.ParameterName"/>
+    ///     Renames the <paramref name="parameter" /> <see cref="ISqlParameter.ParameterName" />
     /// </summary>
     /// <param name="parameter"></param>
     /// <param name="oldName"></param>

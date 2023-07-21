@@ -4,29 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomMessage
+public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCustomMessage
 {
-    public CacheProgress CacheProgress { get; set; }
-    public PermissionWindow PermissionWindow { get; private set; }
-    public bool DirectionIsCacheToPermissionWindow { get; set; }
-
-    public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow, bool directionIsCacheToPermissionWindow)
+    public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow,
+        bool directionIsCacheToPermissionWindow)
     {
         CacheProgress = cacheProgress;
         PermissionWindow = permissionWindow;
         DirectionIsCacheToPermissionWindow = directionIsCacheToPermissionWindow;
     }
 
-    public override string ToString()
-    {
-        return DirectionIsCacheToPermissionWindow ? PermissionWindow.Name : CacheProgress.ToString();
-    }
+    public CacheProgress CacheProgress { get; set; }
+    public PermissionWindow PermissionWindow { get; }
+    public bool DirectionIsCacheToPermissionWindow { get; set; }
 
     public void DeleteInDatabase()
     {
@@ -34,21 +31,34 @@ public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomM
         CacheProgress.SaveToDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetDeleteMessage()
     {
         return "remove PermissionWindow from CacheProgress";
     }
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public string GetDeleteVerb()
     {
         return "Remove";
     }
 
+    public override string ToString()
+    {
+        return DirectionIsCacheToPermissionWindow ? PermissionWindow.Name : CacheProgress.ToString();
+    }
+
+    public object GetImageObject()
+    {
+        return DirectionIsCacheToPermissionWindow ? PermissionWindow : CacheProgress;
+    }
+
     #region Equality Members
+
     protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
     {
-        return CacheProgress.Equals(other.CacheProgress) && PermissionWindow.Equals(other.PermissionWindow) && DirectionIsCacheToPermissionWindow.Equals(other.DirectionIsCacheToPermissionWindow);
+        return CacheProgress.Equals(other.CacheProgress) && PermissionWindow.Equals(other.PermissionWindow) &&
+               DirectionIsCacheToPermissionWindow.Equals(other.DirectionIsCacheToPermissionWindow);
     }
 
     public override bool Equals(object obj)
@@ -56,17 +66,13 @@ public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomM
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PermissionWindowUsedByCacheProgressNode) obj);
+        return Equals((PermissionWindowUsedByCacheProgressNode)obj);
     }
 
     public override int GetHashCode()
     {
-        return System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
+        return HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
     }
-    #endregion
 
-    public object GetImageObject()
-    {
-        return DirectionIsCacheToPermissionWindow ? PermissionWindow : (object)CacheProgress;
-    }
+    #endregion
 }

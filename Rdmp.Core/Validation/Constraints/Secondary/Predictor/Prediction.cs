@@ -11,60 +11,63 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
-/// Validation rule in which two columns are dependent on one another for validation according to a given PredictionRule.  For example the CHI number contains
-/// a gender digit, validation passes if the digit matches the selected gender column (See ChiSexPredictor).
+///     Validation rule in which two columns are dependent on one another for validation according to a given
+///     PredictionRule.  For example the CHI number contains
+///     a gender digit, validation passes if the digit matches the selected gender column (See ChiSexPredictor).
 /// </summary>
 public class Prediction : SecondaryConstraint
 {
-    [Description("The current value enforces a prediction about the value of this other field")]
-    [ExpectsColumnNameAsInput]
-    public string TargetColumn { get; set; }
-        
-    [Description("The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
-    public PredictionRule Rule { get; set; }
-
     //blank constructor required for XMLSerialization
     public Prediction()
     {
-            
     }
 
     public Prediction(PredictionRule rule, string targetColumn)
     {
-        if(rule == null)
-            throw new ArgumentException("You must specify a PredictionRule to follow",nameof(rule));
+        if (rule == null)
+            throw new ArgumentException("You must specify a PredictionRule to follow", nameof(rule));
 
         Rule = rule;
         TargetColumn = targetColumn;
     }
 
+    [Description("The current value enforces a prediction about the value of this other field")]
+    [ExpectsColumnNameAsInput]
+    public string TargetColumn { get; set; }
+
+    [Description(
+        "The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
+    public PredictionRule Rule { get; set; }
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        if(Rule == null )
+        if (Rule == null)
             throw new InvalidOperationException("PredictionRule has not been set yet");
 
-        if(TargetColumn == null)
+        if (TargetColumn == null)
             throw new InvalidOperationException("TargetColumn has not been set yet");
 
-        if(OtherFieldInfoIsNotProvided(otherColumns, otherColumnNames))
+        if (OtherFieldInfoIsNotProvided(otherColumns, otherColumnNames))
             throw new ArgumentException("Could not make prediction because no other fields were passed");
 
         if (otherColumns.Length != otherColumnNames.Length)
-            throw new Exception("Could not make prediction because of mismatch between column values and column names array sizes");
+            throw new Exception(
+                "Could not make prediction because of mismatch between column values and column names array sizes");
 
-        var i = Array.IndexOf(otherColumnNames,TargetColumn);
+        var i = Array.IndexOf(otherColumnNames, TargetColumn);
 
         if (i == -1)
             throw new MissingFieldException(
                 $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})");
 
-        return Rule.Predict(this,value,otherColumns[i]);
+        return Rule.Predict(this, value, otherColumns[i]);
     }
 
 
     private static bool OtherFieldInfoIsNotProvided(object[] otherColumns, string[] otherColumnNames)
     {
-        return otherColumns == null || otherColumns.Length < 1 || otherColumnNames == null || otherColumnNames.Length < 1;
+        return otherColumns == null || otherColumns.Length < 1 || otherColumnNames == null ||
+               otherColumnNames.Length < 1;
     }
 
 

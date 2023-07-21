@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
@@ -13,6 +12,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
@@ -22,11 +22,13 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
     private FileInfo _shareDefinitionFile;
 
     /// <summary>
-    /// Sets up the base command to read ShareDefinitions from the selected <paramref name="sourceFileCollection"/> (pass null to have the user pick at Execute)
+    ///     Sets up the base command to read ShareDefinitions from the selected <paramref name="sourceFileCollection" /> (pass
+    ///     null to have the user pick at Execute)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="sourceFileCollection"></param>
-    protected ExecuteCommandImportShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection) : base(activator)
+    protected ExecuteCommandImportShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection) :
+        base(activator)
     {
         if (sourceFileCollection != null)
         {
@@ -47,7 +49,9 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
         base.Execute();
 
         //ensure file selected
-        if ((_shareDefinitionFile ??= BasicActivator.SelectFile("Select share definition file to import","Share Definition","*.sd")) == null)
+        if ((_shareDefinitionFile ??=
+                BasicActivator.SelectFile("Select share definition file to import", "Share Definition", "*.sd")) ==
+            null)
             return;
 
         var json = File.ReadAllText(_shareDefinitionFile.FullName);

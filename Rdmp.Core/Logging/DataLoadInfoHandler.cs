@@ -7,8 +7,9 @@
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// Handler for a new audit object (<paramref name="dataLoadInfo"/>) being created by an RDMP <see cref="ILogManager"/>
+///     Handler for a new audit object (<paramref name="dataLoadInfo" />) being created by an RDMP
+///     <see cref="ILogManager" />
 /// </summary>
-/// <param name="sender">The logging database that created the <paramref name="dataLoadInfo"/></param>
+/// <param name="sender">The logging database that created the <paramref name="dataLoadInfo" /></param>
 /// <param name="dataLoadInfo">The logging audit object describing a transactional activity (extraction / loading etc)</param>
 public delegate void DataLoadInfoHandler(ILogManager sender, IDataLoadInfo dataLoadInfo);

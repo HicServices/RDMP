@@ -12,16 +12,11 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past / readonly event).
+///     Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past /
+///     readonly event).
 /// </summary>
-public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
+public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
 {
-    public int ID { get; private set; }
-    public DateTime Date { get; internal set; }
-    public string Source { get; internal set; }
-    public string Description { get; internal set; }
-    public string Explanation { get; set; }
-
     public ArchivalFatalError(DbDataReader r)
     {
         ID = Convert.ToInt32(r["ID"]);
@@ -30,18 +25,13 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
         Description = r["description"] as string;
         Explanation = r["explanation"] as string;
     }
-    public string ToShortString()
-    {
-        var s = ToString();
-        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}...";
-        return s;
-    }
-    public override string ToString()
-    {
-        return
-            $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
-    }
+
+    public DateTime Date { get; internal set; }
+    public string Source { get; internal set; }
+    public string Description { get; internal set; }
+    public string Explanation { get; set; }
+    public int ID { get; }
+
     public int CompareTo(object obj)
     {
         if (obj is ArchivalFatalError other)
@@ -52,11 +42,26 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
+
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
         title = $"{Source} ({Date})";
         body = Description;
         stackTrace = null;
         level = CheckResult.Fail;
+    }
+
+    public string ToShortString()
+    {
+        var s = ToString();
+        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
+            return $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}...";
+        return s;
+    }
+
+    public override string ToString()
+    {
+        return
+            $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
     }
 }

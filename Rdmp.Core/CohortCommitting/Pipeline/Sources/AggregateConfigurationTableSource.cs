@@ -19,34 +19,31 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-/// Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient index table)
+///     Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient
+///     index table)
 /// </summary>
-public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable>,IPipelineRequirement<AggregateConfiguration>
+public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable>,
+    IPipelineRequirement<AggregateConfiguration>
 {
+    private bool _haveSentData;
     protected AggregateConfiguration AggregateConfiguration;
     protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
-    private bool _haveSentData = false;
-
-    [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.", DemandType.Unspecified, 10000)]
+    [DemandsInitialization(
+        "The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.",
+        DemandType.Unspecified, 10000)]
     public int Timeout { get; set; }
 
     /// <summary>
-    /// The name to give the table produced into the pipeline
+    ///     The name to give the table produced into the pipeline
     /// </summary>
     public string TableName { get; set; }
 
-    protected virtual string GetSQL()
+    public virtual void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
     {
-        if(!AggregateConfiguration.IsCohortIdentificationAggregate)
-        {
-            var builder = AggregateConfiguration.GetQueryBuilder();
-            return builder.SQL;
-        }
+        AggregateConfiguration = value;
 
-        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny() ?? throw new Exception($"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
-        var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),null);
-        return cohortBuilder.SQL;
+        CohortIdentificationConfigurationIfAny = value.GetCohortIdentificationConfigurationIfAny();
     }
 
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -59,12 +56,58 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         return GetDataTable(Timeout, listener);
     }
 
+    public DataTable TryGetPreview()
+    {
+        return GetDataTable(10, null);
+    }
+
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
+    public virtual void Check(ICheckNotifier notifier)
+    {
+        try
+        {
+            var _sql = GetSQL();
+            notifier.OnCheckPerformed(new CheckEventArgs($"successfully built extraction SQL:{_sql}",
+                CheckResult.Success));
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Could not build extraction SQL for '{AggregateConfiguration}' (ID={AggregateConfiguration.ID})",
+                CheckResult.Fail, e));
+        }
+    }
+
+    protected virtual string GetSQL()
+    {
+        if (!AggregateConfiguration.IsCohortIdentificationAggregate)
+        {
+            var builder = AggregateConfiguration.GetQueryBuilder();
+            return builder.SQL;
+        }
+
+        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny() ??
+                  throw new Exception(
+                      $"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
+        var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(), null);
+        return cohortBuilder.SQL;
+    }
+
     private DataTable GetDataTable(int timeout, IDataLoadEventListener listener)
     {
         listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for AggregateConfiguration '{AggregateConfiguration}'"));
 
-        var server = AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+        var server =
+            AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
 
         using (var con = server.GetConnection())
@@ -82,8 +125,10 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             {
                 cmd.CommandTimeout = timeout;
 
-                using(var da = server.GetDataAdapter(cmd))
+                using (var da = server.GetDataAdapter(cmd))
+                {
                     da.Fill(dt);
+                }
             }
 
 
@@ -95,43 +140,6 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
             return dt;
         }
-    }
-    public DataTable TryGetPreview()
-    {
-        return GetDataTable(10, null);
-    }
-
-
-
-    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-    {
-
-    }
-
-    public void Abort(IDataLoadEventListener listener)
-    {
-
-    }
-
-    public virtual void Check(ICheckNotifier notifier)
-    {
-        try
-        {
-            var _sql = GetSQL();
-            notifier.OnCheckPerformed(new CheckEventArgs($"successfully built extraction SQL:{_sql}", CheckResult.Success));
-        }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not build extraction SQL for '{AggregateConfiguration}' (ID={AggregateConfiguration.ID})", CheckResult.Fail, e));
-        }
-    }
-
-    public virtual void PreInitialize(AggregateConfiguration value, IDataLoadEventListener listener)
-    {
-        AggregateConfiguration = value;
-
-        CohortIdentificationConfigurationIfAny = value.GetCohortIdentificationConfigurationIfAny();
     }
 
     public override string ToString()

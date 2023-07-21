@@ -12,7 +12,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Sharing.Dependency;
 
 /// <summary>
-/// Facilitiates importing plugins from a remote contributor and creating the local copies of the Plugin dlls in the local CatalogueRepository database.
+///     Facilitiates importing plugins from a remote contributor and creating the local copies of the Plugin dlls in the
+///     local CatalogueRepository database.
 /// </summary>
 public class SharedPluginImporter
 {
@@ -25,6 +26,6 @@ public class SharedPluginImporter
 
     public Curation.Data.Plugin Import(Stream stream)
     {
-        return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<Curation.Data.Plugin>().Single();
+        return _shareManager.ImportSharedObject(stream, true).OfType<Curation.Data.Plugin>().Single();
     }
 }

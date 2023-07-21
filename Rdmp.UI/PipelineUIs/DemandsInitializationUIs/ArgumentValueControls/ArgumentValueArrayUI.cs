@@ -13,13 +13,12 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 
-
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-/// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
-/// 
-/// <para>This Control is for setting Properties that are of Array types TableInfo[], Catalogue[] etc</para>
+///     Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization]
+///     decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
+///     <para>This Control is for setting Properties that are of Array types TableInfo[], Catalogue[] etc</para>
 /// </summary>
 [TechnicalUI]
 public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
@@ -39,7 +38,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     {
         _args = args;
 
-        var value = (Array) args.InitialValue;
+        var value = (Array)args.InitialValue;
         SetUp(value);
     }
 
@@ -48,7 +47,9 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
         _value = value;
 
         if (value == null)
+        {
             tbArray.Text = "";
+        }
         else
         {
             var sb = new StringBuilder();
@@ -69,17 +70,19 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     private void btnPickDatabaseEntities_Click(object sender, EventArgs e)
     {
         var type = _args.Type;
-        var elementType = type.GetElementType() ?? throw new NotSupportedException($"No array element existed for DemandsInitialization Type {type}");
+        var elementType = type.GetElementType() ??
+                          throw new NotSupportedException(
+                              $"No array element existed for DemandsInitialization Type {type}");
         if (!_args.CatalogueRepository.SupportsObjectType(elementType))
             throw new NotSupportedException(
                 $"CatalogueRepository does not support element {elementType} for DemandsInitialization Type {type}");
 
-        if(_activator.SelectObjects(new DialogArgs
-           {
-               TaskDescription = $"Which objects should be selected for Argument '{_args.Required.Name}'",
-               InitialObjectSelection = _value is IEnumerable<IMapsDirectlyToDatabaseTable> v ? v.ToArray() : null,
-               AllowSelectingNull = true
-           }, _args.CatalogueRepository.GetAllObjects(elementType).ToArray(), out var selected))
+        if (_activator.SelectObjects(new DialogArgs
+            {
+                TaskDescription = $"Which objects should be selected for Argument '{_args.Required.Name}'",
+                InitialObjectSelection = _value is IEnumerable<IMapsDirectlyToDatabaseTable> v ? v.ToArray() : null,
+                AllowSelectingNull = true
+            }, _args.CatalogueRepository.GetAllObjects(elementType).ToArray(), out var selected))
         {
             _args.Setter(selected);
             SetUp(selected);

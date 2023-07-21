@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI.SingleControlForms;
 
 /// <summary>
-/// Interface for UIs which want to respond to their hosting ParentForm being closed
+///     Interface for UIs which want to respond to their hosting ParentForm being closed
 /// </summary>
 public interface IConsultableBeforeClosing
 {

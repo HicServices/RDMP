@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Rdmp.UI.Copying;
@@ -13,26 +14,17 @@ using Rdmp.UI.SimpleDialogs.SqlDialogs;
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-/// Allows you to specify the value of an IArgument (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
-/// 
-/// <para>This Control is for setting Properties that are of Type string but expect SQL code.  Clicking the button will launch an SQL editor with syntax highlighting.</para>
+///     Allows you to specify the value of an IArgument (the database persistence value of a [DemandsInitialization]
+///     decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
+///     <para>
+///         This Control is for setting Properties that are of Type string but expect SQL code.  Clicking the button will
+///         launch an SQL editor with syntax highlighting.
+///     </para>
 /// </summary>
 [TechnicalUI]
 public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
 {
     private ArgumentValueUIArgs _args;
-
-    /// <summary>
-    /// Helper function to remove extra whitespace in SQL query so it looks nicer in a single line textbox
-    /// </summary>
-    /// <param name="sqlText"></param>
-    /// <returns></returns>
-    private static string FormatSqlForTextbox(object sqlText)
-    {
-        var sqlTextboxPretty = sqlText == null ? "" : sqlText.ToString();
-        sqlTextboxPretty = new Regex(@"\s+").Replace(sqlTextboxPretty, " ");
-        return sqlTextboxPretty;
-    }
 
     public ArgumentValueSqlUI()
     {
@@ -47,9 +39,20 @@ public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
         lblSqlClause.Text = args.ContextText;
     }
 
-    private void btnSetSQL_Click(object sender, System.EventArgs e)
+    /// <summary>
+    ///     Helper function to remove extra whitespace in SQL query so it looks nicer in a single line textbox
+    /// </summary>
+    /// <param name="sqlText"></param>
+    /// <returns></returns>
+    private static string FormatSqlForTextbox(object sqlText)
     {
+        var sqlTextboxPretty = sqlText == null ? "" : sqlText.ToString();
+        sqlTextboxPretty = new Regex(@"\s+").Replace(sqlTextboxPretty, " ");
+        return sqlTextboxPretty;
+    }
 
+    private void btnSetSQL_Click(object sender, EventArgs e)
+    {
         var dialog = new SetSQLDialog((string)_args.InitialValue, new RDMPCombineableFactory());
         var d = dialog.ShowDialog();
 

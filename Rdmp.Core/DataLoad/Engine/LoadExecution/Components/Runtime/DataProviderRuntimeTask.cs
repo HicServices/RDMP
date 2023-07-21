@@ -17,14 +17,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
-/// RuntimeArgumentCollection
+///     RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and
+///     ProcessTaskArguments) See
+///     RuntimeArgumentCollection
 /// </summary>
 public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
-    public IDataProvider Provider { get; private set; }
-    public ICheckable MEFPluginClassInstance => Provider;
-
     public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
         : base(task, args)
     {
@@ -48,9 +46,13 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
         Provider.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
     }
 
+    public IDataProvider Provider { get; }
+    public ICheckable MEFPluginClassInstance => Provider;
+
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to fetch data using class {Provider.GetType().FullName}"));
@@ -67,9 +69,9 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        Provider.LoadCompletedSoDispose(exitCode,postLoadEventListener);
+        Provider.LoadCompletedSoDispose(exitCode, postLoadEventListener);
     }
 
     public override void Check(ICheckNotifier checker)

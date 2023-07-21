@@ -9,16 +9,16 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ProcessTask"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="ProcessTask" />
 /// </summary>
 public class ProcessTaskCombineable : ICombineToMakeCommand
 {
-    public ProcessTask ProcessTask { get; set; }
-
     public ProcessTaskCombineable(ProcessTask processTask)
     {
         ProcessTask = processTask;
     }
+
+    public ProcessTask ProcessTask { get; set; }
 
     public string GetSqlString()
     {

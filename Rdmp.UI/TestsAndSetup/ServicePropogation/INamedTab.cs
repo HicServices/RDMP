@@ -9,12 +9,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 public interface INamedTab
 {
     /// <summary>
-    /// Provide a name for when your control is presented on a tab control, this should only be called after SetCollection/SetDatabaseObject etc has previously been called
+    ///     Provide a name for when your control is presented on a tab control, this should only be called after
+    ///     SetCollection/SetDatabaseObject etc has previously been called
     /// </summary>
     string GetTabName();
 
     /// <summary>
-    /// Provide an optional format for the tab tool tip on a tab control. Return NULL to use default tab tooltip behaviour and display the ToolTipText if too long for the tab box.
+    ///     Provide an optional format for the tab tool tip on a tab control. Return NULL to use default tab tooltip behaviour
+    ///     and display the ToolTipText if too long for the tab box.
     /// </summary>
     string GetTabToolTip();
 }

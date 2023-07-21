@@ -19,39 +19,46 @@ using TypeGuesser;
 namespace Rdmp.Core.CohortCommitting;
 
 /// <summary>
-/// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns 
-/// (PrivateIdentifierPrototype) and a release identifier allocation strategy (<see cref="IAllocateReleaseIdentifiers"/>)
-///  e.g. varchar(10) private patient identifier gets mapped to a new GUID.
-/// 
-/// <para>This implementation is intended to be a basic solution only and lacks advanced features such having the same release identifier for the same primary
-/// key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't want people to be able to link patients
-/// across project extracts they are working on).</para>
-/// 
-/// <para>See UserManual.md for more information on how to tailor the resulting database to fit your needs.</para>
+///     Creates an ExternalCohortTable database implementation.  The implementation will be based on your live
+///     IsExtractionIdentifier columns
+///     (PrivateIdentifierPrototype) and a release identifier allocation strategy (
+///     <see cref="IAllocateReleaseIdentifiers" />)
+///     e.g. varchar(10) private patient identifier gets mapped to a new GUID.
+///     <para>
+///         This implementation is intended to be a basic solution only and lacks advanced features such having the same
+///         release identifier for the same primary
+///         key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't
+///         want people to be able to link patients
+///         across project extracts they are working on).
+///     </para>
+///     <para>See UserManual.md for more information on how to tailor the resulting database to fit your needs.</para>
 /// </summary>
 public class CreateNewCohortDatabaseWizard
 {
-    public bool AllowNullReleaseIdentifiers { get; set; }
     private readonly ICatalogueRepository _catalogueRepository;
     private readonly IDataExportRepository _dataExportRepository;
     private readonly DiscoveredDatabase _targetDatabase;
+    private readonly string _definitionTableForeignKeyField = "cohortDefinition_id";
 
-    private string _releaseIdentifierFieldName = "ReleaseId";
-    private string _definitionTableForeignKeyField = "cohortDefinition_id";
-        
+    private readonly string _releaseIdentifierFieldName = "ReleaseId";
 
-    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,ICatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository,bool allowNullReleaseIdentifiers)
+
+    public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase, ICatalogueRepository catalogueRepository,
+        IDataExportRepository dataExportRepository, bool allowNullReleaseIdentifiers)
     {
         AllowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
         _catalogueRepository = catalogueRepository;
         _dataExportRepository = dataExportRepository;
         _targetDatabase = targetDatabase;
     }
-        
+
+    public bool AllowNullReleaseIdentifiers { get; set; }
+
     public PrivateIdentifierPrototype[] GetPrivateIdentifierCandidates()
     {
         //get the extraction identifiers
-        var extractionInformations = _catalogueRepository.GetAllObjects<ExtractionInformation>().Where(ei => ei.IsExtractionIdentifier);
+        var extractionInformations = _catalogueRepository.GetAllObjects<ExtractionInformation>()
+            .Where(ei => ei.IsExtractionIdentifier);
 
         //name + datatype, ideally we want to find 30 fields called 'PatientIndex' in 30 datasets all as char(10) fields but more likely we will get a slew of different spellings and dodgy datatypes (varchar(max) etc)
         var toReturn = new List<PrivateIdentifierPrototype>();
@@ -60,51 +67,56 @@ public class CreateNewCohortDatabaseWizard
         foreach (var extractionInformation in extractionInformations)
         {
             //do not process ExtractionInformations when the ColumnInfo is COLUMNINFO_MISSING
-            if(extractionInformation.ColumnInfo == null || !extractionInformation.ColumnInfo.Exists())
+            if (extractionInformation.ColumnInfo == null || !extractionInformation.ColumnInfo.Exists())
                 continue;
 
             var match = toReturn.SingleOrDefault(prototype => prototype.IsCompatible(extractionInformation));
 
-            if(match != null)
+            if (match != null)
                 match.MatchingExtractionInformations.Add(extractionInformation);
             else
                 toReturn.Add(new PrivateIdentifierPrototype(extractionInformation));
         }
-                
+
         return toReturn.ToArray();
     }
 
-    public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype, ICheckNotifier notifier)
+    public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype,
+        ICheckNotifier notifier)
     {
         var tt = _targetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;
-            
 
-        if(tt.GetLengthIfString(privateIdentifierPrototype.DataType) == int.MaxValue)
-        {
-            throw new Exception("Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table");
-        }
+
+        if (tt.GetLengthIfString(privateIdentifierPrototype.DataType) == int.MaxValue)
+            throw new Exception(
+                "Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table");
 
         if (!_targetDatabase.Exists())
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Did not find database {_targetDatabase} on server so creating it",CheckResult.Success));
+                $"Did not find database {_targetDatabase} on server so creating it", CheckResult.Success));
             _targetDatabase.Create();
         }
-            
+
         try
         {
             var definitionTable = _targetDatabase.CreateTable("CohortDefinition", new[]
             {
-                new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,IsAutoIncrement = true,IsPrimaryKey = true}, 
-                new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
-                new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
-                new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),3000)){AllowNulls =  false},
-                new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false,Default=MandatoryScalarFunctions.GetTodaysDate}
+                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                    { AllowNulls = false, IsAutoIncrement = true, IsPrimaryKey = true },
+                new DatabaseColumnRequest("projectNumber", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false },
+                new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), 3000))
+                    { AllowNulls = false },
+                new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
+                    { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
             });
 
 
             var idColumn = definitionTable.DiscoverColumn("id");
-            var foreignKey = new DatabaseColumnRequest(_definitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
+            var foreignKey =
+                new DatabaseColumnRequest(_definitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
+                    { IsPrimaryKey = true };
 
             // Look up the collations of all the private identifier columns
             var collations = privateIdentifierPrototype.MatchingExtractionInformations
@@ -115,15 +127,17 @@ public class CreateNewCohortDatabaseWizard
 
             var cohortTable = _targetDatabase.CreateTable("Cohort", new[]
                 {
-                    new DatabaseColumnRequest(privateIdentifierPrototype.RuntimeName,privateIdentifierPrototype.DataType,false)
+                    new DatabaseColumnRequest(privateIdentifierPrototype.RuntimeName,
+                        privateIdentifierPrototype.DataType, false)
                     {
                         IsPrimaryKey = true,
 
                         // if there is a single collation amongst private identifier prototype references we must use that collation
                         // when creating the private column so that the DBMS can link them no bother
-                        Collation = collations.Length == 1 ? collations[0]:null
+                        Collation = collations.Length == 1 ? collations[0] : null
                     },
-                    new DatabaseColumnRequest(_releaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)){AllowNulls = AllowNullReleaseIdentifiers},
+                    new DatabaseColumnRequest(_releaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
+                        { AllowNulls = AllowNullReleaseIdentifiers },
                     foreignKey
                 }
                 ,
@@ -132,7 +146,8 @@ public class CreateNewCohortDatabaseWizard
 
 
             notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
-            var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort", _targetDatabase.Server.DatabaseType)
+            var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort",
+                _targetDatabase.Server.DatabaseType)
             {
                 DatabaseType = _targetDatabase.Server.DatabaseType,
                 Server = _targetDatabase.Server.Name,
@@ -149,7 +164,8 @@ public class CreateNewCohortDatabaseWizard
 
             pointer.SaveToDatabase();
 
-            notifier.OnCheckPerformed(new CheckEventArgs("successfully created reference to cohort source in data export manager", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "successfully created reference to cohort source in data export manager", CheckResult.Success));
 
             notifier.OnCheckPerformed(new CheckEventArgs("About to run post creation checks", CheckResult.Success));
             pointer.Check(notifier);
@@ -157,7 +173,6 @@ public class CreateNewCohortDatabaseWizard
             notifier.OnCheckPerformed(new CheckEventArgs("Finished", CheckResult.Success));
 
             return pointer;
-                
         }
         catch (Exception e)
         {

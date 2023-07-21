@@ -13,27 +13,27 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataQualityEngine;
 
-public class DQEGraphAnnotationTests:DatabaseTests
+public class DQEGraphAnnotationTests : DatabaseTests
 {
     [Test]
     public void TestCreatingOne()
     {
-        var c = new Catalogue(CatalogueRepository,"FrankyMicky");
+        var c = new Catalogue(CatalogueRepository, "FrankyMicky");
 
-            
+
         try
         {
-
             var dqeRepo = new DQERepository(CatalogueRepository);
             var evaluation = new Evaluation(dqeRepo, c);
 
-            var annotation = new DQEGraphAnnotation(dqeRepo,1, 2, 3, 4, "Fishesfly", evaluation,DQEGraphType.TimePeriodicityGraph,"ALL");
-                
-            Assert.AreEqual(annotation.StartX,1);
+            var annotation = new DQEGraphAnnotation(dqeRepo, 1, 2, 3, 4, "Fishesfly", evaluation,
+                DQEGraphType.TimePeriodicityGraph, "ALL");
+
+            Assert.AreEqual(annotation.StartX, 1);
             Assert.AreEqual(annotation.StartY, 2);
             Assert.AreEqual(annotation.EndX, 3);
             Assert.AreEqual(annotation.EndY, 4);
-            Assert.AreEqual(annotation.AnnotationIsForGraph,DQEGraphType.TimePeriodicityGraph);
+            Assert.AreEqual(annotation.AnnotationIsForGraph, DQEGraphType.TimePeriodicityGraph);
 
             //should be about 2 milliseconds ago
             Assert.IsTrue(annotation.CreationDate <= DateTime.Now.AddSeconds(3));
@@ -47,9 +47,9 @@ public class DQEGraphAnnotationTests:DatabaseTests
             annotation.SaveToDatabase();
 
             annotation.Text = "";
-                
+
             //new copy is flibble
-            Assert.AreEqual("flibble", dqeRepo.GetObjectByID<DQEGraphAnnotation>(annotation.ID).Text); 
+            Assert.AreEqual("flibble", dqeRepo.GetObjectByID<DQEGraphAnnotation>(annotation.ID).Text);
 
             annotation.DeleteInDatabase();
         }
@@ -57,7 +57,5 @@ public class DQEGraphAnnotationTests:DatabaseTests
         {
             c.DeleteInDatabase();
         }
-
-
     }
 }

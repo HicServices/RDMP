@@ -11,7 +11,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Encrypts a string, providing access to both the encrypted and decrypted values.
+///     Encrypts a string, providing access to both the encrypted and decrypted values.
 /// </summary>
 /// <exception cref="InvalidOperationException">Value is too long to be encrypted</exception>
 /// <exception cref="CryptographicException" />
@@ -20,13 +20,16 @@ public class EncryptedString : IEncryptedString
     private readonly IEncryptStrings _encrypter;
     private string _value;
 
-    /// <inheritdoc/>
-    public override string ToString()
+    /// <summary>
+    ///     Creates a new encrypted string using <see cref="SimpleStringValueEncryption" />
+    /// </summary>
+    /// <param name="repository"></param>
+    public EncryptedString(ICatalogueRepository repository)
     {
-        return Value;
+        _encrypter = repository.EncryptionManager.GetEncrypter();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Value
     {
         get =>
@@ -34,39 +37,29 @@ public class EncryptedString : IEncryptedString
             _value;
         set
         {
-
-            if (string.IsNullOrWhiteSpace(value))//if it is null
+            if (string.IsNullOrWhiteSpace(value)) //if it is null
                 _value = null;
-            else
-            if (!_encrypter.IsStringEncrypted(value))//it is not null, is it already encrypted?
+            else if (!_encrypter.IsStringEncrypted(value)) //it is not null, is it already encrypted?
                 try
                 {
-                    _value = _encrypter.Encrypt(value);//not yet encrypted so encrypt it
+                    _value = _encrypter.Encrypt(value); //not yet encrypted so encrypt it
                 }
                 catch (Exception e)
                 {
                     if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
                         throw new InvalidOperationException(
-                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})", e);
+                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
+                            e);
 
                     //it's some other exception
                     throw;
                 }
             else
-                _value = value;//it is encrypted already so just store in normally
+                _value = value; //it is encrypted already so just store in normally
         }
     }
 
-    /// <summary>
-    /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/>
-    /// </summary>
-    /// <param name="repository"></param>
-    public EncryptedString(ICatalogueRepository repository)
-    {
-        _encrypter =  repository.EncryptionManager.GetEncrypter();
-    }
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetDecryptedValue()
     {
         if (string.IsNullOrWhiteSpace(Value))
@@ -79,9 +72,15 @@ public class EncryptedString : IEncryptedString
         throw new Exception("Found Value in memory that was not encrypted");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsStringEncrypted(string value)
     {
         return _encrypter.IsStringEncrypted(value);
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Value;
     }
 }

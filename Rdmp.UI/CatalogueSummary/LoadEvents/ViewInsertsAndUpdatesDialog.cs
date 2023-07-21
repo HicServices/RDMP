@@ -15,44 +15,80 @@ using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
-using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 
 /// <summary>
-/// Allows you to view a sample of the data in your dataset before and after a data load.  This includes a sample of the new records added and a side by side comparison of the 
-/// changes (See DiffDataTables).  Depending on your indexes and the volume of your data it might take some time to execute the sample fetching query.
-/// 
-/// <para>Generate the preview by entering an appropriate timeout (e.g. 120 seconds) and selecting 'Try To Fetch Appropriate Data'.  This will show you the SQL that the system is about
-/// to run so that you can (if you want/need to) run the code in Sql Management Studio with the query analyser on which might suggest indexes to help with performance problems.</para>
-/// 
-/// <para>Once the queries have finished executing (you will see progress messages appearing in the 'Fetch Data' tab), INSERTS that were part of the data load will appear in 'View Inserts' 
-/// tab and side by side views of UPDATES (old vs new) will appear in the 'View Updates' tab (see DiffDataTables).</para>
+///     Allows you to view a sample of the data in your dataset before and after a data load.  This includes a sample of
+///     the new records added and a side by side comparison of the
+///     changes (See DiffDataTables).  Depending on your indexes and the volume of your data it might take some time to
+///     execute the sample fetching query.
+///     <para>
+///         Generate the preview by entering an appropriate timeout (e.g. 120 seconds) and selecting 'Try To Fetch
+///         Appropriate Data'.  This will show you the SQL that the system is about
+///         to run so that you can (if you want/need to) run the code in Sql Management Studio with the query analyser on
+///         which might suggest indexes to help with performance problems.
+///     </para>
+///     <para>
+///         Once the queries have finished executing (you will see progress messages appearing in the 'Fetch Data' tab),
+///         INSERTS that were part of the data load will appear in 'View Inserts'
+///         tab and side by side views of UPDATES (old vs new) will appear in the 'View Updates' tab (see DiffDataTables).
+///     </para>
 /// </summary>
 public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
 {
-        
-    private int _dataLoadRunID;
-    private TableInfo _toInterrogate;
     private int _batchSizeToGet;
+
+    private readonly int _dataLoadRunID;
     private int _timeout;
+    private readonly TableInfo _toInterrogate;
+
+    private bool _yesToAll;
+
+    private bool fetchDataResultedInNoErrors = true;
 
     public ViewInsertsAndUpdatesDialog(ArchivalTableLoadInfo toAttemptToDisplay, List<TableInfo> potentialTableInfos)
     {
-            
         InitializeComponent();
 
         if (toAttemptToDisplay == null)
             return;
-            
+
         _dataLoadRunID = toAttemptToDisplay.Parent.ID;
-        _toInterrogate = GetTableInfoFromConstructorArguments(toAttemptToDisplay, potentialTableInfos,checksUI1);
+        _toInterrogate = GetTableInfoFromConstructorArguments(toAttemptToDisplay, potentialTableInfos, checksUI1);
         tbBatchSizeToGet.Text = "20";
-        _batchSizeToGet = 20;//technically redundant since text changed will fire but nvm
+        _batchSizeToGet = 20; //technically redundant since text changed will fire but nvm
         tbTimeout.Text = "30";
         _timeout = 30;
 
         dgInserts.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+    }
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        //if it has proposed fix it will be an SQL select query - probably
+        if (args.ProposedFix != null)
+        {
+            if (_yesToAll)
+                return true;
+
+            //we will handle this one instead of the checksui
+            var window = new SQLPreviewWindow("Send Query?", "The following query is about to be submitted:",
+                args.ProposedFix);
+            try
+            {
+                return window.ShowDialog() == DialogResult.OK;
+            }
+            finally
+            {
+                _yesToAll = window.YesToAll;
+            }
+        }
+
+        if (args.Result == CheckResult.Fail)
+            fetchDataResultedInNoErrors = false; //don't tell them everything was fine because it wasn't
+
+        return checksUI1.OnCheckPerformed(args);
     }
 
 
@@ -68,7 +104,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
             tbBatchSizeToGet.ForeColor = Color.Red;
         }
     }
-        
+
     private void tbTimeout_TextChanged(object sender, EventArgs e)
     {
         try
@@ -82,13 +118,11 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         }
     }
 
-    private bool fetchDataResultedInNoErrors = true;
-
     private void btnFetchData_Click(object sender, EventArgs e)
     {
         fetchDataResultedInNoErrors = true;
         var fetcher = new DiffDatabaseDataFetcher(_batchSizeToGet, _toInterrogate, _dataLoadRunID, _timeout);
-            
+
         fetcher.FetchData(this);
 
         dgInserts.DataSource = fetcher.Inserts;
@@ -96,52 +130,60 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         if (fetcher.Updates_New == null || fetcher.Updates_Replaced == null)
             diffDataTables1.Clear();
         else
-            diffDataTables1.PopulateWith(fetcher.Updates_New,fetcher.Updates_Replaced);
+            diffDataTables1.PopulateWith(fetcher.Updates_New, fetcher.Updates_Replaced);
 
         //if user is already viewing the updates we will need to re-highlight
         if (tabControl1.SelectedTab == tpViewUpdates)
             diffDataTables1.HighlightDiffCells();
 
         //we didn't see any errors so probably everything was fine
-        if(fetchDataResultedInNoErrors)
-            WideMessageBox.Show("Data Ready","Data ready for you to view in the Inserts / Updates tabs",WideMessageBoxTheme.Help);
-
+        if (fetchDataResultedInNoErrors)
+            WideMessageBox.Show("Data Ready", "Data ready for you to view in the Inserts / Updates tabs",
+                WideMessageBoxTheme.Help);
     }
 
 
-    private static TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay, List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
+    private static TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay,
+        List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
     {
         checkNotifier.OnCheckPerformed(new CheckEventArgs(
-            $"Table user is attempting to view updates/inserts for is called {toAttemptToDisplay.TargetTable}", CheckResult.Success));
-            
-        if(potentialTableInfos.Count == 0)
+            $"Table user is attempting to view updates/inserts for is called {toAttemptToDisplay.TargetTable}",
+            CheckResult.Success));
+
+        if (potentialTableInfos.Count == 0)
             throw new Exception("No potential tables were found");
-            
-        if(potentialTableInfos.Select(t=>t.DatabaseType).Distinct().Count() > 1)
-            throw new Exception($"Tables found were from different DBMS Types: {string.Join(",",potentialTableInfos.Select(t=>t.DatabaseType).Distinct())}");
+
+        if (potentialTableInfos.Select(t => t.DatabaseType).Distinct().Count() > 1)
+            throw new Exception(
+                $"Tables found were from different DBMS Types: {string.Join(",", potentialTableInfos.Select(t => t.DatabaseType).Distinct())}");
 
         var syntax = potentialTableInfos.First().GetQuerySyntaxHelper();
 
         var runtimeName = syntax.GetRuntimeName(toAttemptToDisplay.TargetTable);
 
-        checkNotifier.OnCheckPerformed(new CheckEventArgs($"The runtime name of the table is {runtimeName}", CheckResult.Success));
+        checkNotifier.OnCheckPerformed(new CheckEventArgs($"The runtime name of the table is {runtimeName}",
+            CheckResult.Success));
 
         checkNotifier.OnCheckPerformed(
             new CheckEventArgs(
-                $"The following TableInfos were given to us to pick from {string.Join(",", potentialTableInfos)}", CheckResult.Success));
+                $"The following TableInfos were given to us to pick from {string.Join(",", potentialTableInfos)}",
+                CheckResult.Success));
 
         var candidates = potentialTableInfos.Where(t => t.GetRuntimeName().Equals(runtimeName)).ToArray();
 
         if (!candidates.Any())
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("Could not find an appropriate TableInfo from those mentioned above", CheckResult.Fail));
+            checkNotifier.OnCheckPerformed(
+                new CheckEventArgs("Could not find an appropriate TableInfo from those mentioned above",
+                    CheckResult.Fail));
             return null;
         }
 
         if (candidates.Length > 1)
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs(
-                $"Found multiple TableInfos (mentioned above) with the runtime name {runtimeName} I don't know which one you want to view", CheckResult.Fail));
+                $"Found multiple TableInfos (mentioned above) with the runtime name {runtimeName} I don't know which one you want to view",
+                CheckResult.Fail));
             return null;
         }
 
@@ -150,38 +192,9 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         return candidates.Single();
     }
 
-    private bool _yesToAll = false;
-
-    public bool OnCheckPerformed(CheckEventArgs args)
-    {
-        //if it has proposed fix it will be an SQL select query - probably
-        if (args.ProposedFix != null)
-        {
-            if (_yesToAll)
-                return true;
-
-            //we will handle this one instead of the checksui
-            var window = new SQLPreviewWindow("Send Query?","The following query is about to be submitted:",args.ProposedFix);
-            try
-            {
-                return window.ShowDialog() == DialogResult.OK;
-            }
-            finally
-            {
-                _yesToAll = window.YesToAll;
-            }
-        }
-
-        if (args.Result == CheckResult.Fail)
-            fetchDataResultedInNoErrors = false;//don't tell them everything was fine because it wasn't
-
-        return checksUI1.OnCheckPerformed(args);
-    }
-
     private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(tabControl1.SelectedTab == tpViewUpdates)
+        if (tabControl1.SelectedTab == tpViewUpdates)
             diffDataTables1.HighlightDiffCells();
     }
-
 }

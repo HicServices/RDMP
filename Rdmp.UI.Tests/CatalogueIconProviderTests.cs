@@ -12,20 +12,20 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Tests;
 
 [SupportedOSPlatform("windows7.0")]
-internal class CatalogueIconProviderTests: UITests
+internal class CatalogueIconProviderTests : UITests
 {
-
     [Test]
     public void CatalogueIconProvider_HasImage_NoImage()
     {
-        var provider = new CatalogueIconProvider(RepositoryLocator,null);
+        var provider = new CatalogueIconProvider(RepositoryLocator, null);
 
-        var img = provider.GetImage(new object(), OverlayKind.None);
+        var img = provider.GetImage(new object());
 
         Assert.IsFalse(provider.HasIcon(new object()));
     }
@@ -34,23 +34,25 @@ internal class CatalogueIconProviderTests: UITests
     public void CatalogueIconProvider_HasImage_AllObjectsHave()
     {
         var objectCount = 0;
-        var provider = new DataExportIconProvider(RepositoryLocator,null);
-            
+        var provider = new DataExportIconProvider(RepositoryLocator, null);
+
         foreach (var obj in WhenIHaveAll())
         {
-            var img = provider.GetImage(obj, OverlayKind.None);
+            var img = provider.GetImage(obj);
 
             if (obj is IDisableable d)
             {
                 d.IsDisabled = true;
 
-                Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
-                    
+                Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
+                    $"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
+
                 d.IsDisabled = false;
-                Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
+                Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
+                    $"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
             }
-                    
-            Assert.IsTrue(provider.HasIcon(obj),$"Object of Type '{obj.GetType().Name}' did not have an image");
+
+            Assert.IsTrue(provider.HasIcon(obj), $"Object of Type '{obj.GetType().Name}' did not have an image");
             objectCount++;
         }
 
@@ -61,30 +63,48 @@ internal class CatalogueIconProviderTests: UITests
     [Test]
     public void TestGrayscale()
     {
-        var provider = new CatalogueIconProvider(RepositoryLocator,null);
+        var provider = new CatalogueIconProvider(RepositoryLocator, null);
 
         var ac = WhenIHaveA<AggregateConfiguration>();
 
-        Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac)),"Image was unexpectedly Grayscale");
+        Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac)), "Image was unexpectedly Grayscale");
 
         ac.IsDisabled = true;
-        Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)),"Image was expected to be Grayscale but wasn't'");
+        Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)), "Image was expected to be Grayscale but wasn't'");
     }
 
-        
+
     /// <summary>
-    /// Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
+    ///     Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
     /// </summary>
     [Test]
     public void Test_ObjectMasqueradingAsSelf()
     {
         var me = new IAmMe();
 
-        var provider = new CatalogueIconProvider(RepositoryLocator,null);
+        var provider = new CatalogueIconProvider(RepositoryLocator, null);
         provider.GetImage(me, OverlayKind.Add);
 
         Assert.IsFalse(provider.HasIcon(me));
     }
+
+
+    private static bool IsBlackAndWhite(Image<Rgba32> img)
+    {
+        var foundColoured = false;
+        img.ProcessPixelRows(pixels =>
+        {
+            for (var y = 0; y < pixels.Height; y++)
+                foreach (ref var pixel in pixels.GetRowSpan(y))
+                    if (pixel.R != pixel.G || pixel.G != pixel.B)
+                    {
+                        foundColoured = true;
+                        return;
+                    }
+        });
+        return !foundColoured;
+    }
+
     private class IAmMe : IMasqueradeAs
     {
         public object MasqueradingAs()
@@ -92,27 +112,4 @@ internal class CatalogueIconProviderTests: UITests
             return this;
         }
     }
-
-
-    private static bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
-    {
-        var foundColoured = false;
-        img.ProcessPixelRows(pixels =>
-        {
-            for (var y = 0; y < pixels.Height; y++)
-            {
-                foreach (ref var pixel in pixels.GetRowSpan(y))
-                {
-                    if (pixel.R != pixel.G || pixel.G != pixel.B)
-                    {
-                        foundColoured = true;
-                        return;
-                    }
-                }
-            }
-        });
-        return !foundColoured;
-    }
-
-
 }

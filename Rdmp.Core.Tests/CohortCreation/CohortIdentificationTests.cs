@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -16,15 +17,15 @@ namespace Rdmp.Core.Tests.CohortCreation;
 
 public class CohortIdentificationTests : FromToDatabaseTests
 {
-    public DiscoveredDatabase Database { get; private set; }
-
-    protected BulkTestsData testData;
     protected AggregateConfiguration aggregate1;
     protected AggregateConfiguration aggregate2;
     protected AggregateConfiguration aggregate3;
     protected CohortIdentificationConfiguration cohortIdentificationConfiguration;
-    protected CohortAggregateContainer rootcontainer;
     protected CohortAggregateContainer container1;
+    protected CohortAggregateContainer rootcontainer;
+
+    protected BulkTestsData testData;
+    public DiscoveredDatabase Database { get; private set; }
 
     [SetUp]
     protected override void SetUp()
@@ -34,12 +35,12 @@ public class CohortIdentificationTests : FromToDatabaseTests
         SetupTestData(CatalogueRepository);
     }
 
-        
+
     public void SetupTestData(ICatalogueRepository repository)
     {
         BlitzMainDataTables();
 
-        Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         testData = new BulkTestsData(repository, Database, 100);
         testData.SetupTestData();
@@ -53,7 +54,8 @@ public class CohortIdentificationTests : FromToDatabaseTests
             };
         aggregate1.SaveToDatabase();
 
-        new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
+        new AggregateDimension(repository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
 
         aggregate2 =
             new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate2")
@@ -63,7 +65,8 @@ public class CohortIdentificationTests : FromToDatabaseTests
 
         aggregate2.SaveToDatabase();
 
-        new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
+        new AggregateDimension(repository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
 
         aggregate3 =
             new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate3")
@@ -72,7 +75,8 @@ public class CohortIdentificationTests : FromToDatabaseTests
             };
         aggregate3.SaveToDatabase();
 
-        new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);
+        new AggregateDimension(repository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);
 
         cohortIdentificationConfiguration = new CohortIdentificationConfiguration(repository, "UnitTestIdentification");
 

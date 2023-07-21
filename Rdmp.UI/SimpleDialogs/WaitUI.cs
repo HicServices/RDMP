@@ -14,10 +14,10 @@ namespace Rdmp.UI.SimpleDialogs;
 
 public sealed partial class WaitUI : Form
 {
+    private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly string _caption;
     private readonly Task _task;
-    private readonly CancellationTokenSource _cancellationTokenSource;
-    private Timer timer = new();
+    private readonly Timer timer = new();
 
     public WaitUI(string caption, Task task, CancellationTokenSource cancellationTokenSource)
     {
@@ -43,7 +43,7 @@ public sealed partial class WaitUI : Form
             Close();
         }
     }
-        
+
     private void button1_Click(object sender, EventArgs e)
     {
         _cancellationTokenSource.Cancel();

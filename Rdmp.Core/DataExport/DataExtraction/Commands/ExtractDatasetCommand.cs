@@ -19,51 +19,23 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction pipeline.  This includes bundled content
-/// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the
-/// QueryBuilder SQL.
+///     Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction
+///     pipeline.  This includes bundled content
+///     (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can
+///     realise the request by running the
+///     QueryBuilder SQL.
 /// </summary>
 public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 {
-    public ISelectedDataSets SelectedDataSets { get; set; }
+    public static readonly ExtractDatasetCommand EmptyCommand = new();
 
     private IExtractableDatasetBundle _datasetBundle;
-    private List<IColumn> _origColumnsToExtract;
+    private readonly List<IColumn> _origColumnsToExtract;
 
-    public IExtractableCohort ExtractableCohort { get; set; }
-
-    public IExtractableDatasetBundle DatasetBundle
-    {
-        get => _datasetBundle;
-        set
-        {
-            _datasetBundle = value;
-
-            Catalogue = value == null ? null : DataExportRepository.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
-        }
-    }
-
-    public IDataExportRepository DataExportRepository { get; set; }
-
-    public List<IColumn> ColumnsToExtract{get;set;}
-    public IHICProjectSalt Salt{get;set;}
-    public bool IncludeValidation {get;set;}
-
-    public IExtractionDirectory Directory { get; set; }
-    public ICatalogue Catalogue { get; private set; }
-
-    public ISqlQueryBuilder QueryBuilder { get; set; }
-    public ICumulativeExtractionResults CumulativeExtractionResults { get; set; }
-    public List<ReleaseIdentifierSubstitution> ReleaseIdentifierSubstitutions { get; private set; }
-    public List<IExtractionResults> ExtractionResults { get; private set; }
-    public int TopX { get; set; }
-
-    /// <inheritdoc/>
-    public DateTime? BatchStart { get; set; }
-    /// <inheritdoc/>
-    public DateTime? BatchEnd { get; set; }
-
-    public ExtractDatasetCommand( IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+    public ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableCohort extractableCohort,
+        IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt,
+        IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false) : this(
+        configuration, datasetBundle.DataSet)
     {
         DataExportRepository = configuration.DataExportRepository;
         ExtractableCohort = extractableCohort;
@@ -80,16 +52,17 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     }
 
 
-
     /// <summary>
-    /// This version has less arguments because it goes back to the database and queries the configuration and explores who the cohort is etc, it will result in more database
-    /// queries than the more explicit constructor
+    ///     This version has less arguments because it goes back to the database and queries the configuration and explores who
+    ///     the cohort is etc, it will result in more database
+    ///     queries than the more explicit constructor
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="datasetBundle"></param>
     /// <param name="includeValidation"></param>
     /// <param name="includeLookups"></param>
-    public ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+    public ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle,
+        bool includeValidation = false, bool includeLookups = false) : this(configuration, datasetBundle.DataSet)
     {
         DataExportRepository = configuration.DataExportRepository;
         //ExtractableCohort = ExtractableCohort.GetExtractableCohortByID((int) configuration.Cohort_ID);
@@ -106,12 +79,12 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         TopX = -1;
     }
 
-    public static readonly ExtractDatasetCommand EmptyCommand = new();
 
-
-    private ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDataSet dataset):base(configuration)
+    private ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDataSet dataset) : base(
+        configuration)
     {
-        var selectedDataSets = configuration.SelectedDataSets.Where(ds => ds.ExtractableDataSet_ID == dataset.ID).ToArray();
+        var selectedDataSets = configuration.SelectedDataSets.Where(ds => ds.ExtractableDataSet_ID == dataset.ID)
+            .ToArray();
 
         if (selectedDataSets.Length != 1)
             throw new Exception(
@@ -124,30 +97,50 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     private ExtractDatasetCommand() : base(null)
     {
-
     }
 
-    /// <summary>
-    /// Resets the state of the command to when it was first constructed
-    /// </summary>
-    public void Reset()
+    public IDataExportRepository DataExportRepository { get; set; }
+    public IHICProjectSalt Salt { get; set; }
+    public bool IncludeValidation { get; set; }
+    public List<ReleaseIdentifierSubstitution> ReleaseIdentifierSubstitutions { get; private set; }
+    public List<IExtractionResults> ExtractionResults { get; private set; }
+    public ISelectedDataSets SelectedDataSets { get; set; }
+
+    public IExtractableCohort ExtractableCohort { get; set; }
+
+    public IExtractableDatasetBundle DatasetBundle
     {
-        ColumnsToExtract = _origColumnsToExtract.ToList();
-        QueryBuilder = null;
+        get => _datasetBundle;
+        set
+        {
+            _datasetBundle = value;
+
+            Catalogue = value == null
+                ? null
+                : DataExportRepository.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
+        }
     }
+
+    public List<IColumn> ColumnsToExtract { get; set; }
+
+    public IExtractionDirectory Directory { get; set; }
+    public ICatalogue Catalogue { get; private set; }
+
+    public ISqlQueryBuilder QueryBuilder { get; set; }
+    public ICumulativeExtractionResults CumulativeExtractionResults { get; set; }
+    public int TopX { get; set; }
+
+    /// <inheritdoc />
+    public DateTime? BatchStart { get; set; }
+
+    /// <inheritdoc />
+    public DateTime? BatchEnd { get; set; }
+
     public void GenerateQueryBuilder()
     {
         var host = new ExtractionQueryBuilder(DataExportRepository);
-        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this,out var substitutions);
+        QueryBuilder = host.GetSQLCommandForFullExtractionSet(this, out var substitutions);
         ReleaseIdentifierSubstitutions = substitutions;
-    }
-
-    public override string ToString()
-    {
-        if (this == EmptyCommand)
-            return "EmptyCommand";
-
-        return DatasetBundle.DataSet.ToString();
     }
 
     public override DirectoryInfo GetExtractionDirectory()
@@ -157,21 +150,40 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
         return Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
     }
+
     public override string DescribeExtractionImplementation()
     {
         return QueryBuilder.SQL;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
-        IDataAccessPoint[] points = QueryBuilder?.TablesUsedInQuery != null ? QueryBuilder.TablesUsedInQuery.ToArray() : //get it from the request if it has been built
+        IDataAccessPoint[] points = QueryBuilder?.TablesUsedInQuery != null
+            ? QueryBuilder.TablesUsedInQuery.ToArray()
+            : //get it from the request if it has been built
             Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
 
         var singleServer = new DataAccessPointCollection(true, DataAccessContext.DataExport);
         singleServer.AddRange(points);
 
         return singleServer.GetDistinctServer();
+    }
 
+    /// <summary>
+    ///     Resets the state of the command to when it was first constructed
+    /// </summary>
+    public void Reset()
+    {
+        ColumnsToExtract = _origColumnsToExtract.ToList();
+        QueryBuilder = null;
+    }
+
+    public override string ToString()
+    {
+        if (this == EmptyCommand)
+            return "EmptyCommand";
+
+        return DatasetBundle.DataSet.ToString();
     }
 }

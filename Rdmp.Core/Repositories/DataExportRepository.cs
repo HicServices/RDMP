@@ -19,74 +19,89 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Pointer to the Data Export Repository database in which all export related DatabaseEntities are stored (e.g. ExtractionConfiguration).  Every DatabaseEntity class must exist in a
-/// Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository (i.e. the database that contains the
-/// table matching their name).
-/// 
-/// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Export database.  This includes extraction
-/// Projects, ExtractionConfigurations, ExtractableCohorts etc.</para>
-/// 
-/// <para>Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. there are
-/// IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
-/// in the paired Catalogue database.</para>
+///     Pointer to the Data Export Repository database in which all export related DatabaseEntities are stored (e.g.
+///     ExtractionConfiguration).  Every DatabaseEntity class must exist in a
+///     Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of
+///     TableRepository (i.e. the database that contains the
+///     table matching their name).
+///     <para>
+///         This class allows you to fetch objects and should be passed into constructors of classes you want to construct
+///         in the Data Export database.  This includes extraction
+///         Projects, ExtractionConfigurations, ExtractableCohorts etc.
+///     </para>
+///     <para>
+///         Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to
+///         a specific CatalogueRepository database (i.e. there are
+///         IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the
+///         CatalogueRepository property to fetch/create objects
+///         in the paired Catalogue database.
+///     </para>
 /// </summary>
 public class DataExportRepository : TableRepository, IDataExportRepository
 {
-    /// <summary>
-    /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
-    /// contain references to objects in the CatalogueRepository.
-    /// </summary>
-    public ICatalogueRepository CatalogueRepository { get; private set; }
+    private readonly Dictionary<Type, IRowVerCache> _caches = new();
 
-    public IFilterManager FilterManager { get; private set; }
+    private readonly ObjectConstructor _constructor = new();
 
-    public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
+    private readonly Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
-    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
-
-    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
+    public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) :
+        base(null, connectionString)
     {
         CatalogueRepository = catalogueRepository;
-            
+
         FilterManager = new DataExportFilterManager(this);
 
         _packageContentsDictionary = new Lazy<Dictionary<int, List<int>>>(GetPackageContentsDictionary);
 
-        DataExportPropertyManager = new DataExportPropertyManager(false,this);
+        DataExportPropertyManager = new DataExportPropertyManager(false, this);
 
-        Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(DeployedExtractionFilter),(rep,r)=>new DeployedExtractionFilter((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(DeployedExtractionFilterParameter),(rep,r)=>new DeployedExtractionFilterParameter((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ExternalCohortTable),(rep,r)=>new ExternalCohortTable((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ExtractableCohort),(rep,r)=>new ExtractableCohort((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ExtractableColumn),(rep,r)=>new ExtractableColumn((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ExtractableDataSet),(rep,r)=>new ExtractableDataSet((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ExtractionConfiguration),(rep,r)=>new ExtractionConfiguration((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(FilterContainer),(rep,r)=>new FilterContainer((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(GlobalExtractionFilterParameter),(rep,r)=>new GlobalExtractionFilterParameter((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(Project),(rep,r)=>new Project((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(SelectedDataSets),(rep,r)=>new SelectedDataSets((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ExtractableDataSetPackage),(rep,r)=>new ExtractableDataSetPackage((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(ProjectCohortIdentificationConfigurationAssociation),(rep,r)=>new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository)rep,r));
-        Constructors.Add(typeof(SelectedDataSetsForcedJoin), (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(SupplementalExtractionResults),
+            (rep, r) => new SupplementalExtractionResults((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(CumulativeExtractionResults),
+            (rep, r) => new CumulativeExtractionResults((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(DeployedExtractionFilter),
+            (rep, r) => new DeployedExtractionFilter((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(DeployedExtractionFilterParameter),
+            (rep, r) => new DeployedExtractionFilterParameter((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExternalCohortTable),
+            (rep, r) => new ExternalCohortTable((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExtractableCohort), (rep, r) => new ExtractableCohort((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExtractableColumn), (rep, r) => new ExtractableColumn((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExtractableDataSet), (rep, r) => new ExtractableDataSet((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExtractionConfiguration),
+            (rep, r) => new ExtractionConfiguration((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(FilterContainer), (rep, r) => new FilterContainer((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(GlobalExtractionFilterParameter),
+            (rep, r) => new GlobalExtractionFilterParameter((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(Project), (rep, r) => new Project((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(SelectedDataSets), (rep, r) => new SelectedDataSets((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ExtractableDataSetPackage),
+            (rep, r) => new ExtractableDataSetPackage((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(ProjectCohortIdentificationConfigurationAssociation),
+            (rep, r) => new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository)rep, r));
+        Constructors.Add(typeof(SelectedDataSetsForcedJoin),
+            (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
     }
-        
-    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
+
+    /// <summary>
+    ///     The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).
+    ///     Some objects in this database
+    ///     contain references to objects in the CatalogueRepository.
+    /// </summary>
+    public ICatalogueRepository CatalogueRepository { get; }
+
+    public IFilterManager FilterManager { get; }
+
+    public IDataExportPropertyManager DataExportPropertyManager { get; }
+
+    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
+        IExtractionConfiguration configuration, IExtractableDataSet dataset)
     {
         return GetAllObjects<CumulativeExtractionResults>(
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
     }
 
-    private readonly ObjectConstructor _constructor = new();
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        if (Constructors.TryGetValue(t, out var constructor))
-            return constructor(this, reader);
-
-        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
-    }
-        
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
@@ -95,7 +110,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
         return eds.GetCatalogueExtractabilityStatus();
     }
-        
+
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
     {
         return SelectAll<SelectedDataSets>(@"
@@ -110,25 +125,16 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 )", "ID").ToArray();
     }
 
-    private readonly Dictionary<Type, IRowVerCache> _caches = new();
-
     public override T[] GetAllObjects<T>()
     {
-        if (!_caches.ContainsKey(typeof(T))) 
+        if (!_caches.ContainsKey(typeof(T)))
             _caches.Add(typeof(T), new RowVerCache<T>(this));
 
         return _caches[typeof(T)].GetAllObjects<T>();
     }
 
-    public override T[] GetAllObjectsNoCache<T>()
-    {
-        return base.GetAllObjects<T>();
-    }
 
-
-
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {
         //we know of no children
@@ -144,7 +150,10 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
         var toReturn = new Dictionary<int, List<int>>();
 
         using var con = GetConnection();
-        using var r = DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
+        using var r = DiscoveredServer
+            .GetCommand(
+                "SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con)
+            .ExecuteReader();
 
         var lastPackageId = -1;
         while (r.Read())
@@ -165,12 +174,11 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     }
 
     /// <summary>
-    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
-    /// 
-    /// <para>This change is immediately written to the database</para>
-    ///
-    ///  <para>Throws ArgumentException if the <paramref name="dataSet"/> is already part of the package</para>
+    ///     Adds the given <paramref name="dataSet" /> to the <paramref name="package" /> and updates the cached package
+    ///     contents
+    ///     in memory.
+    ///     <para>This change is immediately written to the database</para>
+    ///     <para>Throws ArgumentException if the <paramref name="dataSet" /> is already part of the package</para>
     /// </summary>
     /// <param name="package"></param>
     /// <param name="dataSet"></param>
@@ -178,9 +186,14 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     {
         if (_packageContentsDictionary.Value.TryGetValue(package.ID, out var contents))
         {
-            if (contents.Contains(dataSet.ID)) throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
-        } else
-            _packageContentsDictionary.Value.Add(package.ID, contents=new List<int>());
+            if (contents.Contains(dataSet.ID))
+                throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'",
+                    nameof(dataSet));
+        }
+        else
+        {
+            _packageContentsDictionary.Value.Add(package.ID, contents = new List<int>());
+        }
 
         using (var con = GetConnection())
         {
@@ -194,19 +207,19 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
 
     /// <summary>
-    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
-    /// 
-    /// <para>This change is immediately written to the database</para>
-    ///
-    ///  <para>Throws ArgumentException if the <paramref name="dataSet"/> is not part of the package</para>
+    ///     Removes the given <paramref name="dataSet" /> from the <paramref name="package" /> and updates the cached package
+    ///     contents
+    ///     in memory.
+    ///     <para>This change is immediately written to the database</para>
+    ///     <para>Throws ArgumentException if the <paramref name="dataSet" /> is not part of the package</para>
     /// </summary>
     /// <param name="package"></param>
     /// <param name="dataSet"></param>
     public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed",
+                nameof(dataSet));
 
         using (var con = GetConnection())
         {
@@ -225,8 +238,22 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
             .GetCommand($@"SELECT *
                                     FROM ReleaseLog
                                     where
-                                    CumulativeExtractionResults_ID = {cumulativeExtractionResults.ID}", con.Connection, con.Transaction);
+                                    CumulativeExtractionResults_ID = {cumulativeExtractionResults.ID}", con.Connection,
+                con.Transaction);
         using var r = cmdselect.ExecuteReader();
         return r.Read() ? new ReleaseLog(this, r) : null;
+    }
+
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
+    {
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
+
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
+    }
+
+    public override T[] GetAllObjectsNoCache<T>()
+    {
+        return base.GetAllObjects<T>();
     }
 }

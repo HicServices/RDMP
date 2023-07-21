@@ -11,20 +11,24 @@ using Rdmp.Core.DataQualityEngine.Data;
 namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 
 /// <summary>
-/// Data Quality Engine records all validation results in a relational database, this includes recording with each result the Pivot column value found when evaluating the row.  A Pivot
-/// column is a single categorical field in the dataset that is the most useful way of slicing the dataset e.g. Healthboard.  If your dataset has a pivot column
-/// then this control will let you change which results are displayed in any IDataQualityReportingCharts from either All rows in the dataset or only 
-/// those where the pivot column has a specific value.  If your pivot column contains nulls then these records will only be audited under the ALL category.
+///     Data Quality Engine records all validation results in a relational database, this includes recording with each
+///     result the Pivot column value found when evaluating the row.  A Pivot
+///     column is a single categorical field in the dataset that is the most useful way of slicing the dataset e.g.
+///     Healthboard.  If your dataset has a pivot column
+///     then this control will let you change which results are displayed in any IDataQualityReportingCharts from either
+///     All rows in the dataset or only
+///     those where the pivot column has a specific value.  If your pivot column contains nulls then these records will
+///     only be audited under the ALL category.
 /// </summary>
 public partial class DQEPivotCategorySelector : UserControl
 {
-    public event Action PivotCategorySelectionChanged;
-    public string SelectedPivotCategory { get; private set; }
-
     public DQEPivotCategorySelector()
     {
         InitializeComponent();
     }
+
+    public string SelectedPivotCategory { get; private set; }
+    public event Action PivotCategorySelectionChanged;
 
     public void LoadOptions(Evaluation evaluation)
     {
@@ -42,18 +46,17 @@ public partial class DQEPivotCategorySelector : UserControl
                 Tag = category
             };
 
-            if(rb.Text== "ALL")
-                rb.Checked = true;//always select this one by default first
+            if (rb.Text == "ALL")
+                rb.Checked = true; //always select this one by default first
 
-            rb.CheckedChanged+= OnCheckedChanged;
+            rb.CheckedChanged += OnCheckedChanged;
             flowLayoutPanel1.Controls.Add(rb);
         }
     }
 
     private void OnCheckedChanged(object sender, EventArgs eventArgs)
     {
-        SelectedPivotCategory = (string) ((RadioButton)sender).Tag;
+        SelectedPivotCategory = (string)((RadioButton)sender).Tag;
         PivotCategorySelectionChanged?.Invoke();
     }
-
 }

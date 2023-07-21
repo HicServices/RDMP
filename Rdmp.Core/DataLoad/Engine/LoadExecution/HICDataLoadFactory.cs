@@ -21,19 +21,19 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
 
 /// <summary>
-/// This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory form!
+///     This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory
+///     form!
 /// </summary>
 public class HICDataLoadFactory
 {
+    private readonly IList<ICatalogue> _cataloguesToLoad;
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-    private readonly ICatalogueRepository _repository;
     private readonly ILogManager _logManager;
-    private readonly IList<ICatalogue> _cataloguesToLoad;
+    private readonly ICatalogueRepository _repository;
 
-    public ILoadMetadata LoadMetadata { get; private set; }
-
-    public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
+    public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+        HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
@@ -48,6 +48,8 @@ public class HICDataLoadFactory
                 $"LoadMetadata {LoadMetadata.ID} is not related to any Catalogues, there is nothing to load");
     }
 
+    public ILoadMetadata LoadMetadata { get; }
+
     public IDataLoadExecution Create(IDataLoadEventListener postLoadEventListener)
     {
         var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo);
@@ -60,7 +62,8 @@ public class HICDataLoadFactory
                 new NotifyEventArgs(ProgressEventType.Warning, $"Found disabled ProcessTask{task}"));
 
         //Get all the runtime tasks which are not disabled
-        var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs, _cataloguesToLoad, _repository);
+        var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs,
+            _cataloguesToLoad, _repository);
 
         var getFiles = new LoadFiles(factory.GetRuntimeTasksForStage(LoadStage.GetFiles));
 
@@ -72,7 +75,7 @@ public class HICDataLoadFactory
 
         var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
 
-        var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration,_loadConfigurationFlags);
+        var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration, _loadConfigurationFlags);
 
         var postLoad = factory.CreateCompositeDataLoadComponentFor(LoadStage.PostLoad, "Post Load");
 
@@ -99,8 +102,7 @@ public class HICDataLoadFactory
             adjustStagingAndMigrateToLive,
             archiveFiles
         };
-            
-        return new SingleJobExecution(components);
 
+        return new SingleJobExecution(components);
     }
 }

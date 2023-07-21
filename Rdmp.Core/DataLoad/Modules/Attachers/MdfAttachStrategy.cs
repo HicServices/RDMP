@@ -7,17 +7,17 @@
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Determines the approach used to attach an mdf file to an Sql Server instance
+///     Determines the approach used to attach an mdf file to an Sql Server instance
 /// </summary>
 public enum MdfAttachStrategy
 {
     /// <summary>
-    /// Adds the attach command directly into the connection string sent to the server
+    ///     Adds the attach command directly into the connection string sent to the server
     /// </summary>
     AttachWithConnectionString,
 
     /// <summary>
-    /// Runs the tsql command to attatch the database once an active connection has been established with the server
+    ///     Runs the tsql command to attatch the database once an active connection has been established with the server
     /// </summary>
     ExecuteCreateDatabaseForAttachSql
 }

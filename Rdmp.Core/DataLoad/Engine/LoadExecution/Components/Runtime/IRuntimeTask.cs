@@ -12,14 +12,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// See RuntimeTask
+///     See RuntimeTask
 /// </summary>
-public interface IRuntimeTask : IDataLoadComponent,ICheckable
+public interface IRuntimeTask : IDataLoadComponent, ICheckable
 {
-    bool Exists();
-    void Abort(IDataLoadEventListener postLoadEventListener);
-
     IProcessTask ProcessTask { get; }
 
     RuntimeArgumentCollection RuntimeArguments { get; }
+    bool Exists();
+    void Abort(IDataLoadEventListener postLoadEventListener);
 }

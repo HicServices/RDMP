@@ -15,53 +15,32 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Each PipelineComponent can have 0 or more PipelineComponentArguments, these function exactly like the relationship between ProcessTask and ProcessTaskArgument and
-/// reflect a [DemandsInitialization] property on a class of type IDataFlowComponent which is built and populated by reflection from the PipelineComponent (serialization)
-/// 
-/// <para>See Pipeline and PipelineComponent for more information about this</para>
+///     Each PipelineComponent can have 0 or more PipelineComponentArguments, these function exactly like the relationship
+///     between ProcessTask and ProcessTaskArgument and
+///     reflect a [DemandsInitialization] property on a class of type IDataFlowComponent which is built and populated by
+///     reflection from the PipelineComponent (serialization)
+///     <para>See Pipeline and PipelineComponent for more information about this</para>
 /// </summary>
 public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 {
-    #region Database Properties
-
-    private int _pipelineComponentID;
-
-    /// <inheritdoc/>
-    public int PipelineComponent_ID
-    {
-        get => _pipelineComponentID;
-        set => SetField(ref  _pipelineComponentID, value);
-    }
-
-    #endregion
-        
-    #region Relationships
-
-    /// <inheritdoc cref="PipelineComponent_ID"/>
-    [NoMappingToDatabase]
-    public IPipelineComponent PipelineComponent => Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
-
-    #endregion
-
     public PipelineComponentArgument()
     {
-
     }
 
     /// <summary>
-    /// Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent"/>.  
-    /// 
-    /// <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}"/> intead</para>
+    ///     Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent" />.
+    ///     <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}" /> intead</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     public PipelineComponentArgument(ICatalogueRepository repository, PipelineComponent parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
-        { 
-            {"PipelineComponent_ID",parent.ID},
-            {"Name", $"Parameter{Guid.NewGuid()}" },
-            {"Type", typeof (string).ToString()} });
+        {
+            { "PipelineComponent_ID", parent.ID },
+            { "Name", $"Parameter{Guid.NewGuid()}" },
+            { "Type", typeof(string).ToString() }
+        });
     }
 
     internal PipelineComponentArgument(ICatalogueRepository repository, DbDataReader r)
@@ -74,34 +53,56 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
         Description = r["Description"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="PipelineComponent_ID" />
+    [NoMappingToDatabase]
+    public IPipelineComponent PipelineComponent => Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
+
+    #endregion
+
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {PipelineComponent};
+        return new[] { PipelineComponent };
     }
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         return Array.Empty<IHasDependencies>();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Clone(PipelineComponent intoTargetComponent)
     {
         var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent)
-            {
-                Name = Name,
-                Value = Value,
-                Type = Type,
-                Description = Description
-            };
+        {
+            Name = Name,
+            Value = Value,
+            Type = Type,
+            Description = Description
+        };
 
         cloneArg.SaveToDatabase();
     }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
+
+    #region Database Properties
+
+    private int _pipelineComponentID;
+
+    /// <inheritdoc />
+    public int PipelineComponent_ID
+    {
+        get => _pipelineComponentID;
+        set => SetField(ref _pipelineComponentID, value);
+    }
+
+    #endregion
 }

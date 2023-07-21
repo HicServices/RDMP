@@ -4,46 +4,46 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    private Catalogue[] _availableCatalogues;
+    private readonly Catalogue[] _availableCatalogues;
     private Catalogue _catalogue;
 
-    /// <summary>
-    /// The folder to put the new <see cref="LoadMetadata"/> in.  Defaults to <see cref="FolderHelper.Root"/>
-    /// </summary>
-    public string Folder { get; set; } = FolderHelper.Root;
-
     public ExecuteCommandCreateNewLoadMetadata(IBasicActivateItems activator,
-        [DemandsInitialization("Which Catalogue does this load.  Catalogues must not be associated with an existing load")]
+        [DemandsInitialization(
+            "Which Catalogue does this load.  Catalogues must not be associated with an existing load")]
         Catalogue catalogue = null) : base(activator)
     {
-        _availableCatalogues = activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
+        _availableCatalogues =
+            activator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null).ToArray();
 
         if (!_availableCatalogues.Any())
             SetImpossible("There are no Catalogues that are not associated with another Load already");
 
-        if(catalogue != null)
-        {
-            SetTarget(catalogue);
-        }
+        if (catalogue != null) SetTarget(catalogue);
 
         UseTripleDotSuffix = true;
     }
 
+    /// <summary>
+    ///     The folder to put the new <see cref="LoadMetadata" /> in.  Defaults to <see cref="FolderHelper.Root" />
+    /// </summary>
+    public string Folder { get; set; } = FolderHelper.Root;
+
     public override string GetCommandHelp()
     {
-        return "Create a new data load configuration for loading data into a given set of datasets through RAW=>STAGING=>LIVE migration / adjustment";
+        return
+            "Create a new data load configuration for loading data into a given set of datasets through RAW=>STAGING=>LIVE migration / adjustment";
     }
 
     public override void Execute()
@@ -72,7 +72,6 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
             Publish(lmd);
 
             Activate(lmd);
-
         }
         finally
         {

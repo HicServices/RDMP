@@ -15,80 +15,14 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-/// ComboBox with support for autocomplete (based on substring)
+///     ComboBox with support for autocomplete (based on substring)
 /// </summary>
 public class SuggestComboBox : ComboBox
 {
-    #region fields and properties
-
-    private readonly ListBox _suggLb = new() { Visible = false, TabStop = false };
-    private readonly BindingList<string> _suggBindingList = new();
-    private Expression<Func<ObjectCollection, IEnumerable<string>>> _propertySelector;
-    private Func<ObjectCollection, IEnumerable<string>> _propertySelectorCompiled;
-    private Expression<Func<string, string, bool>> _filterRule;
-    private Func<string, bool> _filterRuleCompiled;
-    private Expression<Func<string, string>> _suggestListOrderRule;
-    private Func<string, string> _suggestListOrderRuleCompiled;
-
-    public int SuggestBoxHeight
-    {
-        get => _suggLb.Height;
-        set { if (value > 0) _suggLb.Height = value; }
-    }
+    private bool _changingVisibility;
 
     /// <summary>
-    /// If the item-type of the ComboBox is not string,
-    /// you can set here which property should be used
-    /// </summary>
-    public Expression<Func<ObjectCollection, IEnumerable<string>>> PropertySelector
-    {
-        get => _propertySelector;
-        set
-        {
-            if (value == null) return;
-            _propertySelector = value;
-            _propertySelectorCompiled = value.Compile();
-        }
-    }
-
-    ///<summary>
-    /// Lambda-Expression to determine the suggested items
-    /// (as Expression here because simple lamda (func) is not serializable)
-    /// <para>default: case-insensitive contains search</para>
-    /// <para>1st string: list item</para>
-    /// <para>2nd string: typed text</para>
-    ///</summary>
-    public Expression<Func<string, string, bool>> FilterRule
-    {
-        get => _filterRule;
-        set
-        {
-            if (value == null) return;
-            _filterRule = value;
-            _filterRuleCompiled = item => value.Compile()(item, Text);
-        }
-    }
-
-    ///<summary>
-    /// Lambda-Expression to order the suggested items
-    /// (as Expression here because simple lamda (func) is not serializable)
-    /// <para>default: alphabetic ordering</para>
-    ///</summary>
-    public Expression<Func<string, string>> SuggestListOrderRule
-    {
-        get => _suggestListOrderRule;
-        set
-        {
-            if (value == null) return;
-            _suggestListOrderRule = value;
-            _suggestListOrderRuleCompiled = value.Compile();
-        }
-    }
-
-    #endregion
-
-    /// <summary>
-    /// ctor
+    ///     ctor
     /// </summary>
     public SuggestComboBox()
     {
@@ -110,17 +44,15 @@ public class SuggestComboBox : ComboBox
         if (string.IsNullOrWhiteSpace(Text))
             return false;
 
-        var keywords = Text.Split(new []{" "}, StringSplitOptions.RemoveEmptyEntries);
+        var keywords = Text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
         return keywords.All(k => arg.ToLower().Contains(k.ToLower()));
     }
 
-    private bool _changingVisibility = false;
-
     private void _suggLb_VisibleChanged(object sender, EventArgs e)
     {
         //don't fire event if its already being fired (needed because Controls.Remove will make visible false)
-        if(_changingVisibility)
+        if (_changingVisibility)
             return;
 
         _changingVisibility = true;
@@ -131,9 +63,8 @@ public class SuggestComboBox : ComboBox
 
             if (form != null)
             {
-                if(_suggLb.Parent != form)
+                if (_suggLb.Parent != form)
                 {
-                     
                     //move it to the parent form
                     _suggLb.Parent.Controls.Remove(_suggLb);
                     form.Controls.Add(_suggLb);
@@ -159,7 +90,7 @@ public class SuggestComboBox : ComboBox
     }
 
     /// <summary>
-    /// the magic happens here ;-)
+    ///     the magic happens here ;-)
     /// </summary>
     /// <param name="e"></param>
     protected override void OnTextChanged(EventArgs e)
@@ -189,11 +120,82 @@ public class SuggestComboBox : ComboBox
         }
     }
 
+    #region fields and properties
+
+    private readonly ListBox _suggLb = new() { Visible = false, TabStop = false };
+    private readonly BindingList<string> _suggBindingList = new();
+    private Expression<Func<ObjectCollection, IEnumerable<string>>> _propertySelector;
+    private Func<ObjectCollection, IEnumerable<string>> _propertySelectorCompiled;
+    private Expression<Func<string, string, bool>> _filterRule;
+    private Func<string, bool> _filterRuleCompiled;
+    private Expression<Func<string, string>> _suggestListOrderRule;
+    private Func<string, string> _suggestListOrderRuleCompiled;
+
+    public int SuggestBoxHeight
+    {
+        get => _suggLb.Height;
+        set
+        {
+            if (value > 0) _suggLb.Height = value;
+        }
+    }
+
+    /// <summary>
+    ///     If the item-type of the ComboBox is not string,
+    ///     you can set here which property should be used
+    /// </summary>
+    public Expression<Func<ObjectCollection, IEnumerable<string>>> PropertySelector
+    {
+        get => _propertySelector;
+        set
+        {
+            if (value == null) return;
+            _propertySelector = value;
+            _propertySelectorCompiled = value.Compile();
+        }
+    }
+
+    /// <summary>
+    ///     Lambda-Expression to determine the suggested items
+    ///     (as Expression here because simple lamda (func) is not serializable)
+    ///     <para>default: case-insensitive contains search</para>
+    ///     <para>1st string: list item</para>
+    ///     <para>2nd string: typed text</para>
+    /// </summary>
+    public Expression<Func<string, string, bool>> FilterRule
+    {
+        get => _filterRule;
+        set
+        {
+            if (value == null) return;
+            _filterRule = value;
+            _filterRuleCompiled = item => value.Compile()(item, Text);
+        }
+    }
+
+    /// <summary>
+    ///     Lambda-Expression to order the suggested items
+    ///     (as Expression here because simple lamda (func) is not serializable)
+    ///     <para>default: alphabetic ordering</para>
+    /// </summary>
+    public Expression<Func<string, string>> SuggestListOrderRule
+    {
+        get => _suggestListOrderRule;
+        set
+        {
+            if (value == null) return;
+            _suggestListOrderRule = value;
+            _suggestListOrderRuleCompiled = value.Compile();
+        }
+    }
+
+    #endregion
+
     #region size and position of suggest box
 
     /// <summary>
-    /// suggest-ListBox is added to parent control
-    /// (in ctor parent isn't already assigned)
+    ///     suggest-ListBox is added to parent control
+    ///     (in ctor parent isn't already assigned)
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -255,8 +257,8 @@ public class SuggestComboBox : ComboBox
     #region keystroke events
 
     /// <summary>
-    /// if the suggest-ListBox is visible some keystrokes
-    /// should behave in a custom way
+    ///     if the suggest-ListBox is visible some keystrokes
+    ///     should behave in a custom way
     /// </summary>
     /// <param name="e"></param>
     protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
@@ -297,10 +299,12 @@ public class SuggestComboBox : ComboBox
             e.SuppressKeyPress = true;
             return;
         }
+
         base.OnKeyDown(e);
     }
 
     private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
+
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         // the keysstrokes of our interest should not be processed be base class:

@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -14,19 +13,24 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-/// Generates and runs an SQL query to fetch all private identifiers contained in a dataset and commits them as a new cohort using the specified <see cref="Pipeline"/>.  Note that this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/> if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
+///     Generates and runs an SQL query to fetch all private identifiers contained in a dataset and commits them as a new
+///     cohort using the specified <see cref="Pipeline" />.  Note that this command will query an entire table, use
+///     <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration" /> if you want to generate a
+///     proper query (e.g. joining multiple tables or only fetching a subset of the table)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandExecution
 {
     private ExtractionInformation _extractionIdentifierColumn;
 
 
-    public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, ExtractionInformation extractionInformation) : this(activator)
+    public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator,
+        ExtractionInformation extractionInformation) : this(activator)
     {
         if (!extractionInformation.IsExtractionIdentifier)
             SetImpossible("Column is not marked IsExtractionIdentifier");
@@ -37,16 +41,17 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
     }
 
 
-    public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, Catalogue catalogue) : this(activator)
+    public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, Catalogue catalogue) :
+        this(activator)
     {
-        if(catalogue != null)
+        if (catalogue != null)
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
     }
 
     [UseWithObjectConstructor]
     public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator,
-
-        [DemandsInitialization("Either a Catalogue with a single IsExtractionIdentifier column or a specific ExtractionInformation to query")]
+        [DemandsInitialization(
+            "Either a Catalogue with a single IsExtractionIdentifier column or a specific ExtractionInformation to query")]
         IMapsDirectlyToDatabaseTable toQuery,
         [DemandsInitialization(Desc_ExternalCohortTableParameter)]
         ExternalCohortTable ect,
@@ -54,7 +59,8 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         string cohortName,
         [DemandsInitialization(Desc_ProjectParameter)]
         Project project,
-        [DemandsInitialization("Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
+        [DemandsInitialization(
+            "Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
         IPipeline pipeline) : base(activator, ect, cohortName, project, pipeline)
     {
         UseTripleDotSuffix = true;
@@ -63,18 +69,13 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         {
             if (toQuery is Catalogue c)
                 SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(c));
-            else
-            if (toQuery is ExtractionInformation ei)
+            else if (toQuery is ExtractionInformation ei)
                 SetExtractionIdentifierColumn(ei);
             else
-                throw new ArgumentException($"{nameof(toQuery)} must be a Catalogue or an ExtractionInformation but it was a {toQuery.GetType().Name}", nameof(toQuery));
+                throw new ArgumentException(
+                    $"{nameof(toQuery)} must be a Catalogue or an ExtractionInformation but it was a {toQuery.GetType().Name}",
+                    nameof(toQuery));
         }
-
-    }
-
-    public override string GetCommandHelp()
-    {
-        return "Creates a cohort using ALL of the patient identifiers in the referenced dataset";
     }
 
     public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator)
@@ -82,9 +83,15 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
     {
     }
 
-    public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) : this(activator)
+    public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator,
+        ExternalCohortTable externalCohortTable) : this(activator)
     {
         ExternalCohortTable = externalCohortTable;
+    }
+
+    public override string GetCommandHelp()
+    {
+        return "Creates a cohort using ALL of the patient identifiers in the referenced dataset";
     }
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -124,7 +131,8 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
     {
         if (_extractionIdentifierColumn == null)
         {
-            var cata = (ICatalogue)BasicActivator.SelectOne("Select Catalogue to create cohort from", BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+            var cata = (ICatalogue)BasicActivator.SelectOne("Select Catalogue to create cohort from",
+                BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
 
             if (cata == null)
                 return;
@@ -134,7 +142,8 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         base.Execute();
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
+        var request =
+            GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)

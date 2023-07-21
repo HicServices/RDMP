@@ -10,24 +10,22 @@ using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.ItemActivation;
 
-
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
-/// TECHNICAL: Base class for all UserControls in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.
-/// The class handles propagation of the RepositoryLocator to all Child Controls at OnLoad time.  IMPORTANT: Do not use RepositoryLocator until OnLoad or later (i.e. don't use it
-/// in the constructor of your class).  Also make sure your RDMPUserControl is hosted on an RDMPForm.
+///     TECHNICAL: Base class for all UserControls in all RDMP applications which require to know where the DataCatalogue
+///     Repository and/or DataExportManager Repository databases are stored.
+///     The class handles propagation of the RepositoryLocator to all Child Controls at OnLoad time.  IMPORTANT: Do not use
+///     RepositoryLocator until OnLoad or later (i.e. don't use it
+///     in the constructor of your class).  Also make sure your RDMPUserControl is hosted on an RDMPForm.
 /// </summary>
 [TechnicalUI]
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPUserControl, UserControl>))]
 public abstract class RDMPUserControl : UserControl, IRDMPControl
 {
-    public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
-    public IActivateItems Activator { get; private set; }
-
     protected readonly bool VisualStudioDesignMode;
 
-        
+
     //constructor
     protected RDMPUserControl()
     {
@@ -35,33 +33,37 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
         CommonFunctionality = new RDMPControlCommonFunctionality(this);
     }
 
+    public RDMPControlCommonFunctionality CommonFunctionality { get; }
+    public IActivateItems Activator { get; private set; }
+
     public virtual void SetItemActivator(IActivateItems activator)
     {
         Activator = activator;
         CommonFunctionality.SetItemActivator(activator);
     }
 
-
     /// <summary>
-    /// Called immediately before checking the object set up by the last call to <see cref="RDMPControlCommonFunctionality.AddChecks(ICheckable)"/>
-    /// </summary>
-    protected virtual void OnBeforeChecking()
-    {
-            
-    }
-
-    /// <summary>
-    /// Returns the topmost control which implements <see cref="RDMPUserControl"/>
+    ///     Returns the topmost control which implements <see cref="RDMPUserControl" />
     /// </summary>
     public IRDMPControl GetTopmostRDMPUserControl()
     {
         return GetTopmostRDMPUserControl(this, this);
     }
-        
+
     public event EventHandler<bool> UnSavedChanges;
+
     public void SetUnSavedChanges(bool b)
     {
-        UnSavedChanges?.Invoke(this,b);
+        UnSavedChanges?.Invoke(this, b);
+    }
+
+
+    /// <summary>
+    ///     Called immediately before checking the object set up by the last call to
+    ///     <see cref="RDMPControlCommonFunctionality.AddChecks(ICheckable)" />
+    /// </summary>
+    protected virtual void OnBeforeChecking()
+    {
     }
 
     private IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)

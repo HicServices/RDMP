@@ -16,30 +16,36 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Pipeline component which rotates DataTables flowing through it by 90 degrees such that the first column becomes the new headers.  Only use this if you have
-/// been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the 
-/// DataTable growing horizontally).
-/// 
-/// <para>IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component unless you set the chunk size large enough
-/// to read the entire file in one go
-/// </para>
+///     Pipeline component which rotates DataTables flowing through it by 90 degrees such that the first column becomes the
+///     new headers.  Only use this if you have
+///     been given a file in which proper headers are vertical down the first column and records are subsequent columns
+///     (i.e. adding new records results in the
+///     DataTable growing horizontally).
+///     <para>
+///         IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component
+///         unless you set the chunk size large enough
+///         to read the entire file in one go
+///     </para>
 /// </summary>
 public class Transposer : IPluginDataFlowComponent<DataTable>
 {
-    private bool _haveServedResult = false;
+    private bool _haveServedResult;
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
+        DemandType.Unspecified, true)]
     public bool MakeHeaderNamesSane { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         if (toProcess == null)
             return null;
-            
-        if(_haveServedResult)
-            throw new NotSupportedException("Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable");
-            
-        if(toProcess.Rows.Count == 0 || toProcess.Columns.Count == 0)
+
+        if (_haveServedResult)
+            throw new NotSupportedException(
+                "Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable");
+
+        if (toProcess.Rows.Count == 0 || toProcess.Columns.Count == 0)
             throw new NotSupportedException(
                 $"DataTable toProcess had {toProcess.Rows.Count} rows and {toProcess.Columns.Count} columns, thus it cannot be transposed");
 
@@ -50,17 +56,14 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public void Check(ICheckNotifier notifier)
     {
-
     }
 
     private DataTable GenerateTransposedTable(DataTable inputTable)
@@ -95,6 +98,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
                 var colValue = inputTable.Rows[cCount][rCount].ToString();
                 newRow[cCount + 1] = colValue;
             }
+
             outputTable.Rows.Add(newRow);
         }
 

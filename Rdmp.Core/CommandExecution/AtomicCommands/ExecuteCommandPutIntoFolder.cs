@@ -16,24 +16,24 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandPutIntoFolder: BasicCommandExecution
+public class ExecuteCommandPutIntoFolder : BasicCommandExecution
 {
-    private readonly IHasFolder[] _toMove;
     private readonly string _folder;
-        
+    private readonly IHasFolder[] _toMove;
+
     public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, IHasFolderCombineable cmd, string targetModel)
-        :this(activator,new []{cmd.Folderable},targetModel)
+        : this(activator, new[] { cmd.Folderable }, targetModel)
     {
-            
     }
+
     public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, ManyCataloguesCombineable cmd, string targetModel)
         : this(activator, cmd.Catalogues, targetModel)
     {
-            
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, IHasFolder[] toMove, string folder) : base(activator)
+    public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, IHasFolder[] toMove, string folder) :
+        base(activator)
     {
         _folder = folder;
         _toMove = toMove;
@@ -46,14 +46,15 @@ public class ExecuteCommandPutIntoFolder: BasicCommandExecution
 
         return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
     }
+
     public override void Execute()
     {
         base.Execute();
 
         var f = _folder;
-        if(f == null)
+        if (f == null)
         {
-            if(BasicActivator.IsInteractive)
+            if (BasicActivator.IsInteractive)
             {
                 // if theres a single current value for the folder
                 // of these objects (i.e. they are only operating on one item
@@ -65,7 +66,8 @@ public class ExecuteCommandPutIntoFolder: BasicCommandExecution
                 if (!BasicActivator.TypeText(new DialogArgs
                     {
                         WindowTitle = "Folder",
-                        TaskDescription = "Enter a new virtual folder for the object.  Folder names should be lower case and start with a backslash ('\\')",
+                        TaskDescription =
+                            "Enter a new virtual folder for the object.  Folder names should be lower case and start with a backslash ('\\')",
                         EntryLabel = "New Folder"
                     }, 500, oldValue, out f, false))
                     return;

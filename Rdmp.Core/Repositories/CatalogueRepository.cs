@@ -32,47 +32,24 @@ using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Repositories;
 
-/// <inheritdoc cref="ICatalogueRepository"/>
+/// <inheritdoc cref="ICatalogueRepository" />
 public class CatalogueRepository : TableRepository, ICatalogueRepository
 {
-    /// <inheritdoc/>
-    public IAggregateForcedJoinManager AggregateForcedJoinManager { get; private set; }
-
-    /// <inheritdoc/>
-    public IGovernanceManager GovernanceManager { get; private set; }
-
-    /// <inheritdoc/>
-    public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
-
-    /// <inheritdoc/>
-    public IJoinManager JoinManager { get; set; }
-
-    /// <inheritdoc/>
-    public MEF MEF { get; set; }
-
-    /// <inheritdoc/>
-    public CommentStore CommentStore { get; set; }
-
-    /// <inheritdoc/>
-    public ICohortContainerManager CohortContainerManager { get; private set; }
-
-    public IEncryptionManager EncryptionManager { get; private set; }
-
-    public IPluginManager PluginManager { get; private set; }
-
     /// <summary>
-    /// Flag used by Startup processes to determine whether the <see cref="CommentStore"/> should be loaded with documentation from the xmldoc files.
+    ///     Flag used by Startup processes to determine whether the <see cref="CommentStore" /> should be loaded with
+    ///     documentation from the xmldoc files.
     /// </summary>
     public static bool SuppressHelpLoading;
 
-    /// <inheritdoc/>
-    public IFilterManager FilterManager { get; private set; }
+    private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
 
     /// <summary>
-    /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
+    ///     Sets up an <see cref="IRepository" /> which connects to the database <paramref name="catalogueConnectionString" />
+    ///     to fetch/create <see cref="DatabaseEntity" /> objects.
     /// </summary>
     /// <param name="catalogueConnectionString"></param>
-    public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
+    public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString) : base(null,
+        catalogueConnectionString)
     {
         AggregateForcedJoinManager = new AggregateForcedJoin(this);
         GovernanceManager = new GovernanceManager(this);
@@ -87,71 +64,121 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         CommentStore = new CommentStoreWithKeywords();
 
         ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
-            
+
         //Shortcuts to improve performance of ConstructEntity (avoids reflection)
-        Constructors.Add(typeof(Catalogue),(rep, r) => new Catalogue((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(CohortAggregateContainer),(rep,r)=>new CohortAggregateContainer((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(CohortIdentificationConfiguration),(rep,r)=>new CohortIdentificationConfiguration((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(GovernanceDocument),(rep,r)=>new GovernanceDocument((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(GovernancePeriod),(rep,r)=>new GovernancePeriod((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(StandardRegex),(rep,r)=>new StandardRegex((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AnyTableSqlParameter),(rep,r)=>new AnyTableSqlParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Curation.Data.Plugin),(rep,r)=>new Curation.Data.Plugin((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ANOTable),(rep,r)=>new ANOTable((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateConfiguration),(rep,r)=>new AggregateConfiguration((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateContinuousDateAxis),(rep,r)=>new AggregateContinuousDateAxis((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateDimension),(rep,r)=>new AggregateDimension((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateFilter),(rep,r)=>new AggregateFilter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateFilterContainer),(rep,r)=>new AggregateFilterContainer((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateFilterParameter),(rep,r)=>new AggregateFilterParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(CatalogueItem),(rep,r)=>new CatalogueItem((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ColumnInfo),(rep,r)=>new ColumnInfo((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(JoinableCohortAggregateConfiguration),(rep,r)=>new JoinableCohortAggregateConfiguration((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(JoinableCohortAggregateConfigurationUse),(rep,r)=>new JoinableCohortAggregateConfigurationUse((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ExternalDatabaseServer),(rep,r)=>new ExternalDatabaseServer((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ExtractionFilter),(rep,r)=>new ExtractionFilter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ExtractionFilterParameter),(rep,r)=>new ExtractionFilterParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ExtractionInformation),(rep,r)=>new ExtractionInformation((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ExtractionFilterParameterSet),(rep,r)=>new ExtractionFilterParameterSet((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(LoadMetadata),(rep,r)=>new LoadMetadata((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ExtractionFilterParameterSetValue),(rep,r)=>new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(LoadModuleAssembly),(rep,r)=>new LoadModuleAssembly((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(LoadProgress),(rep,r)=>new LoadProgress((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Favourite),(rep,r)=>new Favourite((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Pipeline),(rep,r)=>new Pipeline((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Lookup),(rep,r)=>new Lookup((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(AggregateTopX),(rep,r)=>new AggregateTopX((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(PipelineComponent),(rep,r)=>new PipelineComponent((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(LookupCompositeJoinInfo),(rep,r)=>new LookupCompositeJoinInfo((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(PipelineComponentArgument),(rep,r)=>new PipelineComponentArgument((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(PreLoadDiscardedColumn),(rep,r)=>new PreLoadDiscardedColumn((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ProcessTask),(rep,r)=>new ProcessTask((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(DashboardLayout),(rep,r)=>new DashboardLayout((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ProcessTaskArgument),(rep,r)=>new ProcessTaskArgument((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(DashboardControl),(rep,r)=>new DashboardControl((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(DataAccessCredentials),(rep,r)=>new DataAccessCredentials((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(SupportingDocument),(rep,r)=>new SupportingDocument((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(DashboardObjectUse),(rep,r)=>new DashboardObjectUse((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(SupportingSQLTable),(rep,r)=>new SupportingSQLTable((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(TableInfo),(rep,r)=>new TableInfo((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(RemoteRDMP),(rep,r)=>new RemoteRDMP((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ObjectImport),(rep,r)=>new ObjectImport((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ObjectExport),(rep,r)=>new ObjectExport((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(CacheProgress),(rep,r)=>new CacheProgress((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(ConnectionStringKeyword),(rep,r)=>new ConnectionStringKeyword((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(WindowLayout),(rep,r)=>new WindowLayout((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(PermissionWindow),(rep,r)=>new PermissionWindow((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Catalogue), (rep, r) => new Catalogue((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(CohortAggregateContainer),
+            (rep, r) => new CohortAggregateContainer((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(CohortIdentificationConfiguration),
+            (rep, r) => new CohortIdentificationConfiguration((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(GovernanceDocument), (rep, r) => new GovernanceDocument((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(GovernancePeriod), (rep, r) => new GovernancePeriod((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(StandardRegex), (rep, r) => new StandardRegex((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AnyTableSqlParameter),
+            (rep, r) => new AnyTableSqlParameter((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Curation.Data.Plugin),
+            (rep, r) => new Curation.Data.Plugin((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ANOTable), (rep, r) => new ANOTable((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateConfiguration),
+            (rep, r) => new AggregateConfiguration((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateContinuousDateAxis),
+            (rep, r) => new AggregateContinuousDateAxis((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateDimension), (rep, r) => new AggregateDimension((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateFilter), (rep, r) => new AggregateFilter((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateFilterContainer),
+            (rep, r) => new AggregateFilterContainer((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateFilterParameter),
+            (rep, r) => new AggregateFilterParameter((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(CatalogueItem), (rep, r) => new CatalogueItem((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ColumnInfo), (rep, r) => new ColumnInfo((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(JoinableCohortAggregateConfiguration),
+            (rep, r) => new JoinableCohortAggregateConfiguration((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(JoinableCohortAggregateConfigurationUse),
+            (rep, r) => new JoinableCohortAggregateConfigurationUse((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ExternalDatabaseServer),
+            (rep, r) => new ExternalDatabaseServer((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ExtractionFilter), (rep, r) => new ExtractionFilter((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ExtractionFilterParameter),
+            (rep, r) => new ExtractionFilterParameter((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ExtractionInformation),
+            (rep, r) => new ExtractionInformation((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ExtractionFilterParameterSet),
+            (rep, r) => new ExtractionFilterParameterSet((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(LoadMetadata), (rep, r) => new LoadMetadata((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ExtractionFilterParameterSetValue),
+            (rep, r) => new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(LoadModuleAssembly), (rep, r) => new LoadModuleAssembly((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(LoadProgress), (rep, r) => new LoadProgress((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Favourite), (rep, r) => new Favourite((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Pipeline), (rep, r) => new Pipeline((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Lookup), (rep, r) => new Lookup((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(AggregateTopX), (rep, r) => new AggregateTopX((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(PipelineComponent), (rep, r) => new PipelineComponent((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(LookupCompositeJoinInfo),
+            (rep, r) => new LookupCompositeJoinInfo((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(PipelineComponentArgument),
+            (rep, r) => new PipelineComponentArgument((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(PreLoadDiscardedColumn),
+            (rep, r) => new PreLoadDiscardedColumn((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ProcessTask), (rep, r) => new ProcessTask((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(DashboardLayout), (rep, r) => new DashboardLayout((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ProcessTaskArgument),
+            (rep, r) => new ProcessTaskArgument((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(DashboardControl), (rep, r) => new DashboardControl((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(DataAccessCredentials),
+            (rep, r) => new DataAccessCredentials((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(SupportingDocument), (rep, r) => new SupportingDocument((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(DashboardObjectUse), (rep, r) => new DashboardObjectUse((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(SupportingSQLTable), (rep, r) => new SupportingSQLTable((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(TableInfo), (rep, r) => new TableInfo((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(RemoteRDMP), (rep, r) => new RemoteRDMP((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ObjectImport), (rep, r) => new ObjectImport((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ObjectExport), (rep, r) => new ObjectExport((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(CacheProgress), (rep, r) => new CacheProgress((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(ConnectionStringKeyword),
+            (rep, r) => new ConnectionStringKeyword((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(WindowLayout), (rep, r) => new WindowLayout((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(PermissionWindow), (rep, r) => new PermissionWindow((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(TicketingSystemConfiguration),
+            (rep, r) => new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
+    public IAggregateForcedJoinManager AggregateForcedJoinManager { get; }
+
+    /// <inheritdoc />
+    public IGovernanceManager GovernanceManager { get; }
+
+    /// <inheritdoc />
+    public ITableInfoCredentialsManager TableInfoCredentialsManager { get; }
+
+    /// <inheritdoc />
+    public IJoinManager JoinManager { get; set; }
+
+    /// <inheritdoc />
+    public MEF MEF { get; set; }
+
+    /// <inheritdoc />
+    public CommentStore CommentStore { get; set; }
+
+    /// <inheritdoc />
+    public ICohortContainerManager CohortContainerManager { get; }
+
+    public IEncryptionManager EncryptionManager { get; }
+
+    public IPluginManager PluginManager { get; }
+
+    /// <inheritdoc />
+    public IFilterManager FilterManager { get; }
+
+    /// <inheritdoc />
     public LogManager GetDefaultLogManager()
     {
         return new LogManager(GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
     {
         var type = parent.GetType();
@@ -162,7 +189,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         return GetReferencesTo<AnyTableSqlParameter>(parent);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public TicketingSystemConfiguration GetTicketingSystem()
     {
         var configuration = GetAllObjects<TicketingSystemConfiguration>().Where(t => t.IsActive).ToArray();
@@ -177,36 +204,22 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
             $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}");
     }
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        if (Constructors.TryGetValue(t, out var constructor))
-            return constructor(this, reader);
-
-        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
-    }
-
-    private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
     public override T[] GetAllObjects<T>()
     {
-        return _caches.GetOrAdd(typeof(T),t=> new RowVerCache<T>(this))
+        return _caches.GetOrAdd(typeof(T), t => new RowVerCache<T>(this))
             .GetAllObjects<T>();
     }
 
-    public override T[] GetAllObjectsNoCache<T>()
-    {
-        return base.GetAllObjects<T>();
-    }
 
-
-    public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
+    public ExternalDatabaseServer[] GetAllDatabases<T>() where T : IPatcher, new()
     {
         IPatcher p = new T();
-        return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(p)).ToArray();
+        return GetAllObjects<ExternalDatabaseServer>().Where(s => s.WasCreatedBy(p)).ToArray();
     }
 
 
     /// <summary>
-    /// Returns all objects of Type T which reference the supplied object <paramref name="o"/>
+    ///     Returns all objects of Type T which reference the supplied object <paramref name="o" />
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -234,7 +247,6 @@ select 0", con.Connection, con.Transaction))
 
     public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
     {
-
         return GetAllObjects<Catalogue>(
             $@"Where
   Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
@@ -246,7 +258,6 @@ select 0", con.Connection, con.Transaction))
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
     {
-
         if (field == PermissableDefaults.None)
             return null;
 
@@ -262,7 +273,9 @@ select 0", con.Connection, con.Transaction))
 
         var executeScalar = cmd.ExecuteScalar();
 
-        return executeScalar == DBNull.Value ? null : GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
+        return executeScalar == DBNull.Value
+            ? null
+            : GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
     }
 
     public void ClearDefault(PermissableDefaults toDelete)
@@ -273,12 +286,12 @@ select 0", con.Connection, con.Transaction))
         Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
             new Dictionary<string, object>
             {
-                {"DefaultType",ServerDefaults.StringExpansionDictionary[toDelete]}
-            },false);
+                { "DefaultType", ServerDefaults.StringExpansionDictionary[toDelete] }
+            }, false);
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
@@ -297,39 +310,6 @@ select 0", con.Connection, con.Transaction))
             InsertNewValue(toChange, externalDatabaseServer);
         else
             UpdateExistingValue(toChange, externalDatabaseServer);
-    }
-
-    private void UpdateExistingValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
-    {
-        if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", nameof(toChange));
-
-        var sql =
-            "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
-
-        var affectedRows = Update(sql, new Dictionary<string, object>
-        {
-            {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
-            {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
-        });
-
-        if (affectedRows != 1)
-            throw new Exception(
-                $"We were asked to update default for {toChange} but the query '{sql}' did not result in 1 affected rows (it resulted in {affectedRows})");
-    }
-
-    private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
-    {
-        if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", nameof(toChange));
-
-        Insert(
-            "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",
-            new Dictionary<string, object>
-            {
-                {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
-                {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
-            });
     }
 
     public void SetEncryptionKeyPath(string path)
@@ -367,23 +347,71 @@ select 0", con.Connection, con.Transaction))
             throw new Exception($"Delete from PasswordEncryptionKeyLocation resulted in {affectedRows}, expected 1");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj)
     {
         return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName)
             .Where(r => r.IsReferenceTo(obj));
     }
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName)
     {
         return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName);
     }
-    /// <inheritdoc/>
+
+    /// <inheritdoc />
     public IEnumerable<ExtendedProperty> GetExtendedProperties(IMapsDirectlyToDatabaseTable obj)
     {
         // First pass use SQL to pull only those with ReferencedObjectID ID that match our object
         return GetAllObjectsWhere<ExtendedProperty>("ReferencedObjectID", obj.ID)
             // Second pass make sure the object/repo match
             .Where(r => r.IsReferenceTo(obj));
+    }
+
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
+    {
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
+
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
+    }
+
+    public override T[] GetAllObjectsNoCache<T>()
+    {
+        return base.GetAllObjects<T>();
+    }
+
+    private void UpdateExistingValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+    {
+        if (toChange == PermissableDefaults.None)
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
+
+        var sql =
+            "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
+
+        var affectedRows = Update(sql, new Dictionary<string, object>
+        {
+            { "DefaultType", ServerDefaults.StringExpansionDictionary[toChange] },
+            { "ExternalDatabaseServer_ID", externalDatabaseServer.ID }
+        });
+
+        if (affectedRows != 1)
+            throw new Exception(
+                $"We were asked to update default for {toChange} but the query '{sql}' did not result in 1 affected rows (it resulted in {affectedRows})");
+    }
+
+    private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+    {
+        if (toChange == PermissableDefaults.None)
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
+
+        Insert(
+            "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",
+            new Dictionary<string, object>
+            {
+                { "DefaultType", ServerDefaults.StringExpansionDictionary[toChange] },
+                { "ExternalDatabaseServer_ID", externalDatabaseServer.ID }
+            });
     }
 }

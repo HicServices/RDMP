@@ -13,7 +13,8 @@ using Newtonsoft.Json.Serialization;
 namespace Rdmp.Core.ReusableLibraryCode.Serialization;
 
 /// <summary>
-/// Special JsonConvert resolver that allows you to ignore properties.  See https://stackoverflow.com/a/13588192/1037948
+///     Special JsonConvert resolver that allows you to ignore properties.  See
+///     https://stackoverflow.com/a/13588192/1037948
 /// </summary>
 public class IgnorableSerializerContractResolver : DefaultContractResolver
 {
@@ -25,7 +26,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     }
 
     /// <summary>
-    /// Explicitly ignore the given property(s) for the given type
+    ///     Explicitly ignore the given property(s) for the given type
     /// </summary>
     /// <param name="type"></param>
     /// <param name="propertyName">one or more properties to ignore.  Leave empty to ignore the type entirely.</param>
@@ -34,14 +35,11 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
         // start bucket if DNE
         if (!Ignores.ContainsKey(type)) Ignores[type] = new HashSet<string>();
 
-        foreach (var prop in propertyName)
-        {
-            Ignores[type].Add(prop);
-        }
+        foreach (var prop in propertyName) Ignores[type].Add(prop);
     }
 
     /// <summary>
-    /// Is the given property for the given type ignored?
+    ///     Is the given property for the given type ignored?
     /// </summary>
     /// <param name="type"></param>
     /// <param name="propertyName"></param>
@@ -57,7 +55,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     }
 
     /// <summary>
-    /// The decision logic goes here
+    ///     The decision logic goes here
     /// </summary>
     /// <param name="member"></param>
     /// <param name="memberSerialization"></param>
@@ -68,10 +66,9 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
 
         if (IsIgnored(property.DeclaringType, property.PropertyName)
             // need to check basetype as well for EF -- @per comment by user576838 - LT: but it can be null, so check that too!
-            || (property.DeclaringType.BaseType != null && IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
-        {
+            || (property.DeclaringType.BaseType != null &&
+                IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
             property.ShouldSerialize = instance => { return false; };
-        }
 
         return property;
     }

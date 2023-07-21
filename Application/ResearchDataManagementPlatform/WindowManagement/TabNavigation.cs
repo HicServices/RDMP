@@ -10,18 +10,18 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Records the fact that the user visited a specific <see cref="DockContent"/> (Tab)
+///     Records the fact that the user visited a specific <see cref="DockContent" /> (Tab)
 /// </summary>
-public class TabNavigation: INavigation
+public class TabNavigation : INavigation
 {
-    public DockContent Tab { get; }
-
-    public bool IsAlive => Tab.ParentForm != null;
-
     public TabNavigation(DockContent tab)
     {
         Tab = tab;
     }
+
+    public DockContent Tab { get; }
+
+    public bool IsAlive => Tab.ParentForm != null;
 
     public void Activate(ActivateItems activateItems)
     {
@@ -32,6 +32,7 @@ public class TabNavigation: INavigation
     {
         Tab.Close();
     }
+
     public override string ToString()
     {
         return Tab.TabText;
@@ -48,6 +49,6 @@ public class TabNavigation: INavigation
         unchecked
         {
             return -2031380020 + EqualityComparer<DockContent>.Default.GetHashCode(Tab);
-        }            
+        }
     }
 }

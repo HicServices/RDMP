@@ -17,7 +17,7 @@ internal class CacheProgressMenu : RDMPContextMenuStrip
         : base(args, cacheProgress)
     {
         Add(new ExecuteCommandEditCacheProgress(args.ItemActivator, cacheProgress));
-                        
-        ReBrandActivateAs("Execute Caching",RDMPConcept.CacheProgress,OverlayKind.Execute);
+
+        ReBrandActivateAs("Execute Caching", RDMPConcept.CacheProgress, OverlayKind.Execute);
     }
 }

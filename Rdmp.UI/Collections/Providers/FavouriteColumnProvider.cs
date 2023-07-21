@@ -14,8 +14,9 @@ using Rdmp.UI.ItemActivation;
 namespace Rdmp.UI.Collections.Providers;
 
 /// <summary>
-/// Handles creating the 'Favourite' column in <see cref="TreeListView"/>.  This column depicts whether a given RDMP object is a favourite
-/// of the user (see <see cref="Favourite"/>).
+///     Handles creating the 'Favourite' column in <see cref="TreeListView" />.  This column depicts whether a given RDMP
+///     object is a favourite
+///     of the user (see <see cref="Favourite" />).
 /// </summary>
 public class FavouriteColumnProvider
 {
@@ -23,12 +24,11 @@ public class FavouriteColumnProvider
     private readonly TreeListView _tlv;
     private OLVColumn _olvFavourite;
 
-    private Bitmap _starFull;
-    private Bitmap _starHollow;
+    private readonly Bitmap _starFull;
+    private readonly Bitmap _starHollow;
 
 
-
-    public FavouriteColumnProvider(IActivateItems activator,TreeListView tlv)
+    public FavouriteColumnProvider(IActivateItems activator, TreeListView tlv)
     {
         _activator = activator;
         _tlv = tlv;
@@ -78,7 +78,6 @@ public class FavouriteColumnProvider
             }
             catch (ArgumentException)
             {
-
             }
         }
     }
@@ -91,6 +90,7 @@ public class FavouriteColumnProvider
 
         return null;
     }
+
     private object FavouriteAspectGetter(object rowobject)
     {
         if (rowobject is DatabaseEntity o)
@@ -99,5 +99,4 @@ public class FavouriteColumnProvider
 
         return null;
     }
-
 }

@@ -14,22 +14,27 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.UI.Collections.Providers;
 
 /// <summary>
-/// Records and persists a users access of an <see cref="Object"/> including the time (<see cref="Date"/>) it was accessed
+///     Records and persists a users access of an <see cref="Object" /> including the time (<see cref="Date" />) it was
+///     accessed
 /// </summary>
 public class HistoryEntry : IMasqueradeAs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; private set; }
-    public DateTime Date { get; private set; }
-
     private HistoryEntry()
     {
-            
     }
 
     public HistoryEntry(IMapsDirectlyToDatabaseTable o, DateTime date)
     {
         Object = o;
         Date = date;
+    }
+
+    public IMapsDirectlyToDatabaseTable Object { get; private set; }
+    public DateTime Date { get; private set; }
+
+    public object MasqueradingAs()
+    {
+        return Object;
     }
 
     public string Serialize()
@@ -50,9 +55,9 @@ public class HistoryEntry : IMasqueradeAs
             var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
 
 
-            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString,locator).Single();
+            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString, locator).Single();
         }
-        catch (PersistenceException )
+        catch (PersistenceException)
         {
             return null;
         }
@@ -71,16 +76,11 @@ public class HistoryEntry : IMasqueradeAs
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((HistoryEntry) obj);
+        return Equals((HistoryEntry)obj);
     }
 
     public override int GetHashCode()
     {
         return Object != null ? Object.GetHashCode() : 0;
-    }
-
-    public object MasqueradingAs()
-    {
-        return Object;
     }
 }

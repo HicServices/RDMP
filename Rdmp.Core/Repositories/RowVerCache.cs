@@ -15,34 +15,39 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Caches the results of calls to GetAllObjects of <see cref="TableRepository"/> using a mixture of
-/// Sql Server 'Change Tracking' and a RowVer column.  This reduces the number of objects that need to be
-/// constructed / updated when an RDMP platform database stores hundreds of thousands of objects.
+///     Caches the results of calls to GetAllObjects of <see cref="TableRepository" /> using a mixture of
+///     Sql Server 'Change Tracking' and a RowVer column.  This reduces the number of objects that need to be
+///     constructed / updated when an RDMP platform database stores hundreds of thousands of objects.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
+public class RowVerCache<T> : IRowVerCache where T : IMapsDirectlyToDatabaseTable
 {
     private readonly TableRepository _repository;
 
     private List<T> _cachedObjects = new();
-    private object _oLockCachedObjects = new();
-
-    private byte[] _maxRowVer;
     public long _changeTracking;
 
-    /// <summary>
-    /// True if the caching system is broken for some reason (e.g. user lacks certain permissions)
-    /// </summary>
-    public bool Broken => BrokenReason != null;
-
-    /// <summary>
-    /// The error that triggered <see cref="Broken"/> (and ended use of the object caching strategy)
-    /// </summary>
-    public SqlException BrokenReason { get; set; }
+    private byte[] _maxRowVer;
+    private readonly object _oLockCachedObjects = new();
 
     public RowVerCache(TableRepository repository)
     {
         _repository = repository;
+    }
+
+    /// <summary>
+    ///     True if the caching system is broken for some reason (e.g. user lacks certain permissions)
+    /// </summary>
+    public bool Broken => BrokenReason != null;
+
+    /// <summary>
+    ///     The error that triggered <see cref="Broken" /> (and ended use of the object caching strategy)
+    /// </summary>
+    public SqlException BrokenReason { get; set; }
+
+    public T1[] GetAllObjects<T1>()
+    {
+        return GetAllObjects().Cast<T1>().ToArray();
     }
 
     public List<T> GetAllObjects()
@@ -61,10 +66,10 @@ public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
 
             // Get deleted objects
             /*
-                SELECT  
+                SELECT
     CT.ID
-FROM  
-    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
+FROM
+    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT
     WHERE SYS_CHANGE_OPERATION = 'D'
 
     */
@@ -79,15 +84,16 @@ FROM
 
                 using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
                 using (var r = cmd.ExecuteReader())
+                {
                     while (r.Read())
                     {
                         //it might have been added and deleted by someone else and we never saw it
-                        var d = _cachedObjects.SingleOrDefault(o => o.ID == (int) r["ID"]);
+                        var d = _cachedObjects.SingleOrDefault(o => o.ID == (int)r["ID"]);
 
                         if (d != null)
                             _cachedObjects.Remove(d);
-
                     }
+                }
             }
 
             //get new objects
@@ -123,33 +129,29 @@ FROM
         //get the latest RowVer
         using var con = _repository.GetConnection();
         var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
-        if (table.Exists() && table.DiscoverColumns().Any(c=>c.GetRuntimeName().Equals("RowVer",StringComparison.InvariantCultureIgnoreCase)))
+        if (table.Exists() && table.DiscoverColumns()
+                .Any(c => c.GetRuntimeName().Equals("RowVer", StringComparison.InvariantCultureIgnoreCase)))
             using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
             {
                 var result = cmd.ExecuteScalar();
                 _maxRowVer = result == DBNull.Value ? null : (byte[])result;
             }
-                    
+
 
         using (var cmd =
                _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
         {
-
             var result = cmd.ExecuteScalar();
-            if(result != DBNull.Value)
+            if (result != DBNull.Value)
                 _changeTracking = Convert.ToInt64(result);
         }
     }
+
     private static string ByteArrayToString(IReadOnlyCollection<byte> ba)
     {
-        var hex = new StringBuilder("0x",2+ba.Count * 2);
+        var hex = new StringBuilder("0x", 2 + ba.Count * 2);
         foreach (var b in ba)
             hex.Append($"{b:x2}");
         return hex.ToString();
-    }
-
-    public T1[] GetAllObjects<T1>()
-    {
-        return GetAllObjects().Cast<T1>().ToArray();
     }
 }

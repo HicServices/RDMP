@@ -16,21 +16,22 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 
 /// <summary>
-/// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
+///     PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
 /// </summary>
-public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
+public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
 {
-    private Stopwatch sw = new();
-    private int totalRecordsProcessed = 0;
-    private int totalDuplicatesFound = 0;
     private readonly Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
+    private readonly Stopwatch sw = new();
+    private int totalDuplicatesFound;
+    private int totalRecordsProcessed;
 
     /// <summary>
-    /// Turns off notify messages about number of duplicates found/replaced
+    ///     Turns off notify messages about number of duplicates found/replaced
     /// </summary>
     public bool NoLogging { get; set; }
 
-    public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         sw.Start();
 
@@ -42,7 +43,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
             totalRecordsProcessed++;
             var hashOfItems = GetHashCode(row.ItemArray);
 
-            if (_uniqueHashesSeen.TryGetValue(hashOfItems,out var collisions))
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems, out var collisions))
             {
                 //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
                 if (collisions.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
@@ -64,11 +65,16 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 
         sw.Stop();
 
-        if(!NoLogging)
+        if (!NoLogging)
         {
-            listener.OnProgress(this, new ProgressEventArgs("Evaluating For Duplicates", new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
-            listener.OnProgress(this,new ProgressEventArgs("Discarding Duplicates",new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records),sw.Elapsed));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Evaluating For Duplicates",
+                    new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Discarding Duplicates",
+                    new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records), sw.Elapsed));
         }
+
         return toReturn;
     }
 
@@ -78,21 +84,19 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public void Check(ICheckNotifier notifier)
     {
-
     }
 
     /// <summary>
-    /// Gets the hash code for the contents of the array since the default hash code
-    /// for an array is unique even if the contents are the same.
+    ///     Gets the hash code for the contents of the array since the default hash code
+    ///     for an array is unique even if the contents are the same.
     /// </summary>
     /// <remarks>
-    /// See Jon Skeet (C# MVP) response in the StackOverflow thread
-    /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+    ///     See Jon Skeet (C# MVP) response in the StackOverflow thread
+    ///     http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>
     /// <returns>The hash code for the values in the array.</returns>
@@ -100,23 +104,17 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     {
         // if non-null array then go into unchecked block to avoid overflow
         if (array != null)
-        {
             unchecked
             {
                 var hash = 17;
 
                 // get hash code for all items in array
-                foreach (var item in array)
-                {
-                    hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
-                }
+                foreach (var item in array) hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
 
                 return hash;
             }
-        }
 
         // if null, hash code is zero
         return 0;
     }
-
 }

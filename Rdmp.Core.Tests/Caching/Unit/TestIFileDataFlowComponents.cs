@@ -52,7 +52,8 @@ public class MoveToDirectory : IFileDataFlowDestination
     }
 }
 
-public class FilesystemCacheDestination : IFileDataFlowDestination, IPipelineRequirement<CacheProgress>, IPipelineRequirement<DirectoryInfo>
+public class FilesystemCacheDestination : IFileDataFlowDestination, IPipelineRequirement<CacheProgress>,
+    IPipelineRequirement<DirectoryInfo>
 {
     public CacheProgress CacheProgress { get; set; }
     public DirectoryInfo CacheDirectory { get; set; }
@@ -72,8 +73,9 @@ public class FilesystemCacheDestination : IFileDataFlowDestination, IPipelineReq
         // ? where does the date come from?
         // either going to be CacheFillProgress or CacheFillProgress + period, depending on fetch logic
         if (CacheProgress.CacheFillProgress == null)
-            throw new Exception("Should throw, but currently on first cache it is valid for the CacheFIllProgress to be null");
-            
+            throw new Exception(
+                "Should throw, but currently on first cache it is valid for the CacheFIllProgress to be null");
+
 
         return toProcess;
     }
@@ -92,5 +94,4 @@ public class FilesystemCacheDestination : IFileDataFlowDestination, IPipelineReq
     {
         CacheDirectory = cacheDirectory;
     }
-
 }

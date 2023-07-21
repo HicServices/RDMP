@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using System.Linq;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
@@ -42,7 +42,6 @@ public class ExecuteCommandSimilarTests : CommandCliTests
 
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
-
     }
 
     [Test]
@@ -62,6 +61,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
     }
+
     [Test]
     public void FindDifferent_ColumnInfosDiffer_OnCollation()
     {

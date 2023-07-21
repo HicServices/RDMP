@@ -19,7 +19,7 @@ internal class BoundDateTest
     [Test]
     public void Validate_IsValid_Succeeds()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
 
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
@@ -32,22 +32,22 @@ internal class BoundDateTest
     [Test]
     public void Validate_DateIsSame_Succeeds()
     {
-        var b = (BoundDate) Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
 
         Assert.IsTrue(b.Inclusive);
 
 
         var cols = new object[] { DateTime.Parse("2007-10-09 00:00:00.0000000") };
-        var names = new string[]{"dob2"};
+        var names = new[] { "dob2" };
         b.LowerFieldName = "dob2";
 
-        Assert.IsNull(b.Validate(DateTime.Parse("2007-10-09 00:00:00.0000000"),cols,names));
+        Assert.IsNull(b.Validate(DateTime.Parse("2007-10-09 00:00:00.0000000"), cols, names));
     }
 
     [Test]
     public void Validate_IsInvalid_ThrowsException()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
 
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
@@ -59,7 +59,7 @@ internal class BoundDateTest
     [Test]
     public void Validate_IsInvalid_ThrowsExceptionWithConsequence()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Consequence = Consequence.InvalidatesRow;
 
         b.LowerFieldName = "dob";
@@ -67,29 +67,27 @@ internal class BoundDateTest
 
         var result = CallValidateOnInvalidData("admission_date", b);
 
-        if(result == null)
+        if (result == null)
             Assert.Fail("Expected validation exception, but none came");
 
 
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(result.SourceConstraint.Consequence, Consequence.InvalidatesRow);
-            
-            
     }
 
 
     [Test]
     public void Validate_IsValidButNull_Succeeds()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
 
         b.UpperFieldName = "appointmentDate";
 
-        var cols = new object[] { DBNull.Value};
+        var cols = new object[] { DBNull.Value };
 
-        var names = new string[]{"appointmentDate"};
+        var names = new[] { "appointmentDate" };
 
-        b.Validate(null,cols,names);
+        b.Validate(null, cols, names);
     }
 
 
@@ -104,7 +102,6 @@ internal class BoundDateTest
         var d = TestConstants.AdmissionDateOccursBeforeDob;
         return CallValidate(targetProperty, b, d);
     }
-
 
 
     private static ValidationFailure CallValidate(string targetProperty, BoundDate b, Dictionary<string, object> d)

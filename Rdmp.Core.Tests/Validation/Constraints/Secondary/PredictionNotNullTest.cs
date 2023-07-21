@@ -12,14 +12,12 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 [Category("Unit")]
 internal class PredictionNotNullTest
 {
-
     [Test]
     public void Validate_ValueNotNullAndRelatedValueNotNull_Succeeds()
     {
-
         var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
         var otherCols = new object[] { "not null" };
-        var otherColsNames = new string[] { "someColumn" };
+        var otherColsNames = new[] { "someColumn" };
         Assert.IsNull(p.Validate("this is not null", otherCols, otherColsNames));
     }
 
@@ -28,7 +26,7 @@ internal class PredictionNotNullTest
     {
         var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
         var otherCols = new object[] { null };
-        var otherColsNames = new string[] { "someColumn" };
+        var otherColsNames = new[] { "someColumn" };
         Assert.NotNull(p.Validate("this is not null", otherCols, otherColsNames));
     }
 
@@ -37,8 +35,9 @@ internal class PredictionNotNullTest
     {
         var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
         var otherCols = new object[] { "not null" };
-        var otherColsNames = new string[] { "someColumn" };
-        StringAssert.StartsWith("Nullness did not match, when one value is null, the other mus", p.Validate(null, otherCols, otherColsNames)?.Message);
+        var otherColsNames = new[] { "someColumn" };
+        StringAssert.StartsWith("Nullness did not match, when one value is null, the other mus",
+            p.Validate(null, otherCols, otherColsNames)?.Message);
     }
 
     [Test]
@@ -46,8 +45,7 @@ internal class PredictionNotNullTest
     {
         var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
         var otherCols = new object[] { null };
-        var otherColsNames = new string[] { "someColumn" };
+        var otherColsNames = new[] { "someColumn" };
         Assert.IsNull(p.Validate(null, otherCols, otherColsNames));
     }
-
 }

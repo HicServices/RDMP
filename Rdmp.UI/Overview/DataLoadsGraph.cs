@@ -17,7 +17,6 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
-using Rdmp.Core.Logging.PastEvents;
 using Rdmp.UI.Collections;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
@@ -27,8 +26,9 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Overview;
 
 /// <summary>
-/// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have
-/// not configured any data loads yet then this control will be blank.
+///     Displays a graph showing how many of your data loads passed the last time they were run and which data loads are
+///     currently failing.  If you have
+///     not configured any data loads yet then this control will be blank.
 /// </summary>
 public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 {
@@ -46,11 +46,53 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 
         olvViewLog.AspectGetter += s => "View Log";
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvName, new Guid("4a651e11-62f5-4d8f-8fe5-4db488ee7f3a"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvLastRun, new Guid("1aadf2e8-798d-4e85-8abc-7f45edb839b7"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvCategory, new Guid("406173bc-44a0-40b7-8bd1-d01a214c277d"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvStatus, new Guid("8c5cbcd2-9f06-4e24-9521-c3be7ea22eca"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvViewLog, new Guid("e9c04da0-0e91-442e-90a4-119a1b67ea06"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvName,
+            new Guid("4a651e11-62f5-4d8f-8fe5-4db488ee7f3a"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvLastRun,
+            new Guid("1aadf2e8-798d-4e85-8abc-7f45edb839b7"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvCategory,
+            new Guid("406173bc-44a0-40b7-8bd1-d01a214c277d"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvStatus,
+            new Guid("8c5cbcd2-9f06-4e24-9521-c3be7ea22eca"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvViewLog,
+            new Guid("e9c04da0-0e91-442e-90a4-119a1b67ea06"));
+    }
+
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+    }
+
+    public string GetTabName()
+    {
+        return Text;
+    }
+
+    public string GetTabToolTip()
+    {
+        return null;
+    }
+
+    public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
+    {
+        SetItemActivator(activator);
+        _collection = (DataLoadsGraphObjectCollection)collection;
+
+        if (IsHandleCreated && !IsDisposed)
+            RefreshChartAsync();
+    }
+
+    public IPersistableObjectCollection GetCollection()
+    {
+        return _collection;
+    }
+
+    public void NotifyEditModeChange(bool isEditModeOn)
+    {
+    }
+
+    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
+    {
+        return new DataLoadsGraphObjectCollection();
     }
 
     private void SetupOlvDelegates()
@@ -68,7 +110,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     .SingleOrDefault(m => m.ID == loadSummary.ID);
 
             if (metadata != null)
-                new ExecuteCommandViewLogs(Activator,metadata).Execute();
+                new ExecuteCommandViewLogs(Activator, metadata).Execute();
         };
 
         olvDataLoads.DoubleClick += delegate(object sender, EventArgs args)
@@ -89,7 +131,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
     private void olvDataLoads_FormatCell(object sender, FormatCellEventArgs e)
     {
         if (e.ColumnIndex == olvStatus.Index)
-            e.SubItem.ForeColor = ((DataLoadsGraphResult) e.Model).Status != DataLoadsGraphResultStatus.Succeeding
+            e.SubItem.ForeColor = ((DataLoadsGraphResult)e.Model).Status != DataLoadsGraphResultStatus.Succeeding
                 ? Color.Red
                 : Color.Black;
     }
@@ -119,7 +161,6 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 var countManualLoadFailure = 0;
 
                 foreach (var metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
-                {
                     try
                     {
                         LogManager logManager;
@@ -132,13 +173,14 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                         catch (NotSupportedException e)
                         {
                             //sometimes a load metadata won't have any catalogues so we can't process its log history
-                            if(e.Message.Contains("does not have any Catalogues associated with it"))
+                            if (e.Message.Contains("does not have any Catalogues associated with it"))
                                 continue;
 
                             throw;
                         }
 
-                        var archivalDataLoadInfo = logManager.GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
+                        var archivalDataLoadInfo = logManager
+                            .GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
 
                         var loadSummary = new DataLoadsGraphResult
                         {
@@ -157,7 +199,8 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             continue; //has never been run (or has had test runs only)
                         }
 
-                        var lastLoadWasError = archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
+                        var lastLoadWasError =
+                            archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
 
                         //while we were fetching data from database the form was closed
                         if (IsDisposed || !IsHandleCreated)
@@ -170,7 +213,9 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 
                         Invoke(new MethodInvoker(() =>
                         {
-                            loadSummary.Status = lastLoadWasError ? DataLoadsGraphResultStatus.Failing : DataLoadsGraphResultStatus.Succeeding;
+                            loadSummary.Status = lastLoadWasError
+                                ? DataLoadsGraphResultStatus.Failing
+                                : DataLoadsGraphResultStatus.Succeeding;
                             loadSummary.LastRun = archivalDataLoadInfo.EndTime.ToString();
 
                             olvDataLoads.AddObject(loadSummary);
@@ -179,12 +224,8 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     catch (Exception e)
                     {
                         ragSmiley1.Fatal(e);
-                        Invoke(new MethodInvoker(() =>
-                        {
-                            pbLoading.Visible = false;
-                        }));
+                        Invoke(new MethodInvoker(() => { pbLoading.Visible = false; }));
                     }
-                }
 
 
                 //if there have been no loads at all ever
@@ -204,8 +245,8 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 dt.Columns.Add("Category");
                 dt.Columns.Add("NumberOfDataLoadsAtStatus");
 
-                dt.Rows.Add(new object[] { "Manual Successful", countManualLoadsuccessful });
-                dt.Rows.Add(new object[] { "Manual Fail", countManualLoadFailure });
+                dt.Rows.Add("Manual Successful", countManualLoadsuccessful);
+                dt.Rows.Add("Manual Fail", countManualLoadFailure);
 
 
                 Invoke(new MethodInvoker(() =>
@@ -219,13 +260,13 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     chart1.Series[0].Points[0].Color = Color.Green;
                     chart1.Series[0].Points[1].Color = Color.Red;
 
-                    var max = new int[]
+                    var max = new[]
                     {
                         countManualLoadFailure,
                         countManualLoadsuccessful
                     }.Max();
 
-                    var gridMarkEvery = max == 0 ? 1 : Math.Max(max/10, 1);
+                    var gridMarkEvery = max == 0 ? 1 : Math.Max(max / 10, 1);
 
 
                     chart1.ChartAreas[0].AxisY.Interval = gridMarkEvery;
@@ -246,53 +287,10 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
             catch (Exception e)
             {
                 ragSmiley1.Fatal(e);
-                Invoke(new MethodInvoker(() =>
-                {
-                    pbLoading.Visible = false;
-                }));
+                Invoke(new MethodInvoker(() => { pbLoading.Visible = false; }));
             }
-
         });
         //t.SetApartmentState(ApartmentState.STA);
         t.Start();
-    }
-
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-    {
-
-    }
-
-    public string GetTabName()
-    {
-        return Text;
-    }
-
-    public string GetTabToolTip()
-    {
-        return null;
-    }
-
-    public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
-    {
-        SetItemActivator(activator);
-        _collection = (DataLoadsGraphObjectCollection)collection;
-
-        if(IsHandleCreated && !IsDisposed)
-            RefreshChartAsync();
-    }
-
-    public IPersistableObjectCollection GetCollection()
-    {
-        return _collection;
-    }
-
-    public void NotifyEditModeChange(bool isEditModeOn)
-    {
-
-    }
-
-    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
-    {
-        return new DataLoadsGraphObjectCollection();
     }
 }

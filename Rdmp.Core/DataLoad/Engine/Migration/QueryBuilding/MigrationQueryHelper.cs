@@ -4,12 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Generates the MERGE and UPDATE SQL queries responsible for migrating records from STAGING to LIVE as part of a data load.
+///     Generates the MERGE and UPDATE SQL queries responsible for migrating records from STAGING to LIVE as part of a data
+///     load.
 /// </summary>
 public abstract class MigrationQueryHelper
 {
@@ -50,7 +49,7 @@ public abstract class MigrationQueryHelper
             McsQueryHelper.BuildJoinClause(joinTableName, "prod"));
     }
 
-        
+
     public abstract string BuildUpdateClauseForRow(string sourceAlias, string destAlias);
     public abstract string BuildInsertClause();
 }

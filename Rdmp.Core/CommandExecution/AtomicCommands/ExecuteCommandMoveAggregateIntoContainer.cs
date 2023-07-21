@@ -13,29 +13,33 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
 {
-    private readonly CohortAggregateContainer _targetCohortAggregateContainer;
     private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
+    private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfiguration toMove, CohortAggregateContainer into) 
-        : this(activator,new AggregateConfigurationCombineable(toMove), into)
+    public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfiguration toMove,
+        CohortAggregateContainer into)
+        : this(activator, new AggregateConfigurationCombineable(toMove), into)
     {
-
     }
-    public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+
+    public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator,
+        AggregateConfigurationCombineable sourceAggregateCommand,
+        CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
     {
         _sourceAggregateCommand = sourceAggregateCommand;
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
         var cic = _sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
 
-        if(cic != null && !cic.Equals(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
+        if (cic != null && !cic.Equals(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
             SetImpossible("Aggregate belongs to a different CohortIdentificationConfiguration");
 
-        if(_sourceAggregateCommand.ContainerIfAny != null &&  _sourceAggregateCommand.ContainerIfAny.Equals(targetCohortAggregateContainer))
+        if (_sourceAggregateCommand.ContainerIfAny != null &&
+            _sourceAggregateCommand.ContainerIfAny.Equals(targetCohortAggregateContainer))
             SetImpossible("Aggregate is already in container");
 
-        if(targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
+        if (targetCohortAggregateContainer.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -49,9 +53,9 @@ public class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
         oldContainer?.RemoveChild(_sourceAggregateCommand.Aggregate);
 
         //add  it to the new container
-        _targetCohortAggregateContainer.AddChild(_sourceAggregateCommand.Aggregate,0);
-            
-            
+        _targetCohortAggregateContainer.AddChild(_sourceAggregateCommand.Aggregate, 0);
+
+
         //refresh the entire configuration
         Publish(_targetCohortAggregateContainer.GetCohortIdentificationConfiguration());
     }

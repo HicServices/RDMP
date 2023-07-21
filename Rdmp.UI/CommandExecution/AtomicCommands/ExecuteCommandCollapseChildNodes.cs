@@ -15,21 +15,19 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution, IAtomicCommand
 {
     private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
     private readonly object _rootToCollapseTo;
 
-    public ExecuteCommandCollapseChildNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
+    public ExecuteCommandCollapseChildNodes(IActivateItems activator,
+        RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
     {
         _commonFunctionality = commonFunctionality;
         _rootToCollapseTo = rootToCollapseTo;
 
         // collapse all with no node selected collapses whole tree
-        if (_rootToCollapseTo is RDMPCollection)
-        {
-            return;
-        }
+        if (_rootToCollapseTo is RDMPCollection) return;
 
         if (!_commonFunctionality.Tree.IsExpanded(rootToCollapseTo))
             SetImpossible("Node is not expanded");
@@ -40,9 +38,7 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
     public override string GetCommandName()
     {
         if (_rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
-        {
             return "Collapse All";
-        }
 
         return base.GetCommandName();
     }
@@ -50,11 +46,10 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
     public override void Execute()
     {
         base.Execute();
-            
+
         _commonFunctionality.Tree.BeginUpdate();
         try
         {
-
             if (_rootToCollapseTo is RDMPCollection)
             {
                 _commonFunctionality.Tree.CollapseAll();
@@ -70,10 +65,10 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution,IAtomicC
             _commonFunctionality.Tree.Collapse(_rootToCollapseTo);
 
             //then expand it to depth 1
-            _commonFunctionality.ExpandToDepth(1,_rootToCollapseTo);
+            _commonFunctionality.ExpandToDepth(1, _rootToCollapseTo);
 
             var index = _commonFunctionality.Tree.IndexOf(_rootToCollapseTo);
-            if(index != -1)
+            if (index != -1)
                 _commonFunctionality.Tree.EnsureVisible(index);
         }
         finally

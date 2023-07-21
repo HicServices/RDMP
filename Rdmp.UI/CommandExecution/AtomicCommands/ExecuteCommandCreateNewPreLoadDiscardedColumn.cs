@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -15,22 +14,25 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using TypeGuesser;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewPreLoadDiscardedColumn : BasicUICommandExecution, IAtomicCommand
 {
     private readonly TableInfo _tableInfo;
-    private ColumnInfo[] _prototypes;
+    private readonly ColumnInfo[] _prototypes;
 
-    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator,TableInfo tableInfo) : base(activator)
+    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo) :
+        base(activator)
     {
         _tableInfo = tableInfo;
     }
 
-    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo, ColumnInfoCombineable sourceColumnInfoCombineable):this(activator,tableInfo)
+    public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo,
+        ColumnInfoCombineable sourceColumnInfoCombineable) : this(activator, tableInfo)
     {
         _prototypes = sourceColumnInfoCombineable.ColumnInfos;
 
@@ -42,7 +44,6 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
             if (alreadyExists)
                 SetImpossible($"There is already a PreLoadDiscardedColumn called '{prototype.GetRuntimeName()}'");
         }
-          
     }
 
     public override string GetCommandHelp()
@@ -54,17 +55,20 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
     {
         base.Execute();
 
-        if(_prototypes == null)
+        if (_prototypes == null)
         {
-            var varcharMaxDataType = _tableInfo.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (string), int.MaxValue));
+            var varcharMaxDataType = _tableInfo.GetQuerySyntaxHelper().TypeTranslater
+                .GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string), int.MaxValue));
 
-            var textDialog = new TypeTextOrCancelDialog("Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
+            var textDialog = new TypeTextOrCancelDialog("Column Name",
+                "Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
             if (textDialog.ShowDialog() != DialogResult.OK)
                 return;
 
             var name = textDialog.ResultText;
 
-            textDialog = new TypeTextOrCancelDialog("Column DataType", "Enter data type for column (e.g. 'varchar(10)')", 300, varcharMaxDataType);
+            textDialog = new TypeTextOrCancelDialog("Column DataType",
+                "Enter data type for column (e.g. 'varchar(10)')", 300, varcharMaxDataType);
             if (textDialog.ShowDialog() != DialogResult.OK)
                 return;
 
@@ -74,7 +78,6 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
             Publish();
             Emphasise(created);
             Activate(created);
-
         }
         else
         {
@@ -85,21 +88,6 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
         }
     }
 
-    private void Publish()
-    {
-        Publish(_tableInfo);
-    }
-
-    private PreLoadDiscardedColumn Create(string name, string dataType)
-    {
-        var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name)
-            {
-                SqlDataType = dataType
-            };
-        discCol.SaveToDatabase();
-        return discCol;
-    }
-
     public override string GetCommandName()
     {
         return "Add New Load Discarded Column";
@@ -108,5 +96,20 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
         return iconProvider.GetImage(RDMPConcept.PreLoadDiscardedColumn, OverlayKind.Add);
+    }
+
+    private void Publish()
+    {
+        Publish(_tableInfo);
+    }
+
+    private PreLoadDiscardedColumn Create(string name, string dataType)
+    {
+        var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name)
+        {
+            SqlDataType = dataType
+        };
+        discCol.SaveToDatabase();
+        return discCol;
     }
 }

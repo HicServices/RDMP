@@ -11,7 +11,7 @@ using Rdmp.UI.Validation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsStandardRegex:RDMPCommandExecutionProposal<StandardRegex>
+internal class ProposeExecutionWhenTargetIsStandardRegex : RDMPCommandExecutionProposal<StandardRegex>
 {
     public ProposeExecutionWhenTargetIsStandardRegex(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,7 +27,8 @@ internal class ProposeExecutionWhenTargetIsStandardRegex:RDMPCommandExecutionPro
         ItemActivator.Activate<StandardRegexUI, StandardRegex>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardRegex target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardRegex target,
+        InsertOption insertOption = InsertOption.Default)
     {
         //no drag and drop support
         return null;

@@ -14,27 +14,31 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 
 /// <summary>
-/// Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips out all problem fields rather
-/// than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support the full specification of CSV and
-/// it is easier to provide them with a file where problem symbols are not present than explain that they have to join multiple lines together when it is
-/// bounded by quotes.
+///     Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips
+///     out all problem fields rather
+///     than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support
+///     the full specification of CSV and
+///     it is easier to provide them with a file where problem symbols are not present than explain that they have to join
+///     multiple lines together when it is
+///     bounded by quotes.
 /// </summary>
 public class CSVOutputFormat : FileOutputFormat
 {
-    public string Separator { get; set; }
-    public string DateFormat { get; set; }
-
-    public int SeparatorsStrippedOut { get; private set; }
-    private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t","\""};
-    private StreamWriter _sw;
-    private StringBuilder _sbWriteOutLinesBuffer;
     private const string _illegalCharactersReplacement = " ";
+    private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t", "\"" };
+    private StringBuilder _sbWriteOutLinesBuffer;
+    private StreamWriter _sw;
 
-    public CSVOutputFormat(string outputFilename,string separator, string dateFormat): base(outputFilename)
+    public CSVOutputFormat(string outputFilename, string separator, string dateFormat) : base(outputFilename)
     {
         Separator = separator;
         DateFormat = dateFormat;
     }
+
+    public string Separator { get; set; }
+    public string DateFormat { get; set; }
+
+    public int SeparatorsStrippedOut { get; private set; }
 
     public override string GetFileExtension()
     {
@@ -46,9 +50,10 @@ public class CSVOutputFormat : FileOutputFormat
         _sw = new StreamWriter(OutputFilename);
         _sbWriteOutLinesBuffer = new StringBuilder();
     }
+
     public override void Open(bool append)
     {
-        _sw = new StreamWriter(OutputFilename,append);
+        _sw = new StreamWriter(OutputFilename, append);
         _sbWriteOutLinesBuffer = new StringBuilder();
     }
 
@@ -56,9 +61,8 @@ public class CSVOutputFormat : FileOutputFormat
     {
         //write headers separated by separator
         _sw.Write(string.Join(Separator, t.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray()));
-            
-        _sw.WriteLine();
 
+        _sw.WriteLine();
     }
 
     public override void Append(DataRow r)
@@ -86,7 +90,8 @@ public class CSVOutputFormat : FileOutputFormat
 
     public string CleanString(object o)
     {
-        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
+        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,
+            RoundFloatsTo);
 
         SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 
@@ -94,7 +99,8 @@ public class CSVOutputFormat : FileOutputFormat
     }
 
 
-    public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
+    public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat,
+        int? roundFloatsTo)
     {
         if (o is DateTime dt)
         {
@@ -105,10 +111,10 @@ public class CSVOutputFormat : FileOutputFormat
         if (roundFloatsTo.HasValue)
         {
             separatorsStrippedOut = 0;
-            switch(o)
+            switch (o)
             {
-                case float f : return f.ToString($"N{roundFloatsTo.Value}");
-                case decimal dec : return dec.ToString($"N{roundFloatsTo.Value}");
+                case float f: return f.ToString($"N{roundFloatsTo.Value}");
+                case decimal dec: return dec.ToString($"N{roundFloatsTo.Value}");
                 case double d: return d.ToString($"N{roundFloatsTo.Value}");
             }
         }
@@ -130,5 +136,4 @@ public class CSVOutputFormat : FileOutputFormat
 
         return o.ToString().Trim();
     }
-
 }

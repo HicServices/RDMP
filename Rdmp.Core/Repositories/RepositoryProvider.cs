@@ -11,20 +11,22 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Use when you have an already initialized set of repositories and only want to fetch objects from the catalogue/data export repositories
+///     Use when you have an already initialized set of repositories and only want to fetch objects from the catalogue/data
+///     export repositories
 /// </summary>
 public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
-    public ICatalogueRepository CatalogueRepository { get; protected set; }
-    public IDataExportRepository DataExportRepository { get; protected set; }
-
     private readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new();
 
+    private readonly object oLockDictionary = new();
+
     /// <summary>
-    /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
-    /// 
-    /// <para>If possible consider using LinkedRepositoryProvider or Startup (these support plugin repositories, DQE repository etc)</para>
-    /// 
+    ///     Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the
+    ///     Catalogue/Data export databases only.
+    ///     <para>
+    ///         If possible consider using LinkedRepositoryProvider or Startup (these support plugin repositories, DQE
+    ///         repository etc)
+    ///     </para>
     /// </summary>
     /// <param name="dataExportRepository"></param>
     public RepositoryProvider(IDataExportRepository dataExportRepository)
@@ -35,10 +37,13 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 
     protected RepositoryProvider()
     {
-            
     }
 
-    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
+    public ICatalogueRepository CatalogueRepository { get; protected set; }
+    public IDataExportRepository DataExportRepository { get; protected set; }
+
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
+        string databaseObjectTypeName, int objectId)
     {
         var repository = GetRepository(repositoryTypeName);
         var objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
@@ -61,6 +66,34 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
         return repository.StillExists(objectType, objectID);
     }
 
+    /// <inheritdoc />
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+    {
+        if (CatalogueRepository.SupportsObjectType(typeof(T)))
+            return CatalogueRepository.GetObjectByID<T>(value);
+        if (DataExportRepository.SupportsObjectType(typeof(T)))
+            return DataExportRepository.GetObjectByID<T>(value);
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
+    }
+
+    /// <inheritdoc />
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
+    {
+        if (CatalogueRepository.SupportsObjectType(t))
+            return CatalogueRepository.GetObjectByID(t, value);
+        if (DataExportRepository.SupportsObjectType(t))
+            return DataExportRepository.GetObjectByID(t, value);
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
+    }
+
+    public virtual IEnumerable<IRepository> GetAllRepositories()
+    {
+        yield return CatalogueRepository;
+
+        if (DataExportRepository != null)
+            yield return DataExportRepository;
+    }
+
     protected virtual IRepository GetRepository(string s)
     {
         var repoType = GetTypeByName(s, typeof(IRepository));
@@ -73,10 +106,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 
         throw new NotSupportedException(
             $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
-
     }
 
-    private object oLockDictionary = new();
     private Type GetTypeByName(string s, Type expectedBaseClassType)
     {
         Type toReturn;
@@ -98,33 +129,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             //cache known type to not hammer reflection all the time!
             _cachedTypesByNameDictionary.Add(s, toReturn);
         }
+
         return toReturn;
-    }
-
-    /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
-    {
-        if(CatalogueRepository.SupportsObjectType(typeof(T)))
-            return CatalogueRepository.GetObjectByID<T>(value);
-        if(DataExportRepository.SupportsObjectType(typeof(T)))
-            return DataExportRepository.GetObjectByID<T>(value);
-        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
-    }
-
-    /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t,int value)
-    {
-        if(CatalogueRepository.SupportsObjectType(t))
-            return CatalogueRepository.GetObjectByID(t,value);
-        if(DataExportRepository.SupportsObjectType(t))
-            return DataExportRepository.GetObjectByID(t,value);
-        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
-    }
-    public virtual IEnumerable<IRepository> GetAllRepositories()
-    {
-        yield return CatalogueRepository;
-
-        if(DataExportRepository != null)
-            yield return DataExportRepository;
     }
 }

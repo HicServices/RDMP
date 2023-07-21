@@ -7,8 +7,8 @@
 namespace Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 
 /// <summary>
-/// Interface for classes that determine whether a given <see cref="HelpWorkflow"/> should be shown or not (e.g. based
-/// on whether the current user has already seen it).
+///     Interface for classes that determine whether a given <see cref="HelpWorkflow" /> should be shown or not (e.g. based
+///     on whether the current user has already seen it).
 /// </summary>
 public interface IHelpWorkflowProgressProvider
 {

@@ -27,8 +27,8 @@ public class CommitInProgressTests : DatabaseTests
         c.SaveToDatabase();
 
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
-            
-        Assert.IsNull(start.TryFinish(activator),"No changes made to Catalogue so expected no commit");
+
+        Assert.IsNull(start.TryFinish(activator), "No changes made to Catalogue so expected no commit");
 
         c.Name = "abadaba";
         c.IsDeprecated = true;
@@ -42,19 +42,19 @@ public class CommitInProgressTests : DatabaseTests
     }
 
     /// <summary>
-    /// Tests that when there is a <see cref="CommitInProgress"/> on object(s) e.g. <see cref="Catalogue"/>
-    /// that uses transactions.  Cancelling the <see cref="CommitInProgress"/> will leave everything back 
-    /// how it was
+    ///     Tests that when there is a <see cref="CommitInProgress" /> on object(s) e.g. <see cref="Catalogue" />
+    ///     that uses transactions.  Cancelling the <see cref="CommitInProgress" /> will leave everything back
+    ///     how it was
     /// </summary>
     [Test]
     public void CommitInProgress_TestCancellation()
     {
         var c = new Catalogue(CatalogueRepository, "Hey");
 
-        Assert.AreEqual(ChangeDescription.NoChanges,c.HasLocalChanges().Evaluation,
+        Assert.AreEqual(ChangeDescription.NoChanges, c.HasLocalChanges().Evaluation,
             "We just created this Catalogue, how can db copy be different?!");
 
-        var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c) 
+        var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c)
         {
             UseTransactions = true
         });

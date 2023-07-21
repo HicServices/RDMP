@@ -36,9 +36,8 @@ public class PluginValidationSerializationTest
 
         var newV = Validator.LoadFromXml(xml);
 
-        Assert.AreEqual(1,newV.ItemValidators.Count);
+        Assert.AreEqual(1, newV.ItemValidators.Count);
         Assert.AreEqual(typeof(FishConstraint), newV.ItemValidators[0].PrimaryConstraint.GetType());
-
     }
 }
 
@@ -46,7 +45,6 @@ public class FishConstraint : PluginPrimaryConstraint
 {
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
@@ -64,6 +62,6 @@ public class FishConstraint : PluginPrimaryConstraint
         if (result.Equals("Fish"))
             return null;
 
-        return new ValidationFailure($"Value '{value}' was not 'Fish'!",this);
+        return new ValidationFailure($"Value '{value}' was not 'Fish'!", this);
     }
 }

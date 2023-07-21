@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using FAnsi.Discovery;
@@ -20,30 +21,33 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 
-
 namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting;
 
 /// <summary>
-/// Allows you to take data in a single data table and bulk insert it into a database (which you pick at the top of the screen).  You must select or create an appropriate pipeline.
-/// This will consist of a source that is capable of reading your file (e.g. if the file is CSV use DelimitedFlatFileDataFlowSource) and zero or more middle components e.g. CleanStrings.
-/// For destination your pipeline can have any destination that inherits from DataTableUploadDestination (this allows you to have custom plugin behaviour if you have some kind of
-///  weird database repository).  After the pipeline has executed and your database has been populated with the data table then the ForwardEngineerCatalogue dialog will appear which
-/// will let you create a Catalogue reference in the DataCatalogue database for the new table.  Note that this dialog should only be used for 'one off' or 'getting started' style
-/// loads, if you plan to routinely load this data table then give it a LoadMetadata (See LoadMetadataUI).
+///     Allows you to take data in a single data table and bulk insert it into a database (which you pick at the top of the
+///     screen).  You must select or create an appropriate pipeline.
+///     This will consist of a source that is capable of reading your file (e.g. if the file is CSV use
+///     DelimitedFlatFileDataFlowSource) and zero or more middle components e.g. CleanStrings.
+///     For destination your pipeline can have any destination that inherits from DataTableUploadDestination (this allows
+///     you to have custom plugin behaviour if you have some kind of
+///     weird database repository).  After the pipeline has executed and your database has been populated with the data
+///     table then the ForwardEngineerCatalogue dialog will appear which
+///     will let you create a Catalogue reference in the DataCatalogue database for the new table.  Note that this dialog
+///     should only be used for 'one off' or 'getting started' style
+///     loads, if you plan to routinely load this data table then give it a LoadMetadata (See LoadMetadataUI).
 /// </summary>
 public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
 {
-    private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
     private readonly IActivateItems _activator;
-    private readonly DiscoveredDatabase _database;
     private readonly bool _alsoForwardEngineerCatalogue;
+    private readonly DiscoveredDatabase _database;
+    private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
-    private FileInfo _file;
-    private Project _projectSpecific;
+    private readonly FileInfo _file;
+    private readonly Project _projectSpecific;
 
-    public ICatalogue CatalogueCreatedIfAny { get; private set; }
-
-    public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue,Project projectSpecific)
+    public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator, DiscoveredDatabase database,
+        FileInfo file, bool alsoForwardEngineerCatalogue, Project projectSpecific)
     {
         _repositoryLocator = activator.RepositoryLocator;
         _activator = activator;
@@ -52,27 +56,30 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
         _projectSpecific = projectSpecific;
 
         InitializeComponent();
-            
+
         configureAndExecutePipeline1 = new ConfigureAndExecutePipelineUI(
             ExecuteCommandCreateNewCatalogueByImportingFile.GetCreateCatalogueFromFileDialogArgs()
-            ,new UploadFileUseCase(file,database,activator),activator);
+            , new UploadFileUseCase(file, database, activator), activator);
         _file = file;
         // 
         // configureAndExecutePipeline1
         // 
         configureAndExecutePipeline1.Dock = DockStyle.Fill;
-        configureAndExecutePipeline1.Location = new System.Drawing.Point(0, 0);
+        configureAndExecutePipeline1.Location = new Point(0, 0);
         configureAndExecutePipeline1.Name = "configureAndExecutePipeline1";
-        configureAndExecutePipeline1.Size = new System.Drawing.Size(979, 894);
+        configureAndExecutePipeline1.Size = new Size(979, 894);
         configureAndExecutePipeline1.TabIndex = 14;
         Controls.Add(configureAndExecutePipeline1);
 
-        configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully += ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
-
+        configureAndExecutePipeline1.PipelineExecutionFinishedsuccessfully +=
+            ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully;
     }
 
+    public ICatalogue CatalogueCreatedIfAny { get; private set; }
 
-    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
+
+    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender,
+        PipelineEngineEventArgs args)
     {
         //pipeline executed successfully
         if (_alsoForwardEngineerCatalogue)
@@ -85,7 +92,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
                 targetTable = dest.TargetTableName;
                 var table = _database.ExpectTable(targetTable);
 
-                var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
+                var ui = new ConfigureCatalogueExtractabilityUI(_activator,
+                    new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
                     $"File '{_file.FullName}'", _projectSpecific);
                 ui.ShowDialog();
 
@@ -100,7 +108,8 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
             catch (Exception e)
             {
                 ExceptionViewer.Show(
-                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details", e);
+                    $"Failed to import TableInfo/Forward Engineer Catalogue from {_database}(Table was {targetTable ?? "Null!"}) - see Exception for details",
+                    e);
             }
         }
     }

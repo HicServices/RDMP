@@ -15,49 +15,36 @@ using FAnsi.Discovery;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
-/// <inheritdoc/>
-public abstract class Patcher:IPatcher
+/// <inheritdoc />
+public abstract class Patcher : IPatcher
 {
     public const string InitialScriptName = "Initial Create";
 
-    /// <inheritdoc/>
-    public bool SqlServerOnly { get; protected init; }= true;
-
-    /// <inheritdoc/>
-    public virtual Assembly GetDbAssembly() => GetType().Assembly;
-
-    /// <inheritdoc/>
-    public string ResourceSubdirectory { get; private set; }
-
-    /// <inheritdoc/>
-    public int Tier { get; }
-
-    public string Name =>
-        $"{GetDbAssembly().GetName().Name}{(string.IsNullOrEmpty(ResourceSubdirectory) ? "" : $"/{ResourceSubdirectory}")}";
-    public string LegacyName { get; protected set; }
-
-    protected Patcher(int tier,string resourceSubdirectory)
+    protected Patcher(int tier, string resourceSubdirectory)
     {
         Tier = tier;
         ResourceSubdirectory = resourceSubdirectory;
     }
 
-    /// <summary>
-    /// Generates a properly formatted header for <see cref="Patch"/> creation when you only know the SQL you want to execute
-    /// </summary>
-    /// <param name="dbType"></param>
-    /// <param name="description"></param>
-    /// <param name="version"></param>
-    /// <returns></returns>
-    protected static string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
+    /// <inheritdoc />
+    public bool SqlServerOnly { get; protected init; } = true;
 
-    // some DBMS don't like the -- notation so we need to wrap with C style comments
-    private static string CommentFor(DatabaseType dbType, string sql) =>
-        dbType switch
-        {
-            DatabaseType.MicrosoftSQLServer => sql,
-            _ => $"/*{sql}*/"
-        };
+    /// <inheritdoc />
+    public virtual Assembly GetDbAssembly()
+    {
+        return GetType().Assembly;
+    }
+
+    /// <inheritdoc />
+    public string ResourceSubdirectory { get; }
+
+    /// <inheritdoc />
+    public int Tier { get; }
+
+    public string Name =>
+        $"{GetDbAssembly().GetName().Name}{(string.IsNullOrEmpty(ResourceSubdirectory) ? "" : $"/{ResourceSubdirectory}")}";
+
+    public string LegacyName { get; protected set; }
 
     public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {
@@ -74,15 +61,15 @@ public abstract class Patcher:IPatcher
         {
             case 1:
             {
-                    var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
+                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
 
-                    var sql = sr.ReadToEnd();
+                var sql = sr.ReadToEnd();
 
                 if (!sql.Contains(Patch.VersionKey))
                     sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
 
 
-                return new Patch(InitialScriptName,  sql);
+                return new Patch(InitialScriptName, sql);
             }
             case 0:
                 throw new FileNotFoundException(
@@ -93,7 +80,7 @@ public abstract class Patcher:IPatcher
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)
     {
         var assembly = GetDbAssembly();
@@ -117,5 +104,29 @@ public abstract class Patcher:IPatcher
         }
 
         return files;
+    }
+
+    /// <summary>
+    ///     Generates a properly formatted header for <see cref="Patch" /> creation when you only know the SQL you want to
+    ///     execute
+    /// </summary>
+    /// <param name="dbType"></param>
+    /// <param name="description"></param>
+    /// <param name="version"></param>
+    /// <returns></returns>
+    protected static string GetHeader(DatabaseType dbType, string description, Version version)
+    {
+        return
+            $"{CommentFor(dbType, Patch.VersionKey + version)}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
+    }
+
+    // some DBMS don't like the -- notation so we need to wrap with C style comments
+    private static string CommentFor(DatabaseType dbType, string sql)
+    {
+        return dbType switch
+        {
+            DatabaseType.MicrosoftSQLServer => sql,
+            _ => $"/*{sql}*/"
+        };
     }
 }

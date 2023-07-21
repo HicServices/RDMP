@@ -20,24 +20,23 @@ using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 
 /// <summary>
-/// Depicts a table in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
-/// node may or may not map to an existing table in the database.
+///     Depicts a table in a given DLE <see cref="LoadBubble" />.  Given the Create/Destroy nature of load stages this
+///     node may or may not map to an existing table in the database.
 /// </summary>
-public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
+public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
 {
-    private readonly LoadDiagramDatabaseNode _databaseNode;
-    public readonly TableInfo TableInfo;
-    public readonly LoadBubble Bubble;
     private readonly HICDatabaseConfiguration _config;
-
-    public LoadDiagramState State { get; set; }
+    private readonly LoadDiagramDatabaseNode _databaseNode;
+    public readonly LoadBubble Bubble;
 
     public readonly DiscoveredTable Table;
+    public readonly TableInfo TableInfo;
 
-    private List<LoadDiagramColumnNode> _anticipatedChildren = new();
-    private List<DiscoveredColumn>  _unplannedChildren = new();
+    private readonly List<LoadDiagramColumnNode> _anticipatedChildren = new();
+    private readonly List<DiscoveredColumn> _unplannedChildren = new();
 
-    public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode,TableInfo tableInfo, LoadBubble bubble, HICDatabaseConfiguration config)
+    public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode, TableInfo tableInfo, LoadBubble bubble,
+        HICDatabaseConfiguration config)
     {
         _databaseNode = databaseNode;
         TableInfo = tableInfo;
@@ -45,13 +44,13 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         _config = config;
 
         State = LoadDiagramState.Anticipated;
-            
+
         TableName = TableInfo.GetRuntimeName(Bubble);
 
         //only reference schema if it is LIVE
-        var schema = bubble >= LoadBubble.Live ? tableInfo.Schema: null;
+        var schema = bubble >= LoadBubble.Live ? tableInfo.Schema : null;
 
-        Table = databaseNode.Database.ExpectTable(TableName,schema);
+        Table = databaseNode.Database.ExpectTable(TableName, schema);
 
 
         var cols =
@@ -59,15 +58,24 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
                 .Select(c => new LoadDiagramColumnNode(this, c, Bubble));
 
         _anticipatedChildren.AddRange(cols);
-
     }
 
     public string DatabaseName => _databaseNode.DatabaseName;
-    public string TableName { get; private set; }
+    public string TableName { get; }
+
+    public ICombineToMakeCommand GetCombineable()
+    {
+        return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper()
+            .EnsureFullyQualified(DatabaseName, null, TableName));
+    }
+
+    public LoadDiagramState State { get; set; }
 
     public IEnumerable<object> GetChildren(bool dynamicColumnsOnly)
     {
-        foreach (var c in _anticipatedChildren.Where(c => !dynamicColumnsOnly || c.IsDynamicColumn || c.State == LoadDiagramState.Different || c.State == LoadDiagramState.New))
+        foreach (var c in _anticipatedChildren.Where(c =>
+                     !dynamicColumnsOnly || c.IsDynamicColumn || c.State == LoadDiagramState.Different ||
+                     c.State == LoadDiagramState.New))
             yield return c;
 
         foreach (var c in _unplannedChildren)
@@ -77,11 +85,6 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     public override string ToString()
     {
         return TableName;
-    }
-
-    public ICombineToMakeCommand GetCombineable()
-    {
-        return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
     }
 
     public void DiscoverState()
@@ -101,11 +104,12 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
 
         //we do exist
         State = LoadDiagramState.Found;
-            
+
         //discover children and marry them up to planned/ new unplanned ones
         foreach (var discoveredColumn in Table.DiscoverColumns())
         {
-            var match = _anticipatedChildren.SingleOrDefault(c => c.ColumnName.Equals(discoveredColumn.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase));
+            var match = _anticipatedChildren.SingleOrDefault(c =>
+                c.ColumnName.Equals(discoveredColumn.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase));
             if (match != null)
                 match.SetState(discoveredColumn);
             else
@@ -113,8 +117,8 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         }
 
         //any NotFound or Different etc cols or any unplanned children
-        if(_anticipatedChildren.Any(c=>c.State > LoadDiagramState.Found) || _unplannedChildren.Any())
-            State = LoadDiagramState.Different;//elevate our state to Different
+        if (_anticipatedChildren.Any(c => c.State > LoadDiagramState.Found) || _unplannedChildren.Any())
+            State = LoadDiagramState.Different; //elevate our state to Different
     }
 
 
@@ -129,9 +133,11 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     }
 
     #region equality
+
     protected bool Equals(LoadDiagramTableNode other)
     {
-        return Equals(_databaseNode, other._databaseNode) && Bubble == other.Bubble && string.Equals(TableName, other.TableName);
+        return Equals(_databaseNode, other._databaseNode) && Bubble == other.Bubble &&
+               string.Equals(TableName, other.TableName);
     }
 
     public override bool Equals(object obj)
@@ -139,7 +145,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramTableNode) obj);
+        return Equals((LoadDiagramTableNode)obj);
     }
 
     public override int GetHashCode()
@@ -163,9 +169,11 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
                     _ => "A Table that is involved in the load (based on the Catalogues associated with the load)"
                 };
             case LoadDiagramState.NotFound:
-                return "A Table that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
+                return
+                    "A Table that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
             case LoadDiagramState.New:
-                return "A Table that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
+                return
+                    "A Table that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -173,7 +181,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
 
     public object MasqueradingAs()
     {
-        return Bubble == LoadBubble.Live ? TableInfo: null;
+        return Bubble == LoadBubble.Live ? TableInfo : null;
     }
 
     #endregion

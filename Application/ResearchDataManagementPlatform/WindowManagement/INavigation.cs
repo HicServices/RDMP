@@ -7,7 +7,8 @@
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Describes a location the user visited that may or may not still exist (e.g. be an open tab) and which can be revisited through history (e.g. a back button).
+///     Describes a location the user visited that may or may not still exist (e.g. be an open tab) and which can be
+///     revisited through history (e.g. a back button).
 /// </summary>
 public interface INavigation
 {

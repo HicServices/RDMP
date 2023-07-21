@@ -17,8 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
 
 /// <summary>
-/// Loads data according to a data-based schedule, e.g. Biochemistry.
-/// Needs to know: how to generate dates for the job, how to select a load schedule
+///     Loads data according to a data-based schedule, e.g. Biochemistry.
+///     Needs to know: how to generate dates for the job, how to select a load schedule
 /// </summary>
 public abstract class ScheduledDataLoadProcess : DataLoadProcess
 {
@@ -26,8 +26,13 @@ public abstract class ScheduledDataLoadProcess : DataLoadProcess
     protected readonly ILoadProgressSelectionStrategy LoadProgressSelectionStrategy;
     protected readonly int? OverrideNumberOfDaysToLoad;
 
-    protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,HICDatabaseConfiguration configuration)
-        : base(repositoryLocator,loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution,configuration)
+    protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution,
+        JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory,
+        ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad,
+        ILogManager logManager, IDataLoadEventListener dataLoadEventListener, HICDatabaseConfiguration configuration)
+        : base(repositoryLocator, loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution,
+            configuration)
     {
         JobDateGenerationStrategyFactory = jobDateGenerationStrategyFactory;
         LoadProgressSelectionStrategy = loadProgressSelectionStrategy;

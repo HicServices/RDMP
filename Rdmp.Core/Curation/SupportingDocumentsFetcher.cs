@@ -12,12 +12,12 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Copies SupportingDocuments associated with a project extraction request to the output directory.
+///     Copies SupportingDocuments associated with a project extraction request to the output directory.
 /// </summary>
 public class SupportingDocumentsFetcher
 {
-    private readonly SupportingDocument _document;
     private readonly Catalogue _catalogue;
+    private readonly SupportingDocument _document;
     private readonly bool _singleDocument;
 
     public SupportingDocumentsFetcher(Catalogue catalogue)
@@ -42,7 +42,7 @@ public class SupportingDocumentsFetcher
 
     private static string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
     {
-        if(!supportingDocument.IsReleasable())
+        if (!supportingDocument.IsReleasable())
             throw new Exception(
                 $"Cannot extract SupportingDocument {supportingDocument} because it was not evaluated as IsReleasable()");
 
@@ -51,13 +51,13 @@ public class SupportingDocumentsFetcher
         if (!Directory.Exists(Path.Combine(directory.FullName, "SupportingDocuments")))
             Directory.CreateDirectory(Path.Combine(directory.FullName, "SupportingDocuments"));
 
-        if(!toCopy.Exists)
+        if (!toCopy.Exists)
             throw new FileNotFoundException(
                 $"Could not find supporting document '{supportingDocument}' which was expected to be at path:{toCopy.FullName}");
 
         //copy with overwritte
         File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
-            
+
         return Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name);
     }
 
@@ -66,10 +66,9 @@ public class SupportingDocumentsFetcher
         if (_singleDocument)
             CheckDocument(_document, notifier);
         else
-        {
-            foreach (var supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableGlobalsAndLocals))
+            foreach (var supportingDocument in _catalogue.GetAllSupportingDocuments(FetchOptions
+                         .ExtractableGlobalsAndLocals))
                 CheckDocument(supportingDocument, notifier);
-        }
     }
 
     private void CheckDocument(SupportingDocument document, ICheckNotifier notifier)
@@ -79,7 +78,7 @@ public class SupportingDocumentsFetcher
             notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument has not been set", CheckResult.Fail));
             return;
         }
-            
+
         try
         {
             var toCopy = document.GetFileName();
@@ -90,12 +89,14 @@ public class SupportingDocumentsFetcher
                         CheckResult.Success));
             else
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs($"SupportingDocument {document }(ID={ document.ID }) does not map to an existing file despite being flagged as Extractable.  Expected it to exist and be at '{toCopy}'",
+                    new CheckEventArgs(
+                        $"SupportingDocument {document}(ID={document.ID}) does not map to an existing file despite being flagged as Extractable.  Expected it to exist and be at '{toCopy}'",
                         CheckResult.Fail));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not check supporting documents of {_catalogue}", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not check supporting documents of {_catalogue}",
+                CheckResult.Fail, e));
         }
     }
 }

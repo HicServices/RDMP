@@ -21,308 +21,16 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
 /// <summary>
-/// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all cached fetch
-/// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the contructor.  These tables are
-/// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded
-/// (according to the DQE).  See LoadProgressDiagram
+///     Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.
+///     The second containing all cached fetch
+///     counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed
+///     into the contructor.  These tables are
+///     intended to assist the user in rapidly determining how much of a given dataset collection based on a cache
+///     fetch/load DLE job has currently been loaded
+///     (according to the DQE).  See LoadProgressDiagram
 /// </summary>
-public class LoadProgressSummaryReport:ICheckable
+public class LoadProgressSummaryReport : ICheckable
 {
-    private readonly ILoadProgress _loadProgress;
-    private readonly ILoadMetadata _loadMetadata;
-
-    public bool DQERepositoryExists => dqeRepository != null;
-
-    private DQERepository dqeRepository;
-
-    public DataTable CataloguesPeriodictiyData;
-    public DataTable CachePeriodictiyData;
-
-    public DirectoryInfo ResolvedCachePath;
-
-    public HashSet<Catalogue> CataloguesMissingDQERuns { get; private set; }
-    private ICacheProgress _cacheProgress;
-
-    public Dictionary<Catalogue,Evaluation> CataloguesWithDQERuns { get; private set; }
-
-    public LoadProgressSummaryReport(LoadProgress loadProgress)
-    {
-        _loadProgress = loadProgress;
-        _loadMetadata = _loadProgress.LoadMetadata;
-        _cacheProgress = _loadProgress.CacheProgress;
-
-        try
-        {
-            dqeRepository = new DQERepository(loadProgress.CatalogueRepository);
-        }
-        catch (NotSupportedException)
-        {
-            dqeRepository = null;
-        }
-    }
-
-    public void FetchDataFromDQE(ICheckNotifier notifier)
-    {
-        CataloguesWithDQERuns = new Dictionary<Catalogue, Evaluation>();
-        CataloguesMissingDQERuns = new HashSet<Catalogue>();
-
-        //tell them about the missing evaluations catalogues
-        foreach (var catalogue in _loadMetadata.GetAllCatalogues().Cast<Catalogue>())
-        {
-            var evaluation = dqeRepository.GetMostRecentEvaluationFor(catalogue);
-
-            if (evaluation == null)
-            {
-                //Catalogue has never been run in the DQE
-                CataloguesMissingDQERuns.Add(catalogue);
-
-                notifier?.OnCheckPerformed(
-                    new CheckEventArgs(
-                        $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
-                        CheckResult.Warning));
-            }
-            else
-            {
-                CataloguesWithDQERuns.Add(catalogue,evaluation);
-            }
-
-        }
-        //The following code uses an epic pivot to produce something like:
-        /*YearMonth	Year	Month	 6429	 6430
-            1970-1	1970	    1	    4	    0
-            1970-2	1970	    2	    2	    0
-            1970-3	1970	    3	    6	    1
-            1970-4	1970	    4	    4	    0
-            1970-6	1970	    6	    2	    0*/
-
-
-
-        if (!CataloguesWithDQERuns.Any())
-            throw new Exception("There are no Catalogues that have had DQE run on them in this LoadMetadata");
-            
-        if (notifier != null)
-            foreach (var catalogue in CataloguesWithDQERuns)
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        $"Found DQE Evaluations for Catalogue '{catalogue}'",
-                        CheckResult.Success));
-
-        using (var con = dqeRepository.GetConnection())
-        {
-            CataloguesPeriodictiyData = new DataTable();
-
-            var cmd = dqeRepository.DiscoveredServer.GetCommand(GetTotalsByMonthSQL(CataloguesWithDQERuns.Keys.ToArray()), con);
-            var da = dqeRepository.DiscoveredServer.GetDataAdapter(cmd);
-            da.Fill(CataloguesPeriodictiyData);
-        }
-
-        //Now rename the columns from ID to the catalogue name
-        foreach (DataColumn col in CataloguesPeriodictiyData.Columns)
-        {
-            if (int.TryParse(col.ColumnName, out int cataId))
-                col.ColumnName = CataloguesWithDQERuns.Keys.Single(c => c.ID == cataId).Name;
-        }
-
-        //Now extend the X axis up to the cache fill location
-        var cacheProgress = _loadProgress.CacheProgress;
-        if (cacheProgress != null && cacheProgress.CacheFillProgress != null)
-            ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
-    }
-
-
-
-    private void ExtendXAxisTill(DateTime value)
-    {
-        var targetYear = value.Year;
-        var targetMonth = value.Month;
-
-        var row = CataloguesPeriodictiyData.Rows.Count - 1;
-        var maxYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Year"]);
-        var maxMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Month"]);
-
-        var currentMax = new DateTime(maxYear, maxMonth, 1);
-
-        var columnCount = CataloguesPeriodictiyData.Columns.Count;
-
-        while (
-            //While the cache is years ahead of the end of the axis
-            targetYear > currentMax.Year
-            ||
-            //or the cache is months ahead of the end of the axis
-            (targetYear == currentMax.Year && targetMonth >= currentMax.Month))
-        {
-            currentMax = currentMax.AddMonths(1);
-
-            var newRow = CataloguesPeriodictiyData.Rows.Add();
-            newRow["YearMonth"] = $"{currentMax.Year}-{currentMax.Month}";
-            newRow["Year"] = currentMax.Year;
-            newRow["Month"] = currentMax.Month;
-
-            //set all the catalogue row counts to 0 since we are extending the axis
-            for (var i = 3; i < columnCount; i++)
-                newRow[i] = 0;
-        }
-    }
-    private void ExtendXAxisBackwardsTill(DateTime value)
-    {
-
-        var targetYear = value.Year;
-        var targetMonth = value.Month;
-
-        var minYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Year"]);
-        var minMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Month"]);
-
-        var currentMin = new DateTime(minYear, minMonth, 1);
-
-        var columnCount = CataloguesPeriodictiyData.Columns.Count;
-
-        while (
-            //While the cache is years ahead of the end of the axis
-            targetYear < currentMin.Year
-            ||
-            //or the cache is months ahead of the end of the axis
-            (targetYear == currentMin.Year && targetMonth <= currentMin.Month))
-        {
-            currentMin = currentMin.AddMonths(-1);
-
-            var newRow = CataloguesPeriodictiyData.NewRow();
-
-            newRow["YearMonth"] = $"{currentMin.Year}-{currentMin.Month}";
-            newRow["Year"] = currentMin.Year;
-            newRow["Month"] = currentMin.Month;
-
-            //set all the catalogue row counts to 0 since we are extending the axis
-            for (var i = 3; i < columnCount; i++)
-                newRow[i] = 0;
-
-            CataloguesPeriodictiyData.Rows.InsertAt(newRow, 0);
-        }
-    }
-
-
-    public void Check(ICheckNotifier notifier)
-    {
-        try
-        {
-            dqeRepository = new DQERepository((ICatalogueRepository)_loadProgress.Repository);
-        }
-        catch (Exception ex)
-        {
-
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    "Could not contact DQE server to check the 'real' coverage of the datasets linked to this LoadProgress, possibly because there isn't a DQE server yet.  You should create one in ManageExternalServers",
-                    CheckResult.Fail,ex));
-            return;
-        }
-            
-        if (CataloguesPeriodictiyData == null)
-            FetchDataFromDQE(notifier);
-
-        if (CachePeriodictiyData == null)
-            FetchCacheData(notifier);
-
-        foreach (var cataloguesMissingDQERun in CataloguesMissingDQERuns)
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    $"Catalogue '{cataloguesMissingDQERun}' is associated with the load '{_loadMetadata}' but has never had a DQE run executed on it, you should configure some basic validation on it and choose a time periodicity column and execute a DQE run on it.",
-                    CheckResult.Fail));
-            
-    }
-
-    private void FetchCacheData(ICheckNotifier notifier)
-    {
-        if (_cacheProgress != null)
-        {
-            DateTime[] availableFiles;
-
-            try
-            {
-                var cacheFileSystem = new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(new FromCheckNotifierToDataLoadEventListener(notifier));
-
-                var layout = cacheFileSystem.CreateCacheLayout();
-                availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
-                ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
-            }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    "Failed to generate cache layout/population information because the CacheProgress does not have a stable/working Pipeline Destination.  See Inner Exception for specifics",
-                    e);
-            }
-
-            CachePeriodictiyData = new DataTable();
-
-            CachePeriodictiyData.Columns.Add("YearMonth");
-            CachePeriodictiyData.Columns.Add("Year", typeof (int));
-            CachePeriodictiyData.Columns.Add("Month", typeof (int));
-
-            CachePeriodictiyData.Columns.Add("Fetch Failures", typeof (int));
-            CachePeriodictiyData.Columns.Add("Files In Cache", typeof (int));
-
-            var allFailures =
-                _cacheProgress.CacheFetchFailures
-                    .Where(f => f.ResolvedOn == null)
-                    .Select(f => f.FetchRequestStart)
-                    .ToArray();
-            Array.Sort(allFailures);
-
-            var anyFailures = allFailures.Any();
-            var anySuccesses = availableFiles.Any();
-
-            //Make sure main data table has room on its X axis for the cache failures and loaded files
-            if (anyFailures)
-            {
-
-                ExtendXAxisTill(allFailures.Max());
-                ExtendXAxisBackwardsTill(allFailures.Min());
-            }
-
-            if (anySuccesses)
-            {
-
-                ExtendXAxisTill(availableFiles.Max());
-                ExtendXAxisBackwardsTill(availableFiles.Min());
-            }
-
-            //now clone the data table but populate the axis with available/failures instead of
-            foreach (DataRow originRow in CataloguesPeriodictiyData.Rows)
-            {
-                var year = Convert.ToInt32(originRow["Year"]);
-                var month = Convert.ToInt32(originRow["Month"]);
-
-                var newRow = CachePeriodictiyData.Rows.Add();
-
-                newRow["YearMonth"] = originRow["YearMonth"];
-                newRow["Year"] = originRow["Year"];
-                newRow["Month"] = originRow["Month"];
-
-                var totalFailuresForMonth = anyFailures
-                    ? allFailures.Count(f => f.Year == year && f.Month == month)
-                    : 0;
-                var totalAvailableForMonth = anySuccesses
-                    ? availableFiles.Count(f => f.Year == year && f.Month == month)
-                    : 0;
-
-                newRow["Fetch Failures"] = totalFailuresForMonth;
-                newRow["Files In Cache"] = totalAvailableForMonth;
-            }
-        }
-        else
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not nessesarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
-                    CheckResult.Warning));
-    }
-
-
-
-    private static string GetTotalsByMonthSQL(Catalogue[] catalogues)
-    {
-
-        return string.Format(GetTotalRecordsPerYearCountPivotByCatalogueSQL, string.Join(",", catalogues.Select(c=>c.ID)));
-    }
-
     private const string GetTotalRecordsPerYearCountPivotByCatalogueSQL =
         @"
 --DYNAMICALLY FETCH COLUMN VALUES FOR USE IN PIVOT
@@ -418,4 +126,294 @@ Month'
 
 EXECUTE(@Query)";
 
+    private readonly ILoadMetadata _loadMetadata;
+    private readonly ILoadProgress _loadProgress;
+    private readonly ICacheProgress _cacheProgress;
+    public DataTable CachePeriodictiyData;
+
+    public DataTable CataloguesPeriodictiyData;
+
+    private DQERepository dqeRepository;
+
+    public DirectoryInfo ResolvedCachePath;
+
+    public LoadProgressSummaryReport(LoadProgress loadProgress)
+    {
+        _loadProgress = loadProgress;
+        _loadMetadata = _loadProgress.LoadMetadata;
+        _cacheProgress = _loadProgress.CacheProgress;
+
+        try
+        {
+            dqeRepository = new DQERepository(loadProgress.CatalogueRepository);
+        }
+        catch (NotSupportedException)
+        {
+            dqeRepository = null;
+        }
+    }
+
+    public bool DQERepositoryExists => dqeRepository != null;
+
+    public HashSet<Catalogue> CataloguesMissingDQERuns { get; private set; }
+
+    public Dictionary<Catalogue, Evaluation> CataloguesWithDQERuns { get; private set; }
+
+
+    public void Check(ICheckNotifier notifier)
+    {
+        try
+        {
+            dqeRepository = new DQERepository((ICatalogueRepository)_loadProgress.Repository);
+        }
+        catch (Exception ex)
+        {
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "Could not contact DQE server to check the 'real' coverage of the datasets linked to this LoadProgress, possibly because there isn't a DQE server yet.  You should create one in ManageExternalServers",
+                    CheckResult.Fail, ex));
+            return;
+        }
+
+        if (CataloguesPeriodictiyData == null)
+            FetchDataFromDQE(notifier);
+
+        if (CachePeriodictiyData == null)
+            FetchCacheData(notifier);
+
+        foreach (var cataloguesMissingDQERun in CataloguesMissingDQERuns)
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    $"Catalogue '{cataloguesMissingDQERun}' is associated with the load '{_loadMetadata}' but has never had a DQE run executed on it, you should configure some basic validation on it and choose a time periodicity column and execute a DQE run on it.",
+                    CheckResult.Fail));
+    }
+
+    public void FetchDataFromDQE(ICheckNotifier notifier)
+    {
+        CataloguesWithDQERuns = new Dictionary<Catalogue, Evaluation>();
+        CataloguesMissingDQERuns = new HashSet<Catalogue>();
+
+        //tell them about the missing evaluations catalogues
+        foreach (var catalogue in _loadMetadata.GetAllCatalogues().Cast<Catalogue>())
+        {
+            var evaluation = dqeRepository.GetMostRecentEvaluationFor(catalogue);
+
+            if (evaluation == null)
+            {
+                //Catalogue has never been run in the DQE
+                CataloguesMissingDQERuns.Add(catalogue);
+
+                notifier?.OnCheckPerformed(
+                    new CheckEventArgs(
+                        $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
+                        CheckResult.Warning));
+            }
+            else
+            {
+                CataloguesWithDQERuns.Add(catalogue, evaluation);
+            }
+        }
+        //The following code uses an epic pivot to produce something like:
+        /*YearMonth	Year	Month	 6429	 6430
+            1970-1	1970	    1	    4	    0
+            1970-2	1970	    2	    2	    0
+            1970-3	1970	    3	    6	    1
+            1970-4	1970	    4	    4	    0
+            1970-6	1970	    6	    2	    0*/
+
+
+        if (!CataloguesWithDQERuns.Any())
+            throw new Exception("There are no Catalogues that have had DQE run on them in this LoadMetadata");
+
+        if (notifier != null)
+            foreach (var catalogue in CataloguesWithDQERuns)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        $"Found DQE Evaluations for Catalogue '{catalogue}'",
+                        CheckResult.Success));
+
+        using (var con = dqeRepository.GetConnection())
+        {
+            CataloguesPeriodictiyData = new DataTable();
+
+            var cmd = dqeRepository.DiscoveredServer.GetCommand(
+                GetTotalsByMonthSQL(CataloguesWithDQERuns.Keys.ToArray()), con);
+            var da = dqeRepository.DiscoveredServer.GetDataAdapter(cmd);
+            da.Fill(CataloguesPeriodictiyData);
+        }
+
+        //Now rename the columns from ID to the catalogue name
+        foreach (DataColumn col in CataloguesPeriodictiyData.Columns)
+            if (int.TryParse(col.ColumnName, out var cataId))
+                col.ColumnName = CataloguesWithDQERuns.Keys.Single(c => c.ID == cataId).Name;
+
+        //Now extend the X axis up to the cache fill location
+        var cacheProgress = _loadProgress.CacheProgress;
+        if (cacheProgress != null && cacheProgress.CacheFillProgress != null)
+            ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
+    }
+
+
+    private void ExtendXAxisTill(DateTime value)
+    {
+        var targetYear = value.Year;
+        var targetMonth = value.Month;
+
+        var row = CataloguesPeriodictiyData.Rows.Count - 1;
+        var maxYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Year"]);
+        var maxMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[row]["Month"]);
+
+        var currentMax = new DateTime(maxYear, maxMonth, 1);
+
+        var columnCount = CataloguesPeriodictiyData.Columns.Count;
+
+        while (
+            //While the cache is years ahead of the end of the axis
+            targetYear > currentMax.Year
+            ||
+            //or the cache is months ahead of the end of the axis
+            (targetYear == currentMax.Year && targetMonth >= currentMax.Month))
+        {
+            currentMax = currentMax.AddMonths(1);
+
+            var newRow = CataloguesPeriodictiyData.Rows.Add();
+            newRow["YearMonth"] = $"{currentMax.Year}-{currentMax.Month}";
+            newRow["Year"] = currentMax.Year;
+            newRow["Month"] = currentMax.Month;
+
+            //set all the catalogue row counts to 0 since we are extending the axis
+            for (var i = 3; i < columnCount; i++)
+                newRow[i] = 0;
+        }
+    }
+
+    private void ExtendXAxisBackwardsTill(DateTime value)
+    {
+        var targetYear = value.Year;
+        var targetMonth = value.Month;
+
+        var minYear = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Year"]);
+        var minMonth = Convert.ToInt32(CataloguesPeriodictiyData.Rows[0]["Month"]);
+
+        var currentMin = new DateTime(minYear, minMonth, 1);
+
+        var columnCount = CataloguesPeriodictiyData.Columns.Count;
+
+        while (
+            //While the cache is years ahead of the end of the axis
+            targetYear < currentMin.Year
+            ||
+            //or the cache is months ahead of the end of the axis
+            (targetYear == currentMin.Year && targetMonth <= currentMin.Month))
+        {
+            currentMin = currentMin.AddMonths(-1);
+
+            var newRow = CataloguesPeriodictiyData.NewRow();
+
+            newRow["YearMonth"] = $"{currentMin.Year}-{currentMin.Month}";
+            newRow["Year"] = currentMin.Year;
+            newRow["Month"] = currentMin.Month;
+
+            //set all the catalogue row counts to 0 since we are extending the axis
+            for (var i = 3; i < columnCount; i++)
+                newRow[i] = 0;
+
+            CataloguesPeriodictiyData.Rows.InsertAt(newRow, 0);
+        }
+    }
+
+    private void FetchCacheData(ICheckNotifier notifier)
+    {
+        if (_cacheProgress != null)
+        {
+            DateTime[] availableFiles;
+
+            try
+            {
+                var cacheFileSystem =
+                    new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(
+                        new FromCheckNotifierToDataLoadEventListener(notifier));
+
+                var layout = cacheFileSystem.CreateCacheLayout();
+                availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
+                ResolvedCachePath =
+                    layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
+            }
+            catch (Exception e)
+            {
+                throw new Exception(
+                    "Failed to generate cache layout/population information because the CacheProgress does not have a stable/working Pipeline Destination.  See Inner Exception for specifics",
+                    e);
+            }
+
+            CachePeriodictiyData = new DataTable();
+
+            CachePeriodictiyData.Columns.Add("YearMonth");
+            CachePeriodictiyData.Columns.Add("Year", typeof(int));
+            CachePeriodictiyData.Columns.Add("Month", typeof(int));
+
+            CachePeriodictiyData.Columns.Add("Fetch Failures", typeof(int));
+            CachePeriodictiyData.Columns.Add("Files In Cache", typeof(int));
+
+            var allFailures =
+                _cacheProgress.CacheFetchFailures
+                    .Where(f => f.ResolvedOn == null)
+                    .Select(f => f.FetchRequestStart)
+                    .ToArray();
+            Array.Sort(allFailures);
+
+            var anyFailures = allFailures.Any();
+            var anySuccesses = availableFiles.Any();
+
+            //Make sure main data table has room on its X axis for the cache failures and loaded files
+            if (anyFailures)
+            {
+                ExtendXAxisTill(allFailures.Max());
+                ExtendXAxisBackwardsTill(allFailures.Min());
+            }
+
+            if (anySuccesses)
+            {
+                ExtendXAxisTill(availableFiles.Max());
+                ExtendXAxisBackwardsTill(availableFiles.Min());
+            }
+
+            //now clone the data table but populate the axis with available/failures instead of
+            foreach (DataRow originRow in CataloguesPeriodictiyData.Rows)
+            {
+                var year = Convert.ToInt32(originRow["Year"]);
+                var month = Convert.ToInt32(originRow["Month"]);
+
+                var newRow = CachePeriodictiyData.Rows.Add();
+
+                newRow["YearMonth"] = originRow["YearMonth"];
+                newRow["Year"] = originRow["Year"];
+                newRow["Month"] = originRow["Month"];
+
+                var totalFailuresForMonth = anyFailures
+                    ? allFailures.Count(f => f.Year == year && f.Month == month)
+                    : 0;
+                var totalAvailableForMonth = anySuccesses
+                    ? availableFiles.Count(f => f.Year == year && f.Month == month)
+                    : 0;
+
+                newRow["Fetch Failures"] = totalFailuresForMonth;
+                newRow["Files In Cache"] = totalAvailableForMonth;
+            }
+        }
+        else
+        {
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not nessesarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
+                    CheckResult.Warning));
+        }
+    }
+
+
+    private static string GetTotalsByMonthSQL(Catalogue[] catalogues)
+    {
+        return string.Format(GetTotalRecordsPerYearCountPivotByCatalogueSQL,
+            string.Join(",", catalogues.Select(c => c.ID)));
+    }
 }

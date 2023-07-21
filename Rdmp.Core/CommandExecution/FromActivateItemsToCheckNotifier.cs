@@ -9,11 +9,12 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Implementation of <see cref="ICheckNotifier"/> which prompts Yes/No for fixes and reports errors through modal call <see cref="IBasicActivateItems.Show(string)"/>
+///     Implementation of <see cref="ICheckNotifier" /> which prompts Yes/No for fixes and reports errors through modal
+///     call <see cref="IBasicActivateItems.Show(string)" />
 /// </summary>
 public class FromActivateItemsToCheckNotifier : ICheckNotifier
 {
-    private IBasicActivateItems basicActivator;
+    private readonly IBasicActivateItems basicActivator;
 
     public FromActivateItemsToCheckNotifier(IBasicActivateItems basicActivator)
     {
@@ -24,15 +25,15 @@ public class FromActivateItemsToCheckNotifier : ICheckNotifier
     {
         if (args.ProposedFix != null)
             return basicActivator.YesNo(args.ProposedFix, "Apply fix?");
-            
-        if(args.Result >= CheckResult.Fail)
+
+        if (args.Result >= CheckResult.Fail)
         {
             if (args.Ex == null)
                 basicActivator.Show(args.Message);
             else
                 basicActivator.ShowException(args.Message, args.Ex);
         }
-            
+
         return false;
     }
 }

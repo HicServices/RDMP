@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
@@ -24,24 +24,33 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
-/// Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP supports a 'newer is better' policy in which
-/// all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly loaded record with pk X will result in an
-/// UPDATE of the values for that record to the new values in STAGING that are being loaded).
-/// 
-/// <para>This component is designed to support loading periods of old data into a LIVE data table that has moved on (i.e. to backfill a dataset) without
-/// overwriting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have found a year of data you forgot to load back
-/// in 2009 but you expect that since 2009 there have been historical record updates for records originally generated in 2009 (you want to load all 2009 records
-/// from the historical batch except where there has been an update since).</para>
-/// 
-/// <para>This is done by selecting a 'TimePeriodicity' field that identifies the 'dataset time' of the record (as opposed to the load time) e.g. 'date blood sample
-///  taken'.  STAGING records will be deleted where there are records in LIVE wich  have the same primary key but a newer TimePeriodicity date.</para>
+///     Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP
+///     supports a 'newer is better' policy in which
+///     all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly
+///     loaded record with pk X will result in an
+///     UPDATE of the values for that record to the new values in STAGING that are being loaded).
+///     <para>
+///         This component is designed to support loading periods of old data into a LIVE data table that has moved on
+///         (i.e. to backfill a dataset) without
+///         overwriting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have
+///         found a year of data you forgot to load back
+///         in 2009 but you expect that since 2009 there have been historical record updates for records originally
+///         generated in 2009 (you want to load all 2009 records
+///         from the historical batch except where there has been an update since).
+///     </para>
+///     <para>
+///         This is done by selecting a 'TimePeriodicity' field that identifies the 'dataset time' of the record (as
+///         opposed to the load time) e.g. 'date blood sample
+///         taken'.  STAGING records will be deleted where there are records in LIVE wich  have the same primary key but a
+///         newer TimePeriodicity date.
+///     </para>
 /// </summary>
 public class StagingBackfillMutilator : IPluginMutilateDataTables
 {
     private DiscoveredDatabase _dbInfo;
-    private TableInfo _tiWithTimeColumn;
-    private BackfillSqlHelper _sqlHelper;
     private MigrationConfiguration _migrationConfiguration;
+    private BackfillSqlHelper _sqlHelper;
+    private TableInfo _tiWithTimeColumn;
 
     // Only a test runner can set this
     public bool TestContext { get; set; }
@@ -64,16 +73,20 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         {
             // If we are operating inside a test, the client is responsible for providing a TableNamingScheme
             if (TableNamingScheme == null)
-                throw new InvalidOperationException("Executing within test context but no TableNamingScheme has been provided");
+                throw new InvalidOperationException(
+                    "Executing within test context but no TableNamingScheme has been provided");
         }
         else
             // If we are not operating inside a Test, hardwire the TableNamingScheme
+        {
             TableNamingScheme = new FixedStagingDatabaseNamer(liveDatabaseInfo.GetRuntimeName());
+        }
 
         // create invariant helpers
         _sqlHelper = new BackfillSqlHelper(TimePeriodicityField, _dbInfo, liveDatabaseInfo);
-        _migrationConfiguration = new MigrationConfiguration(liveDatabaseInfo, LoadBubble.Live, LoadBubble.Staging, TableNamingScheme);
-            
+        _migrationConfiguration =
+            new MigrationConfiguration(liveDatabaseInfo, LoadBubble.Live, LoadBubble.Staging, TableNamingScheme);
+
         // starting with the TimePeriodicity table, we descend the join relationships to the leaf tables then ascend back up to the TimePeriodicity table
         // at each step we determine the effective date of the record by joining back to the TimePeriodicity table
         // this allows us to remove updates that are older than the corresponding record in live
@@ -91,8 +104,28 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         return ExitCodeType.Success;
     }
 
+    public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
+    {
+        _dbInfo = dbInfo;
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        // if we're not executing in a test context, fail the whole component: it doesn't yet have sufficient test coverage
+        if (!TestContext)
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "Don't use the StagingBackfillMutilator component for now! Does not yet have sufficient test coverage.",
+                    CheckResult.Fail));
+    }
+
+
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
+    {
+    }
+
     /// <summary>
-    /// Get the database credentials for the Live server, accessing them via the TimePeriodicityField ColumnInfo
+    ///     Get the database credentials for the Live server, accessing them via the TimePeriodicityField ColumnInfo
     /// </summary>
     /// <returns></returns>
     private DiscoveredDatabase GetLiveDatabaseInfo()
@@ -102,7 +135,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     }
 
     /// <summary>
-    /// Ascends join tree from the TimePeriodicity table, processing tables at each step
+    ///     Ascends join tree from the TimePeriodicity table, processing tables at each step
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
@@ -112,7 +145,8 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
 
         // Find all parents of this table
         var allJoinInfos = repository.GetAllObjects<JoinInfo>();
-        var joinsWithThisTableAsChild = allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
+        var joinsWithThisTableAsChild =
+            allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
 
         // Infinite recursion check
         var seenBefore = joinPathToTimeTable.Intersect(joinsWithThisTableAsChild).ToList();
@@ -121,9 +155,10 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
                 $"Join loop: I've seen join(s) {string.Join(",", seenBefore.Select(j => $"{j.PrimaryKey} -> {j.ForeignKey}"))} before so we must have hit a loop (and will never complete the recursion).");
 
         // Process this table and its children (we need info about the children in order to join and detect childless rows)
-        var joinsWithThisTableAsParent = allJoinInfos.Where(info => info.PrimaryKey.TableInfo_ID == tiCurrent.ID).ToList();
+        var joinsWithThisTableAsParent =
+            allJoinInfos.Where(info => info.PrimaryKey.TableInfo_ID == tiCurrent.ID).ToList();
         ProcessTable(tiCurrent, joinPathToTimeTable, joinsWithThisTableAsParent);
-            
+
         // Ascend into parent tables once this table has been processed
         foreach (var join in joinsWithThisTableAsChild)
         {
@@ -133,13 +168,12 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
             if (tiParent == null)
                 continue;
 
-            ProcessPredecessors(tiParent, new List<JoinInfo>(joinPathToTimeTable){join});
+            ProcessPredecessors(tiParent, new List<JoinInfo>(joinPathToTimeTable) { join });
         }
-            
     }
 
     /// <summary>
-    /// Descends to leaves of join tree, then processes tables on way back up
+    ///     Descends to leaves of join tree, then processes tables on way back up
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
@@ -154,22 +188,29 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         foreach (var join in joinsToProcess)
         {
             var tiChild = join.ForeignKey.TableInfo;
-            ProcessOldUpdatesInTable(tiChild, new List<JoinInfo>(joinPathToTimeTable){join});
+            ProcessOldUpdatesInTable(tiChild, new List<JoinInfo>(joinPathToTimeTable) { join });
         }
 
         ProcessTable(tiCurrent, joinPathToTimeTable, joinsToProcess);
     }
 
     /// <summary>
-    /// Deletes any rows in tiCurrent that are out-of-date (with respect to live) and childless, then updates remaining out-of-date rows with the values from staging.
-    /// Out-of-date remaining rows will only be present if they have children which are to be inserted. Any other children will have been deleted in an earlier pass through the recursion (since it starts at the leaves and works upwards).
+    ///     Deletes any rows in tiCurrent that are out-of-date (with respect to live) and childless, then updates remaining
+    ///     out-of-date rows with the values from staging.
+    ///     Out-of-date remaining rows will only be present if they have children which are to be inserted. Any other children
+    ///     will have been deleted in an earlier pass through the recursion (since it starts at the leaves and works upwards).
     /// </summary>
     /// <param name="tiCurrent"></param>
-    /// <param name="joinPathToTimeTable">Chain of JoinInfos back to the TimePeriodicity table so we can join to it and recover the effective date of a particular row</param>
+    /// <param name="joinPathToTimeTable">
+    ///     Chain of JoinInfos back to the TimePeriodicity table so we can join to it and recover
+    ///     the effective date of a particular row
+    /// </param>
     /// <param name="childJoins"></param>
     private void ProcessTable(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
     {
-        var columnSetsToMigrate = _migrationConfiguration.CreateMigrationColumnSetFromTableInfos(new[] {tiCurrent}.ToList(),null, new BackfillMigrationFieldProcessor());
+        var columnSetsToMigrate =
+            _migrationConfiguration.CreateMigrationColumnSetFromTableInfos(new[] { tiCurrent }.ToList(), null,
+                new BackfillMigrationFieldProcessor());
         var columnSet = columnSetsToMigrate.Single();
         var queryHelper = new ReverseMigrationQueryHelper(columnSet);
         var mcsQueryHelper = new MigrationColumnSetQueryHelper(columnSet);
@@ -181,7 +222,8 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         UpdateOldParentsThatHaveNewChildren(tiCurrent, joinPathToTimeTable, queryHelper, mcsQueryHelper);
     }
 
-    private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
+    private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable,
+        ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
     {
         var update = $@"WITH 
 {GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable)}
@@ -198,7 +240,8 @@ LiveDataForUpdating LEFT JOIN {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRu
         }
     }
 
-    private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
+    private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable,
+        List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
     {
         // If there are no joins then we should delete any old updates at this level
         string deleteSql;
@@ -245,7 +288,8 @@ RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "C
     }
 
     /// <summary>
-    /// This and GetLiveDataToUpdateStaging are ugly in that they just reflect modifications to the comparison CTE. Leaving for now as a more thorough refactoring may be required once the full test suite is available.
+    ///     This and GetLiveDataToUpdateStaging are ugly in that they just reflect modifications to the comparison CTE. Leaving
+    ///     for now as a more thorough refactoring may be required once the full test suite is available.
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
@@ -261,7 +305,8 @@ SELECT ToLoadWithTime.* FROM
     }
 
     /// <summary>
-    /// This and GetCurrentOldEntriesSQL are ugly in that they just reflect modifications to the comparison CTE. Leaving for now as a more thorough refactoring may be required once the full test suite is available.
+    ///     This and GetCurrentOldEntriesSQL are ugly in that they just reflect modifications to the comparison CTE. Leaving
+    ///     for now as a more thorough refactoring may be required once the full test suite is available.
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
@@ -273,27 +318,5 @@ LiveDataForUpdating AS (
 SELECT LoadedWithTime.* FROM
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)}";
-    }
-
-    public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
-    {
-        _dbInfo = dbInfo;
-    }
-
-    public void Check(ICheckNotifier notifier)
-    {
-        // if we're not executing in a test context, fail the whole component: it doesn't yet have sufficient test coverage
-        if (!TestContext)
-        {
-            notifier.OnCheckPerformed(
-                new CheckEventArgs("Don't use the StagingBackfillMutilator component for now! Does not yet have sufficient test coverage.",
-                    CheckResult.Fail));
-        }
-    }
-
-
-
-    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-    {
     }
 }

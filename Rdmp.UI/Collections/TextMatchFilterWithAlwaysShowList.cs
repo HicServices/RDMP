@@ -11,24 +11,26 @@ using BrightIdeasSoftware;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// <see cref="TextMatchFilter"/> which always shows a given list of objects (the alwaysShowList).  This class is an <see cref="IModelFilter"/>
-/// for use with ObjectListView
+///     <see cref="TextMatchFilter" /> which always shows a given list of objects (the alwaysShowList).  This class is an
+///     <see cref="IModelFilter" />
+///     for use with ObjectListView
 /// </summary>
 public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
 {
-    public HashSet<object>  AlwaysShow = new();
-    private string[] _tokens;
-    private CompositeAllFilter _compositeFilter;
+    private readonly CompositeAllFilter _compositeFilter;
+    private readonly string[] _tokens;
+    public HashSet<object> AlwaysShow = new();
 
-    public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow ,ObjectListView olv, string text, StringComparison comparison): base(olv, text, comparison)
+    public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow, ObjectListView olv, string text,
+        StringComparison comparison) : base(olv, text, comparison)
     {
-        if(!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
+        if (!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
         {
             var filters = new List<IModelFilter>();
 
             _tokens = text.Split(' ');
             foreach (var token in _tokens)
-                filters.Add(new TextMatchFilter(olv,token,comparison));
+                filters.Add(new TextMatchFilter(olv, token, comparison));
 
             _compositeFilter = new CompositeAllFilter(filters);
         }
@@ -38,7 +40,7 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
     }
 
     /// <summary>
-    /// Returns true if the object should be included in the list
+    ///     Returns true if the object should be included in the list
     /// </summary>
     /// <param name="modelObject"></param>
     /// <returns></returns>

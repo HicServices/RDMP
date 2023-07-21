@@ -27,55 +27,46 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Base class for all objects which are stored in database repositories (e.g. Catalogue database , Data Export database).  This is the abstract implementation of
-/// IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is responsible for constructing an instance from a
-/// record in the database and one that takes the minimum parameters required to satisfy database constraints and is used to create new objects.
-/// 
-/// <para>A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This is the RDMP design pattern for object permenance,
-/// sharing and allowing advanced users to update the data model via database queries running directly on the object repository database.</para>
-/// 
-/// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
-/// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
+///     Base class for all objects which are stored in database repositories (e.g. Catalogue database , Data Export
+///     database).  This is the abstract implementation of
+///     IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is
+///     responsible for constructing an instance from a
+///     record in the database and one that takes the minimum parameters required to satisfy database constraints and is
+///     used to create new objects.
+///     <para>
+///         A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This
+///         is the RDMP design pattern for object permenance,
+///         sharing and allowing advanced users to update the data model via database queries running directly on the
+///         object repository database.
+///     </para>
+///     <para>
+///         A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties
+///         that match columns in that table.  This enforces
+///         a transparent mapping between code and database.  If you need to add other public properties you must decorate
+///         them with [NoMappingToDatabase]
+///     </para>
 /// </summary>
-public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICanBeSummarised
+public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICanBeSummarised
 {
     /// <summary>
-    /// The maximum length for any given line in return value of <see cref="GetSummary"/>
+    ///     The maximum length for any given line in return value of <see cref="GetSummary" />
     /// </summary>
     public const int MAX_SUMMARY_ITEM_LENGTH = 100;
 
     protected const string SUMMARY_LINE_DIVIDER = "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯";
 
-    /// <inheritdoc/>
-    public int ID { get; set; }
-
     private bool _readonly;
 
-    /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public IRepository Repository { get; set; }
-
-    /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
-
-
     /// <summary>
-    /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
-    /// </summary>
-    [NoMappingToDatabase]
-    public IDataExportRepository DataExportRepository => Repository as IDataExportRepository;
-
-    /// <summary>
-    /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
-    /// and you are trying to create it into the db
+    ///     Constructs a new instance.  You should only use this when your object does not yet exist in the database
+    ///     and you are trying to create it into the db
     /// </summary>
     protected DatabaseEntity()
     {
     }
 
     /// <summary>
-    /// Creates a new instance and hydrates it from the current values of <paramref name="r"/>
+    ///     Creates a new instance and hydrates it from the current values of <paramref name="r" />
     /// </summary>
     /// <param name="repository">The database which the record/object was read from</param>
     /// <param name="r">Data reader with values for hydrating this object</param>
@@ -87,23 +78,100 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             throw new InvalidOperationException(
                 $"The DataReader passed to this type ({GetType().Name}) does not contain an 'ID' column. This is a requirement for all IMapsDirectlyToDatabaseTable implementing classes.");
 
-        ID = int.Parse(r["ID"].ToString()); // gets around decimals and other random crud number field types that sql returns
+        ID = int.Parse(r["ID"]
+            .ToString()); // gets around decimals and other random crud number field types that sql returns
+    }
 
+    /// <inheritdoc />
+    [NoMappingToDatabase]
+    public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
+
+
+    /// <summary>
+    ///     Returns <see cref="Repository" /> as <see cref="IDataExportRepository" /> or null if the object does not exist in a
+    ///     data export repository.
+    /// </summary>
+    [NoMappingToDatabase]
+    public IDataExportRepository DataExportRepository => Repository as IDataExportRepository;
+
+    /// <inheritdoc />
+    public virtual string GetSummary(bool includeName, bool includeID)
+    {
+        var sbPart1 = new StringBuilder();
+        foreach (var prop in GetType().GetProperties().Where(p => p.Name.Contains("Description")))
+            AppendPropertyToSummary(sbPart1, prop, includeName, includeID, false);
+
+        var sbPart2 = new StringBuilder();
+        foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
+            AppendPropertyToSummary(sbPart2, prop, includeName, includeID);
+
+        if (sbPart1.Length > 0 && sbPart2.Length > 0)
+            sbPart1.AppendLine(SUMMARY_LINE_DIVIDER);
+        sbPart1.Append(sbPart2);
+
+        return sbPart1.ToString();
+    }
+
+    /// <inheritdoc />
+    public int ID { get; set; }
+
+    /// <inheritdoc />
+    [NoMappingToDatabase]
+    public IRepository Repository { get; set; }
+
+    /// <inheritdoc />
+    public virtual void SaveToDatabase()
+    {
+        Repository.SaveToDatabase(this);
+    }
+
+    /// <inheritdoc />
+    public virtual void DeleteInDatabase()
+    {
+        Repository.DeleteFromDatabase(this);
+    }
+
+    /// <inheritdoc />
+    public virtual void RevertToDatabaseState()
+    {
+        Repository.RevertToDatabaseState(this);
+
+        if (this is IInjectKnown ii)
+            ii.ClearAllInjections();
+    }
+
+    /// <inheritdoc />
+    public RevertableObjectReport HasLocalChanges()
+    {
+        return Repository.HasLocalChanges(this);
+    }
+
+    /// <inheritdoc />
+    public virtual bool Exists()
+    {
+        return Repository.StillExists(this);
+    }
+
+    /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged" />
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    /// <inheritdoc />
+    public void SetReadOnly()
+    {
+        _readonly = true;
     }
 
     private static bool HasColumn(IDataRecord reader, string columnName)
     {
         for (var i = 0; i < reader.FieldCount; i++)
-        {
             if (reader.GetName(i).Equals(columnName, StringComparison.InvariantCultureIgnoreCase))
                 return true;
-        }
 
         return false;
     }
 
     /// <summary>
-    /// Converts the <paramref name="fieldName"/> into a <see cref="Uri"/>.  DBNull.Value and null are returned as null;
+    ///     Converts the <paramref name="fieldName" /> into a <see cref="Uri" />.  DBNull.Value and null are returned as null;
     /// </summary>
     /// <param name="r"></param>
     /// <param name="fieldName"></param>
@@ -118,53 +186,20 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         return new Uri(uri.ToString());
     }
 
-    /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
+    /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)" />
     public override int GetHashCode()
     {
         return Repository.GetHashCode(this);
     }
 
-    /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)"/>
+    /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)" />
     public override bool Equals(object obj)
     {
         return Repository.AreEqual(this, obj);
     }
 
-    /// <inheritdoc/>
-    public virtual void SaveToDatabase()
-    {
-        Repository.SaveToDatabase(this);
-    }
-
-    /// <inheritdoc/>
-    public virtual void DeleteInDatabase()
-    {
-        Repository.DeleteFromDatabase(this);
-    }
-
-    /// <inheritdoc/>
-    public virtual void RevertToDatabaseState()
-    {
-        Repository.RevertToDatabaseState(this);
-
-        if (this is IInjectKnown ii)
-            ii.ClearAllInjections();
-    }
-
-    /// <inheritdoc/>
-    public RevertableObjectReport HasLocalChanges()
-    {
-        return Repository.HasLocalChanges(this);
-    }
-
-    /// <inheritdoc/>
-    public virtual bool Exists()
-    {
-        return Repository.StillExists(this);
-    }
-
     /// <summary>
-    /// Converts the supplied object to a <see cref="DateTime"/> or null if o is null/DBNull.Value
+    ///     Converts the supplied object to a <see cref="DateTime" /> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -177,7 +212,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     }
 
     /// <summary>
-    /// Converts the supplied object to a <see cref="int"/> or null if o is null/DBNull.Value
+    ///     Converts the supplied object to a <see cref="int" /> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -190,7 +225,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     }
 
     /// <summary>
-    /// Converts the supplied object to a <see cref="bool"/> or null if o is null/DBNull.Value
+    ///     Converts the supplied object to a <see cref="bool" /> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -202,24 +237,24 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         return Convert.ToBoolean(o);
     }
 
-    /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
-    public event PropertyChangedEventHandler PropertyChanged;
-
     /// <summary>
-    /// Fired when any database tied property is changed in memory.
+    ///     Fired when any database tied property is changed in memory.
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
     /// <param name="propertyName"></param>
     [NotifyPropertyChangedInvocator]
-    protected virtual void OnPropertyChanged(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
+    protected virtual void OnPropertyChanged(object oldValue, object newValue,
+        [CallerMemberName] string propertyName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName,oldValue,newValue));
+        PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName, oldValue, newValue));
     }
 
     /// <summary>
-    /// Changes the value of <paramref name="field"/> to <paramref name="value"/> and triggers <see cref="OnPropertyChanged"/>.  You should have a public Property and
-    /// a backing field for all database fields on your object.  The Property should use this method to change the underlying fields value.
+    ///     Changes the value of <paramref name="field" /> to <paramref name="value" /> and triggers
+    ///     <see cref="OnPropertyChanged" />.  You should have a public Property and
+    ///     a backing field for all database fields on your object.  The Property should use this method to change the
+    ///     underlying fields value.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="field"></param>
@@ -231,7 +266,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         if (EqualityComparer<T>.Default.Equals(field, value)) return false;
 
         //treat null and "" as the same
-        if (typeof(T) == typeof(string) && string.IsNullOrWhiteSpace(field as string) && string.IsNullOrWhiteSpace(value as string))
+        if (typeof(T) == typeof(string) && string.IsNullOrWhiteSpace(field as string) &&
+            string.IsNullOrWhiteSpace(value as string))
             return false;
 
         if (_readonly)
@@ -245,20 +281,15 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         return true;
     }
 
-    /// <inheritdoc/>
-    public void SetReadOnly()
-    {
-        _readonly = true;
-    }
-
     /// <summary>
-    /// Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the <paramref name="to"/> object.
-    /// Also skips 'Name' and 'ID'
+    ///     Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the
+    ///     <paramref name="to" /> object.
+    ///     Also skips 'Name' and 'ID'
     /// </summary>
     /// <param name="to"></param>
     /// <param name="copyName"></param>
     /// <param name="save"></param>
-    protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
+    protected void CopyShallowValuesTo(DatabaseEntity to, bool copyName = false, bool save = true)
     {
         if (GetType() != to.GetType())
             throw new NotSupportedException(
@@ -266,7 +297,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
 
         var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
         var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
-            
+
         foreach (var p in GetType().GetProperties())
         {
             if (p.Name.Equals("ID"))
@@ -275,40 +306,18 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             if (p.Name.Equals("Name") && !copyName)
                 continue;
 
-            if(noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
+            if (noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
                 continue;
 
             p.SetValue(to, p.GetValue(this));
         }
 
-        if(save)
+        if (save)
             to.SaveToDatabase();
     }
 
-    /// <inheritdoc/>
-    public virtual string GetSummary(bool includeName, bool includeID)
-    {
-
-        var sbPart1 = new StringBuilder();
-        foreach (var prop in GetType().GetProperties().Where(p=>p.Name.Contains("Description")))
-        {
-            AppendPropertyToSummary(sbPart1, prop, includeName, includeID, false);
-        }
-
-        var sbPart2 = new StringBuilder();
-        foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
-        {
-            AppendPropertyToSummary(sbPart2, prop, includeName, includeID);
-        }
-
-        if (sbPart1.Length > 0 && sbPart2.Length > 0)
-            sbPart1.AppendLine(SUMMARY_LINE_DIVIDER);
-        sbPart1.Append(sbPart2);
-
-        return sbPart1.ToString();
-    }
-
-    protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID, bool includePropertyName = true)
+    protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID,
+        bool includePropertyName = true)
     {
         // don't show Name if we are being told not to
         if (!includeName && prop.Name.EndsWith("Name"))
@@ -335,10 +344,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
         }
         catch (TargetInvocationException ex)
         {
-            if(ex.InnerException is NotSupportedException)
-            {
-                return;
-            }
+            if (ex.InnerException is NotSupportedException) return;
 
             throw;
         }
@@ -353,24 +359,20 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             if (val is Enum e && Convert.ToInt32(e) == 0 && val is not DatabaseType)
                 return;
 
-            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
+            var representation =
+                $"{(includePropertyName ? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
-            {
                 representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
-            }
 
-            if (representation.Contains('\n'))
-            {
-                representation = Regex.Replace(representation, @"\r?\n", " ");
-            }
+            if (representation.Contains('\n')) representation = Regex.Replace(representation, @"\r?\n", " ");
 
             sb.AppendLine(representation);
         }
     }
 
     /// <summary>
-    /// Returns the human readable property name adjusted to be elegant to read (e.g. with spaces not pascal case)
+    ///     Returns the human readable property name adjusted to be elegant to read (e.g. with spaces not pascal case)
     /// </summary>
     /// <param name="prop"></param>
     /// <returns></returns>
@@ -380,16 +382,13 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     }
 
     /// <summary>
-    /// Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)"/>
+    ///     Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)" />
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
     protected static string FormatForSummary(object val)
     {
-        if(val is bool b)
-        {
-            return b ? "Yes" : "No";
-        }
+        if (val is bool b) return b ? "Yes" : "No";
 
         return val.ToString()?.Trim();
     }

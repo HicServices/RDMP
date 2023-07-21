@@ -10,29 +10,35 @@ using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class LoadDirectoryNode: Node,IDirectoryInfoNode, IOrderable
+public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; set; }
-
     public LoadDirectoryNode(LoadMetadata loadMetadata)
     {
         LoadMetadata = loadMetadata;
     }
 
+    public LoadMetadata LoadMetadata { get; set; }
+
     public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles);
+
+    public DirectoryInfo GetDirectoryInfoIfAny()
+    {
+        if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles))
+            return null;
+
+        return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
+    }
+
+    public int Order
+    {
+        get => 3;
+        set { }
+    }
 
 
     public override string ToString()
     {
         return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) ? "???" : LoadMetadata.LocationOfFlatFiles;
-    }
-
-    public DirectoryInfo GetDirectoryInfoIfAny()
-    {
-        if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles ))
-            return null;
-
-        return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
     }
 
     protected bool Equals(LoadDirectoryNode other)
@@ -45,14 +51,11 @@ public class LoadDirectoryNode: Node,IDirectoryInfoNode, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDirectoryNode) obj);
+        return Equals((LoadDirectoryNode)obj);
     }
 
     public override int GetHashCode()
     {
         return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
     }
-
-    public int Order { get => 3;
-        set{} }
 }

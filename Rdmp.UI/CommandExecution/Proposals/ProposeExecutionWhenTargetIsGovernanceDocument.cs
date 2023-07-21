@@ -27,7 +27,8 @@ internal class ProposeExecutionWhenTargetIsGovernanceDocument : RDMPCommandExecu
         ItemActivator.Activate<GovernanceDocumentUI, GovernanceDocument>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernanceDocument target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernanceDocument target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

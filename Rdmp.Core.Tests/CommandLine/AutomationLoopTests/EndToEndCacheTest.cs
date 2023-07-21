@@ -26,15 +26,15 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
 
 public class EndToEndCacheTest : DatabaseTests
 {
+    private const int NumDaysToCache = 5;
 
     private Catalogue _cata;
-    private LoadMetadata _lmd;
-    private LoadProgress _lp;
     private CacheProgress _cp;
+    private LoadMetadata _lmd;
+    private LoadDirectory _LoadDirectory;
+    private LoadProgress _lp;
 
     private TestDataPipelineAssembler _testPipeline;
-    private LoadDirectory _LoadDirectory;
-    private const int NumDaysToCache = 5;
 
     [SetUp]
     protected override void SetUp()
@@ -43,9 +43,11 @@ public class EndToEndCacheTest : DatabaseTests
 
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
-            
+
         _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
-        _LoadDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), @"EndToEndCacheTest", true);
+        _LoadDirectory =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                @"EndToEndCacheTest", true);
         _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
         _lmd.SaveToDatabase();
 
@@ -58,12 +60,13 @@ public class EndToEndCacheTest : DatabaseTests
         _cata.SaveToDatabase();
 
         _lp = new LoadProgress(CatalogueRepository, _lmd);
-        _cp = new CacheProgress(CatalogueRepository, _lp); 
-            
-        _lp.OriginDate = new DateTime(2001,1,1);
+        _cp = new CacheProgress(CatalogueRepository, _lp);
+
+        _lp.OriginDate = new DateTime(2001, 1, 1);
         _lp.SaveToDatabase();
 
-        _testPipeline = new TestDataPipelineAssembler($"EndToEndCacheTestPipeline{Guid.NewGuid()}",CatalogueRepository);
+        _testPipeline =
+            new TestDataPipelineAssembler($"EndToEndCacheTestPipeline{Guid.NewGuid()}", CatalogueRepository);
         _testPipeline.ConfigureCacheProgressToUseThePipeline(_cp);
 
         _cp.CacheFillProgress = DateTime.Now.AddDays(-NumDaysToCache);
@@ -93,7 +96,7 @@ public class EndToEndCacheTest : DatabaseTests
         var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
         for (var i = -NumDaysToCache; i < 0; i++)
         {
-            var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv"; 
+            var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv";
             Assert.IsTrue(cacheFiles.Contains(filename), filename + " not found");
         }
     }
@@ -105,8 +108,10 @@ public class EndToEndCacheTest : DatabaseTests
         {
             Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
-            var auto = new CacheRunner(new CacheOptions {CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
-            auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+            var auto = new CacheRunner(new CacheOptions
+                { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
+            auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
+                new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         });
 
         Assert.True(t.Wait(60000));

@@ -11,9 +11,12 @@ namespace Rdmp.Core.ReusableLibraryCode.Extensions;
 public static class VersionExtensions
 {
     /// <summary>
-    /// Returns true if the two versions are idential up to the significant parts specified
+    ///     Returns true if the two versions are idential up to the significant parts specified
     /// </summary>
-    /// <param name="version">The version which depends on <paramref name="other"/> (can include short version e.g. "3.0" will have -1 for Build) </param>
+    /// <param name="version">
+    ///     The version which depends on <paramref name="other" /> (can include short version e.g. "3.0" will
+    ///     have -1 for Build)
+    /// </param>
     /// <param name="other">The full version</param>
     /// <param name="significantParts"></param>
     /// <returns></returns>
@@ -23,22 +26,19 @@ public static class VersionExtensions
     }
 
     /// <summary>
-    /// Compares two versions but only up to the significant parts specified.
+    ///     Compares two versions but only up to the significant parts specified.
     /// </summary>
-    /// <param name="version">The version which depends on <paramref name="otherVersion"/> (can include short version e.g. "3.0" will have -1 for Build) </param>
+    /// <param name="version">
+    ///     The version which depends on <paramref name="otherVersion" /> (can include short version e.g.
+    ///     "3.0" will have -1 for Build)
+    /// </param>
     /// <param name="otherVersion">The full version</param>
     /// <param name="significantParts"></param>
     /// <returns></returns>
     public static int CompareTo(this Version version, Version otherVersion, int significantParts)
     {
-        if (version == null)
-        {
-            throw new ArgumentNullException(nameof(version));
-        }
-        if (otherVersion == null)
-        {
-            return 1;
-        }
+        if (version == null) throw new ArgumentNullException(nameof(version));
+        if (otherVersion == null) return 1;
 
         if (version.Major != otherVersion.Major && significantParts >= 1)
             if (version.Major > otherVersion.Major)

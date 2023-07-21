@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -14,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests;
 
-public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
+public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
 {
     private ShareManager _share;
 
@@ -28,10 +27,10 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     [Test]
     public void TestPruning()
     {
-        var c = new Catalogue(CatalogueRepository,"Catapault");
+        var c = new Catalogue(CatalogueRepository, "Catapault");
         var ci = new CatalogueItem(CatalogueRepository, c, "string");
 
-        var c2 = new Catalogue(CatalogueRepository,"Catapault (Import)");
+        var c2 = new Catalogue(CatalogueRepository, "Catapault (Import)");
         var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
         Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Length, 0);
@@ -40,10 +39,12 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
 
         _share.GetImportAs(ec.SharingUID, c2);
         _share.GetImportAs(eci.SharingUID, ci2);
-            
+
         Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectExport>().Length);
         Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
-        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);//successive calls shouldhn't generate extra entries since they are same obj
+        Assert.AreEqual(2,
+            CatalogueRepository.GetAllObjects<ObjectImport>()
+                .Length); //successive calls shouldhn't generate extra entries since they are same obj
         Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
 
         //cannot delete the shared object
@@ -62,7 +63,7 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     public void CannotDeleteSharedObjectTest()
     {
         //create a test catalogue
-        var c = new Catalogue(CatalogueRepository,"blah");
+        var c = new Catalogue(CatalogueRepository, "blah");
 
         Assert.IsFalse(_share.IsExportedObject(c));
 

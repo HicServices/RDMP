@@ -16,31 +16,34 @@ internal class TestExecuteCommandImportTableInfo : CommandCliTests
     [Test]
     public void Test_ImportTableInfo_NoArguments()
     {
-
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
             new CommandLineObjectPicker(Array.Empty<string>(), GetActivator())));
 
-        StringAssert.StartsWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was Missing",ex.Message);
+        StringAssert.StartsWith(
+            "Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was Missing",
+            ex.Message);
     }
 
     [Test]
     public void Test_ImportTableInfo_MalformedArgument()
     {
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
-            new CommandLineObjectPicker(new string[]{ "MyTable"}, GetActivator())));
+            new CommandLineObjectPicker(new[] { "MyTable" }, GetActivator())));
 
-        StringAssert.StartsWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was MyTable",ex.Message);
+        StringAssert.StartsWith(
+            "Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was MyTable",
+            ex.Message);
     }
 
     [Test]
     public void Test_ImportTableInfo_NoTable()
     {
-        var tbl = "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True";
+        var tbl =
+            "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True";
 
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
-            new CommandLineObjectPicker(new string[]{ tbl,"true"}, GetActivator())));
-            
-        StringAssert.StartsWith("Could not reach server myServerAddress",ex.Message);
-    }
+            new CommandLineObjectPicker(new[] { tbl, "true" }, GetActivator())));
 
+        StringAssert.StartsWith("Could not reach server myServerAddress", ex.Message);
+    }
 }

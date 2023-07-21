@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -15,14 +14,11 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 internal class ColumnInfoTests : DatabaseTests
 {
-
- 
-
     [Test]
     public void CreateNewColumnInfoInDatabase_NewColumns_NewColumnsAreEqualAfterSave()
     {
         TableInfo parent = null;
-        ColumnInfo child=null;
+        ColumnInfo child = null;
 
         try
         {
@@ -43,28 +39,24 @@ internal class ColumnInfoTests : DatabaseTests
             Assert.AreEqual(child.Description, childAfter.Description);
             Assert.AreEqual(child.Status, childAfter.Status);
             Assert.AreEqual(child.RegexPattern, childAfter.RegexPattern);
-            Assert.AreEqual(child.ValidationRules, childAfter.ValidationRules); 
-
+            Assert.AreEqual(child.ValidationRules, childAfter.ValidationRules);
         }
-        finally 
+        finally
         {
             child.DeleteInDatabase();
             parent.DeleteInDatabase();
         }
-            
-
     }
 
     [Test]
     public void GetAllColumnInfos_moreThan1_pass()
     {
-
         var parent = new TableInfo(CatalogueRepository, "Slalom");
 
         try
         {
-            var ci = new ColumnInfo(CatalogueRepository, "MyAwesomeColumn","varchar(1000)", parent);
-           
+            var ci = new ColumnInfo(CatalogueRepository, "MyAwesomeColumn", "varchar(1000)", parent);
+
             try
             {
                 Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Length == 1);
@@ -84,13 +76,14 @@ internal class ColumnInfoTests : DatabaseTests
     public void CreateNewColumnInfoInDatabase_valid_pass()
     {
         var parent = new TableInfo(CatalogueRepository, "Lazors");
-        var columnInfo = new ColumnInfo(CatalogueRepository, "Lazor Reflection Vol","varchar(1000)",parent);
+        var columnInfo = new ColumnInfo(CatalogueRepository, "Lazor Reflection Vol", "varchar(1000)", parent);
 
         Assert.NotNull(columnInfo);
 
         columnInfo.DeleteInDatabase();
 
-        var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
+        var ex = Assert.Throws<KeyNotFoundException>(() =>
+            CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
         Assert.IsTrue(ex.Message.StartsWith($"Could not find ColumnInfo with ID {columnInfo.ID}"), ex.Message);
 
         parent.DeleteInDatabase();
@@ -100,7 +93,7 @@ internal class ColumnInfoTests : DatabaseTests
     public void update_changeAllProperties_pass()
     {
         var parent = new TableInfo(CatalogueRepository, "Rokkits");
-        var column = new ColumnInfo(CatalogueRepository, "ExplosiveVol","varchar(1000)", parent)
+        var column = new ColumnInfo(CatalogueRepository, "ExplosiveVol", "varchar(1000)", parent)
         {
             Digitisation_specs = "Highly digitizable",
             Format = "Jpeg",
@@ -124,7 +117,7 @@ internal class ColumnInfoTests : DatabaseTests
     }
 
     [Test]
-    public void  Test_GetRAWStageTypeWhenPreLoadDiscardedDilution()
+    public void Test_GetRAWStageTypeWhenPreLoadDiscardedDilution()
     {
         var parent = new TableInfo(CatalogueRepository, "Rokkits");
         var column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
@@ -142,6 +135,5 @@ internal class ColumnInfoTests : DatabaseTests
 
         discard.DeleteInDatabase();
         parent.DeleteInDatabase();
-       
     }
 }

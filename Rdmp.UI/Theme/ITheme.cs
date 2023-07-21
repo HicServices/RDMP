@@ -9,10 +9,10 @@ using System.Windows.Forms;
 namespace Rdmp.UI.Theme;
 
 /// <summary>
-/// Interface for classes who can apply a look and feel to tool strips/menus
+///     Interface for classes who can apply a look and feel to tool strips/menus
 /// </summary>
 public interface ITheme
 {
-    void ApplyTo(ToolStrip item);
     bool ApplyThemeToMenus { get; set; }
+    void ApplyTo(ToolStrip item);
 }

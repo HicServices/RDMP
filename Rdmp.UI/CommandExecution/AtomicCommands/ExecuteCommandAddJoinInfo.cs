@@ -20,7 +20,7 @@ public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
     private readonly TableInfo _tableInfo;
     private TableInfo _otherTableInfo;
 
-    public ExecuteCommandAddJoinInfo(IActivateItems activator, TableInfo tableInfo):base(activator)
+    public ExecuteCommandAddJoinInfo(IActivateItems activator, TableInfo tableInfo) : base(activator)
     {
         _tableInfo = tableInfo;
     }
@@ -32,20 +32,13 @@ public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
 
     public override string GetCommandHelp()
     {
-        return "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
+        return
+            "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
         return Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
-    }
-
-    public void SetInitialJoinToTableInfo(TableInfo otherTableInfo)
-    {
-        if(_tableInfo.Equals(otherTableInfo))
-            SetImpossible("Cannot join a TableInfo to itself");
-            
-        _otherTableInfo = otherTableInfo;
     }
 
     public override void Execute()
@@ -56,5 +49,13 @@ public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
 
         if (_otherTableInfo != null)
             jc.SetOtherTableInfo(_otherTableInfo);
+    }
+
+    public void SetInitialJoinToTableInfo(TableInfo otherTableInfo)
+    {
+        if (_tableInfo.Equals(otherTableInfo))
+            SetImpossible("Cannot join a TableInfo to itself");
+
+        _otherTableInfo = otherTableInfo;
     }
 }

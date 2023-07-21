@@ -13,14 +13,15 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Changes the set operation on a <see cref="CohortAggregateContainer"/>
+///     Changes the set operation on a <see cref="CohortAggregateContainer" />
 /// </summary>
 public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 {
     private readonly CohortAggregateContainer _container;
     private readonly SetOperation _operation;
 
-    public ExecuteCommandSetContainerOperation(IBasicActivateItems activator, CohortAggregateContainer container, SetOperation operation) : base(activator)
+    public ExecuteCommandSetContainerOperation(IBasicActivateItems activator, CohortAggregateContainer container,
+        SetOperation operation) : base(activator)
     {
         if (container.Operation == operation)
             SetImpossible($"Container already uses {operation}");
@@ -28,10 +29,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
         _container = container;
         _operation = operation;
 
-        if (container.ShouldBeReadOnly(out var reason))
-        {
-            SetImpossible(reason);
-        }
+        if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
 
         Weight = _operation switch
         {
@@ -66,10 +64,14 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 
         //if the old name was UNION and we are changing to INTERSECT Operation then we should probably change the Name too! even if they have something like 'INTERSECT the people who are big and small' and they change to UNION we want it to be changed to 'UNION the people who are big and small'
         if (_container.Name.StartsWith(oldOperation.ToString()))
+        {
             _container.Name = _operation + _container.Name[oldOperation.ToString().Length..];
+        }
         else
         {
-            if (BasicActivator.TypeText("New name for container?", "You have changed the operation, do you want to give it a new description?", 1000, _container.Name, out var newName, false))
+            if (BasicActivator.TypeText("New name for container?",
+                    "You have changed the operation, do you want to give it a new description?", 1000, _container.Name,
+                    out var newName, false))
             {
                 _container.Name = newName;
             }
@@ -79,12 +81,10 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
                 // user cancelled the operation
                 return;
             }
-
         }
 
         _container.Operation = _operation;
         _container.SaveToDatabase();
         Publish(_container);
-
     }
 }

@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using TypeGuesser;
@@ -12,7 +11,8 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 
 /// <summary>
-///  Dilutes data in the ColumnToDilute by replacing all non null values with 1 and all null values with 0 then alters the column type to bit
+///     Dilutes data in the ColumnToDilute by replacing all non null values with 1 and all null values with 0 then alters
+///     the column type to bit
 /// </summary>
 /// <returns></returns>
 public class CrushToBitFlag : DilutionOperation
@@ -24,7 +24,6 @@ public class CrushToBitFlag : DilutionOperation
 
     public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
     {
-            
         return
             string.Format(
                 @"

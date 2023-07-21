@@ -12,17 +12,16 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.UI.Collections.Providers.Filtering;
 
 /// <summary>
-/// Filters objects in a <see cref="CatalogueCollectionUI"/> based on whether the <see cref="Catalogue"/> is marked
-/// with various flags (e.g. <see cref="Catalogue.IsDeprecated"/>
+///     Filters objects in a <see cref="CatalogueCollectionUI" /> based on whether the <see cref="Catalogue" /> is marked
+///     with various flags (e.g. <see cref="Catalogue.IsDeprecated" />
 /// </summary>
 public class CatalogueCollectionFilter : IModelFilter
 {
-    public ICoreChildProvider ChildProvider { get; set; }
-    private readonly bool _isInternal;
-    private readonly bool _isDeprecated;
     private readonly bool _isColdStorage;
-    private readonly bool _isProjectSpecific;
+    private readonly bool _isDeprecated;
+    private readonly bool _isInternal;
     private readonly bool _isNonExtractable;
+    private readonly bool _isProjectSpecific;
 
     public CatalogueCollectionFilter(ICoreChildProvider childProvider)
     {
@@ -34,8 +33,11 @@ public class CatalogueCollectionFilter : IModelFilter
         _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
     }
 
+    public ICoreChildProvider ChildProvider { get; set; }
+
     public bool Filter(object modelObject)
     {
-        return SearchablesMatchScorer.Filter(modelObject, ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage, _isProjectSpecific, _isNonExtractable);
+        return SearchablesMatchScorer.Filter(modelObject, ChildProvider.GetDescendancyListIfAnyFor(modelObject),
+            _isInternal, _isDeprecated, _isColdStorage, _isProjectSpecific, _isNonExtractable);
     }
 }

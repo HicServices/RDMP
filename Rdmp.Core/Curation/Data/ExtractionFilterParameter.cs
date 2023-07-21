@@ -19,82 +19,31 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes an SQL parameter (e.g. @drugname) which is required for use of an <see cref="ExtractionFilter"/> (its parent).
+///     Describes an SQL parameter (e.g. @drugname) which is required for use of an <see cref="ExtractionFilter" /> (its
+///     parent).
 /// </summary>
 public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
 {
-    #region Database Properties
-
-    private string _value;
-    private string _comment;
-    private string _parameterSQL;
-    private int _extractionFilterID;
-        
-    /// <inheritdoc/>
-    [Sql]
-    public string Value
-    {
-        get => _value;
-        set => SetField(ref _value, value);
-    }
-    /// <inheritdoc/>
-    public string Comment
-    {
-        get => _comment;
-        set => SetField(ref _comment, value);
-    }
-    /// <inheritdoc/>
-    [Sql]
-    public string ParameterSQL
-    {
-        get => _parameterSQL;
-        set => SetField(ref _parameterSQL, value);
-    }
-
-    /// <summary>
-    /// The filter which requires this parameter belongs e.g. an <see cref="ExtractionFilter"/>'Healthboard X' could have a required property (<see cref="ExtractionFilterParameter"/>) @Hb 
-    /// </summary>
-    [Relationship(typeof(ExtractionFilter), RelationshipType.LocalReference)]
-    public int ExtractionFilter_ID
-    {
-        get => _extractionFilterID;
-        set => SetField(ref _extractionFilterID , value);
-    }
-
-    #endregion
-
-
-    /// <summary>
-    /// extracts the name ofthe parameter from the SQL
-    /// </summary>
-    [NoMappingToDatabase]
-    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
-
-    #region Relationships
-    /// <inheritdoc cref="ExtractionFilter_ID"/>
-    [NoMappingToDatabase]
-    public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
-
-    #endregion
-
     public ExtractionFilterParameter()
     {
-
     }
 
     /// <summary>
-    /// Creates a new parameter on the given <paramref name="parent"/>
-    /// <para>It is better to use <see cref="ParameterCreator"/> to automatically generate parameters based on the WHERE Sql</para>
+    ///     Creates a new parameter on the given <paramref name="parent" />
+    ///     <para>
+    ///         It is better to use <see cref="ParameterCreator" /> to automatically generate parameters based on the WHERE
+    ///         Sql
+    ///     </para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parameterSQL"></param>
     /// <param name="parent"></param>
     public ExtractionFilterParameter(ICatalogueRepository repository, string parameterSQL, ExtractionFilter parent)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ParameterSQL", parameterSQL},
-            {"ExtractionFilter_ID", parent.ID}
+            { "ParameterSQL", parameterSQL },
+            { "ExtractionFilter_ID", parent.ID }
         });
     }
 
@@ -108,39 +57,61 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
         Comment = r["Comment"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
-    }
+    #region Relationships
 
-    /// <inheritdoc cref="ParameterSyntaxChecker"/>
-    public void Check(ICheckNotifier notifier)
-    {
-        new ParameterSyntaxChecker(this).Check(notifier);
-    }
+    /// <inheritdoc cref="ExtractionFilter_ID" />
+    [NoMappingToDatabase]
+    public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return ExtractionFilter.GetQuerySyntaxHelper();
-    }
+    #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {ExtractionFilter};
+        return new[] { ExtractionFilter };
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         return null;
     }
 
+
     /// <summary>
-    /// Returns true if a  <see cref="Comment"/> has been provided and an example/initial <see cref="Value"/> specified.  This is a requirement of
-    /// publishing a filter as a master filter
+    ///     extracts the name ofthe parameter from the SQL
+    /// </summary>
+    [NoMappingToDatabase]
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+
+    /// <inheritdoc cref="ParameterSyntaxChecker" />
+    public void Check(ICheckNotifier notifier)
+    {
+        new ParameterSyntaxChecker(this).Check(notifier);
+    }
+
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return ExtractionFilter.GetQuerySyntaxHelper();
+    }
+
+    /// <inheritdoc />
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
+        return ExtractionFilter;
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
+
+    /// <summary>
+    ///     Returns true if a  <see cref="Comment" /> has been provided and an example/initial <see cref="Value" /> specified.
+    ///     This is a requirement of
+    ///     publishing a filter as a master filter
     /// </summary>
     /// <param name="sqlParameter"></param>
     /// <param name="reasonParameterRejected"></param>
@@ -151,17 +122,53 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
 
         if (string.IsNullOrWhiteSpace(sqlParameter.ParameterSQL))
             reasonParameterRejected = "There is no ParameterSQL";
-        else
-        if (string.IsNullOrWhiteSpace(sqlParameter.Value))
+        else if (string.IsNullOrWhiteSpace(sqlParameter.Value))
             reasonParameterRejected = "There is no value/default value listed";
 
 
         return reasonParameterRejected == null;
     }
 
-    /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    #region Database Properties
+
+    private string _value;
+    private string _comment;
+    private string _parameterSQL;
+    private int _extractionFilterID;
+
+    /// <inheritdoc />
+    [Sql]
+    public string Value
     {
-        return ExtractionFilter;
+        get => _value;
+        set => SetField(ref _value, value);
     }
+
+    /// <inheritdoc />
+    public string Comment
+    {
+        get => _comment;
+        set => SetField(ref _comment, value);
+    }
+
+    /// <inheritdoc />
+    [Sql]
+    public string ParameterSQL
+    {
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
+    }
+
+    /// <summary>
+    ///     The filter which requires this parameter belongs e.g. an <see cref="ExtractionFilter" />'Healthboard X' could have
+    ///     a required property (<see cref="ExtractionFilterParameter" />) @Hb
+    /// </summary>
+    [Relationship(typeof(ExtractionFilter), RelationshipType.LocalReference)]
+    public int ExtractionFilter_ID
+    {
+        get => _extractionFilterID;
+        set => SetField(ref _extractionFilterID, value);
+    }
+
+    #endregion
 }

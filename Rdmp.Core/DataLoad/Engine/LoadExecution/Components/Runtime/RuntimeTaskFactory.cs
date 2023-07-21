@@ -13,8 +13,9 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// Translates a data load engine ProcessTask (design time template) configured by the user into the correct RuntimeTask (realisation) based on the
-/// ProcessTaskType (Attacher, Executable etc).  See DataLoadEngine.cd
+///     Translates a data load engine ProcessTask (design time template) configured by the user into the correct
+///     RuntimeTask (realisation) based on the
+///     ProcessTaskType (Attacher, Executable etc).  See DataLoadEngine.cd
 /// </summary>
 public class RuntimeTaskFactory
 {

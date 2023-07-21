@@ -4,21 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using System.Linq;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicCommand
 {
-    private IMapsDirectlyToDatabaseTable[] _toAdd;
     private readonly SessionCollectionUI session;
+    private readonly IMapsDirectlyToDatabaseTable[] _toAdd;
 
-    public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd, SessionCollectionUI session) : base(activator)
+    public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd,
+        SessionCollectionUI session) : base(activator)
     {
         _toAdd = toAdd;
         this.session = session;
@@ -27,8 +28,8 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
             SetImpossible("There are no active Sessions");
 
         Weight = 100.2f;
-
     }
+
     public override void Execute()
     {
         base.Execute();
@@ -39,16 +40,16 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
             var sessions = Activator.GetSessions().ToArray();
 
             if (sessions.Length == 1)
+            {
                 ses = sessions[0];
+            }
             else
             {
-                if(BasicActivator.SelectObject(new DialogArgs
-                   {
-                       TaskDescription = "Choose which session to add the objects to"
-                   }, sessions,out var selected))
-                {
+                if (BasicActivator.SelectObject(new DialogArgs
+                    {
+                        TaskDescription = "Choose which session to add the objects to"
+                    }, sessions, out var selected))
                     ses = selected;
-                }
             }
         }
 

@@ -28,8 +28,8 @@ public class LoadProgressTest : DatabaseTests
     }
 
     /// <summary>
-    /// This tests that when fetching 2 copies (references) to the same database
-    /// record that the instances are considered 'Equal' (for purposes of <see cref="object.Equals(object?)"/>)
+    ///     This tests that when fetching 2 copies (references) to the same database
+    ///     record that the instances are considered 'Equal' (for purposes of <see cref="object.Equals(object?)" />)
     /// </summary>
     [Test]
     public void LoadProgress_Equals()
@@ -42,10 +42,10 @@ public class LoadProgressTest : DatabaseTests
 
         var progress = new LoadProgress(CatalogueRepository, loadMetadata);
         var progressCopy = CatalogueRepository.GetObjectByID<LoadProgress>(progress.ID);
-            
+
         progressCopy.Name = "fish";
-        progressCopy.OriginDate = new DateTime(2001,01,01);
-            
+        progressCopy.OriginDate = new DateTime(2001, 01, 01);
+
         try
         {
             //values are different
@@ -57,7 +57,6 @@ public class LoadProgressTest : DatabaseTests
 
             //therefore objects are the same
             Assert.IsTrue(progressCopy.Equals(progress));
-
         }
         finally
         {

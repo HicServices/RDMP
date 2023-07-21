@@ -24,28 +24,29 @@ using Rdmp.Core.ReusableLibraryCode.Performance;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-/// Provides Cross Database Platform Type translation e.g. GetCommand returns SqlCommand when passed an SqlConnection and a MySqlCommand when passed a
-/// MySqlConnection (etc).  Also provides central debugging/performance evaluation of the queries RDMP is using to access Catalogue databases etc via
-/// installing a ComprehensiveQueryPerformanceCounter.  
+///     Provides Cross Database Platform Type translation e.g. GetCommand returns SqlCommand when passed an SqlConnection
+///     and a MySqlCommand when passed a
+///     MySqlConnection (etc).  Also provides central debugging/performance evaluation of the queries RDMP is using to
+///     access Catalogue databases etc via
+///     installing a ComprehensiveQueryPerformanceCounter.
 /// </summary>
 public class DatabaseCommandHelper
 {
     private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new()
     {
-        {DatabaseType.MySql,new MySqlImplementation()},
-        {DatabaseType.Oracle,new OracleImplementation()},
-        {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
-        {DatabaseType.PostgreSql,new PostgreSqlImplementation()}
+        { DatabaseType.MySql, new MySqlImplementation() },
+        { DatabaseType.Oracle, new OracleImplementation() },
+        { DatabaseType.MicrosoftSQLServer, new MicrosoftSQLImplementation() },
+        { DatabaseType.PostgreSql, new PostgreSqlImplementation() }
     };
 
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
 
     /// <summary>
-    /// Sets the default Global timeout in seconds for new DbCommand objects being created 
+    ///     Sets the default Global timeout in seconds for new DbCommand objects being created
     /// </summary>
     public static int GlobalTimeout = 30;
 
-        
 
     public static IDiscoveredServerHelper For(DbConnection con)
     {
@@ -82,7 +83,7 @@ public class DatabaseCommandHelper
     {
         var cmd = For(con).GetCommand(s, con, transaction);
 
-        PerformanceCounter?.AddAudit(cmd,Environment.StackTrace.ToString());
+        PerformanceCounter?.AddAudit(cmd, Environment.StackTrace);
 
         cmd.CommandTimeout = GlobalTimeout;
         return cmd;
@@ -92,11 +93,11 @@ public class DatabaseCommandHelper
     {
         var toReturn = For(cmd).GetCommandBuilder(cmd).GetInsertCommand(true);
         toReturn.CommandTimeout = cmd.CommandTimeout = GlobalTimeout;
-            
+
         return toReturn;
     }
 
-    public static DbParameter GetParameter(string parameterName,DbCommand forCommand)
+    public static DbParameter GetParameter(string parameterName, DbCommand forCommand)
     {
         return For(forCommand).GetParameter(parameterName);
     }
@@ -105,6 +106,7 @@ public class DatabaseCommandHelper
     {
         return For(databaseType).GetParameter(parameterName);
     }
+
     // only used in missing fields checker, should be in UsefulStuff?
     public static DbConnection GetConnection(DbConnectionStringBuilder connectionStringBuilder)
     {

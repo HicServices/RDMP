@@ -4,17 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution, IAtomicCommand
 {
     private readonly PipelineUseCase _useCase;
 
@@ -22,7 +22,7 @@ public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCo
     {
         _useCase = useCase;
 
-        if(_useCase == null)
+        if (_useCase == null)
             SetImpossible("Pipelines can only be created under an established use case");
     }
 

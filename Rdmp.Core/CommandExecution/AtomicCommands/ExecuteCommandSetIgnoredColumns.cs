@@ -6,28 +6,29 @@
 
 
 using System;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories.Construction;
-using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
 {
-    private readonly LoadMetadata _loadMetadata;
     private readonly ColumnInfo[] _columnsToIgnore;
     private readonly bool _explicitChoiceMade;
+    private readonly LoadMetadata _loadMetadata;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandSetIgnoredColumns(IBasicActivateItems activator, LoadMetadata loadMetadata, ColumnInfo[] columnsToIgnore):base(activator)
+    public ExecuteCommandSetIgnoredColumns(IBasicActivateItems activator, LoadMetadata loadMetadata,
+        ColumnInfo[] columnsToIgnore) : base(activator)
     {
         _loadMetadata = loadMetadata;
         _columnsToIgnore = columnsToIgnore;
         _explicitChoiceMade = true;
     }
 
-    public ExecuteCommandSetIgnoredColumns(IBasicActivateItems activator, LoadMetadata loadMetadata):base(activator)
+    public ExecuteCommandSetIgnoredColumns(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
         _loadMetadata = loadMetadata;
     }
@@ -36,9 +37,9 @@ public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
     {
         base.Execute();
 
-        var availableColumns = _loadMetadata.GetDistinctTableInfoList(true).SelectMany(t=>t.ColumnInfos).ToArray();
+        var availableColumns = _loadMetadata.GetDistinctTableInfoList(true).SelectMany(t => t.ColumnInfos).ToArray();
 
-        if(_explicitChoiceMade)
+        if (_explicitChoiceMade)
         {
             var ignore = _columnsToIgnore ?? Array.Empty<ColumnInfo>();
 
@@ -50,19 +51,17 @@ public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
         }
         else
         {
-            var chosen = BasicActivator.SelectMany("Ignore Columns (choice will replace old set)",typeof(ColumnInfo),availableColumns);
+            var chosen = BasicActivator.SelectMany("Ignore Columns (choice will replace old set)", typeof(ColumnInfo),
+                availableColumns);
 
-            if(chosen != null)
-            {
+            if (chosen != null)
                 foreach (var c in availableColumns)
                 {
                     c.IgnoreInLoads = chosen.Contains(c);
                     c.SaveToDatabase();
                 }
-            }
         }
 
         Publish(_loadMetadata);
     }
-
 }

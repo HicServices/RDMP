@@ -7,70 +7,102 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Refreshing;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Rdmp.UI.SimpleDialogs.SqlDialogs;
-using Rdmp.Core;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 
 /// <summary>
-/// Converts the contents of an existing column of your live data into anonymous identifiers.  You should only use this after backing up your database first and being very certain
-/// that you do not need the sensitive data being anonymised in any project extracts.
-/// 
-/// <para>BACKGROUND:
-/// The process of anonymisation is referred to as ANO and involves moving existing identifiers into an ANOStore (separate database) and substituting in their place unique anonymous
-/// identifiers (there is a 1 to 1 mapping between ANO identifiers and the original values).  Each type of data (e.g. GP Code, Practice Code etc) should have its own ANOTable with
-/// a unique suffix such that you can more easily trace down identifiers if you ever have to deanonymise data.  </para>
-/// 
-/// <para>For example if you imagine that all GP codes must be anonymised, in your data they appear as a healthboard (T - Tayside, F - Fife) followed by 3 digits.  Then your ANOTable would
-/// contain the (Deleted) original values e.g. 'T402' and the substituted (ANO) identifier '3622_G'.  ANO identifiers are always a sequence of random integers and letters (you can choose
-/// how many letters and how many characters) followed by a suffix (in this case _G to indicate that it is a GP Code).  After Finalising the configuration, your live data table would go from
-/// varchar(4) to varchar(6) - to accommodate the suffix and longer number of maximum digits and all codes would be replaced with ANO codes.  This lets your data users still match across
-/// GPs (e.g. to identify prescribing patterns in GPs) without knowing which GP is which (which would be the case with a GP Code which can be looked up on any clinical system).</para>
-/// 
-/// <para>All columns that share an ANOTable (e.g. ANOGPCode) must have the same datatype (in above example this would be varchar(4)).</para>
-/// 
-/// <para>USING WINDOW:
-/// To use this window you must be sure that you want to transform identifiable data into anonymous format.  It is advisable to never anonymise useful result data e.g. numberOfPrescriptions) and
-/// stick to anonymising only categorical fields that compromise patient or carer anonymity (GP Codes, Patient identifiers etc).  Also if you never intend to process or even host certain columns
-/// (e.g. Firstname / Surname) then you can drop the fields entirely as part of data loading through the PreLoadDiscardedColumn mechanism).</para>
-/// 
-/// <para>If the data in your column already conforms to a known type that you have anonymised before (e.g. 'GP Code' in another dataset) and the datatype matches exactly (e.g. varchar(4)) then you  
-/// can select an existing ANOTable and push the data straight through into ANO format.</para>
-/// 
-/// <para>If not then you will need to type in a name (beginning with ANO) that refers to the type (e.g. ANOPatientIdentifier) and give it a meaningful suffix (e.g. 'P' for patient) and select 
-/// Create ANOTable.  Adjust the Integer/Character count till the preview data looks pleasing and no errors are reported then Finalise the choice.</para>
-/// 
-/// <para></para>
+///     Converts the contents of an existing column of your live data into anonymous identifiers.  You should only use this
+///     after backing up your database first and being very certain
+///     that you do not need the sensitive data being anonymised in any project extracts.
+///     <para>
+///         BACKGROUND:
+///         The process of anonymisation is referred to as ANO and involves moving existing identifiers into an ANOStore
+///         (separate database) and substituting in their place unique anonymous
+///         identifiers (there is a 1 to 1 mapping between ANO identifiers and the original values).  Each type of data
+///         (e.g. GP Code, Practice Code etc) should have its own ANOTable with
+///         a unique suffix such that you can more easily trace down identifiers if you ever have to deanonymise data.
+///     </para>
+///     <para>
+///         For example if you imagine that all GP codes must be anonymised, in your data they appear as a healthboard (T -
+///         Tayside, F - Fife) followed by 3 digits.  Then your ANOTable would
+///         contain the (Deleted) original values e.g. 'T402' and the substituted (ANO) identifier '3622_G'.  ANO
+///         identifiers are always a sequence of random integers and letters (you can choose
+///         how many letters and how many characters) followed by a suffix (in this case _G to indicate that it is a GP
+///         Code).  After Finalising the configuration, your live data table would go from
+///         varchar(4) to varchar(6) - to accommodate the suffix and longer number of maximum digits and all codes would be
+///         replaced with ANO codes.  This lets your data users still match across
+///         GPs (e.g. to identify prescribing patterns in GPs) without knowing which GP is which (which would be the case
+///         with a GP Code which can be looked up on any clinical system).
+///     </para>
+///     <para>
+///         All columns that share an ANOTable (e.g. ANOGPCode) must have the same datatype (in above example this would
+///         be varchar(4)).
+///     </para>
+///     <para>
+///         USING WINDOW:
+///         To use this window you must be sure that you want to transform identifiable data into anonymous format.  It is
+///         advisable to never anonymise useful result data e.g. numberOfPrescriptions) and
+///         stick to anonymising only categorical fields that compromise patient or carer anonymity (GP Codes, Patient
+///         identifiers etc).  Also if you never intend to process or even host certain columns
+///         (e.g. Firstname / Surname) then you can drop the fields entirely as part of data loading through the
+///         PreLoadDiscardedColumn mechanism).
+///     </para>
+///     <para>
+///         If the data in your column already conforms to a known type that you have anonymised before (e.g. 'GP Code' in
+///         another dataset) and the datatype matches exactly (e.g. varchar(4)) then you
+///         can select an existing ANOTable and push the data straight through into ANO format.
+///     </para>
+///     <para>
+///         If not then you will need to type in a name (beginning with ANO) that refers to the type (e.g.
+///         ANOPatientIdentifier) and give it a meaningful suffix (e.g. 'P' for patient) and select
+///         Create ANOTable.  Adjust the Integer/Character count till the preview data looks pleasing and no errors are
+///         reported then Finalise the choice.
+///     </para>
+///     <para></para>
 /// </summary>
 public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConverterUI_Design
 {
+    private ANOTable _anoTable;
     private ColumnInfo _columnInfo;
-    private bool _yesToAll = false;
-        
+    private bool _yesToAll;
+
+    private DataTable preview;
+
+    //constructor
+    public ColumnInfoToANOTableConverterUI()
+    {
+        InitializeComponent();
+
+        AssociatedCollection = RDMPCollection.Catalogue;
+
+        dgPreview.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+    }
+
     public ColumnInfo ColumnInfo
     {
         get => _columnInfo;
         private set
         {
             _columnInfo = value;
-                
+
             lblName.Text = value.ToString();
             lblDataType.Text = value.Data_type;
         }
@@ -82,7 +114,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         set
         {
             _anoTable = value;
-                
+
             if (value == null)
                 return;
 
@@ -98,25 +130,15 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
     }
 
-    //constructor
-    public ColumnInfoToANOTableConverterUI()
-    {
-        InitializeComponent();
-
-        AssociatedCollection = RDMPCollection.Catalogue;
-
-        dgPreview.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
-    }
-
     public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         ColumnInfo = databaseObject;
 
         //make sure we can connect to the server
-        if(!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad,out var reason))
+        if (!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad, out var reason))
         {
-            activator.KillForm(ParentForm,reason);
+            activator.KillForm(ParentForm, reason);
             return;
         }
 
@@ -131,28 +153,30 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Could not get rowcount of table {ColumnInfo.TableInfo.GetRuntimeName()} using data access context DataLoad", CheckResult.Fail, e));
+                        $"Could not get rowcount of table {ColumnInfo.TableInfo.GetRuntimeName()} using data access context DataLoad",
+                        CheckResult.Fail, e));
             }
 
 
             GeneratePreviews();
-                
+
             RefreshServers();
         }
         catch (Exception e)
         {
-            activator.KillForm(ParentForm,e);
+            activator.KillForm(ParentForm, e);
         }
     }
-        
+
     private void RefreshServers()
     {
         if (ColumnInfo == null)
             return;
-            
+
         ddExternalDatabaseServer.Items.Clear();
-            
-        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<ANOStorePatcher>());
+
+        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository
+            .GetAllDatabases<ANOStorePatcher>());
 
         var defaultServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
@@ -168,7 +192,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
     {
         ANOTable.NumberOfIntegersToUseInAnonymousRepresentation = Convert.ToInt32(numericUpDown1.Value);
-            
+
         GeneratePreviews();
     }
 
@@ -179,12 +203,9 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         GeneratePreviews();
     }
 
-    private DataTable preview;
-    private ANOTable _anoTable;
-
     private void GeneratePreviews()
     {
-        if(preview == null)
+        if (preview == null)
         {
             preview = new DataTable();
             preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
@@ -192,13 +213,13 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
             var server = DataAccessPortal.ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
-            using(var con = server.GetConnection())
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
                 lblPreviewDataIsFictional.Visible = false;
 
-                var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
+                var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
                 qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                 qb.TopX = 10;
 
@@ -211,25 +232,24 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                     {
                         while (r.Read())
                         {
-                            preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)],DBNull.Value);
+                            preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)], DBNull.Value);
                             rowsRead = true;
                         }
                     }
                 }
-                    
-                if(!rowsRead)
+
+                if (!rowsRead)
                 {
                     lblPreviewDataIsFictional.Visible = true;
-                    if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
+                    if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
                     {
                         preview.Rows.Add("?", DBNull.Value);
                         preview.Rows.Add("?", DBNull.Value);
                         preview.Rows.Add("?", DBNull.Value);
                         preview.Rows.Add("?", DBNull.Value);
                     }
-                    else if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
+                    else if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
                     {
-
                         preview.Rows.Add("1977-08-16", DBNull.Value);
                         preview.Rows.Add("1977-08-16", DBNull.Value);
                         preview.Rows.Add("1977-08-16", DBNull.Value);
@@ -242,7 +262,6 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                         preview.Rows.Add("-1", DBNull.Value);
                         preview.Rows.Add("-1", DBNull.Value);
                     }
-                    
                 }
 
                 con.Close();
@@ -250,24 +269,22 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
 
         if (ANOTable != null)
-        {
             try
             {
-                if (preview.Rows.Count!=0)
+                if (preview.Rows.Count != 0)
                 {
                     checksUI1.Clear();
-                    var transformer = new ANOTransformer(ANOTable,new FromCheckNotifierToDataLoadEventListener(checksUI1));
-                    transformer.Transform(preview, preview.Columns[0],preview.Columns[1],true);
+                    var transformer =
+                        new ANOTransformer(ANOTable, new FromCheckNotifierToDataLoadEventListener(checksUI1));
+                    transformer.Transform(preview, preview.Columns[0], preview.Columns[1], true);
                 }
             }
             catch (Exception e)
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
             }
-        }
-            
-        dgPreview.DataSource = preview;
 
+        dgPreview.DataSource = preview;
     }
 
     private void btnCreateNewANOTable_Click(object sender, EventArgs e)
@@ -276,19 +293,20 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         {
             var server = ddExternalDatabaseServer.SelectedItem as ExternalDatabaseServer;
 
-            var a = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text, tbSuffix.Text);
+            var a = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text,
+                tbSuffix.Text);
 
             //if we know the type is e.g. varchar(5)
             var length = ColumnInfo.Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString();
 
-            if (length>0)
+            if (length > 0)
             {
                 a.NumberOfIntegersToUseInAnonymousRepresentation = 0;
-                a.NumberOfCharactersToUseInAnonymousRepresentation = length;//give it a sensible maximal that will work
+                a.NumberOfCharactersToUseInAnonymousRepresentation = length; //give it a sensible maximal that will work
                 a.SaveToDatabase();
             }
 
-            ANOTable = a;//and set the property to it to populate the rest of the form
+            ANOTable = a; //and set the property to it to populate the rest of the form
 
             gbANOTable.Enabled = true;
             gbSelectExistingANOTable.Enabled = false;
@@ -302,22 +320,23 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void ddExternalDatabaseServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
+        if (ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
-        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
+        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad),
+            checksUI1);
     }
 
     private void ddANOTables_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ddANOTables.SelectedItem == null)
+        if (ddANOTables.SelectedItem == null)
             return;
 
         //get ANOTable input datatype
         var anoTable = (ANOTable)ddANOTables.SelectedItem;
-            
+
         //if table is already on the ANO server
-        if(anoTable.IsTablePushed())
+        if (anoTable.IsTablePushed())
         {
             var anoDatatype = anoTable.GetRuntimeDataType(LoadStage.AdjustRaw);
             var colDatatype = _columnInfo.GetRuntimeDataType(LoadStage.PostLoad);
@@ -326,7 +345,8 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"ANOTable  {anoTable} cannot be used because its input datatype is {anoDatatype} but the data in {_columnInfo} is of datatype {colDatatype}", CheckResult.Fail));
+                        $"ANOTable  {anoTable} cannot be used because its input datatype is {anoDatatype} but the data in {_columnInfo} is of datatype {colDatatype}",
+                        CheckResult.Fail));
                 ddANOTables.SelectedItem = null;
                 return;
             }
@@ -340,13 +360,14 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         gbCreateNewANOTable.Enabled = false;
     }
 
-     
+
     private void btnFinalise_Click(object sender, EventArgs e)
     {
         //if it is not pushed, push it now
         if (!ANOTable.IsTablePushed())
         {
-            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type,
+                new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
             ANOTable.SaveToDatabase();
         }
 
@@ -368,7 +389,9 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to complete migration, your table is likely to be in a sorry state now - sorry", CheckResult.Fail, exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs(
+                "Failed to complete migration, your table is likely to be in a sorry state now - sorry",
+                CheckResult.Fail, exception));
         }
 
         //it worked (or didn't!) so notify changes to the TableInfo
@@ -394,7 +417,6 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void tbANOTableName_TextChanged(object sender, EventArgs e)
     {
-            
         //don't enable the button unless he has typed something
         if (string.IsNullOrWhiteSpace(tbANOTableName.Text))
         {
@@ -446,7 +468,8 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
     }
 }
 
-[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ColumnInfoToANOTableConverterUI_Design, UserControl>))]
+[TypeDescriptionProvider(
+    typeof(AbstractControlDescriptionProvider<ColumnInfoToANOTableConverterUI_Design, UserControl>))]
 public abstract class ColumnInfoToANOTableConverterUI_Design : RDMPSingleDatabaseObjectControl<ColumnInfo>
 {
 }

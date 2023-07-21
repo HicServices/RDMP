@@ -12,14 +12,14 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.FilterImporting.Construction;
 
 /// <summary>
-/// Constructs IFilters etc for AggregateConfigurations (See IFilterFactory)
+///     Constructs IFilters etc for AggregateConfigurations (See IFilterFactory)
 /// </summary>
-public class AggregateFilterFactory :IFilterFactory
+public class AggregateFilterFactory : IFilterFactory
 {
     private readonly ICatalogueRepository _repository;
 
     /// <summary>
-    /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref name="repository"/>
+    ///     Sets class up to create <see cref="AggregateFilter" /> objects in the provided <paramref name="repository" />
     /// </summary>
     /// <param name="repository"></param>
     public AggregateFilterFactory(ICatalogueRepository repository)
@@ -27,32 +27,32 @@ public class AggregateFilterFactory :IFilterFactory
         _repository = repository;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IFilter CreateNewFilter(string name)
     {
-        return new AggregateFilter(_repository,name);
+        return new AggregateFilter(_repository, name);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
     {
-        return new AggregateFilterParameter(_repository,parameterSQL,(AggregateFilter)filter);
+        return new AggregateFilterParameter(_repository, parameterSQL, (AggregateFilter)filter);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Type GetRootOwnerType()
     {
-        return typeof (AggregateConfiguration);
+        return typeof(AggregateConfiguration);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Type GetIContainerTypeIfAny()
     {
-        return typeof (AggregateFilterContainer);
+        return typeof(AggregateFilterContainer);
     }
 
     public IContainer CreateNewContainer()
     {
-        return new AggregateFilterContainer(_repository,FilterContainerOperation.AND);
+        return new AggregateFilterContainer(_repository, FilterContainerOperation.AND);
     }
 }

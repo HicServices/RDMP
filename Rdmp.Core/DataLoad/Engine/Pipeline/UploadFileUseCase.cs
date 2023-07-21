@@ -15,10 +15,12 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline;
 
 /// <summary>
-/// Describes the use case of uploading a <see cref="FileInfo"/> to a target database server.  Compatible pipelines for achieving this must have a destination
-/// of (or inheriting from) <see cref="DataTableUploadDestination"/> and a source that implements IPipelineRequirement&lt;FlatFileToLoad&gt;.
+///     Describes the use case of uploading a <see cref="FileInfo" /> to a target database server.  Compatible pipelines
+///     for achieving this must have a destination
+///     of (or inheriting from) <see cref="DataTableUploadDestination" /> and a source that implements IPipelineRequirement
+///     &lt;FlatFileToLoad&gt;.
 /// </summary>
-public sealed class UploadFileUseCase:PipelineUseCase
+public sealed class UploadFileUseCase : PipelineUseCase
 {
     public UploadFileUseCase(FileInfo file, DiscoveredDatabase targetDatabase, IBasicActivateItems activator)
     {
@@ -29,21 +31,21 @@ public sealed class UploadFileUseCase:PipelineUseCase
         GenerateContext();
     }
 
+    private UploadFileUseCase() : base(new[]
+    {
+        typeof(FlatFileToLoad),
+        typeof(DiscoveredDatabase),
+        typeof(IBasicActivateItems)
+    })
+    {
+        GenerateContext();
+    }
+
     protected override IDataFlowPipelineContext GenerateContextImpl()
     {
         var context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
         context.MustHaveDestination = typeof(DataTableUploadDestination);
         return context;
-    }
-        
-    private UploadFileUseCase():base(new []
-    {
-        typeof (FlatFileToLoad),
-        typeof (DiscoveredDatabase),
-        typeof (IBasicActivateItems)
-    })
-    {
-        GenerateContext();
     }
 
     public static PipelineUseCase DesignTime()

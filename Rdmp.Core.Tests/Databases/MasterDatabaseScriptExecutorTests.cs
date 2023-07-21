@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
-using System;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
@@ -26,9 +26,11 @@ internal class MasterDatabaseScriptExecutorTests : DatabaseTests
         mds.CreateAndPatchDatabase(new DataQualityEnginePatcher(), new AcceptAllCheckNotifier());
 
         //now try to setup same db as Logging
-        var ex = Assert.Throws<Exception>(()=>mds.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() =>
+            mds.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier()));
 
-        StringAssert.Contains("is already set up as a platform database for another schema (it has the 'ScriptsRun' table)", ex.InnerException.Message);
-
+        StringAssert.Contains(
+            "is already set up as a platform database for another schema (it has the 'ScriptsRun' table)",
+            ex.InnerException.Message);
     }
 }

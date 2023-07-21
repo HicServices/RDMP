@@ -10,23 +10,10 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IContainer"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="IContainer" />
 /// </summary>
 public class ContainerCombineable : ICombineToMakeCommand
 {
-    public IContainer Container { get; private set; }
-
-    /// <summary>
-    /// All the containers that are further down the container heirarchy from this Container.  This includes all children containers, their children and their children and so on. 
-    /// </summary>
-    public List<IContainer> AllSubContainersRecursive { get; private set; }
-
-    /// <summary>
-    /// All the containers that are in the current filter tree (includes the Root - which might be us btw and all children).  If Container is the Root then this property
-    /// will be the same as AllSubContainersRecursive except that it will also include the Root
-    /// </summary>
-    public List<IContainer> AllContainersInEntireTreeFromRootDown { get; private set; }
-
     public ContainerCombineable(IContainer container)
     {
         Container = container;
@@ -36,7 +23,22 @@ public class ContainerCombineable : ICombineToMakeCommand
         AllContainersInEntireTreeFromRootDown = root.GetAllSubContainersRecursively();
         AllContainersInEntireTreeFromRootDown.Add(root);
     }
-        
+
+    public IContainer Container { get; }
+
+    /// <summary>
+    ///     All the containers that are further down the container heirarchy from this Container.  This includes all children
+    ///     containers, their children and their children and so on.
+    /// </summary>
+    public List<IContainer> AllSubContainersRecursive { get; private set; }
+
+    /// <summary>
+    ///     All the containers that are in the current filter tree (includes the Root - which might be us btw and all
+    ///     children).  If Container is the Root then this property
+    ///     will be the same as AllSubContainersRecursive except that it will also include the Root
+    /// </summary>
+    public List<IContainer> AllContainersInEntireTreeFromRootDown { get; }
+
     public string GetSqlString()
     {
         return null;

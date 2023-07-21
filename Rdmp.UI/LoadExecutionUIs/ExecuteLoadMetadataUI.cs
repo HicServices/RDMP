@@ -18,43 +18,42 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
 namespace Rdmp.UI.LoadExecutionUIs;
 
 /// <summary>
-/// Runs the Data Load Engine on a single LoadMetadata.  This user interface is intended for manually executing and debugging loads.
-/// 
-/// <para>You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you understand and are not concerned about).  </para>
-/// 
-/// <para>Once started the load progress will appear and show as data is loaded into RAW, migrated to STAGING and committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model'
-/// in UserManual.md for full implementation details).</para>
-/// 
-/// <para>There are various options for debugging for example you can override and stop the data load after RAW is populated (in which case the load will crash out early allowing
-/// you to evaluated the RAW data in a database environment conducive with debugging dataset issues). </para>
+///     Runs the Data Load Engine on a single LoadMetadata.  This user interface is intended for manually executing and
+///     debugging loads.
+///     <para>
+///         You can only attempt to launch a data load if the checks are all passing (or giving Warnings that you
+///         understand and are not concerned about).
+///     </para>
+///     <para>
+///         Once started the load progress will appear and show as data is loaded into RAW, migrated to STAGING and
+///         committed to LIVE (See  'RAW Bubble, STAGING Bubble, LIVE Model'
+///         in UserManual.md for full implementation details).
+///     </para>
+///     <para>
+///         There are various options for debugging for example you can override and stop the data load after RAW is
+///         populated (in which case the load will crash out early allowing
+///         you to evaluated the RAW data in a database environment conducive with debugging dataset issues).
+///     </para>
 /// </summary>
 public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 {
-    private LoadMetadata _loadMetadata;
     private ILoadProgress[] _allLoadProgresses;
+    private LoadMetadata _loadMetadata;
 
 
-    private ToolStripComboBox dd_DebugOptions = new();
+    private readonly ToolStripComboBox dd_DebugOptions = new();
 
-
-    private enum DebugOptions
-    {
-        RunNormally,
-        StopAfterRAW,
-        StopAfterSTAGING,
-        SkipArchiving
-    }
-               
     public ExecuteLoadMetadataUI()
     {
         InitializeComponent();
 
-        helpIconRunRepeatedly.SetHelpText("Run Repeatedly", "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
-        helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
+        helpIconRunRepeatedly.SetHelpText("Run Repeatedly",
+            "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
+        helpIconAbortShouldCancel.SetHelpText("Abort Behaviour",
+            "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
 
         AssociatedCollection = RDMPCollection.DataLoad;
 
@@ -64,28 +63,28 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         dd_DebugOptions.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         dd_DebugOptions.ComboBox.DataSource = Enum.GetValues(typeof(DebugOptions));
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _loadMetadata = databaseObject;
 
         checkAndExecuteUI1.SetItemActivator(activator);
-            
-        SetButtonStates(null,null);
+
+        SetButtonStates(null, null);
 
         SetLoadProgressGroupBoxState();
-            
+
 
         CommonFunctionality.Add(new ExecuteCommandViewLoadDiagram(activator, _loadMetadata));
 
         CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
-            
-        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata) databaseObject));
-            
+
+        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, databaseObject));
+
         CommonFunctionality.Add(dd_DebugOptions);
     }
-        
+
     private void SetLoadProgressGroupBoxState()
     {
         _allLoadProgresses = _loadMetadata.LoadProgresses;
@@ -96,10 +95,10 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             gbLoadProgresses.Visible = true;
 
             //give the user the dropdown options for which load progress he wants to run
-            var loadProgressData = new Dictionary<int, string>( );
+            var loadProgressData = new Dictionary<int, string>();
 
             //if there are more than 1 let them pick any
-            if(_allLoadProgresses.Length > 1)
+            if (_allLoadProgresses.Length > 1)
                 loadProgressData.Add(0, "Any Available");
 
             foreach (var loadProgress in _allLoadProgresses)
@@ -119,7 +118,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
         gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
     }
-        
+
     private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
     {
         var lp = GetLoadProgressIfAny();
@@ -139,7 +138,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 
         if (lp != null)
             options.LoadProgress = lp.ID.ToString();
-            
+
         return options;
     }
 
@@ -148,7 +147,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         base.ConsultAboutClosing(sender, e);
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
-        
+
     private LoadProgress GetLoadProgressIfAny()
     {
         if (ddLoadProgress.SelectedIndex == -1)
@@ -161,7 +160,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         return Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
     }
 
-        
+
     private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
     {
         var loadprogress = GetLoadProgressIfAny();
@@ -173,7 +172,9 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
                 udDaysPerJob.Value = progresses[0].DefaultNumberOfDaysToLoadEachTime;
         }
         else
+        {
             udDaysPerJob.Value = loadprogress.DefaultNumberOfDaysToLoadEachTime;
+        }
     }
 
     public override string GetTabName()
@@ -190,6 +191,15 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     private void btnRefreshLoadProgresses_Click(object sender, EventArgs e)
     {
         SetLoadProgressGroupBoxState();
+    }
+
+
+    private enum DebugOptions
+    {
+        RunNormally,
+        StopAfterRAW,
+        StopAfterSTAGING,
+        SkipArchiving
     }
 }
 

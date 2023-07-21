@@ -7,17 +7,18 @@
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 
 /// <summary>
-/// Determines how a system responds to M to 1 mapping (where a patient is known by multiple different identifiers over time).
+///     Determines how a system responds to M to 1 mapping (where a patient is known by multiple different identifiers over
+///     time).
 /// </summary>
 public enum AliasResolutionStrategy
 {
     /// <summary>
-    /// If a multi mapping / alias is found for an input row then throw an exception
+    ///     If a multi mapping / alias is found for an input row then throw an exception
     /// </summary>
     CrashIfAliasesFound,
 
     /// <summary>
-    /// If a multi mapping / alias is found for an input row generate multiple output rows (1 for each alias)
+    ///     If a multi mapping / alias is found for an input row generate multiple output rows (1 for each alias)
     /// </summary>
     MultiplyInputDataRowsByAliases
 }

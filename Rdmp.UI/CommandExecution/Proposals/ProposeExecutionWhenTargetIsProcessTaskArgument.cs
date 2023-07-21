@@ -11,9 +11,10 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProcessTaskArgument: RDMPCommandExecutionProposal<ProcessTaskArgument>
+internal class ProposeExecutionWhenTargetIsProcessTaskArgument : RDMPCommandExecutionProposal<ProcessTaskArgument>
 {
-    private IActivateItems _activator;
+    private readonly IActivateItems _activator;
+
     public ProposeExecutionWhenTargetIsProcessTaskArgument(IActivateItems itemActivator) : base(itemActivator)
     {
         _activator = itemActivator;
@@ -30,7 +31,8 @@ internal class ProposeExecutionWhenTargetIsProcessTaskArgument: RDMPCommandExecu
         setArgumentCommand.Execute();
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTaskArgument target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTaskArgument target,
+        InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }
