@@ -308,7 +308,7 @@ public class SuggestComboBox : ComboBox
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         // the keystrokes of interest should not be processed by base class:
-        return _suggLb.Visible && KeysToHandle.Contains(keyData) || base.ProcessCmdKey(ref msg, keyData);
+        return (_suggLb.Visible && KeysToHandle.Contains(keyData)) || base.ProcessCmdKey(ref msg, keyData);
     }
 
     #endregion

@@ -15,9 +15,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Creates a new database in which to store final cohort lists of a given private linkage identifier name and format (e.g. CHI).
 /// </summary>
-public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
+internal sealed class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
 {
-    private IBasicActivateItems activator;
+    private readonly IBasicActivateItems activator;
     private readonly DiscoveredDatabase databaseToCreate;
     private readonly bool allowNullReleaseIdentifiers;
     private readonly string privateFieldName;
@@ -26,10 +26,10 @@ public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
     /// <summary>
     /// The cohort store created
     /// </summary>
-    public ExternalCohortTable Created;
+    internal ExternalCohortTable Created;
 
 
-    public ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator,
+    internal ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator,
 
         [DemandsInitialization("The database to create")]
         DiscoveredDatabase databaseToCreate,
@@ -53,11 +53,10 @@ public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
     {
         base.Execute();
 
-
         //Create cohort store database
         var wizard = new CreateNewCohortDatabaseWizard(databaseToCreate, activator.RepositoryLocator.CatalogueRepository, activator.RepositoryLocator.DataExportRepository, allowNullReleaseIdentifiers);
         Created = wizard.CreateDatabase(new PrivateIdentifierPrototype(privateFieldName, privateFieldDataType), ThrowImmediatelyCheckNotifier.Quiet);
-            
+
         Publish(Created);
     }
 }
