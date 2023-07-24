@@ -53,9 +53,9 @@ public class ExpectedIdenticalStringsException : Exception
         var previewExpected = GetPreviewAround(i, expected, out _);
         var previewActual = GetPreviewAround(i, actual, out var iIsAtCharacterPosition);
 
-        var toReturn = new StringBuilder($"EXPECTED:{previewExpected}{Environment.NewLine}ACTUAL  :{previewActual}{Environment.NewLine}");
+        var toReturn = new StringBuilder($"{Environment.NewLine}EXPECTED:{previewExpected}{Environment.NewLine}ACTUAL  :{previewActual}{Environment.NewLine}");
 
-            toReturn.Append('-',iIsAtCharacterPosition+"EXPECTED:".Length-1);
+            toReturn.Append('-',iIsAtCharacterPosition+"EXPECTED:".Length);
         toReturn.Append('^');
         return toReturn.ToString();
     }
