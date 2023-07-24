@@ -23,48 +23,48 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// Also, a direct transfer from a C source to C# is not easy because there is a lot of pointer
 /// arithmetic in the typical C solutions and i need a managed solution.
 /// These are the reasons why I implemented the original published algorithm from the scratch and
-/// make it avaliable without the GNU license limitations.
+/// make it available without the GNU license limitations.
 /// I do not need a high performance diff tool because it is used only sometimes.
-/// I will do some performace tweaking when needed.</para>
+/// I will do some performance tweaking when needed.</para>
 /// 
 /// <para>The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
 /// each line is converted into a (hash) number. See DiffText(). </para>
 /// 
-/// <para>Some chages to the original algorithm:
+/// <para>Some changes to the original algorithm:
 /// The original algorithm was described using a recursive approach and comparing zero indexed arrays.
 /// Extracting sub-arrays and rejoining them is very performance and memory intensive so the same
-/// (readonly) data arrays are passed arround together with their lower and upper bounds.
+/// (readonly) data arrays are passed around together with their lower and upper bounds.
 /// This circumstance makes the LCS and SMS functions more complicate.
 /// I added some code to the LCS function to get a fast response on sub-arrays that are identical,
 /// completely deleted or inserted.</para>
 /// 
-/// <para>The result from a comparisation is stored in 2 arrays that flag for modified (deleted or inserted)
+/// <para>The result from a comparison is stored in 2 arrays that flag for modified (deleted or inserted)
 /// lines in the 2 data arrays. These bits are then analysed to produce a array of Item objects.</para>
 /// 
 /// <para>Further possible optimizations:
 /// (first rule: don't do it; second: don't do it yet)
 /// The arrays DataA and DataB are passed as parameters, but are never changed after the creation
-/// so they can be members of the class to avoid the paramter overhead.
+/// so they can be members of the class to avoid the parameter overhead.
 /// In SMS is a lot of boundary arithmetic in the for-D and for-k loops that can be done by increment
 /// and decrement of local variables.
-/// The DownVector and UpVector arrays are alywas created and destroyed each time the SMS gets called.
-/// It is possible to reuse tehm when transfering them to members of the class.</para>
+/// The DownVector and UpVector arrays are always created and destroyed each time the SMS gets called.
+/// It is possible to reuse them when transferring them to members of the class.</para>
 /// 
-/// <para>diff.cs: A port of the algorythm to C#
+/// <para>diff.cs: A port of the algorithm to C#
 /// Created by Matthias Hertel, see http://www.mathertel.de
 /// This work is licensed under a Creative Commons Attribution 2.0 Germany License.
 /// see http://creativecommons.org/licenses/by/2.0/de/</para>
 /// 
 /// <para>Changes:
 /// 2002.09.20 There was a "hang" in some situations.
-/// Now I undestand a little bit more of the SMS algorithm.
+/// Now I understand a little bit more of the SMS algorithm.
 /// There have been overlapping boxes; that where analyzed partial differently.
 /// One return-point is enough.
 /// A assertion was added in CreateDiffs when in debug-mode, that counts the number of equal (no modified) lines in both arrays.
 /// They must be identical.</para>
 /// 
 /// <para>2003.02.07 Out of bounds error in the Up/Down vector arrays in some situations.
-/// The two vetors are now accessed using different offsets that are adjusted using the start k-Line.
+/// The two vectors are now accessed using different offsets that are adjusted using the start k-Line.
 /// A test case is added. </para>
 /// 
 /// <para>2006.03.05 Some documentation and a direct Diff entry point.</para>
