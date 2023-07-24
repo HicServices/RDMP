@@ -36,7 +36,7 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
     {
         base.Execute();
 
-        var destinationOrder = 0;
+        int destinationOrder;
 
         var lmd = _targetProcessTask.LoadMetadata;
 

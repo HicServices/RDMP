@@ -119,7 +119,7 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
         return rowObject switch
         {
             ArchivalDataLoadInfo adi => adi.StartTime,
-            LoadEventsTreeView_Category cat => null,
+            LoadEventsTreeView_Category => null,
             ArchivalFatalError fe => fe.Date,
             ArchivalTableLoadInfo ti => ti.Start,
             ArchivalProgressLog pr => pr.Date,

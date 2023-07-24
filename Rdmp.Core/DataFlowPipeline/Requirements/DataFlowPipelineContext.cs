@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataFlowPipeline.Requirements;
@@ -234,7 +235,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         var initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();
 
         //these are the T tokens in the above interfaces
-        var typesRequired = requirements.Select(i => i.GenericTypeArguments[0]).ToList();
+        var typesRequired = requirements.Select(static i => i.GenericTypeArguments[0]).ToList();
 
         //now initialize all the parameters
         foreach (var parameter in parameters)
@@ -257,17 +258,17 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
 
         if (typesRequired.Any() && !isOptional)
             throw new Exception(
-                $"Component '{component.GetType().Name}' reports a problem{Environment.NewLine}The following expected types were not passed to PreInitialize:{string.Join(",", typesRequired.Select(GetFullName))}{Environment.NewLine}The object types passed were:{Environment.NewLine}{string.Join(Environment.NewLine, parameters.Select(p => $"{p.GetType()}:{p}"))}"
+                $"Component '{component.GetType().Name}' reports a problem{Environment.NewLine}The following expected types were not passed to PreInitialize:{string.Join(",", typesRequired.Select(GetFullName))}{Environment.NewLine}The object types passed were:{Environment.NewLine}{string.Join(Environment.NewLine, parameters.Select(static p => $"{p.GetType()}:{p}"))}"
             );
     }
 
-    private static Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component,
+    [CanBeNull]
+    private static Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, [NotNull] object component,
         object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
     {
         var compatibleInterfaces = component.GetType()
             .GetInterfaces().Where(i =>
-                i.IsGenericType && (i.GenericTypeArguments[0] == value.GetType() ||
-                                    i.GenericTypeArguments[0].IsInstanceOfType(value))
+                i.IsGenericType && i.GenericTypeArguments[0].IsInstanceOfType(value)
             ).ToArray();
 
         switch (compatibleInterfaces.Length)
@@ -280,27 +281,27 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         }
 
         var interfaceToInvokeIfAny = compatibleInterfaces[0];
-        if (interfaceToInvokeIfAny != null)
-        {
-            //We have an interface that matches the input object, let's call it
-            var preInit = interfaceToInvokeIfAny.GetMethod("PreInitialize");
+        var preInit = interfaceToInvokeIfAny?.GetMethod("PreInitialize");
+        if (preInit == null) return null;
 
-            //but first document the fact that we have found it
-            if (!initializedComponents.TryGetValue(component, out var dict))
-                initializedComponents.Add(component, dict = new Dictionary<MethodInfo, object>());
+        //We have an interface that matches the input object, let's call it
 
-            if (dict.TryGetValue(preInit, out var existing))
-                throw new MultipleMatchingImplmentationException(
-                    $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{initializedComponents[component][preInit]}' ('{initializedComponents[component][preInit].GetType().Name}') and '{value}' ('{value.GetType().Name}')");
+        //but first document the fact that we have found it
+        if (!initializedComponents.TryGetValue(component, out var dict))
+            initializedComponents.Add(component, dict = new Dictionary<MethodInfo, object>());
 
-            //invoke it
-            preInit.Invoke(component, new[] { value, listener });
+        if (dict.TryGetValue(preInit, out var existing))
+            throw new MultipleMatchingImplementationException(
+                $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{existing}' ('{existing.GetType().Name}') and '{value}' ('{value.GetType().Name}')");
 
-            //return the type of T for IPipelineRequirement<T> interface that was called
-            return interfaceToInvokeIfAny.GenericTypeArguments[0];
-        }
+        initializedComponents[component].Add(preInit, value);
 
-        return null;
+        //invoke it
+        preInit.Invoke(component, new[] { value, listener });
+
+        //return the type of T for IPipelineRequirement<T> interface that was called
+        return interfaceToInvokeIfAny.GenericTypeArguments[0];
+
     }
 
     /// <inheritdoc/>

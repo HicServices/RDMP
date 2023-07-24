@@ -67,21 +67,18 @@ public class FilterImportWizard
         if (cancel)
             return null;
 
-        FilterImporter importer = null;
-
-        if (containerToImportOneInto is AggregateFilterContainer)
-            importer = new FilterImporter(
+        var importer = containerToImportOneInto switch
+        {
+            AggregateFilterContainer => new FilterImporter(
                 new AggregateFilterFactory((ICatalogueRepository)containerToImportOneInto.Repository),
-                globalParameters);
-        else if (containerToImportOneInto is FilterContainer)
-            importer =
-                new FilterImporter(
-                    new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository),
-                    globalParameters);
-        else
-            throw new ArgumentException(
+                globalParameters),
+            FilterContainer => new FilterImporter(
+                new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository),
+                globalParameters),
+            _ => throw new ArgumentException(
                 $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}",
-                nameof(containerToImportOneInto));
+                nameof(containerToImportOneInto))
+        };
 
         //if there is a parameter value set then tell the importer to use these parameter values instead of the IFilter's default ones
         if (chosenParameterValues != null)

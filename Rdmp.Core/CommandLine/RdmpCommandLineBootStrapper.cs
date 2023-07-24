@@ -107,8 +107,6 @@ public class RdmpCommandLineBootStrapper
         var listener = new NLogIDataLoadEventListener(false);
         var checker = new NLogICheckNotifier(true, false);
 
-        var factory = new RunnerFactory();
-
         // not done startup so check that we can reach stuff
         if (repositoryLocator == null)
         {

@@ -46,14 +46,11 @@ public partial class SQLBeforeAndAfterViewer : Form
 
 
         //compute difference
-        var highlighter = new ScintillaLineHighlightingHelper();
         ScintillaLineHighlightingHelper.ClearAll(queryEditorAfter);
         ScintillaLineHighlightingHelper.ClearAll(queryEditorBefore);
 
         sqlBefore ??= "";
         sqlAfter ??= "";
-
-        var diff = new Diff();
 
         foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {

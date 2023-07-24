@@ -276,7 +276,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void ddPipeline_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var factory = GetFactory();
+        GetFactory();
 
         if (ddPipeline.SelectedItem is not Pipeline p)
             return;

@@ -196,8 +196,8 @@ public class Diff
     /// <summary>
     /// Find the difference in 2 texts, comparing by textlines.
     /// </summary>
-    /// <param name="TextA">A-version of the text (usualy the old one)</param>
-    /// <param name="TextB">B-version of the text (usualy the new one)</param>
+    /// <param name="TextA">A-version of the text (usually the old one)</param>
+    /// <param name="TextB">B-version of the text (usually the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffText(string TextA, string TextB) =>
         DiffText(TextA, TextB, false, false, false); // DiffText
@@ -207,14 +207,14 @@ public class Diff
     /// Find the difference in 2 text documents, comparing by textlines.
     /// The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
     /// each line is converted into a (hash) number. This hash-value is computed by storing all
-    /// textlines into a common hashtable so i can find dublicates in there, and generating a
+    /// textlines into a common hashtable so i can find duplicates in there, and generating a
     /// new number each time a new textline is inserted.
     /// </summary>
-    /// <param name="TextA">A-version of the text (usualy the old one)</param>
-    /// <param name="TextB">B-version of the text (usualy the new one)</param>
-    /// <param name="trimSpace">When set to true, all leading and trailing whitespace characters are stripped out before the comparation is done.</param>
-    /// <param name="ignoreSpace">When set to true, all whitespace characters are converted to a single space character before the comparation is done.</param>
-    /// <param name="ignoreCase">When set to true, all characters are converted to their lowercase equivivalence before the comparation is done.</param>
+    /// <param name="TextA">A-version of the text (usually the old one)</param>
+    /// <param name="TextB">B-version of the text (usually the new one)</param>
+    /// <param name="trimSpace">When set to true, all leading and trailing whitespace characters are stripped out before the comparison is done.</param>
+    /// <param name="ignoreSpace">When set to true, all whitespace characters are converted to a single space character before the comparison is done.</param>
+    /// <param name="ignoreCase">When set to true, all characters are converted to their lowercase equivalents before the comparison is done.</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffText(string TextA, string TextB, bool trimSpace, bool ignoreSpace, bool ignoreCase)
     {
@@ -227,8 +227,6 @@ public class Diff
         // The B-Version of the data (modified data) to be compared.
         var DataB = new DiffData(DiffCodes(TextB, h, trimSpace, ignoreSpace, ignoreCase));
 
-        h = null; // free up hashtable memory (maybe)
-
         LCS(DataA, 0, DataA.Length, DataB, 0, DataB.Length);
         return CreateDiffs(DataA, DataB);
     } // DiffText
@@ -237,8 +235,8 @@ public class Diff
     /// <summary>
     /// Find the difference in 2 arrays of integers.
     /// </summary>
-    /// <param name="ArrayA">A-version of the numbers (usualy the old one)</param>
-    /// <param name="ArrayB">B-version of the numbers (usualy the new one)</param>
+    /// <param name="ArrayA">A-version of the numbers (usually the old one)</param>
+    /// <param name="ArrayB">B-version of the numbers (usually the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffInt(int[] ArrayA, int[] ArrayB)
     {
@@ -260,7 +258,7 @@ public class Diff
     /// <param name="aText">the input text</param>
     /// <param name="h">This extern initialized hashtable is used for storing all ever used textlines.</param>
     /// <param name="trimSpace">ignore leading and trailing space characters</param>
-    /// <param name="ignoreSpace">ignore whitespace differents e.g. double spaces vs single spaces</param>
+    /// <param name="ignoreSpace">ignore whitespace differences e.g. double spaces vs single spaces</param>
     /// <param name="ignoreCase">ignore capitalisation in comparison</param>
     /// <returns>a array of integers.</returns>
     private static int[] DiffCodes(string aText, Hashtable h, bool trimSpace, bool ignoreSpace, bool ignoreCase)

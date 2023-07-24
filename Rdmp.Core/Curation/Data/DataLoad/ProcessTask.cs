@@ -347,7 +347,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     /// <inheritdoc/>
     public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
     {
-        var argFactory = new ArgumentFactory();
         return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
                 t,
 

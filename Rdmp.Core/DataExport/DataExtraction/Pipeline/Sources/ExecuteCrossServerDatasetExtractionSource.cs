@@ -212,7 +212,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
     private void CopyCohortToDataServer(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        DataTable cohortDataTable = null;
+        DataTable cohortDataTable;
         SetServer();
 
         listener.OnNotify(this,

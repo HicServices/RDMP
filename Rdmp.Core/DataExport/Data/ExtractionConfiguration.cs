@@ -633,7 +633,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <returns></returns>
     public LogManager GetExplicitLoggingDatabaseServerOrDefault()
     {
-        ExternalDatabaseServer loggingServer = null;
+        ExternalDatabaseServer loggingServer;
         try
         {
             loggingServer = GetDistinctLoggingServer(false);
