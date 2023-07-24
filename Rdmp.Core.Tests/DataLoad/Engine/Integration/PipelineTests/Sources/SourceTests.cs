@@ -161,7 +161,7 @@ public class SourceTests : DatabaseTests
         var context = contextFactory.Create(PipelineUsage.FixedDestination);
 
         var suspiciousComponent = new TestObject_Suspicious();
-        var ex = Assert.Throws<MultipleMatchingImplmentationException>(() =>
+        var ex = Assert.Throws<MultipleMatchingImplementationException>(() =>
             context.PreInitialize(new ThrowImmediatelyDataLoadJob(), suspiciousComponent, 5, "fish"));
 
         Console.WriteLine($"Exception was:{ex.Message}");

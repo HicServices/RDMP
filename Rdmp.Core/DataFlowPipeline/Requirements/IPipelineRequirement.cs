@@ -30,5 +30,5 @@ public interface IPipelineRequirement<in T>
     /// </summary>
     /// <param name="value">An object</param>
     /// <param name="listener"></param>
-    void PreInitialize(T value, IDataLoadEventListener listener);
+    public void PreInitialize(T value, IDataLoadEventListener listener);
 }

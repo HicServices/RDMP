@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Text;
 
 namespace Rdmp.Core.ReusableLibraryCode.Exceptions;
 
@@ -38,14 +39,9 @@ public class ExpectedIdenticalStringsException : Exception
                     $"{message}{Environment.NewLine}Strings are identical except that Actual string ends at character {i} while we still Expected {expected.Length - actual.Length} additional characters";
 
             //give them a preview of the location of the difference
-            if (!expected[i].Equals(actual[i]))
-            {
-                message = $"{message}{Environment.NewLine}Strings differ at index {i}";
-                message += GetPreviewsAround(i, expected, actual);
+            if (expected[i].Equals(actual[i])) continue;
 
-
-                return message;
-            }
+            return $"{message}{Environment.NewLine}Strings differ at index {i}{GetPreviewsAround(i, expected, actual)}";
         }
 
         return
@@ -54,29 +50,20 @@ public class ExpectedIdenticalStringsException : Exception
 
     private static string GetPreviewsAround(int i, string expected, string actual)
     {
-        var toReturn = "";
+        var previewExpected = GetPreviewAround(i, expected, out _);
+        var previewActual = GetPreviewAround(i, actual, out var iIsAtCharacterPosition);
 
-        var previewExpected = GetPreviewAround(i, expected, out var iIsAtCharacterPosition);
-        var previewActual = GetPreviewAround(i, actual, out iIsAtCharacterPosition);
+        var toReturn = new StringBuilder($"EXPECTED:{previewExpected}{Environment.NewLine}ACTUAL  :{previewActual}{Environment.NewLine}");
 
-        var differencePointer = "";
-
-        for (var j = 0; j < iIsAtCharacterPosition + "EXPECTED:".Length; j++)
-            differencePointer += "-";
-
-        differencePointer += "^";
-
-        toReturn = $"{toReturn}{Environment.NewLine}EXPECTED:{previewExpected}";
-        toReturn = $"{toReturn}{Environment.NewLine}ACTUAL  :{previewActual}";
-        toReturn = toReturn + Environment.NewLine + differencePointer;
-
-        return toReturn;
+            toReturn.Append('-',iIsAtCharacterPosition+"EXPECTED:".Length-1);
+        toReturn.Append('^');
+        return toReturn.ToString();
     }
 
     private static string GetPreviewAround(int i, string str, out int iIsAtCharacterPosition)
     {
-        var charsBefore = 20;
-        var charsAfter = 10;
+        const int charsBefore = 20;
+        const int charsAfter = 10;
 
         //Do not start preview before the beginning of the string e.g. if difference is at index 3 then start at 0 not -17
         var startSubstringAt = Math.Max(0, i - charsBefore);
@@ -91,10 +78,6 @@ public class ExpectedIdenticalStringsException : Exception
 
 
         //if there is more available in the string put a ... so user knows it
-        if (lengthAvailable > lengthWeWillActuallyTake)
-            return $"{str.Substring(startSubstringAt, lengthWeWillActuallyTake)}...";
-
-        //We ran out of characters at the end of the string so don't add ....
-        return str.Substring(startSubstringAt, lengthWeWillActuallyTake);
+        return $"{str.Substring(startSubstringAt, lengthWeWillActuallyTake)}{(lengthAvailable > lengthWeWillActuallyTake?"...":"")}";
     }
 }

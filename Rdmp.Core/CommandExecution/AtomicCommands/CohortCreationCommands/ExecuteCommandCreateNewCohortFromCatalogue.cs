@@ -140,7 +140,6 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
         base.Execute();
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request =
             GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
 

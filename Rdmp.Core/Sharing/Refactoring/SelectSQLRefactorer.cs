@@ -32,10 +32,10 @@ public class SelectSQLRefactorer
     public static void RefactorTableName(IColumn column, IHasFullyQualifiedNameToo tableName,
         string newFullySpecifiedTableName)
     {
-        var ci = column.ColumnInfo ??
-                 throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
-        var fullyQualifiedName = tableName.GetFullyQualifiedName();
+        if (column.ColumnInfo == null)
+            throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
 
+        var fullyQualifiedName = tableName.GetFullyQualifiedName();
         if (!column.SelectSQL.Contains(fullyQualifiedName))
             throw new RefactoringException(
                 $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");

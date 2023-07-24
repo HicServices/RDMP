@@ -56,7 +56,7 @@ public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design, ISave
 
         serverDatabaseTableSelector1.DatabaseType = _externalCohortTable.DatabaseType;
 
-        string password = null;
+        string password;
         try
         {
             password = _externalCohortTable.GetDecryptedPassword();

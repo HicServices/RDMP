@@ -84,8 +84,6 @@ public class ExtractionRunner : ManyRunner
             commands.Add(_globalsCommand);
         }
 
-        var factory = new ExtractCommandCollectionFactory();
-
         foreach (var sds in GetSelectedDataSets())
         {
             var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
@@ -112,7 +110,7 @@ public class ExtractionRunner : ManyRunner
                 ? new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand))
                 : new ForkDataLoadEventListener(logging, listener);
 
-        if (runnable is ExtractGlobalsCommand globalCommand)
+        if (runnable is ExtractGlobalsCommand)
         {
             var useCase = new ExtractionPipelineUseCase(_activator, _project, _globalsCommand, _pipeline, dataLoadInfo)
                 { Token = Token };

@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -135,5 +136,6 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         CohortIdentificationConfigurationIfAny = value.GetCohortIdentificationConfigurationIfAny();
     }
 
+    [NotNull]
     public override string ToString() => GetType().Name;
 }

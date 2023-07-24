@@ -524,14 +524,12 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
-        var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
-
         //get the parental hierarchy
-        var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+        var descendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
 
-        if (decendancyList != null)
-            //for each parent in the decendandy list
-            foreach (var parent in decendancyList.Parents)
+        if (descendancyList != null)
+            //for each parent in the descendancy list
+            foreach (var parent in descendancyList.Parents)
             {
                 //parent isn't in our tree
                 if (Tree.IndexOf(parent) == -1)

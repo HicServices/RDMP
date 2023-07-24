@@ -262,27 +262,15 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         try
         {
             pipeline = PipelineFactory.Create(_pipelineSelectionUI.Pipeline, fork);
-        }
-        catch (Exception exception)
-        {
-            fork.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error, "Could not instantiate pipeline", exception));
-            return null;
-        }
-
-
-        try
-        {
             pipeline.Initialize(_initializationObjects.ToArray());
+            return pipeline;
         }
         catch (Exception exception)
         {
             fork.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error, "Failed to Initialize pipeline", exception));
+                new NotifyEventArgs(ProgressEventType.Error, $"Could not {(pipeline == null ? "instantiate" : "initialise")} pipeline", exception));
             return null;
         }
-
-        return pipeline;
     }
 
     private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)

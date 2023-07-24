@@ -72,8 +72,6 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
     private ExecutableRuntimeTask GetRuntimeTask()
     {
-        var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueRepository);
-
         var lmd = _processTask.LoadMetadata;
         var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
 

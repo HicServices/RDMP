@@ -178,9 +178,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         var cata = ei.CatalogueItem.Catalogue;
 
-        string toReturn = null;
-
-        toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific
+        var toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific
             ? $"{ei.ExtractionCategory}::{cata.Name}"
             : ei.ExtractionCategory.ToString();
 
