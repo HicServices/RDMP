@@ -297,7 +297,14 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         initializedComponents[component].Add(preInit, value);
 
         //invoke it
-        preInit.Invoke(component, new[] { value, listener });
+        try
+        {
+            preInit.Invoke(component, new[] { value, listener });
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Exception invoking {GetFullName(component.GetType())}.PreInitialize({GetFullName(value?.GetType() ?? typeof(object))}:{value ?? "null"},{listener?.ToString() ?? "null"})",e);
+        }
 
         //return the type of T for IPipelineRequirement<T> interface that was called
         return interfaceToInvokeIfAny.GenericTypeArguments[0];
