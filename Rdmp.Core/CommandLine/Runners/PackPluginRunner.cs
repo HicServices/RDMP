@@ -100,23 +100,13 @@ public class PackPluginRunner : IRunner
     private static void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
     {
-        // delete EXACT old versions of the Plugin
-        var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Plugin>()
-            .SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
-
-        if (oldVersion != null)
-            throw new Exception($"There is already a plugin called {oldVersion.Name}");
-
-        try
+      try
         {
-            var plugin = new Plugin(repositoryLocator.CatalogueRepository, toCommit, pluginVersion,
-                rdmpDependencyVersion);
-            //add the new binary
-            new LoadModuleAssembly(repositoryLocator.CatalogueRepository, toCommit, plugin);
+            toCommit.CopyTo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,toCommit.Name),true);
         }
         catch (Exception e)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed processing plugin {toCommit.Name}",
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed copying plugin {toCommit.Name}",
                 CheckResult.Fail, e));
             throw;
         }
