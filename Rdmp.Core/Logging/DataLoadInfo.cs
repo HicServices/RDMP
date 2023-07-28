@@ -311,7 +311,7 @@ SELECT @@IDENTITY;", con);
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
                 "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
                 con);
-            cmdRecordProgress.CommandTimeout = 120;
+            cmdRecordProgress.CommandTimeout = 3600;
             con.Open();
 
             DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);
@@ -326,7 +326,7 @@ SELECT @@IDENTITY;", con);
             using var cmdRecordSlowWarning = DatabaseSettings.GetCommand(
                 "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
                 con);
-            cmdRecordSlowWarning.CommandTimeout = 120;
+            cmdRecordSlowWarning.CommandTimeout = 3600;
 
             DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordSlowWarning, ID);
             DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordSlowWarning,
