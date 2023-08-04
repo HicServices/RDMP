@@ -144,8 +144,6 @@ public partial class UserSettingsFileUI : Form
             btnClearFavourites.Enabled = !cmd.IsImpossible;
         };
 
-        //  var wipeUserSettingsCommand = new ExecuteCommandWipeUserSettings(activator);
-
         btmWipeUserSettings.Enabled = true;
 
         btmWipeUserSettings.Click += (s, e) =>
@@ -155,6 +153,7 @@ public partial class UserSettingsFileUI : Form
                 "Clear User Settings"))
         {
             UserSettings.WipeUserSettings();
+            InitializeComponent();
             //todo need to refresh 
          }
         };

@@ -281,18 +281,7 @@
         "ews.");
             this.btnClearFavourites.UseVisualStyleBackColor = true;
 
-            //
-            //btmWipeUserSettings
-            //
-            //TODO put this in the right place
-             this.btmWipeUserSettings.Location = new System.Drawing.Point(71, 120);
-            this.btmWipeUserSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btmWipeUserSettings.Name = "btmWipeUserSettings";
-            this.btmWipeUserSettings.Size = new System.Drawing.Size(150, 25);
-            this.btmWipeUserSettings.TabIndex = 10;
-            this.btmWipeUserSettings.Text = "Clear User Settings";
-            this.userSettingsToolTips.SetToolTip(this.btmWipeUserSettings, "Clear all user settings & reset to the default settings");
-            this.btmWipeUserSettings.UseVisualStyleBackColor = true;
+           
             // 
             // cbDoubleClickToExpand
             // 
@@ -436,7 +425,6 @@
             this.groupBox3.Controls.Add(this.cbDoubleClickToExpand);
             this.groupBox3.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.groupBox3.Controls.Add(this.btnClearFavourites);
-            this.groupBox3.Controls.Add(this.btmWipeUserSettings);
             this.groupBox3.Location = new System.Drawing.Point(249, 3);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(240, 165);
@@ -713,6 +701,18 @@
             this.label14.Size = new System.Drawing.Size(73, 15);
             this.label14.TabIndex = 26;
             this.label14.Text = "Find Setting:";
+             //
+            //btmWipeUserSettings
+            //
+            //TODO put this in the right place
+             this.btmWipeUserSettings.Location = new System.Drawing.Point(821, 40);
+            this.btmWipeUserSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btmWipeUserSettings.Name = "btmWipeUserSettings";
+            this.btmWipeUserSettings.Size = new System.Drawing.Size(150, 25);
+            this.btmWipeUserSettings.TabIndex = 10;
+            this.btmWipeUserSettings.Text = "Clear Settings";
+            this.userSettingsToolTips.SetToolTip(this.btmWipeUserSettings, "Reset Settings back to the defaults");
+            this.btmWipeUserSettings.UseVisualStyleBackColor = true;
             // 
             // cbUseAliasInsteadOfTransformInGroupByAggregateGraphs
             // 
@@ -731,6 +731,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1012, 758);
             this.Controls.Add(this.label14);
+            this.Controls.Add(this.btmWipeUserSettings);
             this.Controls.Add(this.tbFind);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ddTheme);
