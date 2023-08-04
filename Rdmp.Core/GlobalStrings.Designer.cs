@@ -230,5 +230,16 @@ namespace Rdmp.Core {
                 return ResourceManager.GetString("TriggerStatusIsCurrently", resourceCulture);
             }
         }
+
+        public static string ConfirmClearUserSettings {
+            get {
+                return  ResourceManager.GetString("ConfirmUserSettingsWipe");
+            }
+        }
+        public static string ClearUserSettings {
+            get {
+                return  ResourceManager.GetString("ClearUserSettings");
+            }
+        }
     }
 }

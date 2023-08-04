@@ -149,8 +149,9 @@ public partial class UserSettingsFileUI : Form
         btmWipeUserSettings.Click += (s, e) =>
         {
              if (activator.YesNo(
-                "Are you sure you want to clear your settings?",
-                "Clear User Settings"))
+              Core.GlobalStrings.ConfirmClearUserSettings,
+                               Core.GlobalStrings.ClearUserSettings
+))
         {
             UserSettings.WipeUserSettings();
             //todo need to refresh 
