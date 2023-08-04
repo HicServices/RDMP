@@ -46,6 +46,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         set => SetField(ref  _name, value);
     }
 
+
     /// <summary>
     /// If the database was created by an RDMP schema (or plugin schema) this will contain the name of the dll which holds the schema e.g. DataQualityEngine.Database and was
     /// responsible for creating the database.  This determines what roles RDMP lets the database play.
