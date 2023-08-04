@@ -704,7 +704,6 @@
              //
             //btmWipeUserSettings
             //
-            //TODO put this in the right place
              this.btmWipeUserSettings.Location = new System.Drawing.Point(821, 40);
             this.btmWipeUserSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btmWipeUserSettings.Name = "btmWipeUserSettings";

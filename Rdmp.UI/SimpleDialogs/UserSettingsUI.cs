@@ -153,7 +153,6 @@ public partial class UserSettingsFileUI : Form
                 "Clear User Settings"))
         {
             UserSettings.WipeUserSettings();
-            InitializeComponent();
             //todo need to refresh 
          }
         };
