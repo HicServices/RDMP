@@ -154,7 +154,10 @@ public partial class UserSettingsFileUI : Form
 ))
         {
             UserSettings.WipeUserSettings();
-            //todo need to refresh 
+            Dispose(true);
+            // InitializeComponent();
+            var settings = new UserSettingsFileUI(activator);
+            settings.Show();
          }
         };
     }
