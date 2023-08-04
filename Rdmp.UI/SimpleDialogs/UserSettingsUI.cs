@@ -16,7 +16,6 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
 using static BrightIdeasSoftware.ObjectListView;
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
@@ -143,6 +142,21 @@ public partial class UserSettingsFileUI : Form
         {
             cmd.Execute();
             btnClearFavourites.Enabled = !cmd.IsImpossible;
+        };
+
+        //  var wipeUserSettingsCommand = new ExecuteCommandWipeUserSettings(activator);
+
+        btmWipeUserSettings.Enabled = true;
+
+        btmWipeUserSettings.Click += (s, e) =>
+        {
+             if (activator.YesNo(
+                "Are you sure you want to clear your settings?",
+                "Clear User Settings"))
+        {
+            UserSettings.WipeUserSettings();
+            //todo need to refresh 
+         }
         };
     }
 

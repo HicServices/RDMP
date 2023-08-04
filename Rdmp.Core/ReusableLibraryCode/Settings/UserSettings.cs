@@ -31,6 +31,7 @@ public static class UserSettings
         }
     }
 
+
     /// <summary>
     /// Show a Yes/No confirmation dialog box when closing RDMP
     /// </summary>
@@ -596,6 +597,11 @@ public static class UserSettings
         {
             AppSettings.AddOrUpdateValue($"SplitterDistance_{controlGuid:N}", splitterDistance);
         }
+    }
+
+
+    public static void WipeUserSettings(){
+        AppSettings.Clear();
     }
 
     private static ISettings CreateSettings()

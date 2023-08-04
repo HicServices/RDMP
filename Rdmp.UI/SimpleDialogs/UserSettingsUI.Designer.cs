@@ -46,6 +46,7 @@
             this.cbWait5Seconds = new System.Windows.Forms.CheckBox();
             this.cbShowCohortWizard = new System.Windows.Forms.CheckBox();
             this.btnClearFavourites = new System.Windows.Forms.Button();
+            this.btmWipeUserSettings = new System.Windows.Forms.Button();
             this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             this.cbDebugPerformance = new System.Windows.Forms.CheckBox();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
@@ -279,6 +280,19 @@
             this.userSettingsToolTips.SetToolTip(this.btnClearFavourites, "Clear all the Favourites (items that have been \'started\') from your collection vi" +
         "ews.");
             this.btnClearFavourites.UseVisualStyleBackColor = true;
+
+            //
+            //btmWipeUserSettings
+            //
+            //TODO put this in the right place
+             this.btmWipeUserSettings.Location = new System.Drawing.Point(71, 120);
+            this.btmWipeUserSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btmWipeUserSettings.Name = "btmWipeUserSettings";
+            this.btmWipeUserSettings.Size = new System.Drawing.Size(150, 25);
+            this.btmWipeUserSettings.TabIndex = 10;
+            this.btmWipeUserSettings.Text = "Clear User Settings";
+            this.userSettingsToolTips.SetToolTip(this.btmWipeUserSettings, "Clear all user settings & reset to the default settings");
+            this.btmWipeUserSettings.UseVisualStyleBackColor = true;
             // 
             // cbDoubleClickToExpand
             // 
@@ -422,6 +436,7 @@
             this.groupBox3.Controls.Add(this.cbDoubleClickToExpand);
             this.groupBox3.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.groupBox3.Controls.Add(this.btnClearFavourites);
+            this.groupBox3.Controls.Add(this.btmWipeUserSettings);
             this.groupBox3.Location = new System.Drawing.Point(249, 3);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(240, 165);
@@ -767,6 +782,7 @@
         private System.Windows.Forms.CheckBox cbWait5Seconds;
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
         private System.Windows.Forms.Button btnClearFavourites;
+        private System.Windows.Forms.Button btmWipeUserSettings;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
