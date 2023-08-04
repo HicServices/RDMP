@@ -279,7 +279,7 @@
             this.btnClearFavourites.Text = "Clear Favourites";
             this.userSettingsToolTips.SetToolTip(this.btnClearFavourites, "Clear all the Favourites (items that have been \'started\') from your collection vi" +
         "ews.");
-            this.btnClearFavourites.UseVisualStyleBackColor = true;           
+            this.btnClearFavourites.UseVisualStyleBackColor = true;
             // 
             // cbDoubleClickToExpand
             // 

@@ -150,16 +150,16 @@ public partial class UserSettingsFileUI : Form
 
         btnClearUserSettings.Click += (s, e) =>
         {
-             if (activator.YesNo(
+            if (activator.YesNo(
               Core.GlobalStrings.ConfirmClearUserSettings,
                                Core.GlobalStrings.ClearUserSettings
-))
-        {
-            clearUserSettingsCmd.Execute();
-            Dispose(true);
-            var settings = new UserSettingsFileUI(activator);
-            settings.Show();
-         }
+            ))
+            {
+                clearUserSettingsCmd.Execute();
+                Dispose(true);
+                var settings = new UserSettingsFileUI(activator);
+                settings.Show();
+            }
         };
     }
 
