@@ -18,7 +18,7 @@ public class ExecuteCommandClearUserSettings : BasicCommandExecution
     {
         base.Execute();
 
-        UserSettings.WipeUserSettings();
+        UserSettings.ClearUserSettings();
     }
 
 }

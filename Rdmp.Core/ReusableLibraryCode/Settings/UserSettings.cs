@@ -600,7 +600,7 @@ public static class UserSettings
     }
 
 
-    public static void WipeUserSettings(){
+    public static void ClearUserSettings(){
         AppSettings.Clear();
     }
 

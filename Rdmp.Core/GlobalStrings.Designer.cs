@@ -233,12 +233,23 @@ namespace Rdmp.Core {
 
         public static string ConfirmClearUserSettings {
             get {
-                return  ResourceManager.GetString("ConfirmUserSettingsWipe");
+                return  ResourceManager.GetString("ConfirmClearUserSettings");
             }
         }
         public static string ClearUserSettings {
             get {
                 return  ResourceManager.GetString("ClearUserSettings");
+            }
+        }
+         public static string ClearSettings {
+            get {
+                return  ResourceManager.GetString("ClearSettings");
+            }
+        }
+
+        public static string ClearUserSettingsTooltip {
+            get {
+                return ResourceManager.GetString("ClearUserSettingsTooltip");
             }
         }
     }

@@ -146,9 +146,9 @@ public partial class UserSettingsFileUI : Form
         };
 
         var clearUserSettingsCmd = new ExecuteCommandClearUserSettings(activator);
-        btmWipeUserSettings.Enabled = true;
+        btnClearUserSettings.Enabled = true;
 
-        btmWipeUserSettings.Click += (s, e) =>
+        btnClearUserSettings.Click += (s, e) =>
         {
              if (activator.YesNo(
               Core.GlobalStrings.ConfirmClearUserSettings,
@@ -157,7 +157,6 @@ public partial class UserSettingsFileUI : Form
         {
             clearUserSettingsCmd.Execute();
             Dispose(true);
-            // InitializeComponent();
             var settings = new UserSettingsFileUI(activator);
             settings.Show();
          }
