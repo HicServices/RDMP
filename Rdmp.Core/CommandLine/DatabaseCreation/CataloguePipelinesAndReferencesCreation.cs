@@ -48,25 +48,26 @@ public class CataloguePipelinesAndReferencesCreation
         var startup = new Startup.Startup(new EnvironmentInfo(),_repositoryLocator);
         startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
     }
-    private void CreateServers()
+    private void CreateServers(PlatformDatabaseCreationOptions options)
     {
         var defaults = _repositoryLocator.CatalogueRepository;
+        if(!options.SkipLoggingServer){
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
+                {
+                    Server = _logging.DataSource,
+                    Database = _logging.InitialCatalog
+                };
 
-        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
+            if(_logging.UserID != null)
             {
-                Server = _logging.DataSource,
-                Database = _logging.InitialCatalog
-            };
+                _edsLogging.Username = _logging.UserID;
+                _edsLogging.Password = _logging.Password;
+            }
 
-        if(_logging.UserID != null)
-        {
-            _edsLogging.Username = _logging.UserID;
-            _edsLogging.Password = _logging.Password;
+            _edsLogging.SaveToDatabase();
+            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
+            Console.WriteLine("Successfully configured default logging server");
         }
-
-        _edsLogging.SaveToDatabase();
-        defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
-        Console.WriteLine("Successfully configured default logging server");
 
         var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
             {
@@ -104,7 +105,7 @@ public class CataloguePipelinesAndReferencesCreation
         Console.WriteLine("Successfully configured RAW server");
     }
 
-    public void CreatePipelines()
+    public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
         var bulkInsertCsvPipe = 
             CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
@@ -117,9 +118,10 @@ public class CataloguePipelinesAndReferencesCreation
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-        SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
-        SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
-
+        if(!options.SkipLoggingServer){
+            SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
+            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
+        }
         var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File",typeof (DelimitedFlatFileDataFlowSource), typeof (BasicCohortDestination));
         SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");
 
@@ -184,11 +186,11 @@ public class CataloguePipelinesAndReferencesCreation
         return pipe;
     }
 
-    public void Create()
+    public void Create(PlatformDatabaseCreationOptions options)
     {
 
         DoStartup();
-        CreateServers();
-        CreatePipelines();
+        CreateServers(options);
+        CreatePipelines(options);
     }
 }

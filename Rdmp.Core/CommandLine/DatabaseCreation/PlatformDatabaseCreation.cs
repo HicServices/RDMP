@@ -47,7 +47,7 @@ public class PlatformDatabaseCreation
         if (!options.SkipPipelines)
         {
             var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
-            creator.Create();
+            creator.Create(options);//todo need to figure out how/where to set the options
         }
 
         if(options.ExampleDatasets || options.Nightmare)

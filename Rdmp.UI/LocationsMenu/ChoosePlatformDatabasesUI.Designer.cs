@@ -70,6 +70,7 @@ namespace Rdmp.UI.LocationsMenu
             this.label11 = new System.Windows.Forms.Label();
             this.tbRowCount = new System.Windows.Forms.TextBox();
             this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
+            this.cbSkipLoggingServer = new System.Windows.Forms.CheckBox();
             this.tbSeed = new System.Windows.Forms.TextBox();
             this.tbOtherKeywords = new System.Windows.Forms.TextBox();
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
@@ -375,6 +376,7 @@ namespace Rdmp.UI.LocationsMenu
             // gbCreateNew
             // 
             this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
+            this.gbCreateNew.Controls.Add(this.cbSkipLoggingServer);
             this.gbCreateNew.Controls.Add(this.gbSqlAuthentication);
             this.gbCreateNew.Controls.Add(this.gbExampleDatasets);
             this.gbCreateNew.Controls.Add(this.tbOtherKeywords);
@@ -522,7 +524,17 @@ namespace Rdmp.UI.LocationsMenu
             this.cbCreateExampleDatasets.Text = "Example Datasets";
             this.cbCreateExampleDatasets.UseVisualStyleBackColor = true;
             this.cbCreateExampleDatasets.CheckedChanged += new System.EventHandler(this.cbCreateExampleDatasets_CheckedChanged);
+            //
+            // cbSkipLoggingServer
             // 
+            this.cbSkipLoggingServer.AutoSize = true;
+            this.cbSkipLoggingServer.Location = new System.Drawing.Point(543, 156);
+            this.cbSkipLoggingServer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbSkipLoggingServer.Name = "cbSkipLoggingServer";
+            this.cbSkipLoggingServer.Size = new System.Drawing.Size(118, 19);
+            this.cbSkipLoggingServer.TabIndex = 9;
+            this.cbSkipLoggingServer.Text = "Do not create a logging server";
+            this.cbSkipLoggingServer.UseVisualStyleBackColor = true;
             // tbSeed
             // 
             this.tbSeed.Location = new System.Drawing.Point(94, 22);
@@ -672,6 +684,7 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox cbCreateExampleDatasets;
+        private System.Windows.Forms.CheckBox cbSkipLoggingServer;
         private System.Windows.Forms.TextBox tbSeed;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox tbRowCount;

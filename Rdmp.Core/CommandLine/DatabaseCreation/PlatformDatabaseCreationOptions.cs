@@ -37,6 +37,9 @@ public class PlatformDatabaseCreationOptions
 
     [Option('k', "Skip Pipelines", Default = false, HelpText = "Skips creating the default Pipelines and Managed Server References in the Catalogue database once created.")]
     public bool SkipPipelines { get; set; }
+
+    [Option('l', "Skip Logging Server", Default = false, HelpText = "Skips creating the default logging server in the Catalogue database once created. Is superseeded by 'Skip Pipelines'")]
+    public bool SkipLoggingServer { get; set; }
         
     [Option('e', "ExampleDatasets", Default = false, HelpText = "Create example datasets, projects, extraction configurations and cohort queries")]
     public bool ExampleDatasets{get;set;}
@@ -64,6 +67,7 @@ public class PlatformDatabaseCreationOptions
 
     [Option(Required = false, HelpText = "Optional connection string keywords to use e.g. \"Key1=Value1; Key2=Value2\".  When using this option you must manually specify IntegratedSecurity if required.")]
     public string OtherKeywords { get; set; }
+
 
     [Usage]
     public static IEnumerable<Example> Examples

@@ -29,7 +29,7 @@ internal class ExampleDatasetsCreationTests:DatabaseTests
 
         //create the pipelines
         var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator,null,null);
-        pipes.CreatePipelines();
+        pipes.CreatePipelines(new PlatformDatabaseCreationOptions {});
 
         //create all the stuff
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);

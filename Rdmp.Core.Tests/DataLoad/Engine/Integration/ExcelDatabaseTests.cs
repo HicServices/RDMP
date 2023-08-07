@@ -28,7 +28,7 @@ public class ExcelDatabaseTests : DatabaseTests
         // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
         var creator = new CataloguePipelinesAndReferencesCreation(
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-        creator.CreatePipelines();
+        creator.CreatePipelines(new PlatformDatabaseCreationOptions {});
 
         // find the excel loading pipeline
         var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID).FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
