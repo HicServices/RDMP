@@ -38,8 +38,11 @@ public class PlatformDatabaseCreation
         Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 
         var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
-        var logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
-
+        
+        SqlConnectionStringBuilder logging = null;
+        if(!options.SkipLoggingServer){
+            logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
+        }
         CatalogueRepository.SuppressHelpLoading = true;
 
         var repo = new PlatformDatabaseCreationRepositoryFinder(options);
@@ -47,7 +50,7 @@ public class PlatformDatabaseCreation
         if (!options.SkipPipelines)
         {
             var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
-            creator.Create(options);//todo need to figure out how/where to set the options
+            creator.Create(options);
         }
 
         if(options.ExampleDatasets || options.Nightmare)

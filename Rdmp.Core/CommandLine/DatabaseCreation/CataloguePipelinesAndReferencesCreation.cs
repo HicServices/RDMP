@@ -91,7 +91,7 @@ public class CataloguePipelinesAndReferencesCreation
  };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
-        if (_dqe.UserID != null)
+        if (_dqe.UserID != null && _logging != null)
         {
             if (_logging.UserID != _dqe.UserID || _logging.Password != _dqe.Password)
                 throw new Exception("DQE uses sql authentication but the credentials are not the same as the logging db.  Could not pick a single set of credentials to use for the RAW server entry");
