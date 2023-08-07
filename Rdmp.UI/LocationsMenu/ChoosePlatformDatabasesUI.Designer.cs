@@ -1,4 +1,5 @@
 ﻿using System;
+using Rdmp.Core;
 using Rdmp.UI.SimpleControls;
 
 
@@ -533,7 +534,8 @@ namespace Rdmp.UI.LocationsMenu
             this.cbSkipLoggingServer.Name = "cbSkipLoggingServer";
             this.cbSkipLoggingServer.Size = new System.Drawing.Size(118, 19);
             this.cbSkipLoggingServer.TabIndex = 9;
-            this.cbSkipLoggingServer.Text = "Do not create a logging server";
+            this.cbSkipLoggingServer.Checked = true;
+            this.cbSkipLoggingServer.Text = Core.GlobalStrings.CreateALoggingServer;
             this.cbSkipLoggingServer.UseVisualStyleBackColor = true;
             // tbSeed
             // 

@@ -230,5 +230,11 @@ namespace Rdmp.Core {
                 return ResourceManager.GetString("TriggerStatusIsCurrently", resourceCulture);
             }
         }
+
+        public static string CreateALoggingServer {
+            get {
+                return ResourceManager.GetString("CreateALoggingServer");
+            }
+        }
     }
 }

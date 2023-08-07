@@ -267,7 +267,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 Username = tbUsername.Text,
                 Password = tbPassword.Text,
                 ExampleDatasets = cbCreateExampleDatasets.Checked,
-                SkipLoggingServer = cbSkipLoggingServer.Checked,
+                SkipLoggingServer = !cbSkipLoggingServer.Checked,
                 Seed = _seed,
                 NumberOfPeople = _peopleCount,
                 NumberOfRowsPerDataset = _rowCount,
