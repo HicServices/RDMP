@@ -289,6 +289,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     public override void DeleteInDatabase()
     {
+        //here if its a logging serber, remove all FK referneces first
         base.DeleteInDatabase();
 
         // normally in database schema deleting an ExternalDatabaseServer will cascade to clear defaults
