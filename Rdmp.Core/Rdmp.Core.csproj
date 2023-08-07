@@ -231,7 +231,6 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\077_DropExternalServerFK.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
