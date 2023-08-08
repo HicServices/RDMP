@@ -25,16 +25,14 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
         _loadMetadata = loadMetadata;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Changes the load location\\working directory for the DLE load configuration";
-    }
+    public override string GetCommandHelp() =>
+        "Changes the load location\\working directory for the DLE load configuration";
 
     public override void Execute()
     {
         base.Execute();
 
-        var dialog = new ChooseLoadDirectoryUI(Activator,_loadMetadata);
+        var dialog = new ChooseLoadDirectoryUI(Activator, _loadMetadata);
         if (dialog.ShowDialog() == DialogResult.OK)
         {
             _loadMetadata.LocationOfFlatFiles = dialog.Result;
@@ -43,8 +41,6 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.LoadDirectoryNode);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.LoadDirectoryNode);
 }

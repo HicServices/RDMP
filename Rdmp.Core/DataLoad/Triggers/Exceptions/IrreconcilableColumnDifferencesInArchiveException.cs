@@ -11,8 +11,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Exceptions;
 /// </summary>
 public class IrreconcilableColumnDifferencesInArchiveException : TriggerException
 {
-    public IrreconcilableColumnDifferencesInArchiveException(string s):base(s)
+    public IrreconcilableColumnDifferencesInArchiveException(string s) : base(s)
     {
-            
     }
 }

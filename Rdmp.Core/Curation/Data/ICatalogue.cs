@@ -33,18 +33,18 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
 /// 
 /// </summary>
-public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated, IInjectKnown, ICheckable, IHasFolder
+public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, IMightBeDeprecated, IInjectKnown,
+    ICheckable, IHasFolder
 {
-
     /// <summary>
     /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
     /// </summary>
-    ICatalogueRepository CatalogueRepository {get; }
+    ICatalogueRepository CatalogueRepository { get; }
 
     /// <summary>
     /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
     /// </summary>
-    int? LoadMetadata_ID { get; set;}
+    int? LoadMetadata_ID { get; set; }
 
     /// <summary>
     /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
@@ -88,32 +88,32 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IM
     /// datasets for cohort generation / extraction but don't want them to clog up your user interface.
     /// </summary>
     bool IsColdStorageDataset { get; set; }
-        
-        
+
+
     /// <summary>
     /// User specified free text field.  Not used for anything by RDMP.
     /// <seealso cref="Periodicity"/>
     /// </summary>
-    string Time_coverage {get;set;}
-        
+    string Time_coverage { get; set; }
+
     /// <summary>
     /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
     /// and might be an outright lie.
     /// </summary>
-    Catalogue.CataloguePeriodicity Periodicity{get;set;}
+    Catalogue.CataloguePeriodicity Periodicity { get; set; }
 
     /// <summary>
     /// Human readable description provided by the RDMP user that describes what the dataset contains.  
     /// <para>This can be multiple paragraphs.</para>
     /// </summary>
-    string Description {get;set;}
+    string Description { get; set; }
 
     /// <summary>
     /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
     /// <para>This field is optional</para>
     /// </summary>
     DateTime? DatasetStartDate { get; set; }
-        
+
     /// <inheritdoc cref="TimeCoverage_ExtractionInformation_ID"/>
     ExtractionInformation TimeCoverage_ExtractionInformation { get; }
 
@@ -169,7 +169,8 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IM
     /// <remarks>
     /// <para>High performance overload where you have a <see cref="ICoreChildProvider"/></para>
     /// </remarks>
-    void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables);
+    void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables,
+        out List<ITableInfo> lookupTables);
 
     /// <summary>
     /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 
@@ -180,7 +181,8 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IM
     /// <param name="setInitialDatabase">True to require all tables be in the same database.  False will just connect to master / unspecified database</param>
     /// <param name="distinctAccessPoint"></param>
     /// <returns></returns>
-    DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint);
+    DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase,
+        out IDataAccessPoint distinctAccessPoint);
 
     /// <inheritdoc cref="GetDistinctLiveDatabaseServer(DataAccessContext,bool,out IDataAccessPoint)"/>
     DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase);
@@ -242,7 +244,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IM
     /// <returns></returns>
     CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository);
 
-        
+
     /// <summary>
     /// Provides a new instance of the object (in the database).  Properties will be copied from this object (child objects will not be created).
     /// </summary>

@@ -30,7 +30,7 @@ public partial class RemoteRDMPUI : RemoteRDMPUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",r=>r.ID);
+        Bind(tbID, "Text", "ID", r => r.ID);
         Bind(tbName, "Text", "Name", r => r.Name);
         Bind(tbBaseUrl, "Text", "URL", r => r.URL);
         Bind(tbUsername, "Text", "Username", r => r.Username);

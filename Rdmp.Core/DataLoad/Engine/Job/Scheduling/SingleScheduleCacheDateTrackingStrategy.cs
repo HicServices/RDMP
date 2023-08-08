@@ -24,7 +24,8 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     private readonly Queue<DateTime> _availableDates = new();
     private readonly DateTime _lastDateForLoading;
 
-    public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress,IDataLoadEventListener listener)
+    public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress,
+        IDataLoadEventListener listener)
     {
         // no null check needed as the contract ensures that both DataLoadProgress and OriginDate can't simultaneously be null
         var lastAssignedLoadDate = loadProgress.DataLoadProgress ?? loadProgress.OriginDate.Value;
@@ -32,10 +33,10 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
         // This is all the dates in the cache, but we want to start from _lastAssignedLoadDate
         // todo: must be efficient, revisit
         _availableDates = cacheLayout.GetSortedDateQueue(listener);
-          
-        while (_availableDates.Any() &&  _availableDates.Peek() <= lastAssignedLoadDate)
+
+        while (_availableDates.Any() && _availableDates.Peek() <= lastAssignedLoadDate)
             _availableDates.Dequeue();
-            
+
 
         _lastDateForLoading = CalculateLastLoadDate(loadProgress);
     }
@@ -51,7 +52,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
         // Compute the last cache date from the CacheFillProgress date
         // CacheFillProgress is the date up to which caching has been performed, and is therefore the date from which caching will next begin.
         var cacheProgress = loadProgress.CacheProgress ?? throw new InvalidOperationException(
-                $"Could not retrieve the CacheProgress from LoadProgress {loadProgress.ID} (ensure caching is configured on this load before using this strategy)");
+            $"Could not retrieve the CacheProgress from LoadProgress {loadProgress.ID} (ensure caching is configured on this load before using this strategy)");
         if (cacheProgress.CacheFillProgress == null)
             throw new InvalidOperationException(
                 $"Caching has not begun for this CacheProgress ({cacheProgress.ID}), so there is nothing to load and this strategy should not be used.");
@@ -73,11 +74,12 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     private static ICacheFileSystemDestination GetCacheDestinationPipelineComponent(ICacheProgress cacheProgress)
     {
         if (cacheProgress.Pipeline_ID == null)
-            throw new InvalidOperationException("This CacheProgress does not have a caching pipeline, please configure one.");
+            throw new InvalidOperationException(
+                "This CacheProgress does not have a caching pipeline, please configure one.");
 
         var factory = new CachingPipelineUseCase(cacheProgress);
         ICacheFileSystemDestination destination;
-            
+
         try
         {
             destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
@@ -85,7 +87,8 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
         catch (Exception e)
         {
             throw new Exception(
-                $"We identified that your cache uses pipeline {cacheProgress.Pipeline} but we could not instantiate the Pipeline's Destination instance, make sure the pipeline is intact in PipelineDiagramUI.  See inner exception for details",e );
+                $"We identified that your cache uses pipeline {cacheProgress.Pipeline} but we could not instantiate the Pipeline's Destination instance, make sure the pipeline is intact in PipelineDiagramUI.  See inner exception for details",
+                e);
         }
 
         return destination;
@@ -102,7 +105,8 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
                 // Get the beginning of the day prior to nextDateToBeCached
                 return nextDateToBeCached.AddDays(-1).Date;
             default:
-                throw new ArgumentOutOfRangeException(nameof(cacheFileGranularity), cacheFileGranularity, "CacheFileGranularity must either be Hour or Day.");
+                throw new ArgumentOutOfRangeException(nameof(cacheFileGranularity), cacheFileGranularity,
+                    "CacheFileGranularity must either be Hour or Day.");
         }
     }
 
@@ -129,8 +133,8 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     public int GetTotalNumberOfJobs(int batchSize, bool allowLoadingFutureDates)
     {
         var totalNumberOfValidDates = _availableDates.Count(time => time <= _lastDateForLoading);
-        var totalNumberOfJobs = totalNumberOfValidDates/batchSize;
-        if (totalNumberOfValidDates%batchSize > 0) ++totalNumberOfJobs;
+        var totalNumberOfJobs = totalNumberOfValidDates / batchSize;
+        if (totalNumberOfValidDates % batchSize > 0) ++totalNumberOfJobs;
         return totalNumberOfJobs;
     }
 }

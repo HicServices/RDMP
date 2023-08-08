@@ -18,7 +18,8 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
 {
     private CohortAggregateContainer _container;
 
-    public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container): base( args, container)
+    public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container) : base(args,
+        container)
     {
         _container = container;
 
@@ -32,24 +33,26 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
         //this requires cache to exist (and be populated for the container)
         if (cic != null && cic.QueryCachingServer_ID != null)
         {
-            var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
+            var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",
+                _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
-            var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations.Where(g => !g.IsCohortIdentificationAggregate).ToArray();
+            var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations
+                .Where(g => !g.IsCohortIdentificationAggregate).ToArray();
             var allCatalogues = _activator.CoreChildProvider.AllCatalogues;
 
             if (availableGraphs.Any())
             {
-
                 foreach (var cata in allCatalogues.OrderBy(c => c.Name))
                 {
                     var cataGraphs = availableGraphs.Where(g => g.Catalogue_ID == cata.ID).ToArray();
-                        
+
                     //if there are no graphs belonging to the Catalogue skip it
-                    if(!cataGraphs.Any())
+                    if (!cataGraphs.Any())
                         continue;
 
                     //otherwise create a subheading for it
-                    var catalogueSubheading = new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue.ImageToBitmap());
+                    var catalogueSubheading =
+                        new ToolStripMenuItem(cata.Name, CatalogueIcons.Catalogue.ImageToBitmap());
 
                     //add graph for each in the Catalogue
                     foreach (var graph in cataGraphs)
@@ -65,5 +68,4 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
             }
         }
     }
-
 }

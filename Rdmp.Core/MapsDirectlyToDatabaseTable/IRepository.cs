@@ -56,15 +56,16 @@ public interface IRepository
     /// <param name="toCreate"></param>
     /// <param name="constructorParameters"></param>
     /// <returns></returns>
-    void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable;
-        
+    void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
+        where T : IMapsDirectlyToDatabaseTable;
+
     /// <summary>
     /// Get object with the given id, all implementations of this method should set the Repository field on T for you (automatically)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="id"></param>
     /// <returns></returns>
-    T GetObjectByID<T>(int id) where T:IMapsDirectlyToDatabaseTable;
+    T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable;
 
     /// <summary>
     /// Gets all objects of the given Type from the database, optionally fetches only those that match SQL WHERE statement
@@ -86,7 +87,8 @@ public interface IRepository
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,object value2) where T : IMapsDirectlyToDatabaseTable;
+    T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2, object value2)
+        where T : IMapsDirectlyToDatabaseTable;
 
     /// <summary>
     /// Gets all objects of type <paramref name="t"/>
@@ -94,7 +96,7 @@ public interface IRepository
     /// <param name="t"></param>
     /// <returns></returns>
     IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
-        
+
     /// <summary>
     /// Returns child objects of type T which belong to parent.  If the repository does not think the parent type and T types are 
     /// related you should throw an Exception
@@ -113,7 +115,8 @@ public interface IRepository
     /// <typeparam name="T2">Type of the parent</typeparam>
     /// <param name="parent"></param>
     /// <returns></returns>
-    T[] GetAllObjectsWithParent<T,T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2:IMapsDirectlyToDatabaseTable;
+    T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2>
+        where T2 : IMapsDirectlyToDatabaseTable;
 
 
     /// <summary>
@@ -128,7 +131,7 @@ public interface IRepository
     /// </summary>
     /// <param name="oTableWrapperObject"></param>
     void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject);
-        
+
     /// <summary>
     /// Repopulates all properties of the object to match the values currently stored in the database
     /// </summary>
@@ -141,7 +144,7 @@ public interface IRepository
     /// <param name="mapsDirectlyToDatabaseTable"></param>
     /// <returns></returns>
     RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable);
-        
+
     /// <summary>
     /// Returns true if the two supplied objects are the same Type of <see cref="IMapsDirectlyToDatabaseTable"/> with the same <see cref="IMapsDirectlyToDatabaseTable.ID"/>.
     /// </summary>
@@ -169,13 +172,15 @@ public interface IRepository
     /// <param name="objectId"></param>
     /// <returns></returns>
     bool StillExists(Type objectType, int objectId);
+
     IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId);
 
 
     IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable;
     IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids);
 
-    void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
+    void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,
+        object propertyValue);
 
     /// <summary>
     /// Returns all objects held in the repository.  This method is likely to be slow for large databases

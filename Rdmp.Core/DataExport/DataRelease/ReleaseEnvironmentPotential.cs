@@ -29,19 +29,20 @@ public class ReleaseEnvironmentPotential : ICheckable
     public TicketingReleaseabilityEvaluation Assesment { get; private set; }
     public string Reason { get; private set; }
 
-        
+
     public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
     {
         _repository = configuration.DataExportRepository;
         Configuration = configuration;
         Project = configuration.Project;
     }
-        
+
     private void MakeAssessment()
     {
         Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-        var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
+        var configuration = _repository.CatalogueRepository
+            .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
         if (configuration == null) return;
 
         var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
@@ -58,8 +59,8 @@ public class ReleaseEnvironmentPotential : ICheckable
             Exception = e;
             return;
         }
-            
-        if (ticketingSystem == null) 
+
+        if (ticketingSystem == null)
             return;
 
         try

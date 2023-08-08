@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 public class UpdateProgressToResultOfDelegate : UpdateProgressIfLoadsuccessful
 {
     private readonly Func<DateTime> _delegateToRun;
-        
+
     public UpdateProgressToResultOfDelegate(ScheduledDataLoadJob job, Func<DateTime> delegateToRun) : base(job)
     {
         _delegateToRun = delegateToRun;
@@ -30,6 +30,5 @@ public class UpdateProgressToResultOfDelegate : UpdateProgressIfLoadsuccessful
             DateToSetProgressTo = _delegateToRun();
 
         base.LoadCompletedSoDispose(exitCode, postLoadEventListener);
-
     }
 }

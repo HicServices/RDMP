@@ -9,7 +9,6 @@ using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
 using Color = System.Drawing.Color;
 
 namespace Rdmp.UI.LocationsMenu.Ticketing;
@@ -54,7 +53,7 @@ public partial class TicketingControlUI : RDMPUserControl
     public void ReCheckTicketingSystemInCatalogue()
     {
         ragSmiley1.SetVisible(false);
-            
+
         try
         {
             if (VisualStudioDesignMode)

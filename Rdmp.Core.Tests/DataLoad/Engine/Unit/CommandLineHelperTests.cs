@@ -34,15 +34,17 @@ internal class CommandLineHelperTests
         ImplementationManager.Load<MicrosoftSQLImplementation>();
 
         //notice how server and db don't actually exist, thats cool they implement IMightNotExist
-        var dbInfo = new DiscoveredServer(new SqlConnectionStringBuilder {DataSource = "server"}).ExpectDatabase("db");
-        Assert.AreEqual("--database-name=db --database-server=server", CommandLineHelper.CreateArgString("DbInfo", dbInfo));
+        var dbInfo =
+            new DiscoveredServer(new SqlConnectionStringBuilder { DataSource = "server" }).ExpectDatabase("db");
+        Assert.AreEqual("--database-name=db --database-server=server",
+            CommandLineHelper.CreateArgString("DbInfo", dbInfo));
     }
 
     [Test]
     public void TestGetValueStringError()
     {
         var obj = new CommandLineHelperTests();
-        Assert.Throws<ArgumentException>(()=>CommandLineHelper.GetValueString(obj));
+        Assert.Throws<ArgumentException>(() => CommandLineHelper.GetValueString(obj));
     }
 
     [Test]
@@ -64,18 +66,18 @@ internal class CommandLineHelperTests
     [Test]
     public void TestEmptyArgumentName()
     {
-        Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("", "value"));
+        Assert.Throws<ArgumentException>(() => CommandLineHelper.CreateArgString("", "value"));
     }
 
     [Test]
     public void TestNameWithoutLeadingUppercaseCharacter()
     {
-        Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("dateFrom", "2014-01-01"));
+        Assert.Throws<ArgumentException>(() => CommandLineHelper.CreateArgString("dateFrom", "2014-01-01"));
     }
 
     [Test]
     public void TestNullValue()
     {
-        Assert.Throws<ArgumentException>(()=>CommandLineHelper.CreateArgString("DateFrom", null));
+        Assert.Throws<ArgumentException>(() => CommandLineHelper.CreateArgString("DateFrom", null));
     }
 }

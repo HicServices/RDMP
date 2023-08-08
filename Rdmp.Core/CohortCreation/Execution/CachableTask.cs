@@ -19,26 +19,22 @@ public abstract class CacheableTask : Compileable, ICacheableTask
     }
 
     public abstract AggregateConfiguration GetAggregateConfiguration();
-    public abstract CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes);
+
+    public abstract CacheCommitArguments GetCacheArguments(string sql, DataTable results,
+        DatabaseColumnRequest[] explicitTypes);
+
     public abstract void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager);
-        
+
     public bool IsCacheableWhenFinished()
     {
         if (!_compiler.Tasks.ContainsKey(this))
             return false;
 
         var execution = _compiler.Tasks[this];
-        if(execution == null)
-        {
-            return false;
-        }
+        if (execution == null) return false;
 
         return execution.SubQueries > execution.SubqueriesCached;
     }
 
-    public bool CanDeleteCache()
-    {
-        return _compiler.Tasks[this].SubqueriesCached > 0;
-    }
-
+    public bool CanDeleteCache() => _compiler.Tasks[this].SubqueriesCached > 0;
 }

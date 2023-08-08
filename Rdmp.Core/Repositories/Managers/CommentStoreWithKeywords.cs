@@ -21,7 +21,7 @@ public class CommentStoreWithKeywords : CommentStore
 
         var keywords = new FileInfo("./Curation/KeywordHelp.txt");
 
-        if(keywords.Exists)
+        if (keywords.Exists)
             AddToHelp(File.ReadAllText(keywords.FullName));
     }
 

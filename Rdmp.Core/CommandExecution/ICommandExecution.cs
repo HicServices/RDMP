@@ -25,7 +25,7 @@ public interface ICommandExecution
     /// The reason <see cref="IsImpossible"/> is true.  Should be null if <see cref="IsImpossible"/> is false
     /// </summary>
     string ReasonCommandImpossible { get; }
-        
+
     /// <summary>
     /// Runs the command, this should normally only be called once then the command discarded.  Always ensure when overriding that you call base members
     /// because they can include logic such as <see cref="IsImpossible"/> etc.

@@ -20,9 +20,10 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 /// 4. Step2 collection given the Objects referenced by ObjectsUsed
 /// 5. Control instance given the Hydrated collection with SetCollection method
 /// </summary>
-public class DashboardControl:DatabaseEntity
+public class DashboardControl : DatabaseEntity
 {
     #region Database Properties
+
     private int _dashboardLayout_ID;
     private int _x;
     private int _y;
@@ -113,7 +114,6 @@ public class DashboardControl:DatabaseEntity
 
     public DashboardControl()
     {
-
     }
 
     internal DashboardControl(ICatalogueRepository repository, DbDataReader r)
@@ -125,8 +125,8 @@ public class DashboardControl:DatabaseEntity
         Height = Convert.ToInt32(r["Height"]);
         Width = Convert.ToInt32(r["Width"]);
 
-        ControlType = r["ControlType"].ToString();//cannot be null
-        PersistenceString = r["PersistenceString"] as string;//can be null
+        ControlType = r["ControlType"].ToString(); //cannot be null
+        PersistenceString = r["PersistenceString"] as string; //can be null
     }
 
     /// <summary>
@@ -140,27 +140,25 @@ public class DashboardControl:DatabaseEntity
     /// <param name="w"></param>
     /// <param name="h"></param>
     /// <param name="persistenceString"></param>
-    public DashboardControl(ICatalogueRepository repository, DashboardLayout parent, Type controlType, int x, int y, int w, int h, string persistenceString)
+    public DashboardControl(ICatalogueRepository repository, DashboardLayout parent, Type controlType, int x, int y,
+        int w, int h, string persistenceString)
     {
         Repository = repository;
 
-        Repository.InsertAndHydrate(this,new Dictionary<string, object>
+        Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"DashboardLayout_ID",parent.ID},
-            {"X",x},
-            {"Y",y},
-            {"Width",w},
-            {"Height",h},
-            {"ControlType",controlType.Name},
-            {"PersistenceString",persistenceString}
-        });   
+            { "DashboardLayout_ID", parent.ID },
+            { "X", x },
+            { "Y", y },
+            { "Width", w },
+            { "Height", h },
+            { "ControlType", controlType.Name },
+            { "PersistenceString", persistenceString }
+        });
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return $"{ControlType}( {ID} )";
-    }
+    public override string ToString() => $"{ControlType}( {ID} )";
 
     /// <summary>
     /// Serializes the current state settings of the IDashboardableControl into <see cref="PersistenceString"/>
@@ -177,6 +175,6 @@ public class DashboardControl:DatabaseEntity
             o.DeleteInDatabase();
 
         foreach (var objectToSave in collection.DatabaseObjects)
-            new DashboardObjectUse((ICatalogueRepository) Repository, this, objectToSave);
+            new DashboardObjectUse((ICatalogueRepository)Repository, this, objectToSave);
     }
 }

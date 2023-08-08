@@ -27,6 +27,7 @@ public class ExtractableCohortAuditLogBuilder
     /// writing that ID into the <see cref="ExtractableCohort.AuditLog"/>
     /// </summary>
     private Regex _legacyCic = new(@"Created by running cic ([\d]+)");
+
     private const string InFile = "Patient identifiers in file";
     private const string InColumn = "Patient identifiers in column ";
     private const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
@@ -38,10 +39,8 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="cic"></param>
     /// <returns></returns>
-    public static string GetDescription(CohortIdentificationConfiguration cic)
-    {
-        return $"{InCohortIdentificationConfiguration} '{cic}' (ID={cic.ID})";
-    }
+    public static string GetDescription(CohortIdentificationConfiguration cic) =>
+        $"{InCohortIdentificationConfiguration} '{cic}' (ID={cic.ID})";
 
     /// <summary>
     /// Returns a human readable description recording that an <see cref="ExtractableCohort"/>
@@ -49,16 +48,10 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="extractionIdentifierColumn"></param>
     /// <returns></returns>
-    public static string GetDescription(ExtractionInformation extractionIdentifierColumn)
-    {
-        return
-            $"{InExtractionInformation} '{extractionIdentifierColumn.CatalogueItem.Catalogue}.{extractionIdentifierColumn.GetRuntimeName()}'  (ID={extractionIdentifierColumn.ID})";
-    }
+    public static string GetDescription(ExtractionInformation extractionIdentifierColumn) =>
+        $"{InExtractionInformation} '{extractionIdentifierColumn.CatalogueItem.Catalogue}.{extractionIdentifierColumn.GetRuntimeName()}'  (ID={extractionIdentifierColumn.ID})";
 
-    internal static string GetDescription(DiscoveredColumn col)
-    {
-        return $"{InColumn} '{col.GetFullyQualifiedName()}'";
-    }
+    internal static string GetDescription(DiscoveredColumn col) => $"{InColumn} '{col.GetFullyQualifiedName()}'";
 
     /// <summary>
     /// Returns a human readable description recording that an <see cref="ExtractableCohort"/>
@@ -66,10 +59,7 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    public static string GetDescription(FileInfo file)
-    {
-        return $"{InFile} '{file.FullName}'";
-    }
+    public static string GetDescription(FileInfo file) => $"{InFile} '{file.FullName}'";
 
     /// <summary>
     /// Returns the object that was the source of the given <paramref name="cohort"/>. 
@@ -79,36 +69,28 @@ public class ExtractableCohortAuditLogBuilder
     /// <param name="cohort"></param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public object GetObjectIfAny(IExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public object GetObjectIfAny(IExtractableCohort cohort,
+        Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var audit = cohort.AuditLog;
-            
+
         // no audit means no object
-        if(string.IsNullOrWhiteSpace(audit))
-        {
-            return null;
-        }
+        if (string.IsNullOrWhiteSpace(audit)) return null;
 
-        if(_legacyCic.IsMatch(audit))
-        {
-            return GetObjectFromLog<CohortIdentificationConfiguration>(_legacyCic.Match(audit), repositoryLocator.CatalogueRepository);
-        }
+        if (_legacyCic.IsMatch(audit))
+            return GetObjectFromLog<CohortIdentificationConfiguration>(_legacyCic.Match(audit),
+                repositoryLocator.CatalogueRepository);
 
-        if(audit.Contains(InCohortIdentificationConfiguration))
-        {
+        if (audit.Contains(InCohortIdentificationConfiguration))
             return GetObjectFromLog<CohortIdentificationConfiguration>(audit, repositoryLocator.CatalogueRepository);
-        }
 
-        if(audit.Contains(InExtractionInformation))
-        {
+        if (audit.Contains(InExtractionInformation))
             return GetObjectFromLog<ExtractionInformation>(audit, repositoryLocator.CatalogueRepository);
-        }
 
         if (audit.Contains(InFile))
         {
             var m = _regexGetFilePath.Match(audit);
-            if(m.Success)
-            {
+            if (m.Success)
                 try
                 {
                     return new FileInfo(m.Groups[1].Value);
@@ -118,29 +100,24 @@ public class ExtractableCohortAuditLogBuilder
                     // its not a valid filename, maybe someone hacked the Audit Log by hand
                     return null;
                 }
-            }
         }
+
         if (audit.Contains(InColumn))
         {
             var m = _regexGetColumn.Match(audit);
-            if (m.Success)
-            {
-                return m.Groups[1].Value;
-            }
+            if (m.Success) return m.Groups[1].Value;
         }
+
         // who knows how this cohort was created
         return null;
     }
 
-    private T GetObjectFromLog<T>(string audit, IRepository repository) where T: class, IMapsDirectlyToDatabaseTable
+    private T GetObjectFromLog<T>(string audit, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
     {
         var m = _regexGetID.Match(audit);
 
         // If the ID bit is  missing
-        if (!m.Success)
-        {
-            return null;
-        }
+        if (!m.Success) return null;
 
         return GetObjectFromLog<T>(m, repository);
     }

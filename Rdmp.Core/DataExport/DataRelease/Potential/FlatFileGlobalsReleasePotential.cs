@@ -17,7 +17,8 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential;
 /// </summary>
 public class FlatFileGlobalsReleasePotential : GlobalReleasePotential
 {
-    public FlatFileGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+    public FlatFileGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
         : base(repositoryLocator, globalResult, globalToCheck)
     {
     }

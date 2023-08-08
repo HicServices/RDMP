@@ -28,13 +28,14 @@ public abstract class ScheduledJobFactory : IJobFactory
         LogManager = logManager;
     }
 
-        
+
     public abstract bool HasJobs();
 
 
-    public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+    public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        HICDatabaseConfiguration configuration)
     {
-        var job = CreateImpl(repositoryLocator,listener,configuration);
+        var job = CreateImpl(repositoryLocator, listener, configuration);
 
         if (job == null || job.DatesToRetrieve == null || !job.DatesToRetrieve.Any())
             return null; // No dates to load
@@ -42,5 +43,6 @@ public abstract class ScheduledJobFactory : IJobFactory
         return job;
     }
 
-    protected abstract ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration);
+    protected abstract ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IDataLoadEventListener listener, HICDatabaseConfiguration configuration);
 }

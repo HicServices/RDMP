@@ -27,33 +27,19 @@ public class DeployedExtractionFilterFactory : IFilterFactory
     {
         _repository = repository;
     }
-    
-    /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name)
-    {
-        return new DeployedExtractionFilter(_repository,name,null);
-    }
 
     /// <inheritdoc/>
-    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
-    {
-        return new DeployedExtractionFilterParameter(_repository,parameterSQL,filter);
-    }
+    public IFilter CreateNewFilter(string name) => new DeployedExtractionFilter(_repository, name, null);
 
     /// <inheritdoc/>
-    public Type GetRootOwnerType()
-    {
-        return typeof (SelectedDataSets);
-    }
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
+        new DeployedExtractionFilterParameter(_repository, parameterSQL, filter);
 
     /// <inheritdoc/>
-    public Type GetIContainerTypeIfAny()
-    {
-        return typeof (FilterContainer);
-    }
+    public Type GetRootOwnerType() => typeof(SelectedDataSets);
 
-    public IContainer CreateNewContainer()
-    {
-        return new FilterContainer(_repository);
-    }
+    /// <inheritdoc/>
+    public Type GetIContainerTypeIfAny() => typeof(FilterContainer);
+
+    public IContainer CreateNewContainer() => new FilterContainer(_repository);
 }

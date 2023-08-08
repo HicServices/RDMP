@@ -37,10 +37,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         ClearAllInjections();
     }
 
-    public IEncryptStrings GetEncrypter()
-    {
-        return new SimpleStringValueEncryption(OpenKeyFile());
-    }
+    public IEncryptStrings GetEncrypter() => new SimpleStringValueEncryption(OpenKeyFile());
 
     private Lazy<string> _knownKeyFileLocation;
 
@@ -50,10 +47,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     /// the cache
     /// </summary>
     /// <returns></returns>
-    public string GetKeyFileLocation()
-    {
-        return _knownKeyFileLocation.Value;
-    }
+    public string GetKeyFileLocation() => _knownKeyFileLocation.Value;
 
     private string GetKeyFileLocationImpl()
     {
@@ -85,7 +79,8 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         catch (Exception ex)
         {
             throw new Exception(
-                $"Failed to open and read key file {keyLocation} (possibly it is not in a shared network location or the current user ({Environment.UserName}) does not have access to the file?)", ex);
+                $"Failed to open and read key file {keyLocation} (possibly it is not in a shared network location or the current user ({Environment.UserName}) does not have access to the file?)",
+                ex);
         }
     }
 
@@ -107,11 +102,14 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 
         var fi = new FileInfo(path);
 
-        if(fi.Directory is { Exists: false })
+        if (fi.Directory is { Exists: false })
             fi.Directory.Create();
 
         using (var stream = fi.Create())
+        {
             stream.Write(Encoding.UTF8.GetBytes(provider.ToXmlString(true)));
+        }
+
         var fileInfo = new FileInfo(path);
 
         if (!fileInfo.Exists)
@@ -120,7 +118,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);
 
         ClearAllInjections();
-            
+
         return fileInfo;
     }
 

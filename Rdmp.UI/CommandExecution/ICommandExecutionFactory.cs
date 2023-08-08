@@ -23,7 +23,8 @@ public interface ICommandExecutionFactory
     /// <param name="targetModel"></param>
     /// <param name="insertOption"></param>
     /// <returns></returns>
-    ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default);
+    ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,
+        InsertOption insertOption = InsertOption.Default);
 
     void Activate(object target);
     bool CanActivate(object target);

@@ -24,7 +24,7 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     {
     }
 
-    public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter):this()
+    public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter) : this()
     {
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
@@ -35,8 +35,9 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
 
     public AggregateConfiguration GetGraph()
     {
-        return (AggregateConfiguration) DatabaseObjects.Single(o => o is AggregateConfiguration);
+        return (AggregateConfiguration)DatabaseObjects.Single(o => o is AggregateConfiguration);
     }
+
     public IFilter GetFilter()
     {
         return (IFilter)DatabaseObjects.Single(o => o is IFilter);
@@ -46,6 +47,6 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     {
         foreach (var o in DatabaseObjects)
             if (o.Equals(e.Object))
-                ((IRevertable) o).RevertToDatabaseState();
+                ((IRevertable)o).RevertToDatabaseState();
     }
 }

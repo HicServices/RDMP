@@ -20,15 +20,15 @@ public class RemoveDuplicatesTests
     {
         var dt = new DataTable();
         dt.Columns.Add("Col1");
-        dt.Columns.Add("Col2",typeof(int));
+        dt.Columns.Add("Col2", typeof(int));
 
         dt.Rows.Add("Fish", 123);
         dt.Rows.Add("Fish", 123);
         dt.Rows.Add("Fish", 123);
 
-        Assert.AreEqual(3,dt.Rows.Count);
-            
-            
+        Assert.AreEqual(3, dt.Rows.Count);
+
+
         Assert.AreEqual(123, dt.Rows[0]["Col2"]);
 
         var receiver = new ToMemoryDataLoadEventListener(true);
@@ -36,7 +36,7 @@ public class RemoveDuplicatesTests
         var result = new RemoveDuplicates().ProcessPipelineData(dt, receiver, new GracefulCancellationToken());
 
         //should have told us that it processed 3 rows
-        Assert.AreEqual(3,receiver.LastProgressRecieivedByTaskName["Evaluating For Duplicates"].Progress.Value);
+        Assert.AreEqual(3, receiver.LastProgressRecieivedByTaskName["Evaluating For Duplicates"].Progress.Value);
 
         //and discarded 2 of them as duplicates
         Assert.AreEqual(2, receiver.LastProgressRecieivedByTaskName["Discarding Duplicates"].Progress.Value);
@@ -49,7 +49,9 @@ public class RemoveDuplicatesTests
     [Test]
     public void TestEmptyDataTable()
     {
-        Assert.AreEqual(0,new RemoveDuplicates().ProcessPipelineData(new DataTable(),new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken()).Rows.Count);
+        Assert.AreEqual(0,
+            new RemoveDuplicates().ProcessPipelineData(new DataTable(), new ThrowImmediatelyDataLoadEventListener(),
+                new GracefulCancellationToken()).Rows.Count);
     }
 
     [Test]
@@ -71,13 +73,17 @@ public class RemoveDuplicatesTests
         dt2.Rows.Add("Haddock", 123);
 
 
-        var remover = new RemoveDuplicates(); 
+        var remover = new RemoveDuplicates();
 
         //send it the batch with the duplication it will return 1 row
-        Assert.AreEqual(1,remover.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()).Rows.Count);
+        Assert.AreEqual(1,
+            remover.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
+                new GracefulCancellationToken()).Rows.Count);
 
         //now send it the second batch which contains 2 records, one duplication against first batch and one new one, expect only 1 row to come back
-        Assert.AreEqual(1, remover.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()).Rows.Count);
+        Assert.AreEqual(1,
+            remover.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(),
+                new GracefulCancellationToken()).Rows.Count);
     }
 
     [Test]
@@ -96,11 +102,11 @@ public class RemoveDuplicatesTests
 
         var remover = new RemoveDuplicates();
 
-        Assert.AreEqual(6,dt.Rows.Count);
+        Assert.AreEqual(6, dt.Rows.Count);
 
         //send it the batch with the duplication it will return 5 rows (the only duplicate is the double null)
-        Assert.AreEqual(5, remover.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()).Rows.Count);
-
-
+        Assert.AreEqual(5,
+            remover.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
+                new GracefulCancellationToken()).Rows.Count);
     }
 }

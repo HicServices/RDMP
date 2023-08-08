@@ -17,13 +17,8 @@ public class SpecialFieldNames
     public const string ValidFrom = "hic_validFrom";
     public const string DataLoadRunID = "hic_dataLoadRunID";
 
-    public static bool IsHicPrefixed(IHasRuntimeName col)
-    {
-        return IsHicPrefixed(col.GetRuntimeName());
-    }
+    public static bool IsHicPrefixed(IHasRuntimeName col) => IsHicPrefixed(col.GetRuntimeName());
 
-    public static bool IsHicPrefixed(string runtimeName)
-    {
-        return runtimeName.StartsWith("hic_",StringComparison.CurrentCultureIgnoreCase);
-    }
+    public static bool IsHicPrefixed(string runtimeName) =>
+        runtimeName.StartsWith("hic_", StringComparison.CurrentCultureIgnoreCase);
 }

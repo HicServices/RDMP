@@ -17,7 +17,6 @@ namespace Rdmp.Core.Tests.DataExport.Data;
 
 internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
 {
-
     [Test]
     public void ExtractionProgressConstructor_NoTimePeriodicity()
     {
@@ -25,18 +24,19 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         var eds = new ExtractableDataSet(DataExportRepository, cata);
         var project = new Project(DataExportRepository, "My Proj");
         var config = new ExtractionConfiguration(DataExportRepository, project);
-        var sds = new SelectedDataSets(DataExportRepository, config,eds,null);
+        var sds = new SelectedDataSets(DataExportRepository, config, eds, null);
 
-        var ex = Assert.Throws<ArgumentException>(()=> new ExtractionProgress(DataExportRepository, sds));
-        Assert.AreEqual("Cannot create ExtractionProgress because Catalogue MyCata does not have a time coverage column", ex.Message);
-
+        var ex = Assert.Throws<ArgumentException>(() => new ExtractionProgress(DataExportRepository, sds));
+        Assert.AreEqual(
+            "Cannot create ExtractionProgress because Catalogue MyCata does not have a time coverage column",
+            ex.Message);
     }
 
     [Test]
     public void ExtractionProgressConstructor_Normal()
     {
         ExtractionProgress progress = null;
-        Assert.DoesNotThrow(()=> progress = CreateAnExtractionProgress());
+        Assert.DoesNotThrow(() => progress = CreateAnExtractionProgress());
         progress?.DeleteInDatabase();
     }
 
@@ -86,14 +86,15 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         Assert.AreEqual(freshCopy.Retry, RetryStrategy.IterativeBackoff1Hour);
 
         progress.DeleteInDatabase();
-
     }
+
     [Test]
     public void TestQueryGeneration_FirstBatch()
     {
         Reset();
 
-        _catalogue.TimeCoverage_ExtractionInformation_ID = _extractionInformations.Single(e => e.GetRuntimeName().Equals("DateOfBirth")).ID;
+        _catalogue.TimeCoverage_ExtractionInformation_ID =
+            _extractionInformations.Single(e => e.GetRuntimeName().Equals("DateOfBirth")).ID;
         _catalogue.SaveToDatabase();
 
         var progress = new ExtractionProgress(DataExportRepository, _request.SelectedDataSets)
@@ -112,7 +113,9 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         var fileContents = File.ReadAllText(result.OutputFile);
 
         // Headers should be in file because it is a first batch
-        Assert.AreEqual($"ReleaseID,Name,DateOfBirth{Environment.NewLine}Pub_54321,Dave,2001-01-01{Environment.NewLine}", fileContents);
+        Assert.AreEqual(
+            $"ReleaseID,Name,DateOfBirth{Environment.NewLine}Pub_54321,Dave,2001-01-01{Environment.NewLine}",
+            fileContents);
 
         File.Delete(result.OutputFile);
         progress.DeleteInDatabase();
@@ -142,15 +145,13 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         // should be different instances
         Assert.AreNotSame(origProgress, cloneProgress);
 
-        Assert.AreEqual(cloneProgress.StartDate , new DateTime(2001, 01, 01));
-        Assert.IsNull(cloneProgress.ProgressDate,"Expected progress to be reset on clone");
-        Assert.AreEqual(cloneProgress.EndDate , new DateTime(2020, 01, 01));
+        Assert.AreEqual(cloneProgress.StartDate, new DateTime(2001, 01, 01));
+        Assert.IsNull(cloneProgress.ProgressDate, "Expected progress to be reset on clone");
+        Assert.AreEqual(cloneProgress.EndDate, new DateTime(2020, 01, 01));
     }
 
-    private ExtractionProgress CreateAnExtractionProgress()
-    {
-        return CreateAnExtractionProgress(out _);
-    }
+    private ExtractionProgress CreateAnExtractionProgress() => CreateAnExtractionProgress(out _);
+
     private ExtractionProgress CreateAnExtractionProgress(out ExtractionConfiguration config)
     {
         var cata = new Catalogue(CatalogueRepository, "MyCata");
@@ -166,7 +167,7 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         var project = new Project(DataExportRepository, "My Proj");
         config = new ExtractionConfiguration(DataExportRepository, project);
         var sds = new SelectedDataSets(DataExportRepository, config, eds, null);
-            
+
         return new ExtractionProgress(DataExportRepository, sds);
     }
 }

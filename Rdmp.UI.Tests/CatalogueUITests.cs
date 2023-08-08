@@ -15,7 +15,8 @@ namespace Rdmp.UI.Tests;
 [SupportedOSPlatform("windows7.0")]
 public class CatalogueUITests : UITests
 {
-    [Test, UITimeout(20000)]
+    [Test]
+    [UITimeout(20000)]
     public void Test_CatalogueUI_NormalState()
     {
         var cata = WhenIHaveA<Catalogue>();
@@ -70,7 +71,8 @@ public class CatalogueUITests : UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_CatalogueUI_AcronymDuplicates()
     {
         var cata1 = WhenIHaveA<Catalogue>();
@@ -97,7 +99,7 @@ public class CatalogueUITests : UITests
         ui.tbAcronym.Text = "AB";
 
         //it tells me that I have to make it unique
-        AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Must be unique");
+        AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Must be unique");
 
         //so I make it unique
         ui.tbAcronym.Text = "ABC";

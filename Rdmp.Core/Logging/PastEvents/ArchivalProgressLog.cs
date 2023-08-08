@@ -31,10 +31,8 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
         EventType = r["eventType"] as string;
         Description = r["description"] as string;
     }
-    public override string ToString()
-    {
-        return $"{Date} - {Description}";
-    }
+
+    public override string ToString() => $"{Date} - {Description}";
 
     public int CompareTo(object obj)
     {
@@ -47,9 +45,9 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 
-    public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
+    public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
-        level = EventType == "OnWarning"? CheckResult.Warning : CheckResult.Success;
+        level = EventType == "OnWarning" ? CheckResult.Warning : CheckResult.Success;
         title = Date.ToString();
         body = Description;
         stackTrace = null;

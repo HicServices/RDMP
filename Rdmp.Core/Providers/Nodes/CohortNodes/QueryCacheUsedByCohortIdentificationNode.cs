@@ -17,9 +17,11 @@ namespace Rdmp.Core.Providers.Nodes.CohortNodes;
 /// 
 /// <para>Cache invalidation automatically occurs when subcomponents are changed</para>
 /// </summary>
-internal class QueryCacheUsedByCohortIdentificationNode : ObjectUsedByOtherObjectNode<CohortIdentificationConfiguration, ExternalDatabaseServer>, IDeletableWithCustomMessage
+internal class QueryCacheUsedByCohortIdentificationNode :
+    ObjectUsedByOtherObjectNode<CohortIdentificationConfiguration, ExternalDatabaseServer>, IDeletableWithCustomMessage
 {
-    public QueryCacheUsedByCohortIdentificationNode(CohortIdentificationConfiguration cic, ExternalDatabaseServer cacheServer)
+    public QueryCacheUsedByCohortIdentificationNode(CohortIdentificationConfiguration cic,
+        ExternalDatabaseServer cacheServer)
         : base(cic, cacheServer)
     {
     }
@@ -31,14 +33,8 @@ internal class QueryCacheUsedByCohortIdentificationNode : ObjectUsedByOtherObjec
     }
 
     /// <inheritdoc/>
-    public string GetDeleteMessage()
-    {
-        return "remove cache database use";
-    }
+    public string GetDeleteMessage() => "remove cache database use";
 
     /// <inheritdoc/>
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
+    public string GetDeleteVerb() => "Remove";
 }

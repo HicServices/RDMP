@@ -23,9 +23,9 @@ public class TestBiochemistryCreation
     {
         var r = new Random(500);
         var people = new PersonCollection();
-        people.GeneratePeople(100,r);
+        people.GeneratePeople(100, r);
 
-        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestBiochemistry.csv"));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DeleteMeTestBiochemistry.csv"));
 
         var finished = false;
         var finishedWithRecords = -1;
@@ -43,7 +43,8 @@ public class TestBiochemistryCreation
         Assert.IsTrue(finished);
         Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
+        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length,
+            numberOfRecords); //can be newlines in middle of file
 
         Console.WriteLine($"Created file: {f.FullName}");
         f.Delete();

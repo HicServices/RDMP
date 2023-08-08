@@ -17,7 +17,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 /// </summary>
 public class PickTable : PickObjectBase
 {
-    public override string Format => "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";
+    public override string Format =>
+        "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";
+
     public override string Help =>
         @"Table (Required): Name of the table you want
 Schema (Optional): leave out this section unless your table is in a sub schema within the Database (MySql doesn't support schemas)
@@ -35,12 +37,12 @@ ConnectionString (Required)";
     {
         "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
         "Table:MyTable2:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;"
-
     };
 
 
     public PickTable() : base(null,
-        new Regex("^Table:([^:]+):(Schema:[^:]+:)?(IsView:[^:]+:)?DatabaseType:([A-Za-z]+):(Name:[^:]+:)?(.*)$",RegexOptions.IgnoreCase))
+        new Regex("^Table:([^:]+):(Schema:[^:]+:)?(IsView:[^:]+:)?DatabaseType:([A-Za-z]+):(Name:[^:]+:)?(.*)$",
+            RegexOptions.IgnoreCase))
     {
     }
 
@@ -49,13 +51,13 @@ ConnectionString (Required)";
         var m = MatchOrThrow(arg, idx);
 
         var tableName = m.Groups[1].Value;
-        var schema = Trim("Schema:",m.Groups[2].Value);
+        var schema = Trim("Schema:", m.Groups[2].Value);
 
-        var isViewStr = Trim("IsView:",m.Groups[3].Value);
+        var isViewStr = Trim("IsView:", m.Groups[3].Value);
         var isViewBool = isViewStr != null && bool.Parse(isViewStr);
 
-        var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[4].Value);
-        var dbName = Trim("Name:",m.Groups[5].Value);
+        var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType), m.Groups[4].Value);
+        var dbName = Trim("Name:", m.Groups[5].Value);
         var connectionString = m.Groups[6].Value;
 
         var server = new DiscoveredServer(connectionString, dbType);
@@ -64,7 +66,7 @@ ConnectionString (Required)";
                  throw new CommandLineObjectPickerParseException(
                      "Missing database name parameter, it was not in connection string or specified explicitly", idx,
                      arg);
-        return new CommandLineObjectPickerArgumentValue(arg,idx,db.ExpectTable(tableName,schema,isViewBool ? TableType.View:TableType.Table));
+        return new CommandLineObjectPickerArgumentValue(arg, idx,
+            db.ExpectTable(tableName, schema, isViewBool ? TableType.View : TableType.Table));
     }
-
 }

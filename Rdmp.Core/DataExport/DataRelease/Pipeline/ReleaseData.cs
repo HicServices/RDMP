@@ -24,14 +24,14 @@ public class ReleaseData
     public Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> EnvironmentPotentials { get; set; }
     public Dictionary<IExtractionConfiguration, IEnumerable<ISelectedDataSets>> SelectedDatasets { get; set; }
     public bool ReleaseGlobals { get; set; }
-        
+
     public ReleaseState ReleaseState { get; set; }
-        
+
     public ReleaseData(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         RepositoryLocator = repositoryLocator;
         ConfigurationsForRelease = new Dictionary<IExtractionConfiguration, List<ReleasePotential>>();
         EnvironmentPotentials = new Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential>();
         SelectedDatasets = new Dictionary<IExtractionConfiguration, IEnumerable<ISelectedDataSets>>();
-    } 
+    }
 }

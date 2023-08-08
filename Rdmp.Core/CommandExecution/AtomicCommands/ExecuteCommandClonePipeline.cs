@@ -21,7 +21,7 @@ public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
     {
         _pipeline = pipeline;
         if (_pipeline == null)
-            SetImpossible("You can only clone an existing pipeline"); 
+            SetImpossible("You can only clone an existing pipeline");
     }
 
     public override void Execute()
@@ -32,8 +32,6 @@ public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
         Publish(_pipeline);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
 }

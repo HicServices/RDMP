@@ -12,7 +12,8 @@ namespace Rdmp.UI.Tests;
 
 internal class ExternalDatabaseServerUITests : UITests
 {
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_ExternalDatabaseServerUITests_NormalState()
     {
         SetupMEF();
@@ -32,5 +33,4 @@ internal class ExternalDatabaseServerUITests : UITests
         ui.GetObjectSaverButton().Save();
         Assert.AreEqual("", server.Username);
     }
-        
 }

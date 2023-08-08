@@ -27,7 +27,7 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
 
     protected readonly bool VisualStudioDesignMode;
 
-        
+
     //constructor
     protected RDMPUserControl()
     {
@@ -47,21 +47,18 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
     /// </summary>
     protected virtual void OnBeforeChecking()
     {
-            
     }
 
     /// <summary>
     /// Returns the topmost control which implements <see cref="RDMPUserControl"/>
     /// </summary>
-    public IRDMPControl GetTopmostRDMPUserControl()
-    {
-        return GetTopmostRDMPUserControl(this, this);
-    }
-        
+    public IRDMPControl GetTopmostRDMPUserControl() => GetTopmostRDMPUserControl(this, this);
+
     public event EventHandler<bool> UnSavedChanges;
+
     public void SetUnSavedChanges(bool b)
     {
-        UnSavedChanges?.Invoke(this,b);
+        UnSavedChanges?.Invoke(this, b);
     }
 
     private IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)

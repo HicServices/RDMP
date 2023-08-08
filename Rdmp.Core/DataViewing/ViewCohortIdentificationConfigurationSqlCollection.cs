@@ -16,7 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
-internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection,
+    IViewSQLAndResultsCollection
 {
     public bool UseQueryCache { get; set; }
 
@@ -41,7 +42,8 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
 
     private ExternalDatabaseServer GetCacheServer()
     {
-        if (CohortIdentificationConfiguration != null && CohortIdentificationConfiguration.QueryCachingServer_ID != null)
+        if (CohortIdentificationConfiguration != null &&
+            CohortIdentificationConfiguration.QueryCachingServer_ID != null)
             return CohortIdentificationConfiguration.QueryCachingServer;
 
         return null;
@@ -52,10 +54,7 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     {
         var cache = GetCacheServer();
 
-        if (UseQueryCache && cache != null)
-        {
-            return cache;
-        }
+        if (UseQueryCache && cache != null) return cache;
 
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
         builder.RegenerateSQL();
@@ -65,27 +64,22 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     public string GetSql()
     {
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
-            
+
         if (!UseQueryCache && CohortIdentificationConfiguration.QueryCachingServer_ID.HasValue)
             builder.CacheServer = null;
-            
+
 
         return builder.SQL;
     }
 
-    public string GetTabName()
-    {
-        return $"View {CohortIdentificationConfiguration}";
-    }
+    public string GetTabName() => $"View {CohortIdentificationConfiguration}";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
     }
 
-    private CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
+    private CohortIdentificationConfiguration CohortIdentificationConfiguration =>
+        DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return GetDataAccessPoint()?.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => GetDataAccessPoint()?.GetQuerySyntaxHelper();
 }

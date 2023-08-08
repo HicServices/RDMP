@@ -25,18 +25,16 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / DatabaseEntity logic to IFilter (which would break
 /// SpontaneouslyInventedFilters)</para>
 /// </summary>
-public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
+public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable
 {
     /// <inheritdoc/>
-    protected ConcreteFilter(IRepository repository,DbDataReader r) : base(repository, r)
+    protected ConcreteFilter(IRepository repository, DbDataReader r) : base(repository, r)
     {
-
     }
 
     /// <inheritdoc/>
-    protected ConcreteFilter():base()
+    protected ConcreteFilter() : base()
     {
-
     }
 
     #region Database Properties
@@ -51,14 +49,15 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     public string WhereSQL
     {
         get => _whereSQL;
-        set => SetField(ref  _whereSQL, value);
+        set => SetField(ref _whereSQL, value);
     }
+
     /// <inheritdoc/>
     [NotNull]
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
@@ -66,14 +65,14 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <inheritdoc/>
     public bool IsMandatory
     {
         get => _isMandatory;
-        set => SetField(ref  _isMandatory, value);
+        set => SetField(ref _isMandatory, value);
     }
 
     #endregion
@@ -132,10 +131,7 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     /// Returns an appropriately typed <see cref="IQuerySyntaxHelper"/> depending on the DatabaseType of the Catalogue that it relates to.
     /// </summary>
     /// <returns></returns>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return new QuerySyntaxHelperFactory().Create(GetDatabaseType());
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => new QuerySyntaxHelperFactory().Create(GetDatabaseType());
 
     private DatabaseType? _cachedDatabaseTypeAnswer;
 
@@ -150,7 +146,8 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
             return _cachedDatabaseTypeAnswer.Value;
 
         var col = GetColumnInfoIfExists();
-        _cachedDatabaseTypeAnswer = col != null ? col.TableInfo.DatabaseType : GetCatalogue().GetDistinctLiveDatabaseServerType();
+        _cachedDatabaseTypeAnswer =
+            col != null ? col.TableInfo.DatabaseType : GetCatalogue().GetDistinctLiveDatabaseServerType();
 
         if (!_cachedDatabaseTypeAnswer.HasValue)
             throw new AmbiguousDatabaseTypeException($"Unable to determine DatabaseType for Filter '{this}'");
@@ -165,7 +162,9 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     public virtual void Check(ICheckNotifier notifier)
     {
         if (WhereSQL != null && WhereSQL.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase))
-            notifier.OnCheckPerformed(new CheckEventArgs("Filters do not need to start with 'where' keyword, it is implicit",CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("Filters do not need to start with 'where' keyword, it is implicit",
+                    CheckResult.Fail));
 
         new FilterSyntaxChecker(this).Check(notifier);
     }
@@ -176,5 +175,4 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
         reason = null;
         return FilterContainer?.ShouldBeReadOnly(out reason) ?? false;
     }
-
 }

@@ -26,15 +26,12 @@ public partial class LookupUI : LookupUI_Design
     public LookupUI()
     {
         InitializeComponent();
-            
+
         olvCompositeJoinColumn.ImageGetter = ImageGetter;
         olvExtractionInformationName.ImageGetter = ImageGetter;
     }
 
-    private Bitmap ImageGetter(object rowObject)
-    {
-        return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
-    }
+    private Bitmap ImageGetter(object rowObject) => Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
 
     public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
     {
@@ -59,7 +56,8 @@ public partial class LookupUI : LookupUI_Design
         olvCompositeJoins.ClearObjects();
         olvExtractionDescriptions.ClearObjects();
 
-        var eis = Activator.CoreChildProvider.AllExtractionInformations.Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
+        var eis = Activator.CoreChildProvider.AllExtractionInformations
+            .Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
         olvExtractionDescriptions.AddObjects(eis);
 
         olvCompositeJoins.AddObjects(_lookup.GetSupplementalJoins().ToArray());
@@ -67,19 +65,17 @@ public partial class LookupUI : LookupUI_Design
 
     private void label2_Click(object sender, EventArgs e)
     {
-
     }
 
     private void olvExtractionDescriptions_ItemActivate(object sender, EventArgs e)
     {
-        if(olvExtractionDescriptions.SelectedObject is ExtractionInformation ei)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(ei));
-
+        if (olvExtractionDescriptions.SelectedObject is ExtractionInformation ei)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(ei));
     }
 
     private void olv_KeyUp(object sender, KeyEventArgs e)
     {
-        if(((ObjectListView)sender).SelectedObject is IDeleteable d)
+        if (((ObjectListView)sender).SelectedObject is IDeleteable d)
         {
             Activator.DeleteWithConfirmation(d);
             UpdateTreeViews();

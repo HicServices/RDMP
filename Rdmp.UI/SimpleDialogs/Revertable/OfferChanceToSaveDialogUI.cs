@@ -37,7 +37,7 @@ public partial class OfferChanceToSaveDialogUI : Form
 
         lblFirstPrompt.Text =
             $"Would you like to save changes to {revertable.GetType().Name} '{revertable}' (ID={revertable.ID})";
-            
+
         tableLayoutPanel1.RowCount = differences.Differences.Count;
         for (var index = 0; index < differences.Differences.Count; index++)
         {
@@ -46,7 +46,7 @@ public partial class OfferChanceToSaveDialogUI : Form
             {
                 Dock = DockStyle.Fill
             };
-            tableLayoutPanel1.Controls.Add(toAdd,0,index);
+            tableLayoutPanel1.Controls.Add(toAdd, 0, index);
         }
 
         for (var i = 0; i < tableLayoutPanel1.RowStyles.Count; i++)
@@ -65,7 +65,7 @@ public partial class OfferChanceToSaveDialogUI : Form
         var differences = revertable.HasLocalChanges();
 
         if (differences.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-            return new OfferChanceToSaveDialogUI(revertable,differences).ShowDialog();
+            return new OfferChanceToSaveDialogUI(revertable, differences).ShowDialog();
 
         return null;
     }
@@ -88,7 +88,5 @@ public partial class OfferChanceToSaveDialogUI : Form
     {
         var dialog = new ExceptionViewerStackTraceWithHyperlinks(Environment.StackTrace);
         dialog.Show();
-            
     }
-
 }

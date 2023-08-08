@@ -44,10 +44,10 @@ public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
 
         if (c.IsDeprecated)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Deprecated);
-            
+
         if (c.IsInternalDataset)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Internal);
-            
+
         if (status != null && status.IsExtractable)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
 

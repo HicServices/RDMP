@@ -15,8 +15,8 @@ namespace Rdmp.Core.DataQualityEngine.Reports;
 /// Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming that the report can be run on a given
 /// Catalogue and running it.
 /// </summary>
-public interface IDataQualityReport: ICheckable
+public interface IDataQualityReport : ICheckable
 {
     bool CatalogueSupportsReport(ICatalogue c);
-    void GenerateReport(ICatalogue c, IDataLoadEventListener listener,CancellationToken cancellationToken);
+    void GenerateReport(ICatalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken);
 }

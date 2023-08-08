@@ -22,9 +22,10 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     private readonly ExtractionCategory? _category;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,ExtractionInformation[] eis, ExtractionCategory? category = null) : base(activator)
+    public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator, ExtractionInformation[] eis,
+        ExtractionCategory? category = null) : base(activator)
     {
-        eis = (eis??Array.Empty<ExtractionInformation>()).Where(e => e != null).ToArray();
+        eis = (eis ?? Array.Empty<ExtractionInformation>()).Where(e => e != null).ToArray();
 
         if (eis.Length == 0)
             SetImpossible("No ExtractionInformations found");
@@ -36,38 +37,30 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 
         var cata = _extractionInformations.Select(ei => ei.CatalogueItem.Catalogue).Distinct().ToArray();
         if (cata.Length == 1)
-        {
             _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
-        }
 
         // if project specific only let them set to project specific
         if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
         {
             // user is trying to set to Core
             if (_category == ExtractionCategory.Core)
-            {
                 // surely they meant project specific!
                 _category = ExtractionCategory.ProjectSpecific;
-            }
             else
-            {
                 SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
-            }
         }
     }
 
     public override string GetCommandName()
     {
-        if(_extractionInformations == null || _extractionInformations.Length <= 1)
+        if (_extractionInformations == null || _extractionInformations.Length <= 1)
             return "Set ExtractionCategory";
 
         return "Set ALL to ExtractionCategory";
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExtractionInformation);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionInformation);
 
     public override void Execute()
     {
@@ -75,7 +68,8 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 
         var c = _category;
 
-        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out var category))
+        if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory),
+                ExtractionCategory.Core, out var category))
             c = (ExtractionCategory)category;
 
         if (c == null)
@@ -83,15 +77,12 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 
         // if project specific only let them set to project specific
         if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
-        {
-            throw new Exception("All CatalogueItems in a ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
-        }
+            throw new Exception(
+                "All CatalogueItems in a ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
 
-        if(ExecuteWithCommit(()=>ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
-        {
+        if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue
             Publish(_extractionInformations.First());
-        }
     }
 
     private void ExecuteImpl(ExtractionCategory category)

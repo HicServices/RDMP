@@ -31,12 +31,13 @@ internal class DataLoadTaskHelper
 
     public void CreateDataLoadTask(string taskName)
     {
-        using (var con =_loggingServer.GetConnection())
+        using (var con = _loggingServer.GetConnection())
         {
             con.Open();
 
             var datasetName = $"Test_{taskName}";
-            var datasetCmd = _loggingServer.GetCommand($"INSERT INTO DataSet (dataSetID) VALUES ('{datasetName}')", con);
+            var datasetCmd =
+                _loggingServer.GetCommand($"INSERT INTO DataSet (dataSetID) VALUES ('{datasetName}')", con);
             datasetCmd.ExecuteNonQuery();
             _sqlToCleanUp.Push($"DELETE FROM DataSet WHERE dataSetID = '{datasetName}'");
 
@@ -61,6 +62,5 @@ internal class DataLoadTaskHelper
             while (_sqlToCleanUp.Any())
                 _loggingServer.GetCommand(_sqlToCleanUp.Pop(), con).ExecuteNonQuery();
         }
-
     }
 }

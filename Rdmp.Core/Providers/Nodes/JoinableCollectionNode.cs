@@ -15,84 +15,56 @@ namespace Rdmp.Core.Providers.Nodes;
 /// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6
 /// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
 /// </summary>
-public class JoinableCollectionNode:Node,IOrderable
+public class JoinableCollectionNode : Node, IOrderable
 {
     public CohortIdentificationConfiguration Configuration { get; set; }
     public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
 
-    public JoinableCollectionNode(CohortIdentificationConfiguration configuration, JoinableCohortAggregateConfiguration[] joinables)
+    public JoinableCollectionNode(CohortIdentificationConfiguration configuration,
+        JoinableCohortAggregateConfiguration[] joinables)
     {
         Configuration = configuration;
         Joinables = joinables;
     }
 
-    public static string GetCatalogueName()
-    {
-        return "";
-    }
+    public static string GetCatalogueName() => "";
 
     public static IMapsDirectlyToDatabaseTable Child => null;
 
-    public static IDataAccessPoint[] GetDataAccessPoints()
-    {
-        return null;
-    }
+    public static IDataAccessPoint[] GetDataAccessPoints() => null;
 
-    public override string ToString()
-    {
-        return "Patient Index Table(s)";
-    }
+    public override string ToString() => "Patient Index Table(s)";
 
-    public static string FinalRowCount()
-    {
-        return "";
-    }
+    public static string FinalRowCount() => "";
     public int? CumulativeRowCount { set; get; }
 
 
-    public static string GetStateDescription()
-    {
-        return "";
-    }
+    public static string GetStateDescription() => "";
 
-    public static string Order()
-    {
-        return "";
-    }
+    public static string Order() => "";
 
     public string ElapsedTime = "";
 
-    public static string GetCachedQueryUseCount()
-    {
-        return "";
-    }
+    public static string GetCachedQueryUseCount() => "";
 
-    public static string DescribePurpose()
-    {
-
-        return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
+    public static string DescribePurpose() =>
+        @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
 patient specific dates/fields which you need to use in other datasets). For example if you are
 interested in studying hospitalisations for condition X and all other patient identification 
 criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date per patient)";
-    }
 
-    protected bool Equals(JoinableCollectionNode other)
-    {
-        return Equals(Configuration, other.Configuration);
-    }
+    protected bool Equals(JoinableCollectionNode other) => Equals(Configuration, other.Configuration);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((JoinableCollectionNode) obj);
+        return Equals((JoinableCollectionNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
-    }
+    public override int GetHashCode() =>
+        (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
 
     int IOrderable.Order
     {

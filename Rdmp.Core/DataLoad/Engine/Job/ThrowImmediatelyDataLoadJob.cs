@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job;
 /// <summary>
 /// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc 
 /// </summary>
-public class ThrowImmediatelyDataLoadJob: IDataLoadJob
+public class ThrowImmediatelyDataLoadJob : IDataLoadJob
 {
     private readonly IDataLoadEventListener _listener;
 
@@ -40,6 +40,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     {
         _listener = listener;
     }
+
     public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
     {
         _listener = new ThrowImmediatelyDataLoadEventListener();
@@ -54,8 +55,8 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     public ILoadMetadata LoadMetadata { get; set; }
     public bool DisposeImmediately { get; private set; }
     public string ArchiveFilepath { get; private set; }
-    public List<ITableInfo> RegularTablesToLoad { get; set; } = new List<ITableInfo>();
-    public List<ITableInfo> LookupTablesToLoad { get; set; } = new List<ITableInfo>();
+    public List<ITableInfo> RegularTablesToLoad { get; set; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; set; } = new();
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
     public void StartLogging()
@@ -80,6 +81,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     public static void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
     {
     }
+
     public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
     {
     }
@@ -90,21 +92,22 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
     }
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        _listener.OnNotify(sender,e);
+        _listener.OnNotify(sender, e);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        _listener.OnProgress(sender,e);
+        _listener.OnProgress(sender, e);
     }
+
     public ColumnInfo[] GetAllColumns()
     {
-        return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
     }
 
     /// <inheritdoc/>

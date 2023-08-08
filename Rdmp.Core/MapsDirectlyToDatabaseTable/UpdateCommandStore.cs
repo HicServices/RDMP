@@ -38,26 +38,23 @@ public class UpdateCommandStore
     {
         var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
 
-        var command = DatabaseCommandHelper.GetCommand($"UPDATE {syntax.EnsureWrapped(o.Name)} SET {{0}} WHERE ID=@ID;", connection, transaction);
+        var command = DatabaseCommandHelper.GetCommand($"UPDATE {syntax.EnsureWrapped(o.Name)} SET {{0}} WHERE ID=@ID;",
+            connection, transaction);
 
         var props = TableRepository.GetPropertyInfos(o);
 
-        foreach(var p in props)
-            command.Parameters.Add(DatabaseCommandHelper.GetParameter($"@{p.Name}",command));
+        foreach (var p in props)
+            command.Parameters.Add(DatabaseCommandHelper.GetParameter($"@{p.Name}", command));
 
-        command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
-            
+        command.CommandText = string.Format(command.CommandText,
+            string.Join(",",
+                props.Where(p => p.Name != "ID").Select(p => $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
+
         UpdateCommands.Add(o, command);
     }
 
-    public bool ContainsKey(IMapsDirectlyToDatabaseTable toCreate)
-    {
-        return UpdateCommands.ContainsKey(toCreate.GetType());
-    }
-    public bool ContainsKey(Type toCreate)
-    {
-        return UpdateCommands.ContainsKey(toCreate);
-    }
+    public bool ContainsKey(IMapsDirectlyToDatabaseTable toCreate) => UpdateCommands.ContainsKey(toCreate.GetType());
+    public bool ContainsKey(Type toCreate) => UpdateCommands.ContainsKey(toCreate);
 
     public void Clear()
     {

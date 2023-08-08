@@ -12,19 +12,19 @@ using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandRename : BasicCommandExecution, IAtomicCommand
 {
     private string _newValue;
     private readonly INamed _nameable;
     private bool _explicitNewValuePassed;
 
-    public ExecuteCommandRename(IBasicActivateItems activator, INamed nameable):base(activator)
+    public ExecuteCommandRename(IBasicActivateItems activator, INamed nameable) : base(activator)
     {
         _nameable = nameable;
 
-        if(nameable is ITableInfo)
+        if (nameable is ITableInfo)
             SetImpossible("TableInfos cannot not be renamed");
-            
+
         if (nameable is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
 
@@ -32,7 +32,8 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandRename(IBasicActivateItems activator, INamed nameable, string newValue):this(activator,nameable)
+    public ExecuteCommandRename(IBasicActivateItems activator, INamed nameable, string newValue) : this(activator,
+        nameable)
     {
         _newValue = newValue;
         _explicitNewValuePassed = true;
@@ -44,30 +45,28 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
 
         if (!_explicitNewValuePassed)
         {
-                
-            if (TypeText($"Rename {_nameable.GetType().Name}", "Name", 500, _nameable.Name,out var text))
+            if (TypeText($"Rename {_nameable.GetType().Name}", "Name", 500, _nameable.Name, out var text))
             {
-                while(UsefulStuff.IsBadName(text))
+                while (UsefulStuff.IsBadName(text))
                 {
-                        
-                    if(YesNo("Name contains illegal characters, do you want to use it anyway?","Bad Name"))
-                    {
+                    if (YesNo("Name contains illegal characters, do you want to use it anyway?", "Bad Name"))
                         //user wants to use the name anyway
                         break;
-                    }
 
                     //user does not want to use the bad name
 
                     //type a new one then
-                        
-                    if(!TypeText($"Rename {_nameable.GetType().Name}", "Name", 2000, _nameable.Name, out text))
+
+                    if (!TypeText($"Rename {_nameable.GetType().Name}", "Name", 2000, _nameable.Name, out text))
                         return;
                 }
 
                 _newValue = text;
             }
             else
+            {
                 return;
+            }
         }
 
         _nameable.Name = _newValue;
@@ -75,7 +74,6 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
 
         _nameable.SaveToDatabase();
         Publish((DatabaseEntity)_nameable);
-
     }
 
     private void EnsureNameIfCohortIdentificationAggregate()

@@ -27,13 +27,15 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     private CohortIdentificationConfiguration _cic;
     private readonly CohortIdentificationConfiguration[] _allConfigurations;
 
-    public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
+    public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator,
+        ExternalCohortTable externalCohortTable) :
         this(activator, null, externalCohortTable, null, null, null)
     {
         _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
         if (!_allConfigurations.Any())
-            SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
+            SetImpossible(
+                "You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 
         UseTripleDotSuffix = true;
     }
@@ -48,34 +50,32 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         string cohortName,
         [DemandsInitialization(Desc_ProjectParameter)]
         Project project,
-        [DemandsInitialization("Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
+        [DemandsInitialization(
+            "Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
         IPipeline pipeline) :
         base(activator, ect, cohortName, project, pipeline)
     {
         _cic = cic;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
-    }
+    public override string GetCommandHelp() =>
+        "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
 
     public override void Execute()
     {
         base.Execute();
 
-        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
+        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query",
+            BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
         if (cic == null)
             return;
 
 
         if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
         {
-            var projAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
-            if (projAssociations.Length == 1)
-            {
-                Project = projAssociations[0].Project;
-            }
+            var projAssociations = dx.AllProjectAssociatedCics
+                .Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
+            if (projAssociations.Length == 1) Project = projAssociations[0].Project;
         }
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
@@ -87,27 +87,27 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         request.CohortIdentificationConfiguration = cic;
 
-        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commmit results",cic);
+        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commmit results", cic);
 
-        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s,u)=>OnImportCompletedSuccessfully(s,u,cic);
+        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(s, u, cic);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    private void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
+    private void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u,
+        CohortIdentificationConfiguration cic)
     {
         //see if we can associate the cic with the project
-        var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator).SetTarget((Project)Project).SetTarget(cic);
+        var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator)
+            .SetTarget((Project)Project).SetTarget(cic);
 
         //we can!
         if (!cmd.IsImpossible)
             cmd.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

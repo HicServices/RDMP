@@ -22,27 +22,25 @@ public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExec
 {
     private ExtractionFilter _filter;
 
-    public ExecuteCommandAddNewExtractionFilterParameterSet(IBasicActivateItems activator, ExtractionFilter filter):base(activator)
+    public ExecuteCommandAddNewExtractionFilterParameterSet(IBasicActivateItems activator, ExtractionFilter filter) :
+        base(activator)
     {
         _filter = filter;
 
-        if(!_filter.GetAllParameters().Any())
-        {
-            SetImpossible("Filter has no parameters");
-        }
+        if (!_filter.GetAllParameters().Any()) SetImpossible("Filter has no parameters");
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        var parameterSet = new ExtractionFilterParameterSet(BasicActivator.RepositoryLocator.CatalogueRepository, _filter);
+        var parameterSet =
+            new ExtractionFilterParameterSet(BasicActivator.RepositoryLocator.CatalogueRepository, _filter);
         parameterSet.CreateNewValueEntries();
         Publish(_filter);
-        Activate(parameterSet);            
+        Activate(parameterSet);
     }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
-    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
 }

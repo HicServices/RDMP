@@ -16,7 +16,6 @@ namespace Rdmp.Core.Curation.DataHelper;
 /// </summary>
 public class JoinHelper
 {
-        
     /// <summary>
     /// Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on T1.A = T2.A AND T1.B = T2.B)
     /// </summary>
@@ -49,25 +48,27 @@ public class JoinHelper
             return SQL;
 
         SQL = AppendSupplementalJoins(SQL, join);
-            
+
         return SQL;
     }
 
-    private static string GetOnSql(IJoin join,string key1Table,string key2Table, string key1, string key2,out bool hasCustomSql)
+    private static string GetOnSql(IJoin join, string key1Table, string key2Table, string key1, string key2,
+        out bool hasCustomSql)
     {
         var custom = join.GetCustomJoinSql();
 
-        if(!string.IsNullOrWhiteSpace(custom))
+        if (!string.IsNullOrWhiteSpace(custom))
         {
             hasCustomSql = true;
             custom = custom.Replace("{0}", key1Table);
             custom = custom.Replace("{1}", key2Table);
 
             // remove newlines in users SQL
-            custom = Regex.Replace(custom,"\r?\n", " ");
+            custom = Regex.Replace(custom, "\r?\n", " ");
 
             return $" ON {custom}";
         }
+
         hasCustomSql = false;
 
         return $" ON {key1} = {key2}";
@@ -112,7 +113,6 @@ public class JoinHelper
     }
 
 
-
     /// <summary>
     /// Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
     /// in order to have the primary key table be assigned an alias e.g. 1 to give it t1
@@ -148,8 +148,7 @@ public class JoinHelper
         {
             toReturn =
                 $" {join.ExtractionJoinType} JOIN {primaryTable}{GetOnSql(join, foreignTable, primaryTable, key1, key2, out hasCustomSql)}";
-                
-        }   
+        }
         else
         {
             var lookupAlias = GetLookupTableAlias(aliasNumber);
@@ -165,7 +164,7 @@ public class JoinHelper
             return toReturn;
 
         toReturn = AppendSupplementalJoins(toReturn, join, aliasNumber);
-            
+
         return toReturn;
     }
 
@@ -181,14 +180,12 @@ public class JoinHelper
             return $" AS lookup_{aliasNumber}";
 
         return $"lookup_{aliasNumber}";
-
     }
 
 
     [Pure]
     private static string AppendSupplementalJoins(string sql, IJoin join, int aliasNumber = -1)
     {
-
         var supplementalJoins = join.GetSupplementalJoins();
 
         if (supplementalJoins != null)
@@ -206,23 +203,17 @@ public class JoinHelper
                 sql = AppendCollation(sql, supplementalJoin);
             }
 
-        
 
         return sql;
     }
 
 
     [Pure]
-    private static string AppendCollation(string sql, ISupplementalJoin supplementalJoin)
-    {
-        return AppendCollation(sql, supplementalJoin.Collation);
-    }
+    private static string AppendCollation(string sql, ISupplementalJoin supplementalJoin) =>
+        AppendCollation(sql, supplementalJoin.Collation);
 
     [Pure]
-    private static string AppendCollation(string sql, IJoin join)
-    {
-        return AppendCollation(sql, join.Collation);
-    }
+    private static string AppendCollation(string sql, IJoin join) => AppendCollation(sql, join.Collation);
 
     [Pure]
     private static string AppendCollation(string sql, string collation)

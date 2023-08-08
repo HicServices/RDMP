@@ -16,19 +16,17 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
 internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 {
-    public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
+    public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator,
+        () => GetRunCommand(ec))
     {
-
     }
 
-    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
-    {
-        return new ExtractionOptions
+    private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec) =>
+        new()
         {
             ExtractionConfiguration = ec.ID.ToString(),
             ExtractGlobals = true
         };
-    }
 
 
     protected override void AdjustCommand(ExtractionOptions opts, CommandLineActivity activity)
@@ -37,14 +35,14 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 
         var useCase = ExtractionPipelineUseCase.DesignTime();
 
-        var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
+        var compatible = useCase
+            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .ToArray();
 
-        if (!compatible.Any())
-        {
-            throw new Exception("No compatible pipelines");
-        }
+        if (!compatible.Any()) throw new Exception("No compatible pipelines");
 
-        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
+        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ??
+                   throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
     }
 }

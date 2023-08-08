@@ -13,8 +13,5 @@ namespace Rdmp.Core.Caching.Layouts;
 /// </summary>
 public class NoSubdirectoriesCachePathResolver : ILoadCachePathResolver
 {
-    public DirectoryInfo GetLoadCacheDirectory(DirectoryInfo cacheRootDirectory)
-    {
-        return cacheRootDirectory;
-    }
+    public DirectoryInfo GetLoadCacheDirectory(DirectoryInfo cacheRootDirectory) => cacheRootDirectory;
 }

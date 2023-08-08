@@ -27,9 +27,8 @@ namespace Tests.Common.Scenarios;
 /// <summary>
 /// Scenario where you want to run a full DLE load of records into a table
 /// </summary>
-public class TestsRequiringADle:TestsRequiringA
+public class TestsRequiringADle : TestsRequiringA
 {
-                
     protected int RowsBefore;
     protected int RowsNow => LiveTable.GetRowCount();
 
@@ -41,21 +40,21 @@ public class TestsRequiringADle:TestsRequiringA
     public DiscoveredDatabase Database { get; private set; }
 
     [SetUp]
-
     protected override void SetUp()
     {
         base.SetUp();
-            
+
         Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
         var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var subdir = rootFolder.CreateSubdirectory("TestsRequiringADle");
-        LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder,subdir.FullName,true);
+        LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder, subdir.FullName, true);
 
         Clear(LoadDirectory);
 
-        LiveTable = CreateDataset<Demography>(Database,500, 5000,new Random(190));
-        LiveTable.CreatePrimaryKey(new DiscoveredColumn[]{
+        LiveTable = CreateDataset<Demography>(Database, 500, 5000, new Random(190));
+        LiveTable.CreatePrimaryKey(new DiscoveredColumn[]
+        {
             LiveTable.DiscoverColumn("chi"),
             LiveTable.DiscoverColumn("dtCreated"),
             LiveTable.DiscoverColumn("hb_extract")
@@ -64,7 +63,7 @@ public class TestsRequiringADle:TestsRequiringA
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;
 
-        TestLoadMetadata = new LoadMetadata (CatalogueRepository,"Loading Test Catalogue")
+        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue")
         {
             LocationOfFlatFiles = LoadDirectory.RootPath.FullName
         };
@@ -75,11 +74,13 @@ public class TestsRequiringADle:TestsRequiringA
         TestCatalogue.LoadMetadata_ID = TestLoadMetadata.ID;
         TestCatalogue.SaveToDatabase();
 
-        CreateFlatFileAttacher(TestLoadMetadata,"*.csv",TestCatalogue.GetTableInfoList(false).Single(),",");
+        CreateFlatFileAttacher(TestLoadMetadata, "*.csv", TestCatalogue.GetTableInfoList(false).Single(), ",");
 
         //Get DleRunner to run pre load checks (includes trigger creation etc)
-        var runner = new DleRunner(new DleOptions { LoadMetadata = TestLoadMetadata.ID.ToString(),Command = CommandLineActivity.check});
-        runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+        var runner = new DleRunner(new DleOptions
+            { LoadMetadata = TestLoadMetadata.ID.ToString(), Command = CommandLineActivity.check });
+        runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(),
+            new GracefulCancellationToken());
     }
 
     /// <summary>
@@ -92,27 +93,28 @@ public class TestsRequiringADle:TestsRequiringA
     /// <param name="separator">The separator of the files e.g. ','</param>
     /// <param name="ignoreColumns">Columns to ignore in the load</param>
     /// <returns></returns>
-    protected ProcessTask CreateFlatFileAttacher(LoadMetadata lmd, string pattern, ITableInfo ti, string separator = ",", string ignoreColumns="hic_dataLoadRunID")
+    protected ProcessTask CreateFlatFileAttacher(LoadMetadata lmd, string pattern, ITableInfo ti,
+        string separator = ",", string ignoreColumns = "hic_dataLoadRunID")
     {
-        var csvProcessTask  = new ProcessTask(CatalogueRepository,lmd,LoadStage.Mounting);
+        var csvProcessTask = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
         var args = csvProcessTask.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
         csvProcessTask.Path = typeof(AnySeparatorFileAttacher).FullName;
         csvProcessTask.ProcessTaskType = ProcessTaskType.Attacher;
         csvProcessTask.SaveToDatabase();
 
-        var filePattern = args.Single(a=>a.Name == "FilePattern");
+        var filePattern = args.Single(a => a.Name == "FilePattern");
         filePattern.SetValue(pattern);
         filePattern.SaveToDatabase();
 
-        var tableToLoad = args.Single(a=>a.Name == "TableToLoad");
+        var tableToLoad = args.Single(a => a.Name == "TableToLoad");
         tableToLoad.SetValue(ti);
         tableToLoad.SaveToDatabase();
 
-        var separatorArg = args.Single(a=>a.Name == "Separator");
+        var separatorArg = args.Single(a => a.Name == "Separator");
         separatorArg.SetValue(separator);
         separatorArg.SaveToDatabase();
 
-        var ignoreDataLoadRunIDCol = args.Single(a=>a.Name == "IgnoreColumns");
+        var ignoreDataLoadRunIDCol = args.Single(a => a.Name == "IgnoreColumns");
         ignoreDataLoadRunIDCol.SetValue(ignoreColumns);
         ignoreDataLoadRunIDCol.SaveToDatabase();
 
@@ -126,15 +128,15 @@ public class TestsRequiringADle:TestsRequiringA
     /// <param name="filename">Filename to generate in ForLoading e.g. "bob.csv" (cannot be relative)</param>
     /// <param name="rows"></param>
     /// <param name="r">Seed random to ensure tests are reproducible</param>
-    protected FileInfo CreateFileInForLoading(string filename,int rows, Random r)
+    protected FileInfo CreateFileInForLoading(string filename, int rows, Random r)
     {
-        var fi = new FileInfo(Path.Combine(LoadDirectory.ForLoading.FullName,Path.GetFileName(filename)));
+        var fi = new FileInfo(Path.Combine(LoadDirectory.ForLoading.FullName, Path.GetFileName(filename)));
 
         var demog = new Demography(r);
         var people = new PersonCollection();
-        people.GeneratePeople(500,r);
+        people.GeneratePeople(500, r);
 
-        demog.GenerateTestDataFile(people,fi,rows);
+        demog.GenerateTestDataFile(people, fi, rows);
 
         return fi;
     }
@@ -147,14 +149,14 @@ public class TestsRequiringADle:TestsRequiringA
     /// <returns></returns>
     protected FileInfo CreateFileInForLoading(string filename, string[] contents)
     {
-        var fi = new FileInfo(Path.Combine(LoadDirectory.ForLoading.FullName,Path.GetFileName(filename)));
-        File.WriteAllLines(fi.FullName,contents);
+        var fi = new FileInfo(Path.Combine(LoadDirectory.ForLoading.FullName, Path.GetFileName(filename)));
+        File.WriteAllLines(fi.FullName, contents);
         return fi;
     }
-               
+
     public void RunDLE(int timeoutInMilliseconds)
     {
-        RunDLE(TestLoadMetadata,timeoutInMilliseconds,false);
+        RunDLE(TestLoadMetadata, timeoutInMilliseconds, false);
     }
 
     /// <summary>
@@ -166,14 +168,18 @@ public class TestsRequiringADle:TestsRequiringA
     public void RunDLE(LoadMetadata lmd, int timeoutInMilliseconds, bool checks)
     {
         var timeout = new CancellationTokenSource(timeoutInMilliseconds).Token;
-        if(checks)
+        if (checks)
         {
             //Get DleRunner to run pre load checks (includes trigger creation etc)
-            var checker = new DleRunner(new DleOptions { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check});
-            checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
+            var checker = new DleRunner(new DleOptions
+                { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check });
+            checker.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(),
+                new GracefulCancellationToken(timeout, timeout));
         }
 
-        var runner = new DleRunner(new DleOptions { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run});
-        runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken(timeout,timeout));
+        var runner = new DleRunner(new DleOptions
+            { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run });
+        runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(),
+            new GracefulCancellationToken(timeout, timeout));
     }
 }

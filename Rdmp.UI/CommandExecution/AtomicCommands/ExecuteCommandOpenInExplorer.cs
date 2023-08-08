@@ -15,13 +15,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandOpenInExplorer:BasicUICommandExecution
+public class ExecuteCommandOpenInExplorer : BasicUICommandExecution
 {
     private readonly FileSystemInfo _info;
-        
-    public ExecuteCommandOpenInExplorer(IActivateItems activator,FileSystemInfo info) : base(activator)
+
+    public ExecuteCommandOpenInExplorer(IActivateItems activator, FileSystemInfo info) : base(activator)
     {
-        _info = info; 
+        _info = info;
 
         if (_info is not { Exists: true })
             SetImpossible("Path not found");
@@ -31,12 +31,10 @@ public class ExecuteCommandOpenInExplorer:BasicUICommandExecution
     {
         base.Execute();
 
-        if(_info != null)
+        if (_info != null)
             UsefulStuff.ShowPathInWindowsExplorer(_info);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CatalogueFolder);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CatalogueFolder);
 }

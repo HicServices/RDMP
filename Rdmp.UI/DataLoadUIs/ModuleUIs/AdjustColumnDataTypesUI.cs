@@ -42,7 +42,7 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
     {
         if (_columns == null)
             throw new Exception("AdjustColumns was not called yet");
-            
+
         Close();
     }
 }

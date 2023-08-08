@@ -27,15 +27,19 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     /// <see cref="Include(IMapsDirectlyToDatabaseTable)"/>
     /// </summary>
     private readonly Type[] _diffSupportedTypes = { typeof(ColumnInfo) };
+
     private ReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
+
     /// <summary>
     /// The objects matched by the command (similar or different objects)
     /// </summary>
-    public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched {
-        get {
+    public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched
+    {
+        get
+        {
             if (_matched == null)
                 FetchMatches();
-                
+
             return _matched;
         }
         set => _matched = value;
@@ -49,16 +53,15 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     public ExecuteCommandSimilar(IBasicActivateItems activator,
         [DemandsInitialization("An object for which you want to find similar objects")]
         IMapsDirectlyToDatabaseTable to,
-        [DemandsInitialization("True to show only objects that are similar (e.g. same name) but different (e.g. different data type)")]
-        bool butDifferent):base(activator)
+        [DemandsInitialization(
+            "True to show only objects that are similar (e.g. same name) but different (e.g. different data type)")]
+        bool butDifferent) : base(activator)
     {
         _to = to;
         _butDifferent = butDifferent;
 
-        if(_butDifferent && !_diffSupportedTypes.Contains(_to.GetType()))
-        {
+        if (_butDifferent && !_diffSupportedTypes.Contains(_to.GetType()))
             SetImpossible($"Differencing is not supported on {_to.GetType().Name}");
-        }
 
         Weight = 50.3f;
     }
@@ -74,21 +77,18 @@ public class ExecuteCommandSimilar : BasicCommandExecution
         }
 
         if (!BasicActivator.IsInteractive && GoTo)
-        {
-            throw new Exception($"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
-        }
+            throw new Exception(
+                $"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
 
-        if(GoTo)
+        if (GoTo)
         {
             var selected = BasicActivator.SelectOne("Similar Objects", Matched.ToArray(), null, true);
-            if(selected != null)
-            {
-                Emphasise(selected);
-            }
+            if (selected != null) Emphasise(selected);
         }
         else
         {
-            BasicActivator.Show(string.Join(Environment.NewLine, Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
+            BasicActivator.Show(string.Join(Environment.NewLine,
+                Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
         }
     }
 
@@ -100,11 +100,9 @@ public class ExecuteCommandSimilar : BasicCommandExecution
             Matched = others.Where(IsSimilar).Where(Include).ToList().AsReadOnly();
 
             if (Matched.Count == 0)
-            {
                 SetImpossible(_butDifferent
                     ? "There are no alternate column specifications of this column"
                     : "There are no Similar objects");
-            }
         }
         catch (Exception ex)
         {
@@ -112,20 +110,15 @@ public class ExecuteCommandSimilar : BasicCommandExecution
         }
     }
 
-    public override string GetCommandHelp()
-    {
-        return _butDifferent
+    public override string GetCommandHelp() =>
+        _butDifferent
             ? "Find objects with the same name but different implementation (e.g. different column data type)"
             : "Find other objects with the same or similar name to this";
-    }
 
     private bool IsSimilar(IMapsDirectlyToDatabaseTable other)
     {
         // objects are not similar to themselves!
-        if (Equals(_to, other))
-        {
-            return false;
-        }
+        if (Equals(_to, other)) return false;
 
         return _to switch
         {
@@ -146,29 +139,23 @@ public class ExecuteCommandSimilar : BasicCommandExecution
             return false;
 
         return string.Equals(
-            name1[Math.Max(0,name1.LastIndexOf('.'))..].Trim(trimChars),
-            name2[Math.Max(0,name2.LastIndexOf('.'))..].Trim(trimChars),
+            name1[Math.Max(0, name1.LastIndexOf('.'))..].Trim(trimChars),
+            name2[Math.Max(0, name2.LastIndexOf('.'))..].Trim(trimChars),
             comparisonType);
     }
 
     private bool Include(IMapsDirectlyToDatabaseTable arg)
     {
         // if we don't care that they are different then return true
-        if (!_butDifferent)
-        {
-            return true;
-        }
+        if (!_butDifferent) return true;
 
         // or they are different
-        if(_to is ColumnInfo col && arg is ColumnInfo otherCol)
-        {
-            return 
+        if (_to is ColumnInfo col && arg is ColumnInfo otherCol)
+            return
                 !string.Equals(col.Data_type, otherCol.Data_type) || !string.Equals(col.Collation, otherCol.Collation);
-        }
 
         // WHEN ADDING NEW TYPES add the Type to _diffSupportedTypes
 
         return false;
     }
-
 }

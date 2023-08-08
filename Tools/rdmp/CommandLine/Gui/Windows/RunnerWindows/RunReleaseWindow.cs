@@ -18,11 +18,14 @@ internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
 {
     private IExtractionConfiguration[] configs;
 
-    public RunReleaseWindow(IBasicActivateItems activator, IProject project):base(activator,()=>new ReleaseOptions())
+    public RunReleaseWindow(IBasicActivateItems activator, IProject project) : base(activator,
+        () => new ReleaseOptions())
     {
         configs = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
     }
-    public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => new ReleaseOptions())
+
+    public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator,
+        () => new ReleaseOptions())
     {
         configs = new IExtractionConfiguration[] { ec };
     }
@@ -34,16 +37,16 @@ internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
 
         var useCase = new ReleaseUseCase();
 
-        var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
+        var compatible = useCase
+            .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
+            .ToArray();
 
-        if (!compatible.Any())
-        {
-            throw new Exception("No compatible pipelines");
-        }
+        if (!compatible.Any()) throw new Exception("No compatible pipelines");
 
-        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
+        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ??
+                   throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
-        opts.Configurations = string.Join(",",configs.Select(c=>c.ID.ToString()).ToArray());
+        opts.Configurations = string.Join(",", configs.Select(c => c.ID.ToString()).ToArray());
         opts.ReleaseGlobals = true;
 
         // all datasets

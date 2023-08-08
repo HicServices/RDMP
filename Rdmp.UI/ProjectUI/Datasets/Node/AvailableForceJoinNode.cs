@@ -14,8 +14,7 @@ namespace Rdmp.UI.ProjectUI.Datasets.Node;
 
 internal class AvailableForceJoinNode : IMasqueradeAs
 {
-    [CanBeNull]
-    public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
+    [CanBeNull] public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
 
     public TableInfo TableInfo { get; set; }
     public JoinInfo[] JoinInfos { get; set; }
@@ -32,34 +31,23 @@ internal class AvailableForceJoinNode : IMasqueradeAs
         IsMandatory = isMandatory;
     }
 
-    public object MasqueradingAs()
-    {
-        return TableInfo;
-    }
+    public object MasqueradingAs() => TableInfo;
 
-    public override string ToString()
-    {
-        return TableInfo.ToString();
-    }
+    public override string ToString() => TableInfo.ToString();
 
     #region Equality Members
-    protected bool Equals(AvailableForceJoinNode other)
-    {
-        return TableInfo.Equals(other.TableInfo);
-    }
+
+    protected bool Equals(AvailableForceJoinNode other) => TableInfo.Equals(other.TableInfo);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((AvailableForceJoinNode) obj);
+        return Equals((AvailableForceJoinNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return TableInfo.GetHashCode();
-    }
+    public override int GetHashCode() => TableInfo.GetHashCode();
 
     #endregion
 
@@ -78,13 +66,15 @@ internal class AvailableForceJoinNode : IMasqueradeAs
         foreach (var otherNode in otherNodes)
         {
             //don't look for self joins
-            if(Equals(otherNode , this))
+            if (Equals(otherNode, this))
                 continue;
 
             var theirCols = coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray();
 
 
-            foundJoinInfos.AddRange(TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols, theirCols));
+            foundJoinInfos.AddRange(
+                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
+                    theirCols));
         }
 
         JoinInfos = foundJoinInfos.ToArray();

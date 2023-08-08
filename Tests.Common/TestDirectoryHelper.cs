@@ -32,7 +32,8 @@ public class TestDirectoryHelper
     public void TearDown()
     {
         if (Directory == null)
-            throw new Exception("You have called TearDown without calling SetUp (the directory has not been initialised)");
+            throw new Exception(
+                "You have called TearDown without calling SetUp (the directory has not been initialised)");
 
         Directory.Delete(true);
     }

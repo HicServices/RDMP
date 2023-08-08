@@ -17,21 +17,17 @@ internal class ProposeExecutionWhenTargetIsPipelineComponent : RDMPCommandExecut
     {
     }
 
-    public override bool CanActivate(PipelineComponent target)
-    {
-        return true;
-    }
+    public override bool CanActivate(PipelineComponent target) => true;
 
     public override void Activate(PipelineComponent target)
     {
         var ui = new ArgumentCollectionUI();
-        ui.Setup(ItemActivator, target,target.GetClassAsSystemType(),ItemActivator.RepositoryLocator.CatalogueRepository);
-        ItemActivator.ShowWindow(ui,true);
+        ui.Setup(ItemActivator, target, target.GetClassAsSystemType(),
+            ItemActivator.RepositoryLocator.CatalogueRepository);
+        ItemActivator.ShowWindow(ui, true);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineComponent target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+        InsertOption insertOption = InsertOption.Default) =>
+        null;
 }

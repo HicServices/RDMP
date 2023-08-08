@@ -28,7 +28,7 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
     public AnySeparatorFileAttacher() : base('A')
     {
     }
-        
+
     public override void Check(ICheckNotifier notifier)
     {
         base.Check(notifier);
@@ -39,6 +39,5 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
                 new CheckEventArgs(
                     "Separator has not been set yet, this is the character or sequence which seperates cells in your flat file.  For example in the case of a CSV (comma seperated values) file the Separator argument should be set to ','",
                     CheckResult.Fail));
-
     }
 }

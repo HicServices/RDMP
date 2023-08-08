@@ -21,6 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 {
     #region Database Properties
+
     private int _originalLookup_ID;
     private int _foreignKey_ID;
     private int _primaryKey_ID;
@@ -41,6 +42,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         get => _foreignKey_ID;
         set => SetField(ref _foreignKey_ID, value);
     }
+
     /// <inheritdoc cref="IJoin.PrimaryKey"/>
     public int PrimaryKey_ID
     {
@@ -71,7 +73,6 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 
     public LookupCompositeJoinInfo()
     {
-
     }
 
     /// <inheritdoc cref="LookupCompositeJoinInfo"/>
@@ -84,12 +85,12 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"OriginalLookup_ID", parent.ID},
-            {"ForeignKey_ID", foreignKey.ID},
-            {"PrimaryKey_ID", primaryKey.ID},
-            {"Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object) collation}
+            { "OriginalLookup_ID", parent.ID },
+            { "ForeignKey_ID", foreignKey.ID },
+            { "PrimaryKey_ID", primaryKey.ID },
+            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
         });
     }
 
@@ -104,12 +105,10 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return ToStringCached();
-    }
+    public override string ToString() => ToStringCached();
 
     private string _cachedToString = null;
+
     private string ToStringCached()
     {
         return _cachedToString ??= $"{ForeignKey.Name} = {PrimaryKey.Name}";

@@ -18,13 +18,10 @@ public class SingleLoadProgressSelectionStrategy : ILoadProgressSelectionStrateg
 
     public SingleLoadProgressSelectionStrategy(ILoadProgress loadProgress)
     {
-            
         _loadProgress = loadProgress;
     }
 
-    public List<ILoadProgress> GetAllLoadProgresses()
-    {
+    public List<ILoadProgress> GetAllLoadProgresses() =>
         //here are the load progresses that exist
-        return new List<ILoadProgress> { _loadProgress };
-    }
+        new() { _loadProgress };
 }

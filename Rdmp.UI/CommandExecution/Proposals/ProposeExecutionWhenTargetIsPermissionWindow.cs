@@ -19,20 +19,19 @@ internal class ProposeExecutionWhenTargetIsPermissionWindow : RDMPCommandExecuti
     {
     }
 
-    public override bool CanActivate(PermissionWindow target)
-    {
-        return true;
-    }
+    public override bool CanActivate(PermissionWindow target) => true;
 
     public override void Activate(PermissionWindow target)
     {
         ItemActivator.Activate<PermissionWindowUI, PermissionWindow>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindow target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindow target,
+        InsertOption insertOption = InsertOption.Default)
     {
-        if(cmd is CacheProgressCombineable cacheProgressCommand)
-            return new ExecuteCommandSetPermissionWindow(ItemActivator,cacheProgressCommand.CacheProgress).SetTarget(target);
+        if (cmd is CacheProgressCombineable cacheProgressCommand)
+            return new ExecuteCommandSetPermissionWindow(ItemActivator, cacheProgressCommand.CacheProgress)
+                .SetTarget(target);
 
         return null;
     }

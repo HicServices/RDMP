@@ -19,7 +19,7 @@ public class RequiredArgument
     public string Name { get; }
     public Type Type { get; }
     public object ReflectionObject { get; }
-    public bool HasDefaultValue { get;}
+    public bool HasDefaultValue { get; }
     public object DefaultValue { get; }
 
     public DemandsInitializationAttribute DemandIfAny { get; private set; }
@@ -43,6 +43,7 @@ public class RequiredArgument
         DefaultValue = parameterInfo.DefaultValue;
         DemandIfAny = parameterInfo.GetCustomAttribute<DemandsInitializationAttribute>();
     }
+
     public RequiredArgument(IArgument a)
     {
         Name = a.Name;

@@ -16,7 +16,7 @@ public interface IPipelineUser
     /// Delegate for returning the referenced <see cref="Pipeline"/> for the <see cref="IPipelineUser"/>
     /// </summary>
     PipelineGetter Getter { get; }
-        
+
     /// <summary>
     /// Delegate for changing the referenced <see cref="Pipeline"/> for the <see cref="IPipelineUser"/>
     /// </summary>

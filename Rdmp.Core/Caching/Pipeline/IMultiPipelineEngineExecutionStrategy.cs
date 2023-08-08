@@ -16,5 +16,6 @@ namespace Rdmp.Core.Caching.Pipeline;
 /// </summary>
 public interface IMultiPipelineEngineExecutionStrategy
 {
-    void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken, IDataLoadEventListener listener);
+    void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken,
+        IDataLoadEventListener listener);
 }

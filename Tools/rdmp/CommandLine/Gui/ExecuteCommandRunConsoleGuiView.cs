@@ -19,7 +19,8 @@ internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="windowConstructor">Called only when/if the command is executed</param>
-    public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor):base(activator)
+    public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor) :
+        base(activator)
     {
         this.windowConstructor = windowConstructor;
     }

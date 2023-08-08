@@ -20,12 +20,12 @@ public class ObjectConstructorTests : UnitTests
     [Test]
     public void ConstructValidTests()
     {
-        var constructor =new ObjectConstructor();
-        var testarg = new TestArg {Text = "amagad"};
+        var constructor = new ObjectConstructor();
+        var testarg = new TestArg { Text = "amagad" };
         var testarg2 = new TestArg2 { Text = "amagad" };
 
         //anyone can construct on object!
-        ObjectConstructor.Construct(typeof(TestClass1),testarg);
+        ObjectConstructor.Construct(typeof(TestClass1), testarg);
         ObjectConstructor.Construct(typeof(TestClass1), testarg2);
 
         //basic case - identical Type parameter
@@ -35,7 +35,8 @@ public class ObjectConstructorTests : UnitTests
         ObjectConstructor.Construct(typeof(TestClass2), testarg2);
 
         //not allowed because class 3 explicitly requires a TestArg2 
-        Assert.Throws<ObjectLacksCompatibleConstructorException>(()=> ObjectConstructor.Construct(typeof(TestClass3), testarg));
+        Assert.Throws<ObjectLacksCompatibleConstructorException>(() =>
+            ObjectConstructor.Construct(typeof(TestClass3), testarg));
 
         //allowed
         ObjectConstructor.Construct(typeof(TestClass3), testarg2);
@@ -46,23 +47,24 @@ public class ObjectConstructorTests : UnitTests
         var testarg3 = new TestArg3();
 
         //not valid because there are 2 constructors that are both base classes of TestArg3 so ObjectConstructor doesn't know which to invoke
-        var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(()=> ObjectConstructor.Construct(typeof (TestClass4), testarg3));
+        var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(() =>
+            ObjectConstructor.Construct(typeof(TestClass4), testarg3));
         Assert.IsTrue(ex.Message.Contains("Could not pick the correct constructor between"));
 
         //exactly the same as the above case but one constructor has been decorated with [UseWithObjectConstructor] attribute
-        ObjectConstructor.Construct(typeof (TestClass5), testarg3);
+        ObjectConstructor.Construct(typeof(TestClass5), testarg3);
     }
 
     [Test]
     public void ConstructIfPossibleTests_BlankConstructors()
     {
         var constructor = new ObjectConstructor();
-            
+
         //blank constructors are only used if no params are specified
         Assert.IsNotNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)));
-            
+
         //no constructor taking an int
-        Assert.IsNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor),8));
+        Assert.IsNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor), 8));
     }
 
     [Test]
@@ -72,9 +74,8 @@ public class ObjectConstructorTests : UnitTests
 
         var countCompatible = 0;
 
-        var badTypes = new Dictionary<Type,Exception>();
+        var badTypes = new Dictionary<Type, Exception>();
         foreach (var t in MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
-        {
             try
             {
                 var oc = new ObjectConstructor();
@@ -83,25 +84,22 @@ public class ObjectConstructorTests : UnitTests
             }
             catch (Exception e)
             {
-                badTypes.Add(t,e);
+                badTypes.Add(t, e);
             }
-        }
 
         Assert.IsEmpty(badTypes);
-        Assert.GreaterOrEqual(countCompatible,10);
+        Assert.GreaterOrEqual(countCompatible, 10);
         Console.WriteLine($"Found compatible constructors on {countCompatible} objects");
     }
 
     private class TestClassDefaultConstructor
     {
-            
     }
 
     private class TestClass1
     {
         public TestClass1(object o)
         {
-                
         }
     }
 
@@ -148,6 +146,7 @@ public class ObjectConstructorTests : UnitTests
         {
             A = a;
         }
+
         [UseWithObjectConstructor]
         public TestClass5(TestArg2 a)
         {
@@ -160,13 +159,11 @@ public class ObjectConstructorTests : UnitTests
         public string Text { get; set; }
     }
 
-    private class TestArg2:TestArg
+    private class TestArg2 : TestArg
     {
-             
     }
 
     private class TestArg3 : TestArg2
     {
-
     }
 }

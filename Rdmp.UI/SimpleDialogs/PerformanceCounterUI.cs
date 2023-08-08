@@ -35,7 +35,7 @@ public partial class PerformanceCounterUI : Form
         }
         else
         {
-            var timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Values.Sum(s=>s.TimesSeen);
+            var timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Values.Sum(s => s.TimesSeen);
 
             lblCommandsAudited.Text =
                 $"Commands Audited:{timesSeen} ({DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Count} distinct)";
@@ -44,8 +44,7 @@ public partial class PerformanceCounterUI : Form
 
     private void btnToggleCommandAuditing_Click(object sender, EventArgs e)
     {
-
-        if(DatabaseCommandHelper.PerformanceCounter == null)
+        if (DatabaseCommandHelper.PerformanceCounter == null)
         {
             DatabaseCommandHelper.PerformanceCounter = new ComprehensiveQueryPerformanceCounter();
             btnToggleCommandAuditing.Text = "Stop Command Auditing";
@@ -67,9 +66,9 @@ public partial class PerformanceCounterUI : Form
 
     private void btnViewPerformanceResults_Click(object sender, EventArgs e)
     {
-
         //if there aren't any results don't show
-        if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Any())
+        if (DatabaseCommandHelper.PerformanceCounter == null ||
+            !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Any())
             return;
 
         var f = new Form();

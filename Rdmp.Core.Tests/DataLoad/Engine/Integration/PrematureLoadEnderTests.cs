@@ -15,15 +15,15 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-internal class PrematureLoadEnderTests:DatabaseTests
+internal class PrematureLoadEnderTests : DatabaseTests
 {
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     public void TestEndLoadBecause_NoTables(DatabaseType type)
     {
         var database = GetCleanedServer(type);
-            
-        Assert.AreEqual(0,database.DiscoverTables(false).Length);
+
+        Assert.AreEqual(0, database.DiscoverTables(false).Length);
 
         var ender = new PrematureLoadEnder
         {
@@ -31,9 +31,9 @@ internal class PrematureLoadEnderTests:DatabaseTests
             ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired
         };
 
-        ender.Initialize(database,LoadStage.AdjustRaw);
+        ender.Initialize(database, LoadStage.AdjustRaw);
 
-        Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
+        Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
     }
 
     [TestCase(DatabaseType.MySql)]

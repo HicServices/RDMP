@@ -31,22 +31,22 @@ public static class UsefulStuff
 {
     public static readonly Regex RegexThingsThatAreNotNumbersOrLetters =
         new("[^0-9A-Za-z]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores =
         new("[^0-9A-Za-z_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     private static readonly Regex NullWithSpaces = new(@"^\s*null\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-    public static bool IsBasicallyNull(this string result)
-    {
-        return string.IsNullOrWhiteSpace(result) ||
-               // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
-               // but not the same as task cancellation
-               NullWithSpaces.IsMatch(result);
-    }
+    public static bool IsBasicallyNull(this string result) =>
+        string.IsNullOrWhiteSpace(result) ||
+        // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
+        // but not the same as task cancellation
+        NullWithSpaces.IsMatch(result);
 
     public static bool IsBadName(string name)
     {
-        return name != null && name.Any(c=>Path.GetInvalidFileNameChars().Contains(c));
+        return name != null && name.Any(c => Path.GetInvalidFileNameChars().Contains(c));
     }
 
     public static void OpenUrl(string url)
@@ -106,9 +106,9 @@ public static class UsefulStuff
             catch (Exception)
             {
                 throw new Exception($"Cannot recognise date format :{iO}");
-
             }
         }
+
         return sDate;
     }
 
@@ -119,9 +119,9 @@ public static class UsefulStuff
     private static readonly Regex RBacktickQuotes = new("`([^']+)`$");
     private static readonly Regex RSquareBrackets = new(@"\[([^[]+)]$");
     private static readonly Regex RNoPunctuation = new(@"^([\w\s]+)$");
+
     public static IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
     {
-
         if (string.IsNullOrWhiteSpace(text))
             yield break;
 
@@ -147,8 +147,11 @@ public static class UsefulStuff
             // if user has really horrible names like with spaces and stuff
             // then try expect them to have quoted them and pull out the capture
             // groups.  Remember different DBMS have different quoting symbols
-            foreach (var r in new[] { RDoubleQuotes, RSingleQuotes, 
-                         RSquareBrackets, RBacktickQuotes, RNoPunctuation})
+            foreach (var r in new[]
+                     {
+                         RDoubleQuotes, RSingleQuotes,
+                         RSquareBrackets, RBacktickQuotes, RNoPunctuation
+                     })
             {
                 var m = r.Matches(toAdd);
                 if (!m.Any()) continue;
@@ -177,7 +180,8 @@ public static class UsefulStuff
 
     public static bool CHIisOK(string sCHI)
     {
-        if (!long.TryParse(sCHI, NumberStyles.None,CultureInfo.InvariantCulture, out _) || sCHI.Length != 10) return false;
+        if (!long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) ||
+            sCHI.Length != 10) return false;
         return DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
     }
 
@@ -196,15 +200,12 @@ public static class UsefulStuff
         if (c == 11) c = 0;
 
         return (char)(c + '0');
-
     }
 
-    public static DirectoryInfo GetExecutableDirectory()
-    {
-        return !string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory)
+    public static DirectoryInfo GetExecutableDirectory() =>
+        !string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory)
             ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
             : new DirectoryInfo(Environment.CurrentDirectory);
-    }
 
     public static string HashFile(string filename, int retryCount = 6)
     {
@@ -220,13 +221,11 @@ public static class UsefulStuff
             Thread.Sleep(1000);
 
             if (retryCount-- > 0)
-                return HashFile(filename, retryCount);//try it again (recursively)
+                return HashFile(filename, retryCount); //try it again (recursively)
             throw;
         }
-
-
     }
-     
+
     public static bool RequiresLength(string columnType)
     {
         return columnType.ToLowerInvariant() switch
@@ -253,7 +252,7 @@ public static class UsefulStuff
             _ => false
         };
     }
-        
+
     public static string RemoveIllegalFilenameCharacters(string value)
     {
         return string.IsNullOrWhiteSpace(value)
@@ -262,8 +261,9 @@ public static class UsefulStuff
                 (current, invalidFileNameChar) => current.Replace(invalidFileNameChar.ToString(), ""));
     }
 
-        
-    public static void ExecuteBatchNonQuery(string sql, DbConnection conn, DbTransaction transaction = null, int timeout = 30)
+
+    public static void ExecuteBatchNonQuery(string sql, DbConnection conn, DbTransaction transaction = null,
+        int timeout = 30)
     {
         ExecuteBatchNonQuery(sql, conn, transaction, out _, timeout);
     }
@@ -276,7 +276,8 @@ public static class UsefulStuff
     /// <param name="transaction"></param>
     /// <param name="performanceFigures">Line number the batch started at and the time it took to complete it</param>
     /// <param name="timeout"></param>
-    public static void ExecuteBatchNonQuery(string sql, DbConnection conn, DbTransaction transaction,out Dictionary<int, Stopwatch> performanceFigures, int timeout = 30) 
+    public static void ExecuteBatchNonQuery(string sql, DbConnection conn, DbTransaction transaction,
+        out Dictionary<int, Stopwatch> performanceFigures, int timeout = 30)
     {
         performanceFigures = new Dictionary<int, Stopwatch>();
 
@@ -286,14 +287,13 @@ public static class UsefulStuff
 
         if (conn.State != ConnectionState.Open)
         {
-
             conn.Open();
             hadToOpen = true;
         }
 
         var lineNumber = 1;
 
-        sql += "\nGO";   // make sure last batch is executed.
+        sql += "\nGO"; // make sure last batch is executed.
         try
         {
             foreach (var line in sql.Split(new[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries))
@@ -345,14 +345,14 @@ public static class UsefulStuff
         outputDirectory ??= Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP");
 
         using var fileToSpray = assembly.GetManifestResourceStream(manifestName) ?? throw new Exception(
-                $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
+            $"assembly.GetManifestResourceStream returned null for manifest name {manifestName} in assembly {assembly}");
 
         if (!Directory.Exists(outputDirectory))
             Directory.CreateDirectory(outputDirectory);
 
-        var target = new FileInfo(Path.Combine(outputDirectory,file));
+        var target = new FileInfo(Path.Combine(outputDirectory, file));
         using var destination = target.OpenWrite();
-        fileToSpray.CopyTo(destination,1<<20);
+        fileToSpray.CopyTo(destination, 1 << 20);
         return target;
     }
 
@@ -390,11 +390,7 @@ public static class UsefulStuff
         return task.Wait(timeout) && task.Result;
     }
 
-    public static bool VerifyFileExists(Uri uri, int timeout)
-    {
-        return VerifyFileExists(uri.LocalPath,timeout);
-
-    }
+    public static bool VerifyFileExists(Uri uri, int timeout) => VerifyFileExists(uri.LocalPath, timeout);
 
     public static string DataTableToHtmlDataTable(DataTable dt)
     {
@@ -414,7 +410,7 @@ public static class UsefulStuff
 
             foreach (var cellObject in row.ItemArray)
                 sb.Append($"<TD>{cellObject}</TD>");
-                
+
             sb.AppendLine("</TR>");
         }
 
@@ -427,7 +423,7 @@ public static class UsefulStuff
     {
         var sb = new StringBuilder();
 
-        using var w = new CsvWriter(new StringWriter(sb),CultureInfo.CurrentCulture);
+        using var w = new CsvWriter(new StringWriter(sb), CultureInfo.CurrentCulture);
         foreach (DataColumn column in dt.Columns)
             w.WriteField(column.ColumnName);
 
@@ -442,21 +438,23 @@ public static class UsefulStuff
         }
 
         w.Flush();
-        
+
         return sb.ToString();
     }
+
     public static void ShowPathInWindowsExplorer(FileSystemInfo fileInfo)
     {
-        var argument = $"{(fileInfo is FileInfo?"/select,":"")} \"{fileInfo.FullName}\"";
+        var argument = $"{(fileInfo is FileInfo ? "/select," : "")} \"{fileInfo.FullName}\"";
         Process.Start("explorer.exe", argument);
     }
 
     public static string GetClipboardFormattedHtmlStringFromHtmlString(string s)
     {
-        const int maxLength = 1_000_000_000-52; // Header is 51 characters, total length must fit in 10 digits
-        if(s.Length > maxLength)
+        const int maxLength = 1_000_000_000 - 52; // Header is 51 characters, total length must fit in 10 digits
+        if (s.Length > maxLength)
             throw new ArgumentException(
-                $"String s is too long, the maximum length is {maxLength} but argument s was length {s.Length}",nameof(s));
+                $"String s is too long, the maximum length is {maxLength} but argument s was length {s.Length}",
+                nameof(s));
 
         // Circular dependency here: we need a string containing both its own length and the length of the string after it
         // {0:D6} is the same length as its own description
@@ -466,7 +464,7 @@ public static class UsefulStuff
         return string.Format(
             template,
             template.Length,
-            s.Length+template.Length,s);
+            s.Length + template.Length, s);
     }
 
     public static bool IsAssignableToGenericType(Type givenType, Type genericType)
@@ -512,14 +510,13 @@ public static class UsefulStuff
     /// <returns></returns>
     public static string SplitByLength(string input, int maxLen, string newline = null)
     {
-
         return
             string.Join(newline ?? Environment.NewLine,
                 Regex.Split(input, $@"(.{{1,{maxLen}}})(?:\s|$)")
                     .Where(x => x.Length > 0)
                     .Select(x => x.Trim()));
     }
-        
+
 
     public static void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
     {
@@ -574,12 +571,14 @@ public static class UsefulStuff
         var t = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
 
         if (t == typeof(DateTime) && value is string s)
-        {
-            return string.Equals(s, "now",StringComparison.InvariantCultureIgnoreCase) ? DateTime.Now :
+            return string.Equals(s, "now", StringComparison.InvariantCultureIgnoreCase)
+                ? DateTime.Now
+                :
                 //Convert.ChangeType doesn't handle dates, so let's deal with that
                 DateTime.Parse(s);
-        }
 
-        return value == null || value is string sval && string.IsNullOrWhiteSpace(sval) ? null : Convert.ChangeType(value, t);
+        return value == null || (value is string sval && string.IsNullOrWhiteSpace(sval))
+            ? null
+            : Convert.ChangeType(value, t);
     }
 }

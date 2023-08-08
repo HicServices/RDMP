@@ -37,8 +37,8 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         InitializeComponent();
         helpIcon1.SetHelpText("Null Release Identifiers",
             @"In RMDP a cohort is a list of private identifiers paired to release identifiers.  Normally these release identifiers are allocated as part of the committing pipeline (e.g. as a new GUID).  If you want to allocate these later yourself e.g. with a stored proceedure then you can tick 'AllowNullReleaseIdentifiers' to create a cohort schema where the release identifier can be null.");
-            
-        helpIcon2.SetHelpText("Cohort Databases","Click to view a diagram of what a cohort store is");
+
+        helpIcon2.SetHelpText("Cohort Databases", "Click to view a diagram of what a cohort store is");
         helpIcon2.SuppressClick = true;
 
         serverDatabaseTableSelector1.SetItemActivator(activator);
@@ -49,7 +49,8 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         base.OnLoad(e);
 
         serverDatabaseTableSelector1.HideTableComponents();
-        Wizard = new CreateNewCohortDatabaseWizard(null, Activator.RepositoryLocator.CatalogueRepository, Activator.RepositoryLocator.DataExportRepository, false);
+        Wizard = new CreateNewCohortDatabaseWizard(null, Activator.RepositoryLocator.CatalogueRepository,
+            Activator.RepositoryLocator.DataExportRepository, false);
     }
 
     public CreateNewCohortDatabaseWizard Wizard { get; private set; }
@@ -63,7 +64,8 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         listView1.AddObjects(Wizard.GetPrivateIdentifierCandidates());
 
         if (listView1.GetItemCount() == 0)
-            MessageBox.Show("It looks like none of the ExtractionInformations in your Catalogue database are marked as IsExtractionIdentifier");
+            MessageBox.Show(
+                "It looks like none of the ExtractionInformations in your Catalogue database are marked as IsExtractionIdentifier");
     }
 
     private void btnNext_Click(object sender, EventArgs e)
@@ -74,27 +76,28 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
             MessageBox.Show("You must select a database");
             return;
         }
+
         if (PrivateIdentifierPrototype == null)
         {
             MessageBox.Show("You must select a private identifier datatype");
             return;
         }
 
-        Wizard = new CreateNewCohortDatabaseWizard(db, Activator.RepositoryLocator.CatalogueRepository, Activator.RepositoryLocator.DataExportRepository, cbAllowNullReleaseIdentifiers.Checked);
+        Wizard = new CreateNewCohortDatabaseWizard(db, Activator.RepositoryLocator.CatalogueRepository,
+            Activator.RepositoryLocator.DataExportRepository, cbAllowNullReleaseIdentifiers.Checked);
 
         var popup = new PopupChecksUI("Creating Cohort Table", false);
         ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
 
-        if(popup.GetWorst() <= CheckResult.Warning)
-            if(Activator.YesNo("Close Form?","Close"))
+        if (popup.GetWorst() <= CheckResult.Warning)
+            if (Activator.YesNo("Close Form?", "Close"))
                 ParentForm.Close();
     }
 
-        
 
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        PrivateIdentifierPrototype = (PrivateIdentifierPrototype) listView1.SelectedObject;
+        PrivateIdentifierPrototype = (PrivateIdentifierPrototype)listView1.SelectedObject;
     }
 
     private void HelpIcon2_Click(object sender, EventArgs e)
@@ -104,8 +107,7 @@ internal partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
         var pb = new PictureBox
         {
             Image = bmp,
-            Size = new System.Drawing.Size(bmp.Width,bmp.Height)
-                
+            Size = new System.Drawing.Size(bmp.Width, bmp.Height)
         };
 
         new SingleControlForm(pb).Show();

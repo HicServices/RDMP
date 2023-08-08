@@ -24,7 +24,6 @@ internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
 
     public RDMPCollectionCommonFunctionalityTreeHijacker(TreeListView treeView) : base(treeView)
     {
-                
     }
 
     public override void Sort(OLVColumn column, SortOrder order)
@@ -33,14 +32,11 @@ internal class RDMPCollectionCommonFunctionalityTreeHijacker : TreeListView.Tree
         _lastSortOrder = order;
 
         base.Sort(column, order);
-
     }
 
-    protected override TreeListView.BranchComparer GetBranchComparer()
-    {   
-        return new TreeListView.BranchComparer(
+    protected override TreeListView.BranchComparer GetBranchComparer() =>
+        new(
             new OrderableComparer(
                 _lastSortColumn != null ? new ModelObjectComparer(_lastSortColumn, _lastSortOrder) : null)
         );
-    }
 }

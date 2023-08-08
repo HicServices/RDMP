@@ -10,17 +10,18 @@ using Rdmp.Core.Icons.IconProvision;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class ExtractableDatasetMenu:RDMPContextMenuStrip
+internal class ExtractableDatasetMenu : RDMPContextMenuStrip
 {
     private readonly ExtractableDataSet _dataset;
 
     public ExtractableDatasetMenu(RDMPContextMenuStripArgs args, ExtractableDataSet dataset)
-        : base(args,dataset)
+        : base(args, dataset)
     {
         _dataset = dataset;
 
         if (_dataset.DisableExtraction)
-            Items.Add("ReEnable Extraction", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet).ImageToBitmap(),
+            Items.Add("ReEnable Extraction",
+                _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet).ImageToBitmap(),
                 (s, e) => SetDisabled(false));
         else
             Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled.ImageToBitmap(),

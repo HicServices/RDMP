@@ -31,7 +31,7 @@ public class LogManagerTest : DatabaseTests
     private string _dataLoadTaskName;
     private LogManager _logManager;
 
-        
+
     /// <summary>
     /// Add a bunch of data load runs for the tests in this fixture
     /// </summary>
@@ -45,7 +45,7 @@ public class LogManagerTest : DatabaseTests
             var lds = new DiscoveredServer(UnitTestLoggingConnectionString);
 
             var manager = new LogManager(lds);
-                
+
             _dataLoadTaskName = "LogTest";
 
             _dataLoadTaskHelper = new DataLoadTaskHelper(lds);
@@ -56,17 +56,19 @@ public class LogManagerTest : DatabaseTests
             // Insert some data load runs that are used by all the tests
             _logManager = new LogManager(lds);
 
-            _failedLoad = _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
+            _failedLoad =
+                _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
             _failedLoad.LogFatalError("", "");
             _failedLoad.CloseAndMarkComplete();
 
-            _successfulLoad = _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
+            _successfulLoad =
+                _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
             _successfulLoad.LogProgress(DataLoadInfo.ProgressEventType.OnProgress, "", "");
             _successfulLoad.CloseAndMarkComplete();
 
             var tableLoadInfo = _successfulLoad.CreateTableLoadInfo("ignoreme", "Nowhereland",
                 new DataSource[]
-                    {new DataSource("Firehouse", DateTime.Now.AddDays(-1)), new DataSource("WaterHaus")}, 100);
+                    { new("Firehouse", DateTime.Now.AddDays(-1)), new("WaterHaus") }, 100);
 
             tableLoadInfo.Inserts = 500;
             tableLoadInfo.Updates = 100;
@@ -74,7 +76,8 @@ public class LogManagerTest : DatabaseTests
 
             Task.Delay(1000).Wait();
 
-            _anotherSuccessfulLoad = _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
+            _anotherSuccessfulLoad =
+                _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
             _anotherSuccessfulLoad.LogProgress(DataLoadInfo.ProgressEventType.OnProgress, "", "");
             _anotherSuccessfulLoad.CloseAndMarkComplete();
         }
@@ -90,10 +93,10 @@ public class LogManagerTest : DatabaseTests
         base.SetUp();
 
         if (_setupException != null)
-            Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException,true));
+            Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException, true));
     }
 
-        
+
     [Test]
     public void TestLastLoadStatusassemblage()
     {
@@ -101,19 +104,19 @@ public class LogManagerTest : DatabaseTests
 
         var loadHistoryForTask = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).ToArray();
 
-        Assert.Greater(loadHistoryForTask.Length , 0);//some records
+        Assert.Greater(loadHistoryForTask.Length, 0); //some records
 
-        Assert.Greater(loadHistoryForTask.Count(load => load.Errors.Count > 0), 0);//some with some errors
-        Assert.Greater(loadHistoryForTask.Count(load => load.Progress.Count > 0), 0);//some with some progress
+        Assert.Greater(loadHistoryForTask.Count(load => load.Errors.Count > 0), 0); //some with some errors
+        Assert.Greater(loadHistoryForTask.Count(load => load.Progress.Count > 0), 0); //some with some progress
 
 
-        Assert.Greater(loadHistoryForTask.Count(load => load.TableLoadInfos.Count == 1), 0);//some with some table loads
-            
-            
+        Assert.Greater(loadHistoryForTask.Count(load => load.TableLoadInfos.Count == 1),
+            0); //some with some table loads
+
+
         Console.WriteLine($"Records fetched:{loadHistoryForTask.Length}");
         Console.WriteLine($"Errors fetched:{loadHistoryForTask.Aggregate(0, (p, c) => p + c.Errors.Count)}");
         Console.WriteLine($"Progress fetched:{loadHistoryForTask.Aggregate(0, (p, c) => p + c.Progress.Count)}");
-
     }
 
     [Test]
@@ -123,16 +126,14 @@ public class LogManagerTest : DatabaseTests
 
         Assert.AreEqual(0, _logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
         _logManager.CreateNewLoggingTaskIfNotExists("','') Truncate Table Fishes");
-        Assert.AreEqual(1,_logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
-             
+        Assert.AreEqual(1, _logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
+
         CleanupTruncateCommand();
         Assert.AreEqual(0, _logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
-
     }
 
     private void CleanupTruncateCommand()
     {
-
         var lds = new DiscoveredServer(UnitTestLoggingConnectionString);
         using (var con = lds.GetConnection())
         {
@@ -150,8 +151,8 @@ public class LogManagerTest : DatabaseTests
 
         var loadHistoryForTask = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).First();
 
-        Assert.Greater(loadHistoryForTask.Progress.Count,0);//some with some progress
-            
+        Assert.Greater(loadHistoryForTask.Progress.Count, 0); //some with some progress
+
         Console.WriteLine($"Errors fetched:{loadHistoryForTask.Errors.Count}");
         Console.WriteLine($"Progress fetched:{loadHistoryForTask.Progress.Count}");
 
@@ -185,20 +186,20 @@ public class LogManagerTest : DatabaseTests
         var server = new DiscoveredServer(UnitTestLoggingConnectionString);
         var lm = new LogManager(server);
 
-            
+
         lm.CreateNewLoggingTaskIfNotExists("ff");
-            
-        Assert.AreEqual(1,lm.ListDataSets().Count(s => s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
+
+        Assert.AreEqual(1, lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)));
 
         //don't create another one just because it's changed case
         lm.CreateNewLoggingTaskIfNotExists("FF");
-            
-        Assert.AreEqual(1,lm.ListDataSets().Count(s=>s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
 
-        var dli1 = lm.CreateDataLoadInfo("ff","tests","hi there",null,true);
-        var dli2 = lm.CreateDataLoadInfo("FF","tests","hi there",null,true);
+        Assert.AreEqual(1, lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)));
 
-        Assert.AreEqual(1,lm.ListDataSets().Count(s=>s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
+        var dli1 = lm.CreateDataLoadInfo("ff", "tests", "hi there", null, true);
+        var dli2 = lm.CreateDataLoadInfo("FF", "tests", "hi there", null, true);
+
+        Assert.AreEqual(1, lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -214,7 +215,8 @@ public class LogManagerTest : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("blarg");
 
         var dli = lm.CreateDataLoadInfo("blarg", "tests", "doing nothing interesting", null, true);
-        var tli = dli.CreateTableLoadInfo("", "mytbl", new[] { new DataSource("ff.csv"), new DataSource("bb.csv", new DateTime(2001, 1, 1)) }, 40);
+        var tli = dli.CreateTableLoadInfo("", "mytbl",
+            new[] { new DataSource("ff.csv"), new DataSource("bb.csv", new DateTime(2001, 1, 1)) }, 40);
 
         tli.Inserts = 500;
         tli.CloseAndArchive();
@@ -239,6 +241,7 @@ public class LogManagerTest : DatabaseTests
         Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
 
         var fatal = archival.Errors.Single();
-        lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved, "problem resolved by building more towers");
+        lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved,
+            "problem resolved by building more towers");
     }
 }

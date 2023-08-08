@@ -20,31 +20,24 @@ public class ExecuteCommandAddJoinInfo : BasicUICommandExecution, IAtomicCommand
     private readonly TableInfo _tableInfo;
     private TableInfo _otherTableInfo;
 
-    public ExecuteCommandAddJoinInfo(IActivateItems activator, TableInfo tableInfo):base(activator)
+    public ExecuteCommandAddJoinInfo(IActivateItems activator, TableInfo tableInfo) : base(activator)
     {
         _tableInfo = tableInfo;
     }
 
-    public override string GetCommandName()
-    {
-        return $"Configure JoinInfo where '{_tableInfo}' is a Primary Key Table";
-    }
+    public override string GetCommandName() => $"Configure JoinInfo where '{_tableInfo}' is a Primary Key Table";
 
-    public override string GetCommandHelp()
-    {
-        return "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
-    }
+    public override string GetCommandHelp() =>
+        "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
 
     public void SetInitialJoinToTableInfo(TableInfo otherTableInfo)
     {
-        if(_tableInfo.Equals(otherTableInfo))
+        if (_tableInfo.Equals(otherTableInfo))
             SetImpossible("Cannot join a TableInfo to itself");
-            
+
         _otherTableInfo = otherTableInfo;
     }
 

@@ -14,5 +14,5 @@ public interface IDataAccessCredentials : IEncryptedPasswordHost
     /// <summary>
     /// The user account name to supply when sending the credentials
     /// </summary>
-    string Username { get;}
+    string Username { get; }
 }

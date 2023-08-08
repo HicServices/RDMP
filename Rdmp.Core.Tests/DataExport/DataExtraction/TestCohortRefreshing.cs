@@ -27,26 +27,25 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
 public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 {
-
     [Test]
     public void RefreshCohort()
     {
-
         var pipe = SetupPipeline();
         pipe.Name = "RefreshPipe";
         pipe.SaveToDatabase();
 
-        Execute(out ExtractionPipelineUseCase useCase, out IExecuteDatasetExtractionDestination results);
+        Execute(out var useCase, out var results);
 
         var oldcohort = _configuration.Cohort;
 
 
-        _configuration.CohortIdentificationConfiguration_ID =new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs").ID;
+        _configuration.CohortIdentificationConfiguration_ID =
+            new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs").ID;
         _configuration.CohortRefreshPipeline_ID = pipe.ID;
         _configuration.SaveToDatabase();
 
         var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
-            
+
         Assert.NotNull(engine.Request.NewCohortDefinition);
 
         var oldData = oldcohort.GetExternalData();
@@ -75,16 +74,16 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
     [Test]
     public void RefreshCohort_WithCaching()
     {
-
         var pipe = new Pipeline(CatalogueRepository, "RefreshPipeWithCaching");
 
-        var source = new PipelineComponent(CatalogueRepository, pipe, typeof (CohortIdentificationConfigurationSource), 0);
+        var source =
+            new PipelineComponent(CatalogueRepository, pipe, typeof(CohortIdentificationConfigurationSource), 0);
         var args = source.CreateArgumentsForClassIfNotExists<CohortIdentificationConfigurationSource>();
         var freezeArg = args.Single(a => a.Name.Equals("FreezeAfterSuccessfulImport"));
         freezeArg.SetValue(false);
         freezeArg.SaveToDatabase();
 
-        var dest = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicCohortDestination), 0);
+        var dest = new PipelineComponent(CatalogueRepository, pipe, typeof(BasicCohortDestination), 0);
         var argsDest = dest.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
         var allocatorArg = argsDest.Single(a => a.Name.Equals("ReleaseIdentifierAllocator"));
         allocatorArg.SetValue(null);
@@ -94,7 +93,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.DestinationPipelineComponent_ID = dest.ID;
         pipe.SaveToDatabase();
 
-        Execute(out ExtractionPipelineUseCase useCase, out IExecuteDatasetExtractionDestination results);
+        Execute(out var useCase, out var results);
 
         var oldcohort = _configuration.Cohort;
 
@@ -102,7 +101,8 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         var p = new QueryCachingPatcher();
         var queryCacheServer = new ExternalDatabaseServer(CatalogueRepository, "TestCohortRefreshing_CacheTest", p);
 
-        var cachedb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
+        var cachedb =
+            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
         if (cachedb.Exists())
             cachedb.Drop();
 
@@ -123,7 +123,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
             //add the sub query as the only entry in the cic (in the root container)
             cic.CreateRootContainerIfNotExists();
-            cic.RootCohortAggregateContainer.AddChild(agg,1);
+            cic.RootCohortAggregateContainer.AddChild(agg, 1);
 
             //make the ExtractionConfiguration refresh cohort query be the cic
             _configuration.CohortIdentificationConfiguration_ID = cic.ID;
@@ -141,10 +141,11 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             Assert.AreEqual(oldData.ExternalDescription, engine.Request.NewCohortDefinition.Description);
             Assert.AreEqual(oldData.ExternalVersion + 1, engine.Request.NewCohortDefinition.Version);
 
-            Assert.AreNotEqual(oldcohort.CountDistinct,engine.Request.CohortCreatedIfAny.CountDistinct);
+            Assert.AreNotEqual(oldcohort.CountDistinct, engine.Request.CohortCreatedIfAny.CountDistinct);
 
             //now nuke all data in the catalogue so the cic returns nobody (except that the identifiers are cached eh?)
-            DataAccessPortal.ExpectDatabase(_tableInfo,DataAccessContext.InternalDataProcessing).ExpectTable(_tableInfo.GetRuntimeName()).Truncate();
+            DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.InternalDataProcessing)
+                .ExpectTable(_tableInfo.GetRuntimeName()).Truncate();
 
             var toMem = new ToMemoryDataLoadEventListener(false);
 
@@ -152,15 +153,17 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             engine = new CohortRefreshEngine(toMem, _configuration);
 
             //execute it
-            var ex = Assert.Throws<PipelineCrashedException>(()=>engine.Execute());
+            var ex = Assert.Throws<PipelineCrashedException>(() => engine.Execute());
 
-            Assert.IsTrue(ex.InnerException.InnerException.Message.Contains("CohortIdentificationCriteria execution resulted in an empty dataset"));
+            Assert.IsTrue(
+                ex.InnerException.InnerException.Message.Contains(
+                    "CohortIdentificationCriteria execution resulted in an empty dataset"));
 
             //expected this message to happen
             //that it did clear the cache
-            Assert.AreEqual(1,toMem.EventsReceivedBySender.SelectMany(kvp=>kvp.Value).Count(msg=>msg.Message.Equals("Clearing Cohort Identifier Cache")));
-
-
+            Assert.AreEqual(1,
+                toMem.EventsReceivedBySender.SelectMany(kvp => kvp.Value)
+                    .Count(msg => msg.Message.Equals("Clearing Cohort Identifier Cache")));
         }
         finally
         {

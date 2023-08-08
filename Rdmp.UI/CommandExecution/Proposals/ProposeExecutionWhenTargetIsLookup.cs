@@ -17,18 +17,13 @@ internal class ProposeExecutionWhenTargetIsLookup : RDMPCommandExecutionProposal
     {
     }
 
-    public override bool CanActivate(Lookup target)
-    {
-        return true;
-    }
+    public override bool CanActivate(Lookup target) => true;
 
     public override void Activate(Lookup target)
     {
         ItemActivator.Activate<LookupUI, Lookup>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Lookup target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Lookup target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

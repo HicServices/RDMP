@@ -17,10 +17,10 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 [TechnicalUI]
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI, UserControl>))]
-public abstract class RDMPCollectionUI : RDMPCollectionUI_Design,IConsultableBeforeClosing
+public abstract class RDMPCollectionUI : RDMPCollectionUI_Design, IConsultableBeforeClosing
 {
     public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
-        
+
     protected RDMPCollectionUI()
     {
         CommonTreeFunctionality = new RDMPCollectionCommonFunctionality();
@@ -31,7 +31,6 @@ public abstract class RDMPCollectionUI : RDMPCollectionUI_Design,IConsultableBef
     {
         CommonTreeFunctionality.TearDown();
     }
-
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI_Design, UserControl>))]

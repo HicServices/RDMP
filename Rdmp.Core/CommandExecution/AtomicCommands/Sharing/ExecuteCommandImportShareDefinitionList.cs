@@ -24,17 +24,16 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 {
     public ExecuteCommandImportShareDefinitionList(IBasicActivateItems activator) : base(activator)
     {
-
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        var selected = BasicActivator.SelectFiles("Select ShareDefinitions to import","Sharing Definition File","*.sd");
+        var selected =
+            BasicActivator.SelectFiles("Select ShareDefinitions to import", "Sharing Definition File", "*.sd");
 
         if (selected != null && selected.Any())
-        {
             try
             {
                 var shareManager = new ShareManager(BasicActivator.RepositoryLocator)
@@ -44,23 +43,22 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 
                 foreach (var f in selected)
                     using (var stream = File.Open(f.FullName, FileMode.Open))
+                    {
                         shareManager.ImportSharedObject(stream);
+                    }
             }
             catch (Exception e)
             {
                 BasicActivator.ShowException("Error importing file(s)", e);
             }
-        }
     }
 
 
+    public override string GetCommandHelp() =>
+        "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
 
-    public override string GetCommandHelp()
-    {
-        return "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
-    }
-
-    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
+    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,
+        ShareDefinition shareDefinition)
     {
         BasicActivator.Show(
             $"Choose a local object for '{property}' on {Environment.NewLine}{string.Join(Environment.NewLine, shareDefinition.Properties.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}");
@@ -69,14 +67,16 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
 
         if (BasicActivator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
         {
-            var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
+            var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType)
+                .Cast<DatabaseEntity>().ToArray());
             if (selected != null)
                 return selected.ID;
         }
 
         if (BasicActivator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
         {
-            var selected = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
+            var selected = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType)
+                .Cast<DatabaseEntity>().ToArray());
             if (selected != null)
                 return selected.ID;
         }
@@ -84,8 +84,6 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
         return null;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
 }

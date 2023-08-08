@@ -29,13 +29,12 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 
     [UseWithObjectConstructor]
     public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,
-
-        [DemandsInitialization("Database type e.g. DataExport, Catalogue, QueryCaching, LoggingDatabase etc (See all IPatcher implementations)")]
+        [DemandsInitialization(
+            "Database type e.g. DataExport, Catalogue, QueryCaching, LoggingDatabase etc (See all IPatcher implementations)")]
         string databaseType,
-
-        [DemandsInitialization("Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
+        [DemandsInitialization(
+            "Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
         string query = null,
-
         [DemandsInitialization(ToFileDescription)]
         FileInfo toFile = null) : base(activator, toFile)
     {
@@ -72,18 +71,17 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
             _table = db?.ExpectTable("Catalogue");
             return;
         }
+
         var eds = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>();
 
         var patcher = (IPatcher)Activator.CreateInstance(patcherType);
         db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
 
-        if (db == null)
-        {
-            return;
-        }
+        if (db == null) return;
 
         SetTargetDatabase(db);
     }
+
     public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,
         ExternalDatabaseServer eds) : base(activator, null)
     {
@@ -105,10 +103,7 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 
     private DiscoveredDatabase GetDatabase(IRepository repository)
     {
-        if (repository is TableRepository tableRepo)
-        {
-            return tableRepo.DiscoveredServer?.GetCurrentDatabase();
-        }
+        if (repository is TableRepository tableRepo) return tableRepo.DiscoveredServer?.GetCurrentDatabase();
 
         SetImpossible("Repository was not a database repo");
         return null;
@@ -136,18 +131,13 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
     {
         _table = database.DiscoverTables(false).FirstOrDefault();
 
-        if (_table == null)
-        {
-            SetImpossible("Database was empty");
-        }
+        if (_table == null) SetImpossible("Database was empty");
     }
 
 
-    protected override IViewSQLAndResultsCollection GetCollection()
-    {
-        return new ArbitraryTableExtractionUICollection(_table)
+    protected override IViewSQLAndResultsCollection GetCollection() =>
+        new ArbitraryTableExtractionUICollection(_table)
         {
             OverrideSql = _query
         };
-    }
 }

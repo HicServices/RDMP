@@ -39,7 +39,7 @@ public interface IBasicActivateItems
     /// <summary>
     /// True for activators that can elicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
     /// </summary>
-    bool IsInteractive {get;}
+    bool IsInteractive { get; }
 
     /// <summary>
     /// APIs that supply additional commands or alter user interface logic (either CLI or windows client)
@@ -56,8 +56,7 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="aggregate"></param>
     void ShowGraph(AggregateConfiguration aggregate);
-        
-        
+
 
     /// <summary>
     /// Display information about the logged activities of the <paramref name="rootObject"/>
@@ -73,7 +72,6 @@ public interface IBasicActivateItems
     void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter);
 
 
-
     /// <summary>
     /// True if <see cref="Activate(object)"/> will work for the object
     /// </summary>
@@ -84,7 +82,7 @@ public interface IBasicActivateItems
     /// <summary>
     /// True to prompt Yes/No and offer common fixes for being unable to directly delete an object.  Note that <see cref="IsInteractive"/> must be true for this flag to be respected
     /// </summary>
-    bool InteractiveDeletes {get;set;}
+    bool InteractiveDeletes { get; set; }
 
     /// <summary>
     /// Finds the nearest database object to <paramref name="publish"/> in its hierarchy and issues a publish
@@ -108,7 +106,7 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="dataTable"></param>
     void ShowData(DataTable dataTable);
-        
+
     /// <summary>
     /// Returns the repository that stores objects of the given <paramref name="type"/> (Must be <see cref="IMapsDirectlyToDatabaseTable"/>).
     /// Throws if no compatible repo is found.
@@ -127,16 +125,16 @@ public interface IBasicActivateItems
     /// Component class for discovering the default DQE, Logging servers etc configured in the current RDMP database
     /// </summary>
     IServerDefaults ServerDefaults { get; }
-        
+
     /// <summary>
     /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
     /// </summary>
-    FavouritesProvider FavouritesProvider { get;}
+    FavouritesProvider FavouritesProvider { get; }
 
     /// <summary>
     /// Provides consistent icon representations of objects
     /// </summary>
-    ICoreIconProvider CoreIconProvider { get;}
+    ICoreIconProvider CoreIconProvider { get; }
 
     /// <summary>
     /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
@@ -161,9 +159,10 @@ public interface IBasicActivateItems
     /// Create a class capable of running a <see cref="IPipeline"/> under a given <see cref="IPipelineUseCase"/>.  This may be an async process e.g. non modal dialogues
     /// </summary>
     /// <returns></returns>
-    IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline);
+    IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline);
 
     #region Select X Modal methods
+
     /// <summary>
     /// Prompts the user to enter a description for a cohort they are trying to create including whether it is intended to replace an old version of another cohort.
     /// </summary>
@@ -171,7 +170,8 @@ public interface IBasicActivateItems
     /// <param name="project">The project the cohort should be associated with</param>
     /// <param name="cohortInitialDescription">Optional initial description for the cohort which may be changed by the user</param>
     /// <returns></returns>
-    CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription);
+    CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project,
+        string cohortInitialDescription);
 
     /// <summary>
     /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
@@ -192,10 +192,12 @@ public interface IBasicActivateItems
     /// <param name="availableObjects"></param>
     /// <param name="initialSearchText"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
-        
+    IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null);
+
     /// <inheritdoc cref="SelectMany(string, Type, IMapsDirectlyToDatabaseTable[], string)"/>
-    IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects);
+    IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+        IMapsDirectlyToDatabaseTable[] availableObjects);
 
     /// <summary>
     /// Prompts user to pick one of the <paramref name="availableObjects"/>
@@ -205,7 +207,8 @@ public interface IBasicActivateItems
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
+    IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+        string initialSearchText = null, bool allowAutoSelect = false);
 
     /// <summary>
     /// Prompts user to pick one of the <paramref name="availableObjects"/>
@@ -224,7 +227,8 @@ public interface IBasicActivateItems
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">Determines behaviour when <paramref name="available"/> has only one element.  True to auto select the only object available</param>
     /// <returns>True if a selection was made</returns>
-    bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
+    bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null,
+        bool allowAutoSelect = false) where T : class;
 
     /// <inheritdoc cref="SelectObject{T}(string, T[], out T, string, bool)"/>
     bool SelectObject<T>(DialogArgs args, T[] available, out T selected) where T : class;
@@ -237,7 +241,8 @@ public interface IBasicActivateItems
     /// <param name="available"></param>
     /// <param name="selected"></param>
     /// <param name="initialSearchText"></param>
-    bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null) where T : class;
+    bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        where T : class;
 
     /// <inheritdoc cref="SelectObjects{T}(string, T[], out T[], string)"/>
     bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) where T : class;
@@ -256,7 +261,7 @@ public interface IBasicActivateItems
     /// <returns></returns>
     FileInfo SelectFile(string prompt);
 
-        
+
     /// <summary>
     /// Prompts user to select multiple files on disk that must exist and match the <paramref name="pattern"/>
     /// </summary>
@@ -264,7 +269,7 @@ public interface IBasicActivateItems
     /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
     /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
     /// <returns>Selected files or null if no files chosen</returns>
-    FileInfo[] SelectFiles(string prompt,string patternDescription, string pattern);
+    FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
 
     /// <summary>
     /// Prompts user to select a file on disk (that may or may not exist yet) with the given pattern
@@ -273,8 +278,8 @@ public interface IBasicActivateItems
     /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
     /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
     /// <returns></returns>
-    FileInfo SelectFile(string prompt,string patternDescription, string pattern);
-        
+    FileInfo SelectFile(string prompt, string patternDescription, string pattern);
+
 
     /// <summary>
     /// User must supply a basic value type e.g. string, double, int
@@ -284,7 +289,7 @@ public interface IBasicActivateItems
     /// <param name="initialValue"></param>
     /// <param name="chosen"></param>
     /// <returns></returns>
-    bool SelectValueType(string prompt, Type paramType, object initialValue,out object chosen);
+    bool SelectValueType(string prompt, Type paramType, object initialValue, out object chosen);
 
 
     /// <inheritdoc cref="SelectValueType(string, Type, object, out object)"/>
@@ -339,7 +344,7 @@ public interface IBasicActivateItems
     /// <param name="title"></param>
     /// <param name="message"></param>
     void Show(string title, string message);
-        
+
     /// <summary>
     /// Prompts user to provide some textual input
     /// </summary>
@@ -350,7 +355,8 @@ public interface IBasicActivateItems
     /// <param name="text"></param>
     /// <param name="requireSaneHeaderText"></param>
     /// <returns></returns>
-    bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
+    bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+        bool requireSaneHeaderText);
 
     /// <inheritdoc cref="TypeText(string, string, int, string, out string, bool)"/>
     bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
@@ -370,7 +376,7 @@ public interface IBasicActivateItems
     /// <param name="taskDescription"></param>
     /// <returns></returns>
     DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
-        
+
     /// <summary>
     /// Shows the given error message to the user, optionally with the <paramref name="exception"/> stack trace / Message with high visibility
     /// </summary>
@@ -378,7 +384,7 @@ public interface IBasicActivateItems
     /// <param name="exception"></param>
     void ShowException(string errorText, Exception exception);
 
-        
+
     /// <summary>
     /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation
     /// indication (ui) and letting them cancel the task with the <paramref name="cts"/>.
@@ -458,7 +464,8 @@ public interface IBasicActivateItems
     /// <param name="targetFolder">Optional virtual folder into which to put the <see cref="ICatalogue"/> or null.  This is not a file system folder only a visual display to the user in the RDMP client</param>
     /// <param name="extractionIdentifierColumns">Optional, which column(s) should be <see cref="ConcreteColumn.IsExtractionIdentifier"/></param>
     /// <returns>A fully configured ready to go Catalogue or null if user cancelled process e.g. if <see cref="IsInteractive"/></returns>
-    ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string targetFolder);
+    ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns,
+        string initialDescription, IProject projectSpecific, string targetFolder);
 
     /// <summary>
     /// Returns true if creating a cohort through an interactive wizard is supported.  If a wizard was shown and suitable input received then <paramref name="cic"/> should be populated with the result
@@ -489,7 +496,8 @@ public interface IBasicActivateItems
     /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
     /// <param name="patcher">The schema and patches to run to create the database</param>
     /// <returns></returns>
-    ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
+    ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository,
+        PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
 
     /// <summary>
     /// Return all Types of the given {T} which should be <see cref="IMapsDirectlyToDatabaseTable"/>
@@ -504,6 +512,7 @@ public interface IBasicActivateItems
     /// <param name="t"></param>
     /// <returns></returns>
     IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t);
+
     /// <summary>
     /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
     /// </summary>

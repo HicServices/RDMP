@@ -20,13 +20,14 @@ public sealed class DataQualityEnginePatcher : Patcher
         LegacyName = "DataQualityEngine.Database";
         SqlServerOnly = false;
     }
+
     public override Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {
-        var header = GetHeader(db.Server.DatabaseType,InitialScriptName, new Version(1, 0, 0));
+        var header = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0));
 
         var sql = new StringBuilder();
 
-        sql.AppendLine (
+        sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "Evaluation", new[] { new DatabaseColumnRequest("DateOfEvaluation", new DatabaseTypeRequest(typeof(DateTime))), new DatabaseColumnRequest("CatalogueID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false }, new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, IsPrimaryKey = true } }, null, false, null).TrimEnd()};");
 
         // foreign keys
@@ -56,7 +57,8 @@ public sealed class DataQualityEnginePatcher : Patcher
     {
         var basePatches = base.GetAllPatchesInAssembly(db);
         if (basePatches.Count > 4)
-            throw new NotImplementedException("Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/QueryCachingDatabase/up' please");
+            throw new NotImplementedException(
+                "Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/QueryCachingDatabase/up' please");
 
         //this is empty because the only patch is already accounted for
         return new SortedDictionary<string, Patch>();

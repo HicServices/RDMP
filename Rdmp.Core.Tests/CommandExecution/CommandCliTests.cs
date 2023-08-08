@@ -34,15 +34,15 @@ public abstract class CommandCliTests : UnitTests
 
     protected CommandInvoker GetInvoker()
     {
-        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
         {
             DisallowInput = true
         });
-        invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
+        invoker.CommandImpossible += (s, c) => throw new Exception(c.Command.ReasonCommandImpossible);
 
         return invoker;
     }
-        
+
     protected Mock<IBasicActivateItems> GetMockActivator()
     {
         var mock = new Mock<IBasicActivateItems>();

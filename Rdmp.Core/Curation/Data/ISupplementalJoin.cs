@@ -12,7 +12,6 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public interface ISupplementalJoin
 {
-
     /// <inheritdoc cref="IJoin.ForeignKey"/>
     ColumnInfo ForeignKey { get; }
 
@@ -21,5 +20,4 @@ public interface ISupplementalJoin
 
     /// <inheritdoc cref="IJoin.Collation"/>
     string Collation { get; }
-        
 }

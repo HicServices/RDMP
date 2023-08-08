@@ -18,9 +18,9 @@ namespace Rdmp.UI.Progress;
 /// it will be a Marquee bar (one with a moving unknown progress animation).  All Notify events are displayed under the smiley face (or frowning if the process
 /// has crashed)
 /// </summary>
-public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
+public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 {
-    private Dictionary<string,ProgressBar> progressBars = new();
+    private Dictionary<string, ProgressBar> progressBars = new();
     private ToolTip tt = new();
 
     public float EmSize = 9f;
@@ -29,7 +29,8 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
     {
         InitializeComponent();
     }
-    public ProgressBarsUI(string caption,bool showClose = false)
+
+    public ProgressBarsUI(string caption, bool showClose = false)
     {
         InitializeComponent();
         btnClose.Visible = showClose;
@@ -41,14 +42,12 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
         btnClose.Enabled = true;
 
         foreach (var pb in progressBars.Values)
-        {
             if (pb.Style == ProgressBarStyle.Marquee)
             {
                 pb.Style = ProgressBarStyle.Continuous;
                 pb.Maximum = 1;
                 pb.Value = 1;
             }
-        }
     }
 
     public void OnNotify(object sender, NotifyEventArgs e)
@@ -65,7 +64,9 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
         }
 
         if (progressBars.TryGetValue(e.TaskDescription, out var bar))
+        {
             UpdateProgressBar(bar, e);
+        }
         else
         {
             var y = GetRowYForNewProgressBar();
@@ -86,9 +87,9 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
             };
             Controls.Add(pb);
 
-            UpdateProgressBar(pb,e);
+            UpdateProgressBar(pb, e);
 
-            progressBars.Add(e.TaskDescription,pb);
+            progressBars.Add(e.TaskDescription, pb);
         }
     }
 
@@ -104,21 +105,23 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
     {
         var text = $"{progressEventArgs.Progress.Value} {progressEventArgs.Progress.UnitOfMeasurement}";
 
-        tt.SetToolTip(progressBar,text);
+        tt.SetToolTip(progressBar, text);
 
         if (progressEventArgs.Progress.KnownTargetValue != 0)
         {
             progressBar.Maximum = progressEventArgs.Progress.KnownTargetValue;
-            progressBar.Value = Math.Min(progressBar.Maximum,progressEventArgs.Progress.Value);
+            progressBar.Value = Math.Min(progressBar.Maximum, progressEventArgs.Progress.Value);
             progressBar.Style = ProgressBarStyle.Continuous;
         }
         else
+        {
             progressBar.Style = ProgressBarStyle.Marquee;
+        }
     }
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-        if(ParentForm != null && ParentForm.IsHandleCreated)
+        if (ParentForm != null && ParentForm.IsHandleCreated)
             ParentForm.Close();
     }
 

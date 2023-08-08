@@ -25,15 +25,17 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// </summary>
 public class TableVarcharMaxer : MatchingTablesMutilator
 {
-    [DemandsInitialization("By default (false) the mutilator will only expand columns with an SQL Type containing 'char', if set to true then this will do all columns including decimals, dates etc", defaultValue: false)]
+    [DemandsInitialization(
+        "By default (false) the mutilator will only expand columns with an SQL Type containing 'char', if set to true then this will do all columns including decimals, dates etc",
+        defaultValue: false)]
     public bool AllDataTypes { get; set; }
 
-    [DemandsInitialization(description: "The type that all matching columns will be converted into", defaultValue: "varchar(max)", typeOf: null, mandatory: true)]
+    [DemandsInitialization("The type that all matching columns will be converted into", defaultValue: "varchar(max)",
+        typeOf: null, mandatory: true)]
     public string DestinationType { get; set; }
 
-    public TableVarcharMaxer() :base(LoadStage.Mounting,LoadStage.AdjustRaw)
+    public TableVarcharMaxer() : base(LoadStage.Mounting, LoadStage.AdjustRaw)
     {
-            
     }
 
     public override void Check(ICheckNotifier notifier)
@@ -41,7 +43,6 @@ public class TableVarcharMaxer : MatchingTablesMutilator
         base.Check(notifier);
 
         if (DbInfo != null)
-        {
             try
             {
                 DbInfo.Server.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(DestinationType);
@@ -49,17 +50,15 @@ public class TableVarcharMaxer : MatchingTablesMutilator
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"DestinationType ({DestinationType}) is not supported", CheckResult.Warning,e));
+                notifier.OnCheckPerformed(new CheckEventArgs($"DestinationType ({DestinationType}) is not supported",
+                    CheckResult.Warning, e));
             }
-        }
     }
 
     protected override void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table)
     {
         foreach (var col in table.DiscoverColumns())
-        {
             if (AllDataTypes || col.DataType.GetLengthIfString() >= 1)
-            {
                 try
                 {
                     col.DataType.AlterTypeTo(DestinationType);
@@ -69,9 +68,8 @@ public class TableVarcharMaxer : MatchingTablesMutilator
                 catch (Exception e)
                 {
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                        $"Failed to convert column {col} of data type {col.DataType} to destination type {DestinationType}", e));
+                        $"Failed to convert column {col} of data type {col.DataType} to destination type {DestinationType}",
+                        e));
                 }
-            }
-        }
     }
 }

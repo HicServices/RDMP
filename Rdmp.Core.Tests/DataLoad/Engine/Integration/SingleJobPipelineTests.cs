@@ -22,7 +22,7 @@ public class SingleJobPipelineTests : DatabaseTests
     {
         var component = new NotRequiredComponent();
 
-        var pipeline = new SingleJobExecution(new List<IDataLoadComponent> {component});
+        var pipeline = new SingleJobExecution(new List<IDataLoadComponent> { component });
 
         var job = Mock.Of<IDataLoadJob>();
         var jobTokenSource = new GracefulCancellationTokenSource();
@@ -32,10 +32,8 @@ public class SingleJobPipelineTests : DatabaseTests
 
 internal class NotRequiredComponent : DataLoadComponent
 {
-    public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-    {
-        return ExitCodeType.OperationNotRequired;
-    }
+    public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken) =>
+        ExitCodeType.OperationNotRequired;
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postDataLoadEventListener)
     {

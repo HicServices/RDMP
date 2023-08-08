@@ -38,7 +38,7 @@ public partial class PatchingUI : Form
         _database = database;
         _repository = repository;
         _patcher = patcher;
-            
+
         InitializeComponent();
 
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
@@ -46,7 +46,7 @@ public partial class PatchingUI : Form
 
         var name = $"{patcher.Name} v{patcher.GetDbAssembly().GetName().Version.ToString(3)}";
 
-        tbPatch.Text =  $"{name}";
+        tbPatch.Text = $"{name}";
 
         if (_database == null)
         {
@@ -68,24 +68,26 @@ public partial class PatchingUI : Form
             var mds = new MasterDatabaseScriptExecutor(_database);
 
 
-            mds.PatchDatabase(_patcher,toMem,PreviewPatch,
-                ()=>MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
+            mds.PatchDatabase(_patcher, toMem, PreviewPatch,
+                () => MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
 
             //if it crashed during patching
-            if(toMem.GetWorst() == CheckResult.Fail)
+            if (toMem.GetWorst() == CheckResult.Fail)
             {
                 btnAttemptPatching.Enabled = true;
                 return;
             }
 
-            toMem.OnCheckPerformed(new CheckEventArgs("Patching completed without exception, disabling the patching button", CheckResult.Success, null));
+            toMem.OnCheckPerformed(new CheckEventArgs(
+                "Patching completed without exception, disabling the patching button", CheckResult.Success, null));
             //patching worked so prevent them doing it again!
             btnAttemptPatching.Enabled = false;
 
             if (_repository != null)
             {
                 _repository.ClearUpdateCommandCache();
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success, null));
+                checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success,
+                    null));
             }
 
             checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
@@ -111,15 +113,15 @@ public partial class PatchingUI : Form
         if (_yesToAll)
             return true;
 
-        var preview = new SQLPreviewWindow(patch.locationInAssembly,"The following SQL Patch will be run:", patch.GetScriptBody());
+        var preview = new SQLPreviewWindow(patch.locationInAssembly, "The following SQL Patch will be run:",
+            patch.GetScriptBody());
         try
         {
-            return preview.ShowDialog()==DialogResult.OK;
+            return preview.ShowDialog() == DialogResult.OK;
         }
         finally
         {
             _yesToAll = preview.YesToAll;
         }
-
     }
 }

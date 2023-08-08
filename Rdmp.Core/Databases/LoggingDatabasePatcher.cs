@@ -13,9 +13,9 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Databases;
 
-public sealed class LoggingDatabasePatcher:Patcher
+public sealed class LoggingDatabasePatcher : Patcher
 {
-    public LoggingDatabasePatcher():base(2,"Databases.LoggingDatabase")
+    public LoggingDatabasePatcher() : base(2, "Databases.LoggingDatabase")
     {
         LegacyName = "HIC.Logging.Database";
         SqlServerOnly = false;
@@ -49,7 +49,6 @@ public sealed class LoggingDatabasePatcher:Patcher
             $"{db.Helper.GetCreateTableSql(db, "DataLoadTask", new[] { /*This is not an auto increment (see `GetMaxTaskID` method).  Not sure why it isn't but whatever */ new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false, IsPrimaryKey = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof(string), 1000) { Unicode = true }), new DatabaseColumnRequest("createTime", new DatabaseTypeRequest(typeof(DateTime))) { Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate }, /* TODO: does this have a default on it? */ new DatabaseColumnRequest("userAccount", new DatabaseTypeRequest(typeof(string), 500) { Unicode = true }), new DatabaseColumnRequest("statusID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("isTest", new DatabaseTypeRequest(typeof(bool))), dataLoadTask_datasetID = new DatabaseColumnRequest("dataSetID", new DatabaseTypeRequest(typeof(string), 150) { Unicode = true }) }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { dataLoadTask_datasetID, datasetId } }, true, null).TrimEnd()};");
 
 
-
         sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "DataLoadRun", new[] { new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("startTime", new DatabaseTypeRequest(typeof(DateTime))) { Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate }, new DatabaseColumnRequest("endTime", new DatabaseTypeRequest(typeof(DateTime))) { AllowNulls = true }, dataLoadRun_dataLoadTaskID = new DatabaseColumnRequest("dataLoadTaskID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("isTest", new DatabaseTypeRequest(typeof(bool))), new DatabaseColumnRequest("packageName", new DatabaseTypeRequest(typeof(string), 750) { Unicode = true }), /* TODO: does this have a default on it? */ new DatabaseColumnRequest("userAccount", new DatabaseTypeRequest(typeof(string), 500) { Unicode = true }), new DatabaseColumnRequest("suggestedRollbackCommand", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) { AllowNulls = true } }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { dataLoadRun_dataLoadTaskID, dataLoadTask_ID } }, true, null).TrimEnd()};");
 
@@ -60,7 +59,6 @@ public sealed class LoggingDatabasePatcher:Patcher
             $"{db.Helper.GetCreateTableSql(db, "DataSource", new[] { new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true }, new DatabaseColumnRequest("source", new DatabaseTypeRequest(typeof(string), int.MaxValue)), dataSource_tableLoadRunID = new DatabaseColumnRequest("tableLoadRunID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = true }, new DatabaseColumnRequest("archive", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) { AllowNulls = true }, new DatabaseColumnRequest("originDate", new DatabaseTypeRequest(typeof(DateTime))) { Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate }, /*in old script this was binary(128) but I think string should be ok*/ new DatabaseColumnRequest("MD5", new DatabaseTypeRequest(typeof(string), 128)) { AllowNulls = true } }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { dataSource_tableLoadRunID, tableLoadRun_ID } }, true, null).TrimEnd()};");
 
 
-
         sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "FatalError", new[] { new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true }, new DatabaseColumnRequest("time", new DatabaseTypeRequest(typeof(DateTime))) { Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate }, new DatabaseColumnRequest("source", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) { AllowNulls = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("explanation", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) { AllowNulls = true }, fatalError_dataLoadRunID = new DatabaseColumnRequest("dataLoadRunID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("statusID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = true }, new DatabaseColumnRequest("interestingToOthers", new DatabaseTypeRequest(typeof(bool))) { AllowNulls = true } }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { fatalError_dataLoadRunID, dataLoadRun_ID } }, true, null).TrimEnd()};");
 
@@ -69,10 +67,8 @@ public sealed class LoggingDatabasePatcher:Patcher
             $"{db.Helper.GetCreateTableSql(db, "ProgressLog", new[] { progressLog_dataLoadRunID = new DatabaseColumnRequest("dataLoadRunID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("eventType", new DatabaseTypeRequest(typeof(string), 50) { Unicode = true }) { AllowNulls = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("source", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) { AllowNulls = true }, new DatabaseColumnRequest("time", new DatabaseTypeRequest(typeof(DateTime))) { Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate }, new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true } }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { progressLog_dataLoadRunID, dataLoadRun_ID } }, true, null).TrimEnd()};");
 
 
-
         sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "RowError", new[] { new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true }, rowError_tableLoadRunID = new DatabaseColumnRequest("tableLoadRunID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("rowErrorTypeID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("locationOfRow", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("requiresReloading", new DatabaseTypeRequest(typeof(bool))) { AllowNulls = true }, new DatabaseColumnRequest("columnName", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { rowError_tableLoadRunID, tableLoadRun_ID } }, true, null).TrimEnd()};");
-
 
 
         sql.AppendLine(
@@ -118,7 +114,8 @@ INSERT INTO DataLoadTask (ID, description, name, userAccount, statusID, isTest, 
     {
         var basePatches = base.GetAllPatchesInAssembly(db);
         if (basePatches.Count > 3)
-            throw new NotImplementedException("Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/LoggingDatabase/up' please");
+            throw new NotImplementedException(
+                "Someone has added some patches, we need to think about how we handle those in MySql and Oracle! i.e. don't add them in '/LoggingDatabase/up' please");
 
         //this is empty because the only patch is already accounted for
         return new SortedDictionary<string, Patch>();

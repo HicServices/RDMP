@@ -64,16 +64,20 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         {
             // If we are operating inside a test, the client is responsible for providing a TableNamingScheme
             if (TableNamingScheme == null)
-                throw new InvalidOperationException("Executing within test context but no TableNamingScheme has been provided");
+                throw new InvalidOperationException(
+                    "Executing within test context but no TableNamingScheme has been provided");
         }
         else
             // If we are not operating inside a Test, hardwire the TableNamingScheme
+        {
             TableNamingScheme = new FixedStagingDatabaseNamer(liveDatabaseInfo.GetRuntimeName());
+        }
 
         // create invariant helpers
         _sqlHelper = new BackfillSqlHelper(TimePeriodicityField, _dbInfo, liveDatabaseInfo);
-        _migrationConfiguration = new MigrationConfiguration(liveDatabaseInfo, LoadBubble.Live, LoadBubble.Staging, TableNamingScheme);
-            
+        _migrationConfiguration =
+            new MigrationConfiguration(liveDatabaseInfo, LoadBubble.Live, LoadBubble.Staging, TableNamingScheme);
+
         // starting with the TimePeriodicity table, we descend the join relationships to the leaf tables then ascend back up to the TimePeriodicity table
         // at each step we determine the effective date of the record by joining back to the TimePeriodicity table
         // this allows us to remove updates that are older than the corresponding record in live
@@ -112,7 +116,8 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
 
         // Find all parents of this table
         var allJoinInfos = repository.GetAllObjects<JoinInfo>();
-        var joinsWithThisTableAsChild = allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
+        var joinsWithThisTableAsChild =
+            allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
 
         // Infinite recursion check
         var seenBefore = joinPathToTimeTable.Intersect(joinsWithThisTableAsChild).ToList();
@@ -121,9 +126,10 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
                 $"Join loop: I've seen join(s) {string.Join(",", seenBefore.Select(j => $"{j.PrimaryKey} -> {j.ForeignKey}"))} before so we must have hit a loop (and will never complete the recursion).");
 
         // Process this table and its children (we need info about the children in order to join and detect childless rows)
-        var joinsWithThisTableAsParent = allJoinInfos.Where(info => info.PrimaryKey.TableInfo_ID == tiCurrent.ID).ToList();
+        var joinsWithThisTableAsParent =
+            allJoinInfos.Where(info => info.PrimaryKey.TableInfo_ID == tiCurrent.ID).ToList();
         ProcessTable(tiCurrent, joinPathToTimeTable, joinsWithThisTableAsParent);
-            
+
         // Ascend into parent tables once this table has been processed
         foreach (var join in joinsWithThisTableAsChild)
         {
@@ -133,9 +139,8 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
             if (tiParent == null)
                 continue;
 
-            ProcessPredecessors(tiParent, new List<JoinInfo>(joinPathToTimeTable){join});
+            ProcessPredecessors(tiParent, new List<JoinInfo>(joinPathToTimeTable) { join });
         }
-            
     }
 
     /// <summary>
@@ -154,7 +159,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         foreach (var join in joinsToProcess)
         {
             var tiChild = join.ForeignKey.TableInfo;
-            ProcessOldUpdatesInTable(tiChild, new List<JoinInfo>(joinPathToTimeTable){join});
+            ProcessOldUpdatesInTable(tiChild, new List<JoinInfo>(joinPathToTimeTable) { join });
         }
 
         ProcessTable(tiCurrent, joinPathToTimeTable, joinsToProcess);
@@ -169,7 +174,9 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     /// <param name="childJoins"></param>
     private void ProcessTable(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
     {
-        var columnSetsToMigrate = _migrationConfiguration.CreateMigrationColumnSetFromTableInfos(new[] {tiCurrent}.ToList(),null, new BackfillMigrationFieldProcessor());
+        var columnSetsToMigrate =
+            _migrationConfiguration.CreateMigrationColumnSetFromTableInfos(new[] { tiCurrent }.ToList(), null,
+                new BackfillMigrationFieldProcessor());
         var columnSet = columnSetsToMigrate.Single();
         var queryHelper = new ReverseMigrationQueryHelper(columnSet);
         var mcsQueryHelper = new MigrationColumnSetQueryHelper(columnSet);
@@ -181,7 +188,8 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         UpdateOldParentsThatHaveNewChildren(tiCurrent, joinPathToTimeTable, queryHelper, mcsQueryHelper);
     }
 
-    private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
+    private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable,
+        ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
     {
         var update = $@"WITH 
 {GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable)}
@@ -198,7 +206,8 @@ LiveDataForUpdating LEFT JOIN {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRu
         }
     }
 
-    private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
+    private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable,
+        List<JoinInfo> joinsToProcess, MigrationColumnSetQueryHelper mcsQueryHelper)
     {
         // If there are no joins then we should delete any old updates at this level
         string deleteSql;
@@ -250,15 +259,13 @@ RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "C
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
     /// <returns></returns>
-    private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
-    {
-        return $@"
+    private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable) =>
+        $@"
 CurrentOldEntries AS (
 SELECT ToLoadWithTime.* FROM 
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)} 
 ";
-    }
 
     /// <summary>
     /// This and GetCurrentOldEntriesSQL are ugly in that they just reflect modifications to the comparison CTE. Leaving for now as a more thorough refactoring may be required once the full test suite is available.
@@ -266,14 +273,12 @@ SELECT ToLoadWithTime.* FROM
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
     /// <returns></returns>
-    private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
-    {
-        return $@"
+    private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable) =>
+        $@"
 LiveDataForUpdating AS (
 SELECT LoadedWithTime.* FROM
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)}";
-    }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
@@ -284,13 +289,11 @@ SELECT LoadedWithTime.* FROM
     {
         // if we're not executing in a test context, fail the whole component: it doesn't yet have sufficient test coverage
         if (!TestContext)
-        {
             notifier.OnCheckPerformed(
-                new CheckEventArgs("Don't use the StagingBackfillMutilator component for now! Does not yet have sufficient test coverage.",
+                new CheckEventArgs(
+                    "Don't use the StagingBackfillMutilator component for now! Does not yet have sufficient test coverage.",
                     CheckResult.Fail));
-        }
     }
-
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)

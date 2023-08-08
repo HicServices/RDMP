@@ -17,7 +17,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 {
-
     public IMapsDirectlyToDatabaseTable Deprecated { get; }
     public IMapsDirectlyToDatabaseTable Replacement { get; }
 
@@ -27,62 +26,53 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
     /// <summary>
     /// True to prompt user to pick and replacement at execute time
     /// </summary>
-    public bool PromptToPickReplacement {get;set;}
+    public bool PromptToPickReplacement { get; set; }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandReplacedBy(IBasicActivateItems activator, 
-        [DemandsInitialization("The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
-        IMapsDirectlyToDatabaseTable deprecated, 
-        [DemandsInitialization("The object that replaces the retired one.  Pass null to clear the replacement relationship")]
-        IMapsDirectlyToDatabaseTable replacement) 
+    public ExecuteCommandReplacedBy(IBasicActivateItems activator,
+        [DemandsInitialization(
+            "The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
+        IMapsDirectlyToDatabaseTable deprecated,
+        [DemandsInitialization(
+            "The object that replaces the retired one.  Pass null to clear the replacement relationship")]
+        IMapsDirectlyToDatabaseTable replacement)
         : base(activator)
     {
-            
         Deprecated = deprecated;
         Replacement = replacement;
 
         _type = deprecated.GetType();
 
-        if(deprecated is IMightBeDeprecated m && !m.IsDeprecated)
-        {
+        if (deprecated is IMightBeDeprecated m && !m.IsDeprecated)
             SetImpossible($"{deprecated} is not marked IsDeprecated so no replacement can be specified");
-        }
 
-        if(replacement != null && replacement.GetType() != _type)
-        {
+        if (replacement != null && replacement.GetType() != _type)
             SetImpossible($"'{replacement}' cannot replace '{deprecated}' because it is a different object Type");
-        }
     }
+
     public override void Execute()
     {
         base.Execute();
 
         var rep = Replacement;
 
-        if(PromptToPickReplacement && rep == null)
-        {
-            if(!BasicActivator.SelectObject(new DialogArgs{
-                   AllowSelectingNull = true
-               },BasicActivator.CoreChildProvider.AllCatalogues,out rep))
-            {
+        if (PromptToPickReplacement && rep == null)
+            if (!BasicActivator.SelectObject(new DialogArgs
+                {
+                    AllowSelectingNull = true
+                }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
                 // user cancelled
                 return;
-            }
-        }
 
         var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
-        foreach (var existing in 
+        foreach (var existing in
                  cataRepo.GetExtendedProperties(ExtendedProperty.ReplacedBy, Deprecated))
-        {
             // delete any old references to who we are replaced by
             existing.DeleteInDatabase();
-        }
 
         // null means delete relationship and don't create a new one
-        if(rep != null)
-        {
+        if (rep != null)
             // store the ID of the thing that replaces us
-            new ExtendedProperty(cataRepo,Deprecated, ExtendedProperty.ReplacedBy, rep.ID);
-        }
+            new ExtendedProperty(cataRepo, Deprecated, ExtendedProperty.ReplacedBy, rep.ID);
     }
 }

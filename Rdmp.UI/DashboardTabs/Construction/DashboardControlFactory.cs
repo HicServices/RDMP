@@ -26,18 +26,13 @@ public class DashboardControlFactory
         _startLocationForNewControls = startLocationForNewControls;
     }
 
-    public Type[] GetAvailableControlTypes()
-    {
-        return _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
-    }
+    public Type[] GetAvailableControlTypes() => _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+        .Where(IsCompatibleType).ToArray();
 
-    private bool IsCompatibleType(Type arg)
-    {
-        return
-            typeof (IDashboardableControl).IsAssignableFrom(arg)
-            &&
-            typeof(UserControl).IsAssignableFrom(arg);
-    }
+    private bool IsCompatibleType(Type arg) =>
+        typeof(IDashboardableControl).IsAssignableFrom(arg)
+        &&
+        typeof(UserControl).IsAssignableFrom(arg);
 
     /// <summary>
     /// Creates an instance of the user control described by the database record DashboardControl, including providing the control with a hydrated IPersistableObjectCollection that reflects
@@ -50,7 +45,7 @@ public class DashboardControlFactory
         var controlType = _activator.RepositoryLocator.CatalogueRepository.MEF.GetType(toCreate.ControlType);
 
         var instance = CreateControl(controlType);
-            
+
         return Hydrate((IDashboardableControl)instance, toCreate);
     }
 
@@ -62,7 +57,8 @@ public class DashboardControlFactory
     /// <param name="t"></param>
     /// <param name="theControlCreated"></param>
     /// <returns></returns>
-    public DashboardControl Create(DashboardLayout forLayout, Type t, out DashboardableControlHostPanel theControlCreated)
+    public DashboardControl Create(DashboardLayout forLayout, Type t,
+        out DashboardableControlHostPanel theControlCreated)
     {
         var instance = CreateControl(t);
 
@@ -70,8 +66,9 @@ public class DashboardControlFactory
         var w = instance.Width;
         var h = instance.Height;
 
-        var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueRepository, forLayout, t, _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
-        theControlCreated = Hydrate((IDashboardableControl) instance, dbRecord);
+        var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueRepository, forLayout, t,
+            _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
+        theControlCreated = Hydrate((IDashboardableControl)instance, dbRecord);
 
         return dbRecord;
     }
@@ -79,12 +76,14 @@ public class DashboardControlFactory
     private DashboardableControlHostPanel Hydrate(IDashboardableControl theControlCreated, DashboardControl dbRecord)
     {
         var emptyCollection = theControlCreated.ConstructEmptyCollection(dbRecord);
-            
+
         foreach (var objectUse in dbRecord.ObjectsUsed)
         {
-            var o = _activator.RepositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType, objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
+            var o = _activator.RepositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType,
+                objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
             emptyCollection.DatabaseObjects.Add(o);
         }
+
         try
         {
             emptyCollection.LoadExtraText(dbRecord.PersistenceString);
@@ -92,10 +91,10 @@ public class DashboardControlFactory
         catch (Exception e)
         {
             throw new DashboardControlHydrationException(
-                $"Could not resolve extra text persistence string for control '{theControlCreated.GetType()}'",e);
+                $"Could not resolve extra text persistence string for control '{theControlCreated.GetType()}'", e);
         }
 
-        theControlCreated.SetCollection(_activator,emptyCollection);
+        theControlCreated.SetCollection(_activator, emptyCollection);
 
         var host = new DashboardableControlHostPanel(_activator, dbRecord, theControlCreated)
         {
@@ -117,8 +116,7 @@ public class DashboardControlFactory
 
         instance.Dock = DockStyle.None;
         instance.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            
+
         return instance;
     }
-
 }

@@ -37,7 +37,8 @@ public class GlobalsReleaseChecker : ICheckable
     /// <param name="repositoryLocator"></param>
     /// <param name="extractionConfigurations"></param>
     /// <param name="globalToCheck">Determines the return of <see cref="GetEvaluator"/>.  Pass a global </param>
-    public GlobalsReleaseChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration[] extractionConfigurations, IMapsDirectlyToDatabaseTable globalToCheck = null)
+    public GlobalsReleaseChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IExtractionConfiguration[] extractionConfigurations, IMapsDirectlyToDatabaseTable globalToCheck = null)
     {
         _repositoryLocator = repositoryLocator;
         _configurations = extractionConfigurations;
@@ -53,8 +54,9 @@ public class GlobalsReleaseChecker : ICheckable
     /// <returns></returns>
     public GlobalReleasePotential GetEvaluator()
     {
-        if(_globalToCheck == null)
-            throw new NotSupportedException("You cannot call GetEvaluator when you provided no globalToCheck during construction");
+        if (_globalToCheck == null)
+            throw new NotSupportedException(
+                "You cannot call GetEvaluator when you provided no globalToCheck during construction");
 
         var globalResult = _configurations.SelectMany(c => c.SupplementalExtractionResults)
             .Distinct()
@@ -64,10 +66,12 @@ public class GlobalsReleaseChecker : ICheckable
             return new NoGlobalReleasePotential(_repositoryLocator, null, _globalToCheck);
 
         //it's been extracted!, who extracted it?
-        var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(globalResult.GetDestinationType());
+        var destinationThatExtractedIt =
+            (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(globalResult.GetDestinationType());
 
         //destination tell us how releasable it is
-        return destinationThatExtractedIt.GetGlobalReleasabilityEvaluator(_repositoryLocator, globalResult, _globalToCheck);
+        return destinationThatExtractedIt.GetGlobalReleasabilityEvaluator(_repositoryLocator, globalResult,
+            _globalToCheck);
     }
 
     /// <summary>
@@ -80,21 +84,27 @@ public class GlobalsReleaseChecker : ICheckable
         // checks for pollution in the globals directory
         foreach (var extractionConfiguration in _configurations)
         {
-            var allExtracted = extractionConfiguration.SupplementalExtractionResults.Where(ser => IsValidPath(ser.DestinationDescription));
+            var allExtracted =
+                extractionConfiguration.SupplementalExtractionResults.Where(ser =>
+                    IsValidPath(ser.DestinationDescription));
             var extractDir = extractionConfiguration.GetProject().ExtractionDirectory;
             var folder = new ExtractionDirectory(extractDir, extractionConfiguration).GetGlobalsDirectory();
 
-            var unexpectedDirectories = folder.EnumerateDirectories().Where(d => !d.Name.Equals("SupportingDocuments")).ToList();
+            var unexpectedDirectories =
+                folder.EnumerateDirectories().Where(d => !d.Name.Equals("SupportingDocuments")).ToList();
 
             if (unexpectedDirectories.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Unexpected directories found in extraction directory ({string.Join(",", unexpectedDirectories.Select(d => d.FullName))}. Pollution of extract directory is not permitted.", CheckResult.Fail));
+                    $"Unexpected directories found in extraction directory ({string.Join(",", unexpectedDirectories.Select(d => d.FullName))}. Pollution of extract directory is not permitted.",
+                    CheckResult.Fail));
 
-            var unexpectedFiles = folder.EnumerateFiles("*.*", SearchOption.AllDirectories).Where(f => allExtracted.All(ae => ae.DestinationDescription != f.FullName)).ToList();
+            var unexpectedFiles = folder.EnumerateFiles("*.*", SearchOption.AllDirectories)
+                .Where(f => allExtracted.All(ae => ae.DestinationDescription != f.FullName)).ToList();
 
             if (unexpectedFiles.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Unexpected files found in extract directory ({string.Join(",", unexpectedFiles.Select(d => d.FullName))}). Pollution of extract directory is not permitted.", CheckResult.Fail));
+                    $"Unexpected files found in extract directory ({string.Join(",", unexpectedFiles.Select(d => d.FullName))}). Pollution of extract directory is not permitted.",
+                    CheckResult.Fail));
         }
     }
 

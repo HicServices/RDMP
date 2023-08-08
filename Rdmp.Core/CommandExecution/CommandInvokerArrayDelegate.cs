@@ -23,15 +23,11 @@ internal class CommandInvokerArrayDelegate : CommandInvokerDelegate
     /// <param name="element">The base element type of your array e.g. <see cref="IMapsDirectlyToDatabaseTable"/>(should not be an array itself)</param>
     /// <param name="isAuto">True if the <paramref name="run"/> never requires user input</param>
     /// <param name="run">Method to invoke to fetch an instance when needed</param>
-    public CommandInvokerArrayDelegate(Type element,bool isAuto,Func<RequiredArgument,object> run):base(element,isAuto,run)
+    public CommandInvokerArrayDelegate(Type element, bool isAuto, Func<RequiredArgument, object> run) : base(element,
+        isAuto, run)
     {
-            
     }
 
     /// <inheritdoc/>
-    public override bool CanHandle(Type t)
-    {
-        return t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
-    }
-        
+    public override bool CanHandle(Type t) => t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
 }

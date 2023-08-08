@@ -21,7 +21,7 @@ public interface IAllocateReleaseIdentifiers
     /// <param name="privateIdentifier"></param>
     /// <returns></returns>
     object AllocateReleaseIdentifier(object privateIdentifier);
-        
+
     /// <summary>
     /// Called before any allocation, lets you know what <see cref="IProject"/> etc is involved in the cohort creation attempt.
     /// </summary>

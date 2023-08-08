@@ -27,8 +27,7 @@ public class FavouriteColumnProvider
     private Bitmap _starHollow;
 
 
-
-    public FavouriteColumnProvider(IActivateItems activator,TreeListView tlv)
+    public FavouriteColumnProvider(IActivateItems activator, TreeListView tlv)
     {
         _activator = activator;
         _tlv = tlv;
@@ -78,7 +77,6 @@ public class FavouriteColumnProvider
             }
             catch (ArgumentException)
             {
-
             }
         }
     }
@@ -91,6 +89,7 @@ public class FavouriteColumnProvider
 
         return null;
     }
+
     private object FavouriteAspectGetter(object rowobject)
     {
         if (rowobject is DatabaseEntity o)
@@ -99,5 +98,4 @@ public class FavouriteColumnProvider
 
         return null;
     }
-
 }

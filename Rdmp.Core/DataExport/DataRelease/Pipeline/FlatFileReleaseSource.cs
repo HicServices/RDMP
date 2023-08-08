@@ -18,13 +18,12 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
 public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 {
-    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-    {
-        return flowData ?? new ReleaseAudit
+    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken) =>
+        flowData ?? new ReleaseAudit
         {
             SourceGlobalFolder = PrepareSourceGlobalFolder()
         };
-    }
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -38,7 +37,6 @@ public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 
     protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
     {
-            
     }
 
     protected override DirectoryInfo PrepareSourceGlobalFolder()

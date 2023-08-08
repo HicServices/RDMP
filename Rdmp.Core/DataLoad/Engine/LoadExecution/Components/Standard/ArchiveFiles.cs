@@ -32,12 +32,12 @@ public class ArchiveFiles : DataLoadComponent
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        if (Skip(job)) 
+        if (Skip(job))
             return ExitCodeType.Success;
 
         var datasetID = job.DataLoadInfo.ID;
         var destFile = Path.Combine(job.LoadDirectory.ForArchiving.FullName, $"{datasetID}.zip");
-            
+
         // If there is nothing in the forLoadingDirectory then 
         // There may be a HiddenFromArchiver directory with data that may be processed by another component, but this component should *always* archive *something* even if it is just some metadata about the load (if, for example, imaging data is being loaded which is too large to archive)
         if (!FoundFilesOrDirsToArchive(job))
@@ -77,7 +77,8 @@ public class ArchiveFiles : DataLoadComponent
 
     private static void MoveDirectories(IDataLoadJob job, DirectoryInfo zipDir)
     {
-        var dirsToMove = job.LoadDirectory.ForLoading.EnumerateDirectories().Where(info => !DirsToIgnore.Contains(info.Name)).ToList();
+        var dirsToMove = job.LoadDirectory.ForLoading.EnumerateDirectories()
+            .Where(info => !DirsToIgnore.Contains(info.Name)).ToList();
         foreach (var toMove in dirsToMove)
             toMove.MoveTo(Path.Combine(zipDir.FullName, toMove.Name));
     }
@@ -89,7 +90,7 @@ public class ArchiveFiles : DataLoadComponent
             toMove.MoveTo(Path.Combine(zipDir.FullName, toMove.Name));
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
     }
 }

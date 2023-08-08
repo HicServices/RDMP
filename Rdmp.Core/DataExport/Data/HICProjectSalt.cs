@@ -26,8 +26,5 @@ public class HICProjectSalt : IHICProjectSalt
     /// Returns the <see cref="IProject.ProjectNumber"/> (set during construction).
     /// </summary>
     /// <returns></returns>
-    public string GetSalt()
-    {
-        return _project.ProjectNumber.ToString();
-    }
+    public string GetSalt() => _project.ProjectNumber.ToString();
 }

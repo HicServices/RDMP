@@ -25,11 +25,11 @@ public class OverrideSenderIDataLoadEventListener : IDataLoadEventListener
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        _child.OnNotify(_overridingSender,e);
+        _child.OnNotify(_overridingSender, e);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        _child.OnProgress(_overridingSender,e);
+        _child.OnProgress(_overridingSender, e);
     }
 }

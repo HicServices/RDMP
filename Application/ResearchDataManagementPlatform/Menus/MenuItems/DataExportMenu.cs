@@ -14,9 +14,8 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems;
 
 internal class DataExportMenu : RDMPToolStripMenuItem
 {
-    public DataExportMenu(IActivateItems activator):base(activator,"Data Export Options")
+    public DataExportMenu(IActivateItems activator) : base(activator, "Data Export Options")
     {
-
         Enabled = _activator.RepositoryLocator.DataExportRepository != null;
 
         DropDownItems.Add(new ToolStripMenuItem("Configure Disclaimer", null, ConfigureDisclaimer));

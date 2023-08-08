@@ -11,24 +11,19 @@ using Rdmp.UI.LoadExecutionUIs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsCacheProgress:RDMPCommandExecutionProposal<CacheProgress>
+internal class ProposeExecutionWhenTargetIsCacheProgress : RDMPCommandExecutionProposal<CacheProgress>
 {
     public ProposeExecutionWhenTargetIsCacheProgress(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(CacheProgress target)
-    {
-        return true;
-    }
+    public override bool CanActivate(CacheProgress target) => true;
 
     public override void Activate(CacheProgress target)
     {
         ItemActivator.Activate<ExecuteCacheProgressUI, CacheProgress>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CacheProgress target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CacheProgress target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

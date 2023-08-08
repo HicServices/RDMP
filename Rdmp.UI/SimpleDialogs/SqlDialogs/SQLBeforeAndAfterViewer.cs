@@ -25,7 +25,9 @@ public partial class SQLBeforeAndAfterViewer : Form
     private Scintilla QueryEditorAfter;
 
 
-    public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore, string headerTextForAfter, string caption, MessageBoxButtons buttons, SyntaxLanguage language = SyntaxLanguage.SQL)
+    public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore,
+        string headerTextForAfter, string caption, MessageBoxButtons buttons,
+        SyntaxLanguage language = SyntaxLanguage.SQL)
     {
         InitializeComponent();
 
@@ -52,7 +54,7 @@ public partial class SQLBeforeAndAfterViewer : Form
         var highlighter = new ScintillaLineHighlightingHelper();
         ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
         ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
-            
+
         sqlBefore ??= "";
         sqlAfter ??= "";
 
@@ -60,12 +62,11 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
-            for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i,Color.Pink);
-                    
-            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
+            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore, i, Color.Pink);
+
+            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
-                
         }
 
         switch (buttons)
@@ -88,7 +89,7 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         Text = caption;
     }
-        
+
     private void btnYes_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Yes;
@@ -100,6 +101,4 @@ public partial class SQLBeforeAndAfterViewer : Form
         DialogResult = DialogResult.No;
         Close();
     }
-
-
 }

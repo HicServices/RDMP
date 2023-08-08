@@ -26,17 +26,11 @@ using Rdmp.UI.CommandExecution;
 namespace Rdmp.UI.Copying;
 
 /// <inheritdoc/>
-public class RDMPCombineableFactory:ICombineableFactory
+public class RDMPCombineableFactory : ICombineableFactory
 {
-    public ICombineToMakeCommand Create(ModelDropEventArgs e)
-    {
-        return Create((OLVDataObject)e.DataObject);
-    }
+    public ICombineToMakeCommand Create(ModelDropEventArgs e) => Create((OLVDataObject)e.DataObject);
 
-    public ICombineToMakeCommand Create(DragEventArgs e)
-    {
-        return Create(e.Data as OLVDataObject);
-    }
+    public ICombineToMakeCommand Create(DragEventArgs e) => Create(e.Data as OLVDataObject);
 
     public ICombineToMakeCommand Create(OLVDataObject o)
     {
@@ -45,7 +39,7 @@ public class RDMPCombineableFactory:ICombineableFactory
 
         //does the data object already contain a command?
         if (o.ModelObjects.OfType<ICombineToMakeCommand>().Count() == 1)
-            return o.ModelObjects.OfType<ICombineToMakeCommand>().Single();//yes
+            return o.ModelObjects.OfType<ICombineToMakeCommand>().Single(); //yes
 
         //otherwise is it something that can be turned into a command?
         if (o.ModelObjects.Count == 0)
@@ -59,10 +53,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         return Create(o.ModelObjects.Cast<object>().ToArray());
     }
 
-    public ICombineToMakeCommand Create(FileInfo[] files)
-    {
-        return new FileCollectionCombineable(files);
-    }
+    public ICombineToMakeCommand Create(FileInfo[] files) => new FileCollectionCombineable(files);
 
     public ICombineToMakeCommand Create(object modelObject)
     {
@@ -75,44 +66,42 @@ public class RDMPCombineableFactory:ICombineableFactory
 
         if (modelObject is Pipeline pipeline)
             return new PipelineCombineable(pipeline);
-                       
-        if (modelObject is  ExtractionFilterParameterSet efps)
+
+        if (modelObject is ExtractionFilterParameterSet efps)
             return new ExtractionFilterParameterSetCombineable(efps);
 
         if (modelObject is CatalogueItem ci)
             return new CatalogueItemCombineable(ci);
 
         var arrayOfCatalogueItems = IsArrayOf<CatalogueItem>(modelObject);
-        if (arrayOfCatalogueItems != null)
-        {
-            return new CatalogueItemCombineable(arrayOfCatalogueItems);
-        }
+        if (arrayOfCatalogueItems != null) return new CatalogueItemCombineable(arrayOfCatalogueItems);
 
         //table column pointers (not extractable)
-        var columnInfo = modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
+        var columnInfo =
+            modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
         var linkedColumnInfo = modelObject as LinkedColumnInfoNode;
-            
+
         if (columnInfo != null || linkedColumnInfo != null)
             return new ColumnInfoCombineable(columnInfo ?? linkedColumnInfo.ColumnInfo);
 
         var columnInfoArray = IsArrayOf<ColumnInfo>(modelObject);
-        if(columnInfoArray != null)
+        if (columnInfoArray != null)
             return new ColumnInfoCombineable(columnInfoArray);
 
         if (modelObject is TableInfo tableInfo)
             return new TableInfoCombineable(tableInfo);
 
-        if(modelObject is LoadMetadata lmd)
+        if (modelObject is LoadMetadata lmd)
             return new LoadMetadataCombineable(lmd);
-            
+
         if (modelObject is Project p)
             return new ProjectCombineable(p);
 
         //catalogues
         var catalogues = IsArrayOf<Catalogue>(modelObject);
-            
+
         if (catalogues != null)
-            if(catalogues.Length == 1)
+            if (catalogues.Length == 1)
                 return new CatalogueCombineable(catalogues[0]);
             else
                 return new ManyCataloguesCombineable(catalogues);
@@ -141,7 +130,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         if (extractableDataSets != null)
             return new ExtractableDataSetCombineable(extractableDataSets);
 
-        if(modelObject is ExtractableDataSetPackage extractableDataSetPackage)
+        if (modelObject is ExtractableDataSetPackage extractableDataSetPackage)
             return new ExtractableDataSetCombineable(extractableDataSetPackage);
 
         if (modelObject is DataAccessCredentials dataAccessCredentials)
@@ -156,7 +145,8 @@ public class RDMPCombineableFactory:ICombineableFactory
         var cic = modelObject as CohortIdentificationConfiguration;
         var cicAssociation = modelObject as ProjectCohortIdentificationConfigurationAssociation;
         if (cic != null || cicAssociation != null)
-            return new CohortIdentificationConfigurationCommand(cic ?? cicAssociation.CohortIdentificationConfiguration);
+            return new CohortIdentificationConfigurationCommand(cic ??
+                                                                cicAssociation.CohortIdentificationConfiguration);
 
         if (modelObject is ICombineableSource commandSource)
             return commandSource.GetCombineable();
@@ -166,8 +156,8 @@ public class RDMPCombineableFactory:ICombineableFactory
 
     private static T[] IsArrayOf<T>(object modelObject)
     {
-        if(modelObject is T modelObject1)
-            return new [] { modelObject1 };
+        if (modelObject is T modelObject1)
+            return new[] { modelObject1 };
 
         if (modelObject is not IEnumerable array)
             return null;

@@ -13,16 +13,15 @@ namespace Rdmp.Core.Logging.Listeners.NLogListeners;
 /// <summary>
 /// <see cref="IDataLoadEventListener"/> that passes all events to an <see cref="NLog.LogManager"/>.  Optionally throws on Errors (after logging).
 /// </summary>
-public class NLogIDataLoadEventListener : NLogListener,IDataLoadEventListener
+public class NLogIDataLoadEventListener : NLogListener, IDataLoadEventListener
 {
-    public NLogIDataLoadEventListener(bool throwOnError):base(throwOnError)
+    public NLogIDataLoadEventListener(bool throwOnError) : base(throwOnError)
     {
-            
     }
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        Log(sender,e.ToLogLevel(), e.Exception, e.Message);
+        Log(sender, e.ToLogLevel(), e.Exception, e.Message);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)

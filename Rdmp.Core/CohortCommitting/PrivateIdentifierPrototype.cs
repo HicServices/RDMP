@@ -22,10 +22,10 @@ public class PrivateIdentifierPrototype
     {
         RuntimeName = extractionInformation.GetRuntimeName();
         DataType = extractionInformation.ColumnInfo.Data_type;
-        MatchingExtractionInformations = new List<ExtractionInformation>(new []{extractionInformation});
+        MatchingExtractionInformations = new List<ExtractionInformation>(new[] { extractionInformation });
     }
 
-    public PrivateIdentifierPrototype(string runtimeName,string datatype)
+    public PrivateIdentifierPrototype(string runtimeName, string datatype)
     {
         RuntimeName = runtimeName;
         DataType = datatype;
@@ -36,19 +36,10 @@ public class PrivateIdentifierPrototype
     public string DataType { get; internal set; }
     public List<ExtractionInformation> MatchingExtractionInformations { get; internal set; }
 
-    public bool IsCompatible(ExtractionInformation extractionInformation)
-    {
-        return extractionInformation.GetRuntimeName() == RuntimeName && extractionInformation.ColumnInfo.Data_type == DataType;
-    }
+    public bool IsCompatible(ExtractionInformation extractionInformation) =>
+        extractionInformation.GetRuntimeName() == RuntimeName && extractionInformation.ColumnInfo.Data_type == DataType;
 
-    public int CountOfTimesSeen()
-    {
-        return  MatchingExtractionInformations.Count;
-    }
+    public int CountOfTimesSeen() => MatchingExtractionInformations.Count;
 
-    public string GetDeclarationSql()
-    {
-        return $"{RuntimeName} {DataType}";
-
-    }
+    public string GetDeclarationSql() => $"{RuntimeName} {DataType}";
 }

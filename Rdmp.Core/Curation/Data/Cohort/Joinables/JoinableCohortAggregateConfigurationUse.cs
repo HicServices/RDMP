@@ -17,9 +17,10 @@ namespace Rdmp.Core.Curation.Data.Cohort.Joinables;
 /// <summary>
 /// Indicates that a given AggregateConfiguration in a CohortIdentificationConfiguration is implicitly joined against a 'PatientIndexTable' See JoinableCohortAggregateConfiguration
 /// </summary>
-public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
+public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
 {
     #region Database Properties
+
     private int _joinableCohortAggregateConfigurationID;
     private int _aggregateConfigurationID;
     private ExtractionJoinType _joinType;
@@ -30,7 +31,7 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     public int JoinableCohortAggregateConfiguration_ID
     {
         get => _joinableCohortAggregateConfigurationID;
-        set => SetField(ref  _joinableCohortAggregateConfigurationID, value);
+        set => SetField(ref _joinableCohortAggregateConfigurationID, value);
     }
 
     /// <summary>
@@ -40,7 +41,7 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     public int AggregateConfiguration_ID
     {
         get => _aggregateConfigurationID;
-        set => SetField(ref  _aggregateConfigurationID, value);
+        set => SetField(ref _aggregateConfigurationID, value);
     }
 
     /// <summary>
@@ -50,25 +51,27 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     public ExtractionJoinType JoinType
     {
         get => _joinType;
-        set => SetField(ref  _joinType, value);
+        set => SetField(ref _joinType, value);
     }
 
     #endregion
 
     #region Relationships
+
     /// <inheritdoc cref="JoinableCohortAggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration => Repository.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
+    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration =>
+        Repository.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
 
     /// <inheritdoc cref="AggregateConfiguration_ID"/>
     [NoMappingToDatabase]
-    public AggregateConfiguration AggregateConfiguration => Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
+    public AggregateConfiguration AggregateConfiguration =>
+        Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
 
     #endregion
 
     public JoinableCohortAggregateConfigurationUse()
     {
-
     }
 
     internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
@@ -79,30 +82,29 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
 
         JoinableCohortAggregateConfiguration_ID = Convert.ToInt32(r["JoinableCohortAggregateConfiguration_ID"]);
         AggregateConfiguration_ID = Convert.ToInt32(r["AggregateConfiguration_ID"]);
-
     }
 
-    internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, AggregateConfiguration user, JoinableCohortAggregateConfiguration joinable)
+    internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, AggregateConfiguration user,
+        JoinableCohortAggregateConfiguration joinable)
     {
-        if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID).Any())
+        if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID)
+            .Any())
             throw new NotSupportedException(
                 $"Cannot add user {user} because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration");
-         
-        if(user.Catalogue.IsApiCall())
-        {
-            throw new NotSupportedException("API calls cannot join with PatientIndexTables (The API call must be self contained)");
-        }
 
-        if(user.AggregateDimensions.Count(u=>u.IsExtractionIdentifier) != 1)
+        if (user.Catalogue.IsApiCall())
+            throw new NotSupportedException(
+                "API calls cannot join with PatientIndexTables (The API call must be self contained)");
+
+        if (user.AggregateDimensions.Count(u => u.IsExtractionIdentifier) != 1)
             throw new NotSupportedException(
                 $"Cannot configure AggregateConfiguration {user} as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"JoinableCohortAggregateConfiguration_ID",joinable.ID},
-            {"AggregateConfiguration_ID",user.ID},
-            {"JoinType",ExtractionJoinType.Left.ToString()}
-
+            { "JoinableCohortAggregateConfiguration_ID", joinable.ID },
+            { "AggregateConfiguration_ID", user.ID },
+            { "JoinType", ExtractionJoinType.Left.ToString() }
         });
     }
 
@@ -128,16 +130,14 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
 
     private const string ToStringPrefix = "JOIN Against:";
     private string _toStringName;
-        
+
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return _toStringName ?? GetCachedName();
-    }
+    public override string ToString() => _toStringName ?? GetCachedName();
 
     private string GetCachedName()
     {
-        _toStringName =  ToStringPrefix + JoinableCohortAggregateConfiguration.AggregateConfiguration.Name;//cached answer
+        _toStringName =
+            ToStringPrefix + JoinableCohortAggregateConfiguration.AggregateConfiguration.Name; //cached answer
         return _toStringName;
     }
 
@@ -146,8 +146,5 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     /// <code>'select chi from Tbl1 INNER JOIN TblPatIndx ix123 on Tbl1.chi = ix123.chi where ix123.date > GETDATE()'</code>
     /// </summary>
     /// <returns></returns>
-    public string GetJoinTableAlias()
-    {
-        return $"ix{JoinableCohortAggregateConfiguration_ID}";
-    }
+    public string GetJoinTableAlias() => $"ix{JoinableCohortAggregateConfiguration_ID}";
 }

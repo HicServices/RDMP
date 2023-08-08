@@ -51,24 +51,25 @@ public class FilterImporter
     /// <param name="fromMaster"></param>
     /// <param name="existingFiltersAlreadyInScope"></param>
     /// <returns></returns>
-    public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster, IFilter[] existingFiltersAlreadyInScope)
+    public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster,
+        IFilter[] existingFiltersAlreadyInScope)
     {
-        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null)
+        if (fromMaster is ExtractionFilter extractionFilter &&
+            extractionFilter.ExtractionInformation.ColumnInfo == null)
             throw new Exception(
                 $"Could not import filter {extractionFilter} because it could not be traced back to a ColumnInfo");
 
         //If user is trying to publish a filter into the Catalogue as a new master top level filter, make sure it is properly documented
         if (_factory is ExtractionFilterFactory)
-        {
-            if(!IsProperlyDocumented(fromMaster, out var reason))
+            if (!IsProperlyDocumented(fromMaster, out var reason))
                 throw new Exception($"Cannot clone filter called '{fromMaster.Name}' because:{reason}");
-        }
 
         //Handle problems with existing filters
         existingFiltersAlreadyInScope ??= Array.Empty<IFilter>();
 
-        if(existingFiltersAlreadyInScope.Contains(fromMaster))
-            throw new ArgumentException("Master filter (that you are trying to import) cannot be part of the existing filters collection!");
+        if (existingFiltersAlreadyInScope.Contains(fromMaster))
+            throw new ArgumentException(
+                "Master filter (that you are trying to import) cannot be part of the existing filters collection!");
 
         //Ensure that the new filter has a unique name within the scope
         var name = fromMaster.Name;
@@ -85,30 +86,31 @@ public class FilterImporter
         newFilter.WhereSQL = fromMaster.WhereSQL;
 
         //if we are down cloning from a master ExtractionFilter so record that the new filter is
-        if(fromMaster is ExtractionFilter)
-            newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID;//make the new filters parent the master
+        if (fromMaster is ExtractionFilter)
+            newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID; //make the new filters parent the master
 
         //if we are up cloning we are publishing a child into being a new master catalogue filter (ExtractionFilter)
         if (newFilter is ExtractionFilter)
         {
             newFilter.Description +=
                 $"{Environment.NewLine} Published by {Environment.UserName} on {DateTime.Now} from object {fromMaster.GetType().Name} with ID {fromMaster.ID}";
-            fromMaster.ClonedFromExtractionFilter_ID = newFilter.ID;//Make the newly created master our parent (since we are published)
+            fromMaster.ClonedFromExtractionFilter_ID =
+                newFilter.ID; //Make the newly created master our parent (since we are published)
         }
 
-        if(containerToImportOneInto != null)
-        {
-            newFilter.FilterContainer_ID = containerToImportOneInto.ID;
-        }
+        if (containerToImportOneInto != null) newFilter.FilterContainer_ID = containerToImportOneInto.ID;
 
         newFilter.SaveToDatabase();
 
         //If there are some filters already in scope then we need to take into account their parameters when it comes to importing, so fetch a union of all the parameters
-        var existingFiltersParametersAlreadyInScope = existingFiltersAlreadyInScope.SelectMany(f => f.GetAllParameters()).ToArray();
+        var existingFiltersParametersAlreadyInScope =
+            existingFiltersAlreadyInScope.SelectMany(f => f.GetAllParameters()).ToArray();
 
         //now create parameters while respecting globals
-        var parameterCreator = new ParameterCreator(_factory, _globals, AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
-        parameterCreator.CreateAll(newFilter, existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
+        var parameterCreator = new ParameterCreator(_factory, _globals,
+            AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
+        parameterCreator.CreateAll(newFilter,
+            existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
 
         return newFilter;
     }
@@ -121,7 +123,8 @@ public class FilterImporter
     /// <param name="allMasters"></param>
     /// <param name="existingFiltersAlreadyInScope"></param>
     /// <returns></returns>
-    public IFilter[] ImportAllFilters(IContainer containerToImportInto, IFilter[] allMasters, IFilter[] existingFiltersAlreadyInScope)
+    public IFilter[] ImportAllFilters(IContainer containerToImportInto, IFilter[] allMasters,
+        IFilter[] existingFiltersAlreadyInScope)
     {
         var createdSoFar = new List<IFilter>();
 
@@ -129,7 +132,8 @@ public class FilterImporter
 
         foreach (var master in allMasters)
         {
-            var added = ImportFilter(containerToImportInto,master, createdSoFar.Union(existingFiltersAlreadyInScope).ToArray());
+            var added = ImportFilter(containerToImportInto, master,
+                createdSoFar.Union(existingFiltersAlreadyInScope).ToArray());
             createdSoFar.Add(added);
         }
 
@@ -148,25 +152,20 @@ public class FilterImporter
 
         if (string.IsNullOrWhiteSpace(filter.Description))
             reason = "There is no description";
-        else
-        if (filter.Description.Length <= 20)
+        else if (filter.Description.Length <= 20)
             reason = "Description is not long enough (minimum length is 20 characters)";
         else if (string.IsNullOrWhiteSpace(filter.WhereSQL))
             reason = "WhereSQL is not populated";
 
         //if we have not yet found a reason to complain, look at parameters for a reason to complain
         if (reason == null)
-        {
             //check to see if there's a problem with the parameters
             foreach (var filterParameter in filter.GetAllParameters())
-            {
                 if (!ExtractionFilterParameter.IsProperlyDocumented(filterParameter, out var reasonParameterRejected))
                 {
                     reason = $"Parameter '{filterParameter.ParameterName}' was rejected :{reasonParameterRejected}";
                     break;
                 }
-            }
-        }
 
         return reason == null;
     }

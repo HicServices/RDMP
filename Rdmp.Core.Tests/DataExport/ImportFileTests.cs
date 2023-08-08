@@ -18,14 +18,14 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport;
 
-public class ImportFileTests:DatabaseTests
+public class ImportFileTests : DatabaseTests
 {
     [Test]
     public void ImportFile()
     {
         var file = Path.GetTempFileName();
         var databaseName = TestDatabaseNames.GetConsistentName(GetType().Name);
-            
+
         try
         {
             using (var sw = new StreamWriter(file))
@@ -48,7 +48,8 @@ public class ImportFileTests:DatabaseTests
                 StronglyTypeInput = true
             };
 
-            source.PreInitialize(new FlatFileToLoad(new FileInfo(file)), new ThrowImmediatelyDataLoadEventListener());//this is the file we want to load
+            source.PreInitialize(new FlatFileToLoad(new FileInfo(file)),
+                new ThrowImmediatelyDataLoadEventListener()); //this is the file we want to load
             source.Check(new ThrowImmediatelyCheckNotifier());
 
             var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
@@ -56,7 +57,7 @@ public class ImportFileTests:DatabaseTests
 
             //recreate it
             database.Create(true);
-                
+
             server.ChangeDatabase(databaseName);
 
             var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
@@ -80,7 +81,7 @@ public class ImportFileTests:DatabaseTests
             Assert.AreEqual("decimal(3,2)", GetColumnType(database, tableName, "Healthiness"));
             Assert.AreEqual("datetime2", GetColumnType(database, tableName, "DateOfImagining"));
 
-            using (var con = (SqlConnection) server.GetConnection())
+            using (var con = (SqlConnection)server.GetConnection())
             {
                 con.Open();
 
@@ -107,7 +108,7 @@ public class ImportFileTests:DatabaseTests
             server.ExpectDatabase(databaseName).Drop();
             Assert.IsFalse(server.ExpectDatabase(databaseName).Exists());
         }
-        finally 
+        finally
         {
             try
             {
@@ -117,14 +118,9 @@ public class ImportFileTests:DatabaseTests
             {
                 //Couldn't delete temporary file... oh well
             }
-                
         }
-
     }
 
-    private static string GetColumnType(DiscoveredDatabase database, string tableName, string colName)
-    {
-        return
-            database.ExpectTable(tableName).DiscoverColumn(colName).DataType.SQLType;
-    }
+    private static string GetColumnType(DiscoveredDatabase database, string tableName, string colName) =>
+        database.ExpectTable(tableName).DiscoverColumn(colName).DataType.SQLType;
 }

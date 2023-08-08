@@ -15,6 +15,7 @@ namespace Rdmp.Core.Caching.Pipeline.Sources;
 /// (which tells you what date/time you are supposed to be fetching) and IPermissionWindow (which tells you what real time window you can make requests during e.g. only
 /// attempt to cache data between 9am and 5pm at night)
 /// </summary>
-public interface ICacheSource : IPipelineRequirement<ICacheFetchRequestProvider>, IPipelineRequirement<IPermissionWindow>
+public interface ICacheSource : IPipelineRequirement<ICacheFetchRequestProvider>,
+    IPipelineRequirement<IPermissionWindow>
 {
 }

@@ -14,14 +14,11 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public class SynchronizationFailedException : Exception
 {
-    public SynchronizationFailedException(string s):base(s)
+    public SynchronizationFailedException(string s) : base(s)
     {
-            
-
     }
 
-    public SynchronizationFailedException(string s, Exception exception):base(s,exception)
+    public SynchronizationFailedException(string s, Exception exception) : base(s, exception)
     {
-            
     }
 }

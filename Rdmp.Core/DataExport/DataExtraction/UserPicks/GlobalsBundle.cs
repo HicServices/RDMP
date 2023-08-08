@@ -15,7 +15,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 /// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need
 /// to be extracted/copied to the output ExtractionDirectory.
 /// </summary>
-public class GlobalsBundle:Bundle
+public class GlobalsBundle : Bundle
 {
     public List<SupportingDocument> Documents { get; private set; }
     public List<SupportingSQLTable> SupportingSQL { get; private set; }
@@ -30,10 +30,7 @@ public class GlobalsBundle:Bundle
         SupportingSQL = supportingSQL.ToList();
     }
 
-    public bool Any()
-    {
-        return Documents.Any() || SupportingSQL.Any();
-    }
+    public bool Any() => Documents.Any() || SupportingSQL.Any();
 
 
     protected override void OnDropContent(object toDrop)
@@ -52,6 +49,5 @@ public class GlobalsBundle:Bundle
 
 
         throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
-
     }
 }

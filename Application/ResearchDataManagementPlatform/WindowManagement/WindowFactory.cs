@@ -40,43 +40,46 @@ public class WindowFactory
 
     private readonly IconFactory _iconFactory = IconFactory.Instance;
 
-        
+
     public WindowFactory(IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowManager windowManager)
     {
         _windowManager = windowManager;
         RepositoryLocator = repositoryLocator;
     }
 
-    public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Image<Rgba32> image, RDMPCollection collection)
+    public PersistableToolboxDockContent Create(IActivateItems activator, Control control, string label,
+        Image<Rgba32> image, RDMPCollection collection)
     {
         var content = new PersistableToolboxDockContent(collection);
-            
+
         AddControlToDockContent(activator, control, content, label, image);
 
         return content;
     }
-        
-    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
+
+    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,
+        IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
     {
-        var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
+        var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject, refreshBus);
         _windowManager.AddWindow(content);
 
-        AddControlToDockContent(activator, (Control)control,content,"Loading...",image);
-            
+        AddControlToDockContent(activator, (Control)control, content, "Loading...", image);
+
         if (!RDMPMainForm.Loading)
             activator.HistoryProvider.Add(databaseObject);
 
         return content;
     }
 
-    public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Image<Rgba32> image)
+    public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control,
+        IPersistableObjectCollection objectCollection, Image<Rgba32> image)
     {
         //create a new persistable docking tab
-        var content = new PersistableObjectCollectionDockContent(activator,control,objectCollection);
+        var content = new PersistableObjectCollectionDockContent(activator, control, objectCollection);
 
         //add the control to the tab
-        AddControlToDockContent(activator,(Control)control, content,content.TabText, image);
-            
+        AddControlToDockContent(activator, (Control)control, content, content.TabText, image);
+
         //add to the window tracker
         _windowManager.AddWindow(content);
 
@@ -84,7 +87,8 @@ public class WindowFactory
         return content;
     }
 
-    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, IRDMPSingleDatabaseObjectControl control, DatabaseEntity entity)
+    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator,
+        IRDMPSingleDatabaseObjectControl control, DatabaseEntity entity)
     {
         var content = new PersistableSingleDatabaseObjectDockContent(control, entity, activator.RefreshBus);
 
@@ -100,33 +104,30 @@ public class WindowFactory
 
     public DockContent Create(IActivateItems activator, Control control, string label, Image<Rgba32> image)
     {
-        DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
-            
-        AddControlToDockContent(activator, control, content,label, image);
+        DockContent content = new RDMPSingleControlTab(activator.RefreshBus, control);
+
+        AddControlToDockContent(activator, control, content, label, image);
 
         _windowManager.AddAdhocWindow(content);
 
         return content;
     }
 
-    private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Image<Rgba32> image)
+    private void AddControlToDockContent(IActivateItems activator, Control control, DockContent content, string label,
+        Image<Rgba32> image)
     {
         control.Dock = DockStyle.Fill;
         content.Controls.Add(control);
         content.TabText = label;
-            
-        if(image != null)
-        {
-            content.Icon = _iconFactory.GetIcon(image);
-        }
-                
-    
+
+        if (image != null) content.Icon = _iconFactory.GetIcon(image);
+
 
         if (control is IConsultableBeforeClosing consult)
             content.FormClosing += consult.ConsultAboutClosing;
 
-        if(control is ISaveableUI saveable)
-            content.FormClosing += (s,e)=>saveable.GetObjectSaverButton()?.CheckForUnsavedChangesAnOfferToSave();            
+        if (control is ISaveableUI saveable)
+            content.FormClosing += (s, e) => saveable.GetObjectSaverButton()?.CheckForUnsavedChangesAnOfferToSave();
 
         content.KeyPreview = true;
 
@@ -136,21 +137,18 @@ public class WindowFactory
 
             //Create handler for AfterPublish
             RefreshObjectEventHandler handler = null;
-            handler = (s,e)=>
-            { 
+            handler = (s, e) =>
+            {
                 // After global changes, rebuild the context menu
 
-                if(!content.IsDisposed)
+                if (!content.IsDisposed)
                     content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
-                else
-                if(handler != null)
+                else if (handler != null)
                     activator.RefreshBus.AfterPublish -= handler; //don't leak handlers
             };
 
             //register the event handler
             activator.RefreshBus.AfterPublish += handler;
-                
         }
-                
     }
 }

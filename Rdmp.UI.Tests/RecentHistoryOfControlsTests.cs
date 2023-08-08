@@ -18,15 +18,15 @@ public class RecentHistoryOfControlsTests
     {
         var t = new System.Windows.Forms.TextBox();
 
-        var c = new RecentHistoryOfControls(t,new Guid("b3ccaf14-702a-438a-8cf4-d550d6d7775d"));
+        var c = new RecentHistoryOfControls(t, new Guid("b3ccaf14-702a-438a-8cf4-d550d6d7775d"));
 
         c.Clear();
         var overFlowCounter = 100000;
 
         for (var i = 0; i < overFlowCounter; i++)
-            c.AddResult($"testOverflowValue{Guid.NewGuid()}", i%1000 == 0);//only save every X values added for performance
+            c.AddResult($"testOverflowValue{Guid.NewGuid()}",
+                i % 1000 == 0); //only save every X values added for performance
 
         c.Clear();
     }
-
 }

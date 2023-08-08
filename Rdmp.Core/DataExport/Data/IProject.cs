@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// 
 /// <para>The <see cref="ProjectNumber"/> must match the project number of the cohorts in your cohort database.</para>
 /// </summary>
-public interface IProject:IHasDependencies, INamed, IHasFolder
+public interface IProject : IHasDependencies, INamed, IHasFolder
 {
     /// <summary>
     /// Optional ticket identifier for auditing time, project requirements etc.  Should be compatible with your currently configured <see cref="ITicketingSystem"/>
@@ -38,7 +38,7 @@ public interface IProject:IHasDependencies, INamed, IHasFolder
     /// You can have multiple <see cref="IProject"/> with the same number (in which case they will have shared access to the same cohorts, anonymisation mappings etc).
     /// </summary>
     int? ProjectNumber { get; set; }
-        
+
     /// <summary>
     /// A <see cref="IProject"/> can have multiple <see cref="IExtractionConfiguration"/> defined (e.g. Cases / Controls or multiple extractions over time).  This
     /// returns all current and frozen (released) configurations.
@@ -49,7 +49,7 @@ public interface IProject:IHasDependencies, INamed, IHasFolder
     /// Returns all association links to <see cref="CohortIdentificationConfiguration"/> (cohort queries that are associated with the project).  These are 
     /// association objects not the actual configuration itself.
     /// </summary>
-    IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations {get; }
+    IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations { get; }
 
     /// <summary>
     /// The database in which the object is persisted

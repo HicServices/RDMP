@@ -22,15 +22,15 @@ public abstract class NLogListener
         ThrowOnError = throwOnError;
         Worst = LogLevel.Info;
     }
-        
+
     protected void Log(object sender, LogLevel level, Exception exception, string message)
     {
         if (level > Worst)
             Worst = level;
 
         NLog.LogManager.GetLogger((sender ?? "Null").ToString()).Log(level, exception, message);
-            
+
         if (ThrowOnError && level >= LogLevel.Error)
-            throw exception??new Exception(message);
+            throw exception ?? new Exception(message);
     }
 }

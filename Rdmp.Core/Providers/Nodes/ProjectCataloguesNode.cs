@@ -13,36 +13,32 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Collection of all project specific datasets (<see cref="Catalogue"/>s which can only be used with this <see cref="Project"/>).
 /// </summary>
-public class ProjectCataloguesNode:Node, IOrderable
+public class ProjectCataloguesNode : Node, IOrderable
 {
     public Project Project { get; set; }
-    public int Order { get => 5; set{ } }
+
+    public int Order
+    {
+        get => 5;
+        set { }
+    }
 
     public ProjectCataloguesNode(Project project)
     {
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Project Specific Catalogues";
-    }
+    public override string ToString() => "Project Specific Catalogues";
 
-    protected bool Equals(ProjectCataloguesNode other)
-    {
-        return Project.Equals(other.Project);
-    }
+    protected bool Equals(ProjectCataloguesNode other) => Project.Equals(other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCataloguesNode) obj);
+        return Equals((ProjectCataloguesNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return Project.GetHashCode();
-    }
+    public override int GetHashCode() => Project.GetHashCode();
 }

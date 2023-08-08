@@ -11,10 +11,7 @@ namespace Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 /// </summary>
 public class NullHelpWorkflowProgressProvider : IHelpWorkflowProgressProvider
 {
-    public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
-    {
-        return true;
-    }
+    public bool ShouldShowUserWorkflow(HelpWorkflow workflow) => true;
 
     public void Completed(HelpWorkflow helpWorkflow)
     {

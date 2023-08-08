@@ -57,7 +57,8 @@ public partial class SimpleCohortSetUI : UserControl
         _activator = activator;
         cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
         pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
-        pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();
+        pbExtractionIdentifier.Image =
+            activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();
         pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
         cbxCatalogues.SetItemActivator(activator);
     }
@@ -72,19 +73,23 @@ public partial class SimpleCohortSetUI : UserControl
             return;
 
         //if the Catalogue changes clear the old filters because they apply to the last dataset
-        if(_lastCatalogue != null)
-            if(!Equals(_lastCatalogue, cata))//catalogue has changed
+        if (_lastCatalogue != null)
+            if (!Equals(_lastCatalogue, cata)) //catalogue has changed
             {
                 //if there are no user specified ones clear the mandatory filters (if there are any)
                 if (_filterUIs.All(f => f.Mandatory))
+                {
                     ClearFilters();
+                }
                 else //there are some user specified ones
                 if (
                     //confirm with user before we erase these
                     _activator.YesNo(
                         "Changing the dataset will clear the Filters you have configured, is this what you want?",
                         "Change Dataset"))
+                {
                     ClearFilters();
+                }
                 else
                 {
                     cbxCatalogues.SelectedItem = _lastCatalogue;
@@ -94,7 +99,7 @@ public partial class SimpleCohortSetUI : UserControl
 
         //add any mandatory filters that are not yet part of the configuration
         foreach (var mandatoryFilter in cata.GetAllMandatoryFilters())
-            if(!_filterUIs.Any(f=>f.Filter.Equals(mandatoryFilter)))
+            if (!_filterUIs.Any(f => f.Filter.Equals(mandatoryFilter)))
             {
                 var m = AddFilter(mandatoryFilter);
                 m.Mandatory = true; //mandatory ones cannot be changed or gotten rid of
@@ -109,10 +114,13 @@ public partial class SimpleCohortSetUI : UserControl
 
         //if no columns have yet been marked as IsExtractionIdentifier then we show all columns and demand that the user lock one in
         if (identifiers.Length == 0)
+        {
             UnlockIdentifier(null);
-        else
-        if (identifiers.Length == 1)
-            LockIdentifier(identifiers[0]);//there is only one IsExtractionIdentifier so lock it in automatically
+        }
+        else if (identifiers.Length == 1)
+        {
+            LockIdentifier(identifiers[0]); //there is only one IsExtractionIdentifier so lock it in automatically
+        }
         else
         {
             _knownIdentifiersMode = true;
@@ -143,7 +151,7 @@ public partial class SimpleCohortSetUI : UserControl
         btnLockExtractionIdentifier.Image = _unlinkImage;
 
         //if it isn't yet marked as an extraction identifier save it as one for next time
-        if(!extractionInformation.IsExtractionIdentifier)
+        if (!extractionInformation.IsExtractionIdentifier)
         {
             extractionInformation.IsExtractionIdentifier = true;
             extractionInformation.SaveToDatabase();
@@ -178,11 +186,10 @@ public partial class SimpleCohortSetUI : UserControl
 
     private void btnAddFilter_Click(object sender, EventArgs e)
     {
-        if(ddAvailableFilters.SelectedItem is not ExtractionFilter f)
+        if (ddAvailableFilters.SelectedItem is not ExtractionFilter f)
             return;
 
         AddFilter(f);
-
     }
 
     private SimpleFilterUI AddFilter(ExtractionFilter f)
@@ -228,15 +235,16 @@ public partial class SimpleCohortSetUI : UserControl
             ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
         };
 
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer)
-            {
-                SkipMandatoryFilterCreation = true
-            };
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cataCommand,
+            targetContainer)
+        {
+            SkipMandatoryFilterCreation = true
+        };
         cmd.Execute();
 
         var aggregate = cmd.AggregateCreatedIfAny;
 
-        var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
+        var filterOp = (FilterContainerOperation)ddAndOr.SelectedItem;
 
         IContainer filterContainer;
         if (aggregate.RootFilterContainer_ID != null)
@@ -256,7 +264,8 @@ public partial class SimpleCohortSetUI : UserControl
             var filtersAddedSoFar = new List<IFilter>();
             foreach (var ui in _filterUIs)
             {
-                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository), filterContainer, filtersAddedSoFar.ToArray());
+                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository),
+                    filterContainer, filtersAddedSoFar.ToArray());
                 filtersAddedSoFar.Add(f);
             }
         }
@@ -264,6 +273,5 @@ public partial class SimpleCohortSetUI : UserControl
 
     private void ddAndOr_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 }

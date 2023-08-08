@@ -63,14 +63,14 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 {
     private ColumnInfo _columnInfo;
     private bool _yesToAll = false;
-        
+
     public ColumnInfo ColumnInfo
     {
         get => _columnInfo;
         private set
         {
             _columnInfo = value;
-                
+
             lblName.Text = value.ToString();
             lblDataType.Text = value.Data_type;
         }
@@ -82,7 +82,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         set
         {
             _anoTable = value;
-                
+
             if (value == null)
                 return;
 
@@ -110,13 +110,13 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         ColumnInfo = databaseObject;
 
         //make sure we can connect to the server
-        if(!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad,out var reason))
+        if (!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad, out var reason))
         {
-            activator.KillForm(ParentForm,reason);
+            activator.KillForm(ParentForm, reason);
             return;
         }
 
@@ -131,28 +131,30 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Could not get rowcount of table {ColumnInfo.TableInfo.GetRuntimeName()} using data access context DataLoad", CheckResult.Fail, e));
+                        $"Could not get rowcount of table {ColumnInfo.TableInfo.GetRuntimeName()} using data access context DataLoad",
+                        CheckResult.Fail, e));
             }
 
 
             GeneratePreviews();
-                
+
             RefreshServers();
         }
         catch (Exception e)
         {
-            activator.KillForm(ParentForm,e);
+            activator.KillForm(ParentForm, e);
         }
     }
-        
+
     private void RefreshServers()
     {
         if (ColumnInfo == null)
             return;
-            
+
         ddExternalDatabaseServer.Items.Clear();
-            
-        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<ANOStorePatcher>());
+
+        ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository
+            .GetAllDatabases<ANOStorePatcher>());
 
         var defaultServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
@@ -168,7 +170,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
     {
         ANOTable.NumberOfIntegersToUseInAnonymousRepresentation = Convert.ToInt32(numericUpDown1.Value);
-            
+
         GeneratePreviews();
     }
 
@@ -184,7 +186,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void GeneratePreviews()
     {
-        if(preview == null)
+        if (preview == null)
         {
             preview = new DataTable();
             preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
@@ -192,13 +194,13 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
             var server = DataAccessPortal.ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
-            using(var con = server.GetConnection())
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
                 lblPreviewDataIsFictional.Visible = false;
 
-                var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
+                var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
                 qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                 qb.TopX = 10;
 
@@ -211,25 +213,24 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                     {
                         while (r.Read())
                         {
-                            preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)],DBNull.Value);
+                            preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)], DBNull.Value);
                             rowsRead = true;
                         }
                     }
                 }
-                    
-                if(!rowsRead)
+
+                if (!rowsRead)
                 {
                     lblPreviewDataIsFictional.Visible = true;
-                    if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
+                    if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("char"))
                     {
                         preview.Rows.Add("?", DBNull.Value);
                         preview.Rows.Add("?", DBNull.Value);
                         preview.Rows.Add("?", DBNull.Value);
                         preview.Rows.Add("?", DBNull.Value);
                     }
-                    else if(_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
+                    else if (_columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw).ToLower().Contains("date"))
                     {
-
                         preview.Rows.Add("1977-08-16", DBNull.Value);
                         preview.Rows.Add("1977-08-16", DBNull.Value);
                         preview.Rows.Add("1977-08-16", DBNull.Value);
@@ -242,7 +243,6 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                         preview.Rows.Add("-1", DBNull.Value);
                         preview.Rows.Add("-1", DBNull.Value);
                     }
-                    
                 }
 
                 con.Close();
@@ -250,24 +250,22 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
 
         if (ANOTable != null)
-        {
             try
             {
-                if (preview.Rows.Count!=0)
+                if (preview.Rows.Count != 0)
                 {
                     checksUI1.Clear();
-                    var transformer = new ANOTransformer(ANOTable,new FromCheckNotifierToDataLoadEventListener(checksUI1));
-                    transformer.Transform(preview, preview.Columns[0],preview.Columns[1],true);
+                    var transformer =
+                        new ANOTransformer(ANOTable, new FromCheckNotifierToDataLoadEventListener(checksUI1));
+                    transformer.Transform(preview, preview.Columns[0], preview.Columns[1], true);
                 }
             }
             catch (Exception e)
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
             }
-        }
-            
-        dgPreview.DataSource = preview;
 
+        dgPreview.DataSource = preview;
     }
 
     private void btnCreateNewANOTable_Click(object sender, EventArgs e)
@@ -276,19 +274,20 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         {
             var server = ddExternalDatabaseServer.SelectedItem as ExternalDatabaseServer;
 
-            var a = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text, tbSuffix.Text);
+            var a = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text,
+                tbSuffix.Text);
 
             //if we know the type is e.g. varchar(5)
             var length = ColumnInfo.Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString();
 
-            if (length>0)
+            if (length > 0)
             {
                 a.NumberOfIntegersToUseInAnonymousRepresentation = 0;
-                a.NumberOfCharactersToUseInAnonymousRepresentation = length;//give it a sensible maximal that will work
+                a.NumberOfCharactersToUseInAnonymousRepresentation = length; //give it a sensible maximal that will work
                 a.SaveToDatabase();
             }
 
-            ANOTable = a;//and set the property to it to populate the rest of the form
+            ANOTable = a; //and set the property to it to populate the rest of the form
 
             gbANOTable.Enabled = true;
             gbSelectExistingANOTable.Enabled = false;
@@ -302,22 +301,23 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void ddExternalDatabaseServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
+        if (ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
-        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
+        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad),
+            checksUI1);
     }
 
     private void ddANOTables_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(ddANOTables.SelectedItem == null)
+        if (ddANOTables.SelectedItem == null)
             return;
 
         //get ANOTable input datatype
         var anoTable = (ANOTable)ddANOTables.SelectedItem;
-            
+
         //if table is already on the ANO server
-        if(anoTable.IsTablePushed())
+        if (anoTable.IsTablePushed())
         {
             var anoDatatype = anoTable.GetRuntimeDataType(LoadStage.AdjustRaw);
             var colDatatype = _columnInfo.GetRuntimeDataType(LoadStage.PostLoad);
@@ -326,7 +326,8 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             {
                 checksUI1.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"ANOTable  {anoTable} cannot be used because its input datatype is {anoDatatype} but the data in {_columnInfo} is of datatype {colDatatype}", CheckResult.Fail));
+                        $"ANOTable  {anoTable} cannot be used because its input datatype is {anoDatatype} but the data in {_columnInfo} is of datatype {colDatatype}",
+                        CheckResult.Fail));
                 ddANOTables.SelectedItem = null;
                 return;
             }
@@ -340,13 +341,14 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         gbCreateNewANOTable.Enabled = false;
     }
 
-     
+
     private void btnFinalise_Click(object sender, EventArgs e)
     {
         //if it is not pushed, push it now
         if (!ANOTable.IsTablePushed())
         {
-            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type,
+                new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
             ANOTable.SaveToDatabase();
         }
 
@@ -368,7 +370,9 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to complete migration, your table is likely to be in a sorry state now - sorry", CheckResult.Fail, exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs(
+                "Failed to complete migration, your table is likely to be in a sorry state now - sorry",
+                CheckResult.Fail, exception));
         }
 
         //it worked (or didn't!) so notify changes to the TableInfo
@@ -394,7 +398,6 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void tbANOTableName_TextChanged(object sender, EventArgs e)
     {
-            
         //don't enable the button unless he has typed something
         if (string.IsNullOrWhiteSpace(tbANOTableName.Text))
         {
@@ -440,13 +443,11 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         }
     }
 
-    public override string GetTabName()
-    {
-        return $"Convert {base.GetTabName()} to ANOColumnInfo";
-    }
+    public override string GetTabName() => $"Convert {base.GetTabName()} to ANOColumnInfo";
 }
 
-[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ColumnInfoToANOTableConverterUI_Design, UserControl>))]
+[TypeDescriptionProvider(
+    typeof(AbstractControlDescriptionProvider<ColumnInfoToANOTableConverterUI_Design, UserControl>))]
 public abstract class ColumnInfoToANOTableConverterUI_Design : RDMPSingleDatabaseObjectControl<ColumnInfo>
 {
 }

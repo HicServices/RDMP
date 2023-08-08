@@ -14,7 +14,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// Checks that all Properties on the supplied classInstanceToCheck that are decorated with a [DemandsInitialization] where the Mandatory flag is true have 
 /// a value.
 /// </summary>
-public class MandatoryPropertyChecker:ICheckable
+public class MandatoryPropertyChecker : ICheckable
 {
     private readonly object _classInstanceToCheck;
 
@@ -29,20 +29,19 @@ public class MandatoryPropertyChecker:ICheckable
         foreach (var propertyInfo in _classInstanceToCheck.GetType().GetProperties())
         {
             //see if any demand initialization
-            var demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>().FirstOrDefault();
+            var demand = System.Attribute.GetCustomAttributes(propertyInfo).OfType<DemandsInitializationAttribute>()
+                .FirstOrDefault();
 
             //this one does
             if (demand != null)
-            {
-                if(demand.Mandatory)
+                if (demand.Mandatory)
                 {
                     var value = propertyInfo.GetValue(_classInstanceToCheck);
                     if (value == null || string.IsNullOrEmpty(value.ToString()))
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value", CheckResult.Fail));
-
+                            $"DemandsInitialization Property '{propertyInfo.Name}' is marked Mandatory but does not have a value",
+                            CheckResult.Fail));
                 }
-            }
         }
     }
 }

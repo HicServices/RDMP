@@ -45,6 +45,7 @@ public class CheckColumnProvider
     }
 
     private Task checkingTask;
+
     public void CheckCheckables()
     {
         if (checkingTask != null && !checkingTask.IsCompleted)
@@ -62,13 +63,15 @@ public class CheckColumnProvider
         checkingTask = new Task(() =>
         {
             //only check the items that are visible int he listview
-            foreach (var checkable in GetCheckables())//make copy to prevent synchronization issues
+            foreach (var checkable in GetCheckables()) //make copy to prevent synchronization issues
             {
                 var notifier = new ToMemoryCheckNotifier();
                 checkable.Check(notifier);
 
                 lock (ocheckResultsDictionaryLock)
+                {
                     checkResultsDictionary.Add(checkable, notifier.GetWorst());
+                }
             }
         });
 
@@ -88,7 +91,7 @@ public class CheckColumnProvider
             return;
         }
 
-        var checksCol = _tree.AllColumns.FirstOrDefault(c=>string.Equals(c.Text,ChecksColumnName));
+        var checksCol = _tree.AllColumns.FirstOrDefault(c => string.Equals(c.Text, ChecksColumnName));
 
         if (checksCol != null && !checksCol.IsVisible)
         {
@@ -124,14 +127,11 @@ public class CheckColumnProvider
         {
             if (checkResultsDictionary.TryGetValue(checkable, out var value))
                 return _iconProvider.GetImage(value).ImageToBitmap();
-
         }
+
         //not been checked yet
         return null;
     }
 
-    public IEnumerable<ICheckable> GetCheckables()
-    {
-        return _tree.FilteredObjects.OfType<ICheckable>();
-    }
+    public IEnumerable<ICheckable> GetCheckables() => _tree.FilteredObjects.OfType<ICheckable>();
 }

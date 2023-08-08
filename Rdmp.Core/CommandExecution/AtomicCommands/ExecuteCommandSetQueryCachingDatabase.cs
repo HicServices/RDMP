@@ -20,21 +20,22 @@ public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAto
     private readonly CohortIdentificationConfiguration _cic;
     private ExternalDatabaseServer[] _caches;
 
-    public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator,CohortIdentificationConfiguration cic) : base(activator)
+    public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator, CohortIdentificationConfiguration cic) :
+        base(activator)
     {
         _cic = cic;
 
         _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
             .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
 
-        if(!_caches.Any())
+        if (!_caches.Any())
             SetImpossible("There are no Query Caching databases set up");
     }
 
     public override void Execute()
     {
         base.Execute();
-            
+
         if (SelectOne(_caches.ToList(), out var selected))
         {
             if (selected == null)
@@ -47,13 +48,9 @@ public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAto
         }
     }
 
-    public override string GetCommandName()
-    {
-        return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
-    }
+    public override string GetCommandName() =>
+        _cic.QueryCachingServer_ID == null ? "Set Query Cache" : "Change Query Cache";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
 }

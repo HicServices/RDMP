@@ -23,8 +23,6 @@ public class SharedPluginImporter
         _shareManager = new ShareManager(repositoryLocator);
     }
 
-    public Curation.Data.Plugin Import(Stream stream)
-    {
-        return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<Curation.Data.Plugin>().Single();
-    }
+    public Curation.Data.Plugin Import(Stream stream) =>
+        _shareManager.ImportSharedObject(stream, true).OfType<Curation.Data.Plugin>().Single();
 }

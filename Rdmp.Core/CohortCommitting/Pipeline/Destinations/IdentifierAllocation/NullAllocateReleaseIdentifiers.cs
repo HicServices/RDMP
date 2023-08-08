@@ -10,13 +10,9 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 
 internal class NullAllocateReleaseIdentifiers : IAllocateReleaseIdentifiers
 {
-    public object AllocateReleaseIdentifier(object privateIdentifier)
-    {
-        return DBNull.Value;
-    }
+    public object AllocateReleaseIdentifier(object privateIdentifier) => DBNull.Value;
 
     public void Initialize(ICohortCreationRequest request)
     {
-            
     }
 }

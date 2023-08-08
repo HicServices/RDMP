@@ -32,6 +32,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// ID of the Catalogue that is being extracted by <see cref="_into"/> to ensure that we only import filters from the same table
     /// </summary>
     private readonly ICatalogue _catalogue;
+
     private readonly IRootFilterContainerHost _into;
     private const float DEFAULT_WEIGHT = 1.2f;
 
@@ -45,21 +46,22 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// </summary>
     private IContainer _explicitChoice;
 
-    private ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator):base(activator)
+    private ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator) : base(activator)
     {
         Weight = DEFAULT_WEIGHT;
 
-        if(activator.CoreChildProvider is not DataExportChildProvider)
+        if (activator.CoreChildProvider is not DataExportChildProvider)
             SetImpossible("Data export functions unavailable");
     }
 
-    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into):this(activator)
+    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into) :
+        this(activator)
     {
         Weight = DEFAULT_WEIGHT;
 
         _into = into;
 
-        if(into.RootFilterContainer_ID != null)
+        if (into.RootFilterContainer_ID != null)
             SetImpossible("Dataset already has a root container");
 
 
@@ -78,7 +80,8 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <param name="into"></param>
     /// <param name="from"></param>
     [UseWithObjectConstructor]
-    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, IRootFilterContainerHost from):this(activator,into)
+    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into,
+        IRootFilterContainerHost from) : this(activator, into)
     {
         Weight = DEFAULT_WEIGHT;
 
@@ -94,130 +97,127 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <param name="activator"></param>
     /// <param name="into"></param>
     /// <param name="explicitChoice"></param>
-    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, IContainer explicitChoice):this(activator,into)
+    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into,
+        IContainer explicitChoice) : this(activator, into)
     {
         Weight = DEFAULT_WEIGHT;
 
         _explicitChoice = explicitChoice;
     }
+
     /// <summary>
     /// Constructor for importing into a sub container
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="into"></param>
     /// <param name="explicitChoice"></param>
-    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IContainer into, IContainer explicitChoice):this(activator)
+    public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IContainer into,
+        IContainer explicitChoice) : this(activator)
     {
         Weight = DEFAULT_WEIGHT;
 
         _intoSubContainer = into;
         _explicitChoice = explicitChoice;
+    }
 
-    }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Import);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Import);
 
     public override void Execute()
     {
         base.Execute();
 
-        if(_explicitChoice != null)
+        if (_explicitChoice != null)
         {
             Import(_explicitChoice);
         }
         else
         {
-
-            if(_into == null)
-                throw new NotSupportedException("Interactive mode is only supported when specifying a root object to import into");
+            if (_into == null)
+                throw new NotSupportedException(
+                    "Interactive mode is only supported when specifying a root object to import into");
 
             //prompt user to pick one
             var childProvider = (DataExportChildProvider)BasicActivator.CoreChildProvider;
 
-            var ecById = childProvider.ExtractionConfigurations.ToDictionary(k=>k.ID);
+            var ecById = childProvider.ExtractionConfigurations.ToDictionary(k => k.ID);
 
             // The root object that makes most sense to the user e.g. they select an extraction 
             var fromConfiguration
                 =
                 childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
                     .Cast<DatabaseEntity>()
-                    .Union(childProvider.SelectedDataSets.Where(IsEligible).Select(sds=> ecById[sds.ExtractionConfiguration_ID])).ToList();
+                    .Union(childProvider.SelectedDataSets.Where(IsEligible)
+                        .Select(sds => ecById[sds.ExtractionConfiguration_ID])).ToList();
 
-            if(!fromConfiguration.Any())
+            if (!fromConfiguration.Any())
             {
                 Show("There are no extractions or cohort builder configurations of this dataset that use filters");
                 return;
             }
-                
-            if(SelectOne(fromConfiguration,out var selected))
-            {
-                if(selected is ExtractionConfiguration ec)
-                {
-                    Import(GetEligibleChild(ec).RootFilterContainer);
-                }
-                if(selected is CohortIdentificationConfiguration cic)
-                {
-                    var chosen = SelectOne(GetEligibleChildren(cic).ToList(),null,true);
 
-                    if(chosen != null)
+            if (SelectOne(fromConfiguration, out var selected))
+            {
+                if (selected is ExtractionConfiguration ec) Import(GetEligibleChild(ec).RootFilterContainer);
+                if (selected is CohortIdentificationConfiguration cic)
+                {
+                    var chosen = SelectOne(GetEligibleChildren(cic).ToList(), null, true);
+
+                    if (chosen != null)
                         Import(chosen.RootFilterContainer);
                 }
-
             }
         }
-            
+
         Publish((DatabaseEntity)_into ?? (DatabaseEntity)_intoSubContainer);
     }
 
     private void Import(IContainer from)
     {
-        var factory = 
+        var factory =
             _into != null ? _into.GetFilterFactory() : _intoSubContainer.GetFilterFactory();
-            
+
         IContainer intoContainer;
 
-        if(_into != null)
+        if (_into != null)
         {
             var newRoot = factory.CreateNewContainer();
             newRoot.Operation = from.Operation;
             newRoot.SaveToDatabase();
             _into.RootFilterContainer_ID = newRoot.ID;
             _into.SaveToDatabase();
-                
+
             intoContainer = newRoot;
         }
         else
+        {
             intoContainer = _intoSubContainer;
+        }
 
-        DeepClone(intoContainer,from,factory);            
+        DeepClone(intoContainer, from, factory);
     }
 
-    private void DeepClone(IContainer into,IContainer from, IFilterFactory factory)
+    private void DeepClone(IContainer into, IContainer from, IFilterFactory factory)
     {
         //clone the subcontainers
-        foreach(var container in from.GetSubContainers())
+        foreach (var container in from.GetSubContainers())
         {
             var subContainer = factory.CreateNewContainer();
             subContainer.Operation = container.Operation;
             subContainer.SaveToDatabase();
             into.AddChild(subContainer);
 
-            DeepClone(subContainer,container,factory);            
+            DeepClone(subContainer, container, factory);
         }
 
         var wizard = new FilterImportWizard(BasicActivator);
-            
+
         //clone the filters
-        foreach(var filter in from.GetFilters())
-            into.AddChild(wizard.Import(into,filter));
+        foreach (var filter in from.GetFilters())
+            into.AddChild(wizard.Import(into, filter));
     }
 
-    private bool IsEligible(CohortIdentificationConfiguration arg)
-    {
-        return GetEligibleChildren(arg).Any();
-    }
+    private bool IsEligible(CohortIdentificationConfiguration arg) => GetEligibleChildren(arg).Any();
 
 
     /// <summary>
@@ -227,11 +227,11 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <returns></returns>
     private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
     {
-        if(arg.RootCohortAggregateContainer_ID == null)
+        if (arg.RootCohortAggregateContainer_ID == null)
             return Array.Empty<AggregateConfiguration>();
 
         return arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-            .Where(ac=>ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
+            .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
     }
 
     /// <summary>
@@ -239,13 +239,8 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    private ISelectedDataSets GetEligibleChild(ExtractionConfiguration arg)
-    {
-        return arg.SelectedDataSets.FirstOrDefault(IsEligible);
-    }
+    private ISelectedDataSets GetEligibleChild(ExtractionConfiguration arg) =>
+        arg.SelectedDataSets.FirstOrDefault(IsEligible);
 
-    private bool IsEligible(ISelectedDataSets arg)
-    {
-        return arg.RootFilterContainer_ID != null;
-    }
+    private bool IsEligible(ISelectedDataSets arg) => arg.RootFilterContainer_ID != null;
 }

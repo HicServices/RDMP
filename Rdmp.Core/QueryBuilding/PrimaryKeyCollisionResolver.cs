@@ -29,6 +29,7 @@ public class PrimaryKeyCollisionResolver
     private readonly IQuerySyntaxHelper _querySyntaxHelper;
     private const string WithCTE = "WITH CTE (DuplicateCount)";
     private const string SelectRownum = "\t SELECT ROW_NUMBER()";
+
     private const string DeleteBit =
         @"DELETE 
 FROM CTE 
@@ -48,11 +49,7 @@ WHERE DuplicateCount > 1";
     /// Get the SQL to run to delete records colliding on primary key
     /// </summary>
     /// <returns></returns>
-    public string GenerateSQL()
-    {
-
-        return GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers);
-    }
+    public string GenerateSQL() => GenerateSQL(out var pks, out var resolvers);
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {
@@ -61,7 +58,7 @@ WHERE DuplicateCount > 1";
         var cols = _tableInfo.ColumnInfos.ToArray();
         pks = cols.Where(col => col.IsPrimaryKey).ToArray();
 
-        if(!pks.Any())
+        if (!pks.Any())
             throw new Exception(
                 $"TableInfo {_tableInfo.GetRuntimeName()} does not have any primary keys defined so cannot resolve primary key collisions");
 
@@ -85,7 +82,7 @@ WHERE DuplicateCount > 1";
         //order by the priority of columns
         foreach (var column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
         {
-            if(column is ColumnInfo { IsPrimaryKey: true })
+            if (column is ColumnInfo { IsPrimaryKey: true })
                 throw new Exception(
                     $"Column {column.GetRuntimeName()} is flagged as primary key when it also has a DuplicateRecordResolutionOrder, primary keys cannot be used to resolve duplication since they are the hash!  Resolve this in the CatalogueManager by right clicking the offending TableInfo {_tableInfo.GetRuntimeName()} and editing the resolution order");
 
@@ -99,10 +96,7 @@ WHERE DuplicateCount > 1";
         return sql;
     }
 
-    private string GetTableName()
-    {
-        return _tableInfo.GetRuntimeName(LoadStage.AdjustRaw);
-    }
+    private string GetTableName() => _tableInfo.GetRuntimeName(LoadStage.AdjustRaw);
 
     private string AppendRelevantOrderBySql(string sql, IResolveDuplication col)
     {
@@ -117,12 +111,10 @@ WHERE DuplicateCount > 1";
         var valueType = GetDataType(col.Data_type);
 
         if (valueType == ValueType.CharacterString)
-        {
             //character strings are compared first by LENGTH (to prefer longer data)
             //then by alphabetical comparison to prefer things towards the start of the alphabet (because this makes sense?!)
             return
                 $"{sql}LEN(ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)})){direction},{Environment.NewLine}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
-        }
 
         return
             $"{sql}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
@@ -143,7 +135,7 @@ WHERE DuplicateCount > 1";
         sql += tableNameInRAW + Environment.NewLine;
         sql +=
             $"group by {pks.Aggregate("", (s, n) => $"{s}{_querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw))},")}{Environment.NewLine}";
-        sql = sql.TrimEnd(new[] {',','\r','\n'}) + Environment.NewLine;
+        sql = sql.TrimEnd(new[] { ',', '\r', '\n' }) + Environment.NewLine;
         sql += $"having count(*) > 1{Environment.NewLine}";
         sql += $") then 1 else 0 end{Environment.NewLine}";
 
@@ -159,8 +151,10 @@ WHERE DuplicateCount > 1";
     {
         var basicSQL = GenerateSQL(out var pks, out var resolvers);
 
-        var commaSeparatedPKs = string.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-        var commaSeparatedCols = string.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedPKs = string.Join(",",
+            pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedCols = string.Join(",",
+            resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
         basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
@@ -180,10 +174,13 @@ WHERE DuplicateCount > 1";
         basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-        basicSQL += string.Join("\r\n\t\tand",pks.Select(pk =>  "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL += string.Join("\r\n\t\tand",
+            pks.Select(pk =>
+                "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." +
+                _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
 
         basicSQL += $"\tgroup by{Environment.NewLine}";
-        basicSQL += string.Join(",\r\n", pks.Select( pk =>
+        basicSQL += string.Join(",\r\n", pks.Select(pk =>
             $"\t\t{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
         basicSQL += $"\t\t{Environment.NewLine}";
@@ -238,8 +235,6 @@ WHERE DuplicateCount > 1";
             return ValueType.Freaky;
 
         throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
-
-
     }
 
     /// <summary>
@@ -319,13 +314,15 @@ WHERE DuplicateCount > 1";
             if (min)
                 return "''";
             else
-                throw new NotSupportedException("Cannot think what the maxmimum character string would be, maybe use min = true instead?");
+                throw new NotSupportedException(
+                    "Cannot think what the maxmimum character string would be, maybe use min = true instead?");
 
         if (valueType == ValueType.DateTime)
             if (min)
                 return "'1753-1-1'";
             else
-                throw new NotSupportedException("Cannot think what the maxmimum date would be, maybe use min = true instead?");
+                throw new NotSupportedException(
+                    "Cannot think what the maxmimum date would be, maybe use min = true instead?");
 
         if (valueType == ValueType.Time)
             if (min)
@@ -343,7 +340,6 @@ WHERE DuplicateCount > 1";
 
 
         throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}");
-
     }
 
     private enum ValueType

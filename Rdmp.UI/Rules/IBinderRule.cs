@@ -14,5 +14,5 @@ namespace Rdmp.UI.Rules;
 /// </summary>
 public interface IBinderRule
 {
-    ErrorProvider ErrorProvider { get;}
+    ErrorProvider ErrorProvider { get; }
 }

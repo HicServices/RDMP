@@ -46,24 +46,18 @@ public class CohortIdentificationConfigurationUICommon
     public int Timeout = 3000;
 
     public CohortCompiler Compiler { get; }
+
     public CohortIdentificationConfigurationUICommon()
     {
         Compiler = new CohortCompiler(null);
     }
-    public object Working_AspectGetter(object rowobject)
-    {
-        return GetKey(rowobject)?.State;
-    }
 
-    public object Time_AspectGetter(object rowobject)
-    {
-        return GetKey(rowobject)?.ElapsedTime?.ToString(@"hh\:mm\:ss");
-    }
+    public object Working_AspectGetter(object rowobject) => GetKey(rowobject)?.State;
 
-    public object CumulativeTotal_AspectGetter(object rowobject)
-    {
-        return GetKey(rowobject)?.CumulativeRowCount?.ToString("N0");
-    }
+    public object Time_AspectGetter(object rowobject) => GetKey(rowobject)?.ElapsedTime?.ToString(@"hh\:mm\:ss");
+
+    public object CumulativeTotal_AspectGetter(object rowobject) =>
+        GetKey(rowobject)?.CumulativeRowCount?.ToString("N0");
 
     public ICompileable GetKey(object rowobject)
     {
@@ -71,7 +65,6 @@ public class CohortIdentificationConfigurationUICommon
         {
             return
                 Compiler?.Tasks?.Keys.FirstOrDefault(k =>
-
                     (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j
                                                             && j.AggregateConfiguration_ID == ac.ID)
                     || k.Child.Equals(rowobject));
@@ -97,11 +90,9 @@ public class CohortIdentificationConfigurationUICommon
 
         return null;
     }
-    public static object Catalogue_AspectGetter(object rowobject)
-    {
-        return
-            rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
-    }
+
+    public static object Catalogue_AspectGetter(object rowobject) =>
+        rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
 
     public object ExecuteAspectGetter(object rowObject)
     {
@@ -134,10 +125,11 @@ public class CohortIdentificationConfigurationUICommon
             return task.State;
         }
     }
-    public bool IsExecutingGlobalOperations()
-    {
-        return Runner != null && Runner.ExecutionPhase != CohortCompilerRunner.Phase.None && Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
-    }
+
+    public bool IsExecutingGlobalOperations() => Runner != null &&
+                                                 Runner.ExecutionPhase != CohortCompilerRunner.Phase.None &&
+                                                 Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
+
     private static Operation GetNextOperation(CompilationState currentState)
     {
         return currentState switch
@@ -169,7 +161,6 @@ public class CohortIdentificationConfigurationUICommon
         //Could have configured/unconfigured a joinable state
         foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTask>())
             j.RefreshIsUsedState();
-
     }
 
     public void SetShowCumulativeTotals(bool show)
@@ -206,6 +197,7 @@ public class CohortIdentificationConfigurationUICommon
             Activator.ShowException("Task failed to build", task.CrashMessage);
             return;
         }
+
         //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
         Compiler.CancelTask(task, true);
 
@@ -239,15 +231,9 @@ public class CohortIdentificationConfigurationUICommon
         {
             var kvps = Compiler.Tasks.Where(t => t.Key.Child.Equals(o)).ToArray();
 
-            if (kvps.Length == 0)
-            {
-                return null;
-            }
+            if (kvps.Length == 0) return null;
 
-            if (kvps.Length == 1)
-            {
-                return kvps[0].Key;
-            }
+            if (kvps.Length == 1) return kvps[0].Key;
 
             var running = kvps.FirstOrDefault(k => k.Value != null).Key;
 
@@ -298,6 +284,7 @@ public class CohortIdentificationConfigurationUICommon
 
 
     #region Job control
+
     public enum Operation
     {
         Execute,
@@ -311,18 +298,18 @@ public class CohortIdentificationConfigurationUICommon
         var allTasks = GetAllTasks();
 
         //if any are still executing or scheduled for execution
-        if (allTasks.Any(t => t.State == CompilationState.Executing || t.State == CompilationState.Building || t.State == CompilationState.Scheduled))
+        if (allTasks.Any(t =>
+                t.State == CompilationState.Executing || t.State == CompilationState.Building ||
+                t.State == CompilationState.Scheduled))
             return Operation.Cancel;
 
         //if all are complete
         return Operation.Execute;
     }
+
     #endregion
 
-    public ICompileable[] GetAllTasks()
-    {
-        return Compiler.Tasks.Keys.ToArray();
-    }
+    public ICompileable[] GetAllTasks() => Compiler.Tasks.Keys.ToArray();
 
     /// <summary>
     /// Considers the state of <see cref="Compiler"/> to check for still running
@@ -339,7 +326,7 @@ public class CohortIdentificationConfigurationUICommon
             {
                 Activator.Show("Confirm Close",
                     $"There are {aliveCount} Tasks currently executing, you must cancel them before closing");
-                
+
                 return true;
             }
 
@@ -368,16 +355,14 @@ public class CohortIdentificationConfigurationUICommon
                 else
                     OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
             }
+
             if (o is CohortAggregateContainer container)
-            {
                 OrderActivity(GetNextOperation(GetState(container)), container);
-            }
         });
     }
 
-    public void StartAll(Action afterDelegate,EventHandler onRunnerPhaseChanged)
+    public void StartAll(Action afterDelegate, EventHandler onRunnerPhaseChanged)
     {
-
         //only allow starting all if we are not mid execution already
         if (IsExecutingGlobalOperations())
             return;
@@ -395,11 +380,8 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception e)
             {
-                Activator.ShowException("Runer crashed",e);
+                Activator.ShowException("Runer crashed", e);
             }
-
-        }).ContinueWith((s, e) => {
-            afterDelegate();
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        }).ContinueWith((s, e) => { afterDelegate(); }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }

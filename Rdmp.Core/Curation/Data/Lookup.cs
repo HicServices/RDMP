@@ -41,6 +41,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
 
 
     #region Database Properties
+
     private int _description_ID;
     private int _foreignKey_ID;
     private int _primaryKey_ID;
@@ -92,6 +93,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     #endregion
 
     #region Relationships
+
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
@@ -130,11 +132,11 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             return _primaryKey;
         }
     }
+
     #endregion
 
     public Lookup()
     {
-
     }
 
     /// <summary>
@@ -146,7 +148,8 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="primaryKey">The lookup table column that contains the code e.g. z_DrugLookup.Code</param>
     /// <param name="type"></param>
     /// <param name="collation"></param>
-    public Lookup(ICatalogueRepository repository, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey, ExtractionJoinType type, string collation)
+    public Lookup(ICatalogueRepository repository, ColumnInfo description, ColumnInfo foreignKey, ColumnInfo primaryKey,
+        ExtractionJoinType type, string collation)
     {
         //do checks before it hits the database.
         if (foreignKey.ID == primaryKey.ID)
@@ -156,18 +159,19 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
 
         if (description.TableInfo_ID != primaryKey.TableInfo_ID)
-            throw new ArgumentException("Join Key 2 must be in the same table as the Description ColumnInfo (i.e. Primary Key)");
+            throw new ArgumentException(
+                "Join Key 2 must be in the same table as the Description ColumnInfo (i.e. Primary Key)");
 
-        if(description.ID == primaryKey.ID)
+        if (description.ID == primaryKey.ID)
             throw new ArgumentException("Description Column and PrimaryKey Column cannot be the same column!");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Description_ID", description.ID},
-            {"ForeignKey_ID", foreignKey.ID},
-            {"PrimaryKey_ID", primaryKey.ID},
-            {"ExtractionJoinType", type.ToString()},
-            {"Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation}
+            { "Description_ID", description.ID },
+            { "ForeignKey_ID", foreignKey.ID },
+            { "PrimaryKey_ID", primaryKey.ID },
+            { "ExtractionJoinType", type.ToString() },
+            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
         });
     }
 
@@ -190,12 +194,10 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
 
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return ToStringCached();
-    }
+    public override string ToString() => ToStringCached();
 
     private string _cachedToString = null;
+
     private string ToStringCached()
     {
         return _cachedToString ??= $" {ForeignKey.Name} = {PrimaryKey.Name}";
@@ -208,20 +210,19 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="foreignKeyTable">The main dataset table</param>
     /// <param name="primaryKeyTable">The hypothesized lookup table</param>
     /// <returns>All lookup relationships, a given table could have 2+ of these e.g. SendingLocation and DischargeLocation could both reference z_Location lookup</returns>
-    public static Lookup[] GetAllLookupsBetweenTables(TableInfo foreignKeyTable,TableInfo primaryKeyTable)
+    public static Lookup[] GetAllLookupsBetweenTables(TableInfo foreignKeyTable, TableInfo primaryKeyTable)
     {
         var toReturn = new List<Lookup>();
 
-        if(foreignKeyTable.Equals(primaryKeyTable))
+        if (foreignKeyTable.Equals(primaryKeyTable))
             throw new NotSupportedException("Tables must be different");
 
-        if(!foreignKeyTable.Repository.Equals(primaryKeyTable.Repository))
+        if (!foreignKeyTable.Repository.Equals(primaryKeyTable.Repository))
             throw new NotSupportedException("TableInfos come from different repositories!");
 
-        var repo = (CatalogueRepository) foreignKeyTable.Repository;
+        var repo = (CatalogueRepository)foreignKeyTable.Repository;
         using (var con = repo.GetConnection())
         {
-
             using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
   WHERE 
   (SELECT TableInfo_ID FROM ColumnInfo where ID = PrimaryKey_ID) = @primaryKeyTableID
@@ -236,8 +237,10 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
                 cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
 
                 using (var r = cmd.ExecuteReader())
+                {
                     while (r.Read())
                         toReturn.Add(new Lookup(repo, r));
+                }
             }
 
             return toReturn.ToArray();
@@ -250,14 +253,14 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-            
         if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Foreign Key and Primary Key are from the same table for Lookup {ID}",CheckResult.Fail));
+                $"Foreign Key and Primary Key are from the same table for Lookup {ID}", CheckResult.Fail));
 
         if (Description.TableInfo_ID != PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}", CheckResult.Fail));
+                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}",
+                CheckResult.Fail));
     }
 
     /// <inheritdoc/>
@@ -271,31 +274,28 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             throw new ArgumentException("Join Key 1 and Join Key 2 are from the same table, this is not cool");
 
         if (Description.TableInfo_ID != PrimaryKey.TableInfo_ID)
-            throw new ArgumentException("Join Key 2 must be in the same table as the Description ColumnInfo (i.e. Primary Key)");
+            throw new ArgumentException(
+                "Join Key 2 must be in the same table as the Description ColumnInfo (i.e. Primary Key)");
 
         base.SaveToDatabase();
     }
 
     /// <inheritdoc/>
-    public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
-    {
-        return Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID" , ID);
-    }
+    public IEnumerable<ISupplementalJoin> GetSupplementalJoins() =>
+        Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID", ID);
+
     /// <inheritdoc/>
-    public ExtractionJoinType GetInvertedJoinType()
-    {
-        throw new NotSupportedException("Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
-    }
+    public ExtractionJoinType GetInvertedJoinType() => throw new NotSupportedException(
+        "Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {Description, ForeignKey, PrimaryKey};
+        return new[] { Description, ForeignKey, PrimaryKey };
     }
+
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return null;
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => null;
 
     /// <summary>
     /// Tells the the <see cref="Lookup"/> what the objects are referenced by <see cref="PrimaryKey_ID"/>, <see cref="ForeignKey_ID"/> and
@@ -306,7 +306,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="descriptionColumn"></param>
     public void SetKnownColumns(ColumnInfo primaryKey, ColumnInfo foreignKey, ColumnInfo descriptionColumn)
     {
-        if(PrimaryKey_ID != primaryKey.ID || ForeignKey_ID != foreignKey.ID || Description_ID != descriptionColumn.ID)
+        if (PrimaryKey_ID != primaryKey.ID || ForeignKey_ID != foreignKey.ID || Description_ID != descriptionColumn.ID)
             throw new Exception("Injected arguments did not match on ID");
 
         _primaryKey = primaryKey;
@@ -315,8 +315,6 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <inheritdoc/>
-    public string GetCustomJoinSql()
-    {
-        return CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql,this).FirstOrDefault()?.Value;
-    }
+    public string GetCustomJoinSql() => CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
+        .FirstOrDefault()?.Value;
 }

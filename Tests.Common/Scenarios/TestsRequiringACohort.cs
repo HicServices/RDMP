@@ -37,6 +37,7 @@ public class TestsRequiringACohort : TestsRequiringA
     /// Set the Project_ID to your project to make this 'custom data'
     /// </summary>
     protected ExtractableDataSet CustomExtractableDataSet;
+
     protected ICatalogue CustomCatalogue;
     protected DiscoveredTable CustomTable;
     protected ITableInfo CustomTableInfo;
@@ -47,14 +48,13 @@ public class TestsRequiringACohort : TestsRequiringA
     protected readonly Dictionary<string, string> _cohortKeysGenerated = new();
 
 
-
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
     {
         base.OneTimeSetUp();
-            
+
         CreateCohortDatabase();
-            
+
         EmptyCohortTables();
         SetupCohortDefinitionAndCustomTable();
 
@@ -79,7 +79,7 @@ public class TestsRequiringACohort : TestsRequiringA
     {
         _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
 
-        if(_cohortDatabase.Exists())
+        if (_cohortDatabase.Exists())
             DeleteTables(_cohortDatabase);
         else
             _cohortDatabase.Create();
@@ -135,7 +135,8 @@ GO
         if (alreadyExisting != null)
         {
             //remove dependencies cohorts
-            var toCleanup = DataExportRepository.GetAllObjects<ExtractableCohort>().SingleOrDefault(ec => ec.OriginID == cohortIDInTestData);
+            var toCleanup = DataExportRepository.GetAllObjects<ExtractableCohort>()
+                .SingleOrDefault(ec => ec.OriginID == cohortIDInTestData);
 
 
             if (toCleanup != null)
@@ -152,19 +153,20 @@ GO
             alreadyExisting.DeleteInDatabase();
         }
 
-        var newExternal = new ExternalCohortTable(DataExportRepository, "TestExternalCohort",DatabaseType.MicrosoftSQLServer)
-        {
-            Database = CohortDatabaseName,
-            Server = _cohortDatabase.Server.Name,
-            DefinitionTableName = definitionTableName,
-            TableName = cohortTableName,
-            Name = ExternalCohortTableNameInCatalogue,
-            Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
-            Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
-            PrivateIdentifierField = "PrivateID",
-            ReleaseIdentifierField = "ReleaseID",
-            DefinitionTableForeignKeyField = "cohortDefinition_id"
-        };
+        var newExternal =
+            new ExternalCohortTable(DataExportRepository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = CohortDatabaseName,
+                Server = _cohortDatabase.Server.Name,
+                DefinitionTableName = definitionTableName,
+                TableName = cohortTableName,
+                Name = ExternalCohortTableNameInCatalogue,
+                Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
+                Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
+                PrivateIdentifierField = "PrivateID",
+                ReleaseIdentifierField = "ReleaseID",
+                DefinitionTableForeignKeyField = "cohortDefinition_id"
+            };
 
         newExternal.SaveToDatabase();
 
@@ -174,7 +176,7 @@ GO
     private void CreateExtractableCohort()
     {
         _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData);
-        Assert.AreEqual(_extractableCohort.OriginID,cohortIDInTestData);
+        Assert.AreEqual(_extractableCohort.OriginID, cohortIDInTestData);
     }
 
     private void SetupCohortDefinitionAndCustomTable()
@@ -183,17 +185,18 @@ GO
         dt.Columns.Add("SuperSecretThing");
         dt.Columns.Add("PrivateID");
 
-        dt.Rows.Add(new[] {"monkeys can all secretly fly", "Priv_12345"});
+        dt.Rows.Add(new[] { "monkeys can all secretly fly", "Priv_12345" });
         dt.Rows.Add(new[] { "the wizard of OZ was a man behind a machine", "Priv_wtf11" });
 
         CustomTable = _cohortDatabase.CreateTable("custTable99", dt);
 
         new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out var cols);
 
-        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out CatalogueItem[] cis, out var eis);
+        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out var cis,
+            out var eis);
 
         CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
-            
+
         foreach (var e in eis)
         {
             e.ExtractionCategory = ExtractionCategory.ProjectSpecific;
@@ -211,30 +214,33 @@ GO
                 $"INSERT INTO {definitionTableName} (id,projectNumber,description,version) VALUES ({cohortIDInTestData},{projectNumberInTestData},'unitTestDataForCohort',1)";
 
             con.Open();
-            using(var cmd = _cohortDatabase.Server.GetCommand(insertSQL, con))
+            using (var cmd = _cohortDatabase.Server.GetCommand(insertSQL, con))
+            {
                 cmd.ExecuteNonQuery();
+            }
         }
     }
 
 
     protected void EmptyCohortTables()
     {
-
         using (var con = _cohortDatabase.Server.GetConnection())
         {
             con.Open();
 
             //clear out old data
-            using(var cmdDelete =
-                  _cohortDatabase.Server.GetCommand(
-                      $"DELETE FROM {cohortTableName}; DELETE FROM {definitionTableName};", con))
+            using (var cmdDelete =
+                   _cohortDatabase.Server.GetCommand(
+                       $"DELETE FROM {cohortTableName}; DELETE FROM {definitionTableName};", con))
+            {
                 cmdDelete.ExecuteNonQuery();
+            }
         }
     }
 
     private void InsertIntoCohortTable(string privateID, string publicID)
     {
-        _cohortKeysGenerated.Add(privateID,publicID);
+        _cohortKeysGenerated.Add(privateID, publicID);
 
         using (var con = _cohortDatabase.Server.GetConnection())
         {
@@ -243,9 +249,10 @@ GO
             var insertIntoList =
                 $"INSERT INTO Cohort(PrivateID,ReleaseID,cohortDefinition_id) VALUES ('{privateID}','{publicID}',{cohortIDInTestData})";
 
-            using(var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con))
+            using (var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con))
+            {
                 Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
+            }
         }
     }
-
 }

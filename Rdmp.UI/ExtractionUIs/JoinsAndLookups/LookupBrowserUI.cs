@@ -55,7 +55,7 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
         }
         catch (System.Exception ex)
         {
-            CommonFunctionality.Fatal("Could not connect to database",ex);
+            CommonFunctionality.Fatal("Could not connect to database", ex);
         }
     }
 
@@ -64,27 +64,28 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
         var repo = new MemoryCatalogueRepository();
 
         var qb = new QueryBuilder("distinct", null);
-        qb.AddColumn(new ColumnInfoToIColumn(repo,_keyColumn) { Order = 0 });
-        qb.AddColumn(new ColumnInfoToIColumn(repo,_descriptionColumn) { Order = 1 });
+        qb.AddColumn(new ColumnInfoToIColumn(repo, _keyColumn) { Order = 0 });
+        qb.AddColumn(new ColumnInfoToIColumn(repo, _descriptionColumn) { Order = 1 });
         qb.TopX = 100;
 
 
-        var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
+        var container = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.AND);
 
-        if(!string.IsNullOrWhiteSpace(tbCode.Text))
+        if (!string.IsNullOrWhiteSpace(tbCode.Text))
         {
-            var codeFilter = new SpontaneouslyInventedFilter(repo,container,
+            var codeFilter = new SpontaneouslyInventedFilter(repo, container,
                 $"{_keyColumn.GetFullyQualifiedName()} LIKE '{tbCode.Text}%'", "Key Starts", "", null);
             container.AddChild(codeFilter);
         }
-            
-        if(!string.IsNullOrWhiteSpace(tbDescription.Text))
+
+        if (!string.IsNullOrWhiteSpace(tbDescription.Text))
         {
-            var codeFilter = new SpontaneouslyInventedFilter(repo,container,
-                $"{_descriptionColumn.GetFullyQualifiedName()} LIKE '%{tbDescription.Text}%'", "Description Contains", "", null);
+            var codeFilter = new SpontaneouslyInventedFilter(repo, container,
+                $"{_descriptionColumn.GetFullyQualifiedName()} LIKE '%{tbDescription.Text}%'", "Description Contains",
+                "", null);
             container.AddChild(codeFilter);
         }
-            
+
         qb.RootFilterContainer = container;
 
         return qb.SQL;
@@ -124,6 +125,6 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupBrowserUI_Design, UserControl>))]
-public abstract class LookupBrowserUI_Design: RDMPSingleDatabaseObjectControl<Lookup>
+public abstract class LookupBrowserUI_Design : RDMPSingleDatabaseObjectControl<Lookup>
 {
 }

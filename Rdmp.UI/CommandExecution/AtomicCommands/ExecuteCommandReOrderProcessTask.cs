@@ -16,7 +16,9 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
     private readonly InsertOption _insertOption;
     private ProcessTask _sourceProcessTask;
 
-    public ExecuteCommandReOrderProcessTask(IActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, ProcessTask targetProcessTask, InsertOption insertOption) : base(activator)
+    public ExecuteCommandReOrderProcessTask(IActivateItems activator,
+        ProcessTaskCombineable sourceProcessTaskCombineable, ProcessTask targetProcessTask,
+        InsertOption insertOption) : base(activator)
     {
         _targetProcessTask = targetProcessTask;
         _insertOption = insertOption;
@@ -24,11 +26,9 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
 
         if (_sourceProcessTask.LoadMetadata_ID != targetProcessTask.LoadMetadata_ID)
             SetImpossible("ProcessTasks must belong to the same Load");
-        else
-        if (_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
+        else if (_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
             SetImpossible("ProcessTasks must belong in the same LoadStage to be ReOrdered");
-        else
-        if(_insertOption == InsertOption.Default)
+        else if (_insertOption == InsertOption.Default)
             SetImpossible("Drag above or below to ReOrder");
     }
 
@@ -42,9 +42,8 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
 
         if (_insertOption == InsertOption.InsertAbove)
         {
-
             destinationOrder = _targetProcessTask.Order - 1;
-                
+
             foreach (var pt in lmd.ProcessTasks)
             {
                 //don't change the current one again
@@ -60,7 +59,6 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
         }
         else
         {
-
             destinationOrder = _targetProcessTask.Order + 1;
 
             foreach (var pt in lmd.ProcessTasks)

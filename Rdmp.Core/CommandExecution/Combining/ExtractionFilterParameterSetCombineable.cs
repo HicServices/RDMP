@@ -11,14 +11,12 @@ namespace Rdmp.Core.CommandExecution.Combining;
 public class ExtractionFilterParameterSetCombineable : ICombineToMakeCommand
 {
     public ExtractionFilterParameterSet ParameterSet { get; }
+
     public ExtractionFilterParameterSetCombineable(ExtractionFilterParameterSet parameterSet)
     {
         ParameterSet = parameterSet;
     }
 
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

@@ -12,32 +12,29 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomicCommand
 {
     private CohortAggregateContainer _container;
-        
-    public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
+
+    public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container) :
+        base(activator)
     {
         Weight = 0.12f;
 
         _container = container;
 
-        if (container.ShouldBeReadOnly(out var reason))
-        {
-            SetImpossible(reason);
-        }
+        if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CohortAggregateContainer,OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortAggregateContainer, OverlayKind.Add);
 
     public override void Execute()
     {
         base.Execute();
 
-        var newContainer = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+        var newContainer =
+            new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
         _container.AddChild(newContainer);
         Publish(_container);
         Emphasise(newContainer);

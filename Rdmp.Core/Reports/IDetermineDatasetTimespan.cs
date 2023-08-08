@@ -31,5 +31,6 @@ public interface IDetermineDatasetTimespan
     /// <param name="discardOutliers">True to attempt to throw out outlier rows when determining the dataset timespan</param>
     /// <param name="accurateAsOf">The date at which the timespan was calculated e.g. if the result is cached</param>
     /// <returns></returns>
-    Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf);
+    Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,
+        out DateTime? accurateAsOf);
 }

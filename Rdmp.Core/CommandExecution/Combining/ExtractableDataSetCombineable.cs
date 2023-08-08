@@ -18,7 +18,7 @@ public class ExtractableDataSetCombineable : ICombineToMakeCommand
 
     public ExtractableDataSetCombineable(ExtractableDataSet extractableDataSet)
     {
-        ExtractableDataSets = new ExtractableDataSet[]{extractableDataSet};
+        ExtractableDataSets = new ExtractableDataSet[] { extractableDataSet };
     }
 
     public ExtractableDataSetCombineable(ExtractableDataSet[] extractableDataSetArray)
@@ -28,12 +28,10 @@ public class ExtractableDataSetCombineable : ICombineToMakeCommand
 
     public ExtractableDataSetCombineable(ExtractableDataSetPackage extractableDataSetPackage)
     {
-        var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
-        ExtractableDataSets = repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
+        var repository = (IDataExportRepository)extractableDataSetPackage.Repository;
+        ExtractableDataSets =
+            repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
     }
 
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

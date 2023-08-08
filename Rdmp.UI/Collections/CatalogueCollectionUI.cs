@@ -49,6 +49,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     //constructor
 
     private bool bLoading = true;
+
     public CatalogueCollectionUI()
     {
         InitializeComponent();
@@ -88,10 +89,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
     protected override void Dispose(bool disposing)
     {
-        if (disposing && components != null)
-        {
-            components.Dispose();
-        }
+        if (disposing && components != null) components.Dispose();
         base.Dispose(disposing);
     }
 
@@ -113,40 +111,49 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
             if (newCatalogues.Any())
             {
-                oRefreshFrom = rootFolder;//refresh from the root instead
+                oRefreshFrom = rootFolder; //refresh from the root instead
                 tlvCatalogues.RefreshObject(oRefreshFrom);
             }
         }
 
         _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
-            
+
         if (isFirstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvColumn1, new Guid("1d912137-22ab-4536-b40b-bd984e27dc7a"));
             CommonTreeFunctionality.SetupColumnTracking(olvOrder, new Guid("0d8e6e49-03ae-48f2-9bf8-acc5107f65f8"));
             CommonTreeFunctionality.SetupColumnTracking(olvFilters, new Guid("c4c9b2ac-c9b5-4d23-b06d-d1f55013b4e9"));
 
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator), GlobalStrings.FromFile,null, NewMenu);
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator), GlobalStrings.FromDatabase,null, NewMenu);
-            CommonFunctionality.Add(new ExecuteCommandCreateNewEmptyCatalogue(Activator),"Empty Catalogue (Advanced)", null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),
+                GlobalStrings.FromFile, null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
+                GlobalStrings.FromDatabase, null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandCreateNewEmptyCatalogue(Activator), "Empty Catalogue (Advanced)",
+                null, NewMenu);
 
             CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-            CommonFunctionality.Add(new ExecuteCommandAddNewCatalogueItem(Activator,null) , "CatalogueItem", null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandAddNewCatalogueItem(Activator, null), "CatalogueItem", null,
+                NewMenu);
 
             CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-            CommonFunctionality.Add(new ExecuteCommandAddNewAggregateGraph(Activator, null), "Aggregate Graph", null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandAddNewAggregateGraph(Activator, null), "Aggregate Graph", null,
+                NewMenu);
 
             CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-            CommonFunctionality.Add(new ExecuteCommandAddNewSupportingDocument(Activator, null), "Supporting Document", null, NewMenu);
-            CommonFunctionality.Add(new ExecuteCommandAddNewSupportingSqlTable(Activator, null), "Supporting SQL Table", null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandAddNewSupportingDocument(Activator, null), "Supporting Document",
+                null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandAddNewSupportingSqlTable(Activator, null), "Supporting SQL Table",
+                null, NewMenu);
 
             CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-            CommonFunctionality.Add(new ExecuteCommandCreateNewGovernancePeriod(Activator), "Governance Period", null, NewMenu);
-            CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandCreateNewGovernancePeriod(Activator), "Governance Period", null,
+                NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator, null), "Governance Document",
+                null, NewMenu);
         }
 
         if (isFirstTime || Equals(oRefreshFrom, rootFolder))
@@ -156,12 +163,12 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             isFirstTime = false;
         }
     }
-        
+
     public void ApplyFilters()
     {
-        if(bLoading)
+        if (bLoading)
             return;
-            
+
         tlvCatalogues.UseFiltering = true;
         tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(Activator.CoreChildProvider);
     }
@@ -173,14 +180,15 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         ExtractionBroken,
         TOP1Worked
     }
-        
+
     private object FilterAspectGetter(object rowObject)
     {
         try
         {
             if (rowObject is CatalogueItem cataItem)
-                return Activator.RefreshBus.PublishInProgress ? (object) null:
-                    Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
+                return Activator.RefreshBus.PublishInProgress
+                    ? (object)null
+                    : Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
         }
         catch (Exception)
         {
@@ -208,26 +216,30 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         CommonTreeFunctionality.MaintainRootObjects = new[]
         {
-            typeof (AllGovernanceNode),
-            typeof (FolderNode<Catalogue>)
+            typeof(AllGovernanceNode),
+            typeof(FolderNode<Catalogue>)
         };
 
         //Things that are always visible regardless
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
         {
-            new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator){OverrideCommandName = "Add New Catalogue From File...",Weight = -50.9f},
-            new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "Add New Catalogue From Database..." ,Weight = -50.8f},
-            new ExecuteCommandCreateNewEmptyCatalogue(Activator){OverrideCommandName = "Add New Empty Catalogue (Advanced)", Weight = -50.7f},
+            new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)
+                { OverrideCommandName = "Add New Catalogue From File...", Weight = -50.9f },
+            new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator)
+                { OverrideCommandName = "Add New Catalogue From Database...", Weight = -50.8f },
+            new ExecuteCommandCreateNewEmptyCatalogue(Activator)
+                { OverrideCommandName = "Add New Empty Catalogue (Advanced)", Weight = -50.7f },
 
-            new ExecuteCommandAddNewCatalogueItem(Activator, null){ Weight = -49.9f},
+            new ExecuteCommandAddNewCatalogueItem(Activator, null) { Weight = -49.9f },
 
-            new ExecuteCommandAddNewAggregateGraph(Activator, null){ Weight = -48.9f},
+            new ExecuteCommandAddNewAggregateGraph(Activator, null) { Weight = -48.9f },
 
-            new ExecuteCommandAddNewSupportingDocument(Activator, null){ Weight = -46.9f},
-            new ExecuteCommandAddNewSupportingSqlTable(Activator, null){ Weight = -46.8f},
+            new ExecuteCommandAddNewSupportingDocument(Activator, null) { Weight = -46.9f },
+            new ExecuteCommandAddNewSupportingSqlTable(Activator, null) { Weight = -46.8f },
 
-            new ExecuteCommandCreateNewGovernancePeriod(Activator){OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
-            new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f }
+            new ExecuteCommandCreateNewGovernancePeriod(Activator)
+                { OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
+            new ExecuteCommandAddNewGovernanceDocument(Activator, null) { Weight = 44.9f }
         };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
@@ -243,7 +255,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         //user wants this object emphasised
         var c = args.Request.ObjectToEmphasise as Catalogue;
-            
+
         if (c == null)
         {
             var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
@@ -251,7 +263,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             if (descendancy != null)
                 c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
         }
-            
+
         if (c != null)
         {
             catalogueCollectionFilterUI1.EnsureVisible(c);
@@ -276,25 +288,20 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             return;
         }
 
-        if( o is CatalogueItem || o is AggregateConfiguration ||
+        if (o is CatalogueItem || o is AggregateConfiguration ||
             o is ColumnInfo || o is TableInfo || o is ExtractionFilter || o is ExtractionFilterParameter ||
             o is ExtractionFilterParameterSet || o is ExtractionInformation ||
             o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter)
-        {
             //then refresh us
             RefreshUIFromDatabase(o);
-        }
 
         ApplyFilters();
     }
-        
+
     public static bool IsRootObject(object root)
     {
         // The root ICatalogue FolderNode is a root element in this tree
-        if(root is FolderNode<Catalogue> f)
-        {
-            return f.Name == FolderHelper.Root;
-        }
+        if (root is FolderNode<Catalogue> f) return f.Name == FolderHelper.Root;
 
         // as is the GovernanceNode
         return root is AllGovernanceNode;

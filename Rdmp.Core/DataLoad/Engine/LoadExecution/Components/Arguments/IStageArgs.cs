@@ -16,9 +16,9 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 /// </summary>
 public interface IStageArgs
 {
-    DiscoveredDatabase DbInfo { get;}
+    DiscoveredDatabase DbInfo { get; }
     Dictionary<string, object> ToDictionary();
 
     ILoadDirectory RootDir { get; }
-    LoadStage LoadStage { get;}
+    LoadStage LoadStage { get; }
 }

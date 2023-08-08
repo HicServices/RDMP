@@ -19,13 +19,12 @@ internal class FatalErrorLoggingTest : DatabaseTests
     [TestCase]
     public void CreateNewDataLoadTask()
     {
-
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
-            
+
         lm.CreateNewLoggingTaskIfNotExists("Fish");
 
-        Assert.Contains("Fish",lm.ListDataTasks());
-        Assert.Contains("Fish",lm.ListDataSets());
+        Assert.Contains("Fish", lm.ListDataTasks());
+        Assert.Contains("Fish", lm.ListDataSets());
 
         lm.CreateNewLoggingTaskIfNotExists("Fish");
         lm.CreateNewLoggingTaskIfNotExists("Fish");
@@ -40,14 +39,13 @@ internal class FatalErrorLoggingTest : DatabaseTests
             "No rollback is possible/required as no database rows are actually inserted",
             true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
-        var ds = new DataSource[]{ new DataSource("nothing",DateTime.Now)};
-
+        var ds = new DataSource[] { new("nothing", DateTime.Now) };
 
 
         var t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
         t.Inserts += 3; //simulate that it crashed after 3
 
-        d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest","Some terrible event happened");
+        d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest", "Some terrible event happened");
 
         Assert.IsTrue(d.IsClosed);
     }
@@ -66,10 +64,10 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         using (var md5 = MD5.Create())
         {
-            hashAsBytes = md5.ComputeHash(memory);    
+            hashAsBytes = md5.ComputeHash(memory);
         }
 
-        var ds = new DataSource[] { new DataSource("nothing", DateTime.Now) };
+        var ds = new DataSource[] { new("nothing", DateTime.Now) };
 
         ds[0].MD5 = hashAsBytes; //MD5 is a property so confirm write and read are the same - and don't bomb
 
@@ -87,6 +85,4 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         d.CloseAndMarkComplete();
     }
-    
-
 }

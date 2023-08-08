@@ -13,8 +13,7 @@ namespace Rdmp.Core.Validation.Dependency.Exceptions;
 /// </summary>
 public class ValidationXmlDependencyException : Exception
 {
-    public ValidationXmlDependencyException(string s):base(s)
+    public ValidationXmlDependencyException(string s) : base(s)
     {
-            
     }
 }

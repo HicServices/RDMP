@@ -15,6 +15,5 @@ public class AliasTableFetchException : Exception
 {
     public AliasTableFetchException(string msg) : base(msg)
     {
-            
     }
 }

@@ -15,7 +15,8 @@ namespace Rdmp.Core.Repositories;
 /// A class which can find the location (connection strings) of the of Catalogue and Data Export databases.  This might come from a user settings file or from a 
 /// config file or whatever (depending on how you implement this interface).
 /// </summary>
-public interface IRDMPPlatformRepositoryServiceLocator: ICatalogueRepositoryServiceLocator,IDataExportRepositoryServiceLocator
+public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositoryServiceLocator,
+    IDataExportRepositoryServiceLocator
 {
     /// <summary>
     /// Cross repository method equivallent to GetObjectByID mostly used in persistence recovery (when you startup RDMP after closing it down before).  It is better
@@ -25,8 +26,9 @@ public interface IRDMPPlatformRepositoryServiceLocator: ICatalogueRepositoryServ
     /// <param name="databaseObjectTypeName"></param>
     /// <param name="objectID"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName,int objectID);
-        
+    IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName,
+        int objectID);
+
     bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID);
 
     /// <summary>
@@ -46,7 +48,7 @@ public interface IRDMPPlatformRepositoryServiceLocator: ICatalogueRepositoryServ
     /// <param name="t"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable GetObjectByID(Type t,int value);
+    IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value);
 
     /// <summary>
     /// Returns all repositories (including plugin repositories if supported) known about by this

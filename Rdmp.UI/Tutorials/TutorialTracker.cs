@@ -28,7 +28,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
     public TutorialTracker(IActivateItems activator)
     {
         _activator = activator;
-            
+
         BuildTutorialList();
     }
 
@@ -36,8 +36,10 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
     {
         TutorialsAvailable = new List<Tutorial>
         {
-            new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")),
-            new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b"))
+            new("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator),
+                new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")),
+            new("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
+                new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b"))
         };
 
         //var executeExtraction = new Tutorial("4. Execute DataSet Extraction",
@@ -54,7 +56,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
         //all tutorials disabled
         if (UserSettings.DisableTutorials)
             return false;
-            
+
         return !UserSettings.GetTutorialDone(GetTutorialGuidFromWorkflow(workflow));
     }
 
@@ -75,7 +77,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
 
     public void Completed(HelpWorkflow helpWorkflow)
     {
-        UserSettings.SetTutorialDone(GetTutorialGuidFromWorkflow(helpWorkflow),true);
+        UserSettings.SetTutorialDone(GetTutorialGuidFromWorkflow(helpWorkflow), true);
     }
 
     public void ClearCompleted()
@@ -95,10 +97,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
         UserSettings.DisableTutorials = true;
     }
 
-    public static bool HasSeen(Tutorial tutorial)
-    {
-        return UserSettings.GetTutorialDone(tutorial.Guid);
-    }
+    public static bool HasSeen(Tutorial tutorial) => UserSettings.GetTutorialDone(tutorial.Guid);
 
     public static void LaunchTutorial(Tutorial tutorial)
     {
@@ -108,6 +107,6 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
     public bool IsClearable()
     {
         //any that are true
-        return TutorialsAvailable.Any(t=>UserSettings.GetTutorialDone(t.Guid));
+        return TutorialsAvailable.Any(t => UserSettings.GetTutorialDone(t.Guid));
     }
 }

@@ -41,9 +41,7 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
     /// <param name="activator"></param>
     public ExecuteCommandPrunePlugin(IBasicActivateItems activator) : base(activator)
     {
-
     }
-
 
 
     public override void Execute()
@@ -51,15 +49,10 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
         base.Execute();
 
         // make runtime decision about the file to run on
-        if(file == null && BasicActivator != null)
-        {
+        if (file == null && BasicActivator != null)
             file = BasicActivator.SelectFile("Select plugin to prune")?.FullName;
-        }
 
-        if(file == null)
-        {
-            return;
-        }
+        if (file == null) return;
 
         var logger = LogManager.GetCurrentClassLogger();
 
@@ -84,7 +77,8 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
                     continue;
                 Assembly assembly;
-                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) || rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
+                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) ||
+                    rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                 {
                     logger.Info($"Deleting '{e.FullName}' (static)");
                     e.Delete();
@@ -110,13 +104,8 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
 
                 if (main.IsMatch(e.FullName))
-                {
                     inMain.Add(e);
-                }
-                else if (windows.IsMatch(e.FullName))
-                {
-                    inWindows.Add(e);
-                }
+                else if (windows.IsMatch(e.FullName)) inWindows.Add(e);
             }
 
             foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())

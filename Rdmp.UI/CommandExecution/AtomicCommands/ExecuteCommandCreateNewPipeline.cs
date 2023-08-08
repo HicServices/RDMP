@@ -14,7 +14,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution, IAtomicCommand
 {
     private readonly PipelineUseCase _useCase;
 
@@ -22,7 +22,7 @@ public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCo
     {
         _useCase = useCase;
 
-        if(_useCase == null)
+        if (_useCase == null)
             SetImpossible("Pipelines can only be created under an established use case");
     }
 
@@ -35,8 +35,6 @@ public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCo
         edit.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Add);
 }

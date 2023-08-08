@@ -20,7 +20,8 @@ namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 ///</summary>
 public class CacheCommitExtractableAggregate : CacheCommitArguments
 {
-    public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results, int timeout)
+    public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results,
+        int timeout)
         : base(AggregateOperation.ExtractableAggregateResults, configuration, sql, results, timeout)
     {
         if (results.Columns.Count == 0)
@@ -39,7 +40,6 @@ public class CacheCommitExtractableAggregate : CacheCommitArguments
         if (!configuration.IsExtractable)
             throw new NotSupportedException(
                 $"Aggregate {configuration} is not marked as IsExtractable therefore cannot be cached for publication on website");
-            
     }
 
     public override void CommitTableDataCompleted(DiscoveredTable resultingTable)

@@ -29,5 +29,4 @@ public class ReplayCheckable : ICheckable
             notifier.OnCheckPerformed(msg);
         }
     }
-
 }

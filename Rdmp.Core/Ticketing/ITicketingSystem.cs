@@ -16,7 +16,7 @@ namespace Rdmp.Core.Ticketing;
 /// 
 /// <para>IMPORTANT: you must have a constructor that takes a single parameter of Type TicketingSystemConstructorParameters</para>
 /// </summary>
-public interface ITicketingSystem:ICheckable
+public interface ITicketingSystem : ICheckable
 {
     /// <summary>
     /// Called when the user enters a string he thinks is a valid ticket.  You should respond quickly (e.g. by Regex pattern matching not database query
@@ -44,7 +44,8 @@ public interface ITicketingSystem:ICheckable
     /// <param name="reason"></param>
     /// <param name="exception"></param>
     /// <returns></returns>
-    TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket, string releaseTicket, out string reason, out Exception exception);
+    TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket,
+        string releaseTicket, out string reason, out Exception exception);
 
     string GetProjectFolderName(string masterTicket);
 }

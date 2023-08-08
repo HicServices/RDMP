@@ -38,13 +38,15 @@ public class CohortSummaryQueryBuilder
     /// <param name="summary">A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time with an axis interval of year</param>
     /// <param name="cohort">A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)</param>
     /// <param name="childProvider"></param>
-    public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort, ICoreChildProvider childProvider)
+    public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort,
+        ICoreChildProvider childProvider)
     {
         if (cohort == null)
-            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor",nameof(cohort));
-            
-        if(summary.Equals(cohort))
-            throw new ArgumentException("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
+            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor", nameof(cohort));
+
+        if (summary.Equals(cohort))
+            throw new ArgumentException(
+                "Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
 
         ThrowIfNotValidGraph(summary);
 
@@ -55,10 +57,11 @@ public class CohortSummaryQueryBuilder
         catch (Exception e)
         {
             throw new ArgumentException(
-                $"The second argument to constructor CohortSummaryQueryBuilder should be a cohort identification aggregate (i.e. have a single AggregateDimension marked IsExtractionIdentifier and have a name starting with {CohortIdentificationConfiguration.CICPrefix}) but the argument you passed ('{cohort}') was NOT a cohort identification configuration aggregate", e);
+                $"The second argument to constructor CohortSummaryQueryBuilder should be a cohort identification aggregate (i.e. have a single AggregateDimension marked IsExtractionIdentifier and have a name starting with {CohortIdentificationConfiguration.CICPrefix}) but the argument you passed ('{cohort}') was NOT a cohort identification configuration aggregate",
+                e);
         }
 
-        if(summary.Catalogue_ID != cohort.Catalogue_ID)
+        if (summary.Catalogue_ID != cohort.Catalogue_ID)
             throw new ArgumentException(
                 $"Constructor arguments to CohortSummaryQueryBuilder must belong to the same dataset (i.e. have the same underlying Catalogue), the first argument (the graphable aggregate) was called '{summary} and belonged to Catalogue ID {summary.Catalogue_ID} while the second argument (the cohort) was called '{cohort}' and belonged to Catalogue ID {cohort.Catalogue_ID}");
 
@@ -67,20 +70,20 @@ public class CohortSummaryQueryBuilder
         _childProvider = childProvider;
 
         //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
-        _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d=>d.IsExtractionIdentifier);
+        _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
 
         var cic = _cohort.GetCohortIdentificationConfigurationIfAny() ?? throw new ArgumentException(
-                $"AggregateConfiguration {_cohort} looked like a cohort but did not belong to any CohortIdentificationConfiguration");
+            $"AggregateConfiguration {_cohort} looked like a cohort but did not belong to any CohortIdentificationConfiguration");
         _globals = cic.GetAllParameters();
     }
 
 
     public CohortSummaryQueryBuilder(AggregateConfiguration summary, CohortAggregateContainer cohortAggregateContainer)
     {
-
         ThrowIfNotValidGraph(summary);
 
-        var extractionIdentifiers = summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();
+        var extractionIdentifiers = summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Where(e => e.IsExtractionIdentifier).ToArray();
 
         if (extractionIdentifiers.Length != 1)
             throw new Exception(
@@ -91,7 +94,7 @@ public class CohortSummaryQueryBuilder
         _cohortContainer = cohortAggregateContainer;
 
         var cic = _cohortContainer.GetCohortIdentificationConfiguration() ?? throw new ArgumentException(
-                $"CohortAggregateContainer {cohortAggregateContainer} is an orphan? it does not belong to any CohortIdentificationConfiguration");
+            $"CohortAggregateContainer {cohortAggregateContainer} is an orphan? it does not belong to any CohortIdentificationConfiguration");
         _globals = cic.GetAllParameters();
     }
 
@@ -108,13 +111,15 @@ public class CohortSummaryQueryBuilder
     /// and the cohort (resulting in a graphing of the RECORDS returned by the cohort set query instead of a master set of all those patients records - as above does).</para>
     /// </summary>
     /// <returns></returns>
-    public AggregateBuilder GetAdjustedAggregateBuilder(CohortSummaryAdjustment adjustment, IFilter singleFilterOnly = null)
+    public AggregateBuilder GetAdjustedAggregateBuilder(CohortSummaryAdjustment adjustment,
+        IFilter singleFilterOnly = null)
     {
         switch (adjustment)
         {
             case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
                 if (singleFilterOnly != null)
-                    throw new NotSupportedException("You cannot graph a single IFilter with CohortSummaryAdjustment.WhereExtractionIdentifiersIn");
+                    throw new NotSupportedException(
+                        "You cannot graph a single IFilter with CohortSummaryAdjustment.WhereExtractionIdentifiersIn");
 
                 return GetAdjustedForExtractionIdentifiersIn();
             case CohortSummaryAdjustment.WhereRecordsIn:
@@ -126,8 +131,9 @@ public class CohortSummaryQueryBuilder
 
     private AggregateBuilder GetAdjustedForRecordsIn(IFilter singleFilterOnly = null)
     {
-        if(_cohort == null)
-            throw new NotSupportedException("This method only works when there is a cohort aggregate, it does not work for CohortAggregateContainers");
+        if (_cohort == null)
+            throw new NotSupportedException(
+                "This method only works when there is a cohort aggregate, it does not work for CohortAggregateContainers");
 
         var memoryRepository = new MemoryCatalogueRepository();
 
@@ -142,7 +148,8 @@ public class CohortSummaryQueryBuilder
 
         //if we are only graphing a single filter from the Cohort
         if (singleFilterOnly != null)
-            cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, new [] { singleFilterOnly }, FilterContainerOperation.AND);
+            cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null,
+                new[] { singleFilterOnly }, FilterContainerOperation.AND);
 
         var joinUse = _cohort.PatientIndexJoinablesUsed.SingleOrDefault();
         var joinTo = joinUse?.JoinableCohortAggregateConfiguration?.AggregateConfiguration;
@@ -159,11 +166,12 @@ public class CohortSummaryQueryBuilder
             var extractionIdentifierColumn = _summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
                 .Where(ei => ei.IsExtractionIdentifier).ToArray();
 
-            if(extractionIdentifierColumn.Length != 1)
+            if (extractionIdentifierColumn.Length != 1)
                 throw new Exception(
                     $"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had {extractionIdentifierColumn.Length}");
 
-            CohortQueryBuilderHelper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
+            CohortQueryBuilderHelper.AddJoinToBuilder(_summary, extractionIdentifierColumn[0], summaryBuilder,
+                new QueryBuilderArgs(joinUse, joinTo, joinableSql, null, _globals));
         }
 
         //if the cohort has no WHERE SQL
@@ -172,13 +180,16 @@ public class CohortSummaryQueryBuilder
 
         //the summary has no WHERE SQL
         if (summaryRootContainer == null)
-            summaryBuilder.RootFilterContainer = cohortRootContainer;//hijack the cohorts root container
+        {
+            summaryBuilder.RootFilterContainer = cohortRootContainer; //hijack the cohorts root container
+        }
         else
         {
             //they both have WHERE SQL
 
             //Create a new spontaneous container (virtual memory only container) that contains both subtrees
-            var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,new[] { cohortRootContainer,summaryRootContainer }, null, FilterContainerOperation.AND);
+            var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,
+                new[] { cohortRootContainer, summaryRootContainer }, null, FilterContainerOperation.AND);
             summaryBuilder.RootFilterContainer = spontContainer;
         }
 
@@ -191,7 +202,8 @@ public class CohortSummaryQueryBuilder
 
     private AggregateBuilder GetAdjustedForExtractionIdentifiersIn()
     {
-        var cachingServer = GetQueryCachingServer() ?? throw new NotSupportedException("No Query Caching Server configured");
+        var cachingServer = GetQueryCachingServer() ??
+                            throw new NotSupportedException("No Query Caching Server configured");
         var memoryRepository = new MemoryCatalogueRepository();
 
         //Get a builder for creating the basic aggregate graph
@@ -201,7 +213,8 @@ public class CohortSummaryQueryBuilder
         var oldRootContainer = builder.RootFilterContainer;
 
         //Create a new spontaneous container (virtual memory only container, this will include an in line filter that restricts the graph to match the cohort and then include a subcontainer with the old root container - if there was one)
-        var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,oldRootContainer != null ? new[] { oldRootContainer } : null, null, FilterContainerOperation.AND);
+        var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,
+            oldRootContainer != null ? new[] { oldRootContainer } : null, null, FilterContainerOperation.AND);
 
         //work out a filter SQL that will restrict the graph generated only to the cohort
         var cohortQueryBuilder = GetBuilder();
@@ -212,7 +225,8 @@ public class CohortSummaryQueryBuilder
         //the basic cohort SQL select chi from dataset where ....
         var cohortSql = cohortQueryBuilder.SQL;
 
-        if (cohortQueryBuilder.Results.CountOfCachedSubQueries == 0 || cohortQueryBuilder.Results.CountOfSubQueries != cohortQueryBuilder.Results.CountOfCachedSubQueries)
+        if (cohortQueryBuilder.Results.CountOfCachedSubQueries == 0 || cohortQueryBuilder.Results.CountOfSubQueries !=
+            cohortQueryBuilder.Results.CountOfCachedSubQueries)
             throw new NotSupportedException(
                 $"Only works for 100% Cached queries, your query has {cohortQueryBuilder.Results.CountOfCachedSubQueries}/{cohortQueryBuilder.Results.CountOfSubQueries} queries cached");
 
@@ -220,7 +234,9 @@ public class CohortSummaryQueryBuilder
         var filterSql = $"{_extractionIdentifierColumn.SelectSQL} IN ({cohortSql})";
 
         //Add a filter which restricts the graph generated to the cohort only
-        spontContainer.AddChild(new SpontaneouslyInventedFilter(memoryRepository,spontContainer, filterSql, "Patient is in cohort", "Ensures the patients in the summary aggregate are also in the cohort aggregate (and only them)", null));
+        spontContainer.AddChild(new SpontaneouslyInventedFilter(memoryRepository, spontContainer, filterSql,
+            "Patient is in cohort",
+            "Ensures the patients in the summary aggregate are also in the cohort aggregate (and only them)", null));
 
         builder.RootFilterContainer = spontContainer;
 
@@ -240,11 +256,11 @@ public class CohortSummaryQueryBuilder
 
     private CohortQueryBuilder GetBuilder()
     {
-        if(_cohort != null)
-            return new CohortQueryBuilder(_cohort, _globals,_childProvider);
-            
-        if(_cohortContainer != null)
-            return new CohortQueryBuilder(_cohortContainer,_globals,_childProvider);
+        if (_cohort != null)
+            return new CohortQueryBuilder(_cohort, _globals, _childProvider);
+
+        if (_cohortContainer != null)
+            return new CohortQueryBuilder(_cohortContainer, _globals, _childProvider);
 
         throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
     }
@@ -263,7 +279,7 @@ public class CohortSummaryQueryBuilder
             throw new ArgumentException(
                 $"AggregateConfiguration {cohort} was a not a cohort identification configuration aggregate its name didn't start with '{CohortIdentificationConfiguration.CICPrefix}', this is not allowed, the second argument must always be a cohort specific aggregate with only a single column marked IsExtractionIdentifier etc");
 
-        if(cohort.AggregateDimensions.Count(d=>d.IsExtractionIdentifier) != 1)
+        if (cohort.AggregateDimensions.Count(d => d.IsExtractionIdentifier) != 1)
             throw new Exception(
                 $"Expected cohort {cohort} to have exactly 1 column which would be an IsExtractionIdentifier");
     }

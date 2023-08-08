@@ -18,12 +18,13 @@ namespace Rdmp.Core.Reports.ExtractionTime;
 /// Generates tables in a Microsoft Word document describing a Catalogue, its CatalogueItems and any Issues associated with it.  This is used in data extraction 
 /// to generate metadata documents for the researchers to read (See WordDataWriter)
 /// </summary>
-public class WordCatalogueExtractor: DocXHelper
+public class WordCatalogueExtractor : DocXHelper
 {
     private ICatalogue Catalogue { get; set; }
 
     //This is an alternative for [DoNotExtractProperty] that only applies to this class where [DoNotExtractProperty] applies to all users of Catalogue e.g. DITAExtractor
-    private static string[] PropertyIgnorelist = {
+    private static string[] PropertyIgnorelist =
+    {
         "Statistical_cons", "Research_relevance", "Topic", "Agg_method", "Limitations", "Comments", "Periodicity",
         "Acronym",
         "Detail_Page_URL",
@@ -64,7 +65,6 @@ public class WordCatalogueExtractor: DocXHelper
         "Ticket",
         "DatasetStartDate",
         "Name"
-
     };
 
     private XWPFDocument _document;
@@ -81,7 +81,8 @@ public class WordCatalogueExtractor: DocXHelper
     /// </summary>
     /// <param name="cataItems">The CatalogueItems you want to write out ( should all belong to the same Catalogue) but may be a subset of the whole Catalogue e.g. those columns that were actualy extracted</param>
     /// <param name="supplementalData">A bunch of key value pairs (Tuple actually) that accompany a CatalogueItem and should be rammed into the table as it is written out, this could contain information only determined at runtime e.g. not part of the Catalogue</param>
-    public void AddMetaDataForColumns(CatalogueItem[] cataItems, Dictionary<CatalogueItem, Tuple<string, string>[]> supplementalData = null)
+    public void AddMetaDataForColumns(CatalogueItem[] cataItems,
+        Dictionary<CatalogueItem, Tuple<string, string>[]> supplementalData = null)
     {
         InsertHeader(_document, $"Catalogue:{Catalogue.Name}");
 
@@ -89,26 +90,26 @@ public class WordCatalogueExtractor: DocXHelper
 
         var requiredRowsCount = CountWriteableProperties(Catalogue);
 
-        var table = InsertTable(_document,requiredRowsCount, 2);
+        var table = InsertTable(_document, requiredRowsCount, 2);
 
         GenerateObjectPropertiesAsRowUsingReflection(table, Catalogue, null);
 
         //then move onto CatalogueItems that have been extracte
         foreach (var catalogueItem in cataItems)
         {
-            InsertHeader(_document,catalogueItem.Name,2);
-                
+            InsertHeader(_document, catalogueItem.Name, 2);
+
             requiredRowsCount = CountWriteableProperties(catalogueItem);
-                
+
             //allocate extra space for supplementalData
-            if(supplementalData != null)
+            if (supplementalData != null)
                 requiredRowsCount += supplementalData[catalogueItem].Length;
 
             //create a new table
             var t = InsertTable(_document, requiredRowsCount, 2);
-                
-            if(supplementalData!=null && supplementalData.TryGetValue(catalogueItem, out var value))
-                GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,value);
+
+            if (supplementalData != null && supplementalData.TryGetValue(catalogueItem, out var value))
+                GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem, value);
             else
                 GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem, null);
         }
@@ -121,44 +122,44 @@ public class WordCatalogueExtractor: DocXHelper
 
         var count = 0;
         //generate a row for each property
-        foreach (var property in propertyInfo )
-        {
+        foreach (var property in propertyInfo)
             //Check whether property can be written to
-            if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||property.PropertyType.Equals(typeof (string)))
+            if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false &&
+                !PropertyIgnorelist.Contains(property.Name))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
+                    property.PropertyType.Equals(typeof(string)))
                     count++;
-
-        }
         return count;
     }
 
-    private static void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
+    private static void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o,
+        Tuple<string, string>[] supplementalData)
     {
-        var propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var propertyInfo =
+            o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         var currentRow = 0;
 
         //generate a row for each property
         foreach (var property in propertyInfo)
-        {
-                
             //Check whether property can be written to
-            if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
+            if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false &&
+                !PropertyIgnorelist.Contains(property.Name))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
+                    property.PropertyType.Equals(typeof(string)))
                 {
                     SetTableCell(table, currentRow, 0, property.Name);
 
                     var val = property.GetValue(o, null);
 
-                    if(val != null)
+                    if (val != null)
                         SetTableCell(table, currentRow, 1, val.ToString());
 
                     currentRow++;
                 }
-        }
 
         //add any supplemental data they want in the table
-        if(supplementalData!= null)
+        if (supplementalData != null)
             foreach (var tuple in supplementalData)
             {
                 SetTableCell(table, currentRow, 0, tuple.Item1);
@@ -168,6 +169,4 @@ public class WordCatalogueExtractor: DocXHelper
 
         //table.AutoFit = AutoFit.Contents;
     }
-        
-        
 }

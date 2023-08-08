@@ -17,17 +17,14 @@ internal class IHasSummaryTests : UnitTests
     public void AllObjects_SupportSummary()
     {
         foreach (var obj in WhenIHaveAll())
-        {
             try
             {
                 var text = obj.GetSummary(true, true);
                 Assert.IsNotNull(text);
-
             }
             catch (Exception ex)
             {
                 throw new Exception($"GetSummary is broken for {obj.GetType().Name}", ex);
             }
-        }
     }
 }

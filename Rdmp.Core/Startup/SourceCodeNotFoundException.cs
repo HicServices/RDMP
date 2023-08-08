@@ -14,8 +14,7 @@ namespace Rdmp.Core.Startup;
 /// </summary>
 public class SourceCodeNotFoundException : Exception
 {
-    public SourceCodeNotFoundException(string msg):base(msg)
+    public SourceCodeNotFoundException(string msg) : base(msg)
     {
-            
     }
 }

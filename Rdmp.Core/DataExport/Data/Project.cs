@@ -23,9 +23,10 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IProject"/>
-public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable, IHasFolder
+public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable, IHasFolder
 {
     #region Database Properties
+
     private string _name;
     private string _masterTicket;
     private string _extractionDirectory;
@@ -40,6 +41,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
         get => _name;
         set => SetField(ref _name, value);
     }
+
     /// <inheritdoc/>
     public string MasterTicket
     {
@@ -85,13 +87,14 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations => Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+    public IProjectCohortIdentificationConfigurationAssociation[]
+        ProjectCohortIdentificationConfigurationAssociations =>
+        Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
 
     #endregion
 
     public Project()
     {
-
     }
 
     /// <summary>
@@ -105,8 +108,8 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
         {
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Name", name},
-                {"Folder" , FolderHelper.Root}
+                { "Name", name },
+                { "Folder", FolderHelper.Root }
             });
         }
         catch (Exception ex)
@@ -124,9 +127,10 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
                 {
                     throw;
                 }
-                throw new Exception(
-                    $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number", ex);
 
+                throw new Exception(
+                    $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number",
+                    ex);
             }
 
             throw;
@@ -149,14 +153,12 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// Returns <see cref="Name"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     public void Check(ICheckNotifier notifier)
     {
-        new ProjectChecker(new ThrowImmediatelyActivator(new RepositoryProvider(DataExportRepository),notifier),this).Check(notifier);
+        new ProjectChecker(new ThrowImmediatelyActivator(new RepositoryProvider(DataExportRepository), notifier), this)
+            .Check(notifier);
     }
 
     /// <summary>
@@ -170,7 +172,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
 
         return $"{ProjectNumber}_{Name}_{MasterTicket}";
     }
-        
+
     /// <summary>
     /// Returns all <see cref="CohortIdentificationConfiguration"/> which are associated with the <see cref="IProject"/> (usually because
     /// they have been used to create <see cref="ExtractableCohort"/> used by the <see cref="IProject"/>).
@@ -178,8 +180,9 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// <returns></returns>
     public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
     {
-        var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-        return associations.Select(a => a.CohortIdentificationConfiguration).Where(c=>c != null).ToArray();
+        var associations =
+            Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+        return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null).ToArray();
     }
 
     /// <summary>
@@ -188,10 +191,9 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// </summary>
     /// <param name="cic"></param>
     /// <returns></returns>
-    public ProjectCohortIdentificationConfigurationAssociation AssociateWithCohortIdentification(CohortIdentificationConfiguration cic)
-    {
-        return new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository) Repository, this, cic);
-    }
+    public ProjectCohortIdentificationConfigurationAssociation
+        AssociateWithCohortIdentification(CohortIdentificationConfiguration cic) =>
+        new((IDataExportRepository)Repository, this, cic);
 
     /// <inheritdoc/>
     public ICatalogue[] GetAllProjectCatalogues()
@@ -208,23 +210,17 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// <inheritdoc/>
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
     {
-        if(childProvider is DataExportChildProvider dx)
-        {
+        if (childProvider is DataExportChildProvider dx)
             return dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
                 .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
-                .SelectMany(cata=>cata.GetAllExtractionInformation(c)).ToArray();
-        }
+                .SelectMany(cata => cata.GetAllExtractionInformation(c)).ToArray();
 
         return GetAllProjectCatalogueColumns(c);
     }
+
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
+
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return ExtractionConfigurations;
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => ExtractionConfigurations;
 }

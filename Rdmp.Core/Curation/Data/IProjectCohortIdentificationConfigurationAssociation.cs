@@ -15,7 +15,8 @@ namespace Rdmp.Core.Curation.Data;
 /// associated configurations in a given project (e.g. cases, controls, time based etc).  You can also associate the same configuration with multiple Projects if
 /// you need to.
 /// </summary>
-public interface IProjectCohortIdentificationConfigurationAssociation : IMapsDirectlyToDatabaseTable,IMasqueradeAs, IDeletableWithCustomMessage, IMightBeReadOnly
+public interface IProjectCohortIdentificationConfigurationAssociation : IMapsDirectlyToDatabaseTable, IMasqueradeAs,
+    IDeletableWithCustomMessage, IMightBeReadOnly
 {
     /// <summary>
     /// The <see cref="IProject"/> to which the <see cref="CohortIdentificationConfiguration_ID"/> is associated with.

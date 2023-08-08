@@ -25,17 +25,15 @@ namespace Rdmp.Core.Repositories.Construction;
 /// </summary>
 public class ObjectConstructor
 {
-    private static readonly BindingFlags BindingFlags = BindingFlags.Instance  | BindingFlags.Public| BindingFlags.NonPublic;
+    private static readonly BindingFlags BindingFlags =
+        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
     /// <summary>
     /// Constructs a new instance of Type t using the blank constructor
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public static object Construct(Type t)
-    {
-        return GetUsingBlankConstructor(t);
-    }
+    public static object Construct(Type t) => GetUsingBlankConstructor(t);
 
     #region permissable constructor signatures for use with this class
 
@@ -46,10 +44,9 @@ public class ObjectConstructor
     /// <param name="serviceLocator"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public static object Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator,bool allowBlank = true)
-    {
-        return Construct<IRDMPPlatformRepositoryServiceLocator>(t,serviceLocator, allowBlank);
-    }
+    public static object
+        Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator, bool allowBlank = true) =>
+        Construct<IRDMPPlatformRepositoryServiceLocator>(t, serviceLocator, allowBlank);
 
     /// <summary>
     /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derived class)
@@ -58,10 +55,8 @@ public class ObjectConstructor
     /// <param name="catalogueRepository"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
-    {
-        return Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
-    }
+    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true) =>
+        Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
 
     /// <summary>
     /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="DatabaseEntity"/>).
@@ -71,20 +66,20 @@ public class ObjectConstructor
     /// <param name="repositoryOfTypeT"></param>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public static IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType, T repositoryOfTypeT, DbDataReader reader) where T : IRepository
+    public static IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType,
+        T repositoryOfTypeT, DbDataReader reader) where T : IRepository
     {
         // Preferred constructor
         var constructors = GetConstructors<T, DbDataReader>(objectType);
 
         if (!constructors.Any())
-        {
             // Fallback constructor
             throw new ObjectLacksCompatibleConstructorException(
                 $"{objectType.Name} requires a constructor ({typeof(T).Name} repo, DbDataReader reader) to be used with ConstructIMapsDirectlyToDatabaseObject");
-        }
 
         return (IMapsDirectlyToDatabaseTable)InvokeBestConstructor(constructors, repositoryOfTypeT, reader);
     }
+
     #endregion
 
     /// <summary>
@@ -129,19 +124,21 @@ public class ObjectConstructor
             switch (p.Length)
             {
                 //is it an exact match i.e. ctor(T bob)
-                case 1 when p[0].ParameterType == typeof (T):
+                case 1 when p[0].ParameterType == typeof(T):
                     exactMatch = constructor;
                     break;
                 case 1:
                 {
-                    if(p[0].ParameterType.IsAssignableFrom(typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
+                    if (p[0].ParameterType
+                        .IsAssignableFrom(
+                            typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
                         toReturn.Add(constructor);
                     break;
                 }
             }
         }
 
-        return exactMatch != null ? new List<ConstructorInfo>(new []{exactMatch}) : toReturn;
+        return exactMatch != null ? new List<ConstructorInfo>(new[] { exactMatch }) : toReturn;
     }
 
 
@@ -152,7 +149,7 @@ public class ObjectConstructor
     /// <typeparam name="T2"></typeparam>
     /// <param name="type"></param>
     /// <returns></returns>
-    private static List<ConstructorInfo> GetConstructors<T,T2>(Type type)
+    private static List<ConstructorInfo> GetConstructors<T, T2>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
         ConstructorInfo exactMatch = null;
@@ -162,10 +159,10 @@ public class ObjectConstructor
             var p = constructor.GetParameters();
 
             if (p.Length == 2)
-                if (p[0].ParameterType == typeof (T) && p[1].ParameterType == typeof (T2))
+                if (p[0].ParameterType == typeof(T) && p[1].ParameterType == typeof(T2))
                     exactMatch = constructor;
-                else
-                if(p[0].ParameterType.IsAssignableFrom(typeof(T)) && p[1].ParameterType.IsAssignableFrom(typeof(T2)))
+                else if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
+                         p[1].ParameterType.IsAssignableFrom(typeof(T2)))
                     toReturn.Add(constructor);
         }
 
@@ -174,6 +171,7 @@ public class ObjectConstructor
 
         return toReturn;
     }
+
     /// <summary>
     /// Returns all constructors defined for class 'type' which are compatible with any set or subset of the provided parameters.  The return value is a dictionary
     /// of all compatible constructors with the objects needed to invoke them.
@@ -183,23 +181,27 @@ public class ObjectConstructor
     /// <param name="allowPrivate"></param>
     /// <param name="parameterObjects"></param>
     /// <returns></returns>
-    public static Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
+    public static Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor,
+        bool allowPrivate, params object[] parameterObjects)
     {
         var toReturn = new Dictionary<ConstructorInfo, List<object>>();
 
         foreach (var constructor in type.GetConstructors(BindingFlags))
         {
-            if(constructor.IsPrivate && !allowPrivate)
+            if (constructor.IsPrivate && !allowPrivate)
                 continue;
 
             var p = constructor.GetParameters();
 
             //if it is a blank constructor
-            if(!p.Any())
+            if (!p.Any())
+            {
                 if (!allowBlankConstructor) //if we do not allow blank constructors ignore it
                     continue;
                 else
-                    toReturn.Add(constructor, new List<object>()); //otherwise add it to the return list with no objects for invoking (because it's blank duh!)
+                    toReturn.Add(constructor,
+                        new List<object>()); //otherwise add it to the return list with no objects for invoking (because it's blank duh!)
+            }
             else
             {
                 //ok we found a constructor that takes some arguments
@@ -221,8 +223,8 @@ public class ObjectConstructor
                         invokeWithObjects.Add(o);
                 }
 
-                if(canInvoke)
-                    toReturn.Add(constructor,invokeWithObjects);
+                if (canInvoke)
+                    toReturn.Add(constructor, invokeWithObjects);
             }
         }
 
@@ -245,10 +247,8 @@ public class ObjectConstructor
 
         //if there are no exact matches look for an assignable one
         if (matches.Length == 0)
-        {
             //look for an assignable one instead
             matches = parameterObjects.Where(parameterType.IsInstanceOfType).ToArray();
-        }
 
         //if there is one exact match on Type, use that to hydrate it
         if (matches.Length == 1)
@@ -259,7 +259,6 @@ public class ObjectConstructor
 
         throw new ObjectLacksCompatibleConstructorException(
             $"Could not pick a suitable parameterObject for populating {parameterType} (found {matches.Length} compatible parameter objects)");
-
     }
 
     private static object InvokeBestConstructor(List<ConstructorInfo> constructors, params object[] parameters)
@@ -267,9 +266,10 @@ public class ObjectConstructor
         if (constructors.Count == 1)
             return constructors[0].Invoke(parameters);
 
-        var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof (UseWithObjectConstructorAttribute))).ToArray();
-        if(importDecorated.Length == 1)
-            return importDecorated[0].Invoke( parameters);
+        var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute)))
+            .ToArray();
+        if (importDecorated.Length == 1)
+            return importDecorated[0].Invoke(parameters);
 
         throw new ObjectLacksCompatibleConstructorException(
             $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
@@ -277,7 +277,9 @@ public class ObjectConstructor
 
     private static object GetUsingBlankConstructor(Type t)
     {
-        var blankConstructor = t.GetConstructor(Type.EmptyTypes) ?? throw new ObjectLacksCompatibleConstructorException($"Type '{t}' did not contain a blank constructor");
+        var blankConstructor = t.GetConstructor(Type.EmptyTypes) ??
+                               throw new ObjectLacksCompatibleConstructorException(
+                                   $"Type '{t}' did not contain a blank constructor");
         return blankConstructor.Invoke(Array.Empty<object>());
     }
 
@@ -286,10 +288,7 @@ public class ObjectConstructor
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public static bool HasBlankConstructor(Type arg)
-    {
-        return arg.GetConstructor(Type.EmptyTypes) != null;
-    }
+    public static bool HasBlankConstructor(Type arg) => arg.GetConstructor(Type.EmptyTypes) != null;
 
     /// <summary>
     /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
@@ -317,7 +316,6 @@ public class ObjectConstructor
             var isCompatible = true;
 
             for (var index = 0; index < constructorValues.Length; index++)
-            {
                 //if we have been given a null value for this parameter
                 if (constructorValues[index] == null)
                 {
@@ -325,17 +323,17 @@ public class ObjectConstructor
                     if (p[index].ParameterType.IsEnum || p[index].ParameterType.IsValueType)
                         isCompatible = false;
                 }
-                else
-                if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
+                else if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
+                {
                     isCompatible = false;
-            }
+                }
 
-            if(isCompatible)
+            if (isCompatible)
                 compatible.Add(constructor);
         }
 
         if (compatible.Any())
-            return InvokeBestConstructor(compatible,constructorValues);
+            return InvokeBestConstructor(compatible, constructorValues);
 
         return null;
     }
@@ -363,7 +361,7 @@ public class ObjectConstructor
                 continue;
 
             //at least one parameter must be an IRepository
-            if(!parameters.Any(p=>typeof(IRepository).IsAssignableFrom(p.ParameterType)))
+            if (!parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
                 continue;
 
             //yay it's compatible

@@ -25,21 +25,15 @@ public class Alpha : PrimaryConstraint
         var match = Regex.Match(text, RegExp);
 
         if (!match.Success)
-        {
-            return new ValidationFailure($"Value [{value}] contains characters other than alphabetic",this);
-        }
+            return new ValidationFailure($"Value [{value}] contains characters other than alphabetic", this);
 
         return null;
     }
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return $"Checks to see if input strings contain nothing but characters by using pattern {RegExp}";
-    }
-
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        $"Checks to see if input strings contain nothing but characters by using pattern {RegExp}";
 }

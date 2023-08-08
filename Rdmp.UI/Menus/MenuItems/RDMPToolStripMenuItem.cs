@@ -19,12 +19,12 @@ public abstract class RDMPToolStripMenuItem : ToolStripMenuItem
     protected AtomicCommandUIFactory AtomicCommandUIFactory;
     protected IActivateItems _activator;
 
-    protected RDMPToolStripMenuItem(IActivateItems activator,string text):base(text)
+    protected RDMPToolStripMenuItem(IActivateItems activator, string text) : base(text)
     {
         _activator = activator;
         AtomicCommandUIFactory = new AtomicCommandUIFactory(activator);
     }
-        
+
     protected void Activate(DatabaseEntity o)
     {
         var cmd = new ExecuteCommandActivate(_activator, o);

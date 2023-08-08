@@ -16,5 +16,4 @@ public class ChiAgeDomainObject
         this.chi = chi;
         this.age = age;
     }
-
 }

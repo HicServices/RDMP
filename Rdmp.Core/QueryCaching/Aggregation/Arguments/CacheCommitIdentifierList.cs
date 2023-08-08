@@ -22,8 +22,10 @@ public class CacheCommitIdentifierList : CacheCommitArguments
 {
     private DatabaseColumnRequest _identifierColumn;
 
-    public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest identifierColumn, int timeout)
-        : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout, new []{identifierColumn})
+    public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results,
+        DatabaseColumnRequest identifierColumn, int timeout)
+        : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout,
+            new[] { identifierColumn })
     {
         //advise them if they are trying to cache an identifier list but the DataTable has more than 1 column
         if (results.Columns.Count != 1)
@@ -39,7 +41,7 @@ public class CacheCommitIdentifierList : CacheCommitArguments
         foreach (var r in results.Rows.Cast<DataRow>().ToArray())
             if (r[0] == null || r[0] == DBNull.Value)
                 results.Rows.Remove(r);
-            
+
         if (identifierColumn == null)
             throw new Exception("You must specify the data type of the identifier column, identifierColumn was null");
 
@@ -53,7 +55,7 @@ public class CacheCommitIdentifierList : CacheCommitArguments
         //if user has an explicit type to use for the column (probably a good idea to have all extraction idetntifiers of the same data type
         var col = resultingTable.DiscoverColumn(_identifierColumn.ColumnName);
 
-        CreateIndex(resultingTable,col, Configuration.ToString());
+        CreateIndex(resultingTable, col, Configuration.ToString());
     }
 
 
