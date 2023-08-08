@@ -54,7 +54,7 @@ public class CataloguePipelinesAndReferencesCreation
         if(!options.SkipLoggingServer){
             _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
                 {
-                    Server = _logging.DataSource,
+                    Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
                     Database = _logging.InitialCatalog
                 };
 
