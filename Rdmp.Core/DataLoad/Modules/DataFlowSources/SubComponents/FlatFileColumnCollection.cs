@@ -47,7 +47,9 @@ public class FlatFileColumnCollection
     /// </summary>
     public HashSet<string> IgnoreColumnsList { get; private set; }
 
-    public FlatFileColumnCollection(FlatFileToLoad toLoad, bool makeHeaderNamesSane, ExplicitTypingCollection explicitlyTypedColumns, string forceHeaders, bool forceHeadersReplacesFirstLineInFile, string ignoreColumns)
+    public FlatFileColumnCollection(FlatFileToLoad toLoad, bool makeHeaderNamesSane,
+        ExplicitTypingCollection explicitlyTypedColumns, string forceHeaders, bool forceHeadersReplacesFirstLineInFile,
+        string ignoreColumns)
     {
         _toLoad = toLoad;
         _makeHeaderNamesSane = makeHeaderNamesSane;
@@ -90,7 +92,10 @@ public class FlatFileColumnCollection
     /// <summary>
     /// Counts the number of headers that are not null
     /// </summary>
-    public int CountNotNull { get { return _headers.Except(IgnoreColumnsList).Count(h => !h.IsBasicallyNull()); } }
+    public int CountNotNull
+    {
+        get { return _headers.Except(IgnoreColumnsList).Count(h => !h.IsBasicallyNull()); }
+    }
 
     /// <summary>
     /// The number of headers including null ones (but not trailing null headers)
@@ -132,7 +137,7 @@ public class FlatFileColumnCollection
         //ignore these columns (trimmed and ignoring case)
         if (!string.IsNullOrWhiteSpace(_ignoreColumns))
             IgnoreColumnsList = new HashSet<string>(
-                _ignoreColumns.Split(new[] {r.Configuration.Delimiter}, StringSplitOptions.None)
+                _ignoreColumns.Split(new[] { r.Configuration.Delimiter }, StringSplitOptions.None)
                     .Select(h => h.Trim())
                 , StringComparer.CurrentCultureIgnoreCase);
         else
@@ -146,7 +151,7 @@ public class FlatFileColumnCollection
                 _headers[i] = _headers[i].Trim();
 
         //throw away trailing null headers e.g. the header line "Name,Date,,,"
-        var trailingNullHeaders = _headers.Reverse().TakeWhile(s=>s.IsBasicallyNull()).Count();
+        var trailingNullHeaders = _headers.Reverse().TakeWhile(s => s.IsBasicallyNull()).Count();
 
         if (trailingNullHeaders > 0)
             _headers = _headers.Take(_headers.Length - trailingNullHeaders).ToArray();
@@ -156,7 +161,6 @@ public class FlatFileColumnCollection
             for (var i = 0; i < _headers.Length; i++)
                 _headers[i] = QuerySyntaxHelper.MakeHeaderNameSensible(_headers[i]);
     }
-
 
 
     /// <summary>
@@ -182,13 +186,15 @@ public class FlatFileColumnCollection
             var h = header;
 
             //if we are ignoring this column
-            if(h != null && IgnoreColumnsList.Contains(h.Trim()))
+            if (h != null && IgnoreColumnsList.Contains(h.Trim()))
                 continue; //skip adding to dt
 
             //watch for duplicate columns
             if (dt.Columns.Contains(header))
                 if (_makeHeaderNamesSane)
+                {
                     h = MakeHeaderUnique(header, dt.Columns, listener, this);
+                }
                 else
                 {
                     duplicateHeaders.Add(header);
@@ -196,19 +202,23 @@ public class FlatFileColumnCollection
                 }
 
             if (h.IsBasicallyNull())
+            {
                 unamedColumns.Add(dt.Columns.Add(h));
+            }
             else
                 //override type
-            if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h,out var t) == true)
+            if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h, out var t) == true)
             {
                 var c = dt.Columns.Add(h, t);
 
                 //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
-                if(c.DataType == typeof(string))
+                if (c.DataType == typeof(string))
                     c.SetDoNotReType(true);
             }
             else
+            {
                 dt.Columns.Add(h);
+            }
         }
 
         UnamedColumns = new ReadOnlyCollection<DataColumn>(unamedColumns);
@@ -242,7 +252,7 @@ public class FlatFileColumnCollection
         {
             ASCIIArt.Append($"[{index}]");
 
-            if (dt.Columns.Contains(_headers[index]))    //exact match
+            if (dt.Columns.Contains(_headers[index])) //exact match
             {
                 ASCIIArt.AppendLine($"{_headers[index]}>>>{_headers[index]}");
                 continue;
@@ -250,7 +260,7 @@ public class FlatFileColumnCollection
 
             if (string.IsNullOrWhiteSpace(_headers[index])) //Empty column header, ignore it
             {
-                ASCIIArt.AppendLine("Blank Column>>>IGNORED" );
+                ASCIIArt.AppendLine("Blank Column>>>IGNORED");
                 continue;
             }
 
@@ -288,7 +298,10 @@ public class FlatFileColumnCollection
         //now that we have adjusted the header names
         var unmatchedColumns =
             dt.Columns.Cast<DataColumn>()
-                .Where(c => !_headers.Any(h => h != null && h.ToLower().Equals(c.ColumnName.ToLower())))//get all columns in data table where there are not any with the same name
+                .Where(c => !_headers.Any(h =>
+                    h != null &&
+                    h.ToLower().Equals(c.ColumnName
+                        .ToLower()))) //get all columns in data table where there are not any with the same name
                 .Select(c => c.ColumnName)
                 .ToArray();
 
@@ -299,21 +312,24 @@ public class FlatFileColumnCollection
         //if there is exactly 1 column found by the program and there are unmatched columns it is likely the user has selected the wrong separator
         if (_headers.Length == 1 && unmatchedColumns.Any())
             foreach (var commonSeparator in _commonSeparators)
-                if(_headers[0].Contains(commonSeparator))
+                if (_headers[0].Contains(commonSeparator))
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                         $"Your separator does not appear in the headers line of your file ({_toLoad.File.Name}) but the separator '{commonSeparator}' does... did you mean to set the Separator to '{commonSeparator}'? The headers line is:\"{_headers[0]}\""));
 
         listener.OnNotify(this, new NotifyEventArgs(
-            headersNotFound.Any()?ProgressEventType.Error : ProgressEventType.Information, //information or warning if there are unrecognised field names
+            headersNotFound.Any()
+                ? ProgressEventType.Error
+                : ProgressEventType.Information, //information or warning if there are unrecognised field names
             $"I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:{Environment.NewLine}{ASCIIArt}")); //tell them about what columns match what
 
 
-        if(headersNotFound.Any())
+        if (headersNotFound.Any())
             throw new Exception(
                 $"Could not find a suitable target column for flat file columns {string.Join(",", headersNotFound)} amongst database data table columns ({string.Join(",", from DataColumn col in dt.Columns select col.ColumnName)})");
     }
 
-    public static string MakeHeaderUnique(string newColumnName, DataColumnCollection columnsSoFar, IDataLoadEventListener listener, object sender)
+    public static string MakeHeaderUnique(string newColumnName, DataColumnCollection columnsSoFar,
+        IDataLoadEventListener listener, object sender)
     {
         //if it is already unique then that's fine
         if (!columnsSoFar.Contains(newColumnName))
@@ -338,15 +354,15 @@ public class FlatFileColumnCollection
     /// </summary>
     /// <param name="row"></param>
     /// <param name="listener"></param>
-    public void ShowForceHeadersAsciiArt(IReaderRow row,IDataLoadEventListener listener)
+    public void ShowForceHeadersAsciiArt(IReaderRow row, IDataLoadEventListener listener)
     {
-        if(_state < State.AfterHeadersRead)
+        if (_state < State.AfterHeadersRead)
             throw new Exception($"Illegal state:{_state}");
 
-        if(string.IsNullOrWhiteSpace(_forceHeaders))
+        if (string.IsNullOrWhiteSpace(_forceHeaders))
             throw new Exception("There are no force headers! how did we get here");
 
-        if(!_forceHeadersReplacesFirstLineInFile)
+        if (!_forceHeadersReplacesFirstLineInFile)
             throw new Exception("Headers do not replace the first line in the file, how did we get here!");
 
         //create an ascii art representation of the headers being replaced in the format
@@ -365,7 +381,9 @@ public class FlatFileColumnCollection
             $"Your attacher has ForceHeaders and ForceHeadersReplacesFirstLineInFile=true, I will now tell you about the first line of data in the file that you skipped (and how it related to your forced headers).  Replacement headers are {Environment.NewLine}{Environment.NewLine}{asciiArt}"));
 
         if (row.ColumnCount != _headers.Length)
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning,
+                    "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
 
         var discarded = new StringBuilder();
         for (var i = 0; i < row.ColumnCount; i++)
@@ -374,6 +392,7 @@ public class FlatFileColumnCollection
                 discarded.Append(',');
             discarded.Append(row[i]);
         }
+
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Skipped first line of file because there are forced replacement headers, we discarded: {discarded}"));
     }

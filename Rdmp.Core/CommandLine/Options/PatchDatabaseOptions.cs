@@ -14,7 +14,6 @@ namespace Rdmp.Core.CommandLine.Options;
 [Verb("patch", HelpText = "Patches all RDMP platform databases")]
 public class PatchDatabaseOptions : RDMPCommandLineOptions
 {
-
     [Option('b', Required = false, HelpText = @"Pass to backup databases prior to patching (if patching is required)")]
     public bool BackupDatabase { get; set; } = false;
 }

@@ -20,32 +20,34 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 public class CohortQueryBuilderTests : CohortIdentificationTests
 {
     private readonly string _scratchDatabaseName = TestDatabaseNames.GetConsistentName("ScratchArea");
-        
+
     [Test]
     public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
     {
-        var builder = new CohortQueryBuilder(aggregate1,null,null);
+        var builder = new CohortQueryBuilder(aggregate1, null, null);
 
         Assert.AreEqual(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT 
 distinct
 [" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 FROM 
-[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
+[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)),
+            CollapseWhitespace(builder.SQL));
     }
-        
+
     [Test]
     public void TestGettingAggregateJustFromConfig_SelectStar()
     {
-        var builder = new CohortQueryBuilder(aggregate1, null,null);
+        var builder = new CohortQueryBuilder(aggregate1, null, null);
 
         Assert.AreEqual(CollapseWhitespace(
-            string.Format(@"/*cic_{0}_UnitTestAggregate1*/
+                string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)),
+            CollapseWhitespace(builder.GetDatasetSampleSQL()));
     }
 
 
@@ -59,7 +61,7 @@ FROM
     {
         aggregate1.HavingSQL = "count(*)>1";
 
-        var builder = new CohortQueryBuilder(aggregate1, null,null);
+        var builder = new CohortQueryBuilder(aggregate1, null, null);
 
         Assert.AreEqual(CollapseWhitespace(
             string.Format(@"/*cic_{0}_UnitTestAggregate1*/
@@ -85,13 +87,12 @@ FROM
         rootcontainer.AddChild(aggregate2, 1);
         rootcontainer.AddChild(aggregate1, 5);
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
-        Assert.AreEqual(rootcontainer,aggregate1.GetCohortAggregateContainerIfAny());
+        Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
         try
         {
             Assert.AreEqual(
-
                 CollapseWhitespace(string.Format(
                     @"(
 	/*cic_{0}_UnitTestAggregate2*/
@@ -110,11 +111,10 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
-       
-                    ,cohortIdentificationConfiguration.ID))
+                    , cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
         }
-        finally 
+        finally
         {
             rootcontainer.RemoveChild(aggregate1);
             rootcontainer.RemoveChild(aggregate2);
@@ -136,7 +136,7 @@ FROM
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
         try
         {
@@ -176,7 +176,7 @@ FROM
 		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	)
 
-)",cohortIdentificationConfiguration.ID))
+)", cohortIdentificationConfiguration.ID))
                 ,
                 CollapseWhitespace(builder.SQL));
         }
@@ -203,7 +203,7 @@ FROM
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
         try
         {
@@ -239,7 +239,7 @@ FROM
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
-)",cohortIdentificationConfiguration.ID))
+)", cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
         }
         finally
@@ -254,8 +254,8 @@ FROM
     public void TestGettingAggregateSQLFromEntirity_IncludingParametersAtTop()
     {
         //setup a filter (all filters must be in a container so the container is a default AND container)
-        var AND = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository,"hithere",AND)
+        var AND = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+        var filter = new AggregateFilter(CatalogueRepository, "hithere", AND)
         {
             //give the filter an implicit parameter requiring bit of SQL
             WhereSQL = "1=@abracadabra"
@@ -271,19 +271,17 @@ FROM
         new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
 
         //get the parameter it just created, set its value and save it
-        var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
+        var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
         param.Value = "1";
         param.ParameterSQL = "DECLARE @abracadabra AS int;";
         param.SaveToDatabase();
 
-            
-            
-            
+
         //set the order so that 2 comes before 1
         rootcontainer.AddChild(aggregate2, 1);
         rootcontainer.AddChild(aggregate1, 5);
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
         try
         {
@@ -315,13 +313,12 @@ SET @abracadabra=1;
 	1=@abracadabra
 	)
 )
-",cohortIdentificationConfiguration.ID))
+", cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
 
 
-            var builder2 = new CohortQueryBuilder(aggregate1, null,null);
+            var builder2 = new CohortQueryBuilder(aggregate1, null, null);
             Assert.AreEqual(
-
                 CollapseWhitespace(
                     string.Format(
                         @"DECLARE @abracadabra AS int;
@@ -336,16 +333,15 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)",cohortIdentificationConfiguration.ID)),
+)", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder2.SQL));
 
 
-            var selectStar = new CohortQueryBuilder(aggregate1,null,null).GetDatasetSampleSQL();
+            var selectStar = new CohortQueryBuilder(aggregate1, null, null).GetDatasetSampleSQL();
 
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
-
                         @"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
 
@@ -354,14 +350,13 @@ SET @abracadabra=1;
 	TOP 1000
 	*
 	FROM 
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*hithere*/
 	1=@abracadabra
-	)",cohortIdentificationConfiguration.ID)),
+	)", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(selectStar));
-
         }
         finally
         {
@@ -370,7 +365,6 @@ SET @abracadabra=1;
 
             rootcontainer.RemoveChild(aggregate1);
             rootcontainer.RemoveChild(aggregate2);
-
         }
     }
 
@@ -378,11 +372,11 @@ SET @abracadabra=1;
     [Test]
     public void TestGettingAggregateSQLFromEntirity_StopEarly()
     {
-        rootcontainer.AddChild(aggregate1,1);
-        rootcontainer.AddChild(aggregate2,2);
-        rootcontainer.AddChild(aggregate3,3);
+        rootcontainer.AddChild(aggregate1, 1);
+        rootcontainer.AddChild(aggregate2, 2);
+        rootcontainer.AddChild(aggregate3, 3);
 
-        var builder = new CohortQueryBuilder(rootcontainer, null,null)
+        var builder = new CohortQueryBuilder(rootcontainer, null, null)
         {
             StopContainerWhenYouReach = aggregate2
         };
@@ -392,7 +386,6 @@ SET @abracadabra=1;
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
-
                         @"
 (
 	/*cic_{0}_UnitTestAggregate1*/
@@ -411,11 +404,11 @@ SET @abracadabra=1;
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )
-",cohortIdentificationConfiguration.ID)),
+", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
 
 
-            var builder2 = new CohortQueryBuilder(rootcontainer, null,null)
+            var builder2 = new CohortQueryBuilder(rootcontainer, null, null)
             {
                 StopContainerWhenYouReach = null
             };
@@ -449,7 +442,7 @@ SET @abracadabra=1;
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )
-",cohortIdentificationConfiguration.ID)),
+", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder2.SQL));
         }
         finally
@@ -457,7 +450,6 @@ SET @abracadabra=1;
             rootcontainer.RemoveChild(aggregate1);
             rootcontainer.RemoveChild(aggregate2);
             rootcontainer.RemoveChild(aggregate3);
-
         }
     }
 
@@ -468,18 +460,19 @@ SET @abracadabra=1;
 
         container1.AddChild(aggregate2, 2);
         container1.AddChild(aggregate3, 3);
-            
+
         rootcontainer.AddChild(container1);
 
         var aggregate4 = new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4");
-        new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
+        new AggregateDimension(CatalogueRepository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
-        rootcontainer.AddChild(aggregate4,5);
-        var builder = new CohortQueryBuilder(rootcontainer, null,null)
+        rootcontainer.AddChild(aggregate4, 5);
+        var builder = new CohortQueryBuilder(rootcontainer, null, null)
         {
             //Looks like:
             /*
-         * 
+         *
         EXCEPT
         Aggregate 1
           UNION            <-----We tell it to stop after this container
@@ -526,7 +519,7 @@ SET @abracadabra=1;
 	)
 
 )
-",cohortIdentificationConfiguration.ID)),
+", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
         }
         finally
@@ -554,10 +547,9 @@ SET @abracadabra=1;
         aggregate1.SaveToDatabase();
         try
         {
-
             rootcontainer.AddChild(container1);
 
-            var builder = new CohortQueryBuilder(rootcontainer, null,null);
+            var builder = new CohortQueryBuilder(rootcontainer, null, null);
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
@@ -600,9 +592,8 @@ SET @abracadabra=1;
 	)
 
 )
-",cohortIdentificationConfiguration.ID))
+", cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
-
         }
         finally
         {
@@ -619,11 +610,12 @@ SET @abracadabra=1;
     }
 
     [Test]
-    [TestCase(true,true)]
+    [TestCase(true, true)]
     [TestCase(true, false)]
-    [TestCase(false,true)]
+    [TestCase(false, true)]
     [TestCase(false, false)]
-    public void TestGettingAggregateSQLFromEntirity_TwoFilterParametersPerDataset(bool valuesAreSame,bool memoryRepository)
+    public void TestGettingAggregateSQLFromEntirity_TwoFilterParametersPerDataset(bool valuesAreSame,
+        bool memoryRepository)
     {
         var repo = memoryRepository ? (ICatalogueRepository)new MemoryCatalogueRepository() : CatalogueRepository;
 
@@ -631,14 +623,14 @@ SET @abracadabra=1;
         SetupTestData(repo);
 
         //setup a filter (all filters must be in a container so the container is a default AND container)
-        var AND1 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
-        var filter1_1 = new AggregateFilter(repo,"filter1_1",AND1);
-        var filter1_2 = new AggregateFilter(repo,"filter1_2",AND1);
+        var AND1 = new AggregateFilterContainer(repo, FilterContainerOperation.AND);
+        var filter1_1 = new AggregateFilter(repo, "filter1_1", AND1);
+        var filter1_2 = new AggregateFilter(repo, "filter1_2", AND1);
 
-        var AND2 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
-        var filter2_1 = new AggregateFilter(repo,"filter2_1",AND2);
-        var filter2_2 = new AggregateFilter(repo,"filter2_2",AND2);
-             
+        var AND2 = new AggregateFilterContainer(repo, FilterContainerOperation.AND);
+        var filter2_1 = new AggregateFilter(repo, "filter2_1", AND2);
+        var filter2_2 = new AggregateFilter(repo, "filter2_2", AND2);
+
         //Filters must belong to containers BEFORE parameter creation
         //Make aggregate1 use the filter set we just setup
         aggregate1.RootFilterContainer_ID = AND1.ID;
@@ -653,18 +645,18 @@ SET @abracadabra=1;
         rootcontainer.AddChild(aggregate1, 5);
 
         //give the filter an implicit parameter requiring bit of SQL
-        foreach (var filter in new IFilter[]{filter1_1,filter1_2,filter2_1,filter2_2})
+        foreach (var filter in new IFilter[] { filter1_1, filter1_2, filter2_1, filter2_2 })
         {
             filter.WhereSQL = "@bob = 'bob'";
-            filter.SaveToDatabase();     
+            filter.SaveToDatabase();
             //get it to create the parameters for us
             new ParameterCreator(new AggregateFilterFactory(repo), null, null).CreateAll(filter, null);
 
             //get the parameter it just created, set its value and save it
-            var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
+            var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
             param.Value = "'Boom!'";
             param.ParameterSQL = "DECLARE @bob AS varchar(10);";
-                
+
             //if test case is different values then we change the values of the parameters
             if (!valuesAreSame && (filter.Equals(filter2_1) || Equals(filter, filter2_2)))
                 param.Value = "'Grenades Are Go'";
@@ -672,13 +664,12 @@ SET @abracadabra=1;
             param.SaveToDatabase();
         }
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
-        Console.WriteLine( builder.SQL);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
+        Console.WriteLine(builder.SQL);
 
         try
         {
             if (valuesAreSame)
-            {
                 Assert.AreEqual(
                     CollapseWhitespace(
                         string.Format(
@@ -718,14 +709,11 @@ SET @bob='Boom!';
 	@bob = 'bob'
 	)
 )
-",cohortIdentificationConfiguration.ID)),
+", cohortIdentificationConfiguration.ID)),
                     CollapseWhitespace(builder.SQL));
-            }
             else
-            {
                 Assert.AreEqual(
-
-                    CollapseWhitespace( 
+                    CollapseWhitespace(
                         string.Format(
                             @"DECLARE @bob AS varchar(10);
 SET @bob='Grenades Are Go';
@@ -736,9 +724,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+ @"ScratchArea].[dbo].[BulkData]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter2_1*/
@@ -753,9 +741,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter1_1*/
@@ -765,9 +753,8 @@ SET @bob_2='Boom!';
 	@bob_2 = 'bob'
 	)
 )
-",cohortIdentificationConfiguration.ID)),
+", cohortIdentificationConfiguration.ID)),
                     CollapseWhitespace(builder.SQL));
-            }
         }
         finally
         {
@@ -778,10 +765,9 @@ SET @bob_2='Boom!';
             filter1_2.DeleteInDatabase();
             filter2_1.DeleteInDatabase();
             filter2_2.DeleteInDatabase();
-                 
+
             AND1.DeleteInDatabase();
             AND2.DeleteInDatabase();
-
         }
     }
 
@@ -800,11 +786,10 @@ SET @bob_2='Boom!';
 
         Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
         try
         {
             Assert.AreEqual(
-
                 CollapseWhitespace(string.Format(
                     @"(
 	/*cic_{0}_UnitTestAggregate2*/
@@ -814,13 +799,11 @@ SET @bob_2='Boom!';
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
-
                     , cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
         }
         finally
         {
-
             aggregate1.IsDisabled = false;
             aggregate1.SaveToDatabase();
 
@@ -828,7 +811,7 @@ SET @bob_2='Boom!';
             rootcontainer.RemoveChild(aggregate2);
         }
     }
-        
+
     [Test]
     public void TestGettingAggregateSQLFromEntirity_Filter_IsDisabled()
     {
@@ -877,7 +860,7 @@ SET @bob_2='Boom!';
             param.SaveToDatabase();
         }
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
         Console.WriteLine(builder.SQL);
 
@@ -886,7 +869,6 @@ SET @bob_2='Boom!';
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
-
                         @"DECLARE @bob AS varchar(10);
 SET @bob='Grenades Are Go';
 DECLARE @bob_2 AS varchar(10);
@@ -924,11 +906,9 @@ SET @bob_2='Boom!';
 )
 ", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
-                
         }
         finally
         {
-
             filter2_2.IsDisabled = false;
             filter2_2.SaveToDatabase();
 
@@ -942,7 +922,6 @@ SET @bob_2='Boom!';
 
             AND1.DeleteInDatabase();
             AND2.DeleteInDatabase();
-
         }
     }
 }

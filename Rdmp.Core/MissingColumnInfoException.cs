@@ -15,13 +15,11 @@ namespace Rdmp.Core;
 /// </summary>
 public class MissingColumnInfoException : Exception
 {
-    public MissingColumnInfoException(string message): base(message)
+    public MissingColumnInfoException(string message) : base(message)
     {
-            
     }
 
-    public MissingColumnInfoException(string message,Exception innerException):base(message,innerException)
+    public MissingColumnInfoException(string message, Exception innerException) : base(message, innerException)
     {
-            
     }
 }

@@ -16,30 +16,31 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// Common abstract base class for IContainer (AND/OR Where logic) classes that are persisted in the database as a <see cref="DatabaseEntity"/>
 /// </summary>
-public abstract class ConcreteContainer:DatabaseEntity, IContainer
+public abstract class ConcreteContainer : DatabaseEntity, IContainer
 {
     private IFilterManager _manager;
     private FilterContainerOperation _operation;
+
     /// <inheritdoc/>
     public FilterContainerOperation Operation
     {
         get => _operation;
-        set => SetField(ref  _operation, value);
+        set => SetField(ref _operation, value);
     }
 
     public ConcreteContainer()
     {
-
     }
 
     public void SetManager(IFilterManager manager)
     {
         _manager = manager;
     }
-    protected ConcreteContainer(IFilterManager manager,IRepository repository, DbDataReader r):base(repository,r)
+
+    protected ConcreteContainer(IFilterManager manager, IRepository repository, DbDataReader r) : base(repository, r)
     {
         _manager = manager;
-        Operation = (FilterContainerOperation) Enum.Parse(typeof(FilterContainerOperation), r["Operation"].ToString());
+        Operation = (FilterContainerOperation)Enum.Parse(typeof(FilterContainerOperation), r["Operation"].ToString());
     }
 
     protected ConcreteContainer(IFilterManager manager)
@@ -48,27 +49,18 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
     }
 
     /// <inheritdoc/>
-    public IContainer GetParentContainerIfAny()
-    {
-        return _manager.GetParentContainerIfAny(this);
-    }
+    public IContainer GetParentContainerIfAny() => _manager.GetParentContainerIfAny(this);
 
     /// <inheritdoc/>
-    public IContainer[] GetSubContainers()
-    {
-        return _manager.GetSubContainers(this);
-    }
+    public IContainer[] GetSubContainers() => _manager.GetSubContainers(this);
 
     /// <inheritdoc/>
-    public IFilter[] GetFilters()
-    {
-        return _manager.GetFilters(this);
-    }
+    public IFilter[] GetFilters() => _manager.GetFilters(this);
 
     /// <inheritdoc/>
     public void AddChild(IContainer child)
     {
-        _manager.AddSubContainer(this,child);
+        _manager.AddSubContainer(this, child);
     }
 
     /// <inheritdoc/>
@@ -97,7 +89,7 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
 
         //then delete any children it has itself
         foreach (var subContainer in GetAllSubContainersRecursively())
-            if(subContainer.Exists())
+            if (subContainer.Exists())
                 subContainer.DeleteInDatabase();
 
         //clean up the orphans that will be created by killing ourselves
@@ -113,10 +105,7 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
     }
 
     /// <inheritdoc/>
-    public IContainer GetRootContainerOrSelf()
-    {
-        return GetRootContainerOrSelf(this);
-    }
+    public IContainer GetRootContainerOrSelf() => GetRootContainerOrSelf(this);
 
     private IContainer GetRootContainerOrSelf(IContainer container)
     {
@@ -128,11 +117,9 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
     }
 
     /// <inheritdoc/>
-    public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-    {
-        return GetAllFiltersIncludingInSubContainersRecursively(this);
-    }
-        
+    public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively() =>
+        GetAllFiltersIncludingInSubContainersRecursively(this);
+
     private List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
     {
         var toReturn = new List<IFilter>();
@@ -151,10 +138,7 @@ public abstract class ConcreteContainer:DatabaseEntity, IContainer
     public abstract Catalogue GetCatalogueIfAny();
 
     /// <inheritdoc/>
-    public List<IContainer> GetAllSubContainersRecursively()
-    {
-        return GetAllSubContainersRecursively(this);
-    }
+    public List<IContainer> GetAllSubContainersRecursively() => GetAllSubContainersRecursively(this);
 
     private List<IContainer> GetAllSubContainersRecursively(IContainer current)
     {

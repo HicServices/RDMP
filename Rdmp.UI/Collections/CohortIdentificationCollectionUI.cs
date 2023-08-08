@@ -40,60 +40,69 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
         //important to register the setup before the lifetime subscription so it gets priority on events
         CommonTreeFunctionality.SetUp(
-            RDMPCollection.Cohort, 
+            RDMPCollection.Cohort,
             tlvCohortIdentificationConfigurations,
             Activator,
-            olvName,//column with the icon
-            olvName//column that can be renamed
-                
+            olvName, //column with the icon
+            olvName //column that can be renamed
         );
-        CommonTreeFunctionality.AxeChildren = new[]{typeof (CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration) };
+        CommonTreeFunctionality.AxeChildren = new[]
+        {
+            typeof(CohortIdentificationConfiguration), typeof(Core.Curation.Data.Aggregation.AggregateConfiguration)
+        };
 
-        CommonTreeFunctionality.MaintainRootObjects = new[] {
-                typeof (FolderNode<CohortIdentificationConfiguration>),
-                typeof(AllOrphanAggregateConfigurationsNode),
-                typeof(AllTemplateAggregateConfigurationsNode)};
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
+        CommonTreeFunctionality.MaintainRootObjects = new[]
+        {
+            typeof(FolderNode<CohortIdentificationConfiguration>),
+            typeof(AllOrphanAggregateConfigurationsNode),
+            typeof(AllTemplateAggregateConfigurationsNode)
+        };
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
+            .CohortIdentificationConfigurationRootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
-        
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]{
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
+            .TemplateAggregateConfigurationsNode);
+
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+        {
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
-            new ExecuteCommandMergeCohortIdentificationConfigurations(a,null)};
+            new ExecuteCommandMergeCohortIdentificationConfigurations(a, null)
+        };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
         var factory = new AtomicCommandUIFactory(activator);
-            
-        CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
-        CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
+
+        CommonFunctionality.Add(
+            factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)), "New...");
+        CommonFunctionality.Add(
+            factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator, null)
+                { OverrideCommandName = "By Merging Existing..." }), "New...");
 
         if (_firstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
             CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
 
-            tlvCohortIdentificationConfigurations.Expand(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
+            tlvCohortIdentificationConfigurations.Expand(Activator.CoreChildProvider
+                .CohortIdentificationConfigurationRootFolder);
 
             _firstTime = false;
         }
     }
-        
+
     public static bool IsRootObject(object root)
     {
         // The root CohortIdentificationConfiguration FolderNode is a root element in this tree
-        if (root is FolderNode<CohortIdentificationConfiguration> f)
-        {
-            return f.Name == FolderHelper.Root;
-        }
+        if (root is FolderNode<CohortIdentificationConfiguration> f) return f.Name == FolderHelper.Root;
 
         return root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-
     }
+
     private string FrozenAspectGetter(object o)
     {
         if (o is CohortIdentificationConfiguration cic)

@@ -18,7 +18,6 @@ public class CredentialsInUseException : Exception
     /// </inheritdoc>
     public CredentialsInUseException(string s) : base(s)
     {
-        
     }
 
     /// <inheritdoc>
@@ -26,6 +25,5 @@ public class CredentialsInUseException : Exception
     /// </inheritdoc>
     public CredentialsInUseException(string s, Exception inner) : base(s, inner)
     {
-            
     }
 }

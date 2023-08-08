@@ -12,7 +12,9 @@ namespace Tests.Common;
 public class TestDatabasesSettings
 {
 #pragma warning disable CA1822 // Mark members as static - that upsets the YAML hack used for loading settings
-    public string Prefix { get => TestDatabaseNames.Prefix;
+    public string Prefix
+    {
+        get => TestDatabaseNames.Prefix;
         set => TestDatabaseNames.Prefix = value;
     }
 #pragma warning restore CA1822 // Mark members as static
@@ -23,7 +25,7 @@ public class TestDatabasesSettings
 
     public string SqlServerLowPrivilegeUsername { get; set; }
     public string SqlServerLowPrivilegePassword { get; set; }
-        
+
     public string MySql { get; set; }
     public string MySqlLowPrivilegeUsername { get; set; }
     public string MySqlLowPrivilegePassword { get; set; }
@@ -31,7 +33,7 @@ public class TestDatabasesSettings
     public string Oracle { get; set; }
     public string OracleLowPrivilegeUsername { get; set; }
     public string OracleLowPrivilegePassword { get; set; }
-        
+
     public string PostgreSql { get; set; }
     public string PostgreSqlLowPrivilegeUsername { get; set; }
     public string PostgreSqlLowPrivilegePassword { get; set; }
@@ -51,7 +53,6 @@ public class TestDatabasesSettings
         };
     }
 
-        
 
     public string GetLowPrivilegePassword(DatabaseType databaseType)
     {

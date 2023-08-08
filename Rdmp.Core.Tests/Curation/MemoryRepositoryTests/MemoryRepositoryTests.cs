@@ -43,7 +43,7 @@ internal class MemoryRepositoryTests
     {
         var memCatalogue = new Catalogue(_repo, "My New Catalogue");
 
-        var myCol = new CatalogueItem(_repo,memCatalogue,"MyCol1");
+        var myCol = new CatalogueItem(_repo, memCatalogue, "MyCol1");
 
         var ti = new TableInfo(_repo, "My table");
         var col = new ColumnInfo(_repo, "Mycol", "varchar(10)", ti);
@@ -52,7 +52,7 @@ internal class MemoryRepositoryTests
 
         Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
 
-        var qb = new QueryBuilder(null,null);
+        var qb = new QueryBuilder(null, null);
         qb.AddColumnRange(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
         Assert.AreEqual(@"

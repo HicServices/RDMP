@@ -17,7 +17,6 @@ namespace Rdmp.Core.Tests.Validation;
 [Category("Unit")]
 internal class ExceptionHandlingTests
 {
-
     [Test]
     public void Validate_WhenMultipleErrors_ReturnsAllErrors()
     {
@@ -25,14 +24,14 @@ internal class ExceptionHandlingTests
 
         var chi = new ItemValidator
         {
-            PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong)
+            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong)
         };
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         chi.AddSecondaryConstraint(prediction);
         validator.AddItemValidator(chi, "chi", typeof(string));
 
         var age = new ItemValidator();
-        var ageConstraint = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        var ageConstraint = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
         ageConstraint.Lower = 0;
         ageConstraint.Upper = 30;
         age.AddSecondaryConstraint(ageConstraint);
@@ -45,10 +44,8 @@ internal class ExceptionHandlingTests
             { "gender", "F" }
         };
 
-        var result =  validator.Validate(row);
+        var result = validator.Validate(row);
 
         Assert.AreEqual(2, result.GetExceptionList().Count);
-            
-
     }
 }

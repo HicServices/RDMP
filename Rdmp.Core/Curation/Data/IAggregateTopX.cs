@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// See AggregateTopX
 /// </summary>
-public interface IAggregateTopX:IMapsDirectlyToDatabaseTable
+public interface IAggregateTopX : IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// The number of records to return from the TopX e.g. Top 10
@@ -29,5 +29,4 @@ public interface IAggregateTopX:IMapsDirectlyToDatabaseTable
     /// count / sum etc is highest.
     /// </summary>
     AggregateTopXOrderByDirection OrderByDirection { get; }
-
 }

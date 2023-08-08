@@ -26,11 +26,11 @@ public partial class CreateNewLoadMetadataUI : RDMPForm
     private readonly Catalogue _catalogue;
     public LoadMetadata LoadMetadataCreatedIfAny { get; set; }
 
-    public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator):base(activator)
+    public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator) : base(activator)
     {
         _catalogue = catalogue;
         InitializeComponent();
-            
+
         chooseLoggingTaskUI1.SetItemActivator(activator);
         chooseLoggingTaskUI1.Catalogue = catalogue;
     }
@@ -42,14 +42,15 @@ public partial class CreateNewLoadMetadataUI : RDMPForm
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
-        if(string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
+        if (string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
         {
             MessageBox.Show("You must configure a logging task first");
             return;
         }
 
-        LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository, tbLoadMetadataNameToCreate.Text);
-            
+        LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository,
+            tbLoadMetadataNameToCreate.Text);
+
         DialogResult = DialogResult.OK;
         Close();
     }

@@ -56,6 +56,7 @@ public class NavigationTrack<T>
         _isAlive = aliveDelegate;
         _activate = activate;
     }
+
     /// <summary>
     /// Removes all dead objects in the history (forward and backwards).  This is based on the alive delegate used to construct the <see cref="NavigationTrack{T}"/>
     /// </summary>
@@ -133,7 +134,7 @@ public class NavigationTrack<T>
         if (show)
             Activate(newHead);
 
-        Changed?.Invoke(this,EventArgs.Empty);
+        Changed?.Invoke(this, EventArgs.Empty);
 
         return newHead;
     }
@@ -157,8 +158,8 @@ public class NavigationTrack<T>
             Activate(r);
 
         _navigationStack.Push(r);
-            
-        Changed?.Invoke(this,EventArgs.Empty);
+
+        Changed?.Invoke(this, EventArgs.Empty);
 
         return r;
     }
@@ -167,10 +168,7 @@ public class NavigationTrack<T>
     /// Returns true if there is a history that can be navigated back to
     /// </summary>
     /// <returns></returns>
-    public bool CanBack()
-    {
-        return GetHistory(1).Any();
-    }
+    public bool CanBack() => GetHistory(1).Any();
 
     /// <summary>
     /// Returns true if the current state is an exploration of the past history and therefore the user can navigate Forwards again
@@ -216,7 +214,7 @@ public class NavigationTrack<T>
 
         _navigationStack.Push(newHead);
 
-        Changed?.Invoke(this,EventArgs.Empty);
+        Changed?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>

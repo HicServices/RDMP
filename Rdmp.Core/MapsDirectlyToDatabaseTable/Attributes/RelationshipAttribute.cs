@@ -40,7 +40,7 @@ public class RelationshipAttribute : Attribute
     /// <param name="cref"></param>
     /// <param name="type"></param>
     /// <param name="propertyName"></param>
-    public RelationshipAttribute(Type cref,RelationshipType type,[CallerMemberName] string propertyName=null)
+    public RelationshipAttribute(Type cref, RelationshipType type, [CallerMemberName] string propertyName = null)
     {
         Cref = cref;
         Type = type;
@@ -48,22 +48,19 @@ public class RelationshipAttribute : Attribute
     }
 
     #region Equality Members
-    protected bool Equals(RelationshipAttribute other)
-    {
-        return base.Equals(other) && Equals(Cref, other.Cref) && string.Equals(PropertyName, other.PropertyName);
-    }
+
+    protected bool Equals(RelationshipAttribute other) => base.Equals(other) && Equals(Cref, other.Cref) &&
+                                                          string.Equals(PropertyName, other.PropertyName);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((RelationshipAttribute) obj);
+        return Equals((RelationshipAttribute)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(base.GetHashCode(), Cref, PropertyName);
-    }
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Cref, PropertyName);
+
     #endregion
 }

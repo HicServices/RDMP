@@ -15,5 +15,6 @@ namespace Rdmp.Core.DataLoad.Engine.Job;
 /// </summary>
 public interface IJobFactory
 {
-    IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration);
+    IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        HICDatabaseConfiguration configuration);
 }

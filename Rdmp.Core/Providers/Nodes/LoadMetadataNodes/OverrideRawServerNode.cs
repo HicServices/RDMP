@@ -11,11 +11,12 @@ using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-internal class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,ExternalDatabaseServer>,IDeletableWithCustomMessage
+internal class OverrideRawServerNode : ObjectUsedByOtherObjectNode<LoadMetadata, ExternalDatabaseServer>,
+    IDeletableWithCustomMessage
 {
-    public OverrideRawServerNode(LoadMetadata user, ExternalDatabaseServer objectBeingUsed) : base(user, objectBeingUsed)
+    public OverrideRawServerNode(LoadMetadata user, ExternalDatabaseServer objectBeingUsed) : base(user,
+        objectBeingUsed)
     {
-
     }
 
     public void DeleteInDatabase()
@@ -24,18 +25,10 @@ internal class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,Ex
         User.SaveToDatabase();
     }
 
-    public override string ToString()
-    {
-        return $"Override RAW:{ObjectBeingUsed.Name}";
-    }
+    public override string ToString() => $"Override RAW:{ObjectBeingUsed.Name}";
 
-    public string GetDeleteMessage()
-    {
-        return "remove explicit RAW server";
-    }
+    public string GetDeleteMessage() => "remove explicit RAW server";
+
     /// <inheritdoc/>
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
+    public string GetDeleteVerb() => "Remove";
 }

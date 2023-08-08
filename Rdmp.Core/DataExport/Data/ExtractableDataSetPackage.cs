@@ -15,9 +15,10 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IExtractableDataSetPackage"/>
-public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackage
+public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPackage
 {
     #region Database Properties
+
     private string _name;
     private string _creator;
     private DateTime _creationDate;
@@ -56,7 +57,6 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
 
     public ExtractableDataSetPackage()
     {
-
     }
 
     /// <summary>
@@ -80,11 +80,11 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
     /// <param name="name"></param>
     public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, string name)
     {
-        dataExportRepository.InsertAndHydrate(this,new Dictionary<string, object>
+        dataExportRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name",name},
-            {"Creator",Environment.UserName},
-            {"CreationDate",DateTime.Now }
+            { "Name", name },
+            { "Creator", Environment.UserName },
+            { "CreationDate", DateTime.Now }
         });
     }
 
@@ -92,8 +92,5 @@ public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackag
     /// Returns <see cref="Name"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 }

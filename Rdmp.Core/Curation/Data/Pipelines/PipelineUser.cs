@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 /// 
 /// <para>Currently used primarily by PipelineSelectionUIFactory </para>
 /// </summary>
-public class PipelineUser:IPipelineUser
+public class PipelineUser : IPipelineUser
 {
     private readonly PropertyInfo _property;
     private ICatalogueRepository _catalogueRepository;
@@ -41,12 +41,12 @@ public class PipelineUser:IPipelineUser
     /// <param name="property"></param>
     /// <param name="user"></param>
     /// <param name="repository"></param>
-    public PipelineUser(PropertyInfo property, DatabaseEntity user,ICatalogueRepository repository = null)
+    public PipelineUser(PropertyInfo property, DatabaseEntity user, ICatalogueRepository repository = null)
     {
         _property = property;
         User = user;
 
-        if(property.PropertyType != typeof (int?))
+        if (property.PropertyType != typeof(int?))
             throw new NotSupportedException($"Property {property} must be of PropertyType nullable int");
 
         //if user passed in an explicit one
@@ -66,30 +66,29 @@ public class PipelineUser:IPipelineUser
             if (_catalogueRepository == null)
                 throw new Exception(
                     $"Repository of Host '{User}' was not an ICatalogueRepository or a IDataExportRepository.  user came from a Repository called '{user.Repository.GetType().Name}' in this case you will need to specify the ICatalogueRepository property to this method so we know where to fetch Pipelines from");
-                
         }
+
         Getter = Get;
         Setter = Set;
     }
-        
+
     /// <summary>
     /// Gets a <see cref="PipelineUser"/> targetting <see cref="CacheProgress.Pipeline_ID"/>
     /// </summary>
     /// <param name="cacheProgress"></param>
-    public PipelineUser(CacheProgress cacheProgress):this(typeof(CacheProgress).GetProperty("Pipeline_ID"),cacheProgress)
+    public PipelineUser(CacheProgress cacheProgress) : this(typeof(CacheProgress).GetProperty("Pipeline_ID"),
+        cacheProgress)
     {
-            
     }
 
     private Pipeline Get()
     {
-        var id = (int?) _property.GetValue(User);
+        var id = (int?)_property.GetValue(User);
 
-        if(id == null)
+        if (id == null)
             return null;
 
         return _catalogueRepository.GetObjectByID<Pipeline>(id.Value);
-
     }
 
     private void Set(Pipeline newPipelineOrNull)

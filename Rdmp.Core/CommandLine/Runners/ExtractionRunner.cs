@@ -40,9 +40,9 @@ public class ExtractionRunner : ManyRunner
     private Pipeline _pipeline;
     private LogManager _logManager;
     private object _oLock = new();
-    public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
+    public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
 
-    public ExtractionRunner(IBasicActivateItems activator,ExtractionOptions extractionOpts):base(extractionOpts)
+    public ExtractionRunner(IBasicActivateItems activator, ExtractionOptions extractionOpts) : base(extractionOpts)
     {
         _options = extractionOpts;
         _activator = activator;
@@ -51,8 +51,9 @@ public class ExtractionRunner : ManyRunner
 
     protected override void Initialize()
     {
-            
-        _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.ExtractionConfiguration);
+        _configuration =
+            GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,
+                _options.ExtractionConfiguration);
         _project = _configuration.Project;
         _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
 
@@ -66,8 +67,10 @@ public class ExtractionRunner : ManyRunner
 
     protected override object[] GetRunnables()
     {
-        lock(_oLock)
+        lock (_oLock)
+        {
             ExtractCommands.Clear();
+        }
 
         var commands = new List<IExtractCommand>();
 
@@ -75,7 +78,8 @@ public class ExtractionRunner : ManyRunner
         if (_options.ExtractGlobals)
         {
             var g = _configuration.GetGlobals();
-            var globals = new GlobalsBundle(g.OfType<SupportingDocument>().ToArray(), g.OfType<SupportingSQLTable>().ToArray());
+            var globals = new GlobalsBundle(g.OfType<SupportingDocument>().ToArray(),
+                g.OfType<SupportingSQLTable>().ToArray());
             _globalsCommand = new ExtractGlobalsCommand(RepositoryLocator, _project, _configuration, globals);
             commands.Add(_globalsCommand);
         }
@@ -86,9 +90,11 @@ public class ExtractionRunner : ManyRunner
         {
             var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
-                
-            lock(_oLock)
-                ExtractCommands.Add(sds,extractDatasetCommand);
+
+            lock (_oLock)
+            {
+                ExtractCommands.Add(sds, extractDatasetCommand);
+            }
         }
 
         return commands.ToArray();
@@ -101,20 +107,23 @@ public class ExtractionRunner : ManyRunner
         var datasetCommand = runnable as ExtractDatasetCommand;
 
         var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
-        var fork = 
-            datasetCommand != null ?
-                new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand)):
-                new ForkDataLoadEventListener(logging, listener);
+        var fork =
+            datasetCommand != null
+                ? new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand))
+                : new ForkDataLoadEventListener(logging, listener);
 
-        if(runnable is ExtractGlobalsCommand globalCommand)
+        if (runnable is ExtractGlobalsCommand globalCommand)
         {
-            var useCase = new ExtractionPipelineUseCase(_activator,_project, _globalsCommand, _pipeline, dataLoadInfo) { Token = Token };
+            var useCase = new ExtractionPipelineUseCase(_activator, _project, _globalsCommand, _pipeline, dataLoadInfo)
+                { Token = Token };
             useCase.Execute(fork);
         }
 
         if (datasetCommand != null)
         {
-            var executeUseCase = new ExtractionPipelineUseCase(_activator,_project, datasetCommand, _pipeline, dataLoadInfo) { Token = Token };
+            var executeUseCase =
+                new ExtractionPipelineUseCase(_activator, _project, datasetCommand, _pipeline, dataLoadInfo)
+                    { Token = Token };
             executeUseCase.Execute(fork);
         }
 
@@ -132,7 +141,7 @@ public class ExtractionRunner : ManyRunner
             return Array.Empty<ICheckable>();
         }
 
-        checkables.Add(new ProjectChecker(_activator,_configuration.Project)
+        checkables.Add(new ProjectChecker(_activator, _configuration.Project)
         {
             CheckDatasets = false,
             CheckConfigurations = false
@@ -150,12 +159,13 @@ public class ExtractionRunner : ManyRunner
                 checkables.Add(new GlobalExtractionChecker(_activator, _configuration, globalsCommand, _pipeline));
 
             if (runnable is ExtractDatasetCommand datasetCommand)
-                checkables.Add(new SelectedDataSetsChecker(_activator,datasetCommand.SelectedDataSets,  false, _pipeline));
+                checkables.Add(new SelectedDataSetsChecker(_activator, datasetCommand.SelectedDataSets, false,
+                    _pipeline));
         }
-            
+
         return checkables.ToArray();
     }
-        
+
     private ISelectedDataSets[] GetSelectedDataSets()
     {
         if (_options.Datasets == null || !_options.Datasets.Any())
@@ -167,27 +177,24 @@ public class ExtractionRunner : ManyRunner
         return _configuration.SelectedDataSets.Where(ds => datasetIds.Contains(ds.ExtractableDataSet_ID)).ToArray();
     }
 
-    public ToMemoryCheckNotifier GetGlobalCheckNotifier()
-    {
-        return GetSingleCheckerResults<GlobalExtractionChecker>();
-    }
+    public ToMemoryCheckNotifier GetGlobalCheckNotifier() => GetSingleCheckerResults<GlobalExtractionChecker>();
 
     public ToMemoryCheckNotifier GetCheckNotifier(IExtractableDataSet extractableData)
     {
-        return GetSingleCheckerResults<SelectedDataSetsChecker>(sds => sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
+        return GetSingleCheckerResults<SelectedDataSetsChecker>(sds =>
+            sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
     }
 
     public object GetState(IExtractableDataSet extractableData)
     {
-        if(_options.Command == CommandLineActivity.check)
+        if (_options.Command == CommandLineActivity.check)
         {
             var sds = GetCheckNotifier(extractableData);
 
             return sds?.GetWorst();
         }
 
-        if(_options.Command == CommandLineActivity.run)
-        {
+        if (_options.Command == CommandLineActivity.run)
             lock (_oLock)
             {
                 var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == extractableData.ID);
@@ -197,8 +204,7 @@ public class ExtractionRunner : ManyRunner
 
                 return ExtractCommands[sds].State;
             }
-        }
-            
+
         return null;
     }
 
@@ -215,7 +221,6 @@ public class ExtractionRunner : ManyRunner
             return _globalsCommand.State;
 
         return null;
-            
     }
 
     private DataLoadInfo StartAudit()
@@ -235,7 +240,8 @@ public class ExtractionRunner : ManyRunner
         catch (Exception e)
         {
             throw new Exception(
-                $"Problem occurred trying to create Logging Component:{e.Message} (check user has access to {_logManager.Server} and that the DataLoadTask '{ExecuteDatasetExtractionSource.AuditTaskName}' exists)", e);
+                $"Problem occurred trying to create Logging Component:{e.Message} (check user has access to {_logManager.Server} and that the DataLoadTask '{ExecuteDatasetExtractionSource.AuditTaskName}' exists)",
+                e);
         }
 
         return dataLoadInfo;

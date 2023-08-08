@@ -19,5 +19,5 @@ public abstract class PredictionRule
     /// <param name="value">The value upon which to make a prediction</param>
     /// <param name="targetValue">The value that should match the prediction</param>
     /// <returns>null if the predicted value matches the <paramref name="targetValue"/> otherwise a <see cref="ValidationFailure"/></returns>
-    public abstract ValidationFailure Predict(IConstraint parent,object value, object targetValue);
+    public abstract ValidationFailure Predict(IConstraint parent, object value, object targetValue);
 }

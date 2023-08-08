@@ -43,7 +43,7 @@ public sealed partial class WaitUI : Form
             Close();
         }
     }
-        
+
     private void button1_Click(object sender, EventArgs e)
     {
         _cancellationTokenSource.Cancel();

@@ -61,12 +61,13 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbName,"Text","Name",w=>w.Name);
+        Bind(tbName, "Text", "Name", w => w.Name);
         Bind(tbDescription, "Text", "Description", w => w.Description);
-        Bind(tbID,"Text","ID",w=>w.ID);
+        Bind(tbID, "Text", "ID", w => w.ID);
     }
 
-    private static void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
+    private static void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum,
+        Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
     {
         if (periodsByDay.TryGetValue(dayNum, out var value)) PopulateTextBox(textBox, value);
     }
@@ -80,9 +81,9 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         var listString = textBox.Text;
         var periodList = new List<PermissionWindowPeriod>();
-        foreach (var periodString in listString.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var periodString in listString.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
         {
-            var parts = periodString.Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries);
+            var parts = periodString.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
             if (!TimeSpan.TryParse(parts[0], out var start))
                 throw new Exception($"Could not parse {parts[0]} as a TimeSpan");
 
@@ -94,7 +95,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
         return periodList;
     }
-        
+
     public void RebuildPermissionWindowPeriods()
     {
         var periodList = new List<PermissionWindowPeriod>();
@@ -108,7 +109,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
         _permissionWindow.SetPermissionWindowPeriods(periodList);
     }
-        
+
     private void tbDay_TextChanged(object sender, EventArgs e)
     {
         ragSmiley1.Reset();
@@ -124,7 +125,6 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PermissionWindowUI_Design, UserControl>))]
-public abstract class PermissionWindowUI_Design:RDMPSingleDatabaseObjectControl<PermissionWindow>
+public abstract class PermissionWindowUI_Design : RDMPSingleDatabaseObjectControl<PermissionWindow>
 {
-
 }

@@ -47,23 +47,19 @@ public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecut
             if (wizard.ExtractionConfigurationCreatedIfAny != null)
             {
                 //now execute it
-                var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
+                var executeCommand =
+                    new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(
+                        wizard.ExtractionConfigurationCreatedIfAny);
                 if (!executeCommand.IsImpossible)
                     executeCommand.Execute();
             }
-
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
 
-    public override string GetCommandHelp()
-    {
-        return
-            "This will open a window which will guide you in the steps for creating a Data Extraction Project.\r\n" +
-            "You will be asked to choose a Cohort, the Catalogues to extract and the destination folder.";
-    }
+    public override string GetCommandHelp() =>
+        "This will open a window which will guide you in the steps for creating a Data Extraction Project.\r\n" +
+        "You will be asked to choose a Cohort, the Catalogues to extract and the destination folder.";
 }

@@ -29,7 +29,8 @@ public class CatalogueItemCombineable : ICombineToMakeCommand
 
     public string GetSqlString()
     {
-        var strings = CatalogueItems.Select(ci => ci.ExtractionInformation?.SelectSQL).Where(v => !string.IsNullOrEmpty(v)).ToArray();
+        var strings = CatalogueItems.Select(ci => ci.ExtractionInformation?.SelectSQL)
+            .Where(v => !string.IsNullOrEmpty(v)).ToArray();
         return string.Join(Environment.NewLine, strings);
     }
 }

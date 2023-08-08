@@ -27,5 +27,5 @@ public interface IExtractCommand
     /// set of new data that has not been succesfully outputted yet and should be appended to the destination 
     /// instead of overwriting.
     /// </summary>
-    bool IsBatchResume{ get; set; }
+    bool IsBatchResume { get; set; }
 }

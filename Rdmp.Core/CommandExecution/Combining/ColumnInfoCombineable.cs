@@ -19,7 +19,7 @@ public class ColumnInfoCombineable : ICombineToMakeCommand
 
     public ColumnInfoCombineable(ColumnInfo columnInfo)
     {
-        ColumnInfos = new []{columnInfo};
+        ColumnInfos = new[] { columnInfo };
     }
 
     public ColumnInfoCombineable(ColumnInfo[] columnInfos)
@@ -29,6 +29,6 @@ public class ColumnInfoCombineable : ICombineToMakeCommand
 
     public string GetSqlString()
     {
-        return string.Join(Environment.NewLine,ColumnInfos.Select(c=>c.Name));
+        return string.Join(Environment.NewLine, ColumnInfos.Select(c => c.Name));
     }
 }

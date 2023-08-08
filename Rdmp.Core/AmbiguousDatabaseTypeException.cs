@@ -20,8 +20,7 @@ public class AmbiguousDatabaseTypeException : Exception
     /// Creates a new Exception with the given message
     /// </summary>
     /// <param name="s"></param>
-    public AmbiguousDatabaseTypeException(string s):base(s)
+    public AmbiguousDatabaseTypeException(string s) : base(s)
     {
-            
     }
 }

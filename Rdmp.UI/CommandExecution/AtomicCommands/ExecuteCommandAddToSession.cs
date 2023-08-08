@@ -18,7 +18,8 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
     private IMapsDirectlyToDatabaseTable[] _toAdd;
     private readonly SessionCollectionUI session;
 
-    public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd, SessionCollectionUI session) : base(activator)
+    public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd,
+        SessionCollectionUI session) : base(activator)
     {
         _toAdd = toAdd;
         this.session = session;
@@ -27,8 +28,8 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
             SetImpossible("There are no active Sessions");
 
         Weight = 100.2f;
-
     }
+
     public override void Execute()
     {
         base.Execute();
@@ -39,16 +40,16 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
             var sessions = Activator.GetSessions().ToArray();
 
             if (sessions.Length == 1)
+            {
                 ses = sessions[0];
+            }
             else
             {
-                if(BasicActivator.SelectObject(new DialogArgs
-                   {
-                       TaskDescription = "Choose which session to add the objects to"
-                   }, sessions,out var selected))
-                {
+                if (BasicActivator.SelectObject(new DialogArgs
+                    {
+                        TaskDescription = "Choose which session to add the objects to"
+                    }, sessions, out var selected))
                     ses = selected;
-                }
             }
         }
 

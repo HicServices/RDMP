@@ -36,10 +36,11 @@ public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisable
     /// <inheritdoc cref="DataLoad.ProcessTaskType"/>
     ProcessTaskType ProcessTaskType { get; }
 
-        
+
     /// <summary>
     /// Deprecated property
     /// </summary>
-    [Obsolete("Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
+    [Obsolete(
+        "Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
     int? RelatesSolelyToCatalogue_ID { get; }
 }

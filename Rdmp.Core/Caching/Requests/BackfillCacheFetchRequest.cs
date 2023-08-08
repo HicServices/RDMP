@@ -17,8 +17,7 @@ namespace Rdmp.Core.Caching.Requests;
 /// </summary>
 public class BackfillCacheFetchRequest : ICacheFetchRequest
 {
-    [NoMappingToDatabase]
-    public IRepository Repository { get; set; }
+    [NoMappingToDatabase] public IRepository Repository { get; set; }
 
     public DateTime Start { get; set; }
     public TimeSpan ChunkPeriod { get; set; }
@@ -28,13 +27,13 @@ public class BackfillCacheFetchRequest : ICacheFetchRequest
 
     public DateTime End => Start.Add(ChunkPeriod);
 
-    public BackfillCacheFetchRequest(IRepository repository,DateTime start)
+    public BackfillCacheFetchRequest(IRepository repository, DateTime start)
     {
         Repository = repository;
         Start = start;
         IsRetry = false;
     }
-        
+
     public void SaveCacheFillProgress(DateTime cacheFillProgress)
     {
         // do nothing, backfill should not affect the cache

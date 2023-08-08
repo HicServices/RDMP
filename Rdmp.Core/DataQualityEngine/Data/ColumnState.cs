@@ -25,8 +25,8 @@ public class ColumnState
     public int DataLoadRunID { get; set; }
 
     public int? ID { get; private set; }
-    public int? Evaluation_ID { get;private set; }
-        
+    public int? Evaluation_ID { get; private set; }
+
     public string ItemValidatorXML { get; set; }
 
     public int CountMissing
@@ -35,7 +35,8 @@ public class ColumnState
         set
         {
             if (IsCommitted)
-                throw new NotSupportedException("Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
+                throw new NotSupportedException(
+                    "Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
             _countMissing = value;
         }
     }
@@ -46,9 +47,9 @@ public class ColumnState
         set
         {
             if (IsCommitted)
-                throw new NotSupportedException("Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
+                throw new NotSupportedException(
+                    "Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
             _countWrong = value;
-                
         }
     }
 
@@ -58,7 +59,8 @@ public class ColumnState
         set
         {
             if (IsCommitted)
-                throw new NotSupportedException("Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
+                throw new NotSupportedException(
+                    "Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
             _countInvalidatesRow = value;
         }
     }
@@ -69,9 +71,10 @@ public class ColumnState
         set
         {
             if (IsCommitted)
-                throw new NotSupportedException("Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
+                throw new NotSupportedException(
+                    "Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
 
-            _countCorrect = value; 
+            _countCorrect = value;
         }
     }
 
@@ -80,16 +83,18 @@ public class ColumnState
         get => _countDbNull;
         set
         {
-            if(IsCommitted)
-                throw new NotSupportedException("Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
+            if (IsCommitted)
+                throw new NotSupportedException(
+                    "Can only edit these values while the ColumnState is being computed in memory, this ColumnState came from the database and was committed long ago");
 
             _countDbNull = value;
         }
     }
-        
+
     public string PivotCategory { get; private set; }
 
     public bool IsCommitted { get; private set; }
+
     public ColumnState(string targetProperty, int dataLoadRunID, string itemValidatorXML)
     {
         TargetProperty = targetProperty;
@@ -116,7 +121,6 @@ public class ColumnState
         PivotCategory = (string)r["PivotCategory"];
 
         IsCommitted = true;
-
     }
 
     /// <summary>
@@ -124,25 +128,24 @@ public class ColumnState
     /// </summary>
     protected ColumnState()
     {
-
     }
 
-    public void Commit(Evaluation evaluation,string pivotCategory, DbConnection con, DbTransaction transaction)
+    public void Commit(Evaluation evaluation, string pivotCategory, DbConnection con, DbTransaction transaction)
     {
-        if(IsCommitted)
+        if (IsCommitted)
             throw new NotSupportedException("ColumnState was already committed");
 
         var sql = string.Format(
             "INSERT INTO ColumnState(TargetProperty,DataLoadRunID,Evaluation_ID,CountCorrect,CountDBNull,ItemValidatorXML,CountMissing,CountWrong,CountInvalidatesRow,PivotCategory)VALUES({0},{1},{2},{3},{4},{5},{6},{7},{8},{9})",
             "@TargetProperty",
             DataLoadRunID
-            ,evaluation.ID
-            ,CountCorrect
-            ,CountDBNull
-            ,"@ItemValidatorXML"
-            ,CountMissing
-            ,CountWrong
-            ,CountInvalidatesRow
+            , evaluation.ID
+            , CountCorrect
+            , CountDBNull
+            , "@ItemValidatorXML"
+            , CountMissing
+            , CountWrong
+            , CountInvalidatesRow
             , "@PivotCategory"
         );
 
@@ -153,10 +156,8 @@ public class ColumnState
             DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
             cmd.ExecuteNonQuery();
         }
-            
+
 
         IsCommitted = true;
     }
-
-        
 }

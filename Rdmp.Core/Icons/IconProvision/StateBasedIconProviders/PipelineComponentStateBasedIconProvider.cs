@@ -22,6 +22,7 @@ public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProv
         _source = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentSource);
         _destination = Image.Load<Rgba32>(CatalogueIcons.PipelineComponentDestination);
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is not PipelineComponent pc) return null;
@@ -32,6 +33,5 @@ public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProv
             return _destination;
 
         return _component;
-
     }
 }

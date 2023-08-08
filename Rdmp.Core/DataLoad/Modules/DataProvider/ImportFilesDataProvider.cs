@@ -33,17 +33,21 @@ public class ImportFilesDataProvider : IPluginDataProvider
     [DemandsInitialization("The file pattern to match on the DirectoryPath", Mandatory = true)]
     public string FilePattern { get; set; }
 
-    [DemandsInitialization("If true then at the end of a successful data load the files that were originally matched and copied to forLoading will be deleted from the remote DirectoryPath.  Note that only the files copied will be deleted, any new files that appear during the load will not be deleted")]
+    [DemandsInitialization(
+        "If true then at the end of a successful data load the files that were originally matched and copied to forLoading will be deleted from the remote DirectoryPath.  Note that only the files copied will be deleted, any new files that appear during the load will not be deleted")]
     public bool DeleteFilesOnsuccessfulLoad { get; set; }
 
     public void Check(ICheckNotifier notifier)
     {
-
         if (string.IsNullOrWhiteSpace(DirectoryPath))
-            notifier.OnCheckPerformed(new CheckEventArgs("No DirectoryPath has been specified, this should be set to the remote folder you want to copy files out of",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "No DirectoryPath has been specified, this should be set to the remote folder you want to copy files out of",
+                CheckResult.Fail));
 
         if (string.IsNullOrWhiteSpace(FilePattern))
-            notifier.OnCheckPerformed(new CheckEventArgs("No FilePattern has been specified, this should be a pattern that matches files in the remote folder you want to copy files out of e.g. *.*", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "No FilePattern has been specified, this should be a pattern that matches files in the remote folder you want to copy files out of e.g. *.*",
+                CheckResult.Fail));
 
         notifier.OnCheckPerformed(new DirectoryInfo(DirectoryPath).Exists
             ? new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success)
@@ -52,7 +56,6 @@ public class ImportFilesDataProvider : IPluginDataProvider
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -62,9 +65,9 @@ public class ImportFilesDataProvider : IPluginDataProvider
         foreach (var f in _files)
         {
             var to = Path.Combine(job.LoadDirectory.ForLoading.FullName, f.Name);
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Copying file {f.FullName} to directory {to}"));
-            f.CopyTo(to,true);
+            f.CopyTo(to, true);
         }
 
         return ExitCodeType.Success;

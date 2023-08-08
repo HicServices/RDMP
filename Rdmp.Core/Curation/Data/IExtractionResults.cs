@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data;
 /// Record of a single component extracted as part of an <see cref="IExtractionConfiguration"/>.  This could be an anonymised dataset or bundled supporting
 /// documents e.g. Lookups , pdfs etc.  This audit is used to perform release process (where all extracted artifacts are collected and sent somewhere).
 /// </summary>
-public interface IExtractionResults : IReferenceOtherObject,IMapsDirectlyToDatabaseTable, ISaveable
+public interface IExtractionResults : IReferenceOtherObject, IMapsDirectlyToDatabaseTable, ISaveable
 {
     /// <summary>
     /// Description of the file path, database table name etc of the extracted artifact.  This must make sense to the pipeline
@@ -67,5 +67,6 @@ public interface IExtractionResults : IReferenceOtherObject,IMapsDirectlyToDatab
     /// <param name="recordsExtracted">Total number of records in the dataset extracted</param>
     /// <param name="isBatchResume">True if the <paramref name="recordsExtracted"/> is a subset of those already extracted</param>
     /// <param name="failed">True if the extraction pipeline execution failed otherwise false</param>
-    void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted, bool isBatchResume, bool failed);
+    void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted, bool isBatchResume,
+        bool failed);
 }

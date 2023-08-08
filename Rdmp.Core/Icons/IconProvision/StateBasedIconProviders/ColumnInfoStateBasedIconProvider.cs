@@ -24,6 +24,7 @@ public class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
         _columnInfo = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
         _columnInfoWithANO = Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is not ColumnInfo columnInfo)
@@ -33,7 +34,7 @@ public class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 
         if (columnInfo.IsPrimaryKey)
             return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Key);
-            
+
         return basicIcon;
     }
 }

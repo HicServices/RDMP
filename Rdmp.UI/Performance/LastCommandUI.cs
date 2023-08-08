@@ -21,7 +21,7 @@ public partial class LastCommandUI : Form
 
     private void btnCopyToClipboard_Click(object sender, EventArgs e)
     {
-        Clipboard.SetText(label1.Text);                
+        Clipboard.SetText(label1.Text);
     }
 
     private void timer1_Tick(object sender, EventArgs e)

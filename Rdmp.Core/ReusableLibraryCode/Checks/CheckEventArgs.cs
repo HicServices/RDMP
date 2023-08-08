@@ -51,14 +51,13 @@ public partial class CheckEventArgs : IHasSummary
         }
     }
 
-    public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code,null,null,formatStringArgs)
+    public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code, null, null, formatStringArgs)
     {
-
     }
 
-    public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null, formatStringArgs)
+    public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null,
+        formatStringArgs)
     {
-
     }
 
     /// <summary>
@@ -86,18 +85,14 @@ public partial class CheckEventArgs : IHasSummary
         {
             //Stack trace not available ah well
         }
-
     }
 
-    public override string ToString()
-    {
-        return Message;
-    }
+    public override string ToString() => Message;
 
     public NotifyEventArgs ToNotifyEventArgs()
     {
         ProgressEventType status;
-            
+
         switch (Result)
         {
             case CheckResult.Success:
@@ -113,14 +108,14 @@ public partial class CheckEventArgs : IHasSummary
                 throw new ArgumentOutOfRangeException();
         }
 
-        return new NotifyEventArgs(status, Message,Ex);
+        return new NotifyEventArgs(status, Message, Ex);
     }
 
-    public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
+    public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
         title = "Check Result";
         body = Message;
-        stackTrace= StackTrace;
+        stackTrace = StackTrace;
         level = Result;
     }
 }

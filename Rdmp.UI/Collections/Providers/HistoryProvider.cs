@@ -26,19 +26,20 @@ public class HistoryProvider
     /// <summary>
     /// Collection of objects and when they were accessed, use <see cref="HistoryProvider.Add"/> instead of modifying this list directly
     /// </summary>
-    public List<HistoryEntry> History { get; set; } = new List<HistoryEntry>();
+    public List<HistoryEntry> History { get; set; } = new();
 
     /// <summary>
     /// What Types to track in <see cref="Add"/>
     /// </summary>
-    public Type[] TrackTypes { get; set; } = {
+    public Type[] TrackTypes { get; set; } =
+    {
         typeof(Catalogue),
         typeof(Project),
         typeof(ExtractionConfiguration),
         typeof(CohortIdentificationConfiguration),
         typeof(LoadMetadata)
     };
-        
+
     /// <summary>
     /// Creates a new history provider and loads the users history from the persistence file (<see cref="UserSettings.RecentHistory"/>)
     /// </summary>
@@ -48,20 +49,19 @@ public class HistoryProvider
         try
         {
             var history = UserSettings.RecentHistory;
-            
+
             if (string.IsNullOrWhiteSpace(history))
                 return;
 
-            foreach (var s in history.Split(new []{Environment.NewLine},StringSplitOptions.RemoveEmptyEntries))
+            foreach (var s in history.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var entry = HistoryEntry.Deserialize(s, locator);
-                
-                if(entry != null)
+
+                if (entry != null)
                     History.Add(entry);
             }
-
         }
-        catch (Exception )
+        catch (Exception)
         {
             //error reading persisted history, maybe history file is corrupt or something
             return;
@@ -79,12 +79,11 @@ public class HistoryProvider
 
         foreach (var group in History.GroupBy(o => o.Object.GetType()))
         {
-            var recentsOfType = group.ToList().OrderByDescending(e=>e.Date).Take(numberOfEntries).ToList();
-                
+            var recentsOfType = group.ToList().OrderByDescending(e => e.Date).Take(numberOfEntries).ToList();
+
             //save x of each Type
-            sb.AppendLine(string.Join(Environment.NewLine,recentsOfType.Select(h=>h.Serialize())));
+            sb.AppendLine(string.Join(Environment.NewLine, recentsOfType.Select(h => h.Serialize())));
             newHistory.AddRange(recentsOfType);
-                
         }
 
         History = newHistory;
@@ -98,10 +97,10 @@ public class HistoryProvider
     /// <param name="o"></param>
     public void Add(IMapsDirectlyToDatabaseTable o)
     {
-        if(o == null)
+        if (o == null)
             return;
 
-        if(!TrackTypes.Contains(o.GetType()))
+        if (!TrackTypes.Contains(o.GetType()))
             return;
 
         var newEntry = new HistoryEntry(o, DateTime.Now);
@@ -126,7 +125,7 @@ public class HistoryProvider
 
     public void Remove(IMapsDirectlyToDatabaseTable o)
     {
-        if(o == null)
+        if (o == null)
             return;
 
         foreach (var historyEntry in History.Where(h => h.Object.Equals(o)).ToArray())

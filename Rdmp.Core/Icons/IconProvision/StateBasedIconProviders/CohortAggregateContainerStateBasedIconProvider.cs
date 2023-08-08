@@ -21,8 +21,9 @@ public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedI
     {
         _union = Image.Load<Rgba32>(CatalogueIcons.UNION);
         _intersect = Image.Load<Rgba32>(CatalogueIcons.INTERSECT);
-        _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);            
+        _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);
     }
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         return o switch

@@ -20,18 +20,12 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
 
     public ExecuteCommandCreateNewPermissionWindow(IBasicActivateItems activator) : base(activator)
     {
-
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a new time window restriction on when loads can occur";
-    }
+    public override string GetCommandHelp() => "Creates a new time window restriction on when loads can occur";
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -43,7 +37,8 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
     {
         base.Execute();
 
-        if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000,null,out var name))
+        if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000, null,
+                out var name))
         {
             var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueRepository)
             {
@@ -52,7 +47,8 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
             newWindow.SaveToDatabase();
 
             if (_cacheProgressToSetOnIfAny != null)
-                new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow).Execute();
+                new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow)
+                    .Execute();
 
             Publish(newWindow);
             Activate(newWindow);

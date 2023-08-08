@@ -34,11 +34,10 @@ public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        if(_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
+        if (_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
             return;
 
-        if (oTableWrapperObject.GetType() != typeof (ObjectImport))
+        if (oTableWrapperObject.GetType() != typeof(ObjectImport))
             _shareManager.DeleteAllOrphanImportDefinitions();
     }
-
 }

@@ -29,7 +29,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 /// </summary>
 /// <typeparam name="T"></typeparam>
 [TechnicalUI]
-public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
+public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl
+    where T : DatabaseEntity
 {
     /// <summary>
     /// True to track changes made to the <see cref="DatabaseObject"/> hosted by this control
@@ -68,12 +69,12 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
     {
         SetItemActivator(activator);
-        Activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
+        Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
         DatabaseObject = databaseObject;
 
         CommonFunctionality.ClearToolStrip();
 
-        if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
+        if (_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
             _colorIndicator = new Control
             {
@@ -87,16 +88,16 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         }
 
         _readonlyIndicator ??= new Label
-            {
-                Dock = DockStyle.Top,
-                Location = new Point(0, 0),
-                Size = new Size(150, 20),
-                TabIndex = 0,
-                TextAlign = ContentAlignment.MiddleLeft,
-                BackColor = SystemColors.HotTrack,
-                Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
-                ForeColor = Color.Moccasin
-            };
+        {
+            Dock = DockStyle.Top,
+            Location = new Point(0, 0),
+            Size = new Size(150, 20),
+            TabIndex = 0,
+            TextAlign = ContentAlignment.MiddleLeft,
+            BackColor = SystemColors.HotTrack,
+            Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
+            ForeColor = Color.Moccasin
+        };
 
         if (databaseObject is IMightBeReadOnly ro)
         {
@@ -118,11 +119,12 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         SetBindings(_binder, databaseObject);
 
-        if(this is ISaveableUI)
+        if (this is ISaveableUI)
         {
-            if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
+            if (UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
             {
-                CurrentCommit = new CommitInProgress(activator.RepositoryLocator, new CommitInProgressSettings(databaseObject));
+                CurrentCommit = new CommitInProgress(activator.RepositoryLocator,
+                    new CommitInProgressSettings(databaseObject));
                 ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
                 ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
             }
@@ -135,7 +137,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
         {
             cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
-            CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
+            CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         }
     }
 
@@ -151,13 +153,9 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             return true;
 
         if (CurrentCommit != null)
-        {
             if (CurrentCommit.TryFinish(Activator) == null)
-            {
                 // No changes were actually made or user cancelled
                 return false;
-            }
-        }
 
         // before starting a new commit cleanup old one
         CurrentCommit?.Dispose();
@@ -171,10 +169,9 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     private void AfterSave_BeginNewCommitIfApplicable()
     {
         if (CurrentCommit == null && UseCommitSystem && Activator.UseCommits())
-        {
             // start a new commit for the next changes the user commits
-            CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
-        }
+            CurrentCommit =
+                new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
     }
 
     private void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
@@ -184,7 +181,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
     {
-
     }
 
     /// <summary>
@@ -197,13 +193,12 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     /// <param name="getter"></param>
     /// <param name="formattingEnabled"></param>
     /// <param name="updateMode"></param>
-    protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
+    protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter,
+        bool formattingEnabled = true, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
         //workaround for only comitting lists on loose focus
         if (c is ComboBox box && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
-        {
-            box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
-        }
+            box.SelectionChangeCommitted += (s, e) => box.DataBindings["SelectedItem"].WriteValue();
 
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
     }
@@ -219,7 +214,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         try
         {
-
             if (string.IsNullOrWhiteSpace(tb.Text))
             {
                 action(null);
@@ -230,7 +224,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             action(dateTime);
 
             tb.ForeColor = Color.Black;
-
         }
         catch (Exception)
         {
@@ -257,7 +250,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             var u = new Uri(tb.Text);
             action(u);
             tb.ForeColor = Color.Black;
-
         }
         catch (UriFormatException)
         {
@@ -267,13 +259,10 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
     {
-        SetDatabaseObject(activator,(T)databaseObject);
+        SetDatabaseObject(activator, (T)databaseObject);
     }
 
-    public Type GetTypeOfT()
-    {
-        return typeof (T);
-    }
+    public Type GetTypeOfT() => typeof(T);
 
     public virtual string GetTabName()
     {
@@ -287,10 +276,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         return "Unamed Tab";
     }
 
-    public virtual string GetTabToolTip()
-    {
-        return null;
-    }
+    public virtual string GetTabToolTip() => null;
 
     /// <summary>
     /// Triggers an application refresh because a change has been made to <paramref name="e"/>
@@ -315,19 +301,20 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         SetDatabaseObject(Activator, DatabaseObject);
     }
-    public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
-    public virtual ObjectSaverButton GetObjectSaverButton()
+    public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
-        return ObjectSaverButton1;
     }
+
+    public virtual ObjectSaverButton GetObjectSaverButton() => ObjectSaverButton1;
+
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
 
         CurrentCommit?.Dispose();
 
-        if(ObjectSaverButton1 != null)
+        if (ObjectSaverButton1 != null)
         {
             ObjectSaverButton1.BeforeSave -= BeforeSave_FinishCommitInProgressIfAny;
             ObjectSaverButton1.AfterSave -= AfterSave_BeginNewCommitIfApplicable;

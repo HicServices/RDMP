@@ -18,10 +18,7 @@ public class GuidReleaseIdentifierAllocator : IAllocateReleaseIdentifiers
     /// </summary>
     /// <param name="privateIdentifier"></param>
     /// <returns></returns>
-    public object AllocateReleaseIdentifier(object privateIdentifier)
-    {
-        return Guid.NewGuid().ToString();
-    }
+    public object AllocateReleaseIdentifier(object privateIdentifier) => Guid.NewGuid().ToString();
 
     /// <summary>
     /// Does nothing
@@ -29,6 +26,5 @@ public class GuidReleaseIdentifierAllocator : IAllocateReleaseIdentifiers
     /// <param name="request"></param>
     public void Initialize(ICohortCreationRequest request)
     {
-            
     }
 }

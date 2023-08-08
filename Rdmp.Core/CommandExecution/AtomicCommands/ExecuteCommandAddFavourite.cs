@@ -49,7 +49,6 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
         }
         else
         {
-                
             BasicActivator.SelectAnythingThen("Add Favourite",
                 a =>
                 {
@@ -59,7 +58,6 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
                         BasicActivator.FavouritesProvider.AddFavourite(this, a);
                 });
         }
-
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

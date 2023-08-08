@@ -15,24 +15,20 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandEditLoadMetadataDescription : BasicUICommandExecution,IAtomicCommand
+internal class ExecuteCommandEditLoadMetadataDescription : BasicUICommandExecution, IAtomicCommand
 {
     private LoadMetadata _loadMetadata;
 
-    public ExecuteCommandEditLoadMetadataDescription(IActivateItems activator, LoadMetadata loadMetadata):base(activator)
+    public ExecuteCommandEditLoadMetadataDescription(IActivateItems activator, LoadMetadata loadMetadata) :
+        base(activator)
     {
         _loadMetadata = loadMetadata;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.LoadMetadata,OverlayKind.Edit);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Edit);
 
-    public override string GetCommandName()
-    {
-        return "Edit Description";
-    }
+    public override string GetCommandName() => "Edit Description";
 
     public override void Execute()
     {

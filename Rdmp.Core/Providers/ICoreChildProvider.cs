@@ -31,15 +31,14 @@ namespace Rdmp.Core.Providers;
 /// property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests for the icon - you don't want to lookup
 /// the PermissionWindow from the database every time).
 /// </summary>
-public interface ICoreChildProvider:IChildProvider
+public interface ICoreChildProvider : IChildProvider
 {
-
-    JoinInfo[] AllJoinInfos { get;}
+    JoinInfo[] AllJoinInfos { get; }
     LoadMetadata[] AllLoadMetadatas { get; }
     TableInfoServerNode[] AllServers { get; }
-    TableInfo[] AllTableInfos { get;}
+    TableInfo[] AllTableInfos { get; }
     Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
-    CohortIdentificationConfiguration [] AllCohortIdentificationConfigurations { get; }
+    CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
     CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
     JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
     JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
@@ -56,7 +55,7 @@ public interface ICoreChildProvider:IChildProvider
     AllANOTablesNode AllANOTablesNode { get; }
     ANOTable[] AllANOTables { get; }
     AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
-    AllServersNode AllServersNode { get;}
+    AllServersNode AllServersNode { get; }
     ColumnInfo[] AllColumnInfos { get; }
     Lookup[] AllLookups { get; }
     AllExternalServersNode AllExternalServersNode { get; }
@@ -70,20 +69,20 @@ public interface ICoreChildProvider:IChildProvider
     /// <returns></returns>
     object GetRootObjectOrSelf(object model);
 
-    PermissionWindow[] AllPermissionWindows { get;}
+    PermissionWindow[] AllPermissionWindows { get; }
     IEnumerable<CatalogueItem> AllCatalogueItems { get; }
     Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; }
-    AggregateConfiguration[] AllAggregateConfigurations { get;}
+    AggregateConfiguration[] AllAggregateConfigurations { get; }
     AllRDMPRemotesNode AllRDMPRemotesNode { get; }
 
     AllDashboardsNode AllDashboardsNode { get; }
-    DashboardLayout[] AllDashboards { get;  }
+    DashboardLayout[] AllDashboards { get; }
 
     AllObjectSharingNode AllObjectSharingNode { get; }
     ObjectImport[] AllImports { get; }
     ObjectExport[] AllExports { get; }
 
-    AllPluginsNode AllPluginsNode {get;}
+    AllPluginsNode AllPluginsNode { get; }
 
     Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     IEnumerable<object> GetAllChildrenRecursively(object o);
@@ -93,22 +92,22 @@ public interface ICoreChildProvider:IChildProvider
 
     AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
     AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
-    AllStandardRegexesNode AllStandardRegexesNode { get;}
+    AllStandardRegexesNode AllStandardRegexesNode { get; }
     AllPipelinesNode AllPipelinesNode { get; }
-        
+
     AllGovernanceNode AllGovernanceNode { get; }
     GovernancePeriod[] AllGovernancePeriods { get; }
-    GovernanceDocument[] AllGovernanceDocuments { get;}
+    GovernanceDocument[] AllGovernanceDocuments { get; }
 
     Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; }
     AggregateFilter[] AllAggregateFilters { get; }
 
     /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
-    Dictionary<int, HashSet<int>> GovernanceCoverage { get;}
+    Dictionary<int, HashSet<int>> GovernanceCoverage { get; }
 
     JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
-        
+
     /// <summary>
     /// Copy updated values for all properties from the <paramref name="other"/>
     /// </summary>
@@ -122,16 +121,16 @@ public interface ICoreChildProvider:IChildProvider
     /// <returns></returns>
     IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
-        
+
     AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
     AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
     /// <summary>
     /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
     /// </summary>
-    HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get; }
+    HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; }
 
-        
+
     /// <summary>
     /// All components within all <see cref="Pipeline"/>
     /// </summary>
@@ -146,9 +145,9 @@ public interface ICoreChildProvider:IChildProvider
     /// All process
     /// </summary>
     ProcessTask[] AllProcessTasks { get; }
-        
+
     ProcessTaskArgument[] AllProcessTasksArguments { get; }
-        
+
 
     /// <summary>
     /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>
@@ -156,7 +155,7 @@ public interface ICoreChildProvider:IChildProvider
     /// <param name="type"></param>
     /// <param name="unwrapMasqueraders">true to unwrap and return matching underlying objects from <see cref="IMasqueradeAs"/> objects</param>
     /// <returns></returns>
-    IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type,bool unwrapMasqueraders);
+    IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders);
 
     /// <summary>
     /// Performs a partial refresh assuming that only the hierarchy of <paramref name="databaseEntity"/> has

@@ -19,11 +19,13 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential;
 /// </summary>
 public class MsSqlExtractionReleasePotential : ReleasePotential
 {
-    public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets): base(repositoryLocator, selectedDataSets)
+    public MsSqlExtractionReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSets) : base(repositoryLocator, selectedDataSets)
     {
     }
 
-    protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
+    protected override Releaseability GetSupplementalSpecificAssessment(
+        IExtractionResults supplementalExtractionResults)
     {
         if (supplementalExtractionResults.IsReferenceTo(typeof(SupportingDocument)))
             if (File.Exists(supplementalExtractionResults.DestinationDescription))
@@ -31,7 +33,7 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
             else
                 return Releaseability.ExtractFilesMissing;
 
-        if (supplementalExtractionResults.IsReferenceTo(typeof (SupportingSQLTable)) ||
+        if (supplementalExtractionResults.IsReferenceTo(typeof(SupportingSQLTable)) ||
             supplementalExtractionResults.IsReferenceTo(typeof(TableInfo)))
             return GetSpecificAssessment(supplementalExtractionResults);
 
@@ -45,21 +47,16 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
         ExtractDirectory = new ExtractionDirectory(_extractDir, Configuration).GetDirectoryForDataset(DataSet);
 
         var externalServerId = int.Parse(extractionResults.DestinationDescription.Split('|')[0]);
-        var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+        var externalServer =
+            _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
         var dbName = extractionResults.DestinationDescription.Split('|')[1];
         var tblName = extractionResults.DestinationDescription.Split('|')[2];
-        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, false);
         var database = server.ExpectDatabase(dbName);
-        if (!database.Exists())
-        {
-            return Releaseability.ExtractFilesMissing;
-        }
+        if (!database.Exists()) return Releaseability.ExtractFilesMissing;
         var foundTable = database.ExpectTable(tblName);
-        if (!foundTable.Exists())
-        {
-            return Releaseability.ExtractFilesMissing;
-        }
-            
+        if (!foundTable.Exists()) return Releaseability.ExtractFilesMissing;
+
         return Releaseability.Undefined;
     }
 }

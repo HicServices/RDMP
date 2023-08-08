@@ -17,10 +17,8 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
 public class NullReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 {
-    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken) => throw new NotImplementedException();
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -36,8 +34,5 @@ public class NullReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
     {
     }
 
-    public override string ToString()
-    {
-        return "Fixed Release Source";
-    }
+    public override string ToString() => "Fixed Release Source";
 }

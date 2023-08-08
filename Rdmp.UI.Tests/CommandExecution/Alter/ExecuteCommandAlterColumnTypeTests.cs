@@ -15,15 +15,15 @@ using TypeGuesser;
 
 namespace Rdmp.UI.Tests.CommandExecution.Alter;
 
-internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
+internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
 {
-    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
     [UITimeout(10000)]
     public void AlterColumnType_NoArchive(DatabaseType dbType)
     {
-
         var db = GetCleanedServer(dbType);
-        var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
+        var tbl = db.CreateTable("MyTbl",
+            new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
 
         Import(tbl, out var ti, out _);
 
@@ -31,7 +31,7 @@ internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
         var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
 
         var myCol = tbl.DiscoverColumn("myCol");
-            
+
         //should have started out as 10
         Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
 
@@ -58,10 +58,11 @@ internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
     [UITimeout(10000)]
     public void AlterColumnType_WithArchive(DatabaseType dbType)
     {
-
         var db = GetCleanedServer(dbType);
-        var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
-        var tblArchive = db.CreateTable("MyTbl_Archive", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
+        var tbl = db.CreateTable("MyTbl",
+            new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
+        var tblArchive = db.CreateTable("MyTbl_Archive",
+            new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
 
         Import(tbl, out var ti, out _);
 

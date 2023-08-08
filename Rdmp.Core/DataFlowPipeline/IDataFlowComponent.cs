@@ -29,7 +29,7 @@ public interface IDataFlowComponent<T>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     T ProcessPipelineData(T toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
-        
+
     /// <summary>
     /// Called after your pipeline has been fully executed (even if it resulted in a crash).  If the pipeline crashed then the Exception will be populated.
     /// </summary>

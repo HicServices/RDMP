@@ -47,7 +47,7 @@ public class ParameterCreator
     /// <param name="importFromIfAny">Desired parameter values, if a filter requires a parameter that matches importFromIfAny then it will get the value from here</param>
     public ParameterCreator(IFilterFactory factory, IEnumerable<ISqlParameter> globals, ISqlParameter[] importFromIfAny)
     {
-        if(globals != null)
+        if (globals != null)
             _globals = globals.ToArray();
 
         _factory = factory;
@@ -64,7 +64,7 @@ public class ParameterCreator
     public void CreateAll(IFilter filterToCreateFor, ISqlParameter[] existingParametersInScope)
     {
         //get what parameter exists
-        var sqlParameters = filterToCreateFor.GetAllParameters()??Array.Empty<ISqlParameter>();
+        var sqlParameters = filterToCreateFor.GetAllParameters() ?? Array.Empty<ISqlParameter>();
 
         //all parameters in the Select SQL
         var parametersRequiredByWhereSQL = GetRequiredParamaterNamesForQuery(filterToCreateFor.WhereSQL, _globals);
@@ -76,7 +76,6 @@ public class ParameterCreator
 
         //find new parameters that we don't have
         foreach (var requiredParameterName in parametersRequiredByWhereSQL)
-        {
             if (!sqlParameters.Any(p => p.ParameterName.Equals(requiredParameterName)))
             {
                 ISqlParameter matchingTemplateFilter = null;
@@ -84,16 +83,20 @@ public class ParameterCreator
 
                 //now we might be in the process of cloning another IFilter in which case we want the filters to match the templates ones
                 if (_importFromIfAny != null)
-                    matchingTemplateFilter = _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
+                    matchingTemplateFilter =
+                        _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
 
                 var proposedNewParameterName = requiredParameterName;
                 var proposedAliasNumber = 2;
 
                 //Figure out of there are any collisions with existing parameters
-                if(existingParametersInScope != null)
-                    if(existingParametersInScope.Any(e => e.ParameterName.Equals(proposedNewParameterName)))//there is a conflict between the parameter you are importing and one that already exists in scope
+                if (existingParametersInScope != null)
+                    if (existingParametersInScope.Any(e =>
+                            e.ParameterName.Equals(
+                                proposedNewParameterName))) //there is a conflict between the parameter you are importing and one that already exists in scope
                     {
-                        while (existingParametersInScope.Any(e => e.ParameterName.Equals(proposedNewParameterName + proposedAliasNumber)))
+                        while (existingParametersInScope.Any(e =>
+                                   e.ParameterName.Equals(proposedNewParameterName + proposedAliasNumber)))
                             proposedAliasNumber++;
 
                         //Naming conflict has been resolved! (by adding the proposed alias number on) so record that this is the new name
@@ -103,12 +106,13 @@ public class ParameterCreator
                 //The final name is different e.g. bob2 instead of bob so propagate into the WHERE SQL of the filter
                 if (!proposedNewParameterName.Equals(requiredParameterName))
                 {
-                    filterToCreateFor.WhereSQL = RenameParameterInSQL(filterToCreateFor.WhereSQL,requiredParameterName, proposedNewParameterName);
+                    filterToCreateFor.WhereSQL = RenameParameterInSQL(filterToCreateFor.WhereSQL, requiredParameterName,
+                        proposedNewParameterName);
                     filterToCreateFor.SaveToDatabase();
                 }
 
                 //If there is a matching Template Filter
-                if(matchingTemplateFilter != null)
+                if (matchingTemplateFilter != null)
                 {
                     var toCreate = matchingTemplateFilter.ParameterSQL;
 
@@ -117,15 +121,16 @@ public class ParameterCreator
                         toCreate = toCreate.Replace(requiredParameterName, proposedNewParameterName);
 
                     //construct it as a match to the existing parameter declared at the template level (see below for full match propogation)
-                    newParameter = _factory.CreateNewParameter(filterToCreateFor,toCreate);
+                    newParameter = _factory.CreateNewParameter(filterToCreateFor, toCreate);
                 }
                 else
                 {
                     var syntaxHelper = filterToCreateFor.GetQuerySyntaxHelper();
                     //its not got a template match so just create it as varchar(50)
-                    var declaration = syntaxHelper.GetParameterDeclaration(proposedNewParameterName,new DatabaseTypeRequest(typeof(string),50));
+                    var declaration = syntaxHelper.GetParameterDeclaration(proposedNewParameterName,
+                        new DatabaseTypeRequest(typeof(string), 50));
 
-                    newParameter = _factory.CreateNewParameter(filterToCreateFor,declaration);
+                    newParameter = _factory.CreateNewParameter(filterToCreateFor, declaration);
 
                     if (newParameter != null)
                     {
@@ -133,9 +138,10 @@ public class ParameterCreator
                         newParameter.SaveToDatabase();
                     }
                 }
-                if (newParameter == null)
-                    throw new NullReferenceException("Parameter construction method returned null, expected it to return an ISqlParameter");
 
+                if (newParameter == null)
+                    throw new NullReferenceException(
+                        "Parameter construction method returned null, expected it to return an ISqlParameter");
 
 
                 //We have a template so copy across the remaining values
@@ -145,9 +151,7 @@ public class ParameterCreator
                     newParameter.Comment = matchingTemplateFilter.Comment;
                     newParameter.SaveToDatabase();
                 }
-
             }
-        }
     }
 
     /// <summary>
@@ -157,7 +161,8 @@ public class ParameterCreator
     /// <param name="whereSql">the SQL filter WHERE section you want to determine the parameter names in, does.  Should not nclude WHERE (only the boolean logic bit)</param>
     /// <param name="globals">optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global parametetrs)</param>
     /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
-    private static HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
+    private static HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql,
+        IEnumerable<ISqlParameter> globals)
     {
         var toReturn = QuerySyntaxHelper.GetAllParameterNamesFromQuery(whereSql);
 

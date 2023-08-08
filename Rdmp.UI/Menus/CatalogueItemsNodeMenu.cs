@@ -11,9 +11,10 @@ namespace Rdmp.UI.Menus;
 
 internal class CatalogueItemsNodeMenu : RDMPContextMenuStrip
 {
-    public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, node)
+    public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node) : base(args, node)
     {
-        if(node.Category != null)
-            Add(new ExecuteCommandChangeExtractionCategory(_activator,node.Catalogue.GetAllExtractionInformation(node.Category.Value)));
+        if (node.Category != null)
+            Add(new ExecuteCommandChangeExtractionCategory(_activator,
+                node.Catalogue.GetAllExtractionInformation(node.Category.Value)));
     }
 }

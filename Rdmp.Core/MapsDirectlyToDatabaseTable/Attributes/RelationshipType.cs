@@ -26,7 +26,7 @@ public enum RelationshipType
     /// LoadMetadata is irrelevant and should not be shared (it should be left as null in the imported destination).
     /// </summary>
     IgnoreableLocalReference,
-        
+
     /// <summary>
     /// The decorated property reflects a reference to another shared object which may or may not be supplied as part of the gathered objects (Optional).
     /// If no shared object is included in a share then the marked property is ignored (i.e. behaves like a <see cref="IgnoreableLocalReference"/>).

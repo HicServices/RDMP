@@ -23,30 +23,25 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
     private Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator,Catalogue catalogue)
+    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator, Catalogue catalogue)
         : base(activator)
     {
         SetTarget(catalogue);
     }
 
-    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator):base(activator)
+    public ExecuteCommandViewDQEResultsForCatalogue(IActivateItems activator) : base(activator)
     {
     }
 
-    public override string GetCommandHelp()
-    {
-        return "View the results of all data quality engine runs that have ever been run on the dataset";
-    }
+    public override string GetCommandHelp() =>
+        "View the results of all data quality engine runs that have ever been run on the dataset";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.DQE);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.DQE);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue) target;
-            
+        _catalogue = (Catalogue)target;
+
         //must have both of these things to be DQEd
         if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)
         {
@@ -81,8 +76,6 @@ public class ExecuteCommandViewDQEResultsForCatalogue : BasicUICommandExecution,
         Activator.Activate<CatalogueDQEResultsUI, Catalogue>(_catalogue);
     }
 
-    private bool ServerHasAtLeastOneEvaluation(Catalogue c)
-    {
-        return new DQERepository(Activator.RepositoryLocator.CatalogueRepository).HasEvaluations(c);
-    }
+    private bool ServerHasAtLeastOneEvaluation(Catalogue c) =>
+        new DQERepository(Activator.RepositoryLocator.CatalogueRepository).HasEvaluations(c);
 }

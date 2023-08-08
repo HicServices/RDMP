@@ -27,23 +27,25 @@ public class ServerDefaultsTests : DatabaseTests
     [Test]
     public void CreateNewExternalServerAndConfigureItAsDefault()
     {
-        var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme",null);
+        var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme", null);
 
         try
         {
-            Assert.AreEqual("Deleteme",databaseServer.Name);
+            Assert.AreEqual("Deleteme", databaseServer.Name);
             databaseServer.Password = "nothing"; //automatically encrypts password
 
-            Assert.AreNotEqual("nothing",databaseServer.Password);//should not match what we just set it to
-            Assert.AreEqual("nothing", databaseServer.GetDecryptedPassword());//should match what we set it to because of explicit call to decrypt
+            Assert.AreNotEqual("nothing", databaseServer.Password); //should not match what we just set it to
+            Assert.AreEqual("nothing",
+                databaseServer
+                    .GetDecryptedPassword()); //should match what we set it to because of explicit call to decrypt
 
             databaseServer.Server = "Bob";
             databaseServer.Database = "TEST";
             databaseServer.SaveToDatabase();
 
-            var cata = new Catalogue(CatalogueRepository, "TestCatalogueFor_CreateNewExternalServerAndConfigureItAsDefault");
+            var cata = new Catalogue(CatalogueRepository,
+                "TestCatalogueFor_CreateNewExternalServerAndConfigureItAsDefault");
             cata.DeleteInDatabase();
-
         }
         finally
         {
@@ -60,7 +62,7 @@ public class ServerDefaultsTests : DatabaseTests
         try
         {
             //make the new server the default for logging
-            CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID,eds);
+            CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
             //now we deleted it!
             eds.DeleteInDatabase();
@@ -69,8 +71,7 @@ public class ServerDefaultsTests : DatabaseTests
         }
         finally
         {
-
             CatalogueRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, old);
-        }            
+        }
     }
 }

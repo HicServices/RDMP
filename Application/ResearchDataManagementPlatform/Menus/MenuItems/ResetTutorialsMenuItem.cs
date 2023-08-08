@@ -36,6 +36,4 @@ public class ResetTutorialsMenuItem : ToolStripMenuItem
     {
         Enabled = _tracker.IsClearable();
     }
-
-
 }

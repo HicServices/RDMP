@@ -61,7 +61,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         InitializeComponent();
 
 
-        btnExecuteSql.Click += (s,e) => RunQuery();
+        btnExecuteSql.Click += (s, e) => RunQuery();
         btnResetSql.Click += btnResetSql_Click;
 
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
@@ -78,18 +78,14 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         var distance = UserSettings.GetSplitterDistance(splitterGuid);
 
         if (distance == -1)
-        {
             splitContainer1.SplitterDistance = (int)(splitContainer1.Height * 0.75f);
-        }
         else
-        {
             // don't let them set the distance to greater/less than the control size
-            splitContainer1.SplitterDistance = Math.Max(5,Math.Min(distance ,(int)(splitContainer1.Height * 0.99f)));
-        }
+            splitContainer1.SplitterDistance = Math.Max(5, Math.Min(distance, (int)(splitContainer1.Height * 0.99f)));
 
-        splitContainer1.SplitterMoved += (s,e)=>
+        splitContainer1.SplitterMoved += (s, e) =>
         {
-            UserSettings.SetSplitterDistance(splitterGuid,splitContainer1.SplitterDistance);
+            UserSettings.SetSplitterDistance(splitterGuid, splitContainer1.SplitterDistance);
         };
     }
 
@@ -104,22 +100,21 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     {
         //if we don't exist!
         if (_collection.DatabaseObjects.Any())
-            if(!((IRevertable)_collection.DatabaseObjects[0]).Exists())
-            {
+            if (!((IRevertable)_collection.DatabaseObjects[0]).Exists())
                 ParentForm?.Close();
-            }
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
     {
-        _collection = (IViewSQLAndResultsCollection) collection;
+        _collection = (IViewSQLAndResultsCollection)collection;
 
         CommonFunctionality.ClearToolStrip();
 
         btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ImageToBitmap();
 
         var overlayer = new IconOverlayProvider();
-        btnResetSql.Image = overlayer.GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
+        btnResetSql.Image = overlayer
+            .GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
 
         if (_scintilla == null)
         {
@@ -140,7 +135,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         }
 
         SetItemActivator(activator);
-            
+
         CommonFunctionality.Add(btnExecuteSql);
         CommonFunctionality.Add(btnResetSql);
 
@@ -149,7 +144,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         foreach (var d in _collection.GetToolStripObjects())
             CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, d, 0, true));
-            
+
         CommonFunctionality.Add(new ToolStripSeparator());
         CommonFunctionality.Add(_serverHeader);
 
@@ -163,7 +158,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         {
             _serverHeader.Text = "Server:Unknown";
         }
-            
+
 
         RefreshUIFromDatabase();
     }
@@ -179,13 +174,10 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             _originalSql = sql;
             //update the editor to show the user the SQL
             _scintilla.Text = sql;
-                
+
             _server.TestConnection();
 
-            if(UserSettings.AutoRunSqlQueries)
-            {
-                LoadDataTableAsync(_server, sql);
-            }
+            if (UserSettings.AutoRunSqlQueries) LoadDataTableAsync(_server, sql);
         }
         catch (Exception ex)
         {
@@ -206,8 +198,8 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         tbErrors.Visible = true;
         tbErrors.Text = exception.Message;
         tbErrors.Dock = DockStyle.Fill;
-            
-        CommonFunctionality.Fatal("Query failed",exception);
+
+        CommonFunctionality.Fatal("Query failed", exception);
     }
 
     private void HideFatal()
@@ -221,7 +213,6 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         splitContainer1.Panel2.Controls.Add(dataGridView1);
         splitContainer1.Panel2.Controls.Remove(tbErrors);
         CommonFunctionality.ResetChecks();
-
     }
 
     private void LoadDataTableAsync(DiscoveredServer server, string sql)
@@ -238,7 +229,6 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         _task = Task.Factory.StartNew(() =>
         {
-
             var timeout = 1000;
             while (!IsHandleCreated && timeout > 0)
             {
@@ -298,9 +288,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
             // fill in values in new column for every row
             foreach (DataRow row in table.Rows)
-            {
                 row[tmpName] = $"0x{string.Join("", ((byte[])row[colName]).Select(b => b.ToString("X2")).ToArray())}";
-            }
 
             // cleanup
             table.Columns.Remove(colName);
@@ -308,20 +296,11 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         }
     }
 
-    public IPersistableObjectCollection GetCollection()
-    {
-        return _collection;
-    }
+    public IPersistableObjectCollection GetCollection() => _collection;
 
-    public string GetTabName()
-    {
-        return _collection.GetTabName();
-    }
+    public string GetTabName() => _collection.GetTabName();
 
-    public string GetTabToolTip()
-    {
-        return null;
-    }
+    public string GetTabToolTip() => null;
 
     private void llCancel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
@@ -333,13 +312,13 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         //enable the reset button only if the SQL has changed (e.g. user is typing stuff)
         btnResetSql.Enabled = !_originalSql.Equals(_scintilla.Text);
     }
-        
+
     private void RunQuery()
     {
         var selected = _scintilla.SelectedText;
 
         //Run the full query or only the selected portion
-        LoadDataTableAsync(_server, string.IsNullOrWhiteSpace(selected)?_scintilla.Text:selected);
+        LoadDataTableAsync(_server, string.IsNullOrWhiteSpace(selected) ? _scintilla.Text : selected);
     }
 
     private void btnResetSql_Click(object sender, EventArgs e)

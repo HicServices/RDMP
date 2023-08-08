@@ -18,7 +18,7 @@ namespace Rdmp.Core.QueryBuilding.Options;
 /// <summary>
 /// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set'
 /// </summary>
-public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
+public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
 {
     private readonly ISqlParameter[] _globals;
 
@@ -47,7 +47,8 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
         var alreadyExisting = aggregate.AggregateDimensions.ToArray();
 
         //get novel ExtractionInformations from the catalogue for which there are not already any Dimensions
-        var candidates = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => alreadyExisting.All(d => d.ExtractionInformation_ID != e.ID)).ToArray();
+        var candidates = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Where(e => alreadyExisting.All(d => d.ExtractionInformation_ID != e.ID)).ToArray();
 
         //patient index tables can have any columns
         if (aggregate.IsJoinablePatientIndexTable())
@@ -61,14 +62,15 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate)
     {
         var toReturn = new List<IColumn>();
-            
+
         toReturn.AddRange(aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
         //for each joined PatientIdentifier table
         foreach (var usedJoinable in aggregate.PatientIndexJoinablesUsed)
         {
             var tableAlias = usedJoinable.GetJoinTableAlias();
-            var hackedDimensions = usedJoinable.JoinableCohortAggregateConfiguration.AggregateConfiguration.AggregateDimensions.Cast<IColumn>().ToArray();
+            var hackedDimensions = usedJoinable.JoinableCohortAggregateConfiguration.AggregateConfiguration
+                .AggregateDimensions.Cast<IColumn>().ToArray();
 
             //change the SelectSQL to the table alias of the joinable used (see CohortQueryBuilder.AddJoinablesToBuilder)
             foreach (var dimension in hackedDimensions)
@@ -109,7 +111,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
         var availableTableInfos = aggregate.Catalogue.GetTableInfoList(true);
 
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
-            
+
         //They can add TableInfos that have not been referenced yet by the columns or already been configured as an explicit force join
         toReturn.AddRange(availableTableInfos.Except(existingTablesAlreadyReferenced.Union(existingForcedJoinTables)));
 
@@ -119,10 +121,10 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
 
         //it's not a patient index table itself so it can reference other patient index tables in the configuration
         var config = aggregate.GetCohortIdentificationConfigurationIfAny() ?? throw new NotSupportedException(
-                $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
+            $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
 
         //find those that are already referenced
-        var existingJoinables = aggregate.PatientIndexJoinablesUsed.Select(u=>u.JoinableCohortAggregateConfiguration);
+        var existingJoinables = aggregate.PatientIndexJoinablesUsed.Select(u => u.JoinableCohortAggregateConfiguration);
 
         //return also these which are available for use but not yet linked in
         toReturn.AddRange(config.GetAllJoinables().Except(existingJoinables));
@@ -136,17 +138,15 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
         var parameterManager = new ParameterManager();
         foreach (var p in _globals)
             parameterManager.AddGlobalParameter(p);
-            
+
         parameterManager.AddParametersFor(aggregate, ParameterLevel.QueryLevel);
 
         return parameterManager.GetFinalResolvedParametersList().ToArray();
     }
 
     /// <inheritdoc/>
-    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
-    {
-        return aggregate.IsJoinablePatientIndexTable()
+    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate) =>
+        aggregate.IsJoinablePatientIndexTable()
             ? CountColumnRequirement.CanOptionallyHaveOne
             : CountColumnRequirement.CannotHaveOne;
-    }
 }

@@ -63,7 +63,8 @@ public class DemandsInitializationAttribute : Attribute
     /// <param name="defaultValue"></param>
     /// <param name="typeOf"></param>
     /// <param name="mandatory"></param>
-    public DemandsInitializationAttribute(string description,DemandType demandType =  DemandType.Unspecified, object defaultValue = null, Type typeOf = null, bool mandatory = false)
+    public DemandsInitializationAttribute(string description, DemandType demandType = DemandType.Unspecified,
+        object defaultValue = null, Type typeOf = null, bool mandatory = false)
     {
         Description = description;
         DemandType = demandType;

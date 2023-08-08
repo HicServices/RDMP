@@ -24,10 +24,10 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// in QueryBuilding even if it is not a selected dimension (this allows you to for example aggregate the drug codes but filter by drug prescribed date even
 /// when the two fields are in different tables - that will be joined at Query Time).
 /// 
-/// <para>Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL paramater values (along with descriptions for the user) that let you
+/// <para>Each AggregateFilter can have a collection of AggregateFilterParameters which store SQL parameter values (along with descriptions for the user) that let you
 /// paramaterise (for the user) your AggregateFilter</para>
 /// </summary>
-public class AggregateFilter : ConcreteFilter,IDisableable
+public class AggregateFilter : ConcreteFilter, IDisableable
 {
     #region Database Properties
 
@@ -40,15 +40,15 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     public override int? ClonedFromExtractionFilter_ID
     {
         get => _clonedFromExtractionFilterID;
-        set => SetField(ref _clonedFromExtractionFilterID , value);
+        set => SetField(ref _clonedFromExtractionFilterID, value);
     }
 
     /// <inheritdoc/>
-    [Relationship(typeof(AggregateFilterContainer),RelationshipType.SharedObject)]
+    [Relationship(typeof(AggregateFilterContainer), RelationshipType.SharedObject)]
     public override int? FilterContainer_ID
     {
         get => _filterContainerID;
-        set => SetField(ref  _filterContainerID, value);
+        set => SetField(ref _filterContainerID, value);
     }
 
 
@@ -59,39 +59,41 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     public int? AssociatedColumnInfo_ID
     {
         get => _associatedColumnInfoID;
-        set => SetField(ref  _associatedColumnInfoID, value);
+        set => SetField(ref _associatedColumnInfoID, value);
     }
 
     /// <inheritdoc/>
     public bool IsDisabled
     {
         get => _isDisabled;
-        set => SetField(ref  _isDisabled, value);
+        set => SetField(ref _isDisabled, value);
     }
+
     #endregion
 
     /// <inheritdoc cref="GetAllParameters"/>
+
     #region Relationships
+
     [NoMappingToDatabase]
-    public IEnumerable<AggregateFilterParameter> AggregateFilterParameters {
+    public IEnumerable<AggregateFilterParameter> AggregateFilterParameters
+    {
         get { return Repository.GetAllObjectsWithParent<AggregateFilterParameter>(this); }
     }
 
     /// <inheritdoc/>
-    public override ISqlParameter[] GetAllParameters()
-    {
-        return AggregateFilterParameters.ToArray();
-    }
+    public override ISqlParameter[] GetAllParameters() => AggregateFilterParameters.ToArray();
 
     ///<inheritdoc/>
     [NoMappingToDatabase]
-    public override IContainer FilterContainer => FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;
+    public override IContainer FilterContainer => FilterContainer_ID.HasValue
+        ? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value)
+        : null;
 
     #endregion
 
     public AggregateFilter()
     {
-
     }
 
     /// <summary>
@@ -100,18 +102,19 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     /// <param name="repository"></param>
     /// <param name="name"></param>
     /// <param name="container"></param>
-    public AggregateFilter(ICatalogueRepository repository, string name=null, AggregateFilterContainer container=null)
+    public AggregateFilter(ICatalogueRepository repository, string name = null,
+        AggregateFilterContainer container = null)
     {
         name ??= $"New AggregateFilter{Guid.NewGuid()}";
-            
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value}
+            { "Name", name },
+            { "FilterContainer_ID", container != null ? (object)container.ID : DBNull.Value }
         });
     }
 
-    internal AggregateFilter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    internal AggregateFilter(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         WhereSQL = r["WhereSQL"] as string;
         Description = r["Description"] as string;
@@ -133,10 +136,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
 
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <inheritdoc/>
     public override ColumnInfo GetColumnInfoIfExists()
@@ -153,16 +153,15 @@ public class AggregateFilter : ConcreteFilter,IDisableable
 
         return null;
     }
+
     /// <inheritdoc/>
-    public override IFilterFactory GetFilterFactory()
-    {
-        return new AggregateFilterFactory((ICatalogueRepository)Repository);
-    }
+    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory((ICatalogueRepository)Repository);
+
     /// <inheritdoc/>
     public override Catalogue GetCatalogue()
     {
         var agg = GetAggregate() ?? throw new Exception(
-                $"Cannot determine the Catalogue for AggregateFilter {this} because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
+            $"Cannot determine the Catalogue for AggregateFilter {this} because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
         return agg.Catalogue;
     }
 

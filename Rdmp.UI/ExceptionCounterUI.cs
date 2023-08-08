@@ -21,12 +21,12 @@ namespace Rdmp.UI;
 /// but which should none the less be visible.
 /// </summary>
 [System.ComponentModel.DesignerCategory("")]
-public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
+public class ExceptionCounterUI : ToolStripButton, ICheckNotifier
 {
     private const float EmSize = 8f;
 
-    private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true,false));
-        
+    private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true, false));
+
     private const float NotifyWidth = 15;
 
     public ExceptionCounterUI()
@@ -35,6 +35,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
         Enabled = false;
         ToolTipText = "Application Errors";
     }
+
     protected override void OnPaint(PaintEventArgs e)
     {
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -43,19 +44,19 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
 
         var exceptionCount = Math.Min(_events.Messages.Count, 10);
 
-        if(exceptionCount > 0)
+        if (exceptionCount > 0)
         {
-            var msg = exceptionCount == 10?"!":exceptionCount.ToString();
+            var msg = exceptionCount == 10 ? "!" : exceptionCount.ToString();
 
-            var f = new Font(FontFamily.GenericMonospace, EmSize,FontStyle.Bold);
+            var f = new Font(FontFamily.GenericMonospace, EmSize, FontStyle.Bold);
 
-            var xStart = (Width - NotifyWidth)/2;
+            var xStart = (Width - NotifyWidth) / 2;
             var yStart = (Height - NotifyWidth) / 2;
 
             var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
 
-            e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);
-            e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 2,yStart,NotifyWidth,NotifyWidth));
+            e.Graphics.FillEllipse(darkRed, xStart, yStart + 1, NotifyWidth - 2, NotifyWidth - 2);
+            e.Graphics.DrawString(msg, f, Brushes.White, new RectangleF(xStart + 2, yStart, NotifyWidth, NotifyWidth));
         }
     }
 
@@ -74,15 +75,15 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
             };
         }
     }
-        
+
     public bool OnCheckPerformed(CheckEventArgs args)
     {
         //handle cross thread invocations
         var p = GetCurrentParent();
 
-        if(p!= null && p.InvokeRequired)
+        if (p != null && p.InvokeRequired)
         {
-            p.BeginInvoke(new MethodInvoker(()=>{OnCheckPerformed(args);}));
+            p.BeginInvoke(new MethodInvoker(() => { OnCheckPerformed(args); }));
             return false;
         }
 
@@ -97,7 +98,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
         {
             //thrown if cross thread
         }
-        return false;
 
+        return false;
     }
 }

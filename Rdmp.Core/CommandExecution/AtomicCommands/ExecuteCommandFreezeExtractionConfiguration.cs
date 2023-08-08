@@ -16,7 +16,8 @@ internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecuti
 {
     private ExtractionConfiguration _extractionConfiguration;
 
-    public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+    public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
 
@@ -24,10 +25,9 @@ internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecuti
             SetImpossible("ExtractionConfiguration is already released)");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(CatalogueIcons.FrozenExtractionConfiguration);
+
     public override void Execute()
     {
         base.Execute();

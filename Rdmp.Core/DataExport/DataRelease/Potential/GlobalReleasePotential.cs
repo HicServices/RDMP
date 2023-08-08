@@ -16,11 +16,12 @@ public abstract class GlobalReleasePotential : ICheckable
 {
     protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     protected readonly ISupplementalExtractionResults GlobalResult;
-        
+
     public IMapsDirectlyToDatabaseTable RelatedGlobal { get; protected set; }
     public Releaseability Releasability { get; protected set; }
 
-    protected GlobalReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+    protected GlobalReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
     {
         RepositoryLocator = repositoryLocator;
         GlobalResult = globalResult;
@@ -31,25 +32,28 @@ public abstract class GlobalReleasePotential : ICheckable
     {
         if (GlobalResult == null) // this should be already covered by the NoGlobalPotential
             return;
-            
+
         if (GlobalResult.SQLExecuted != null)
         {
             var table = RelatedGlobal as SupportingSQLTable;
             if (table == null)
-            { 
+            {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"The executed Global {GlobalResult.ExtractedName} has a SQL script but the extracted type ({GlobalResult.ReferencedObjectType}) is not a SupportingSQLTable", CheckResult.Fail));
+                    $"The executed Global {GlobalResult.ExtractedName} has a SQL script but the extracted type ({GlobalResult.ReferencedObjectType}) is not a SupportingSQLTable",
+                    CheckResult.Fail));
                 Releasability = Releaseability.ExtractionSQLDesynchronisation;
             }
+
             if (table.SQL != GlobalResult.SQLExecuted)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"The executed Global {GlobalResult.ExtractedName} has a SQL script which is different from the current one!", CheckResult.Fail));
+                    $"The executed Global {GlobalResult.ExtractedName} has a SQL script which is different from the current one!",
+                    CheckResult.Fail));
                 Releasability = Releaseability.ExtractionSQLDesynchronisation;
             }
         }
 
-        if (GlobalResult.IsReferenceTo(typeof (SupportingDocument)))
+        if (GlobalResult.IsReferenceTo(typeof(SupportingDocument)))
             CheckFileExists(notifier, GlobalResult.DestinationDescription);
         else
             CheckDestination(notifier, GlobalResult);

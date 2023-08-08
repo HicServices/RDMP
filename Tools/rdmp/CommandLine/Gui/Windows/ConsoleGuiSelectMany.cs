@@ -24,18 +24,22 @@ public class ConsoleGuiSelectMany : Window
     /// The final object selection made.  Note that you should
     /// also check <see cref="ResultOk"/> in case of user cancellation
     /// </summary>
-    public object[] Result { get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); } }
+    public object[] Result
+    {
+        get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); }
+    }
 
     /// <summary>
     /// True if the user made a final selection or False if they exited without
     /// making a choice e.g. Hit Ctrl+Q
     /// </summary>
     public bool ResultOk { get; internal set; }
+
     private object[] _available;
     private IReadOnlyCollection<object> _original;
     private TextField _tbSearch;
 
-    public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
+    public ConsoleGuiSelectMany(IBasicActivateItems activator, string prompt, object[] available)
     {
         _available = available;
         _original = available.ToList().AsReadOnly();
@@ -74,7 +78,7 @@ public class ConsoleGuiSelectMany : Window
         Add(_tbSearch);
 
         Title = prompt;
-            
+
         _activator = activator;
     }
 
@@ -86,7 +90,8 @@ public class ConsoleGuiSelectMany : Window
 
         // plus everything else that matches on search text
         var matchingFilter = _original.Except(ticked)
-            .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
+            .Where(o => string.IsNullOrWhiteSpace(search) ||
+                        o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
             .ToArray();
 
         // make a list of all marked followed by unmarked but matching filter
@@ -98,28 +103,23 @@ public class ConsoleGuiSelectMany : Window
         lv.SetSource(all);
 
         // since we changed the source we need to remark the originally ticked ones
-        for(var i =0;i<ticked.Length;i++)
-        {
-            lv.Source.SetMark(i, true);
-        }
+        for (var i = 0; i < ticked.Length; i++) lv.Source.SetMark(i, true);
         SetNeedsDisplay();
     }
 
     private void Lv_KeyPress(KeyEventEventArgs obj)
     {
-        if(obj.KeyEvent.Key == Key.Enter)
+        if (obj.KeyEvent.Key == Key.Enter)
         {
             // if there are no selected objects (user hits space to select many)
             // then they probably want a single object selection
-            if(Result.Length == 0)
-            {
-                lv.MarkUnmarkRow();
-            }
+            if (Result.Length == 0) lv.MarkUnmarkRow();
 
             obj.Handled = true;
             ResultOk = true;
             Application.RequestStop();
         }
+
         SetNeedsDisplay();
     }
 }

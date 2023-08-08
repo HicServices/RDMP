@@ -35,7 +35,8 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="ICatalogue"/>
-public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
+public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,
+    IInjectKnown<CatalogueExtractabilityStatus>
 {
     #region Database Properties
 
@@ -95,7 +96,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Acronym
     {
         get => _acronym;
-        set => SetField(ref  _acronym, value);
+        set => SetField(ref _acronym, value);
     }
 
     /// <summary>
@@ -108,7 +109,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
@@ -117,7 +118,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Folder
     {
         get => _folder;
-        set => SetField(ref  _folder, FolderHelper.Adjust(value));
+        set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
 
@@ -126,7 +127,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -135,7 +136,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public Uri Detail_Page_URL
     {
         get => _detailPageUrl;
-        set => SetField(ref  _detailPageUrl, value);
+        set => SetField(ref _detailPageUrl, value);
     }
 
     /// <summary>
@@ -144,14 +145,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public CatalogueType Type
     {
         get => _type;
-        set => SetField(ref  _type, value);
+        set => SetField(ref _type, value);
     }
 
     /// <inheritdoc/>
     public CataloguePeriodicity Periodicity
     {
         get => _periodicity;
-        set => SetField(ref  _periodicity, value);
+        set => SetField(ref _periodicity, value);
     }
 
     /// <summary>
@@ -160,7 +161,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public CatalogueGranularity Granularity
     {
         get => _granularity;
-        set => SetField(ref  _granularity, value);
+        set => SetField(ref _granularity, value);
     }
 
     /// <summary>
@@ -169,7 +170,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Geographical_coverage
     {
         get => _geographicalCoverage;
-        set => SetField(ref  _geographicalCoverage, value);
+        set => SetField(ref _geographicalCoverage, value);
     }
 
     /// <summary>
@@ -178,7 +179,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Background_summary
     {
         get => _backgroundSummary;
-        set => SetField(ref  _backgroundSummary, value);
+        set => SetField(ref _backgroundSummary, value);
     }
 
     /// <summary>
@@ -187,7 +188,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Search_keywords
     {
         get => _searchKeywords;
-        set => SetField(ref  _searchKeywords, value);
+        set => SetField(ref _searchKeywords, value);
     }
 
     /// <summary>
@@ -197,7 +198,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Update_freq
     {
         get => _updateFreq;
-        set => SetField(ref  _updateFreq, value);
+        set => SetField(ref _updateFreq, value);
     }
 
     /// <summary>
@@ -207,7 +208,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Update_sched
     {
         get => _updateSched;
-        set => SetField(ref  _updateSched, value);
+        set => SetField(ref _updateSched, value);
     }
 
 
@@ -215,7 +216,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Time_coverage
     {
         get => _timeCoverage;
-        set => SetField(ref  _timeCoverage, value);
+        set => SetField(ref _timeCoverage, value);
     }
 
     /// <summary>
@@ -224,7 +225,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public DateTime? Last_revision_date
     {
         get => _lastRevisionDate;
-        set => SetField(ref  _lastRevisionDate, value);
+        set => SetField(ref _lastRevisionDate, value);
     }
 
     /// <summary>
@@ -233,7 +234,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Contact_details
     {
         get => _contactDetails;
-        set => SetField(ref  _contactDetails, value);
+        set => SetField(ref _contactDetails, value);
     }
 
     /// <summary>
@@ -242,7 +243,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Resource_owner
     {
         get => _resourceOwner;
-        set => SetField(ref  _resourceOwner, value);
+        set => SetField(ref _resourceOwner, value);
     }
 
     /// <summary>
@@ -251,7 +252,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Attribution_citation
     {
         get => _attributionCitation;
-        set => SetField(ref  _attributionCitation, value);
+        set => SetField(ref _attributionCitation, value);
     }
 
     /// <summary>
@@ -260,7 +261,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Access_options
     {
         get => _accessOptions;
-        set => SetField(ref  _accessOptions, value);
+        set => SetField(ref _accessOptions, value);
     }
 
     /// <summary>
@@ -269,7 +270,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string SubjectNumbers
     {
         get => _subjectNumbers;
-        set => SetField(ref  _subjectNumbers, value);
+        set => SetField(ref _subjectNumbers, value);
     }
 
     /// <summary>
@@ -278,7 +279,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public Uri API_access_URL
     {
         get => _apiAccessUrl;
-        set => SetField(ref  _apiAccessUrl, value);
+        set => SetField(ref _apiAccessUrl, value);
     }
 
     /// <summary>
@@ -287,7 +288,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public Uri Browse_URL
     {
         get => _browseUrl;
-        set => SetField(ref  _browseUrl, value);
+        set => SetField(ref _browseUrl, value);
     }
 
     /// <summary>
@@ -296,7 +297,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public Uri Bulk_Download_URL
     {
         get => _bulkDownloadUrl;
-        set => SetField(ref  _bulkDownloadUrl, value);
+        set => SetField(ref _bulkDownloadUrl, value);
     }
 
     /// <summary>
@@ -305,7 +306,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public Uri Query_tool_URL
     {
         get => _queryToolUrl;
-        set => SetField(ref  _queryToolUrl, value);
+        set => SetField(ref _queryToolUrl, value);
     }
 
     /// <summary>
@@ -314,7 +315,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public Uri Source_URL
     {
         get => _sourceUrl;
-        set => SetField(ref  _sourceUrl, value);
+        set => SetField(ref _sourceUrl, value);
     }
 
     /// <summary>
@@ -323,7 +324,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Country_of_origin
     {
         get => _countryOfOrigin;
-        set => SetField(ref  _countryOfOrigin, value);
+        set => SetField(ref _countryOfOrigin, value);
     }
 
     /// <summary>
@@ -332,7 +333,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Data_standards
     {
         get => _dataStandards;
-        set => SetField(ref  _dataStandards, value);
+        set => SetField(ref _dataStandards, value);
     }
 
     /// <summary>
@@ -341,7 +342,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Administrative_contact_name
     {
         get => _administrativeContactName;
-        set => SetField(ref  _administrativeContactName, value);
+        set => SetField(ref _administrativeContactName, value);
     }
 
     /// <summary>
@@ -350,7 +351,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Administrative_contact_email
     {
         get => _administrativeContactEmail;
-        set => SetField(ref  _administrativeContactEmail, value);
+        set => SetField(ref _administrativeContactEmail, value);
     }
 
     /// <summary>
@@ -359,7 +360,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Administrative_contact_telephone
     {
         get => _administrativeContactTelephone;
-        set => SetField(ref  _administrativeContactTelephone, value);
+        set => SetField(ref _administrativeContactTelephone, value);
     }
 
     /// <summary>
@@ -368,7 +369,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Administrative_contact_address
     {
         get => _administrativeContactAddress;
-        set => SetField(ref  _administrativeContactAddress, value);
+        set => SetField(ref _administrativeContactAddress, value);
     }
 
     /// <summary>
@@ -377,7 +378,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool? Explicit_consent
     {
         get => _explicitConsent;
-        set => SetField(ref  _explicitConsent, value);
+        set => SetField(ref _explicitConsent, value);
     }
 
     /// <summary>
@@ -386,7 +387,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Ethics_approver
     {
         get => _ethicsApprover;
-        set => SetField(ref  _ethicsApprover, value);
+        set => SetField(ref _ethicsApprover, value);
     }
 
     /// <summary>
@@ -395,7 +396,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string Source_of_data_collection
     {
         get => _sourceOfDataCollection;
-        set => SetField(ref  _sourceOfDataCollection, value);
+        set => SetField(ref _sourceOfDataCollection, value);
     }
 
     /// <summary>
@@ -413,7 +414,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string LoggingDataTask
     {
         get => _loggingDataTask;
-        set => SetField(ref  _loggingDataTask, value);
+        set => SetField(ref _loggingDataTask, value);
     }
 
     /// <inheritdoc/>
@@ -421,25 +422,27 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public string ValidatorXML
     {
         get => _validatorXml;
-        set => SetField(ref  _validatorXml, value);
+        set => SetField(ref _validatorXml, value);
     }
 
     /// <inheritdoc/>
-    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter = nameof(GetAllExtractionInformation))] //todo do we want to share this?
+    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference,
+        ValueGetter = nameof(GetAllExtractionInformation))] //todo do we want to share this?
     [DoNotExtractProperty]
     public int? TimeCoverage_ExtractionInformation_ID
     {
         get => _timeCoverageExtractionInformationID;
-        set => SetField(ref  _timeCoverageExtractionInformationID, value);
+        set => SetField(ref _timeCoverageExtractionInformationID, value);
     }
 
     /// <inheritdoc/>
     [DoNotExtractProperty]
-    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter=nameof(GetAllExtractionInformation))]
+    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference,
+        ValueGetter = nameof(GetAllExtractionInformation))]
     public int? PivotCategory_ExtractionInformation_ID
     {
         get => _pivotCategoryExtractionInformationID;
-        set => SetField(ref  _pivotCategoryExtractionInformationID, value);
+        set => SetField(ref _pivotCategoryExtractionInformationID, value);
     }
 
     /// <inheritdoc/>
@@ -448,7 +451,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool IsDeprecated
     {
         get => _isDeprecated;
-        set => SetField(ref  _isDeprecated, value);
+        set => SetField(ref _isDeprecated, value);
     }
 
     /// <inheritdoc/>
@@ -457,7 +460,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool IsInternalDataset
     {
         get => _isInternalDataset;
-        set => SetField(ref  _isInternalDataset, value);
+        set => SetField(ref _isInternalDataset, value);
     }
 
     /// <inheritdoc/>
@@ -466,7 +469,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool IsColdStorageDataset
     {
         get => _isColdStorageDataset;
-        set => SetField(ref  _isColdStorageDataset, value);
+        set => SetField(ref _isColdStorageDataset, value);
     }
 
     /// <inheritdoc/>
@@ -475,14 +478,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public int? LiveLoggingServer_ID
     {
         get => _liveLoggingServerID;
-        set => SetField(ref  _liveLoggingServerID, value);
+        set => SetField(ref _liveLoggingServerID, value);
     }
 
     /// <inheritdoc/>
     public DateTime? DatasetStartDate
     {
         get => _datasetStartDate;
-        set => SetField(ref  _datasetStartDate, value);
+        set => SetField(ref _datasetStartDate, value);
     }
 
     private int? _loadMetadataId;
@@ -493,11 +496,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public int? LoadMetadata_ID
     {
         get => _loadMetadataId;
-        set => SetField(ref _loadMetadataId , value);
+        set => SetField(ref _loadMetadataId, value);
     }
+
     #endregion
 
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public CatalogueItem[] CatalogueItems => _knownCatalogueItems.Value;
@@ -511,13 +516,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             if (LoadMetadata_ID == null)
                 return null;
 
-            return Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
+            return Repository.GetObjectByID<LoadMetadata>((int)LoadMetadata_ID);
         }
     }
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public AggregateConfiguration[] AggregateConfigurations => Repository.GetAllObjectsWithParent<AggregateConfiguration>(this);
+    public AggregateConfiguration[] AggregateConfigurations =>
+        Repository.GetAllObjectsWithParent<AggregateConfiguration>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -550,6 +556,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     #endregion
 
     #region Enums
+
     /// <summary>
     /// Somewhat arbitrary concepts for defining the limitations of a Catalogues data
     /// </summary>
@@ -601,14 +608,17 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         /// Data is updated on a daily basis
         /// </summary>
         Daily,
+
         /// <summary>
         /// Data is updated on a weekly basis
         /// </summary>
         Weekly,
+
         /// <summary>
         /// Data is updated every 2 weeks
         /// </summary>
         Fortnightly,
+
         /// <summary>
         /// Data is updated every month
         /// </summary>
@@ -665,6 +675,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         /// </summary>
         Clinic
     }
+
     #endregion
 
     /// <summary>
@@ -688,10 +699,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         var loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name",name},
-            {"LiveLoggingServer_ID",loggingServer == null ? DBNull.Value:loggingServer.ID}
+            { "Name", name },
+            { "LiveLoggingServer_ID", loggingServer == null ? DBNull.Value : loggingServer.ID }
         });
 
         if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
@@ -702,7 +713,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             var liveLoggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-            if(liveLoggingServer != null)
+            if (liveLoggingServer != null)
                 LiveLoggingServer_ID = liveLoggingServer.ID;
         }
 
@@ -718,7 +729,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        if(r["LoadMetadata_ID"] != DBNull.Value)
+        if (r["LoadMetadata_ID"] != DBNull.Value)
             LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
 
         Acronym = r["Acronym"].ToString();
@@ -733,39 +744,42 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (r["LiveLoggingServer_ID"] == DBNull.Value)
             LiveLoggingServer_ID = null;
         else
-            LiveLoggingServer_ID = (int) r["LiveLoggingServer_ID"];
+            LiveLoggingServer_ID = (int)r["LiveLoggingServer_ID"];
 
         ////Type - with handling for invalid enum values listed in database
         var type = r["Type"];
         if (type == null || type == DBNull.Value)
+        {
             Type = CatalogueType.Unknown;
+        }
         else
         {
             if (Enum.TryParse(type.ToString(), true, out CatalogueType typeAsEnum))
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
-
         }
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
         if (periodicity == null || periodicity == DBNull.Value)
+        {
             Periodicity = CataloguePeriodicity.Unknown;
+        }
         else
         {
             if (Enum.TryParse(periodicity.ToString(), true, out CataloguePeriodicity periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
-            {
                 throw new Exception(
                     $" r[\"Periodicity\"] had value {periodicity} which is not contained in Enum CataloguePeriodicity");
-            }
         }
 
         var granularity = r["Granularity"];
         if (granularity == null || granularity == DBNull.Value)
+        {
             Granularity = CatalogueGranularity.Unknown;
+        }
         else
         {
             if (Enum.TryParse(granularity.ToString(), true, out CatalogueGranularity granularityAsEnum))
@@ -773,7 +787,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             else
                 throw new Exception(
                     $" r[\"granularity\"] had value {granularity} which is not contained in Enum CatalogueGranularity");
-
         }
 
         Geographical_coverage = r["Geographical_coverage"].ToString();
@@ -804,7 +817,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         Ethics_approver = r["Ethics_approver"].ToString();
         Source_of_data_collection = r["Source_of_data_collection"].ToString();
 
-        if (r["Explicit_consent"] != null && r["Explicit_consent"]!= DBNull.Value)
+        if (r["Explicit_consent"] != null && r["Explicit_consent"] != DBNull.Value)
             Explicit_consent = (bool)r["Explicit_consent"];
 
         TimeCoverage_ExtractionInformation_ID = ObjectToNullableInt(r["TimeCoverage_ExtractionInformation_ID"]);
@@ -814,7 +827,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (oDatasetStartDate == null || oDatasetStartDate == DBNull.Value)
             DatasetStartDate = null;
         else
-            DatasetStartDate = (DateTime) oDatasetStartDate;
+            DatasetStartDate = (DateTime)oDatasetStartDate;
 
 
         ValidatorXML = r["ValidatorXML"] as string;
@@ -823,13 +836,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         //detailed info url with support for invalid urls
         API_access_URL = ParseUrl(r, "API_access_URL");
-        Browse_URL = ParseUrl(r, "Browse_URL" );
+        Browse_URL = ParseUrl(r, "Browse_URL");
         Bulk_Download_URL = ParseUrl(r, "Bulk_Download_URL");
         Query_tool_URL = ParseUrl(r, "Query_tool_URL");
         Source_URL = ParseUrl(r, "Source_URL");
-        IsDeprecated = (bool) r["IsDeprecated"];
+        IsDeprecated = (bool)r["IsDeprecated"];
         IsInternalDataset = (bool)r["IsInternalDataset"];
-        IsColdStorageDataset = (bool) r["IsColdStorageDataset"];
+        IsColdStorageDataset = (bool)r["IsColdStorageDataset"];
 
         Folder = r["Folder"].ToString();
 
@@ -838,15 +851,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     internal Catalogue(ShareManager shareManager, ShareDefinition shareDefinition)
     {
-        shareManager.UpsertAndHydrate(this,shareDefinition);
+        shareManager.UpsertAndHydrate(this, shareDefinition);
         ClearAllInjections();
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <summary>
     /// Sorts alphabetically based on <see cref="Name"/>
@@ -855,10 +865,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is Catalogue)
-        {
-            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
-        }
+        if (obj is Catalogue) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -875,7 +882,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     $"Catalogue name {Name} (ID={ID}) does not follow naming conventions reason:{reason}",
                     CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",
+                CheckResult.Success));
 
         var tables = GetTableInfoList(true);
         foreach (TableInfo t in tables)
@@ -887,7 +895,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             var missingColumnInfos = false;
 
-            foreach (var missingColumnInfo in extractionInformations.Where(e=>e.ColumnInfo == null))
+            foreach (var missingColumnInfo in extractionInformations.Where(e => e.ColumnInfo == null))
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
@@ -901,7 +909,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Found {extractionInformations.Length} ExtractionInformation(s), preparing to validate SQL with QueryBuilder", CheckResult.Success));
+                    $"Found {extractionInformations.Length} ExtractionInformation(s), preparing to validate SQL with QueryBuilder",
+                    CheckResult.Success));
 
             var accessContext = DataAccessContext.InternalDataProcessing;
 
@@ -924,7 +933,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
                         sql = qb.SQL;
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
+                            $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}",
+                            CheckResult.Success));
                     }
                     catch (Exception e)
                     {
@@ -934,17 +944,19 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                         return;
                     }
 
-                    using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                    using (var cmd = DatabaseCommandHelper.GetCommand(sql, con))
                     {
                         cmd.CommandTimeout = 10;
                         using (var r = cmd.ExecuteReader())
                         {
                             if (r.Read())
                                 notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
+                                    $"successfully read a row of data from the extraction SQL of Catalogue {this}",
+                                    CheckResult.Success));
                             else
                                 notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
+                                    $"The query produced an empty result set for Catalogue{this}",
+                                    CheckResult.Warning));
                         }
                     }
 
@@ -979,7 +991,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public ITableInfo[] GetLookupTableInfoList()
     {
-        GetTableInfos(out List<ITableInfo> normalTables, out var lookupTables);
+        GetTableInfos(out var normalTables, out var lookupTables);
 
         return lookupTables.ToArray();
     }
@@ -991,12 +1003,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <inheritdoc/>
-    public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
+    public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables,
+        out List<ITableInfo> lookupTables)
     {
         GetAllTableInfos(t => t.IsLookupTable(provider), out normalTables, out lookupTables);
     }
 
-    private void GetAllTableInfos(Func<ITableInfo, bool> isLookupTableDelegate, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
+    private void GetAllTableInfos(Func<ITableInfo, bool> isLookupTableDelegate, out List<ITableInfo> normalTables,
+        out List<ITableInfo> lookupTables)
     {
         var tables = GetColumnInfos().GroupBy(c => c.TableInfo_ID).Select(c => c.First().TableInfo).ToArray();
 
@@ -1009,13 +1023,15 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (CatalogueItems.All(ci => ci.IsColumnInfoCached()))
             return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
 
-        return Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue).Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
+        return Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
+            .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
     }
 
     /// <inheritdoc/>
     public ExtractionFilter[] GetAllMandatoryFilters()
     {
-        return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f=>f.ExtractionFilters).Where(f=>f.IsMandatory).ToArray();
+        return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters)
+            .Where(f => f.IsMandatory).ToArray();
     }
 
     /// <inheritdoc/>
@@ -1025,7 +1041,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <inheritdoc/>
-    public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
+    public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase,
+        out IDataAccessPoint distinctAccessPoint)
     {
         var tables = GetTableInfosIdeallyJustFromMainTables();
 
@@ -1035,15 +1052,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <inheritdoc/>
-    public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
-    {
-        return DataAccessPortal.ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
-    }
+    public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase) =>
+        DataAccessPortal.ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
 
     /// <inheritdoc/>
     public ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
     {
-
         //try with only the normal tables
         var tables = GetTableInfoList(false);
 
@@ -1089,7 +1103,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public LogManager GetLogManager()
     {
-        if(LiveLoggingServer_ID == null)
+        if (LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
 
         var server = DataAccessPortal.ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
@@ -1104,17 +1118,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         iDependOn.AddRange(CatalogueItems);
 
-        if(LoadMetadata != null)
+        if (LoadMetadata != null)
             iDependOn.Add(LoadMetadata);
 
         return iDependOn.ToArray();
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return AggregateConfigurations;
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => AggregateConfigurations;
 
     /// <inheritdoc/>
     public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
@@ -1125,7 +1136,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
     {
-        return Repository.GetAllObjects<SupportingSQLTable>().Where(o=>Fetch(o,fetch)).ToArray();
+        return Repository.GetAllObjects<SupportingSQLTable>().Where(o => Fetch(o, fetch)).ToArray();
     }
 
     private bool Fetch(ISupportingObject o, FetchOptions fetch)
@@ -1143,7 +1154,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
 
-    private string GetFetchSQL<T>(FetchOptions fetch) where T:IMapsDirectlyToDatabaseTable
+    private string GetFetchSQL<T>(FetchOptions fetch) where T : IMapsDirectlyToDatabaseTable
     {
         return fetch switch
         {
@@ -1160,10 +1171,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <inheritdoc/>
-    public ExtractionInformation[] GetAllExtractionInformation()
-    {
-        return GetAllExtractionInformation(ExtractionCategory.Any);
-    }
+    public ExtractionInformation[] GetAllExtractionInformation() => GetAllExtractionInformation(ExtractionCategory.Any);
 
     /// <inheritdoc/>
     public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
@@ -1198,7 +1206,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public void ClearAllInjections()
     {
         _extractabilityStatus = null;
-        _knownCatalogueItems = new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem,Catalogue>(this));
+        _knownCatalogueItems =
+            new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem, Catalogue>(this));
     }
 
     /// <inheritdoc/>
@@ -1229,11 +1238,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         var f = new QuerySyntaxHelperFactory();
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
-                $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
+            $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
         return f.Create(type);
     }
 
     #region Static Methods
+
     /// <summary>
     /// Returns true if the given name would be sensible for a Catalogue.  This means no slashes, hashes @ symbols etc and other things which make XML serialization hard
     /// or prevent naming a database table after a Catalogue (all things we might want to do with the <see cref="Catalogue.Name"/>).
@@ -1249,7 +1259,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             return false;
         }
 
-        var invalidCharacters = name.Where(c => Path.GetInvalidPathChars().Contains(c) || c == '\\' || c == '/' || c == '.' || c == '#' || c == '@' || c == '$').ToArray();
+        var invalidCharacters = name.Where(c =>
+            Path.GetInvalidPathChars().Contains(c) || c == '\\' || c == '/' || c == '.' || c == '#' || c == '@' ||
+            c == '$').ToArray();
         if (invalidCharacters.Any())
         {
             reason =
@@ -1262,12 +1274,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
-    public static bool IsAcceptableName(string name)
-    {
-        return IsAcceptableName(name, out string whoCares);
-    }
-    #endregion
+    public static bool IsAcceptableName(string name) => IsAcceptableName(name, out var whoCares);
 
+    #endregion
 
 
     /// <inheritdoc/>
@@ -1279,23 +1288,18 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
 
-    public bool IsApiCall()
-    {
-        return Name.StartsWith(PluginCohortCompiler.ApiPrefix);
-    }
+    public bool IsApiCall() => Name.StartsWith(PluginCohortCompiler.ApiPrefix);
 
     public bool IsApiCall(out IPluginCohortCompiler plugin)
     {
-        if(!IsApiCall())
+        if (!IsApiCall())
         {
             plugin = null;
             return false;
         }
 
-        if(CatalogueRepository.MEF == null)
-        {
+        if (CatalogueRepository.MEF == null)
             throw new Exception("MEF has not been loaded yet so cannot find compatible IPluginCohortCompilers");
-        }
 
         plugin = new PluginCohortCompilerFactory(CatalogueRepository.MEF)
             .CreateAll().FirstOrDefault(p => p.ShouldRun(this));

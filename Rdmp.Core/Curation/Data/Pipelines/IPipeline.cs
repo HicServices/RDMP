@@ -31,7 +31,7 @@ public interface IPipeline : IInjectKnown<IPipelineComponent[]>, INamed
     /// what the pipeline is supposed to do.
     /// </summary>
     string Description { get; set; }
-        
+
     /// <summary>
     /// The component acting as the source of the pipeline and producing data (e.g. by reading a flat file).  This
     /// can be null if the <see cref="IPipelineUseCase"/> has a fixed runtime source instance instead.
@@ -61,5 +61,4 @@ public interface IPipeline : IInjectKnown<IPipelineComponent[]>, INamed
     /// </summary>
     /// <returns></returns>
     Pipeline Clone();
-
 }

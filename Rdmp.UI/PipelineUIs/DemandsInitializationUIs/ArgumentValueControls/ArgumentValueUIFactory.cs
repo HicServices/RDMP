@@ -26,7 +26,7 @@ public class ArgumentValueUIFactory
 {
     private IActivateItems _activator;
 
-    public IArgumentValueUI Create(IActivateItems activator,ArgumentValueUIArgs args)
+    public IArgumentValueUI Create(IActivateItems activator, ArgumentValueUIArgs args)
     {
         _activator = activator;
         var argumentType = args.Type;
@@ -35,30 +35,37 @@ public class ArgumentValueUIFactory
         try
         {
             //if it's an array
-            if(typeof(IDictionary).IsAssignableFrom(argumentType))
+            if (typeof(IDictionary).IsAssignableFrom(argumentType))
+            {
                 toReturn = new ArgumentValueDictionaryUI();
-            else
-            if (typeof (Array).IsAssignableFrom(argumentType))
+            }
+            else if (typeof(Array).IsAssignableFrom(argumentType))
+            {
                 toReturn = new ArgumentValueArrayUI(activator);
+            }
             else
                 //if it's a pipeline
-            if (typeof (IPipeline).IsAssignableFrom(argumentType))
+            if (typeof(IPipeline).IsAssignableFrom(argumentType))
+            {
                 toReturn = new ArgumentValuePipelineUI(catalogueRepository, args.Parent, argumentType);
-            else if (typeof (bool) == argumentType)
+            }
+            else if (typeof(bool) == argumentType)
+            {
                 toReturn = new ArgumentValueBoolUI();
+            }
             else if (args.Required.Demand.DemandType == DemandType.SQL) //if it is SQL
             {
-                if (typeof (string) != argumentType)
+                if (typeof(string) != argumentType)
                     throw new NotSupportedException(
                         $"Demanded type (of DemandsInitialization) was DemandType.SQL but the ProcessTaskArgument Property was of type {argumentType} (Expected String)");
 
                 toReturn = new ArgumentValueSqlUI();
             }
-            else if (typeof (ICustomUIDrivenClass).IsAssignableFrom(argumentType))
+            else if (typeof(ICustomUIDrivenClass).IsAssignableFrom(argumentType))
             {
                 toReturn = new ArgumentValueCustomUIDrivenClassUI();
             }
-            else if (argumentType == typeof (Type))
+            else if (argumentType == typeof(Type))
             {
                 //Handle case where Demand is for the user to pick a Type (derived from a given parent Type/Interface).  Use case for this is when you want them to pick e.g. a IDilutionOperation where these are a list of classes corrupt data to greater or lesser degree and can be plugin Types but all share the same parent interface IDilutionOperation
 
@@ -73,7 +80,7 @@ public class ArgumentValueUIFactory
                             .Where(t => args.Required.Demand.TypeOf.IsAssignableFrom(t))
                             .ToArray());
             }
-            else if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
+            else if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(argumentType))
             {
                 toReturn = HandleCreateForIMapsDirectlyToDatabaseTable(args);
             }
@@ -83,24 +90,25 @@ public class ArgumentValueUIFactory
                     new ArgumentValueComboBoxUI(activator,
                         Enum.GetValues(argumentType).Cast<object>().ToArray());
             }
-            else if (typeof (ICatalogueRepository).IsAssignableFrom(argumentType))
+            else if (typeof(ICatalogueRepository).IsAssignableFrom(argumentType))
             {
                 toReturn = new ArgumentValueLabelUI("<this value cannot be set manually>");
             }
             else //type is simple
             {
                 toReturn =
-                    new ArgumentValueTextUI(isPassword: typeof (IEncryptedString).IsAssignableFrom(argumentType));
+                    new ArgumentValueTextUI(typeof(IEncryptedString).IsAssignableFrom(argumentType));
             }
         }
         catch (Exception e)
         {
             throw new Exception(
-                $"A problem occured trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'", e);
+                $"A problem occured trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'",
+                e);
         }
 
         ((Control)toReturn).Dock = DockStyle.Fill;
-            
+
         toReturn.SetUp(activator, args);
         return toReturn;
     }
@@ -122,42 +130,45 @@ public class ArgumentValueUIFactory
 
         //Populate dropdown with the appropriate types
         if (argumentType == typeof(TableInfo))
-            array = GetTableInfosInScope(args.CatalogueRepository, args.Parent).ToArray(); //explicit cases where selection is constrained somehow
-        else if (argumentType == typeof (ColumnInfo))
+            array = GetTableInfosInScope(args.CatalogueRepository, args.Parent)
+                .ToArray(); //explicit cases where selection is constrained somehow
+        else if (argumentType == typeof(ColumnInfo))
             array = GetColumnInfosInScope(args.CatalogueRepository, args.Parent).ToArray();
-        else if (argumentType == typeof (PreLoadDiscardedColumn))
+        else if (argumentType == typeof(PreLoadDiscardedColumn))
             array = GetAllPreloadDiscardedColumnsInScope(args.CatalogueRepository, args.Parent).ToArray();
-        else if (argumentType == typeof (LoadProgress) && args.Parent is ProcessTask pt)
+        else if (argumentType == typeof(LoadProgress) && args.Parent is ProcessTask pt)
             array = pt.LoadMetadata.LoadProgresses;
         else
-            array = args.CatalogueRepository.GetAllObjects(argumentType).ToArray(); //Default case fetch all the objects of the Type
+            array = args.CatalogueRepository.GetAllObjects(argumentType)
+                .ToArray(); //Default case fetch all the objects of the Type
 
-        return new ArgumentValueComboBoxUI(_activator,array);
+        return new ArgumentValueComboBoxUI(_activator, array);
     }
 
     private static IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
-        if(parent is ProcessTask pt)
+        if (parent is ProcessTask pt)
             return pt.GetTableInfos();
 
-        if(parent is LoadMetadata lmd)
+        if (parent is LoadMetadata lmd)
             return lmd.GetDistinctTableInfoList(true);
 
         return repository.GetAllObjects<TableInfo>();
     }
 
-        
-    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
+
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
-        if(parent is ProcessTask || parent is LoadMetadata)
-            return GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos);
-            
+        if (parent is ProcessTask || parent is LoadMetadata)
+            return GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos);
+
         return repository.GetAllObjects<ColumnInfo>();
     }
-        
-    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
+
+    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(
+        ICatalogueRepository repository, IArgumentHost parent)
     {
-        if(parent is ProcessTask || parent is LoadMetadata)
+        if (parent is ProcessTask || parent is LoadMetadata)
             return GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
 
         return repository.GetAllObjects<PreLoadDiscardedColumn>();
@@ -169,8 +180,7 @@ public class ArgumentValueUIFactory
     /// </summary>
     /// <param name="argsType"></param>
     /// <returns></returns>
-    public static bool CanHandleInvalidStringData(Type argsType)
-    {
-        return argsType.IsValueType && !typeof(bool).IsAssignableFrom(argsType)&& !typeof(Enum).IsAssignableFrom(argsType);
-    }
+    public static bool CanHandleInvalidStringData(Type argsType) => argsType.IsValueType &&
+                                                                    !typeof(bool).IsAssignableFrom(argsType) &&
+                                                                    !typeof(Enum).IsAssignableFrom(argsType);
 }

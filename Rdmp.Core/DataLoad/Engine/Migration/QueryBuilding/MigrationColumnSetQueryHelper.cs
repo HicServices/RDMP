@@ -31,7 +31,7 @@ public class MigrationColumnSetQueryHelper
         foreach (var col in _migrationColumnSet.FieldsToDiff)
         {
             //if it is hic_ or identity specification
-            if(SpecialFieldNames.IsHicPrefixed(col) || col.IsAutoIncrement)
+            if (SpecialFieldNames.IsHicPrefixed(col) || col.IsAutoIncrement)
                 continue;
 
             sql += $"{tableAlias}[{col.GetRuntimeName()}],";
@@ -40,17 +40,11 @@ public class MigrationColumnSetQueryHelper
         return sql.TrimEnd(',');
     }
 
-    public string BuildPrimaryKeyNotNullTest(string columnPrefix)
-    {
-        return BuildPrimaryKeyCondition(columnPrefix, "NOT NULL");
-    }
+    public string BuildPrimaryKeyNotNullTest(string columnPrefix) => BuildPrimaryKeyCondition(columnPrefix, "NOT NULL");
 
-    public string BuildPrimaryKeyNullTest(string columnPrefix)
-    {
-        return BuildPrimaryKeyCondition(columnPrefix, "NULL");
-    }
+    public string BuildPrimaryKeyNullTest(string columnPrefix) => BuildPrimaryKeyCondition(columnPrefix, "NULL");
 
-    private string BuildPrimaryKeyCondition(string columnPrefix,string condition)
+    private string BuildPrimaryKeyCondition(string columnPrefix, string condition)
     {
         // Allow either 'prefix' or 'prefix.' to be passed through
         if (!columnPrefix.EndsWith("."))
@@ -63,7 +57,8 @@ public class MigrationColumnSetQueryHelper
     public string BuildJoinClause(string sourceAlias = "source", string destAlias = "dest")
     {
         if (!_migrationColumnSet.PrimaryKeys.Any())
-            throw new InvalidOperationException("None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.");
+            throw new InvalidOperationException(
+                "None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.");
 
         return
             $"ON ({string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => string.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName())))})";

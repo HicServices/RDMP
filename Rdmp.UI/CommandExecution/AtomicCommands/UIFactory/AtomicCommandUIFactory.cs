@@ -25,20 +25,14 @@ public class AtomicCommandUIFactory
         _iconProvider = activator.CoreIconProvider;
     }
 
-    public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
-    {
-        return new AtomicCommandMenuItem(command, _activator){Tag = command };
-    }
+    public ToolStripMenuItem CreateMenuItem(IAtomicCommand command) =>
+        new AtomicCommandMenuItem(command, _activator) { Tag = command };
 
-    public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)
-    {
-        return new AtomicCommandLinkLabel(_iconProvider,command){Tag = command };
-    }
+    public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command) =>
+        new(_iconProvider, command) { Tag = command };
 
-    public ToolStripItem CreateToolStripItem(IAtomicCommand command)
-    {
-        return new AtomicCommandToolStripItem(command, _activator);
-    }
+    public ToolStripItem CreateToolStripItem(IAtomicCommand command) =>
+        new AtomicCommandToolStripItem(command, _activator);
 
     public Button CreateButton(IAtomicCommand cmd)
     {

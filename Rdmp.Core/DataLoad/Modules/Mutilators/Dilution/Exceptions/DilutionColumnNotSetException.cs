@@ -13,9 +13,8 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
 /// </summary>
 public class DilutionColumnNotSetException : Exception
 {
-    public DilutionColumnNotSetException(string s):base(s)
+    public DilutionColumnNotSetException(string s) : base(s)
     {
-            
     }
 
     public DilutionColumnNotSetException()

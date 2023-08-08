@@ -14,7 +14,7 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// <summary>
 /// Records the fact that the user visited a specific object in a tree collection
 /// </summary>
-public class CollectionNavigation: INavigation
+public class CollectionNavigation : INavigation
 {
     public IMapsDirectlyToDatabaseTable Object { get; }
 
@@ -22,12 +22,12 @@ public class CollectionNavigation: INavigation
     {
         get
         {
-            if(Object is IMightNotExist o)
+            if (Object is IMightNotExist o)
                 return o.Exists();
 
             return true;
         }
-    } 
+    }
 
     public CollectionNavigation(IMapsDirectlyToDatabaseTable Object)
     {
@@ -36,23 +36,18 @@ public class CollectionNavigation: INavigation
 
     public void Activate(ActivateItems activateItems)
     {
-        activateItems.RequestItemEmphasis(this,new EmphasiseRequest(Object,0));
+        activateItems.RequestItemEmphasis(this, new EmphasiseRequest(Object, 0));
     }
 
     public void Close()
     {
-            
-    }
-    public override string ToString()
-    {
-        return Object.ToString();
     }
 
-    public override bool Equals(object obj)
-    {
-        return obj is CollectionNavigation other &&
-               Object.Equals(other.Object);
-    }
+    public override string ToString() => Object.ToString();
+
+    public override bool Equals(object obj) =>
+        obj is CollectionNavigation other &&
+        Object.Equals(other.Object);
 
     public override int GetHashCode()
     {

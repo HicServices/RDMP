@@ -41,12 +41,14 @@ public class ExcelTests
     public void SprayToDisk()
     {
         _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,
-            $"{typeof(ExcelTests).Namespace}.TestFile.{TestFile}",TestFile,TestContext.CurrentContext.TestDirectory));
+            $"{typeof(ExcelTests).Namespace}.TestFile.{TestFile}", TestFile, TestContext.CurrentContext.TestDirectory));
         _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,
-            $"{typeof(ExcelTests).Namespace}.TestFile.{FreakyTestFile}", FreakyTestFile, TestContext.CurrentContext.TestDirectory));
+            $"{typeof(ExcelTests).Namespace}.TestFile.{FreakyTestFile}", FreakyTestFile,
+            TestContext.CurrentContext.TestDirectory));
 
         _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,
-            $"{typeof(ExcelTests).Namespace}.TestFile.{OddFormatsFile}", OddFormatsFile, TestContext.CurrentContext.TestDirectory));
+            $"{typeof(ExcelTests).Namespace}.TestFile.{OddFormatsFile}", OddFormatsFile,
+            TestContext.CurrentContext.TestDirectory));
     }
 
 
@@ -65,8 +67,8 @@ public class ExcelTests
             Separator = ","
         };
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ThrowImmediatelyDataLoadEventListener());
-        var ex = Assert.Throws<Exception>(()=>invalid.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains("File Book1.xlsx has a prohibitted file extension .xlsx",ex.Message);
+        var ex = Assert.Throws<Exception>(() => invalid.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("File Book1.xlsx has a prohibitted file extension .xlsx", ex.Message);
     }
 
     [Test]
@@ -76,10 +78,11 @@ public class ExcelTests
     {
         var source = new ExcelDataFlowSource();
 
-        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]),
+            new ThrowImmediatelyDataLoadEventListener());
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-        Assert.AreEqual(6,dt.Columns.Count);
+        Assert.AreEqual(6, dt.Columns.Count);
         Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
         Assert.AreEqual("Score", dt.Columns[1].ColumnName);
         Assert.AreEqual("IsEvil", dt.Columns[2].ColumnName);
@@ -88,7 +91,7 @@ public class ExcelTests
         Assert.AreEqual("DoubleField", dt.Columns[4].ColumnName);
         Assert.AreEqual("MixedField", dt.Columns[5].ColumnName);
 
-        Assert.AreEqual("Bob",dt.Rows[0][0]);
+        Assert.AreEqual("Bob", dt.Rows[0][0]);
         Assert.AreEqual("3", dt.Rows[0][1]);
         Assert.AreEqual("yes", dt.Rows[0][2]);
     }
@@ -104,7 +107,8 @@ public class ExcelTests
             AddFilenameColumnNamed = "Path"
         };
 
-        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]),
+            new ThrowImmediatelyDataLoadEventListener());
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(7, dt.Columns.Count);
@@ -143,7 +147,7 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(5,dt.Rows.Count);
+        Assert.AreEqual(5, dt.Rows.Count);
 
         Assert.AreEqual("2001-01-01", dt.Rows[0][3]);
         Assert.AreEqual("0.1", dt.Rows[0][4]);
@@ -179,22 +183,23 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(2,dt.Rows.Count);
+        Assert.AreEqual(2, dt.Rows.Count);
         Assert.AreEqual(5, dt.Columns.Count);
-            
+
         Assert.AreEqual("Name", dt.Columns[0].ColumnName);
         Assert.AreEqual("Category", dt.Columns[1].ColumnName);
         Assert.AreEqual("Age", dt.Columns[2].ColumnName);
         Assert.AreEqual("Wage", dt.Columns[3].ColumnName);
-        Assert.AreEqual("Invisibre", dt.Columns[4].ColumnName); //this column is hidden in the spreadsheet but we still load it
+        Assert.AreEqual("Invisibre",
+            dt.Columns[4].ColumnName); //this column is hidden in the spreadsheet but we still load it
 
         Assert.AreEqual("Frank", dt.Rows[0][0]);
         Assert.AreEqual("Upper, Left", dt.Rows[0][1]);
         Assert.AreEqual("30", dt.Rows[0][2]);
-            
+
         //its a pound symbol alright! but since there is 2 encodings for pound symbol let's just make everyones life easier
         StringAssert.IsMatch(@"^\W11.00$", dt.Rows[0][3].ToString());
-            
+
         Assert.AreEqual("0.1", dt.Rows[0][4]);
 
         Assert.AreEqual("Castello", dt.Rows[1][0]);
@@ -214,7 +219,7 @@ public class ExcelTests
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[TestFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
-            
+
         Assert.AreEqual(5, dt.Rows.Count);
     }
 
@@ -225,14 +230,17 @@ public class ExcelTests
 
         var source = new ExcelDataFlowSource();
 
-        source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]), new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]),
+            new ThrowImmediatelyDataLoadEventListener());
         var dt = source.GetChunk(messages, new GracefulCancellationToken());
 
         var args = messages.EventsReceivedBySender[source];
 
         Console.Write(messages.ToString());
 
-        Assert.IsTrue(args.Any(a => a.Message.Contains("Discarded the following data (that was found in unamed columns):RowCount:5") && a.ProgressEventType == ProgressEventType.Warning));
+        Assert.IsTrue(args.Any(a =>
+            a.Message.Contains("Discarded the following data (that was found in unamed columns):RowCount:5") &&
+            a.ProgressEventType == ProgressEventType.Warning));
     }
 
     [Test]
@@ -241,7 +249,7 @@ public class ExcelTests
         var source = new ExcelDataFlowSource();
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
-            "DataLoad","Engine","Resources","BlankLineBook.xlsx"));
+            "DataLoad", "Engine", "Resources", "BlankLineBook.xlsx"));
         Assert.IsTrue(fi.Exists);
 
         source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -249,8 +257,8 @@ public class ExcelTests
 
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-            
-        Assert.AreEqual(3,dt.Rows.Count);
+
+        Assert.AreEqual(3, dt.Rows.Count);
         Assert.AreEqual(2, dt.Columns.Count);
         Assert.AreEqual("Name", dt.Columns[0].ColumnName);
         Assert.AreEqual("Age", dt.Columns[1].ColumnName);
@@ -263,30 +271,35 @@ public class ExcelTests
         var source = new ExcelDataFlowSource();
 
 
-        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources","BlankBook.xlsx"));
+        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine", "Resources",
+            "BlankBook.xlsx"));
         Assert.IsTrue(fi.Exists);
 
         source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
 
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        var ex = Assert.Throws<FlatFileLoadException>(() =>
+            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
         Assert.AreEqual("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty", ex.Message);
-
     }
+
     [Test]
     public void Checks_ValidFileExtension_Pass()
     {
         var source = new ExcelDataFlowSource();
-        source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
-        source.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true});
+        source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")), new ThrowImmediatelyDataLoadEventListener());
+        source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
     }
+
     [Test]
     public void Checks_ValidFileExtension_InvalidExtensionPass()
     {
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), new ThrowImmediatelyDataLoadEventListener());
-        var ex = Assert.Throws<Exception>(()=>source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
+        var ex = Assert.Throws<Exception>(() =>
+            source.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
+        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",
+            ex.Message);
     }
 
     [TestCase(true)]
@@ -301,7 +314,7 @@ public class ExcelTests
             PrefixWithWorkbookName = prefixWithWorkbookName
         };
 
-        var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading==loc.Directory);
+        var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading == loc.Directory);
 
         var j = new ThrowImmediatelyDataLoadJob
         {
@@ -310,7 +323,9 @@ public class ExcelTests
 
         converter.Fetch(j, new GracefulCancellationToken());
 
-        var file = prefixWithWorkbookName ?  loc.Directory.GetFiles("Book1_Sheet1.csv").Single(): loc.Directory.GetFiles("Sheet1.csv").Single();
+        var file = prefixWithWorkbookName
+            ? loc.Directory.GetFiles("Book1_Sheet1.csv").Single()
+            : loc.Directory.GetFiles("Sheet1.csv").Single();
 
         Assert.IsTrue(file.Exists);
 
@@ -325,6 +340,5 @@ Shanker,2,yes,2003-01-01 01:30:00,0.10,0.51
 Bobboy,2,maybe,2015-09-18,15:09:00,00:03:56", contents.Trim(new[] { ',', '\r', '\n', ' ', '\t' }));
 
         file.Delete();
-
     }
 }

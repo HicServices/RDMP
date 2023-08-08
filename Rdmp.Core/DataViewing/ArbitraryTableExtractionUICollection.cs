@@ -18,7 +18,8 @@ namespace Rdmp.Core.DataViewing;
 /// <summary>
 /// <see cref="IViewSQLAndResultsCollection"/> for querying samples of arbitrary tables / columns
 /// </summary>
-public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
+public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection,
+    IDataAccessPoint, IDataAccessCredentials
 {
     private DiscoveredTable _table;
 
@@ -32,10 +33,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
 
     public string Username { get; set; }
     public string Password { get; set; }
-    public string GetDecryptedPassword()
-    {
-        return Password ?? "";
-    }
+    public string GetDecryptedPassword() => Password ?? "";
 
     public string OverrideSql { get; set; }
 
@@ -44,7 +42,6 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
     /// </summary>
     public ArbitraryTableExtractionUICollection()
     {
-
     }
 
     public ArbitraryTableExtractionUICollection(DiscoveredTable table) : this()
@@ -61,11 +58,9 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         Username = table.Database.Server.ExplicitUsernameIfAny;
         Password = table.Database.Server.ExplicitPasswordIfAny;
     }
+
     /// <nheritdoc/>
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(_arguments);
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(_arguments);
 
     public override void LoadExtraText(string s)
     {
@@ -82,10 +77,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         yield break;
     }
 
-    public IDataAccessPoint GetDataAccessPoint()
-    {
-        return this;
-    }
+    public IDataAccessPoint GetDataAccessPoint() => this;
 
     public string GetSql()
     {
@@ -107,10 +99,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         }
     }
 
-    public string GetTabName()
-    {
-        return $"View {_table.GetRuntimeName()}";
-    }
+    public string GetTabName() => $"View {_table.GetRuntimeName()}";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -122,6 +111,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         get => _arguments[ServerKey];
         set => _arguments[ServerKey] = value;
     }
+
     public string Database
     {
         get => _arguments[DatabaseKey];
@@ -129,17 +119,11 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
     }
 
 
-
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
         //we have our own credentials if we do
-        return string.IsNullOrWhiteSpace(Username) ? null : this;
-    }
+        string.IsNullOrWhiteSpace(Username) ? null : this;
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _table.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _table.GetQuerySyntaxHelper();
 
     public bool DiscoverExistence(DataAccessContext context, out string reason)
     {
@@ -151,6 +135,5 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
 
         reason = $"Table {_table} did not exist";
         return false;
-
     }
 }

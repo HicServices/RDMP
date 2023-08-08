@@ -27,7 +27,5 @@ public partial class ConsequenceKey : UserControl
         lblInvalid.BackColor = ConsequenceBar.InvalidColor;
         lblHasValue.BackColor = ConsequenceBar.HasValuesColor;
         lblIsNull.BackColor = ConsequenceBar.IsNullColor;
-
     }
-
 }

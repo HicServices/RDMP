@@ -75,10 +75,9 @@ public class UnitTests
     /// <see cref="IBasicActivateItems.YesNo(DialogArgs)"/>)
     /// </summary>
     /// <returns></returns>
-    protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null)
-    {
-        return new ConsoleInputManager(locator ?? RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true};
-    }
+    protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null) =>
+        new ConsoleInputManager(locator ?? RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+            { DisallowInput = true };
 
     /// <summary>
     /// Override to do stuff before your first instance is constructed
@@ -108,10 +107,7 @@ public class UnitTests
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
     //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected T WhenIHaveA<T>() where T : DatabaseEntity
-    {
-        return WhenIHaveA<T>(Repository);
-    }
+    protected T WhenIHaveA<T>() where T : DatabaseEntity => WhenIHaveA<T>(Repository);
 
 
     /// <summary>
@@ -126,12 +122,11 @@ public class UnitTests
         if (typeof(T) == typeof(Catalogue))
             return (T)(object)Save(new Catalogue(repository, "Mycata"));
 
-            
+
         if (typeof(T) == typeof(ExtendedProperty))
-        {
-            return (T)(object)new ExtendedProperty(repository,Save(new Catalogue(repository, "Mycata")),"TestProp",0);
-        }
-                
+            return (T)(object)new ExtendedProperty(repository, Save(new Catalogue(repository, "Mycata")), "TestProp",
+                0);
+
 
         if (typeof(T) == typeof(CatalogueItem))
         {
@@ -151,7 +146,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(TableInfo))
         {
-            var table = new TableInfo(repository, "My_Table"){DatabaseType = DatabaseType.MicrosoftSQLServer};
+            var table = new TableInfo(repository, "My_Table") { DatabaseType = DatabaseType.MicrosoftSQLServer };
             return (T)(object)table;
         }
 
@@ -163,19 +158,12 @@ public class UnitTests
         }
 
         if (typeof(T) == typeof(AggregateConfiguration))
-        {
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository, out ExtractionInformation dateEi, out ExtractionInformation otherEi);
-        }
+            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out var otherEi);
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
-        {
-            return (T)(object)Save(new ExternalDatabaseServer(repository, "My Server",null));
-        }
+            return (T)(object)Save(new ExternalDatabaseServer(repository, "My Server", null));
 
-        if (typeof(T) == typeof(ANOTable))
-        {
-            return (T)(object)WhenIHaveA<ANOTable>(repository, out ExternalDatabaseServer server);
-        }
+        if (typeof(T) == typeof(ANOTable)) return (T)(object)WhenIHaveA<ANOTable>(repository, out var server);
 
         if (typeof(T) == typeof(LoadMetadata))
         {
@@ -194,30 +182,31 @@ public class UnitTests
             return (T)(object)lmd;
         }
 
-        if (typeof (T) == typeof (AggregateTopX))
+        if (typeof(T) == typeof(AggregateTopX))
         {
             var agg = WhenIHaveA<AggregateConfiguration>(repository);
-            return (T)(object) new AggregateTopX(repository, agg, 10);
+            return (T)(object)new AggregateTopX(repository, agg, 10);
         }
 
-        if (typeof (T) == typeof (ConnectionStringKeyword))
-        {
-            return (T)(object)new ConnectionStringKeyword(repository, DatabaseType.MicrosoftSQLServer, "MultipleActiveResultSets", "true");
-        }
+        if (typeof(T) == typeof(ConnectionStringKeyword))
+            return (T)(object)new ConnectionStringKeyword(repository, DatabaseType.MicrosoftSQLServer,
+                "MultipleActiveResultSets", "true");
 
-        if (typeof (T) == typeof (DashboardLayout))
+        if (typeof(T) == typeof(DashboardLayout))
             return (T)(object)new DashboardLayout(repository, "My Layout");
 
         if (typeof(T) == typeof(DashboardControl))
         {
             var layout = WhenIHaveA<DashboardLayout>(repository);
-            return (T)(object)Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "") { ControlType = "GoodBadCataloguePieChart" });
+            return (T)(object)Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "")
+                { ControlType = "GoodBadCataloguePieChart" });
         }
 
         if (typeof(T) == typeof(DashboardObjectUse))
         {
             var layout = WhenIHaveA<DashboardLayout>(repository);
-            var control = Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "") { ControlType = "GoodBadCataloguePieChart" });
+            var control = Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "")
+                { ControlType = "GoodBadCataloguePieChart" });
             var use = new DashboardObjectUse(repository, control, WhenIHaveA<Catalogue>(repository));
             return (T)(object)use;
         }
@@ -233,7 +222,7 @@ public class UnitTests
             var filter = WhenIHaveA<ExtractionFilter>(repository);
             filter.WhereSQL = "@myParam = 'T'";
 
-            return (T)(object)new ExtractionFilterParameter(repository,"DECLARE @myParam varchar(10)",filter);
+            return (T)(object)new ExtractionFilterParameter(repository, "DECLARE @myParam varchar(10)", filter);
         }
 
         if (typeof(T) == typeof(ExtractionFilterParameterSetValue))
@@ -243,90 +232,89 @@ public class UnitTests
             return (T)(object)new ExtractionFilterParameterSetValue(repository, set, parameter);
         }
 
-        if (typeof (T) == typeof(ExtractionFilterParameterSet))
-        {
+        if (typeof(T) == typeof(ExtractionFilterParameterSet))
             return (T)(object)WhenIHaveA<ExtractionFilterParameterSetValue>(repository).ExtractionFilterParameterSet;
-        }
 
-        if (typeof (T) == typeof (Favourite))
-            return (T) (object) new Favourite(repository, WhenIHaveA<Catalogue>(repository));
+        if (typeof(T) == typeof(Favourite))
+            return (T)(object)new Favourite(repository, WhenIHaveA<Catalogue>(repository));
 
-        if (typeof (T) == typeof(ObjectExport))
-        {
-            return (T)(object)WhenIHaveA<ObjectExport>(repository, out ShareManager sm);
-        }
-            
-        if (typeof (T) == typeof(ObjectImport))
+        if (typeof(T) == typeof(ObjectExport)) return (T)(object)WhenIHaveA<ObjectExport>(repository, out var sm);
+
+        if (typeof(T) == typeof(ObjectImport))
         {
             var export = WhenIHaveA<ObjectExport>(repository, out var sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
-            
-        if (typeof (T) == typeof(WindowLayout))
-            return (T)(object)new WindowLayout(repository,"My window arrangement","<html><body>ignore this</body></html>");
 
-        if (typeof (T) == typeof(RemoteRDMP))
+        if (typeof(T) == typeof(WindowLayout))
+            return (T)(object)new WindowLayout(repository, "My window arrangement",
+                "<html><body>ignore this</body></html>");
+
+        if (typeof(T) == typeof(RemoteRDMP))
             return (T)(object)new RemoteRDMP(repository);
-            
-        if (typeof (T) == typeof(CohortIdentificationConfiguration))
-            return (T)(object)new CohortIdentificationConfiguration(repository,"My cic");
 
-        if (typeof (T) == typeof(JoinableCohortAggregateConfiguration))
+        if (typeof(T) == typeof(CohortIdentificationConfiguration))
+            return (T)(object)new CohortIdentificationConfiguration(repository, "My cic");
+
+        if (typeof(T) == typeof(JoinableCohortAggregateConfiguration))
         {
             var config = WhenIHaveCohortAggregateConfiguration(repository, "PatientIndexTable");
             var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
             cic.EnsureNamingConvention(config);
-            return (T)(object)new JoinableCohortAggregateConfiguration(repository,cic,config);
+            return (T)(object)new JoinableCohortAggregateConfiguration(repository, cic, config);
         }
-            
-        if (typeof (T) == typeof(JoinableCohortAggregateConfigurationUse))
+
+        if (typeof(T) == typeof(JoinableCohortAggregateConfigurationUse))
         {
             var joinable = WhenIHaveA<JoinableCohortAggregateConfiguration>(repository);
             var config = WhenIHaveCohortAggregateConfiguration(repository, "Aggregate");
             return (T)(object)joinable.AddUser(config);
         }
-            
-        if (typeof (T) == typeof(Rdmp.Core.Curation.Data.Plugin))
-            return (T)(object)new Rdmp.Core.Curation.Data.Plugin(repository,new FileInfo("bob.nupkg"),new Version(1,1,1),new Version(1,1,1));
-            
-        if (typeof (T) == typeof(LoadModuleAssembly))
-        {
-            var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.nupkg");
-            File.WriteAllBytes(dll,new byte[] {0x11});
 
-            return (T)(object)new LoadModuleAssembly(repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
-        }
-            
-        if (typeof (T) == typeof(AggregateContinuousDateAxis))
+        if (typeof(T) == typeof(Rdmp.Core.Curation.Data.Plugin))
+            return (T)(object)new Rdmp.Core.Curation.Data.Plugin(repository, new FileInfo("bob.nupkg"),
+                new Version(1, 1, 1), new Version(1, 1, 1));
+
+        if (typeof(T) == typeof(LoadModuleAssembly))
         {
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out ExtractionInformation otherEi);
+            var dll = Path.Combine(TestContext.CurrentContext.TestDirectory, "a.nupkg");
+            File.WriteAllBytes(dll, new byte[] { 0x11 });
+
+            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll),
+                WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
+        }
+
+        if (typeof(T) == typeof(AggregateContinuousDateAxis))
+        {
+            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out var otherEi);
 
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
             //add the date one
             var dim = new AggregateDimension(repository, dateEi, config);
 
-            return (T)(object)new AggregateContinuousDateAxis(repository,dim);
+            return (T)(object)new AggregateContinuousDateAxis(repository, dim);
         }
-            
-        if (typeof (T) == typeof(AggregateDimension))
-            return (T)(object) WhenIHaveA<AggregateConfiguration>(repository).AggregateDimensions[0];
-            
-        if (typeof (T) == typeof(AggregateFilterContainer))
+
+        if (typeof(T) == typeof(AggregateDimension))
+            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository).AggregateDimensions[0];
+
+        if (typeof(T) == typeof(AggregateFilterContainer))
         {
             var config = WhenIHaveA<AggregateConfiguration>(repository);
-            var container = new AggregateFilterContainer(repository,FilterContainerOperation.AND);
+            var container = new AggregateFilterContainer(repository, FilterContainerOperation.AND);
             config.RootFilterContainer_ID = container.ID;
             config.SaveToDatabase();
-            return (T) (object) container;
+            return (T)(object)container;
         }
-        if (typeof (T) == typeof(AggregateFilter))
+
+        if (typeof(T) == typeof(AggregateFilter))
         {
             var container = WhenIHaveA<AggregateFilterContainer>(repository);
-            return (T)(object)new AggregateFilter(repository,"My Filter",container);
+            return (T)(object)new AggregateFilter(repository, "My Filter", container);
         }
-            
-        if (typeof (T) == typeof(AggregateFilterParameter))
+
+        if (typeof(T) == typeof(AggregateFilterParameter))
         {
             var filter = WhenIHaveA<AggregateFilter>(repository);
             filter.WhereSQL = "@MyP = 'mnnn apples'";
@@ -335,107 +323,113 @@ public class UnitTests
             return (T)filter.GetFilterFactory().CreateNewParameter(filter, "DECLARE @MyP as varchar(10)");
         }
 
-        if (typeof (T) == typeof (LoadProgress))
-            return (T) (object) new LoadProgress(repository, WhenIHaveA<LoadMetadata>(repository));
+        if (typeof(T) == typeof(LoadProgress))
+            return (T)(object)new LoadProgress(repository, WhenIHaveA<LoadMetadata>(repository));
 
-        if (typeof (T) == typeof(CacheProgress))
-            return (T)(object)new CacheProgress(repository,WhenIHaveA<LoadProgress>(repository));
+        if (typeof(T) == typeof(CacheProgress))
+            return (T)(object)new CacheProgress(repository, WhenIHaveA<LoadProgress>(repository));
 
-        if (typeof (T) == typeof(CacheFetchFailure))
-            return (T)(object)new CacheFetchFailure(repository,WhenIHaveA<CacheProgress>(repository),DateTime.Now.Subtract(new TimeSpan(1,0,0,0)),DateTime.Now,new Exception("It didn't work"));
-            
-        if (typeof (T) == typeof(CohortAggregateContainer))
+        if (typeof(T) == typeof(CacheFetchFailure))
+            return (T)(object)new CacheFetchFailure(repository, WhenIHaveA<CacheProgress>(repository),
+                DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0)), DateTime.Now, new Exception("It didn't work"));
+
+        if (typeof(T) == typeof(CohortAggregateContainer))
         {
             var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
             cic.CreateRootContainerIfNotExists();
             return (T)(object)cic.RootCohortAggregateContainer;
         }
-            
-        if (typeof (T) == typeof(AnyTableSqlParameter))
+
+        if (typeof(T) == typeof(AnyTableSqlParameter))
         {
             var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
-            return (T)(object)new AnyTableSqlParameter(repository,cic,"DECLARE @myGlobal as varchar(10)");
+            return (T)(object)new AnyTableSqlParameter(repository, cic, "DECLARE @myGlobal as varchar(10)");
         }
 
-        if (typeof (T) == typeof(DataAccessCredentials))
-            return (T)(object)new DataAccessCredentials(repository,"My credentials");
-            
-        if (typeof (T) == typeof(GovernancePeriod))
+        if (typeof(T) == typeof(DataAccessCredentials))
+            return (T)(object)new DataAccessCredentials(repository, "My credentials");
+
+        if (typeof(T) == typeof(GovernancePeriod))
             return (T)(object)new GovernancePeriod(repository);
-            
-        if (typeof (T) == typeof(GovernanceDocument))
+
+        if (typeof(T) == typeof(GovernanceDocument))
         {
             var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "myfile.txt"));
-            return (T)(object)new GovernanceDocument(repository,WhenIHaveA<GovernancePeriod>(repository),fi);
+            return (T)(object)new GovernanceDocument(repository, WhenIHaveA<GovernancePeriod>(repository), fi);
         }
 
-        if (typeof (T) == typeof(PermissionWindow))
+        if (typeof(T) == typeof(PermissionWindow))
             return (T)(object)new PermissionWindow(repository);
-            
 
-        if (typeof (T) == typeof(JoinInfo))
-        {
-            WhenIHaveTwoTables(repository, out var col1, out var col2, out ColumnInfo col3);
 
-            return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
-        }
-        if (typeof (T) == typeof(Lookup))
+        if (typeof(T) == typeof(JoinInfo))
         {
             WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
 
-            return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
+            return (T)(object)new JoinInfo(repository, col1, col2, ExtractionJoinType.Left, null);
         }
-        if (typeof (T) == typeof(LookupCompositeJoinInfo))
+
+        if (typeof(T) == typeof(Lookup))
+        {
+            WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
+
+            return (T)(object)new Lookup(repository, col3, col1, col2, ExtractionJoinType.Left, null);
+        }
+
+        if (typeof(T) == typeof(LookupCompositeJoinInfo))
         {
             var lookup = WhenIHaveA<Lookup>(repository);
 
-            var otherJoinFk = new ColumnInfo(repository,"otherJoinKeyForeign","int",lookup.ForeignKey.TableInfo);
-            var otherJoinPk = new ColumnInfo(repository,"otherJoinKeyPrimary","int",lookup.PrimaryKey.TableInfo);
+            var otherJoinFk = new ColumnInfo(repository, "otherJoinKeyForeign", "int", lookup.ForeignKey.TableInfo);
+            var otherJoinPk = new ColumnInfo(repository, "otherJoinKeyPrimary", "int", lookup.PrimaryKey.TableInfo);
 
-            return (T)(object)new LookupCompositeJoinInfo(repository,lookup,otherJoinFk,otherJoinPk);
+            return (T)(object)new LookupCompositeJoinInfo(repository, lookup, otherJoinFk, otherJoinPk);
         }
-        if (typeof (T) == typeof(Pipeline))
-            return (T)(object)new Pipeline(repository,"My Pipeline");
 
-        if (typeof (T) == typeof(PipelineComponent))
-            return (T)(object)new PipelineComponent(repository, WhenIHaveA<Pipeline>(repository), typeof(ColumnForbidder),0,"My Component");
-            
-        if (typeof (T) == typeof(PipelineComponentArgument))
+        if (typeof(T) == typeof(Pipeline))
+            return (T)(object)new Pipeline(repository, "My Pipeline");
+
+        if (typeof(T) == typeof(PipelineComponent))
+            return (T)(object)new PipelineComponent(repository, WhenIHaveA<Pipeline>(repository),
+                typeof(ColumnForbidder), 0, "My Component");
+
+        if (typeof(T) == typeof(PipelineComponentArgument))
         {
             var comp = WhenIHaveA<PipelineComponent>(repository);
             return (T)comp.CreateArgumentsForClassIfNotExists<ColumnForbidder>().First();
         }
 
-        if (typeof (T) == typeof(PreLoadDiscardedColumn))
-            return (T)(object)new PreLoadDiscardedColumn(repository,WhenIHaveA<TableInfo>(repository),"MyDiscardedColum");
-                        
-                       
-        if (typeof (T) == typeof(ProcessTask))
-            return (T)(object)new ProcessTask(repository,WhenIHaveA<LoadMetadata>(repository),LoadStage.AdjustRaw);
+        if (typeof(T) == typeof(PreLoadDiscardedColumn))
+            return (T)(object)new PreLoadDiscardedColumn(repository, WhenIHaveA<TableInfo>(repository),
+                "MyDiscardedColum");
 
-        if (typeof (T) == typeof(ProcessTaskArgument))
-            return (T)(object)new ProcessTaskArgument(repository,WhenIHaveA<ProcessTask>(repository));
 
-                
-        if (typeof (T) == typeof(StandardRegex))
+        if (typeof(T) == typeof(ProcessTask))
+            return (T)(object)new ProcessTask(repository, WhenIHaveA<LoadMetadata>(repository), LoadStage.AdjustRaw);
+
+        if (typeof(T) == typeof(ProcessTaskArgument))
+            return (T)(object)new ProcessTaskArgument(repository, WhenIHaveA<ProcessTask>(repository));
+
+
+        if (typeof(T) == typeof(StandardRegex))
             return (T)(object)new StandardRegex(repository);
 
-        if (typeof (T) == typeof(SupportingSQLTable))
-            return (T)(object)new SupportingSQLTable(repository,WhenIHaveA<Catalogue>(repository),"Some Handy Query");
+        if (typeof(T) == typeof(SupportingSQLTable))
+            return (T)(object)new SupportingSQLTable(repository, WhenIHaveA<Catalogue>(repository), "Some Handy Query");
 
-        if (typeof (T) == typeof(TicketingSystemConfiguration))
-            return (T)(object)new TicketingSystemConfiguration(repository,"My Ticketing System");
+        if (typeof(T) == typeof(TicketingSystemConfiguration))
+            return (T)(object)new TicketingSystemConfiguration(repository, "My Ticketing System");
 
-        if (typeof (T) == typeof(SupportingDocument))
-            return (T)(object)new SupportingDocument(repository,WhenIHaveA<Catalogue>(repository),"HelpFile.docx");
+        if (typeof(T) == typeof(SupportingDocument))
+            return (T)(object)new SupportingDocument(repository, WhenIHaveA<Catalogue>(repository), "HelpFile.docx");
 
-        if (typeof (T) == typeof(Project))
-            return (T)(object)new Project(repository,"My Project");
-            
-        if (typeof (T) == typeof(ExtractionConfiguration))
-            return (T)(object)new ExtractionConfiguration(repository,WhenIHaveA<Project>(repository));
-            
-        if (typeof (T) == typeof(ExtractableDataSet))
+        if (typeof(T) == typeof(Project))
+            return (T)(object)new Project(repository, "My Project");
+
+        if (typeof(T) == typeof(ExtractionConfiguration))
+            return (T)(object)new ExtractionConfiguration(repository, WhenIHaveA<Project>(repository));
+
+        if (typeof(T) == typeof(ExtractableDataSet))
         {
             //To make an extractable dataset we need an extraction identifier (e.g. chi) that will be linked in the cohort
             var ei = WhenIHaveA<ExtractionInformation>(repository);
@@ -443,37 +437,40 @@ public class UnitTests
             ei.SaveToDatabase();
 
             //And we need another column too just for sanity sakes (in the same table)
-            var ci2 = new CatalogueItem(repository,ei.CatalogueItem.Catalogue,"ci2");
+            var ci2 = new CatalogueItem(repository, ei.CatalogueItem.Catalogue, "ci2");
             var col2 = new ColumnInfo(repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
-            var ei2 = new ExtractionInformation(repository,ci2,col2,col2.GetFullyQualifiedName());
+            var ei2 = new ExtractionInformation(repository, ci2, col2, col2.GetFullyQualifiedName());
 
-            return (T)(object)new ExtractableDataSet(repository,ei.CatalogueItem.Catalogue);
+            return (T)(object)new ExtractableDataSet(repository, ei.CatalogueItem.Catalogue);
         }
-            
-        if (typeof (T) == typeof(CumulativeExtractionResults))
-            return (T)(object)new CumulativeExtractionResults(repository,WhenIHaveA<ExtractionConfiguration>(repository),WhenIHaveA<ExtractableDataSet>(repository),"SELECT * FROM Anywhere");
-            
-        if (typeof (T) == typeof(SelectedDataSets))
+
+        if (typeof(T) == typeof(CumulativeExtractionResults))
+            return (T)(object)new CumulativeExtractionResults(repository,
+                WhenIHaveA<ExtractionConfiguration>(repository), WhenIHaveA<ExtractableDataSet>(repository),
+                "SELECT * FROM Anywhere");
+
+        if (typeof(T) == typeof(SelectedDataSets))
         {
             var eds = WhenIHaveA<ExtractableDataSet>(repository);
             var config = WhenIHaveA<ExtractionConfiguration>(repository);
 
             foreach (var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             {
-                var ec = new ExtractableColumn(repository, eds, config,ei,ei.Order,ei.SelectSQL);
+                var ec = new ExtractableColumn(repository, eds, config, ei, ei.Order, ei.SelectSQL);
             }
 
-            return (T)(object)new SelectedDataSets(repository,config,eds, null);
+            return (T)(object)new SelectedDataSets(repository, config, eds, null);
         }
-                
 
-        if (typeof (T) == typeof(ReleaseLog))
+
+        if (typeof(T) == typeof(ReleaseLog))
         {
-            var file = Path.Combine(TestContext.CurrentContext.TestDirectory,"myDataset.csv");
-            File.WriteAllText(file,"omg rows");
+            var file = Path.Combine(TestContext.CurrentContext.TestDirectory, "myDataset.csv");
+            File.WriteAllText(file, "omg rows");
 
             var sds = WhenIHaveA<SelectedDataSets>(repository);
-            new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
+            new CumulativeExtractionResults(repository, sds.ExtractionConfiguration, sds.ExtractableDataSet,
+                "SELECT * FROM ANYWHERE");
             var potential = new FlatFileReleasePotential(new RepositoryProvider(repository), sds);
 
             return (T)(object)new ReleaseLog(repository,
@@ -482,28 +479,29 @@ public class UnitTests
                 false,
                 new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 new FileInfo(file));
-
         }
 
-        if (typeof (T) == typeof(ExtractableDataSetPackage))
-            return (T)(object)new ExtractableDataSetPackage(repository,"My Cool Package");
-            
-            
-        if (typeof (T) == typeof(SupplementalExtractionResults))
-        {
-            return (T)(object)new SupplementalExtractionResults(repository,WhenIHaveA<CumulativeExtractionResults>(repository),"Select * from Lookup",WhenIHaveA<SupportingSQLTable>(repository));
-        }
+        if (typeof(T) == typeof(ExtractableDataSetPackage))
+            return (T)(object)new ExtractableDataSetPackage(repository, "My Cool Package");
 
-        if (typeof (T) == typeof(SelectedDataSetsForcedJoin))
-            return (T)(object)new SelectedDataSetsForcedJoin(repository,WhenIHaveA<SelectedDataSets>(repository),WhenIHaveA<TableInfo>(repository));
-            
-        if (typeof (T) == typeof(ProjectCohortIdentificationConfigurationAssociation))
-            return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(repository,WhenIHaveA<Project>(repository),WhenIHaveA<CohortIdentificationConfiguration>(repository));
-            
-        if (typeof (T) == typeof(ExternalCohortTable))
-            return Save((T)(object)new ExternalCohortTable(repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
+
+        if (typeof(T) == typeof(SupplementalExtractionResults))
+            return (T)(object)new SupplementalExtractionResults(repository,
+                WhenIHaveA<CumulativeExtractionResults>(repository), "Select * from Lookup",
+                WhenIHaveA<SupportingSQLTable>(repository));
+
+        if (typeof(T) == typeof(SelectedDataSetsForcedJoin))
+            return (T)(object)new SelectedDataSetsForcedJoin(repository, WhenIHaveA<SelectedDataSets>(repository),
+                WhenIHaveA<TableInfo>(repository));
+
+        if (typeof(T) == typeof(ProjectCohortIdentificationConfigurationAssociation))
+            return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(repository,
+                WhenIHaveA<Project>(repository), WhenIHaveA<CohortIdentificationConfiguration>(repository));
+
+        if (typeof(T) == typeof(ExternalCohortTable))
+            return Save((T)(object)new ExternalCohortTable(repository, "My cohorts", DatabaseType.MicrosoftSQLServer)
             {
-                Database="MyCohortsDb",
+                Database = "MyCohortsDb",
                 DefinitionTableForeignKeyField = "c_id",
                 PrivateIdentifierField = "priv",
                 ReleaseIdentifierField = "rel",
@@ -512,25 +510,27 @@ public class UnitTests
                 Server = "localhost\\sqlexpress"
             });
 
-        if (typeof (T) == typeof(ExtractableCohort))
-            throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
+        if (typeof(T) == typeof(ExtractableCohort))
+            throw new NotSupportedException(
+                "You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
 
-        if (typeof (T) == typeof(GlobalExtractionFilterParameter))
-            return (T)(object)new GlobalExtractionFilterParameter(repository,WhenIHaveA<ExtractionConfiguration>(repository),"DECLARE @ExtractionGlobal as varchar(100)");
+        if (typeof(T) == typeof(GlobalExtractionFilterParameter))
+            return (T)(object)new GlobalExtractionFilterParameter(repository,
+                WhenIHaveA<ExtractionConfiguration>(repository), "DECLARE @ExtractionGlobal as varchar(100)");
 
 
-        if (typeof (T) == typeof(ExtractableColumn))
+        if (typeof(T) == typeof(ExtractableColumn))
         {
             var ei = WhenIHaveA<ExtractionInformation>(repository);
 
             var eds = new ExtractableDataSet(repository, ei.CatalogueItem.Catalogue);
-            var config  = WhenIHaveA<ExtractionConfiguration>(repository);
+            var config = WhenIHaveA<ExtractionConfiguration>(repository);
             config.AddDatasetToConfiguration(eds);
 
-            return (T)(object) config.GetAllExtractableColumnsFor(eds).Single();
+            return (T)(object)config.GetAllExtractableColumnsFor(eds).Single();
         }
-            
-        if (typeof (T) == typeof(FilterContainer))
+
+        if (typeof(T) == typeof(FilterContainer))
         {
             var sds = WhenIHaveA<SelectedDataSets>(repository);
             var container = new FilterContainer(repository, FilterContainerOperation.AND);
@@ -539,21 +539,22 @@ public class UnitTests
 
             return (T)(object)container;
         }
-                              
-            
-        if (typeof (T) == typeof(DeployedExtractionFilter))
+
+
+        if (typeof(T) == typeof(DeployedExtractionFilter))
         {
             var container = WhenIHaveA<FilterContainer>(repository);
-            return (T)(object)new DeployedExtractionFilter(repository,"Fish = 'haddock'",container);
+            return (T)(object)new DeployedExtractionFilter(repository, "Fish = 'haddock'", container);
         }
-        if (typeof (T) == typeof(DeployedExtractionFilterParameter))
+
+        if (typeof(T) == typeof(DeployedExtractionFilterParameter))
         {
             var filter = WhenIHaveA<DeployedExtractionFilter>(repository);
             filter.WhereSQL = "@had = 'enough'";
             return (T)(object)filter.GetFilterFactory().CreateNewParameter(filter, "DECLARE @had as varchar(100)");
         }
 
-        if(typeof(T)== typeof(ExtractionProgress))
+        if (typeof(T) == typeof(ExtractionProgress))
         {
             var cata = new Catalogue(repository, "MyCata");
             var cataItem = new CatalogueItem(repository, cata, "MyCol");
@@ -573,10 +574,7 @@ public class UnitTests
         }
 
 
-        if (typeof(T) == typeof(Commit))
-        {
-            return (T)(object)new Commit(repository, Guid.NewGuid(),"Breaking stuff");
-        }
+        if (typeof(T) == typeof(Commit)) return (T)(object)new Commit(repository, Guid.NewGuid(), "Breaking stuff");
 
         if (typeof(T) == typeof(Memento))
         {
@@ -590,19 +588,21 @@ public class UnitTests
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
 
-    private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
+    private static void WhenIHaveTwoTables(MemoryDataExportRepository repository, out ColumnInfo col1,
+        out ColumnInfo col2, out ColumnInfo col3)
     {
-        WhenIHaveTwoTables(repository, out TableInfo ti1, out TableInfo ti2, out col1, out col2, out col3);
+        WhenIHaveTwoTables(repository, out var ti1, out var ti2, out col1, out col2, out col3);
     }
 
-    private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out TableInfo ti1, out TableInfo ti2, out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
+    private static void WhenIHaveTwoTables(MemoryDataExportRepository repository, out TableInfo ti1, out TableInfo ti2,
+        out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
     {
         ti1 = WhenIHaveA<TableInfo>(repository);
         ti1.Name = "ParentTable";
         ti1.Database = "MyDb";
         ti1.SaveToDatabase();
         col1 = new ColumnInfo(repository, "ParentCol", "varchar(10)", ti1);
-         
+
         ti2 = WhenIHaveA<TableInfo>(repository);
         ti2.Name = "ChildTable";
         ti2.Database = "MyDb";
@@ -610,7 +610,8 @@ public class UnitTests
         col3 = new ColumnInfo(repository, "Desc", "varchar(10)", ti2);
     }
 
-    private static AggregateConfiguration WhenIHaveCohortAggregateConfiguration(MemoryDataExportRepository repository, string name)
+    private static AggregateConfiguration WhenIHaveCohortAggregateConfiguration(MemoryDataExportRepository repository,
+        string name)
     {
         var config = WhenIHaveA<AggregateConfiguration>(repository);
         config.Name = name;
@@ -623,7 +624,8 @@ public class UnitTests
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static AggregateConfiguration WhenIHaveA<T>(MemoryDataExportRepository repository, out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
+    protected static AggregateConfiguration WhenIHaveA<T>(MemoryDataExportRepository repository,
+        out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
     {
         var ti = WhenIHaveA<TableInfo>(repository);
         var dateCol = new ColumnInfo(repository, "MyDateCol", "datetime2", ti);
@@ -641,7 +643,8 @@ public class UnitTests
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static ANOTable WhenIHaveA<T>(MemoryDataExportRepository repository, out ExternalDatabaseServer server) where T : ANOTable
+    protected static ANOTable WhenIHaveA<T>(MemoryDataExportRepository repository, out ExternalDatabaseServer server)
+        where T : ANOTable
     {
         server = new ExternalDatabaseServer(repository, "ANO Server", new ANOStorePatcher());
         var anoTable = new ANOTable(repository, server, "ANOFish", "F");
@@ -649,7 +652,8 @@ public class UnitTests
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static ObjectExport WhenIHaveA<T>(MemoryDataExportRepository repository, out ShareManager shareManager) where T : ObjectExport
+    protected static ObjectExport WhenIHaveA<T>(MemoryDataExportRepository repository, out ShareManager shareManager)
+        where T : ObjectExport
     {
         shareManager = new ShareManager(new RepositoryProvider(repository));
         return shareManager.GetNewOrExistingExportFor(WhenIHaveA<Catalogue>(repository));
@@ -671,15 +675,18 @@ public class UnitTests
     protected void SetupMEF()
     {
         MEF = new MEF();
-        MEF.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(),TestContext.CurrentContext.TestDirectory));
+        MEF.Setup(
+            new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
         Repository.CatalogueRepository.MEF = MEF;
 
-        Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog,new ThrowImmediatelyCheckNotifier());
+        Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog, new ThrowImmediatelyCheckNotifier());
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
-    private static readonly string[] IgnorePropertiesWhenDiffing = {"ID","Repository","CatalogueRepository","SoftwareVersion"};
-    public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new();
+    private static readonly string[] IgnorePropertiesWhenDiffing =
+        { "ID", "Repository", "CatalogueRepository", "SoftwareVersion" };
+
+    public static Dictionary<PropertyInfo, HashSet<object>> _alreadyChecked = new();
 
     /// <summary>
     /// Asserts that the two objects are basically the same except for IDs/Repositories.  This includes checking all public properties
@@ -689,9 +696,10 @@ public class UnitTests
     /// <param name="memObj"></param>
     /// <param name="dbObj"></param>
     /// <param name="firstIteration"></param>
-    public static void AssertAreEqual(IMapsDirectlyToDatabaseTable memObj, IMapsDirectlyToDatabaseTable dbObj,bool firstIteration = true)
+    public static void AssertAreEqual(IMapsDirectlyToDatabaseTable memObj, IMapsDirectlyToDatabaseTable dbObj,
+        bool firstIteration = true)
     {
-        if(firstIteration)
+        if (firstIteration)
             _alreadyChecked.Clear();
 
         foreach (var property in memObj.GetType().GetProperties())
@@ -700,10 +708,10 @@ public class UnitTests
                 continue;
 
             if (!_alreadyChecked.ContainsKey(property))
-                _alreadyChecked.Add(property,new HashSet<object>());
+                _alreadyChecked.Add(property, new HashSet<object>());
 
             //if we have already checked this property
-            if(_alreadyChecked[property].Contains(memObj))
+            if (_alreadyChecked[property].Contains(memObj))
                 return; //don't check it again
 
             _alreadyChecked[property].Add(memObj);
@@ -716,31 +724,36 @@ public class UnitTests
             }
             catch (Exception e)
             {
-                Assert.Fail("{0} Property {1} could not be read from Memory:\r\n{2}", memObj.GetType().Name, property.Name,e);
+                Assert.Fail("{0} Property {1} could not be read from Memory:\r\n{2}", memObj.GetType().Name,
+                    property.Name, e);
             }
+
             try
             {
                 dbValue = property.GetValue(dbObj);
             }
             catch (Exception e)
             {
-                Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
+                Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name,
+                    property.Name, e);
             }
 
-            if(memValue is IMapsDirectlyToDatabaseTable table)
+            if (memValue is IMapsDirectlyToDatabaseTable table)
             {
-                AssertAreEqual(table, (IMapsDirectlyToDatabaseTable)dbValue,false);
+                AssertAreEqual(table, (IMapsDirectlyToDatabaseTable)dbValue, false);
                 return;
             }
+
             if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable> value)
             {
-                AssertAreEqual(value, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
+                AssertAreEqual(value, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue, false);
                 return;
             }
 
             if (memValue is DateTime time && dbValue is DateTime dateTime)
                 if (!AreAboutTheSameTime(time, dateTime))
-                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, time, dateTime);
+                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",
+                        memObj.GetType().Name, property.Name, time, dateTime);
                 else
                     return;
 
@@ -749,10 +762,13 @@ public class UnitTests
             dbValue = dbValue as string == string.Empty ? null : dbValue;
 
             //all other properties should be legit
-            Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);
+            Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,
+                property.Name, memValue, dbValue);
         }
     }
-    public static void AssertAreEqual(IEnumerable<IMapsDirectlyToDatabaseTable> memObjects, IEnumerable<IMapsDirectlyToDatabaseTable> dbObjects,bool firstIteration=true)
+
+    public static void AssertAreEqual(IEnumerable<IMapsDirectlyToDatabaseTable> memObjects,
+        IEnumerable<IMapsDirectlyToDatabaseTable> dbObjects, bool firstIteration = true)
     {
         var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
         var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
@@ -760,7 +776,7 @@ public class UnitTests
         Assert.AreEqual(memObjectsArr.Length, dbObjectsArr.Length);
 
         for (var i = 0; i < memObjectsArr.Length; i++)
-            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
+            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i], firstIteration);
     }
 
     /// <summary>
@@ -769,10 +785,8 @@ public class UnitTests
     /// </summary>
     private const double TimeThresholdInSeconds = 60;
 
-    private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
-    {
-        return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < TimeThresholdInSeconds;
-    }
+    private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue) =>
+        Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < TimeThresholdInSeconds;
 
 
     /// <summary>
@@ -782,20 +796,21 @@ public class UnitTests
     public IEnumerable<DatabaseEntity> WhenIHaveAll()
     {
         var types = typeof(Catalogue).Assembly.GetTypes()
-            .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            .Where(t => t != null && typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+            .ToArray();
 
         var methodWhenIHaveA = GetWhenIHaveAMethod();
-            
+
         foreach (var t in types)
         {
             //ignore these types too
             if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
-                typeof (SpontaneousObject).IsAssignableFrom(t))
+                typeof(SpontaneousObject).IsAssignableFrom(t))
                 continue;
 
             //ensure that the method supports the Type
             var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
-            yield return (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
+            yield return (DatabaseEntity)genericWhenIHaveA.Invoke(this, null);
         }
     }
 
@@ -810,13 +825,13 @@ public class UnitTests
         var methodWhenIHaveA = GetWhenIHaveAMethod();
         //ensure that the method supports the Type
         var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
-        return (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
+        return (DatabaseEntity)genericWhenIHaveA.Invoke(this, null);
     }
 
     private MethodInfo GetWhenIHaveAMethod()
     {
-        var methods = typeof (UnitTests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var methods =
+            typeof(UnitTests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         return methods.Single(m => m.Name.Equals(nameof(WhenIHaveA)) && !m.GetParameters().Any());
     }
-
 }

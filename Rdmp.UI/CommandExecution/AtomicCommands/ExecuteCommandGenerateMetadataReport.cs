@@ -11,12 +11,13 @@ using Rdmp.UI.SimpleDialogs.Reports;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandGenerateMetadataReport:BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandGenerateMetadataReport : BasicUICommandExecution, IAtomicCommand
 {
     private readonly ICatalogue[] _initialSelection;
 
 
-    public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) : base(activator)
+    public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) :
+        base(activator)
     {
         _initialSelection = initialSelection;
     }

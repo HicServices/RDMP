@@ -13,9 +13,10 @@ using Rdmp.UI.AggregationUIs.Advanced;
 
 namespace Rdmp.UI.Tests;
 
-internal class AggregateEditorUITests:UITests
+internal class AggregateEditorUITests : UITests
 {
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_AggregateEditorUI_NormalState()
     {
         var config = GetAggregateConfigurationWithNoDimensions();
@@ -26,7 +27,7 @@ internal class AggregateEditorUITests:UITests
 
         //should show two available columns
         var available = colsUi.AvailableColumns;
-        Assert.AreEqual(2,available.Count);
+        Assert.AreEqual(2, available.Count);
 
         //the count(*) column
         var included = colsUi.IncludedColumns;
@@ -35,13 +36,14 @@ internal class AggregateEditorUITests:UITests
         //before we have added any columns it should not be possible to launch the graph
         var cmdExecuteGraph = new ExecuteCommandExecuteAggregateGraph(ItemActivator, config);
         Assert.IsTrue(cmdExecuteGraph.IsImpossible);
-        StringAssert.Contains("No tables could be identified for the query.  Try adding a column or a force join",cmdExecuteGraph.ReasonCommandImpossible);
+        StringAssert.Contains("No tables could be identified for the query.  Try adding a column or a force join",
+            cmdExecuteGraph.ReasonCommandImpossible);
 
         var ei = config.Catalogue.CatalogueItems[0].ExtractionInformation;
 
         //create a new dimension to the config in the database
         var dim = new AggregateDimension(Repository, ei, config);
-            
+
         //publish a refresh
         Publish(config);
 
@@ -60,7 +62,8 @@ internal class AggregateEditorUITests:UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
     {
         var config = GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
@@ -73,14 +76,15 @@ internal class AggregateEditorUITests:UITests
 
         //only date should be an option for axis dimension
         Assert.AreEqual(1, ui.ddAxisDimension.Items.Count);
-        Assert.AreEqual(dimDate,ui.ddAxisDimension.Items[0]);
+        Assert.AreEqual(dimDate, ui.ddAxisDimension.Items[0]);
 
         //dates are not valid for pivots
         Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
         Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
 
         //it wants us to pick either a pivot or an axis
-        AssertErrorWasShown(ExpectedErrorType.FailedCheck,"In order to have 2 columns, one must be selected as a pivot");
+        AssertErrorWasShown(ExpectedErrorType.FailedCheck,
+            "In order to have 2 columns, one must be selected as a pivot");
         config.PivotOnDimensionID = dimOther.ID;
         config.SaveToDatabase();
 
@@ -89,40 +93,36 @@ internal class AggregateEditorUITests:UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test, UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_AggregateEditorUI_NoExtractableColumns()
     {
         //Create a Catalogue with an AggregateConfiguration that doesn't have any extractable columns yet
         var cata = WhenIHaveA<Catalogue>();
-        var config = new AggregateConfiguration(Repository,cata,"My config");
+        var config = new AggregateConfiguration(Repository, cata, "My config");
 
         //these commands should be impossible
         var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
         Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains("no extractable columns",cmd.ReasonCommandImpossible);
+        StringAssert.Contains("no extractable columns", cmd.ReasonCommandImpossible);
 
         //and if the broken config is activated
         var ui = AndLaunch<AggregateEditorUI>(config);
 
         //it should not launch and instead show the following message
         var killed = ItemActivator.Results.KilledForms.Single();
-        Assert.AreEqual(ui.ParentForm,killed.Key);
+        Assert.AreEqual(ui.ParentForm, killed.Key);
         StringAssert.Contains("no extractable columns", killed.Value.Message);
     }
 
 
+    private AggregateConfiguration GetAggregateConfigurationWithNoDimensions() =>
+        GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
 
-
-
-
-    private AggregateConfiguration GetAggregateConfigurationWithNoDimensions()
+    private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi,
+        out ExtractionInformation otherEi)
     {
-        return GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi);
-    }
-
-    private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)
-    {
-        var config = WhenIHaveA<AggregateConfiguration>(Repository,out dateEi, out otherEi);
+        var config = WhenIHaveA<AggregateConfiguration>(Repository, out dateEi, out otherEi);
 
         //remove any existing dimensions
         foreach (var d in config.AggregateDimensions)

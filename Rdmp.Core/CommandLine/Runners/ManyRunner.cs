@@ -18,12 +18,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
-public abstract class ManyRunner: Runner
+public abstract class ManyRunner : Runner
 {
     private readonly ConcurrentRDMPCommandLineOptions _options;
 
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-    protected GracefulCancellationToken Token { get;private set; }
+    protected GracefulCancellationToken Token { get; private set; }
 
     private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new();
 
@@ -37,7 +37,8 @@ public abstract class ManyRunner: Runner
         _options = options;
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         RepositoryLocator = repositoryLocator;
         Token = token;
@@ -48,7 +49,7 @@ public abstract class ManyRunner: Runner
             semaphore = new Semaphore(_options.MaxConcurrentExtractions.Value, _options.MaxConcurrentExtractions.Value);
 
         Initialize();
-            
+
         switch (_options.Command)
         {
             case CommandLineActivity.none:
@@ -79,7 +80,9 @@ public abstract class ManyRunner: Runner
             case CommandLineActivity.check:
 
                 lock (_oLock)
+                {
                     _checksDictionary.Clear();
+                }
 
                 var checkables = GetCheckables(checkNotifier);
                 foreach (var checkable in checkables)
@@ -90,7 +93,9 @@ public abstract class ManyRunner: Runner
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
 
                     lock (_oLock)
+                    {
                         _checksDictionary.Add(checkable1, memory);
+                    }
 
                     tasks.Add(Task.Run(() =>
                     {
@@ -109,7 +114,7 @@ public abstract class ManyRunner: Runner
             default:
                 throw new ArgumentOutOfRangeException();
         }
-            
+
         Task.WaitAll(tasks.ToArray());
 
         AfterRun();
@@ -121,7 +126,7 @@ public abstract class ManyRunner: Runner
     protected abstract void AfterRun();
 
     protected abstract ICheckable[] GetCheckables(ICheckNotifier checkNotifier);
-        
+
     protected abstract object[] GetRunnables();
     protected abstract void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener);
 
@@ -171,15 +176,20 @@ public abstract class ManyRunner: Runner
     /// <typeparam name="T"></typeparam>
     /// <param name="func"></param>
     /// <returns></returns>
-    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>(Func<T, bool> func) where T : ICheckable
+    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>(Func<T, bool> func)
+        where T : ICheckable
     {
         lock (_oLock)
-            return GetCheckerResults<T>().Where(kvp=>func((T) kvp.Key)).ToArray();
+        {
+            return GetCheckerResults<T>().Where(kvp => func((T)kvp.Key)).ToArray();
+        }
     }
 
-    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>() where T:ICheckable
+    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>() where T : ICheckable
     {
         lock (_oLock)
+        {
             return _checksDictionary.Where(kvp => kvp.Key is T).ToArray();
+        }
     }
 }

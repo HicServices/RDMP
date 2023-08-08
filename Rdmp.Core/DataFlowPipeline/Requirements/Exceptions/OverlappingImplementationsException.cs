@@ -17,7 +17,7 @@ public class OverlappingImplementationsException : Exception
     /// Creates a new Exception with the provided message
     /// </summary>
     /// <param name="s"></param>
-    public OverlappingImplementationsException(string s) : base (s)
+    public OverlappingImplementationsException(string s) : base(s)
     {
     }
 }

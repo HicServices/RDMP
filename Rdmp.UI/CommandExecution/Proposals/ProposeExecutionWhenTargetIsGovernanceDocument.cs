@@ -17,18 +17,13 @@ internal class ProposeExecutionWhenTargetIsGovernanceDocument : RDMPCommandExecu
     {
     }
 
-    public override bool CanActivate(GovernanceDocument target)
-    {
-        return true;
-    }
+    public override bool CanActivate(GovernanceDocument target) => true;
 
     public override void Activate(GovernanceDocument target)
     {
         ItemActivator.Activate<GovernanceDocumentUI, GovernanceDocument>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernanceDocument target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernanceDocument target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

@@ -12,27 +12,24 @@ namespace Rdmp.Core.Providers;
 
 public static class RdmpEnumerableExtensions
 {
-    public static Dictionary<TKey, TElement> ToDictionaryEx<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
+    public static Dictionary<TKey, TElement> ToDictionaryEx<TSource, TKey, TElement>(this IEnumerable<TSource> source,
+        Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
     {
         var d = new Dictionary<TKey, TElement>();
         foreach (var element in source)
-        {
             try
             {
                 d.Add(keySelector(element), elementSelector(element));
             }
             catch (Exception ex)
             {
-                if(element is IMapsDirectlyToDatabaseTable m)
-                {
-                    throw new Exception($"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.Repository}", ex);
-                }
+                if (element is IMapsDirectlyToDatabaseTable m)
+                    throw new Exception(
+                        $"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.Repository}",
+                        ex);
 
                 throw new Exception($"Failed to add {element} to Dictionary", ex);
-
-
             }
-        }
 
         return d;
     }

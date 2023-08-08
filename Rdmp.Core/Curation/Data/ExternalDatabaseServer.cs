@@ -26,7 +26,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="IExternalDatabaseServer"/>
-public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
+public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed,
+    ICheckable
 {
     #region Database Properties
 
@@ -43,7 +44,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -53,7 +54,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     public string CreatedByAssembly
     {
         get => _createdByAssembly;
-        set => SetField(ref  _createdByAssembly, value);
+        set => SetField(ref _createdByAssembly, value);
     }
 
     /// <summary>
@@ -77,7 +78,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
             var old = _selfCertifyingDataAccessPoint.Server;
             _selfCertifyingDataAccessPoint.Server = value;
-            OnPropertyChanged(old,value);
+            OnPropertyChanged(old, value);
         }
     }
 
@@ -87,7 +88,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         get => _selfCertifyingDataAccessPoint.Database;
         set
         {
-            if (Equals(_selfCertifyingDataAccessPoint.Database,value))
+            if (Equals(_selfCertifyingDataAccessPoint.Database, value))
                 return;
 
             var old = _selfCertifyingDataAccessPoint.Database;
@@ -146,6 +147,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             DatabaseType = DatabaseType.MicrosoftSQLServer
         };
     }
+
     /// <summary>
     /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
     /// 
@@ -159,15 +161,15 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         var parameters = new Dictionary<string, object>
         {
-            {"Name", name},
-            {"DatabaseType",DatabaseType.MicrosoftSQLServer}
+            { "Name", name },
+            { "DatabaseType", DatabaseType.MicrosoftSQLServer }
         };
-            
-        if(creatorIfAny != null)
-            parameters.Add("CreatedByAssembly" , creatorIfAny.Name);
-            
+
+        if (creatorIfAny != null)
+            parameters.Add("CreatedByAssembly", creatorIfAny.Name);
+
         Repository = repository;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository,DatabaseType.MicrosoftSQLServer);
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, DatabaseType.MicrosoftSQLServer);
         repository.InsertAndHydrate(this, parameters);
     }
 
@@ -176,18 +178,19 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         var repo = shareManager.RepositoryLocator.CatalogueRepository;
         Repository = repo;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository,
+            DatabaseType.MicrosoftSQLServer /*will get changed by UpsertAndHydrate*/);
 
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"] as string;
         CreatedByAssembly = r["CreatedByAssembly"] as string;
         MappedDataPath = r["MappedDataPath"] as string;
 
-        var databaseType = (DatabaseType) Enum.Parse(typeof (DatabaseType), r["DatabaseType"].ToString());
+        var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
         _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, databaseType)
         {
@@ -199,17 +202,13 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     public void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(Server))
             notifier.OnCheckPerformed(new CheckEventArgs("No Server set", CheckResult.Warning));
-        else
-        if (string.IsNullOrWhiteSpace(Database))
+        else if (string.IsNullOrWhiteSpace(Database))
             notifier.OnCheckPerformed(new CheckEventArgs("No Database set", CheckResult.Warning));
         else
             try
@@ -219,7 +218,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             }
             catch (Exception exception)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to connect to server", CheckResult.Fail, exception));
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("Failed to connect to server", CheckResult.Fail, exception));
                 return;
             }
 
@@ -229,21 +229,14 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return _selfCertifyingDataAccessPoint.GetQuerySyntaxHelper();
-    }
-    /// <inheritdoc/>
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
-        return _selfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _selfCertifyingDataAccessPoint.GetQuerySyntaxHelper();
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        return _selfCertifyingDataAccessPoint.GetDecryptedPassword()?? "";
-    }
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+        _selfCertifyingDataAccessPoint.GetCredentialsIfExists(context);
+
+    /// <inheritdoc/>
+    public string GetDecryptedPassword() => _selfCertifyingDataAccessPoint.GetDecryptedPassword() ?? "";
 
     /// <summary>
     /// Sets server,database,username and password properties based on the supplied DiscoveredDatabase (which doesn't have to actually exist).  This method also optionally calls
@@ -253,14 +246,13 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <param name="save">true if you want to call SaveToDatabase after setting the properties</param>
     public void SetProperties(DiscoveredDatabase discoveredDatabase, bool save = true)
     {
-
         Server = discoveredDatabase.Server.Name;
         Database = discoveredDatabase.GetRuntimeName();
         Username = discoveredDatabase.Server.ExplicitUsernameIfAny;
         Password = discoveredDatabase.Server.ExplicitPasswordIfAny;
         DatabaseType = discoveredDatabase.Server.DatabaseType;
 
-        if(save)
+        if (save)
             SaveToDatabase();
     }
 
@@ -269,21 +261,16 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         if (string.IsNullOrWhiteSpace(CreatedByAssembly))
             return false;
-            
+
         return patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly;
     }
 
     /// <inheritdoc/>
-    public DiscoveredDatabase Discover(DataAccessContext context)
-    {
-        return _selfCertifyingDataAccessPoint.Discover(context);
-    }
+    public DiscoveredDatabase Discover(DataAccessContext context) => _selfCertifyingDataAccessPoint.Discover(context);
 
     /// <inheritdoc/>
-    public bool DiscoverExistence(DataAccessContext context,out string reason)
-    {
-        return _selfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
-    }
+    public bool DiscoverExistence(DataAccessContext context, out string reason) =>
+        _selfCertifyingDataAccessPoint.DiscoverExistence(context, out reason);
 
 
     public override void DeleteInDatabase()
@@ -301,13 +288,10 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
         // normally in database schema deleting an ExternalDatabaseServer will cascade to clear defaults
         // but some repositories do not support this implicit removal so lets double check theres no references
-        foreach(PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
+        foreach (PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
         {
             var existingDefault = CatalogueRepository.GetDefaultFor(d);
-            if (Equals(existingDefault))
-            {
-                CatalogueRepository.ClearDefault(d);
-            }
+            if (Equals(existingDefault)) CatalogueRepository.ClearDefault(d);
         }
     }
 

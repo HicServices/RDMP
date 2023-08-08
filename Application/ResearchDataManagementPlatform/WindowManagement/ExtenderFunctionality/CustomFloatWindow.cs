@@ -10,7 +10,6 @@ using Rdmp.UI;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleControls;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
-
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
@@ -21,14 +20,15 @@ namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public class CustomFloatWindow:FloatWindow
+public class CustomFloatWindow : FloatWindow
 {
     protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane) : base(dockPanel, pane)
     {
         Initialize();
-            
     }
-    protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane, Rectangle bounds): base(dockPanel, pane, bounds)
+
+    protected internal CustomFloatWindow(DockPanel dockPanel, DockPane pane, Rectangle bounds) : base(dockPanel, pane,
+        bounds)
     {
         Initialize();
     }

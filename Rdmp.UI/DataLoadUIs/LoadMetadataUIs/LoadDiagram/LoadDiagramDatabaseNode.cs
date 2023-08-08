@@ -22,7 +22,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 /// Depicts a database in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
 /// database may or may not map to an existing database.
 /// </summary>
-public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
+public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
 {
     private readonly LoadBubble _bubble;
     public readonly DiscoveredDatabase Database;
@@ -37,7 +37,8 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
     public List<UnplannedTable> _unplannedChildren = new();
 
 
-    public LoadDiagramDatabaseNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
+    public LoadDiagramDatabaseNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables,
+        HICDatabaseConfiguration config)
     {
         _bubble = bubble;
         Database = database;
@@ -49,20 +50,11 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
         _anticipatedChildren.AddRange(_loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, _config)));
     }
 
-    public IEnumerable<object> GetChildren()
-    {
-        return _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
-    }
+    public IEnumerable<object> GetChildren() => _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
 
-    public override string ToString()
-    {
-        return DatabaseName;
-    }
+    public override string ToString() => DatabaseName;
 
-    public Bitmap GetImage(ICoreIconProvider coreIconProvider)
-    {
-        return coreIconProvider.GetImage(_bubble).ImageToBitmap();
-    }
+    public Bitmap GetImage(ICoreIconProvider coreIconProvider) => coreIconProvider.GetImage(_bubble).ImageToBitmap();
 
     public void DiscoverState()
     {
@@ -85,11 +77,13 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
             plannedChild.DiscoverState();
 
         //also discover any unplanned tables if not live
-        if(_bubble != LoadBubble.Live)
+        if (_bubble != LoadBubble.Live)
             foreach (var discoveredTable in Database.DiscoverTables(true))
             {
                 //it's an anticipated one
-                if(_anticipatedChildren.Any(c=>c.TableName.Equals(discoveredTable.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)))
+                if (_anticipatedChildren.Any(c =>
+                        c.TableName.Equals(discoveredTable.GetRuntimeName(),
+                            StringComparison.CurrentCultureIgnoreCase)))
                     continue;
 
                 //it's unplanned (maybe user created it as part of his load script or something)
@@ -98,24 +92,23 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
     }
 
     #region equality
-    protected bool Equals(LoadDiagramDatabaseNode other)
-    {
-        return string.Equals(DatabaseName, other.DatabaseName) && _bubble == other._bubble;
-    }
+
+    protected bool Equals(LoadDiagramDatabaseNode other) =>
+        string.Equals(DatabaseName, other.DatabaseName) && _bubble == other._bubble;
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramDatabaseNode) obj);
+        return Equals((LoadDiagramDatabaseNode)obj);
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            return ((DatabaseName != null ? DatabaseName.GetHashCode() : 0)*397) ^ (int) _bubble;
+            return ((DatabaseName != null ? DatabaseName.GetHashCode() : 0) * 397) ^ (int)_bubble;
         }
     }
 

@@ -24,7 +24,7 @@ public class CacheLayoutFactory
 {
     public static ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
     {
-        AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p=>!p.IsDisabled));
+        AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p => !p.IsDisabled));
 
         var cp = loadProgress.CacheProgress;
 
@@ -34,9 +34,11 @@ public class CacheLayoutFactory
         return destination.CreateCacheLayout();
     }
 
-    private static void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
+    private static void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata,
+        IEnumerable<IProcessTask> processTasks)
     {
-        const string whatWeExpected = @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
+        const string whatWeExpected =
+            @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
 
         var incompatibleProviders = new List<ProcessTask>();
         var compatibleProviders = new List<ProcessTask>();
@@ -68,6 +70,5 @@ public class CacheLayoutFactory
         if (compatibleProviders.Count > 1)
             throw new CacheDataProviderFindingException(
                 $"LoadMetadata {metadata} has multiple cache DataProviders tasks ({string.Join(",", compatibleProviders.Select(p => p.ToString()))}), you are only allowed 1");
-
     }
 }

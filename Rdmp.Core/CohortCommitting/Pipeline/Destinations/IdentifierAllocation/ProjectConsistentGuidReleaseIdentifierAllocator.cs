@@ -44,7 +44,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
 
         //otherwise allocate a new guid and let's record it just for prosperity
         var toReturn = Guid.NewGuid().ToString();
-        _releaseMap.Add(privateIdentifier,toReturn);
+        _releaseMap.Add(privateIdentifier, toReturn);
 
         return toReturn;
     }
@@ -83,16 +83,17 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
 
             con.Open();
 
-            using(var r = cohortDatabase.Server.GetCommand(sql, con).ExecuteReader())
+            using (var r = cohortDatabase.Server.GetCommand(sql, con).ExecuteReader())
+            {
                 while (r.Read())
                 {
-                    if(toReturn.TryGetValue(r[priv],out var value))
+                    if (toReturn.TryGetValue(r[priv], out var value))
                         throw new Exception(
                             $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", value, r[rel])}");
 
-                    toReturn.Add(r[priv],r[rel]);
+                    toReturn.Add(r[priv], r[rel]);
                 }
-
+            }
         }
 
         return toReturn;
@@ -101,19 +102,18 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
     /// <inheritdoc/>
     public void Initialize(ICohortCreationRequest request)
     {
-        if(request.Project != null)
+        if (request.Project != null)
         {
             if (!request.Project.ProjectNumber.HasValue)
                 throw new ProjectNumberException($"Project {request.Project} must have a ProjectNumber");
         }
         else
         {
-            if((request.NewCohortDefinition?.ProjectNumber ?? 0) == 0)
-            {
-                throw new ProjectNumberException("No Project was specified and NewCohortDefinition had no explicit project number");
-            }
+            if ((request.NewCohortDefinition?.ProjectNumber ?? 0) == 0)
+                throw new ProjectNumberException(
+                    "No Project was specified and NewCohortDefinition had no explicit project number");
         }
-            
+
         _request = request;
         _projectNumber = request.Project?.ProjectNumber.Value ?? request.NewCohortDefinition?.ProjectNumber ?? 0;
     }

@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data.Serialization;
 /// <para>Also stores the ObjectExport SharingUID if available which will allow deserializing shared objects that might only exist in a local import form i.e. with a different ID
 /// (<see cref="ShareManager"/>)</para>
 /// </summary>
-public class DatabaseEntityJsonConverter:JsonConverter
+public class DatabaseEntityJsonConverter : JsonConverter
 {
     private readonly ShareManager _shareManager;
 
@@ -54,7 +54,7 @@ public class DatabaseEntityJsonConverter:JsonConverter
         writer.WriteRawValue($"\"{_shareManager.GetPersistenceString((IMapsDirectlyToDatabaseTable)value)}\"");
         writer.WriteEndObject();
     }
-        
+
     /// <summary>
     /// Deserializes a persisted <see cref="IMapsDirectlyToDatabaseTable"/> by resolving it as a reference and fetching the original 
     /// object using <see cref="ShareManager.GetObjectFromPersistenceString"/>.
@@ -67,24 +67,24 @@ public class DatabaseEntityJsonConverter:JsonConverter
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
-            
-        if (reader.TokenType != JsonToken.StartObject) 
+
+        if (reader.TokenType != JsonToken.StartObject)
             throw new JsonReaderException("Malformed json");
-            
+
         //instance to populate
         reader.Read();
 
-        if(!reader.Value.Equals("PersistenceString"))
+        if (!reader.Value.Equals("PersistenceString"))
             throw new JsonReaderException("Malformed json, expected single property PersistenceString");
 
         //read the value
         reader.Read();
-        var o = _shareManager.GetObjectFromPersistenceString((string) reader.Value);
+        var o = _shareManager.GetObjectFromPersistenceString((string)reader.Value);
 
         reader.Read();
 
         //read the end object
-        if(reader.TokenType != JsonToken.EndObject)
+        if (reader.TokenType != JsonToken.EndObject)
             throw new JsonReaderException("Did not find EndObject");
 
 
@@ -96,8 +96,6 @@ public class DatabaseEntityJsonConverter:JsonConverter
     /// </summary>
     /// <param name="objectType"></param>
     /// <returns></returns>
-    public override bool CanConvert(Type objectType)
-    {
-        return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(objectType);
-    }
+    public override bool CanConvert(Type objectType) =>
+        typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(objectType);
 }

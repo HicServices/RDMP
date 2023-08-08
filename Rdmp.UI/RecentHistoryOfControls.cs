@@ -22,7 +22,7 @@ public class RecentHistoryOfControls
     private readonly HashSet<string> _rvContents;
     private readonly List<string> _recentValues;
 
-    public RecentHistoryOfControls(TextBox c, Guid controlGuid):this(controlGuid)
+    public RecentHistoryOfControls(TextBox c, Guid controlGuid) : this(controlGuid)
     {
         var values = new AutoCompleteStringCollection();
         values.AddRange(_recentValues.ToArray());
@@ -33,7 +33,7 @@ public class RecentHistoryOfControls
         c.Leave += (sender, args) => AddResult(c.Text);
     }
 
-    public RecentHistoryOfControls(ComboBox c, Guid controlGuid):this(controlGuid)
+    public RecentHistoryOfControls(ComboBox c, Guid controlGuid) : this(controlGuid)
     {
         var values = new AutoCompleteStringCollection();
         values.AddRange(_recentValues.ToArray());
@@ -59,10 +59,10 @@ public class RecentHistoryOfControls
         _rvContents = new HashSet<string>(_recentValues);
     }
 
-    public void AddResult( string value,bool save = true)
+    public void AddResult(string value, bool save = true)
     {
         // bump it to the top
-        if(_rvContents.Contains(value))
+        if (_rvContents.Contains(value))
             _recentValues.Remove(value);
         else
             _rvContents.Add(value);
@@ -70,13 +70,14 @@ public class RecentHistoryOfControls
         if (save)
             Save();
     }
-        
+
     public void Clear()
     {
         //clear the selected key only
         _recentValues.Clear();
         Save();
     }
+
     private void Save()
     {
         UserSettings.SetHistoryForControl(_controlGuid, _recentValues);
@@ -87,6 +88,7 @@ public class RecentHistoryOfControls
         if (c.AutoCompleteCustomSource.Count > 0)
             c.Text = c.AutoCompleteCustomSource[^1]; //set the current text to the last used text
     }
+
     public static void SetValueToMostRecentlySavedValue(ComboBox c)
     {
         if (c.AutoCompleteCustomSource.Count > 0)
@@ -96,7 +98,7 @@ public class RecentHistoryOfControls
     public static void AddHistoryAsItemsToComboBox(ComboBox c)
     {
         if (c.AutoCompleteCustomSource.Count <= 0) return;
-        var items =new string[c.AutoCompleteCustomSource.Count];
+        var items = new string[c.AutoCompleteCustomSource.Count];
         c.AutoCompleteCustomSource.CopyTo(items, 0);
         c.Items.AddRange(items.Cast<object>().ToArray());
     }

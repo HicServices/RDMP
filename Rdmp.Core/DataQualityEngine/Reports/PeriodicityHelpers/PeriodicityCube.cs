@@ -27,8 +27,8 @@ public class PeriodicityCube
         _consequenceCube.Add(Consequence.Missing, new PeriodicityState(year, month, Consequence.Missing));
         _consequenceCube.Add(Consequence.Wrong, new PeriodicityState(year, month, Consequence.Wrong));
         _consequenceCube.Add(Consequence.InvalidatesRow, new PeriodicityState(year, month, Consequence.InvalidatesRow));
-
     }
+
     public PeriodicityState GetStateForConsequence(Consequence? consequence)
     {
         if (consequence == null)

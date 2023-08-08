@@ -29,7 +29,7 @@ namespace Rdmp.UI.ItemActivation;
 /// 
 /// <para>Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator</para>
 /// </summary>
-public interface IActivateItems:IBasicActivateItems
+public interface IActivateItems : IBasicActivateItems
 {
     ITheme Theme { get; }
 
@@ -41,20 +41,20 @@ public interface IActivateItems:IBasicActivateItems
     /// <summary>
     /// Component for closing and opening multiple windows at once for optimal user experience for achieving a given task (e.g. running a data load)
     /// </summary>
-    IArrangeWindows WindowArranger { get;}
+    IArrangeWindows WindowArranger { get; }
 
     Form ShowWindow(Control singleControlForm, bool asDocument = false);
-        
+
     /// <summary>
     /// Component for starting drag or copy operations
     /// </summary>
-    ICombineableFactory CommandFactory { get;}
+    ICombineableFactory CommandFactory { get; }
 
     /// <summary>
     /// Component for suggesting completion options for an ongoing drag or paste
     /// </summary>
-    ICommandExecutionFactory CommandExecutionFactory { get;}
-        
+    ICommandExecutionFactory CommandExecutionFactory { get; }
+
     /// <summary>
     /// Records when objects are accessed by the user through the UI to allow navigation to recent objects
     /// </summary>
@@ -76,13 +76,13 @@ public interface IActivateItems:IBasicActivateItems
     /// <typeparam name="T"></typeparam>
     /// <param name="collection"></param>
     /// <returns></returns>
-    T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
+    T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new();
 
-        
+
     bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
     bool HasProblem(object model);
     string DescribeProblemIfAny(object model);
-        
+
 
     /// <summary>
     /// Returns xml doc comments from the CommentStore for the given class (or null if it is undocumented)
@@ -102,7 +102,7 @@ public interface IActivateItems:IBasicActivateItems
     /// <param name="form"></param>
     /// <returns></returns>
     DialogResult ShowDialog(Form form);
-        
+
     /// <summary>
     /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
     /// in a highly visible way
@@ -139,8 +139,9 @@ public interface IActivateItems:IBasicActivateItems
     /// <param name="sessionName"></param>
     /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
     /// <param name="initialSearch">The value to set the search textbox to on load if objects are being selected during this operation, or null.</param>
-    void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch);
-        
+    void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny,
+        string initialSearch);
+
     /// <summary>
     /// Returns all currently open session uis
     /// </summary>

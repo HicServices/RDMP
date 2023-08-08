@@ -18,7 +18,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the 
 /// identifiers themselves (once complete), cancellation token etc.
 /// </summary>
-public class CohortIdentificationTaskExecution: IDisposable
+public class CohortIdentificationTaskExecution : IDisposable
 {
     private readonly IDataAccessPoint _cacheServerIfAny;
     public int SubQueries { get; private set; }
@@ -45,7 +45,9 @@ public class CohortIdentificationTaskExecution: IDisposable
     private DbDataReader _rCumulative;
     private DbCommand _cmdCountCumulative;
 
-    public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
+    public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL,
+        CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached,
+        bool isResultsForRootContainer, DiscoveredServer target)
     {
         _cacheServerIfAny = cacheServerIfAny;
         SubQueries = subQueries;
@@ -60,13 +62,9 @@ public class CohortIdentificationTaskExecution: IDisposable
     public void Cancel()
     {
         _cancellationTokenSource.Cancel();
-        if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open)
-        {
-            _cmdCount.Cancel();
-        }
+        if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open) _cmdCount.Cancel();
 
         if (_rIds != null && !_rIds.IsClosed)
-        {
             try
             {
                 _rIds.Close();
@@ -74,10 +72,8 @@ public class CohortIdentificationTaskExecution: IDisposable
             catch (InvalidOperationException)
             {
             }
-        }
 
         if (_rCumulative != null && !_rCumulative.IsClosed)
-        {
             try
             {
                 _rCumulative.Close();
@@ -85,22 +81,20 @@ public class CohortIdentificationTaskExecution: IDisposable
             catch (InvalidOperationException)
             {
             }
-        }
-            
     }
 
-        
+
     public void GetCohortAsync(int commandTimeout)
     {
-        if(Identifiers != null)
+        if (Identifiers != null)
             throw new Exception("GetCohortAsync has already been called for this object");
 
         Identifiers = new DataTable();
-            
+
         IsExecuting = true;
 
         var server = _target;
-            
+
         server.EnableAsync();
 
         using (var con = server.GetConnection())

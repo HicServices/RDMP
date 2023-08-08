@@ -15,28 +15,28 @@ using Rdmp.Core;
 
 namespace Rdmp.UI.Tests;
 
-internal class ArbitraryFolderNodeTests:UITests
+internal class ArbitraryFolderNodeTests : UITests
 {
-
-    [Test,UITimeout(50000)]
+    [Test]
+    [UITimeout(50000)]
     public void Test_ArbitraryFolderNode_CommandGetter_Throwing()
     {
         SetupMEF();
 
         var tlv = new TreeListView();
         var common = new RDMPCollectionCommonFunctionality();
-        common.SetUp(RDMPCollection.None,tlv,ItemActivator,null,null);
+        common.SetUp(RDMPCollection.None, tlv, ItemActivator, null, null);
 
-        var node = new ArbitraryFolderNode("my node",0);
+        var node = new ArbitraryFolderNode("my node", 0);
 
         var menu1 = common.GetMenuIfExists(node);
         Assert.IsNotNull(menu1);
         var count1 = menu1.Items.Count;
         //some you get for free e.g. Expand/Collapse
-        Assert.GreaterOrEqual(count1,2);
+        Assert.GreaterOrEqual(count1, 2);
 
         //set the menu to have one command in it
-        node.CommandGetter = () =>  new IAtomicCommand[] { new ImpossibleCommand("Do Nothing")};
+        node.CommandGetter = () => new IAtomicCommand[] { new ImpossibleCommand("Do Nothing") };
 
         var menu2 = common.GetMenuIfExists(node);
 
@@ -44,14 +44,14 @@ internal class ArbitraryFolderNodeTests:UITests
 
         // expect 2 new entries in the context menu.  The "Do Nothing" command added above
         // and a tool strip seperator to divide the menu commands from the common commands
-        Assert.AreEqual(count1+2,count2);
-            
+        Assert.AreEqual(count1 + 2, count2);
+
         //what happens if the delegate crashes?
         node.CommandGetter = () => throw new NotSupportedException("It went wrong!");
 
-        Assert.DoesNotThrow(()=>common.GetMenuIfExists(node));
+        Assert.DoesNotThrow(() => common.GetMenuIfExists(node));
 
-        AssertErrorWasShown(ExpectedErrorType.GlobalErrorCheckNotifier, "Failed to build menu for my node of Type Rdmp.Core.Providers.Nodes.ArbitraryFolderNode");
+        AssertErrorWasShown(ExpectedErrorType.GlobalErrorCheckNotifier,
+            "Failed to build menu for my node of Type Rdmp.Core.Providers.Nodes.ArbitraryFolderNode");
     }
-
 }

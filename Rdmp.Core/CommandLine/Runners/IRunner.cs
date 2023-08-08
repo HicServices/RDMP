@@ -17,5 +17,6 @@ namespace Rdmp.Core.CommandLine.Runners;
 /// </summary>
 public interface IRunner
 {
-    int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token);
+    int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token);
 }

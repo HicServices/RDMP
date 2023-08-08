@@ -34,7 +34,7 @@ public class CohortIdentificationTests : FromToDatabaseTests
         SetupTestData(CatalogueRepository);
     }
 
-        
+
     public void SetupTestData(ICatalogueRepository repository)
     {
         BlitzMainDataTables();
@@ -53,7 +53,8 @@ public class CohortIdentificationTests : FromToDatabaseTests
             };
         aggregate1.SaveToDatabase();
 
-        new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
+        new AggregateDimension(repository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
 
         aggregate2 =
             new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate2")
@@ -63,7 +64,8 @@ public class CohortIdentificationTests : FromToDatabaseTests
 
         aggregate2.SaveToDatabase();
 
-        new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
+        new AggregateDimension(repository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
 
         aggregate3 =
             new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate3")
@@ -72,7 +74,8 @@ public class CohortIdentificationTests : FromToDatabaseTests
             };
         aggregate3.SaveToDatabase();
 
-        new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);
+        new AggregateDimension(repository,
+            testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);
 
         cohortIdentificationConfiguration = new CohortIdentificationConfiguration(repository, "UnitTestIdentification");
 

@@ -27,24 +27,28 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// Data load component for loading RAW tables with records read from a remote database server.
 /// Fetches all table from the specified database to load all catalogues specified.
 /// </summary>
-public class RemoteDatabaseAttacher: Attacher, IPluginAttacher
+public class RemoteDatabaseAttacher : Attacher, IPluginAttacher
 {
-    public RemoteDatabaseAttacher(): base(true)
-    {   
+    public RemoteDatabaseAttacher() : base(true)
+    {
     }
 
-    [DemandsInitialization("The DataSource to connect to in order to read data.", Mandatory=true)]
+    [DemandsInitialization("The DataSource to connect to in order to read data.", Mandatory = true)]
     public ExternalDatabaseServer RemoteSource { get; set; }
 
-    [DemandsInitialization("The length of time in seconds to allow for data to be completely read from the destination before giving up (0 for no timeout)")]
+    [DemandsInitialization(
+        "The length of time in seconds to allow for data to be completely read from the destination before giving up (0 for no timeout)")]
     public int Timeout { get; set; }
 
-    [DemandsInitialization(@"Determines how columns in the remote database are fetched and used to populate RAW tables of the same name.
+    [DemandsInitialization(
+        @"Determines how columns in the remote database are fetched and used to populate RAW tables of the same name.
 True - Fetch only the default columns that appear in RAW (e.g. skip hic_ columns)
-False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema", DefaultValue=true)]
+False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema",
+        DefaultValue = true)]
     public bool LoadRawColumnsOnly { get; set; }
 
-    [DemandsInitialization(@"By default RemoteDatabaseAttacher expects all tables in the load to exist in the remote database at the time the load is run.  Enabling this option will ignore missing tables:
+    [DemandsInitialization(
+        @"By default RemoteDatabaseAttacher expects all tables in the load to exist in the remote database at the time the load is run.  Enabling this option will ignore missing tables:
 True - Ignore the fact that some tables do not exist and skip them
 False - Trigger an error reporting the missing table(s)
 ")]
@@ -57,7 +61,7 @@ False - Trigger an error reporting the missing table(s)
     }
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {   
+    {
     }
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -67,7 +71,8 @@ False - Trigger an error reporting the missing table(s)
 
         var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
-        var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()),StringComparer.CurrentCultureIgnoreCase);
+        var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()),
+            StringComparer.CurrentCultureIgnoreCase);
         var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).ToArray();
 
         var syntaxFrom = dbFrom.Server.GetQuerySyntaxHelper();
@@ -79,22 +84,27 @@ False - Trigger an error reporting the missing table(s)
             // A table in the load does not exist on the remote db
             if (!remoteTables.Contains(table))
             {
-                if(IgnoreMissingTables)
+                if (IgnoreMissingTables)
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Table {table} was NOT found on the remote DB but {nameof(IgnoreMissingTables)} is enabled so table will be skipped"));
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Information,
+                            $"Table {table} was NOT found on the remote DB but {nameof(IgnoreMissingTables)} is enabled so table will be skipped"));
 
                     //skip it
                     continue;
                 }
+
                 throw new Exception(
                     $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
             }
 
 
             string sql;
-            if(LoadRawColumnsOnly)
+            if (LoadRawColumnsOnly)
             {
-                var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;
+                var rawColumns = LoadRawColumnsOnly
+                    ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
+                    : tableInfo.ColumnInfos;
                 sql =
                     $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)}";
             }
@@ -106,7 +116,8 @@ False - Trigger an error reporting the missing table(s)
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));
 
-            var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}", dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
+            var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}",
+                dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, table, Enumerable.Empty<string>());
 
@@ -120,19 +131,19 @@ False - Trigger an error reporting the missing table(s)
                 new[]
                 {
                     new DataSource(
-                        $"Remote SqlServer Servername={dbFrom.Server};Database={_dbInfo.GetRuntimeName()}{(table != null ? $" Table={table}" : $" Query = {sql}")}", DateTime.Now)
+                        $"Remote SqlServer Servername={dbFrom.Server};Database={_dbInfo.GetRuntimeName()}{(table != null ? $" Table={table}" : $" Query = {sql}")}",
+                        DateTime.Now)
                 }, -1);
 
             engine.Initialize(loadInfo);
             engine.ExecutePipeline(cancellationToken);
 
             if (source.TotalRowsRead == 0)
-            {
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"No rows were read from the remote table {table}."));
-            }
 
-            job.OnNotify(this, new NotifyEventArgs(source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
+            job.OnNotify(this, new NotifyEventArgs(
+                source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
                 $"Finished after reading {source.TotalRowsRead} rows"));
         }
 

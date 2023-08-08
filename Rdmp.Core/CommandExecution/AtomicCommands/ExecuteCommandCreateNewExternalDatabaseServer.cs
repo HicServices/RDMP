@@ -32,13 +32,16 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, PermissableDefaults defaultToSet,DiscoveredDatabase toCreate)
-        : this(activator,defaultToSet == PermissableDefaults.None ? null : defaultToSet.ToTier2DatabaseType(),defaultToSet)
+    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator,
+        PermissableDefaults defaultToSet, DiscoveredDatabase toCreate)
+        : this(activator, defaultToSet == PermissableDefaults.None ? null : defaultToSet.ToTier2DatabaseType(),
+            defaultToSet)
     {
         _database = toCreate;
     }
 
-    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, IPatcher patcher, PermissableDefaults defaultToSet) : base(activator)
+    public ExecuteCommandCreateNewExternalDatabaseServer(IBasicActivateItems activator, IPatcher patcher,
+        PermissableDefaults defaultToSet) : base(activator)
     {
         _patcher = patcher;
         _defaultToSet = defaultToSet;
@@ -70,19 +73,25 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         switch (_defaultToSet)
         {
             case PermissableDefaults.LiveLoggingServer_ID:
-                return "Creates a database for auditing all flows of data (data load, extraction etc) including tables for errors, progress tables/record count loaded etc";
+                return
+                    "Creates a database for auditing all flows of data (data load, extraction etc) including tables for errors, progress tables/record count loaded etc";
             case PermissableDefaults.IdentifierDumpServer_ID:
-                return "Creates a database for storing the values of intercepted columns that are discarded during data load because they contain identifiable data";
+                return
+                    "Creates a database for storing the values of intercepted columns that are discarded during data load because they contain identifiable data";
             case PermissableDefaults.DQE:
-                return "Creates a database for storing the results of data quality engine runs on your datasets over time.";
+                return
+                    "Creates a database for storing the results of data quality engine runs on your datasets over time.";
             case PermissableDefaults.WebServiceQueryCachingServer_ID:
                 break;
             case PermissableDefaults.RAWDataLoadServer:
-                return "Defines which database server should be used for the RAW data in the RAW=>STAGING=>LIVE model of the data load engine";
+                return
+                    "Defines which database server should be used for the RAW data in the RAW=>STAGING=>LIVE model of the data load engine";
             case PermissableDefaults.ANOStore:
-                return "Creates a new anonymisation database which contains mappings of identifiable values to anonymous representations";
+                return
+                    "Creates a new anonymisation database which contains mappings of identifiable values to anonymous representations";
             case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
-                return "Creates a new Query Cache database which contains the indexed results of executed subqueries in a CohortIdentificationConfiguration";
+                return
+                    "Creates a new Query Cache database which contains the indexed results of executed subqueries in a CohortIdentificationConfiguration";
         }
 
         return "Defines a new server that can be accessed by RDMP";
@@ -97,14 +106,12 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
             ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueRepository,
                 $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
         else
-        {
             //create the new server
             ServerCreatedIfAny = BasicActivator.CreateNewPlatformDatabase(
                 BasicActivator.RepositoryLocator.CatalogueRepository,
                 _defaultToSet,
                 _patcher,
                 _database);
-        }
 
         //user cancelled creating a server
         if (ServerCreatedIfAny == null)
@@ -119,6 +126,5 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         if (_patcher == null) return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
         var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
         return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
-
     }
 }

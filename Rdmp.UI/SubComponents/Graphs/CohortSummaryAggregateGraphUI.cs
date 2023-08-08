@@ -32,7 +32,7 @@ namespace Rdmp.UI.SubComponents.Graphs;
 /// query).</para>
 ///  
 /// </summary>
-public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionControl
+public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollectionControl
 {
     private CohortSummaryAggregateGraphObjectCollection _collection;
 
@@ -43,40 +43,34 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        _collection.RevertIfMatchedInCollectionObjects(e.Object,out var shouldCloseInstead);
+        _collection.RevertIfMatchedInCollectionObjects(e.Object, out var shouldCloseInstead);
 
         if (shouldCloseInstead)
-        {
             ParentForm?.Close();
-        }
         else
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();
-            
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
     {
-        _collection = (CohortSummaryAggregateGraphObjectCollection) collection;
+        _collection = (CohortSummaryAggregateGraphObjectCollection)collection;
         SetItemActivator(activator);
-            
+
         BuildMenu(activator);
 
-        SetAggregate(activator,_collection.Graph);
+        SetAggregate(activator, _collection.Graph);
         LoadGraphAsync();
     }
 
-    public IPersistableObjectCollection GetCollection()
-    {
-        return _collection;
-    }
+    public IPersistableObjectCollection GetCollection() => _collection;
 
     public override string GetTabName()
     {
-        if(_collection.CohortIfAny != null)
+        if (_collection.CohortIfAny != null)
             return $"Cohort Graph {_collection.CohortIfAny}({_collection.Adjustment})";
 
-        if(_collection.CohortContainerIfAny != null)
+        if (_collection.CohortContainerIfAny != null)
             return $"Cohort Container Graph {_collection.CohortContainerIfAny}";
 
         return "Loading...";
@@ -104,7 +98,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     protected override object[] GetRibbonObjects()
     {
-        return new object[]{ GetAdjustmentDescription(_collection.Adjustment)};
+        return new object[] { GetAdjustmentDescription(_collection.Adjustment) };
     }
 
     private static string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
@@ -123,7 +117,6 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny, Activator.CoreChildProvider)
             : new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
 
-        return builder.GetAdjustedAggregateBuilder(_collection.Adjustment,_collection.SingleFilterOnly);
+        return builder.GetAdjustedAggregateBuilder(_collection.Adjustment, _collection.SingleFilterOnly);
     }
-
 }

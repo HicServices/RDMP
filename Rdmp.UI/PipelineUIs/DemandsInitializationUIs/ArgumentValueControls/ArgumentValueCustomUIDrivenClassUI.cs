@@ -12,7 +12,6 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 
-
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
@@ -48,7 +47,8 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             if (_uiType == null)
             {
                 var shortUIClassName = $"{t.Name}UI";
-                var candidates = _args.CatalogueRepository.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
+                var candidates = _args.CatalogueRepository.MEF.GetAllTypes()
+                    .Where(type => type.Name.Equals(shortUIClassName)).ToArray();
 
                 if (candidates.Length > 1)
                     throw new Exception(
@@ -61,7 +61,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
                 _uiType = candidates[0];
             }
 
-    
+
             btnLaunchCustomUI.Text = $"Launch Custom UI ({_uiType.Name})";
             btnLaunchCustomUI.Width = btnLaunchCustomUI.PreferredSize.Width;
         }
@@ -70,7 +70,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             btnLaunchCustomUI.Enabled = false;
         }
     }
-        
+
     private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try
@@ -79,13 +79,13 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var uiInstance = Activator.CreateInstance(_uiType);
 
-            var instanceAsCustomUI = (ICustomUI) uiInstance;
+            var instanceAsCustomUI = (ICustomUI)uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
             instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance);
             var dr = ((Form)instanceAsCustomUI).ShowDialog();
 
-            if(dr != DialogResult.Cancel)
+            if (dr != DialogResult.Cancel)
             {
                 var result = instanceAsCustomUI.GetFinalStateOfUnderlyingObject();
                 _args.Setter(result);

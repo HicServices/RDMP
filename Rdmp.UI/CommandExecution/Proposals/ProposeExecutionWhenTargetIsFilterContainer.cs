@@ -12,24 +12,20 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
+internal class ProposeExecutionWhenTargetIsFilterContainer : RDMPCommandExecutionProposal<IContainer>
 {
     public ProposeExecutionWhenTargetIsFilterContainer(IActivateItems itemActivator) : base(itemActivator)
     {
-
     }
 
-    public override bool CanActivate(IContainer target)
-    {
-        return false;
-    }
+    public override bool CanActivate(IContainer target) => false;
 
     public override void Activate(IContainer target)
     {
-            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer,
+        InsertOption insertOption = InsertOption.Default)
     {
         //drag a filter into a container
         if (cmd is FilterCombineable sourceFilterCommand)
@@ -41,17 +37,16 @@ internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionP
             //if the target container is one that is part of the filters tree then it's a move
             if (sourceFilterCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
                 return new ExecuteCommandMoveFilterIntoContainer(ItemActivator, sourceFilterCommand, targetContainer);
-                
+
             //otherwise it's an import    
 
             //so instead let's let them create a new copy (possibly including changing the type e.g. importing a master
             //filter into a data export AND/OR container
-            return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer,sourceFilterCommand.Filter);
-                
+            return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer, sourceFilterCommand.Filter);
         }
 
         //drag a container into another container
-        if ( cmd is ContainerCombineable sourceContainerCommand)
+        if (cmd is ContainerCombineable sourceContainerCommand)
         {
             //if the source and target are the same container
             if (sourceContainerCommand.Container.Equals(targetContainer))
@@ -59,13 +54,13 @@ internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionP
 
             //is it a movement within the current container tree
             if (sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                return new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer);
+                return new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand,
+                    targetContainer);
 
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetContainer,sourceContainerCommand.Container);
+            return new ExecuteCommandImportFilterContainerTree(ItemActivator, targetContainer,
+                sourceContainerCommand.Container);
         }
-            
-        return null;
-        
 
+        return null;
     }
 }

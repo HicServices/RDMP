@@ -18,5 +18,5 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 /// </summary>
 public interface IArgumentValueUI : IContainerControl
 {
-    void SetUp(IActivateItems activator,ArgumentValueUIArgs args);
+    void SetUp(IActivateItems activator, ArgumentValueUIArgs args);
 }

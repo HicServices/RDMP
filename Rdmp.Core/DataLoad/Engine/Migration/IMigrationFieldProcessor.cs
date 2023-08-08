@@ -20,7 +20,7 @@ public interface IMigrationFieldProcessor
     /// <summary>
     /// True if there is not expected to be any backup trigger on the table i.e. <see cref="SpecialFieldNames"/> are not going to be there
     /// </summary>
-    bool NoBackupTrigger {get;set;}
+    bool NoBackupTrigger { get; set; }
 
     void ValidateFields(DiscoveredColumn[] fromColumns, DiscoveredColumn[] toColumns);
 
@@ -32,5 +32,6 @@ public interface IMigrationFieldProcessor
     /// (some fields might not matter if they are different e.g. dataLoadRunID)</param>
     /// <param name="fieldsToUpdate">Fields that will have their values copied across to the new table (this is usually a superset of fields to diff, and also
     /// includes all primary keys).</param>
-    void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate);
+    void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff,
+        List<DiscoveredColumn> fieldsToUpdate);
 }

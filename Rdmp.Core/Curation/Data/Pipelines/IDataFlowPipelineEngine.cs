@@ -55,5 +55,4 @@ public interface IDataFlowPipelineEngine : ICheckable
     /// The IDataFlowSource component at the start of the pipeline
     /// </summary>
     object SourceObject { get; }
-        
 }

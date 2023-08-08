@@ -52,11 +52,11 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
             $"{Description}(ID={ID}) - {StartTime} - {(EndTime != null ? EndTime.ToString() : "<DidNotFinish>")}{elapsed}";
     }
 
-    
+
     /// <summary>
     /// All tables loaded during the run
     /// </summary>
-    public List<ArchivalTableLoadInfo>  TableLoadInfos => _knownTableInfos.Value;
+    public List<ArchivalTableLoadInfo> TableLoadInfos => _knownTableInfos.Value;
 
     /// <summary>
     /// All errors that occured during the run
@@ -71,7 +71,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     private readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
     private readonly Lazy<List<ArchivalFatalError>> _knownErrors;
     private readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
-        
+
     public string Description { get; set; }
 
     /// <summary>
@@ -80,15 +80,14 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     /// </summary>
     internal ArchivalDataLoadInfo()
     {
-
     }
-        
-    internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
+
+    internal ArchivalDataLoadInfo(DbDataReader r, DiscoveredDatabase loggingDatabase)
     {
         _loggingDatabase = loggingDatabase;
         ID = Convert.ToInt32(r["ID"]);
         DataLoadTaskID = Convert.ToInt32(r["dataLoadTaskID"]);
-            
+
         //populate basic facts from the table
         StartTime = (DateTime)r["startTime"];
         if (r["endTime"] == null || r["endTime"] == DBNull.Value)
@@ -123,19 +122,20 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         {
             con.Open();
 
-            using(var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
-                while(r.Read())
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}",
+                       con))
+            using (var r = cmd.ExecuteReader())
+            {
+                while (r.Read())
                 {
                     var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
-                        
-                    if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
-                    {
-                        continue;
-                    }
+
+                    if ((audit.Inserts ?? 0) <= 0 && (audit.Updates ?? 0) <= 0 && (audit.Deletes ?? 0) <= 0 &&
+                        UserSettings.HideEmptyTableLoadRunAudits) continue;
 
                     toReturn.Add(audit);
-                }   
+                }
+            }
         }
 
         return toReturn;
@@ -149,10 +149,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         {
             con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}", con))
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}",
+                       con))
             using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
                     toReturn.Add(new ArchivalProgressLog(r));
+            }
         }
 
         return toReturn;
@@ -166,10 +169,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         {
             con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}",
+                       con))
+            using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
                     toReturn.Add(new ArchivalFatalError(r));
+            }
         }
 
         return toReturn;

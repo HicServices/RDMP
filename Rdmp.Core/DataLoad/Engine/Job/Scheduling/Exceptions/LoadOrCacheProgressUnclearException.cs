@@ -16,6 +16,5 @@ public class LoadOrCacheProgressUnclearException : Exception
 {
     public LoadOrCacheProgressUnclearException(string msg) : base(msg)
     {
-            
     }
 }

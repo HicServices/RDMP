@@ -25,7 +25,7 @@ public interface IPluginCohortCompiler
     /// <param name="ac"></param>
     /// <returns></returns>
     bool ShouldRun(AggregateConfiguration ac);
-        
+
     /// <summary>
     /// Return true if the <paramref name="catalogue"/> is of a type that should be handled by your class
     /// by calling your API.
@@ -42,7 +42,8 @@ public interface IPluginCohortCompiler
     /// <param name="ac"></param>
     /// <param name="cache"></param>
     /// <param name="cancellationToken"></param>
-    void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken cancellationToken);
+    void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Return true if the <paramref name="oldDescription"/> does not match the logic currently 

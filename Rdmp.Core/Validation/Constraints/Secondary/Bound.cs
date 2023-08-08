@@ -16,17 +16,20 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 /// </summary>
 public abstract class Bound : SecondaryConstraint
 {
-    [Description("Optional, requires that the value being validated is HIGHER than the value stored in the referenced column (where values are present in both columns)")]
+    [Description(
+        "Optional, requires that the value being validated is HIGHER than the value stored in the referenced column (where values are present in both columns)")]
     [ExpectsColumnNameAsInput]
     public string LowerFieldName { get; set; }
 
-    [Description("Optional, requires that the value being validated is LOWER than the value stored in the referenced column (where values are present in both columns)")]
+    [Description(
+        "Optional, requires that the value being validated is LOWER than the value stored in the referenced column (where values are present in both columns)")]
     [ExpectsColumnNameAsInput]
     public string UpperFieldName { get; set; }
 
-    [Description("When ticked allows values that are EXACTLY THE SAME AS either the Upper or Lower boundary (including field boundaries) to pass validation")]
+    [Description(
+        "When ticked allows values that are EXACTLY THE SAME AS either the Upper or Lower boundary (including field boundaries) to pass validation")]
     public bool Inclusive { get; set; }
-        
+
 
     protected static object LookupFieldNamed(string name, object[] otherColumns, object[] otherColumnNames)
     {
@@ -45,7 +48,6 @@ public abstract class Bound : SecondaryConstraint
         throw new MissingFieldException($"Validation failed: Comparator field [{name}] not found in dictionary.");
     }
 
-        
 
     public override void RenameColumn(string originalName, string newName)
     {
@@ -62,13 +64,13 @@ public abstract class Bound : SecondaryConstraint
     {
         var result = "";
 
-        if (LowerFieldName != null )
-            if(Inclusive)
+        if (LowerFieldName != null)
+            if (Inclusive)
                 result += $" >={LowerFieldName}";
             else
                 result += $" >{LowerFieldName}";
-            
-        if (UpperFieldName != null )
+
+        if (UpperFieldName != null)
             if (Inclusive)
                 result += $" <={UpperFieldName}";
             else

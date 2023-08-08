@@ -36,10 +36,8 @@ public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExtractionProgress,OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionProgress, OverlayKind.Add);
 
     public override void Execute()
     {

@@ -33,11 +33,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("GGG");
 
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd);
-        var ex = Assert.Throws<LogsNotConfirmedException>(()=>cmd.Execute());
+        var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
         Assert.AreEqual("There are no log entries for MyLmd", ex.Message);
-
     }
+
     [TestCase(true)]
     [TestCase(false)]
     public void ConfirmLogs_HappyEntries_Passes(bool withinTime)
@@ -53,14 +53,14 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
-            
+
         // we mark it as completed successfully - this is a good, happy log entry
         logEntry.CloseAndMarkComplete();
 
 
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator),
             //within last 10 hours
-            lmd, withinTime ? "10:00:00":null);
+            lmd, withinTime ? "10:00:00" : null);
         Assert.DoesNotThrow(() => cmd.Execute());
     }
 
@@ -86,6 +86,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
 
         StringAssert.IsMatch("Latest logs for MyLmd .* indicate that it did not complete", ex.Message);
     }
+
     [Test]
     public void ConfirmLogs_SadEntryWithEx_Throws()
     {
@@ -106,14 +107,12 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
         StringAssert.IsMatch("Latest logs for MyLmd .* indicate that it failed", ex.Message);
-
     }
 
 
     [Test]
     public void ConfirmLogs_NotWithinTime_Throws()
     {
-
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
@@ -132,10 +131,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         Thread.Sleep(5000);
 
         // but we want this to have finished in the last second
-        var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd,"00:00:01");
+        var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd, "00:00:01");
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
-        StringAssert.IsMatch("Latest logged activity for MyLmd is .*.  This is older than the requested date threshold:.*", ex.Message);
+        StringAssert.IsMatch(
+            "Latest logged activity for MyLmd is .*.  This is older than the requested date threshold:.*", ex.Message);
     }
 
     [Test]
@@ -171,7 +171,8 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists(cp1.GetDistinctLoggingTask());
 
         // create a log entry for cp1 only
-        var logEntry = lm.CreateDataLoadInfo(cp1.GetDistinctLoggingTask(), "pack o' cards", cp1.GetLoggingRunName(), null, true);
+        var logEntry = lm.CreateDataLoadInfo(cp1.GetDistinctLoggingTask(), "pack o' cards", cp1.GetLoggingRunName(),
+            null, true);
 
         // we mark it as completed successfully - this is a good, happy log entry
         logEntry.CloseAndMarkComplete();
@@ -181,7 +182,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         Assert.DoesNotThrow(() => cmd1.Execute());
 
         // The second cache has not logged any successes so should be unhappy
-        var cmd2 = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), cp2,null);
+        var cmd2 = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), cp2, null);
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd2.Execute());
 
         Assert.AreEqual("There are no log entries for MyCoolCache", ex.Message);

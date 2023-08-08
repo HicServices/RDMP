@@ -11,7 +11,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// <summary>
 /// Powers the creation of instances of T in an ICustomUI
 /// </summary>
-public interface ICustomUI<T> : ICustomUI where T:ICustomUIDrivenClass
+public interface ICustomUI<T> : ICustomUI where T : ICustomUIDrivenClass
 {
     /// <summary>
     /// Loads the current value into the user interface

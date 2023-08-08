@@ -18,7 +18,7 @@ namespace Rdmp.Core.CohortCreation;
 /// A cohort identification container (AggregateContainer) or sub query (AggregateConfiguration) that is running in a CohortCompiler and will be
 /// given the results of the execution (CohortIdentificationTaskExecution).
 /// </summary>
-public interface ICompileable:IOrderable
+public interface ICompileable : IOrderable
 {
     IMapsDirectlyToDatabaseTable Child { get; }
     int Timeout { get; set; }

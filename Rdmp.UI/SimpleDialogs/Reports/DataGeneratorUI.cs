@@ -20,7 +20,6 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 /// </summary>
 public partial class DataGeneratorUI : UserControl
 {
-
     public DataGeneratorUI()
     {
         InitializeComponent();
@@ -35,17 +34,14 @@ public partial class DataGeneratorUI : UserControl
         {
             _generator = value;
 
-            if(value != null)
+            if (value != null)
                 value.RowsGenerated += ValueOnRowsGenerated;
 
-            cbGenerate.Text = value != null ? value.GetType().Name:"";
+            cbGenerate.Text = value != null ? value.GetType().Name : "";
         }
     }
-        
-    public int GetSize()
-    {
-        return 10* (int)Math.Pow(10, trackBar1.Value);
-    }
+
+    public int GetSize() => 10 * (int)Math.Pow(10, trackBar1.Value);
 
     private int sizeAtBeginGeneration = -1;
     public Thread Thread;
@@ -56,7 +52,7 @@ public partial class DataGeneratorUI : UserControl
     public void BeginGeneration(IPersonCollection cohort, DirectoryInfo target)
     {
         //already running
-        if(sizeAtBeginGeneration != -1)
+        if (sizeAtBeginGeneration != -1)
             return;
 
         sizeAtBeginGeneration = GetSize();
@@ -65,9 +61,8 @@ public partial class DataGeneratorUI : UserControl
 
         Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration));
         Thread.Start();
-
     }
-        
+
     private void ValueOnRowsGenerated(object sender, RowsGeneratedEventArgs e)
     {
         if (InvokeRequired)
@@ -76,13 +71,10 @@ public partial class DataGeneratorUI : UserControl
             return;
         }
 
-        var percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
+        var percentProgress = e.RowsWritten / (double)sizeAtBeginGeneration * 100.0;
         progressBar1.Value = (int)percentProgress;
 
-        if (e.IsFinished)
-        {
-            Completed?.Invoke();
-        }
+        if (e.IsFinished) Completed?.Invoke();
     }
 
     private void trackBar1_MouseUp(object sender, MouseEventArgs e)
@@ -90,7 +82,9 @@ public partial class DataGeneratorUI : UserControl
         TrackBarMouseUp?.Invoke();
     }
 
-    public bool Generate { get => cbGenerate.Checked;
+    public bool Generate
+    {
+        get => cbGenerate.Checked;
         set => cbGenerate.Checked = value;
     }
 

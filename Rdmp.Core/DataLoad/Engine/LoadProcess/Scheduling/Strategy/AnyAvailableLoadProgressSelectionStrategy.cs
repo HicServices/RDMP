@@ -23,8 +23,5 @@ public class AnyAvailableLoadProgressSelectionStrategy : ILoadProgressSelectionS
         _loadMetadata = loadMetadata;
     }
 
-    public List<ILoadProgress> GetAllLoadProgresses()
-    {
-        return _loadMetadata.LoadProgresses.ToList();
-    }
+    public List<ILoadProgress> GetAllLoadProgresses() => _loadMetadata.LoadProgresses.ToList();
 }

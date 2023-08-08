@@ -26,7 +26,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterSetUI_Design, ISaveableUI
 {
     private ExtractionFilterParameterSet _extractionFilterParameterSet;
-        
+
     public ExtractionFilterParameterSet ExtractionFilterParameterSet
     {
         get => _extractionFilterParameterSet;
@@ -45,7 +45,7 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 
         var factory = new ParameterCollectionUIOptionsFactory();
         var options = ParameterCollectionUIOptionsFactory.Create(ExtractionFilterParameterSet);
-        parameterCollectionUI1.SetUp(options,Activator);
+        parameterCollectionUI1.SetUp(options, Activator);
     }
 
     public ExtractionFilterParameterSetUI()
@@ -55,7 +55,6 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 
     private void ExtractionFilterParameterSetUI_Load(object sender, EventArgs e)
     {
-
     }
 
     private void tbName_TextChanged(object sender, EventArgs e)
@@ -76,12 +75,14 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractionFilterParameterSet databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         ExtractionFilterParameterSet = databaseObject;
     }
 }
 
-[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionFilterParameterSetUI_Design, UserControl>))]
-public abstract class ExtractionFilterParameterSetUI_Design : RDMPSingleDatabaseObjectControl<ExtractionFilterParameterSet>
+[TypeDescriptionProvider(
+    typeof(AbstractControlDescriptionProvider<ExtractionFilterParameterSetUI_Design, UserControl>))]
+public abstract class
+    ExtractionFilterParameterSetUI_Design : RDMPSingleDatabaseObjectControl<ExtractionFilterParameterSet>
 {
 }

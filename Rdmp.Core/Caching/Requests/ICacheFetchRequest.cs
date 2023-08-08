@@ -21,7 +21,7 @@ public interface ICacheFetchRequest
     IRepository Repository { get; set; }
 
     void SaveCacheFillProgress(DateTime cacheFillProgress);
-        
+
     DateTime Start { get; set; }
     DateTime End { get; }
     TimeSpan ChunkPeriod { get; set; }

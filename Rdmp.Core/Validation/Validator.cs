@@ -51,14 +51,13 @@ public class Validator
     /// for selection (the Catalogue database).
     /// </summary>
     public static ICatalogueRepositoryServiceLocator LocatorForXMLDeserialization;
-    public List<ItemValidator> ItemValidators { get; set; }
 
+    public List<ItemValidator> ItemValidators { get; set; }
 
 
     public Validator()
     {
         ItemValidators = new List<ItemValidator>();
-
     }
 
     /// <summary>
@@ -70,8 +69,9 @@ public class Validator
     /// <param name="expectedType"></param>
     public void AddItemValidator(ItemValidator itemValidator, string targetProperty, Type expectedType)
     {
-        if(ItemValidators.Any(iv=>iv.TargetProperty.Equals(targetProperty)))
-            throw new ArgumentException("TargetProperty is already targeted by another ItemValidator in the collection");
+        if (ItemValidators.Any(iv => iv.TargetProperty.Equals(targetProperty)))
+            throw new ArgumentException(
+                "TargetProperty is already targeted by another ItemValidator in the collection");
 
         itemValidator.TargetProperty = targetProperty;
         itemValidator.ExpectedType = expectedType;
@@ -94,7 +94,6 @@ public class Validator
         {
             return null;
         }
-
     }
 
     /// <summary>
@@ -104,7 +103,6 @@ public class Validator
     /// <returns>true if the removal succeeded, false otherwise</returns>
     public bool RemoveItemValidator(string key)
     {
-
         ItemValidator toRemove;
 
         try
@@ -113,7 +111,6 @@ public class Validator
         }
         catch (InvalidOperationException)
         {
-
             return false;
         }
 
@@ -138,7 +135,8 @@ public class Validator
     /// <param name="domainObject"></param>
     /// /// <param name="currentResults">It is expected that Validate is called multiple times (once per row) therefore you can store the Result of the last one and pass it back into the method the next time you call it in order to maintain a running total</param>
     /// <param name="worstConsequence"></param>
-    public VerboseValidationResults ValidateVerboseAdditive(object domainObject,VerboseValidationResults currentResults, out Consequence? worstConsequence)
+    public VerboseValidationResults ValidateVerboseAdditive(object domainObject,
+        VerboseValidationResults currentResults, out Consequence? worstConsequence)
     {
         worstConsequence = null;
 
@@ -188,7 +186,7 @@ public class Validator
 
     private static void InitializeSerializer()
     {
-        _serializer ??= new XmlSerializer(typeof (Validator), GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof(Validator), GetExtraTypes());
     }
 
     /// <summary>
@@ -202,7 +200,9 @@ public class Validator
         InitializeSerializer();
 
         using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
+        {
             _serializer.Serialize(sw, this);
+        }
 
         return sb.ToString();
     }
@@ -220,12 +220,12 @@ public class Validator
 
             //Get all the Types in the assembly that are compatible with Constraint (primary or secondary)
             extraTypes.AddRange(mef.GetAllTypes().Where(
-
                     //type is
                     type =>
                         type != null &&
                         //of the correct Type
-                        (typeof(IConstraint).IsAssignableFrom(type) || typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+                        (typeof(IConstraint).IsAssignableFrom(type) ||
+                         typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
                         &&
                         !type.IsAbstract
                         &&
@@ -233,7 +233,6 @@ public class Validator
                         &&
                         type.IsClass
                 )
-
             );
 
             _extraTypes = extraTypes.ToArray();
@@ -244,7 +243,7 @@ public class Validator
     {
         lock (oLockExtraTypes)
         {
-            return _extraTypes??Type.EmptyTypes;
+            return _extraTypes ?? Type.EmptyTypes;
         }
     }
 
@@ -254,10 +253,7 @@ public class Validator
     /// </summary>
     /// <param name="pattern"></param>
     /// <returns></returns>
-    public static ISecondaryConstraint CreateRegularExpression(string pattern)
-    {
-        return new RegularExpression(pattern);
-    }
+    public static ISecondaryConstraint CreateRegularExpression(string pattern) => new RegularExpression(pattern);
 
     /// <summary>
     /// Returns an array of available PrimaryConstraint names.
@@ -288,9 +284,8 @@ public class Validator
     /// <returns>A Constraint</returns>
     public static IConstraint CreateConstraint(string name, Consequence consequence)
     {
-
         var type = GetExtraTypes().Single(t => t.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
-        var toReturn = (IConstraint) Activator.CreateInstance(type);
+        var toReturn = (IConstraint)Activator.CreateInstance(type);
         toReturn.Consequence = consequence;
         return toReturn;
     }
@@ -343,14 +338,13 @@ public class Validator
 
         //for all the columns we need to validate
         foreach (var itemValidator in ItemValidators)
-        {
             if (_domainObjectDictionary.TryGetValue(itemValidator.TargetProperty, out var o))
             {
                 //get the first validation failure for the given column (or null if it is valid)
                 var result = itemValidator.ValidateAll(o, vals, keys);
 
                 //if it wasn't valid then add it to the eList
-                if(result is { SourceItemValidator: null })
+                if (result is { SourceItemValidator: null })
                 {
                     result.SourceItemValidator = itemValidator;
                     eList.Add(result);
@@ -361,15 +355,10 @@ public class Validator
                 throw new InvalidOperationException(
                     $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in dictionary.");
             }
-        }
 
-        if (eList.Count > 0)
-        {
-            return new ValidationFailure("There are validation errors.", eList);
-        }
+        if (eList.Count > 0) return new ValidationFailure("There are validation errors.", eList);
 
         return null;
-
     }
 
     private ValidationFailure ValidateAgainstDomainObject()
@@ -377,6 +366,7 @@ public class Validator
         var eList = new List<ValidationFailure>();
 
         #region work out other column values
+
         string[] names = null;
         object[] values = null;
 
@@ -413,13 +403,13 @@ public class Validator
                     values[i] = row[i].ToString();
             }
         }
+
         #endregion
 
 
         foreach (var itemValidator in ItemValidators)
         {
-
-            if(itemValidator.TargetProperty == null)
+            if (itemValidator.TargetProperty == null)
                 throw new NullReferenceException("Target property cannot be null");
 
             try
@@ -436,9 +426,10 @@ public class Validator
 
                     result = itemValidator.ValidateAll(value, values, names);
                 }
-                else
-                if (o is DataRow dataRow)
+                else if (o is DataRow dataRow)
+                {
                     result = itemValidator.ValidateAll(dataRow[itemValidator.TargetProperty], values, names);
+                }
                 else
                 {
                     var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
@@ -447,13 +438,16 @@ public class Validator
                     {
                         value = value1;
 
-                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(), propertiesDictionary.Keys.ToArray());
+                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
+                            propertiesDictionary.Keys.ToArray());
                     }
                     else
+                    {
                         throw new MissingFieldException(
                             $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
-
+                    }
                 }
+
                 if (result != null)
                 {
                     result.SourceItemValidator ??= itemValidator;
@@ -468,10 +462,7 @@ public class Validator
             }
         }
 
-        if (eList.Count > 0)
-        {
-            return new ValidationFailure("There are validation errors.", eList);
-        }
+        if (eList.Count > 0) return new ValidationFailure("There are validation errors.", eList);
 
         return null;
     }
@@ -480,20 +471,19 @@ public class Validator
     {
         var toReturn = new Dictionary<string, object>();
 
-        foreach(var prop in o.GetType().GetProperties())
+        foreach (var prop in o.GetType().GetProperties())
             toReturn.Add(prop.Name, prop.GetValue(o));
 
 
         return toReturn;
-
     }
 
     #endregion
 
     public void RenameColumns(Dictionary<string, string> renameDictionary)
     {
-        foreach(var kvp in renameDictionary)
-            RenameColumn(kvp.Key,kvp.Value);
+        foreach (var kvp in renameDictionary)
+            RenameColumn(kvp.Key, kvp.Value);
     }
 
     public void RenameColumn(string oldName, string newName)
@@ -503,7 +493,7 @@ public class Validator
             if (itemValidator.TargetProperty == oldName)
                 itemValidator.TargetProperty = newName;
 
-            itemValidator.PrimaryConstraint?.RenameColumn(oldName,newName);
+            itemValidator.PrimaryConstraint?.RenameColumn(oldName, newName);
 
             foreach (ISecondaryConstraint constraint in itemValidator.SecondaryConstraints)
                 constraint.RenameColumn(oldName, newName);
@@ -512,6 +502,6 @@ public class Validator
 
     public static Type[] GetPredictionExtraTypes()
     {
-        return GetExtraTypes().Where(t => typeof (PredictionRule).IsAssignableFrom(t)).ToArray();
+        return GetExtraTypes().Where(t => typeof(PredictionRule).IsAssignableFrom(t)).ToArray();
     }
 }

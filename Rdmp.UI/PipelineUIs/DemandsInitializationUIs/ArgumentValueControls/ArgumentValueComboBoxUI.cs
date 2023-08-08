@@ -33,7 +33,7 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
     private ArgumentValueUIArgs _args;
     private bool _isEnum;
 
-    public ArgumentValueComboBoxUI(IActivateItems activator,object[] objectsForComboBox)
+    public ArgumentValueComboBoxUI(IActivateItems activator, object[] objectsForComboBox)
     {
         _activator = activator;
         _objectsForComboBox = objectsForComboBox;
@@ -42,23 +42,22 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
         //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
         RDMPControlCommonFunctionality.DisableMouseWheel(cbxValue);
 
-        if(objectsForComboBox == null || objectsForComboBox.Length == 0)
+        if (objectsForComboBox == null || objectsForComboBox.Length == 0)
             return;
 
         btnPick.Enabled = objectsForComboBox.All(o => o is IMapsDirectlyToDatabaseTable);
 
         //If it is a dropdown of Types
-        if (objectsForComboBox.All(o=>o is Type))
+        if (objectsForComboBox.All(o => o is Type))
         {
             //add only the names (not the full namespace)
             types = new HashSet<Type>(objectsForComboBox.Cast<Type>());
 
             cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
-            cbxValue.Items.AddRange(types.Select(t=>t.Name).ToArray());
+            cbxValue.Items.AddRange(types.Select(t => t.Name).ToArray());
             cbxValue.Items.Add(ClearSelection);
         }
-        else
-        if (objectsForComboBox.All(t=>t is Enum)) //don't offer "ClearSelection" if it is an Enum list
+        else if (objectsForComboBox.All(t => t is Enum)) //don't offer "ClearSelection" if it is an Enum list
         {
             _isEnum = true;
             cbxValue.DataSource = objectsForComboBox;
@@ -70,16 +69,13 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
 
             cbxValue.DropDown += (s, e) => { LateLoad(objectsForComboBox); };
         }
-
     }
 
     private bool haveLateLoaded = false;
+
     private void LateLoad(object[] objectsForComboBox)
     {
-        if(haveLateLoaded)
-        {
-            return;
-        }
+        if (haveLateLoaded) return;
 
         cbxValue.BeginUpdate();
         cbxValue.Items.AddRange(objectsForComboBox.Except(cbxValue.Items.Cast<object>()).ToArray());
@@ -108,12 +104,9 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
             _args.Fatal(e);
         }
 
-        if(cbxValue.Items.Count == 0 && _args.InitialValue != null)
-        {
-            cbxValue.Items.Add(_args.InitialValue);
-        }
+        if (cbxValue.Items.Count == 0 && _args.InitialValue != null) cbxValue.Items.Add(_args.InitialValue);
 
-        if (currentValue != null) cbxValue.Text = types != null ? ((Type) currentValue).Name : currentValue.ToString();
+        if (currentValue != null) cbxValue.Text = types != null ? ((Type)currentValue).Name : currentValue.ToString();
 
         _bLoading = false;
     }
@@ -126,8 +119,7 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
         //user chose to clear selection from a combo box
         if (cbxValue.Text == ClearSelection)
             _args.Setter(null);
-        else
-        if (cbxValue.SelectedItem != null)
+        else if (cbxValue.SelectedItem != null)
             _args.Setter(
                 types != null ? types.Single(t => t.Name.Equals(cbxValue.SelectedItem)) : cbxValue.SelectedItem);
     }
@@ -138,19 +130,15 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
             {
                 TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
                 AllowSelectingNull = true
-            }, _objectsForComboBox,out var selected))
+            }, _objectsForComboBox, out var selected))
         {
-
             if (selected == null)
             {
                 cbxValue.Text = ClearSelection;
             }
             else
             {
-                if (!cbxValue.Items.Contains(selected))
-                {
-                    cbxValue.Items.Add(selected);
-                }
+                if (!cbxValue.Items.Contains(selected)) cbxValue.Items.Add(selected);
 
                 cbxValue.SelectedItem = selected;
             }

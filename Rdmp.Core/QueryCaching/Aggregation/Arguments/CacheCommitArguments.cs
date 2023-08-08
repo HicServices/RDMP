@@ -20,7 +20,8 @@ public abstract class CacheCommitArguments
     public DataTable Results { get; private set; }
     public DatabaseColumnRequest[] ExplicitColumns { get; private set; }
 
-    protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql, DataTable results, int timeout, DatabaseColumnRequest[] explicitColumns = null)
+    protected CacheCommitArguments(AggregateOperation operation, AggregateConfiguration configuration, string sql,
+        DataTable results, int timeout, DatabaseColumnRequest[] explicitColumns = null)
     {
         Timeout = timeout;
         Operation = operation;
@@ -31,7 +32,6 @@ public abstract class CacheCommitArguments
 
         if (results == null)
             throw new Exception("DataTable results must have a value");
-
     }
 
     public abstract void CommitTableDataCompleted(DiscoveredTable resultingTable);

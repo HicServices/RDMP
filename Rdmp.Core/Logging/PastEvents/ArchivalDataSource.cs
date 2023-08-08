@@ -15,7 +15,6 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// </summary>
 public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 {
-
     public string MD5 { get; internal set; }
     public string Source { get; internal set; }
     public string Archive { get; internal set; }
@@ -24,7 +23,6 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
     public ArchivalDataSource(DbDataReader r)
     {
-            
         ID = Convert.ToInt32(r["ID"]);
         var od = r["originDate"];
 
@@ -37,37 +35,33 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
         Archive = r["archive"] as string;
         MD5 = r["MD5"] as string;
     }
-        
+
     public string ToShortString()
     {
-
         var s = ToString();
         if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
             return $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}...";
         return s;
     }
 
-    public override string ToString()
-    {
-        return $"Source:{Source}{(string.IsNullOrWhiteSpace(MD5) ? "" : $"(MD5={MD5})")}";
-    }
+    public override string ToString() => $"Source:{Source}{(string.IsNullOrWhiteSpace(MD5) ? "" : $"(MD5={MD5})")}";
 
     public int CompareTo(object obj)
     {
         if (obj is ArchivalDataSource other)
             if (OriginDate == other.OriginDate)
+            {
                 return 0;
+            }
             else
             {
-
                 if (!OriginDate.HasValue)
                     return -1;
 
                 if (!other.OriginDate.HasValue)
                     return 1;
-                    
-                return OriginDate > other.OriginDate ? 1 : -1;
 
+                return OriginDate > other.OriginDate ? 1 : -1;
             }
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);

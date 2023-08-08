@@ -39,7 +39,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
     public ParameterCollectionUIOptions Options { get; set; }
 
-    public Dictionary<ISqlParameter,Exception> ProblemObjects { get; private set; }
+    public Dictionary<ISqlParameter, Exception> ProblemObjects { get; private set; }
 
     public bool IsBroken { get; private set; }
 
@@ -57,7 +57,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         QueryEditor.KeyUp += new KeyEventHandler(QueryEditor_KeyUp);
         QueryEditor.MouseUp += new MouseEventHandler(QueryEditor_MouseUp);
 
-        QueryEditor.Leave += (s,e)=>RegenerateSQL();
+        QueryEditor.Leave += (s, e) => RegenerateSQL();
         ProblemObjects = new Dictionary<ISqlParameter, Exception>();
     }
 
@@ -66,10 +66,12 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     {
         UpdateEditability();
     }
+
     private void QueryEditor_KeyUp(object sender, KeyEventArgs e)
     {
         UpdateEditability();
     }
+
     private void QueryEditor_KeyDown(object sender, KeyEventArgs e)
     {
         UpdateEditability();
@@ -114,17 +116,17 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             }
 
             if (changed == FreeTextParameterChangeResult.ChangeAccepted)
-                ParameterChanged(this,section.Parameter);
+                ParameterChanged(this, section.Parameter);
         }
     }
 
     private ParameterEditorScintillaSection GetParameterOnLine(int lineNumber)
     {
-        return Sections.SingleOrDefault(s=>s.IncludesLine(lineNumber));
+        return Sections.SingleOrDefault(s => s.IncludesLine(lineNumber));
     }
 
     private List<ParameterEditorScintillaSection> Sections = new();
-        
+
     /// <summary>
     /// Updates the Sql code for the current state of the <see cref="Options"/> 
     /// </summary>
@@ -147,9 +149,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             foreach (var parameter in finalParameters)
             {
                 //if it's a user one
-                if(AnyTableSqlParameter.HasProhibitedName(parameter) && !ProblemObjects.ContainsKey(parameter))
-                    ProblemObjects.Add(parameter,new Exception(
-                        $"Parameter name {parameter.ParameterName} is a reserved name for the RDMP software"));//advise them
+                if (AnyTableSqlParameter.HasProhibitedName(parameter) && !ProblemObjects.ContainsKey(parameter))
+                    ProblemObjects.Add(parameter, new Exception(
+                        $"Parameter name {parameter.ParameterName} is a reserved name for the RDMP software")); //advise them
 
                 try
                 {
@@ -165,10 +167,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
                 var lineCount = GetLineCount(toAdd);
 
-                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter, 
-                        
+                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer, currentLine,
+                    currentLine += lineCount - 1, parameter,
                     !Options.ShouldBeReadOnly(parameter),
-                        
                     toAdd));
 
                 sql += toAdd;
@@ -176,12 +177,11 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             }
 
             QueryEditor.Text = sql.TrimEnd();
-
         }
         catch (Exception ex)
         {
             QueryEditor.Text = ex.ToString();
-                
+
             IsBroken = true;
 
             if (ex is QueryBuildingException exception)
@@ -191,6 +191,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 ProblemObjectsFound();
             }
         }
+
         QueryEditor.ReadOnly = true;
 
         var highlighter = new ScintillaLineHighlightingHelper();
@@ -202,12 +203,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                     ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
-        
 
     private static int GetLineCount(string s)
     {
         return s.Count(c => c.Equals('\n'));
     }
-
-
 }

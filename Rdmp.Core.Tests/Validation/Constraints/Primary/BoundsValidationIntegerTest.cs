@@ -15,13 +15,12 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 [Category("Unit")]
 internal class BoundsValidationIntegerTest : ValidationTests
 {
-
     [Test]
     public void simple_integer_bounds()
     {
         var v = new Validator();
 
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
         b.Lower = 5;
         b.Upper = 120;
 

@@ -44,7 +44,7 @@ public enum LoadStage
     /// defined in the Catalogue ColumnInfos to merge the new data into the current LIVE database
     /// </summary>
     AdjustStaging,
-        
+
     /// <summary>
     /// "Processes in this category are executed after the new data has been merged into the LIVE database.  This 
     /// is your opportunity to update dependent data, run longitudinal/dataset wide cleaning algorithms etc."

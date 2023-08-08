@@ -31,35 +31,25 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     private BrightIdeasSoftware.OLVColumn olvName;
     private bool _firstTime = true;
 
-    public SessionCollection Collection {get; private set;}
-    public RDMPCollectionCommonFunctionality CommonTreeFunctionality {get;} = new RDMPCollectionCommonFunctionality();
+    public SessionCollection Collection { get; private set; }
+    public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; } = new();
 
     public SessionCollectionUI()
     {
         InitializeComponent();
 
-        olvName.AspectGetter = o=>o.ToString();
-        CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration)};
+        olvName.AspectGetter = o => o.ToString();
+        CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
     }
 
-    public IPersistableObjectCollection GetCollection()
-    {
-        return Collection;
-    }
+    public IPersistableObjectCollection GetCollection() => Collection;
 
-    public string GetTabName()
-    {
-        return Collection?.SessionName ?? "Unamed Session";
-    }
+    public string GetTabName() => Collection?.SessionName ?? "Unamed Session";
 
-    public string GetTabToolTip()
-    {
-        return null;
-    }
+    public string GetTabToolTip() => null;
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-            
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -68,37 +58,32 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
         Collection = (SessionCollection)collection;
 
-        if(!CommonTreeFunctionality.IsSetup)
-        {
-            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvTree,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
-            {
-                // add custom options here
-                    
-            });
-        }
-                
+        if (!CommonTreeFunctionality.IsSetup)
+            CommonTreeFunctionality.SetUp(RDMPCollection.None, olvTree, activator, olvName, olvName,
+                new RDMPCollectionCommonFunctionalitySettings
+                {
+                    // add custom options here
+                });
+
         RefreshSessionObjects();
 
         CommonFunctionality.ClearToolStrip();
-        CommonFunctionality.Add(new ToolStripButton("Add...",null,AddObjectToSession));
+        CommonFunctionality.Add(new ToolStripButton("Add...", null, AddObjectToSession));
         CommonFunctionality.Add(new ToolStripButton("Remove...", null, RemoveObjectsFromSession));
 
-        if(_firstTime)
+        if (_firstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("a6abe085-f5cc-4ce0-85ef-0d42e7dbfced"));
             _firstTime = false;
         }
-
     }
 
     private void RemoveObjectsFromSession(object sender, EventArgs e)
     {
-        var toRemove = Activator.SelectMany("Remove From Session", typeof(IMapsDirectlyToDatabaseTable), Collection.DatabaseObjects.ToArray());
+        var toRemove = Activator.SelectMany("Remove From Session", typeof(IMapsDirectlyToDatabaseTable),
+            Collection.DatabaseObjects.ToArray());
 
-        if(toRemove != null && toRemove.Length > 0)
-        {
-            Remove(toRemove);
-        }
+        if (toRemove != null && toRemove.Length > 0) Remove(toRemove);
     }
 
     /// <summary>
@@ -107,59 +92,54 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     /// <param name="toAdd"></param>
     public void Add(params IMapsDirectlyToDatabaseTable[] toAdd)
     {
-        for(var i =0;i< toAdd.Length;i++)
-        {
+        for (var i = 0; i < toAdd.Length; i++)
             //unwrap pipelines
-            if(toAdd[i] is PipelineCompatibleWithUseCaseNode pcn)
-            {
+            if (toAdd[i] is PipelineCompatibleWithUseCaseNode pcn)
                 toAdd[i] = pcn.Pipeline;
-            }
-            else if(toAdd[i] is SpontaneousObject)
-            {
+            else if (toAdd[i] is SpontaneousObject)
                 throw new NotSupportedException("Object cannot be added to sessions");
-            }
-        }
 
         Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
         RefreshSessionObjects();
     }
+
     /// <summary>
     /// Removes <paramref name="toRemove"/> from the list of objects tracked in the session
     /// </summary>
     /// <param name="toRemove"></param>
     public void Remove(params IMapsDirectlyToDatabaseTable[] toRemove)
     {
-        foreach(var r in toRemove)
+        foreach (var r in toRemove)
         {
             Collection.DatabaseObjects.Remove(r);
             olvTree.RemoveObject(r);
         }
-            
+
         RefreshSessionObjects();
     }
+
     private void AddObjectToSession(object sender, EventArgs e)
     {
         var toAdd = Activator.SelectMany(new DialogArgs
-            {
-                WindowTitle = "Add to Session",
-                TaskDescription = "Pick which objects you want added to the session window."
-            }, typeof(IMapsDirectlyToDatabaseTable),
-            Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())?.ToList();
+                {
+                    WindowTitle = "Add to Session",
+                    TaskDescription = "Pick which objects you want added to the session window."
+                }, typeof(IMapsDirectlyToDatabaseTable),
+                Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())
+            ?.ToList();
 
         if (toAdd == null || toAdd.Count == 0)
-        {
             // user cancelled picking objects
             return;
-        }
 
         Add(toAdd.ToArray());
     }
 
     private void RefreshSessionObjects()
     {
-        var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator,Collection.DatabaseObjects.Contains)
+        var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
             .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
-            
+
         //no change in root favouratism
         if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
             return;
@@ -177,12 +157,10 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         olvTree.RebuildAll(true);
     }
 
-    public override string ToString()
-    {
-        return Collection?.SessionName ?? "Unamed Session";
-    }
+    public override string ToString() => Collection?.SessionName ?? "Unamed Session";
 
     #region InitializeComponent
+
     private void InitializeComponent()
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
@@ -194,8 +172,10 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         // 
         olvTree.AllColumns.Add(olvName);
         olvTree.CellEditUseWholeCell = false;
-        olvTree.Columns.AddRange(new ColumnHeader[] {
-            olvName});
+        olvTree.Columns.AddRange(new ColumnHeader[]
+        {
+            olvName
+        });
         olvTree.Cursor = Cursors.Default;
         olvTree.Dock = DockStyle.Fill;
         olvTree.FullRowSelect = true;
@@ -222,15 +202,13 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         Size = new System.Drawing.Size(487, 518);
         ((System.ComponentModel.ISupportInitialize)olvTree).EndInit();
         ResumeLayout(false);
-
     }
 
     public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
-        if(e.CloseReason == CloseReason.UserClosing)
-        {
-            e.Cancel = !Activator.YesNo($"Close Session {Collection.SessionName}? (this will end the session)","End Session");
-        }
+        if (e.CloseReason == CloseReason.UserClosing)
+            e.Cancel = !Activator.YesNo($"Close Session {Collection.SessionName}? (this will end the session)",
+                "End Session");
     }
 
     #endregion

@@ -42,7 +42,7 @@ public partial class ImportSQLTableUI : RDMPForm
 
     private Project _projectSpecific;
 
-    public ImportSQLTableUI(IActivateItems activator,bool allowImportAsCatalogue):base(activator)
+    public ImportSQLTableUI(IActivateItems activator, bool allowImportAsCatalogue) : base(activator)
     {
         _allowImportAsCatalogue = allowImportAsCatalogue;
         InitializeComponent();
@@ -50,8 +50,8 @@ public partial class ImportSQLTableUI : RDMPForm
         serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = true;
         serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
 
-        ddContext.DataSource = Enum.GetValues(typeof (DataAccessContext));
-        ddContext.SelectedItem = DataAccessContext.Any;//default to any!
+        ddContext.DataSource = Enum.GetValues(typeof(DataAccessContext));
+        ddContext.SelectedItem = DataAccessContext.Any; //default to any!
 
         serverDatabaseTableSelector1.SetItemActivator(activator);
     }
@@ -76,12 +76,12 @@ public partial class ImportSQLTableUI : RDMPForm
 
             //if it isn't a table valued function
             if (tbl is DiscoveredTableValuedFunction function)
-                Importer = new TableValuedFunctionImporter(cataRepo, function,(DataAccessContext) ddContext.SelectedValue);
+                Importer = new TableValuedFunctionImporter(cataRepo, function,
+                    (DataAccessContext)ddContext.SelectedValue);
             else
-                Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext) ddContext.SelectedValue);
+                Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext)ddContext.SelectedValue);
 
             btnImport.Enabled = true;
-
         }
         catch (Exception exception)
         {
@@ -91,8 +91,7 @@ public partial class ImportSQLTableUI : RDMPForm
 
     private void btnImport_Click(object sender, EventArgs e)
     {
-
-        if(_allowImportAsCatalogue)
+        if (_allowImportAsCatalogue)
         {
             var ui = new ConfigureCatalogueExtractabilityUI(Activator, Importer, "Existing Table", _projectSpecific)
             {
@@ -107,7 +106,7 @@ public partial class ImportSQLTableUI : RDMPForm
             // parent.SetCredentials();
             Importer.DoImport(out var ti, out var cols);
 
-            if(ti is DatabaseEntity de)
+            if (ti is DatabaseEntity de)
                 Activator.Publish(de);
 
             TableInfoCreatedIfAny = ti;
@@ -121,11 +120,12 @@ public partial class ImportSQLTableUI : RDMPForm
 
             if (ti != null)
             {
-                if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
+                if (ti.IsTableValuedFunction && ti.GetAllParameters().Any())
                 {
                     var options = ParameterCollectionUIOptionsFactory.Create(ti);
-                    ParameterCollectionUI.ShowAsDialog(Activator,options,true);
+                    ParameterCollectionUI.ShowAsDialog(Activator, options, true);
                 }
+
                 MessageBox.Show($"Successfully imported table '{ti}'");
             }
 

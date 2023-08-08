@@ -8,7 +8,6 @@ using System;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
-
 using Version = System.Version;
 
 namespace Rdmp.Core.Repositories;
@@ -18,10 +17,7 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 internal class VersionYamlTypeConverter : IYamlTypeConverter
 {
-    public bool Accepts(Type type)
-    {
-        return type == typeof(Version);
-    }
+    public bool Accepts(Type type) => type == typeof(Version);
 
     public object ReadYaml(IParser parser, Type type)
     {

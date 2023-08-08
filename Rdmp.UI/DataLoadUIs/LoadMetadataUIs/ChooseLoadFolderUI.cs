@@ -40,14 +40,15 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     public ChooseLoadDirectoryUI(IActivateItems activator, ILoadMetadata loadMetadata)
     {
         InitializeComponent();
-            
+
         SetItemActivator(activator);
 
-        var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
-            
-        helpIcon1.SetHelpText("Location Of Flat Files",help);
+        var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists(
+            "ILoadMetadata.LocationOfFlatFiles", false, true);
 
-        if(!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        helpIcon1.SetHelpText("Location Of Flat Files", help);
+
+        if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
         {
             tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
             CheckExistingProjectDirectory();
@@ -59,7 +60,6 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
         tbCreateNew.Enabled = rbCreateNew.Checked;
         tbUseExisting.Enabled = rbUseExisting.Checked;
         btnOk.Enabled = true;
-
     }
 
     private void tbUseExisting_Leave(object sender, EventArgs e)
@@ -85,15 +85,14 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     private void btnOk_Click(object sender, EventArgs e)
     {
         if (rbCreateNew.Checked)
-        {
             try
             {
                 var dir = new DirectoryInfo(tbCreateNew.Text);
 
-                if(!dir.Exists)
+                if (!dir.Exists)
                     dir.Create();
 
-                Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name).RootPath.FullName;
+                Result = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name).RootPath.FullName;
 
                 DialogResult = DialogResult.OK;
                 Close();
@@ -102,10 +101,8 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             {
                 ExceptionViewer.Show(exception);
             }
-        }
 
         if (rbUseExisting.Checked)
-        {
             try
             {
                 var dir = new LoadDirectory(tbUseExisting.Text);
@@ -115,14 +112,13 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             }
             catch (Exception exception)
             {
-                if(Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})","Invalid Path"))
+                if (Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})", "Invalid Path"))
                 {
                     Result = tbUseExisting.Text;
                     DialogResult = DialogResult.OK;
                     Close();
                 }
             }
-        }
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -134,7 +130,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     private void btnCreateNewBrowse_Click(object sender, EventArgs e)
     {
         var fbd = new FolderBrowserDialog();
-            
+
         if (fbd.ShowDialog() == DialogResult.OK)
             tbCreateNew.Text = fbd.SelectedPath;
     }

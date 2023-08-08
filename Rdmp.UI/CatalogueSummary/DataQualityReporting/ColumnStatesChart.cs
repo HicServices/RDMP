@@ -46,16 +46,21 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
 
         var row = 0;
 
-        foreach (var property in evaluation.ColumnStates.Select(static c=>c.TargetProperty).Distinct())
+        foreach (var property in evaluation.ColumnStates.Select(static c => c.TargetProperty).Distinct())
         {
             var bar = new ConsequenceBar
             {
                 Label = property,
-                Correct = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountCorrect : 0),
-                Invalid = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountInvalidatesRow : 0),
-                Missing = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountMissing : 0),
-                Wrong = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountWrong : 0),
-                DBNull = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountDBNull : 0),
+                Correct = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
+                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountCorrect : 0),
+                Invalid = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s =>
+                    s.PivotCategory.Equals(pivotCategoryValue) ? s.CountInvalidatesRow : 0),
+                Missing = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
+                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountMissing : 0),
+                Wrong = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
+                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountWrong : 0),
+                DBNull = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
+                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountDBNull : 0),
 
                 Width = panel1.Width,
                 Location = new Point(0, 23 * row++),

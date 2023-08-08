@@ -23,7 +23,6 @@ namespace Rdmp.UI.SimpleControls;
 
 public delegate void IntegratedSecurityUseChangedHandler(bool use);
 
-
 /// <summary>
 /// Lets you select a server database or table.  Includes auto population of database/table lists.  This is a reusable component.
 /// </summary>
@@ -82,12 +81,12 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         InitializeComponent();
 
-        if(LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+        if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
             return;
 
         _workerRefreshDatabases.DoWork += UpdateDatabaseListAsync;
         _workerRefreshDatabases.WorkerSupportsCancellation = true;
-        _workerRefreshDatabases.RunWorkerCompleted+=UpdateDatabaseAsyncCompleted;
+        _workerRefreshDatabases.RunWorkerCompleted += UpdateDatabaseAsyncCompleted;
 
         _workerRefreshTables.DoWork += UpdateTablesListAsync;
         _workerRefreshTables.WorkerSupportsCancellation = true;
@@ -105,7 +104,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         btnPickCredentials.Enabled = false;
     }
 
-        
+
     #region Async Stuff
 
     private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
@@ -129,12 +128,13 @@ public partial class ServerDatabaseTableSelector : UserControl
                 var result = new List<DiscoveredTable>();
 
                 result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
-                result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
+                result.AddRange(
+                    databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
 
                 _listTablesAsyncResult = result;
             }
         }
-        catch (OperationCanceledException)//user cancels
+        catch (OperationCanceledException) //user cancels
         {
             _listTablesAsyncResult = new List<DiscoveredTable>();
         }
@@ -142,7 +142,6 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void UpdateTablesAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
-
         //success?
         ResetState();
 
@@ -150,20 +149,19 @@ public partial class ServerDatabaseTableSelector : UserControl
         {
             SetState(e.Error);
         }
-        else
-        if (!e.Cancelled)
+        else if (!e.Cancelled)
         {
-            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction).ToArray());
-            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(static t => t is DiscoveredTableValuedFunction).ToArray());
+            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction)
+                .ToArray());
+            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult
+                .Where(static t => t is DiscoveredTableValuedFunction).ToArray());
         }
-                
+
 
         SetLoading(false);
 
         cbxTable.Focus();
     }
-
-        
 
 
     //do work
@@ -182,15 +180,17 @@ public partial class ServerDatabaseTableSelector : UserControl
         {
             _listDatabasesAsyncResult = Array.Empty<string>();
         }
-        catch (AggregateException ex )//user cancels
+        catch (AggregateException ex) //user cancels
         {
             if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
+            {
                 _listDatabasesAsyncResult = Array.Empty<string>();
+            }
             else
             {
                 SetState(ex);
                 _listDatabasesAsyncResult = Array.Empty<string>();
-            }   
+            }
         }
     }
 
@@ -199,6 +199,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         _exception = null;
         SetText(CancelConnection);
     }
+
     private void SetState(Exception ex)
     {
         _exception = ex;
@@ -207,36 +208,27 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void SetText(string v)
     {
-
         if (llLoading.InvokeRequired)
-        {
             llLoading.Invoke(new MethodInvoker(() => llLoading.Text = v));
-        }
         else
-        {
             llLoading.Text = v;
-        }
     }
 
     //handle complete
     private void UpdateDatabaseAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         if (e.Error != null)
-        {
             SetState(e.Error);
-        }
         else if (!e.Cancelled)
             cbxDatabase.Items.AddRange(_listDatabasesAsyncResult);
         else
-        {
             // user cancelled
             ResetState();
-        }
 
         SetLoading(false);
         cbxDatabase.Focus();
     }
-        
+
     //aborting
     private void AbortWorkers()
     {
@@ -252,6 +244,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             _workerRefreshTablesToken?.Cancel();
         }
     }
+
     #endregion
 
     public void SetDefaultServers(string[] defaultServers)
@@ -265,14 +258,15 @@ public partial class ServerDatabaseTableSelector : UserControl
         set
         {
             _allowTableValuedFunctionSelection = value;
-                
+
             lblOr.Visible = value;
             lblTableValuedFunction.Visible = value;
             cbxTableValueFunctions.Visible = value;
         }
     }
 
-    public DatabaseType DatabaseType {
+    public DatabaseType DatabaseType
+    {
         get => databaseTypeUI1.DatabaseType;
         set => databaseTypeUI1.DatabaseType = value;
     }
@@ -303,6 +297,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     }
 
     private bool _clearingTable = false;
+
     private void cbxTable_SelectedIndexChanged(object sender, EventArgs e)
     {
         //don't clear both!
@@ -341,7 +336,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         UpdateDatabaseList();
     }
-        
+
     private void UpdateTableList()
     {
         if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))
@@ -383,7 +378,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         SelectionChanged?.Invoke();
 
 
-        if(!_workerRefreshDatabases.IsBusy)
+        if (!_workerRefreshDatabases.IsBusy)
             _workerRefreshDatabases.RunWorkerAsync(new object[]
             {
                 GetBuilder()
@@ -400,7 +395,6 @@ public partial class ServerDatabaseTableSelector : UserControl
         databaseTypeUI1.Enabled = !isLoading;
         btnRefreshDatabases.Enabled = !isLoading;
         btnRefreshTables.Enabled = !isLoading;
-
     }
 
     public event IntegratedSecurityUseChangedHandler IntegratedSecurityUseChanged;
@@ -457,37 +451,30 @@ public partial class ServerDatabaseTableSelector : UserControl
             return null;
 
         //They made up a table that may or may not exist 
-        if(!string.IsNullOrWhiteSpace(Table))
+        if (!string.IsNullOrWhiteSpace(Table))
             return db.ExpectTable(Table);
 
         //They made up a table valued function which may or may not exist
-        if(!string.IsNullOrWhiteSpace(TableValuedFunction))
+        if (!string.IsNullOrWhiteSpace(TableValuedFunction))
             return db.ExpectTableValuedFunction(TableValuedFunction);
 
         //they haven't entered anything
         return null;
     }
 
-    public DbConnectionStringBuilder GetBuilder()
-    {
-        return _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
-    }
-        
+    public DbConnectionStringBuilder GetBuilder() =>
+        _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
+
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        if(llLoading.Text == CancelConnection)
+        if (llLoading.Text == CancelConnection)
         {
             AbortWorkers();
         }
         else
         {
-            if(_exception != null)
-            {
-                ExceptionViewer.Show(_exception);
-            }
-                
+            if (_exception != null) ExceptionViewer.Show(_exception);
         }
-            
     }
 
     private void btnRefreshDatabases_Click(object sender, EventArgs e)
@@ -540,22 +527,18 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void btnPickCredentials_Click(object sender, EventArgs e)
     {
-        if(_activator == null)
-        {
-            return;
-        }
+        if (_activator == null) return;
 
         var creds = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
 
-        if(!creds.Any())
+        if (!creds.Any())
         {
             _activator.Show("You do not have any DataAccessCredentials configured");
             return;
         }
 
         var cred = (DataAccessCredentials)_activator.SelectOne("Select Credentials", creds);
-        if(cred != null)
-        {
+        if (cred != null)
             try
             {
                 tbUsername.Text = cred.Username;
@@ -565,6 +548,5 @@ public partial class ServerDatabaseTableSelector : UserControl
             {
                 _activator.ShowException("Error decrypting password", ex);
             }
-        }
     }
 }

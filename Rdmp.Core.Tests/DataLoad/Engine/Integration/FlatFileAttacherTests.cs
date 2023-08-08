@@ -46,30 +46,28 @@ public class FlatFileAttacherTests : DatabaseTests
         toCleanup?.Delete(true);
 
         LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
-            
+
         // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
         _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            
+
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
 
             var cmdCreateTable = _database.Server.GetCommand(
-                $"CREATE Table {_database.GetRuntimeName()}..Bob([name] [varchar](500),[name2] [varchar](500))",con);
+                $"CREATE Table {_database.GetRuntimeName()}..Bob([name] [varchar](500),[name2] [varchar](500))", con);
             cmdCreateTable.ExecuteNonQuery();
         }
 
         _table = _database.ExpectTable("Bob");
-
     }
 
     [Test]
-    [TestCase(",",false)]
-    [TestCase("|",false)]//wrong separator
-    [TestCase(",",true)]
+    [TestCase(",", false)]
+    [TestCase("|", false)] //wrong separator
+    [TestCase(",", true)]
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
-
         var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
@@ -105,13 +103,15 @@ public class FlatFileAttacherTests : DatabaseTests
         }
 
         //Case when you are using the wrong separator
-        if(separator == "|")
+        if (separator == "|")
         {
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
 
-            var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-                
             Assert.IsNotNull(ex.InnerException);
-            StringAssert.StartsWith("Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does", ex.InnerException.Message);
+            StringAssert.StartsWith(
+                "Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does",
+                ex.InnerException.Message);
             return;
         }
 
@@ -126,29 +126,27 @@ public class FlatFileAttacherTests : DatabaseTests
 
         using (var con = _database.Server.GetConnection())
         {
-
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
             Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob",r["name"]);
+            Assert.AreEqual("Bob", r["name"]);
             Assert.AreEqual("Munchousain", r["name2"]);
-                    
+
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Franky", r["name"]);
             Assert.AreEqual("Hollyw9ood", r["name2"]);
-                
+
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Manny2", r["name"]);
             Assert.AreEqual("Ok", r["name2"]);
         }
-            
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
         File.Delete(filename);
     }
 
 
-        
     [Test]
     public void Test_ExplicitDateTimeFormat_Attachment()
     {
@@ -184,19 +182,18 @@ public class FlatFileAttacherTests : DatabaseTests
 
         using (var con = _database.Server.GetConnection())
         {
-
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
             Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob",r["name"]);
-            Assert.AreEqual(new DateTime(2001,01,13), r["name2"]);
-                    
+            Assert.AreEqual("Bob", r["name"]);
+            Assert.AreEqual(new DateTime(2001, 01, 13), r["name2"]);
+
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Franky", r["name"]);
-            Assert.AreEqual(new DateTime(2002,01,13), r["name2"]);
+            Assert.AreEqual(new DateTime(2002, 01, 13), r["name2"]);
         }
-            
-        attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
         File.Delete(filename);
     }
@@ -222,11 +219,10 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.ForceHeaders = "name\tname2";
 
         var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-        Assert.AreEqual(ExitCodeType.Success,exitCode);
+        Assert.AreEqual(ExitCodeType.Success, exitCode);
 
         using (var con = _database.Server.GetConnection())
         {
-
             con.Open();
             var r = _database.Server.GetCommand("Select name,name2 from Bob", con).ExecuteReader();
             Assert.IsTrue(r.Read());
@@ -241,8 +237,6 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
         File.Delete(filename);
-
-
     }
 
     [TestCase(true)]
@@ -260,7 +254,7 @@ public class FlatFileAttacherTests : DatabaseTests
         sw.Dispose();
 
         if (columnExistsInRaw)
-            _table.AddColumn("FilePath",new DatabaseTypeRequest(typeof(string),500),true,30);
+            _table.AddColumn("FilePath", new DatabaseTypeRequest(typeof(string), 500), true, 30);
 
         var attacher = new AnySeparatorFileAttacher();
         attacher.Initialize(LoadDirectory, _database);
@@ -272,8 +266,10 @@ public class FlatFileAttacherTests : DatabaseTests
 
         if (!columnExistsInRaw)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-            Assert.AreEqual("AddFilenameColumnNamed is set to 'FilePath' but the column did not exist in RAW",ex.InnerException.Message);
+            var ex = Assert.Throws<FlatFileLoadException>(() =>
+                attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+            Assert.AreEqual("AddFilenameColumnNamed is set to 'FilePath' but the column did not exist in RAW",
+                ex.InnerException.Message);
             return;
         }
 
@@ -283,7 +279,6 @@ public class FlatFileAttacherTests : DatabaseTests
 
         using (var con = _database.Server.GetConnection())
         {
-
             con.Open();
             var r = _database.Server.GetCommand("Select name,name2,FilePath from Bob", con).ExecuteReader();
             Assert.IsTrue(r.Read());
@@ -299,8 +294,6 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
         File.Delete(filename);
-
-
     }
 
 
@@ -339,12 +332,12 @@ public class FlatFileAttacherTests : DatabaseTests
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
         Assert.AreEqual(ExitCodeType.Success, exitCode);
-            
+
         using (var con = _database.Server.GetConnection())
         {
-
             con.Open();
-            var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con).ExecuteReader();
+            var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con)
+                .ExecuteReader();
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Bob", r["name"]);
             Assert.AreEqual("Munchousain", r["name2"]);
@@ -357,7 +350,6 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
         File.Delete(filename);
-
     }
 
 
@@ -391,9 +383,9 @@ public class FlatFileAttacherTests : DatabaseTests
 
         using (var con = _database.Server.GetConnection())
         {
-
             con.Open();
-            var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con).ExecuteReader();
+            var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con)
+                .ExecuteReader();
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Bob", r["name"]);
             Assert.AreEqual("Munchousain", r["name2"]);
@@ -406,26 +398,23 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
         File.Delete(filename);
-
     }
-        
-    [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-GB")]
-    [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-us")]
-    [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-us")]
-    [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-GB")]
 
-    [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-GB")]
-    [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-us")]
-    [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-us")]
-    [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-GB")]
-                
-    [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-GB")]
-    [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-us")]
-    [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-us")]
-    [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-GB")]
-
-    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type,string val,string attacherCulture, string threadCulture)
-    { 
+    [TestCase(DatabaseType.MySql, "27/01/2001", "en-GB", "en-GB")]
+    [TestCase(DatabaseType.MySql, "27/01/2001", "en-GB", "en-us")]
+    [TestCase(DatabaseType.MySql, "01/27/2001", "en-us", "en-us")]
+    [TestCase(DatabaseType.MySql, "01/27/2001", "en-us", "en-GB")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "27/01/2001", "en-GB", "en-GB")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "27/01/2001", "en-GB", "en-us")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "01/27/2001", "en-us", "en-us")]
+    [TestCase(DatabaseType.MicrosoftSQLServer, "01/27/2001", "en-us", "en-GB")]
+    [TestCase(DatabaseType.Oracle, "27/01/2001", "en-GB", "en-GB")]
+    [TestCase(DatabaseType.Oracle, "27/01/2001", "en-GB", "en-us")]
+    [TestCase(DatabaseType.Oracle, "01/27/2001", "en-us", "en-us")]
+    [TestCase(DatabaseType.Oracle, "01/27/2001", "en-us", "en-GB")]
+    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type, string val, string attacherCulture,
+        string threadCulture)
+    {
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
         var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
@@ -440,13 +429,13 @@ public class FlatFileAttacherTests : DatabaseTests
 
         var db = GetCleanedServer(type);
 
-        var tbl = 
+        var tbl =
             db.CreateTable("AmbiguousDatesTestTable",
-                new []{new DatabaseColumnRequest("dob",new DatabaseTypeRequest(typeof(DateTime)))}
+                new[] { new DatabaseColumnRequest("dob", new DatabaseTypeRequest(typeof(DateTime))) }
             );
 
 
-        Import(tbl,out var ti,out _);
+        Import(tbl, out var ti, out _);
         var attacher = new AnySeparatorFileAttacher
         {
             Separator = ",",
@@ -456,14 +445,14 @@ public class FlatFileAttacherTests : DatabaseTests
         };
         attacher.Initialize(LoadDirectory, db);
 
-        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
+        var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
         Assert.AreEqual(ExitCodeType.Success, exitCode);
-            
+
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
 
-        Assert.AreEqual(new DateTime(2001,1,27),tbl.GetDataTable().Rows[0][0]);
+        Assert.AreEqual(new DateTime(2001, 1, 27), tbl.GetDataTable().Rows[0][0]);
 
         File.Delete(filename);
         tbl.Drop();
@@ -474,19 +463,21 @@ public class FlatFileAttacherTests : DatabaseTests
     {
         var source = new AnySeparatorFileAttacher();
 
-        var tiInLoad = new TableInfo(CatalogueRepository,"TableInLoad");
+        var tiInLoad = new TableInfo(CatalogueRepository, "TableInLoad");
         var tiNotInLoad = new TableInfo(CatalogueRepository, "TableNotInLoad");
 
         source.TableToLoad = tiNotInLoad;
 
-        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true})
-            {
-                RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad })
-            };
+        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true })
+        {
+            RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new[] { tiInLoad })
+        };
 
 
-        var ex = Assert.Throws<Exception>(()=>source.Attach(job,new GracefulCancellationToken()));
+        var ex = Assert.Throws<Exception>(() => source.Attach(job, new GracefulCancellationToken()));
 
-        StringAssert.IsMatch("FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'", ex.Message);
+        StringAssert.IsMatch(
+            "FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'",
+            ex.Message);
     }
 }

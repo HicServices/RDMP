@@ -37,13 +37,17 @@ namespace Rdmp.Core.CohortCreation.Execution;
 public class CohortCompiler
 {
     private CohortIdentificationConfiguration _cic;
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration {
+
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration
+    {
         get => _cic;
-        set {
+        set
+        {
             _cic = value;
             BuildPluginCohortCompilerList();
         }
     }
+
     public bool IncludeCumulativeTotals { get; set; }
 
 
@@ -57,7 +61,8 @@ public class CohortCompiler
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
-        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
+        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,
+            null, new IgnoreAllErrorsCheckNotifier(), null);
         set => _coreChildProvider = value;
     }
 
@@ -78,16 +83,10 @@ public class CohortCompiler
     private void BuildPluginCohortCompilerList()
     {
         // we already have them (or crashed out trying to create them
-        if(PluginCohortCompilers != null)
-        {
-            return;
-        }
+        if (PluginCohortCompilers != null) return;
 
         // we don't know what we are building yet!
-        if(CohortIdentificationConfiguration == null)
-        {
-            return;
-        }
+        if (CohortIdentificationConfiguration == null) return;
 
         try
         {
@@ -100,7 +99,8 @@ public class CohortCompiler
         }
     }
 
-    private void DoTaskAsync(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,bool cacheOnCompletion = false)
+    private void DoTaskAsync(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,
+        bool cacheOnCompletion = false)
     {
         try
         {
@@ -109,7 +109,7 @@ public class CohortCompiler
             task.Timeout = timeout;
             task.State = CompilationState.Executing;
 
-            execution.GetCohortAsync( timeout);
+            execution.GetCohortAsync(timeout);
 
             task.FinalRowCount = execution.Identifiers.Rows.Count;
 
@@ -125,7 +125,7 @@ public class CohortCompiler
         catch (Exception ex)
         {
             task.Stopwatch.Stop();
-            task.State= CompilationState.Crashed;
+            task.State = CompilationState.Crashed;
             task.CrashMessage = ex;
         }
     }
@@ -145,12 +145,14 @@ public class CohortCompiler
         foreach (var joinable in CohortIdentificationConfiguration.GetAllJoinables())
             toReturn.Add(AddTask(joinable, globals));
 
-        toReturn.AddRange( AddTasksRecursively(globals,CohortIdentificationConfiguration.RootCohortAggregateContainer,addSubcontainerTasks));
+        toReturn.AddRange(AddTasksRecursively(globals, CohortIdentificationConfiguration.RootCohortAggregateContainer,
+            addSubcontainerTasks));
 
         return toReturn;
     }
 
-    public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+    public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container,
+        bool addSubcontainerTasks = true)
     {
         var tasks = AddTasksRecursivelyAsync(globals, container, addSubcontainerTasks);
 
@@ -170,33 +172,27 @@ public class CohortCompiler
     /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
     /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
     /// <returns></returns>
-    public List<Task<ICompileable>> AddTasksRecursivelyAsync(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+    public List<Task<ICompileable>> AddTasksRecursivelyAsync(ISqlParameter[] globals,
+        CohortAggregateContainer container, bool addSubcontainerTasks = true)
     {
         var toReturn = new List<Task<ICompileable>>();
 
-        if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
-            throw new QueryBuildingException($"CohortIdentificationConfiguration '{CohortIdentificationConfiguration}' had not root SET container (UNION / INERSECT / EXCEPT)");
+        if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
+            throw new QueryBuildingException(
+                $"CohortIdentificationConfiguration '{CohortIdentificationConfiguration}' had not root SET container (UNION / INERSECT / EXCEPT)");
 
         //if it is the root container or we are adding tasks for all containers including subcontainers
         if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
-        {
             if (!container.IsDisabled)
-            {
-                toReturn.Add(Task.Run(()=> { return AddTask(container, globals); }));
-            }
-        }
+                toReturn.Add(Task.Run(() => { return AddTask(container, globals); }));
 
 
         foreach (var c in container.GetOrderedContents())
         {
-            if(c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
-            {
+            if (c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
                 toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
-            }
-            if(c is AggregateConfiguration aggregate && !aggregate.IsDisabled)
-            {
+            if (c is AggregateConfiguration aggregate && !aggregate.IsDisabled)
                 toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
-            }
         }
 
         return toReturn;
@@ -215,7 +211,7 @@ public class CohortCompiler
         var container = runnable as CohortAggregateContainer;
         var joinable = runnable as JoinableCohortAggregateConfiguration;
         var obj = (aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable) ?? throw new NotSupportedException(
-                $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
+            $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
         var source = new CancellationTokenSource();
         ICompileable task;
 
@@ -230,27 +226,28 @@ public class CohortCompiler
             // is this a custom aggregate type that gets handled differently e.g. by queriying an API?
             var plugin = PluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(aggregate));
 
-            task = plugin != null ?
+            task = plugin != null
+                ?
                 // yes
-                new PluginCohortCompilerTask(aggregate,this,plugin)
+                new PluginCohortCompilerTask(aggregate, this, plugin)
                 // no
                 : new AggregationTask(aggregate, this);
 
-            queryBuilder = new CohortQueryBuilder(aggregate, globals,CoreChildProvider);
+            queryBuilder = new CohortQueryBuilder(aggregate, globals, CoreChildProvider);
 
             //which has a parent
             parent = aggregate.GetCohortAggregateContainerIfAny();
         }
         else if (joinable != null)
         {
-            task = new JoinableTask(joinable,this);
-            queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,CoreChildProvider);
+            task = new JoinableTask(joinable, this);
+            queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration, globals, CoreChildProvider);
             parent = null;
         }
         else
         {
             task = new AggregationContainerTask(container, this);
-            queryBuilder = new CohortQueryBuilder(container, globals,CoreChildProvider);
+            queryBuilder = new CohortQueryBuilder(container, globals, CoreChildProvider);
             parent = container.GetParentContainerIfAny();
         }
 
@@ -264,19 +261,16 @@ public class CohortCompiler
             //but...
             //if the container/aggregate being processed isn't the first component in the container
             if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
-            {
-                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider)
-                    {
-                        StopContainerWhenYouReach = (IOrderable) runnable
-                    };
-            }
-
+                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals, CoreChildProvider)
+                {
+                    StopContainerWhenYouReach = (IOrderable)runnable
+                };
         }
+
         ExternalDatabaseServer cacheServer = null;
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
-
             cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
             queryBuilder.CacheServer = cacheServer;
 
@@ -292,14 +286,12 @@ public class CohortCompiler
         lock (Tasks)
         {
             //we have seen this entity before (by ID & entity type)
-            foreach (var c in Tasks.Keys.Where(k =>k.Child.Equals(obj) && k != task).ToArray())
+            foreach (var c in Tasks.Keys.Where(k => k.Child.Equals(obj) && k != task).ToArray())
             {
                 // the task is already setup ready to go somehow
-                if(c.CancellationTokenSource == source)
-                {
+                if (c.CancellationTokenSource == source)
                     // it's already added, no worries just return the already existing one
                     return c;
-                }
 
                 CancelTask(c, true);
             }
@@ -331,20 +323,19 @@ public class CohortCompiler
         task.Log = queryBuilder?.Results?.Log;
 
 
-        var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
+        var isResultsForRootContainer = container != null &&
+                                        container.ID == CohortIdentificationConfiguration
+                                            .RootCohortAggregateContainer_ID;
 
 
         var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
             queryBuilder?.Results?.CountOfSubQueries ?? -1,
-            queryBuilder?.Results?.CountOfCachedSubQueries ??-1,
+            queryBuilder?.Results?.CountOfCachedSubQueries ?? -1,
             isResultsForRootContainer,
             queryBuilder?.Results?.TargetServer);
 
         // task is now built but not yet
-        if(task.State != CompilationState.Crashed)
-        {
-            task.State = CompilationState.NotScheduled;
-        }
+        if (task.State != CompilationState.Crashed) task.State = CompilationState.NotScheduled;
 
         lock (Tasks)
         {
@@ -355,25 +346,27 @@ public class CohortCompiler
         return task;
     }
 
-    public void LaunchSingleTask(ICompileable compileable,int timeout,bool cacheOnCompletion)
+    public void LaunchSingleTask(ICompileable compileable, int timeout, bool cacheOnCompletion)
     {
-        if(!Tasks.ContainsKey(compileable))
+        if (!Tasks.ContainsKey(compileable))
             throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
-        if(compileable.State != CompilationState.NotScheduled)
-            throw new ArgumentException($"Task must be in state NotScheduled but was {compileable.State}.  Crash message is:{compileable.CrashMessage?.ToString() ?? "null"}");
+        if (compileable.State != CompilationState.NotScheduled)
+            throw new ArgumentException(
+                $"Task must be in state NotScheduled but was {compileable.State}.  Crash message is:{compileable.CrashMessage?.ToString() ?? "null"}");
 
         KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
     }
 
-    public void LaunchScheduledTasksAsync(int timeout,bool cacheOnCompletion)
+    public void LaunchScheduledTasksAsync(int timeout, bool cacheOnCompletion)
     {
         foreach (var kvp in Tasks)
             if (kvp.Key.State == CompilationState.NotScheduled)
                 KickOff(kvp.Key, kvp.Value, timeout, cacheOnCompletion);
     }
 
-    private void KickOff(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,bool cacheOnCompletion)
+    private void KickOff(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,
+        bool cacheOnCompletion)
     {
         task.State = CompilationState.Scheduled;
         task.Stopwatch = new Stopwatch();
@@ -420,27 +413,27 @@ public class CohortCompiler
 
                 var identifierDimension = identifiers[0];
                 var identifierColumnInfo = identifierDimension.ColumnInfo;
-                var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
+                var destinationDataType =
+                    GetDestinationType(identifierColumnInfo.Data_type, cacheableTask, queryCachingServer);
 
                 explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
 
                 //make other non transform Types have explicit values
-                foreach(var d in configuration.AggregateDimensions)
-                {
-                    if(d != identifierDimension)
-                    {
+                foreach (var d in configuration.AggregateDimensions)
+                    if (d != identifierDimension)
                         //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
-                        if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
-                        {
+                        if (d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) &&
+                            !d.ExtractionInformation.IsProperTransform())
                             //then use the origin datatype
-                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(), GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
-                        }
-                    }
-                }
+                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),
+                                GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask,
+                                    queryCachingServer)));
             }
             catch (Exception e)
             {
-                throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
+                throw new Exception(
+                    "Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache",
+                    e);
             }
 
             var args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
@@ -450,7 +443,7 @@ public class CohortCompiler
         catch (Exception e)
         {
             cacheableTask.State = CompilationState.Crashed;
-            cacheableTask.CrashMessage = new Exception("Failed to cache results",e);
+            cacheableTask.CrashMessage = new Exception("Failed to cache results", e);
         }
     }
 
@@ -462,7 +455,8 @@ public class CohortCompiler
     /// <param name="cacheableTask">Where the datatype was read from e.g. Oracle</param>
     /// <param name="queryCachingServer">Where the datatype is going to be stored e.g. Sql Server</param>
     /// <returns></returns>
-    private static string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
+    private static string GetDestinationType(string data_type, ICacheableTask cacheableTask,
+        ExternalDatabaseServer queryCachingServer)
     {
         var accessPoints = cacheableTask.GetDataAccessPoints();
 
@@ -473,9 +467,7 @@ public class CohortCompiler
 
         //if we have a change in syntax e.g. read from Oracle write to Sql Server
         if (sourceSyntax.DatabaseType != destinationSyntax.DatabaseType)
-        {
             return sourceSyntax.TypeTranslater.TranslateSQLDBType(data_type, destinationSyntax.TypeTranslater);
-        }
 
         return data_type;
     }
@@ -487,19 +479,12 @@ public class CohortCompiler
     /// <param name="alsoClearTaskList">True to also remove all ICompileables, False to leave the Tasks intact (allows you to rerun them or clear etc)</param>
     public void CancelAllTasks(bool alsoClearTaskList)
     {
-        lock(Tasks)
+        lock (Tasks)
         {
-            foreach (var k in Tasks.Keys)
-            {
-                CancelTask(k, alsoClearTaskList);
-            }
+            foreach (var k in Tasks.Keys) CancelTask(k, alsoClearTaskList);
 
-            if (alsoClearTaskList)
-            {
-                Tasks.Clear();
-            }
+            if (alsoClearTaskList) Tasks.Clear();
         }
-
     }
 
     /// <summary>
@@ -510,20 +495,15 @@ public class CohortCompiler
     /// <param name="alsoClearFromTaskList">True to remove the ICompileable from the tasks list, False to leave the Tasks intact (allows you to rerun it or clear etc) </param>
     public void CancelTask(ICompileable compileable, bool alsoClearFromTaskList)
     {
-        lock(Tasks)
+        lock (Tasks)
         {
             if (!Tasks.TryGetValue(compileable, out var execution)) return;
-            if (execution is { IsExecuting: true })
-            {
-                execution.Cancel();
-            }
+            if (execution is { IsExecuting: true }) execution.Cancel();
 
             // cancel the source
-            if(
+            if (
                 compileable.State is CompilationState.Building or CompilationState.Executing)
-            {
                 compileable.CancellationTokenSource.Cancel();
-            }
 
             if (alsoClearFromTaskList)
             {
@@ -531,7 +511,6 @@ public class CohortCompiler
                 Tasks.Remove(compileable);
             }
         }
-
     }
 
     public int GetAliveThreadCount()
@@ -541,17 +520,17 @@ public class CohortCompiler
 
     public string GetCachedQueryUseCount(ICompileable task)
     {
-        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
+        if (!Tasks.TryGetValue(task, out var execution) || execution == null)
             return "Unknown";
 
         return $"{execution.SubqueriesCached}/{execution.SubQueries}";
     }
 
-    public bool AreaAllQueriesCached(ICompileable task )
+    public bool AreaAllQueriesCached(ICompileable task)
     {
-        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
+        if (!Tasks.TryGetValue(task, out var execution) || execution == null)
             return false;
 
-        return execution.SubqueriesCached == execution.SubQueries && execution.SubQueries >=1;
+        return execution.SubqueriesCached == execution.SubQueries && execution.SubQueries >= 1;
     }
 }

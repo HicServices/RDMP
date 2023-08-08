@@ -27,17 +27,17 @@ public class CachingHost
     /// The cacheable tasks that the host will be running
     /// </summary>
     public ICacheProgress CacheProgress { get; set; }
-        
+
     /// <summary>
     /// True if the host is attempting to back fill the cache with failed date ranges from the past
     /// </summary>
     public bool RetryMode { get; set; }
-        
+
     private readonly ICatalogueRepository _repository;
-        
+
     // this is more because we can't retrieve CacheWindows from LoadProgresss (yet) 
     private List<PermissionWindowCacheDownloader> _downloaders;
-        
+
     /// <summary>
     /// True to shut down once the <see cref="PermissionWindow"/> for the <see cref="CacheProgress"/> is exceeded.  False
     /// to sleep until it becomes permissible again.
@@ -64,18 +64,20 @@ public class CachingHost
         if (CacheProgress == null)
             throw new InvalidOperationException("No CacheProgress has been set");
 
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"CachingHost started for {CacheProgress} (CacheFillProgress={CacheProgress.CacheFillProgress}, CacheLagPeriod={CacheProgress.CacheLagPeriod}, ChunkPeriod={CacheProgress.ChunkPeriod}, Pipeline={CacheProgress.Pipeline})"));
+        listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information,
+                $"CachingHost started for {CacheProgress} (CacheFillProgress={CacheProgress.CacheFillProgress}, CacheLagPeriod={CacheProgress.CacheLagPeriod}, ChunkPeriod={CacheProgress.ChunkPeriod}, Pipeline={CacheProgress.Pipeline})"));
 
         var permissionWindow = CacheProgress.PermissionWindow;
 
         _downloaders = new List<PermissionWindowCacheDownloader>
         {
-            new PermissionWindowCacheDownloader(permissionWindow, new List<ICacheProgress>(new []{ CacheProgress}), new RoundRobinPipelineExecution())
+            new(permissionWindow, new List<ICacheProgress>(new[] { CacheProgress }), new RoundRobinPipelineExecution())
         };
 
         RetrieveNewDataForCache(listener, cancellationToken);
     }
-        
+
     private void RetrieveNewDataForCache(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Retrieving new data"));
@@ -97,16 +99,21 @@ public class CachingHost
         {
             var operationCanceledException = e.GetExceptionIfExists<OperationCanceledException>();
             if (operationCanceledException != null)
+            {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Operation cancelled", e));
+            }
             else
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Exception in downloader task whilst caching data", e));
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Error, "Exception in downloader task whilst caching data",
+                        e));
                 throw;
             }
         }
     }
 
-    private void DownloadUntilFinished(PermissionWindowCacheDownloader downloader, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    private void DownloadUntilFinished(PermissionWindowCacheDownloader downloader, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
         try
         {
@@ -114,15 +121,15 @@ public class CachingHost
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var result = RetryMode ? 
-                    downloader.RetryDownload(listener, cancellationToken) :
-                    downloader.Download(listener, cancellationToken);
+                var result = RetryMode
+                    ? downloader.RetryDownload(listener, cancellationToken)
+                    : downloader.Download(listener, cancellationToken);
 
                 switch (result)
                 {
                     case RetrievalResult.NotPermitted:
 
-                        if(TerminateIfOutsidePermissionWindow)
+                        if (TerminateIfOutsidePermissionWindow)
                         {
                             listener.OnNotify(this,
                                 new NotifyEventArgs(ProgressEventType.Information,
@@ -145,9 +152,11 @@ public class CachingHost
                             cancellationToken.ThrowIfCancellationRequested();
                             elapsedTime += cancellationCheckInterval;
                         }
+
                         break;
                     case RetrievalResult.Complete:
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Download completed successfully."));
+                        listener.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Information, "Download completed successfully."));
                         return;
                     default:
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,

@@ -65,7 +65,7 @@ public class DialogArgs
     /// ticked set of objects in the dialog.
     /// </summary>
     public IMapsDirectlyToDatabaseTable[] InitialObjectSelection { get; set; }
-        
+
     /// <summary>
     /// If choosing Null is a valid option for the user then set this to true.
     /// Defaults to false.
@@ -98,10 +98,7 @@ public class DialogArgs
         if (!string.IsNullOrEmpty(EntryLabel))
             sb.AppendLine($"Label:{EntryLabel}");
 
-        if(sb.Length == 0)
-        {
-            return "Undefined DialogArgs";
-        }
+        if (sb.Length == 0) return "Undefined DialogArgs";
 
         return sb.ToString();
     }

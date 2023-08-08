@@ -17,7 +17,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport;
 
-public class ProjectChecksTestsSimple:DatabaseTests
+public class ProjectChecksTestsSimple : DatabaseTests
 {
     [Test]
     public void Project_NoConfigurations()
@@ -26,9 +26,10 @@ public class ProjectChecksTestsSimple:DatabaseTests
 
         try
         {
-            var ex = Assert.Throws<Exception>(()=>new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Project does not have any ExtractionConfigurations yet",ex.Message);
-
+            var ex = Assert.Throws<Exception>(() =>
+                new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(
+                    new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Project does not have any ExtractionConfigurations yet", ex.Message);
         }
         finally
         {
@@ -40,9 +41,8 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Project_NoDirectory()
     {
         var p = GetProjectWithConfig(out var config);
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
         Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
-            
     }
 
     [Test]
@@ -52,11 +52,10 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Project_NonExistentDirectory(string dir)
     {
         var p = GetProjectWithConfig(out var config);
-           
-        p.ExtractionDirectory = dir;
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
-        Assert.IsTrue(Regex.IsMatch(ex.Message,@"Project ExtractionDirectory .* Does Not Exist"));
 
+        p.ExtractionDirectory = dir;
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
+        Assert.IsTrue(Regex.IsMatch(ex.Message, @"Project ExtractionDirectory .* Does Not Exist"));
     }
 
     [Test]
@@ -65,7 +64,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
         var p = GetProjectWithConfig(out var config);
         p.ExtractionDirectory = @"C:\|||";
 
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
         Assert.AreEqual(@"Project ExtractionDirectory ('C:\|||') Does Not Exist", ex.Message);
     }
 
@@ -76,11 +75,11 @@ public class ProjectChecksTestsSimple:DatabaseTests
 
         //create remnant directory (empty)
         var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
-                
+
         //with empty subdirectories
         remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
 
-        config.IsReleased = true;//make environment think config is released
+        config.IsReleased = true; //make environment think config is released
         config.SaveToDatabase();
 
         try
@@ -90,12 +89,11 @@ public class ProjectChecksTestsSimple:DatabaseTests
             Assert.IsTrue(remnantDir.Exists);
 
             //resolve accepting deletion
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(new AcceptAllCheckNotifier());
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(new AcceptAllCheckNotifier());
 
             //boom remnant doesnt exist anymore (but parent does obviously)
             Assert.IsTrue(dir.Exists);
-            Assert.IsFalse(Directory.Exists(remnantDir.FullName));//cant use .Exists for some reason, c# caches answer?
-
+            Assert.IsFalse(Directory.Exists(remnantDir.FullName)); //cant use .Exists for some reason, c# caches answer?
         }
         finally
         {
@@ -117,18 +115,19 @@ public class ProjectChecksTestsSimple:DatabaseTests
         var lookupDir = remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
 
         //this time put a file in
-        File.AppendAllLines(Path.Combine(lookupDir.FullName,"Text.txt"),new string[]{"Amagad"});
+        File.AppendAllLines(Path.Combine(lookupDir.FullName, "Text.txt"), new string[] { "Amagad" });
 
-        config.IsReleased = true;//make environment think config is released
+        config.IsReleased = true; //make environment think config is released
         config.SaveToDatabase();
         try
         {
             var notifier = new ToMemoryCheckNotifier();
-            RunTestWithCleanup(p,config,notifier);
+            RunTestWithCleanup(p, config, notifier);
 
             Assert.IsTrue(notifier.Messages.Any(
-                m=>m.Result == CheckResult.Fail &&
-                   Regex.IsMatch(m.Message,@"Found non-empty folder .* which is left over extracted folder after data release \(First file found was '.*[/\\]DMPTestCatalogue[/\\]Lookups[/\\]Text.txt' but there may be others\)")));
+                m => m.Result == CheckResult.Fail &&
+                     Regex.IsMatch(m.Message,
+                         @"Found non-empty folder .* which is left over extracted folder after data release \(First file found was '.*[/\\]DMPTestCatalogue[/\\]Lookups[/\\]Text.txt' but there may be others\)")));
         }
         finally
         {
@@ -139,27 +138,30 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Configuration_NoDatasets()
     {
-        var p = GetProjectWithConfigDirectory(out var config, out DirectoryInfo dir);
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
-        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
-
+        var p = GetProjectWithConfigDirectory(out var config, out var dir);
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
+        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",
+            ex.Message);
     }
 
 
     [Test]
     public void Configuration_NoProjectNumber()
     {
-        var p = GetProjectWithConfigDirectory(out var config, out DirectoryInfo dir);
+        var p = GetProjectWithConfigDirectory(out var config, out var dir);
         p.ProjectNumber = null;
-        var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
-        StringAssert.Contains("Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",ex.Message);
+        var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
+        StringAssert.Contains(
+            "Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",
+            ex.Message);
     }
 
-    private void RunTestWithCleanup(Project p,ExtractionConfiguration config, ICheckNotifier notifier = null)
+    private void RunTestWithCleanup(Project p, ExtractionConfiguration config, ICheckNotifier notifier = null)
     {
         try
         {
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(notifier ??
+                new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
         }
         finally
         {
@@ -174,18 +176,18 @@ public class ProjectChecksTestsSimple:DatabaseTests
         {
             ProjectNumber = -5000
         };
-        config = new ExtractionConfiguration(DataExportRepository,p);
+        config = new ExtractionConfiguration(DataExportRepository, p);
         return p;
     }
 
-    private Project GetProjectWithConfigDirectory(out ExtractionConfiguration config,out DirectoryInfo dir)
+    private Project GetProjectWithConfigDirectory(out ExtractionConfiguration config, out DirectoryInfo dir)
     {
         var p = new Project(DataExportRepository, "Fish");
         config = new ExtractionConfiguration(DataExportRepository, p);
 
         var projectFolder = Path.Combine(TestContext.CurrentContext.WorkDirectory, "ProjectCheckerTestDir");
 
-        dir = new DirectoryInfo(projectFolder );
+        dir = new DirectoryInfo(projectFolder);
         dir.Create();
 
         p.ExtractionDirectory = projectFolder;

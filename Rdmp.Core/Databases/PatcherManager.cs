@@ -40,26 +40,28 @@ public class PatcherManager
         };
     }
 
-    public IEnumerable<PluginPatcher> GetTier3Patchers(MEF mef,PluginPatcherFoundHandler events)
+    public IEnumerable<PluginPatcher> GetTier3Patchers(MEF mef, PluginPatcherFoundHandler events)
     {
         var constructor = new ObjectConstructor();
-            
+
         foreach (var patcherType in mef.GetTypes<PluginPatcher>().Where(type => type.IsPublic))
         {
             PluginPatcher instance = null;
-                
+
             try
             {
                 instance = (PluginPatcher)ObjectConstructor.Construct(patcherType);
 
-                events?.Invoke(this, new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
+                events?.Invoke(this,
+                    new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
             }
             catch (Exception e)
             {
-                events?.Invoke(this, new PluginPatcherFoundEventArgs(patcherType, null, PluginPatcherStatus.CouldNotConstruct, e));
+                events?.Invoke(this,
+                    new PluginPatcherFoundEventArgs(patcherType, null, PluginPatcherStatus.CouldNotConstruct, e));
             }
 
-            if(instance != null)
+            if (instance != null)
                 yield return instance;
         }
     }
@@ -69,8 +71,5 @@ public class PatcherManager
     /// </summary>
     /// <param name="mef"></param>
     /// <returns></returns>
-    public IEnumerable<IPatcher> GetAllPatchers(MEF mef)
-    {
-        return Tier2Patchers.Union(GetTier3Patchers(mef,null));
-    }
+    public IEnumerable<IPatcher> GetAllPatchers(MEF mef) => Tier2Patchers.Union(GetTier3Patchers(mef, null));
 }

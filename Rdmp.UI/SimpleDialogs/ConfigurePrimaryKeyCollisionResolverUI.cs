@@ -14,8 +14,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
-
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.UI.ScintillaHelper;
 
@@ -50,12 +48,13 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private ScintillaNET.Scintilla QueryEditor;
 
-    public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator):base(activator)
+    public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator) : base(activator)
     {
         _table = table;
         InitializeComponent();
 
-        if (VisualStudioDesignMode || table == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode ||
+            table == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create();
@@ -68,7 +67,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-
     }
 
     private void RefreshUIFromDatabase()
@@ -95,7 +93,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         resolvers.AddRange(_table.PreLoadDiscardedColumns);
 
         //if there is no order yet
-        if(resolvers.All(r=>r.DuplicateRecordResolutionOrder == null))
+        if (resolvers.All(r => r.DuplicateRecordResolutionOrder == null))
             for (var i = 0; i < resolvers.Count; i++)
             {
                 //set one up
@@ -105,7 +103,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
 
         foreach (var resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
-        {
             //if it starts with hic_
             if (SpecialFieldNames.IsHicPrefixed(resolver))
             {
@@ -115,7 +112,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 resolver.SaveToDatabase();
                 resolvers.Remove(resolver);
             }
-        }
 
         foreach (var resolver in resolvers.OrderBy(c => c.DuplicateRecordResolutionOrder))
             lbConflictResolutionColumns.Items.Add(resolver);
@@ -124,19 +120,17 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         try
         {
-
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
             QueryEditor.Text = resolver.GenerateSQL();
-            CommonFunctionality.ScintillaGoRed(QueryEditor,false);
+            CommonFunctionality.ScintillaGoRed(QueryEditor, false);
         }
         catch (Exception e)
         {
-            CommonFunctionality.ScintillaGoRed(QueryEditor,e);
+            CommonFunctionality.ScintillaGoRed(QueryEditor, e);
         }
 
         QueryEditor.ReadOnly = true;
-
     }
 
     #region Drag and Drop reordering
@@ -148,7 +142,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         if (e.Button == MouseButtons.Left)
             lbConflictResolutionColumns.DoDragDrop(lbConflictResolutionColumns.SelectedItem,
                 DragDropEffects.Move);
-
     }
 
     private Point draggingOldLeftPoint;
@@ -162,7 +155,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         var g = lbConflictResolutionColumns.CreateGraphics();
 
-        var top = lbConflictResolutionColumns.Font.Height*idxHoverOver;
+        var top = lbConflictResolutionColumns.Font.Height * idxHoverOver;
 
         top += lbConflictResolutionColumns.AutoScrollOffset.Y;
 
@@ -183,7 +176,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         draggingOldLeftPoint = left;
         draggingOldRightPoint = right;
-
     }
 
     private void listBox1_DragDrop(object sender, DragEventArgs e)
@@ -198,7 +190,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         //get the thing they are dragging
         var data =
             (IResolveDuplication)
-            (e.Data.GetData(typeof (ColumnInfo)) ?? e.Data.GetData(typeof (PreLoadDiscardedColumn)));
+            (e.Data.GetData(typeof(ColumnInfo)) ?? e.Data.GetData(typeof(PreLoadDiscardedColumn)));
 
         //find original index because if we are dragging down then we will want to adjust the index so that insert point is correct even after removing the object further up the list
         var originalIndex = lbConflictResolutionColumns.Items.IndexOf(data);
@@ -208,7 +200,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
 
         SaveOrderIntoDatabase();
-
     }
 
 
@@ -216,14 +207,13 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     {
         for (var i = 0; i < lbConflictResolutionColumns.Items.Count; i++)
         {
-            var extractionInformation = (IResolveDuplication) lbConflictResolutionColumns.Items[i];
+            var extractionInformation = (IResolveDuplication)lbConflictResolutionColumns.Items[i];
             extractionInformation.DuplicateRecordResolutionOrder = i;
             extractionInformation.SaveToDatabase();
         }
 
         RefreshUIFromDatabase();
     }
-
 
     #endregion
 
@@ -243,13 +233,14 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 var RightClickMenu = new ContextMenuStrip();
 
                 var resolver =
-                    (IResolveDuplication) lbConflictResolutionColumns.Items[indexFromPoint];
+                    (IResolveDuplication)lbConflictResolutionColumns.Items[indexFromPoint];
 
                 var target = resolver.DuplicateRecordResolutionIsAscending ? "DESC" : "ASC";
                 var currently = resolver.DuplicateRecordResolutionIsAscending ? "ASC" : "DESC";
 
                 RightClickMenu.Items.Add(
-                    $"Set {resolver.GetRuntimeName()} to {target} (Currently resolution order is {currently})", null, delegate
+                    $"Set {resolver.GetRuntimeName()} to {target} (Currently resolution order is {currently})", null,
+                    delegate
                     {
                         //flip its bit
                         resolver.DuplicateRecordResolutionIsAscending =
@@ -262,7 +253,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
                 RightClickMenu.Show(lbConflictResolutionColumns.PointToScreen(e.Location));
             }
-
         }
     }
 
@@ -300,6 +290,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 g.DrawString(toDisplay, new Font(e.Font, FontStyle.Regular), new SolidBrush(Color.Black),
                     new PointF(e.Bounds.X, e.Bounds.Y));
         }
+
         e.DrawFocusRectangle();
     }
 
@@ -310,12 +301,11 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
 
-            if(sender == btnCopyPreview)
+            if (sender == btnCopyPreview)
                 Clipboard.SetText(resolver.GeneratePreviewSQL());
 
-            if(sender == btnCopyDetection)
+            if (sender == btnCopyDetection)
                 Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
-
         }
         catch (Exception exception)
         {
@@ -326,7 +316,9 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private void btnSetAllAscending_Click(object sender, EventArgs e)
     {
         if (!AllAreSameDirection())
-            if(!Activator.YesNo("Are you sure you want to override the current resolution direction(s) with ASC , You will loose any currently configured column specific directions.", "Override current directions?"))
+            if (!Activator.YesNo(
+                    "Are you sure you want to override the current resolution direction(s) with ASC , You will loose any currently configured column specific directions.",
+                    "Override current directions?"))
                 return;
 
         foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
@@ -334,12 +326,16 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             item.DuplicateRecordResolutionIsAscending = true;
             item.SaveToDatabase();
         }
+
         RefreshUIFromDatabase();
     }
+
     private void btnSetAllDescending_Click(object sender, EventArgs e)
     {
         if (!AllAreSameDirection())
-            if (!Activator.YesNo("Are you sure you want to override the current resolution direction(s) with DESC, You will loose any currently configured column specific directions.", "Override current directions?"))
+            if (!Activator.YesNo(
+                    "Are you sure you want to override the current resolution direction(s) with DESC, You will loose any currently configured column specific directions.",
+                    "Override current directions?"))
                 return;
 
         foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
@@ -347,6 +343,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             item.DuplicateRecordResolutionIsAscending = false;
             item.SaveToDatabase();
         }
+
         RefreshUIFromDatabase();
     }
 
@@ -358,9 +355,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             lbConflictResolutionColumns.Items.Cast<IResolveDuplication>()
                 .Select(resolver => resolver.DuplicateRecordResolutionOrder)
                 .Distinct()
-                .Count() ==1; //if count of distinct directions is 1 then they are all in the same direction
-
+                .Count() == 1; //if count of distinct directions is 1 then they are all in the same direction
     }
-
-
 }

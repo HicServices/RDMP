@@ -27,11 +27,11 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// <para>The second are those that do not have a MEF class powering them.  This includes ProcessTaskTypes like Executable and SQLFile where the ProcessTask.Path
 /// is simply the location of the exe/sql file to run at runtime. </para>
 /// </summary>
-public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
+public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask, ICheckable
 {
     public RuntimeArgumentCollection RuntimeArguments { get; set; }
     public IProcessTask ProcessTask { get; set; }
-        
+
     public abstract bool Exists();
 
     public abstract void Abort(IDataLoadEventListener postLoadEventListener);
@@ -47,8 +47,8 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
         if (toSetPropertiesOf == null)
             throw new NullReferenceException(
                 $"{ProcessTask.Path} instance has not been created yet! Call SetProperties after the factory has created the instance.");
-            
-        if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(),typeof (IPipelineRequirement<>)))
+
+        if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(), typeof(IPipelineRequirement<>)))
             throw new Exception(
                 $"ProcessTask '{ProcessTask.Name}' was was an instance of Class '{ProcessTask.Path}' which declared an IPipelineRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
 
@@ -61,11 +61,11 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
         foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())
         {
             //see if any demand initialization
-            var initialization = (DemandsInitializationAttribute)Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute) ;
+            var initialization = (DemandsInitializationAttribute)Attribute.GetCustomAttributes(propertyInfo)
+                .FirstOrDefault(a => a is DemandsInitializationAttribute);
 
             //this one does
             if (initialization != null)
-            {
                 try
                 {
                     //get the approrpriate value from arguments
@@ -77,15 +77,16 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
                 catch (NotSupportedException e)
                 {
                     throw new Exception(
-                        $"Class {toSetPropertiesOf.GetType().Name} has a property {propertyInfo.Name} but is of unexpected type {propertyInfo.GetType()}", e);
+                        $"Class {toSetPropertiesOf.GetType().Name} has a property {propertyInfo.Name} but is of unexpected type {propertyInfo.GetType()}",
+                        e);
                 }
                 catch (KeyNotFoundException e)
                 {
-                    if(initialization.Mandatory)
+                    if (initialization.Mandatory)
                         throw new ArgumentException(
-                            $"Class {toSetPropertiesOf.GetType().Name} has a Mandatory property '{propertyInfo.Name}' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
+                            $"Class {toSetPropertiesOf.GetType().Name} has a Mandatory property '{propertyInfo.Name}' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",
+                            e);
                 }
-            }
         }
     }
 

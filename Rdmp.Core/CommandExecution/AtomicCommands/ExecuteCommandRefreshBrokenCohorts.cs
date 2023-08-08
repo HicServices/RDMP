@@ -22,8 +22,9 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandRefreshBrokenCohorts(IBasicActivateItems activator,
-        [DemandsInitialization("The specific ExternalCohortTable to attempt to refresh connections to or null to refresh all ExternalCohortTables")]
-        ExternalCohortTable ect = null):base(activator)
+        [DemandsInitialization(
+            "The specific ExternalCohortTable to attempt to refresh connections to or null to refresh all ExternalCohortTables")]
+        ExternalCohortTable ect = null) : base(activator)
     {
         _ect = ect;
 
@@ -34,12 +35,9 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         }
 
         // if we only want to clear one 
-        if(ect != null)
+        if (ect != null)
         {
-            if(!dx.ForbidListedSources.Contains(ect))
-            {
-                SetImpossible($"'{ect}' is not broken");
-            }
+            if (!dx.ForbidListedSources.Contains(ect)) SetImpossible($"'{ect}' is not broken");
         }
         else
         {
@@ -64,13 +62,9 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
             return;
 
         if (_ect != null)
-        {
             dx.ForbidListedSources.Remove(_ect);
-        }
         else
-        {
             dx.ForbidListedSources.Clear();
-        }
 
 
         Publish(toPublish);

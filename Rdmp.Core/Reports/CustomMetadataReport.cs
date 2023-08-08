@@ -25,14 +25,12 @@ public class CustomMetadataReport
     /// <summary>
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
     /// </summary>
-
-    private Dictionary<string,Func<Catalogue,object>> Replacements = new();
+    private Dictionary<string, Func<Catalogue, object>> Replacements = new();
 
     /// <summary>
     /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
     /// </summary>
-
-    private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
+    private Dictionary<string, Func<CatalogueItem, object>> ReplacementsCatalogueItem = new();
 
 
     /// <summary>
@@ -55,7 +53,7 @@ public class CustomMetadataReport
     /// <summary>
     /// How the range of data in each <see cref="Catalogue"/> is determined, defaults to <see cref="DatasetTimespanCalculator"/> (using the DQE results)
     /// </summary>
-    public IDetermineDatasetTimespan TimespanCalculator { get; set; }  = new DatasetTimespanCalculator();
+    public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
 
     /// <summary>
     /// Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
@@ -77,7 +75,7 @@ public class CustomMetadataReport
     /// <summary>
     /// Cache of latest run DQE <see cref="Evaluation"/> by <see cref="Catalogue"/> (populated from <see cref="DQERepository"/>)
     /// </summary>
-    public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; }  = new Dictionary<ICatalogue, Evaluation>();
+    public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; } = new();
 
     /// <summary>
     /// Describes whether a $foreach is iterating and which element type is
@@ -100,10 +98,8 @@ public class CustomMetadataReport
 
         //add basic properties TableInfo
         foreach (var prop in typeof(TableInfo).GetProperties())
-        {
             // if it's not already a property of Catalogue
             Replacements.TryAdd($"${prop.Name}", c => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
-        }
 
         AddDQEReplacements();
 
@@ -115,10 +111,9 @@ public class CustomMetadataReport
 
         //add basic properties ColumnInfo
         foreach (var prop in typeof(ColumnInfo).GetProperties())
-        {
             // if it's not already a property of CatalogueItem
-            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
-        }
+            ReplacementsCatalogueItem.TryAdd($"${prop.Name}",
+                s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
 
         try
         {
@@ -128,8 +123,6 @@ public class CustomMetadataReport
         {
             DQERepository = null;
         }
-
-            
     }
 
     private static ITableInfo GetTable(Catalogue c)
@@ -205,25 +198,18 @@ public class CustomMetadataReport
     {
         var columnStats = GetColumnState(ci);
 
-        if (columnStats == null)
-        {
-            return null;
-        }
+        if (columnStats == null) return null;
 
-        var total = columnStats.CountCorrect + columnStats.CountInvalidatesRow + columnStats.CountMissing + columnStats.CountWrong;
+        var total = columnStats.CountCorrect + columnStats.CountInvalidatesRow + columnStats.CountMissing +
+                    columnStats.CountWrong;
 
-        if (total == 0)
-        {
-            return null;
-        }
+        if (total == 0) return null;
 
         return $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
-    private Evaluation GetEvaluation(CatalogueItem ci)
-    {
-        return GetEvaluation(ci.Catalogue);
-    }
+    private Evaluation GetEvaluation(CatalogueItem ci) => GetEvaluation(ci.Catalogue);
+
     private Evaluation GetEvaluation(Catalogue c)
     {
         if (!EvaluationCache.TryGetValue(c, out var evaluation))
@@ -235,15 +221,11 @@ public class CustomMetadataReport
         return evaluation;
     }
 
-    private DateTime? GetStartDate(Catalogue c)
-    {
-        return TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item1;
-    }
+    private DateTime? GetStartDate(Catalogue c) =>
+        TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item1;
 
-    private DateTime? GetEndDate(Catalogue c)
-    {
-        return TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item2;
-    }
+    private DateTime? GetEndDate(Catalogue c) =>
+        TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item2;
 
     /// <summary>
     /// Reads the contents of <paramref name="template"/> and generates one or more files (see <paramref name="oneFile"/>) by substituting tokens (e.g. $Name) for the values in the provided <paramref name="catalogues"/>
@@ -253,61 +235,62 @@ public class CustomMetadataReport
     /// <param name="template">Template file with free text and substitutions (e.g. $Name).  Also supports looping e.g. $foreach CatalogueItem</param>
     /// <param name="fileNaming">Determines how output file(s) will be named in the <paramref name="outputDirectory"/>.  Supports substitution e.g. $Name.md</param>
     /// <param name="oneFile">True to concatenate the results together and output in a single file.  If true then <paramref name="fileNaming"/> should not contain substitutions.  If false then <paramref name="fileNaming"/> should contain substitutions (e.g. $Name.doc) to prevent duplicate file names</param>
-    public void GenerateReport(Catalogue[] catalogues, DirectoryInfo outputDirectory, FileInfo template, string fileNaming, bool oneFile)
+    public void GenerateReport(Catalogue[] catalogues, DirectoryInfo outputDirectory, FileInfo template,
+        string fileNaming, bool oneFile)
     {
-        if(catalogues == null || !catalogues.Any())
+        if (catalogues == null || !catalogues.Any())
             return;
 
         var templateBody = File.ReadAllLines(template.FullName);
 
-        var outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
+        var outname = DoReplacements(new[] { fileNaming }, catalogues.First(), null, ElementIteration.NotIterating)
+            .Trim();
 
         StreamWriter outFile = null;
-            
+
         try
         {
-            if(oneFile)
+            if (oneFile)
                 outFile = new StreamWriter(File.Create(Path.Combine(outputDirectory.FullName, outname)));
 
             if (templateBody.Contains(LoopCatalogues))
             {
                 if (oneFile)
-                {
-                    foreach(var section in SplitCatalogueLoops(templateBody))
-                    {
-                        if(section.IsPlainText)
-                        {
-                            outFile.WriteLine(string.Join(Environment.NewLine,section.Body));
-                        }
+                    foreach (var section in SplitCatalogueLoops(templateBody))
+                        if (section.IsPlainText)
+                            outFile.WriteLine(string.Join(Environment.NewLine, section.Body));
                         else
-                        {
-                            for (var i =0;i<catalogues.Length;i++)
+                            for (var i = 0; i < catalogues.Length; i++)
                             {
                                 var element =
-                                    i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
+                                    i == catalogues.Length - 1
+                                        ? ElementIteration.LastElement
+                                        : ElementIteration.RegularElement;
 
-                                var newContents = DoReplacements(section.Body.ToArray(), catalogues[i],section, element);
+                                var newContents = DoReplacements(section.Body.ToArray(), catalogues[i], section,
+                                    element);
                                 outFile.WriteLine(newContents);
                             }
-                        }
-                    }
-                }
                 else
-                    throw new Exception($"'{LoopCatalogues}' is on valid when extracting in oneFile mode (a single document for all Catalogues' metadata)");
+                    throw new Exception(
+                        $"'{LoopCatalogues}' is on valid when extracting in oneFile mode (a single document for all Catalogues' metadata)");
             }
             else
             {
                 foreach (var catalogue in catalogues)
                 {
-                    var newContents = DoReplacements(templateBody, catalogue,null,ElementIteration.NotIterating);
+                    var newContents = DoReplacements(templateBody, catalogue, null, ElementIteration.NotIterating);
 
                     if (oneFile)
+                    {
                         outFile.WriteLine(newContents);
+                    }
                     else
                     {
-                        var filename = DoReplacements(new[] {fileNaming}, catalogue,null, ElementIteration.NotIterating).Trim();
+                        var filename = DoReplacements(new[] { fileNaming }, catalogue, null,
+                            ElementIteration.NotIterating).Trim();
 
-                        using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
+                        using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName, filename)))
                         {
                             sw.Write(newContents);
                             sw.Flush();
@@ -321,26 +304,28 @@ public class CustomMetadataReport
         {
             outFile?.Flush();
             outFile?.Dispose();
-        }   
+        }
     }
 
     private static IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
     {
-        if(templateBody.Length == 0)
+        if (templateBody.Length == 0)
             yield break;
 
         CatalogueSection currentSection = null;
         var depth = 0;
 
-        for(var i =0;i< templateBody.Length ;i++)
+        for (var i = 0; i < templateBody.Length; i++)
         {
             var str = templateBody[i];
 
             // is it trying to loop catalogue items
-            if(str.Trim().Equals(LoopCatalogueItems))
+            if (str.Trim().Equals(LoopCatalogueItems))
             {
-                if(currentSection == null || currentSection.IsPlainText)
-                    throw new CustomMetadataReportException($"Error, Unexpected '{str}' on line {i+1}.  Current section is plain text, '{LoopCatalogueItems}' can only appear within a '{LoopCatalogues}' block (you cannot mix and match top level loop elements)",i+1);
+                if (currentSection == null || currentSection.IsPlainText)
+                    throw new CustomMetadataReportException(
+                        $"Error, Unexpected '{str}' on line {i + 1}.  Current section is plain text, '{LoopCatalogueItems}' can only appear within a '{LoopCatalogues}' block (you cannot mix and match top level loop elements)",
+                        i + 1);
 
                 // ignore dives into CatalogueItems
                 depth++;
@@ -350,36 +335,39 @@ public class CustomMetadataReport
             }
             else
                 // is it a loop Catalogues
-            if(str.Trim().Equals(LoopCatalogues))
+            if (str.Trim().Equals(LoopCatalogues))
             {
-                if(currentSection != null)
-                    if(currentSection.IsPlainText)
+                if (currentSection != null)
+                    if (currentSection.IsPlainText)
                         yield return currentSection;
                     else
-                        throw new CustomMetadataReportException($"Unexpected '{str}' before the end of the last one on line {i+1}",i+1);
+                        throw new CustomMetadataReportException(
+                            $"Unexpected '{str}' before the end of the last one on line {i + 1}", i + 1);
 
                 // start new section looping Catalogues
-                currentSection = new CatalogueSection(false,i);
+                currentSection = new CatalogueSection(false, i);
                 depth = 1;
             }
             else
                 // is it an end loop
-            if(str.Trim().Equals(EndLoop))
+            if (str.Trim().Equals(EndLoop))
             {
-                if(currentSection == null || currentSection.IsPlainText)
-                    throw new CustomMetadataReportException($"Error, encountered '{str}' on line {i+1} while not in a {LoopCatalogues} block",i+1);
+                if (currentSection == null || currentSection.IsPlainText)
+                    throw new CustomMetadataReportException(
+                        $"Error, encountered '{str}' on line {i + 1} while not in a {LoopCatalogues} block", i + 1);
 
                 depth--;
 
                 // does end loop correspond to ending a $foreach Catalogue
-                if(depth == 0)
+                if (depth == 0)
                 {
                     yield return currentSection;
                     currentSection = null;
                 }
-                else
-                if(depth <0)
-                    throw new CustomMetadataReportException($"Error, unexpected '{str}' on line {i+1}",i+1);
+                else if (depth < 0)
+                {
+                    throw new CustomMetadataReportException($"Error, unexpected '{str}' on line {i + 1}", i + 1);
+                }
                 else
                 {
                     // $end is for a CatalogueItem block so preserve it in the body
@@ -391,24 +379,25 @@ public class CustomMetadataReport
                 // it's just a regular line of text
 
                 //if it's the first line of a new block we get a plaintext block
-                currentSection ??= new CatalogueSection(true,i);
+                currentSection ??= new CatalogueSection(true, i);
 
                 currentSection.Body.Add(str);
             }
         }
-            
-        if(currentSection != null)
-            if(currentSection.IsPlainText)
+
+        if (currentSection != null)
+            if (currentSection.IsPlainText)
                 yield return currentSection;
             else
-                throw new CustomMetadataReportException($"Reached end of template without finding an expected {EndLoop}",templateBody.Length);
+                throw new CustomMetadataReportException(
+                    $"Reached end of template without finding an expected {EndLoop}", templateBody.Length);
     }
 
     private class CatalogueSection
     {
-        public int LineNumber { get;set;}
-        public bool IsPlainText { get;set;}
-        public List<string> Body {get;set; } = new List<string>();
+        public int LineNumber { get; set; }
+        public bool IsPlainText { get; set; }
+        public List<string> Body { get; set; } = new();
 
         public CatalogueSection(bool isPlainText, int lineNumber)
         {
@@ -425,7 +414,8 @@ public class CustomMetadataReport
     /// <param name="section"></param>
     /// <param name="iteration">Indicates if looping through Catalogues and we are not at the last element in the collection yet.</param>
     /// <returns></returns>
-    private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section, ElementIteration iteration)
+    private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section,
+        ElementIteration iteration)
     {
         var sb = new StringBuilder();
 
@@ -436,25 +426,19 @@ public class CustomMetadataReport
 
             if (str.Trim().Equals(LoopCatalogueItems, StringComparison.CurrentCultureIgnoreCase))
             {
-                index = DoReplacements(strs, index, out copy,catalogue.CatalogueItems,section);
+                index = DoReplacements(strs, index, out copy, catalogue.CatalogueItems, section);
             }
             else
             {
                 foreach (var r in Replacements)
-                {
                     if (copy.Contains(r.Key))
                         copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
-                }
 
                 // when iterating we need to respect iteration symbols (e.g. $Comma).
-                if(iteration == ElementIteration.NotIterating)
-                {
+                if (iteration == ElementIteration.NotIterating)
                     ThrowIfContainsIterationElements(copy);
-                }
                 else
-                {
                     copy = copy.Replace(Comma, iteration == ElementIteration.RegularElement ? CommaSubstitution : "");
-                }
             }
 
             sb.AppendLine(copy.TrimEnd());
@@ -472,7 +456,8 @@ public class CustomMetadataReport
     /// <param name="catalogueItems"></param>
     /// <param name="section"></param>
     /// <returns>The index in <paramref name="strs"/> where the $end was detected</returns>
-    private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems,CatalogueSection section)
+    private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems,
+        CatalogueSection section)
     {
         // The foreach template block as extracted from strs
         var block = new StringBuilder();
@@ -480,16 +465,16 @@ public class CustomMetadataReport
         //the result of printing out the block once for each CatalogueItem item (with replacements)
         var sbResult = new StringBuilder();
 
-        var i = index+1;
+        var i = index + 1;
         var blockTerminated = false;
 
-        var sectionOffset = section?.LineNumber ??0;
+        var sectionOffset = section?.LineNumber ?? 0;
 
         //starting on the next line after $foreach until the end of the file
         for (; i < strs.Length; i++)
         {
             var current = strs[i];
-            var lineNumberHuman = i +1+sectionOffset;
+            var lineNumberHuman = i + 1 + sectionOffset;
 
             if (current.Trim().Equals(EndLoop, StringComparison.CurrentCultureIgnoreCase))
             {
@@ -497,22 +482,23 @@ public class CustomMetadataReport
                 break;
             }
 
-            if(current == LoopCatalogueItems)
-                throw new CustomMetadataReportException($"Error, encountered '{current}' on line {lineNumberHuman} before the end of current block which started on line {lineNumberHuman}.  Make sure to add {EndLoop} at the end of each loop",lineNumberHuman);
+            if (current == LoopCatalogueItems)
+                throw new CustomMetadataReportException(
+                    $"Error, encountered '{current}' on line {lineNumberHuman} before the end of current block which started on line {lineNumberHuman}.  Make sure to add {EndLoop} at the end of each loop",
+                    lineNumberHuman);
 
             block.AppendLine(current);
         }
 
-        if(!blockTerminated)
-            throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
+        if (!blockTerminated)
+            throw new CustomMetadataReportException(
+                $"Expected {EndLoop} to match $foreach which started on line {index + 1 + sectionOffset}",
+                index + 1 + sectionOffset);
 
-        for(var j =0;j< catalogueItems.Length; j++)
-        {
+        for (var j = 0; j < catalogueItems.Length; j++)
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
-                j < catalogueItems.Length -1 ?
-                    ElementIteration.RegularElement : ElementIteration.LastElement));
-        }
-                
+                j < catalogueItems.Length - 1 ? ElementIteration.RegularElement : ElementIteration.LastElement));
+
 
         result = sbResult.ToString();
 
@@ -526,18 +512,15 @@ public class CustomMetadataReport
     /// <returns></returns>
     private string ValueToString(object v)
     {
-        if(v is ExtractionInformation ei)
-        {
-            return ei.GetRuntimeName();
-        }
+        if (v is ExtractionInformation ei) return ei.GetRuntimeName();
 
         return ReplaceNewlines(v?.ToString() ?? "");
     }
 
     public string ReplaceNewlines(string input)
     {
-        if(input != null && NewlineSubstitution != null)
-            return Regex.Replace(input,"[\r]?\n",NewlineSubstitution);
+        if (input != null && NewlineSubstitution != null)
+            return Regex.Replace(input, "[\r]?\n", NewlineSubstitution);
 
         return input;
     }
@@ -555,24 +538,19 @@ public class CustomMetadataReport
             if (template.Contains(r.Key))
                 template = template.Replace(r.Key, ValueToString(r.Value(catalogueItem)));
 
-        if(iteration == ElementIteration.NotIterating)
-        {
+        if (iteration == ElementIteration.NotIterating)
             ThrowIfContainsIterationElements(template);
-        }
         else
-        {
             template = template.Replace(Comma, iteration == ElementIteration.RegularElement ? CommaSubstitution : "");
-        }
-            
+
 
         return template.TrimEnd();
     }
 
     private static void ThrowIfContainsIterationElements(string template)
     {
-        if(template.Contains(Comma))
-        {
-            throw new CustomMetadataReportException($"Unexpected use of {Comma} outside of an iteration ($foreach) block",-1);
-        }
+        if (template.Contains(Comma))
+            throw new CustomMetadataReportException(
+                $"Unexpected use of {Comma} outside of an iteration ($foreach) block", -1);
     }
 }

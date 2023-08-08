@@ -51,8 +51,11 @@ internal class AggregateForcedJoin : IAggregateForcedJoinManager
     public void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
     {
         using (var con = _repository.GetConnection())
-        using(var cmd = DatabaseCommandHelper.GetCommand(
-                  $"INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({configuration.ID},{tableInfo.ID})", con.Connection,con.Transaction))
+        using (var cmd = DatabaseCommandHelper.GetCommand(
+                   $"INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({configuration.ID},{tableInfo.ID})",
+                   con.Connection, con.Transaction))
+        {
             cmd.ExecuteNonQuery();
+        }
     }
 }

@@ -40,7 +40,7 @@ public class ExtractionTimeValidator
     {
         _catalogue = catalogue;
         _columnsToExtract = columnsToExtract;
-            
+
         Validator = Validator.LoadFromXml(_catalogue.ValidatorXML);
 
         if (string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
@@ -49,7 +49,7 @@ public class ExtractionTimeValidator
         IgnoredBecauseColumnHashed = new List<ItemValidator>();
     }
 
-    public void Validate(DataTable dt,string validationColumnToPopulateIfAny)
+    public void Validate(DataTable dt, string validationColumnToPopulateIfAny)
     {
         if (!_initialized)
             Initialize(dt);
@@ -58,13 +58,12 @@ public class ExtractionTimeValidator
         {
             //additive validation results, Results is a class that wraps DictionaryOfFailure which is an array of columns and each element is another array of consequences (with a row count for each consequence)
             //think of it like a 2D array with X columns and Y consquences and a number in each box which is how many values in that column failed validation with that consequence
-            Results = Validator.ValidateVerboseAdditive(r, Results, out Consequence? consequenceOnLastRowProcessed);
+            Results = Validator.ValidateVerboseAdditive(r, Results, out var consequenceOnLastRowProcessed);
 
 
             if (validationColumnToPopulateIfAny != null)
                 r[validationColumnToPopulateIfAny] = consequenceOnLastRowProcessed;
         }
-
     }
 
     private void Initialize(DataTable dt)
@@ -73,8 +72,10 @@ public class ExtractionTimeValidator
 
         //discard any item validators that don't exist in our colmn collection (from schema) - These are likely just columns that are not used during validation
         foreach (var iv in Validator.ItemValidators)
-            if (!dt.Columns.Contains(iv.TargetProperty))  //if target property is not in the column collection
+            if (!dt.Columns.Contains(iv.TargetProperty)) //if target property is not in the column collection
+            {
                 toDiscard.Add(iv);
+            }
             else
             {
                 //also discard any that have an underlying column that is Hashed as they will not match validation constraints post hash (hashing is done in SQL so we will never see original value)
@@ -93,13 +94,11 @@ public class ExtractionTimeValidator
                     IgnoredBecauseColumnHashed.Add(iv);
                     toDiscard.Add(iv);
                 }
-
             }
 
         foreach (var itemValidator in toDiscard)
             Validator.ItemValidators.Remove(itemValidator);
 
         _initialized = true;
-
     }
 }

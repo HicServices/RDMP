@@ -26,12 +26,13 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier(),null);
+        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
+            new ThrowImmediatelyCheckNotifier(), null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoServerNode) desc.Parents[^2];
+        var parent = (TableInfoServerNode)desc.Parents[^2];
         Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
     }
 
@@ -43,7 +44,8 @@ internal class ChildProviderTests : UITests
         ti.SaveToDatabase();
 
         //creating a child provider when there are TableInfos with null servers should not crash the API!
-        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier(), null);
+        var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
+            new ThrowImmediatelyCheckNotifier(), null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
         Assert.IsNotNull(desc);
 
@@ -55,38 +57,42 @@ internal class ChildProviderTests : UITests
     [Test]
     public void TestUpTo()
     {
-        string[] skip = {"AllAggregateContainers","_dataExportFilterManager","dataExportRepository","WriteLock","_oProjectNumberToCohortsDictionary","_errorsCheckNotifier", "ProgressStopwatch" };
+        string[] skip =
+        {
+            "AllAggregateContainers", "_dataExportFilterManager", "dataExportRepository", "WriteLock",
+            "_oProjectNumberToCohortsDictionary", "_errorsCheckNotifier", "ProgressStopwatch"
+        };
 
         // We have 2 providers and want to suck all the data out of one into the other
-        var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
-        var cp2 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
+        var cp1 = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+        var cp2 = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
 
         //to start with let's make sure all fields and properties are different on the two classes except where we expect them to be the same
         var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-        foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
+        foreach (var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
         {
             var val1 = prop.GetValue(cp1);
             var val2 = prop.GetValue(cp2);
 
             // these are exempt, I guess 2 seperate empty arrays are now considered 'same'
-            if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
+            if (val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
-            Assert.AreNotSame(val1,val2,$"Prop {prop} was unexpectedly the same between child providers");
+            Assert.AreNotSame(val1, val2, $"Prop {prop} was unexpectedly the same between child providers");
         }
 
 
-        foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
+        foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
         {
             var val1 = field.GetValue(cp1);
             var val2 = field.GetValue(cp2);
 
             // these are exempt, I guess 2 seperate empty arrays are now considered 'same'
-            if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
+            if (val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
-            Assert.AreNotSame(val1,val2,$"Field {field} was unexpectedly the same between child providers");
+            Assert.AreNotSame(val1, val2, $"Field {field} was unexpectedly the same between child providers");
         }
 
 
@@ -95,10 +101,11 @@ internal class ChildProviderTests : UITests
 
         var badProps = new List<string>();
 
-        foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p=>!skip.Contains(p.Name)))
+        foreach (var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
             try
             {
-                Assert.AreSame(prop.GetValue(cp1),prop.GetValue(cp2),$"Prop {prop} was not the same between child providers - after UpdateTo");
+                Assert.AreSame(prop.GetValue(cp1), prop.GetValue(cp2),
+                    $"Prop {prop} was not the same between child providers - after UpdateTo");
             }
             catch (Exception)
             {
@@ -109,18 +116,18 @@ internal class ChildProviderTests : UITests
 
         var badFields = new List<string>();
 
-        foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
+        foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
             try
             {
-                Assert.AreSame(field.GetValue(cp1),field.GetValue(cp2),$"Field {field} was not the same between child providers - after UpdateTo");
+                Assert.AreSame(field.GetValue(cp1), field.GetValue(cp2),
+                    $"Field {field} was not the same between child providers - after UpdateTo");
             }
-            catch(Exception)
+            catch (Exception)
             {
                 badFields.Add(field.Name);
             }
 
         Assert.IsEmpty(badFields);
-
     }
 
     [Test]
@@ -239,6 +246,7 @@ internal class ChildProviderTests : UITests
         Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
         Assert.AreNotEqual(p1[2], p2[2]); // Database (i.e. Frank/Biff)
     }
+
     /// <summary>
     /// Capitalization changes are not considered different.  This test confirms that
     /// when user has 2 nodes that have SERVER names with different caps they get grouped

@@ -30,8 +30,5 @@ public class ColumnCombineable : ICombineToMakeCommand
     }
 
     /// <inheritdoc/>
-    public string GetSqlString()
-    {
-        return Column.SelectSQL;
-    }
+    public string GetSqlString() => Column.SelectSQL;
 }

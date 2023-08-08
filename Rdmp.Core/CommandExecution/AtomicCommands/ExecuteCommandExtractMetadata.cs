@@ -24,21 +24,25 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
     private readonly string _newlineSub;
     private readonly string _commaSub;
 
-    public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator, 
-        Catalogue[] catalogues, 
+    public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator,
+        Catalogue[] catalogues,
         [DemandsInitialization("Where new files should be generated")]
         DirectoryInfo outputDirectory,
-
-        [DemandsInitialization("Template file in which keys such as $Name will be replaced with the corresponding Catalogue entry")]
-        FileInfo template, 
-        [DemandsInitialization("How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
-        string fileNaming, 
-        [DemandsInitialization("True to append all outputs into a single file.  False to output a new file for every Catalogue")]
-        bool oneFile, 
-        [DemandsInitialization("Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
+        [DemandsInitialization(
+            "Template file in which keys such as $Name will be replaced with the corresponding Catalogue entry")]
+        FileInfo template,
+        [DemandsInitialization(
+            "How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
+        string fileNaming,
+        [DemandsInitialization(
+            "True to append all outputs into a single file.  False to output a new file for every Catalogue")]
+        bool oneFile,
+        [DemandsInitialization(
+            "Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
         string newlineSub,
-        [DemandsInitialization("Optional, specify a replacement for the token $Comma (defaults to ',')",DefaultValue = ",")]
-        string commaSub = ","):base(basicActivator)
+        [DemandsInitialization("Optional, specify a replacement for the token $Comma (defaults to ',')",
+            DefaultValue = ",")]
+        string commaSub = ",") : base(basicActivator)
     {
         _catalogues = catalogues;
         _outputDirectory = outputDirectory;
@@ -57,12 +61,12 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
             .SelectMany("Which catalogues do you want to extract metadata for", typeof(Catalogue),
                 BasicActivator.CoreChildProvider.AllCatalogues);
 
-        if(catas == null || !catas.Any())
+        if (catas == null || !catas.Any())
             return;
 
         var outputDir = _outputDirectory ?? BasicActivator.SelectDirectory("Enter output directory");
 
-        if(outputDir == null)
+        if (outputDir == null)
             return;
 
         var template = _template;
@@ -70,18 +74,20 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
         if (template == null)
         {
             BasicActivator.Show("Pick a template");
-            template = BasicActivator.SelectFile("Enter metadata template (should have template values in it e.g. $Name, $Description etc)");
+            template = BasicActivator.SelectFile(
+                "Enter metadata template (should have template values in it e.g. $Name, $Description etc)");
         }
 
         if (template == null)
             return;
 
-        var fileNaming =  _fileNaming;
+        var fileNaming = _fileNaming;
 
         if (fileNaming == null)
-            if(!BasicActivator.TypeText("File naming", "File Naming", 1000, $"$Name{template.Extension}", out fileNaming, false))
+            if (!BasicActivator.TypeText("File naming", "File Naming", 1000, $"$Name{template.Extension}",
+                    out fileNaming, false))
                 return;
-            
+
         if (string.IsNullOrWhiteSpace(fileNaming))
             return;
 
@@ -90,6 +96,7 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
             NewlineSubstitution = _newlineSub,
             CommaSubstitution = _commaSub
         };
-        reporter.GenerateReport(catas.Cast<Catalogue>().OrderBy(c=>c.Name).ToArray(),outputDir,template, fileNaming, _oneFile);
+        reporter.GenerateReport(catas.Cast<Catalogue>().OrderBy(c => c.Name).ToArray(), outputDir, template, fileNaming,
+            _oneFile);
     }
 }

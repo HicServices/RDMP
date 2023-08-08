@@ -19,16 +19,13 @@ public abstract class CommandFactoryBase
     /// <returns></returns>
     public static bool Is<T>(object o, out T match)
     {
-        if(o is T o1)
+        if (o is T o1)
         {
             match = o1;
             return true;
         }
 
-        if(o is IMasqueradeAs m)
-        {
-            return Is<T>(m.MasqueradingAs(),out match);
-        }
+        if (o is IMasqueradeAs m) return Is<T>(m.MasqueradingAs(), out match);
 
         match = default;
         return false;

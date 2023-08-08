@@ -20,16 +20,17 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
     {
         var ac = WhenIHaveA<AggregateConfiguration>();
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
-            
+
         Assert.IsNull(ac.RootFilterContainer_ID);
-            
+
         Assert.IsNull(cmd.ReasonCommandImpossible);
         Assert.IsFalse(cmd.IsImpossible);
 
         cmd.Execute();
-            
+
         Assert.IsNotNull(ac.RootFilterContainer_ID);
     }
+
     [Test]
     public void Impossible_BecauseAlreadyHasContainer()
     {
@@ -43,6 +44,7 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
         Assert.AreEqual("There is already a root filter container on this object", cmd.ReasonCommandImpossible);
         Assert.IsTrue(cmd.IsImpossible);
     }
+
     [Test]
     public void Impossible_BecauseAPI()
     {

@@ -20,7 +20,7 @@ internal class NewObjectPoolTests : UnitTests
     {
         SetupMEF();
 
-        var cata1 = new Catalogue(Repository,"Hey");
+        var cata1 = new Catalogue(Repository, "Hey");
 
         // When there is only one object we can pick it by name
         var picker = new CommandLineObjectPicker(new string[] { "Catalogue:Hey" }, GetActivator());
@@ -38,7 +38,7 @@ internal class NewObjectPoolTests : UnitTests
     {
         SetupMEF();
 
-        using(NewObjectPool.StartSession())
+        using (NewObjectPool.StartSession())
         {
             var cata1 = new Catalogue(Repository, "Hey");
 

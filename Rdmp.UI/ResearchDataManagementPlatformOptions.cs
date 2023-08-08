@@ -13,8 +13,5 @@ namespace Rdmp.UI;
 /// </summary>
 public class ResearchDataManagementPlatformOptions : RDMPCommandLineOptions
 {
-    protected override bool ShouldLoadHelp()
-    {
-        return true;
-    }
+    protected override bool ShouldLoadHelp() => true;
 }

@@ -21,7 +21,7 @@ public class DilutionOperationFactory
 
     public DilutionOperationFactory(IPreLoadDiscardedColumn targetColumn)
     {
-        if(targetColumn == null)
+        if (targetColumn == null)
             throw new ArgumentNullException(nameof(targetColumn));
 
         _targetColumn = targetColumn;
@@ -30,15 +30,15 @@ public class DilutionOperationFactory
 
     public IDilutionOperation Create(Type operation)
     {
-        if(operation == null)
+        if (operation == null)
             throw new ArgumentNullException(nameof(operation));
 
-        if(!typeof(IDilutionOperation).IsAssignableFrom(operation))
+        if (!typeof(IDilutionOperation).IsAssignableFrom(operation))
             throw new ArgumentException($"Requested operation Type {operation} did was not an IDilutionOperation");
 
         var instance = _mef.CreateA<IDilutionOperation>(operation.FullName);
         instance.ColumnToDilute = _targetColumn;
-            
+
         return instance;
     }
 }

@@ -18,14 +18,15 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecution,IAtomicCommandWithTarget
+public class ExecuteCommandExecuteExtractionConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
 {
     private ExtractionConfiguration _extractionConfiguration;
     private SelectedDataSets _selectedDataSet;
     private Project _project;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : this(activator)
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : this(activator)
     {
         _extractionConfiguration = extractionConfiguration;
     }
@@ -40,22 +41,18 @@ public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecutio
         OverrideCommandName = "Run Extraction...";
     }
 
-    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) : this(activator)
+    public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) :
+        this(activator)
     {
         _extractionConfiguration = (ExtractionConfiguration)selectedDataSet.ExtractionConfiguration;
         _selectedDataSet = selectedDataSet;
-
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Extract all the datasets in the configuration linking each against the configuration's cohort";
-    }
+    public override string GetCommandHelp() =>
+        "Extract all the datasets in the configuration linking each against the configuration's cohort";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -63,7 +60,7 @@ public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecutio
         _project = target as Project;
 
         //if target is ExtractionConfiguration
-        if(_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out var reason))
+        if (_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out var reason))
             SetImpossible(reason);
 
         if (_project != null && !_project.ExtractionConfigurations.Any(c => c.IsExtractable(out _)))
@@ -71,20 +68,21 @@ public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecutio
 
         return this;
     }
-        
+
 
     public override void Execute()
     {
         base.Execute();
 
-        if(_project != null && _extractionConfiguration == null)
+        if (_project != null && _extractionConfiguration == null)
         {
-            var available = _project.ExtractionConfigurations.Where(c=>c.IsExtractable(out _)).Cast<ExtractionConfiguration>().ToArray();
-                
-            if(available.Any())
+            var available = _project.ExtractionConfigurations.Where(c => c.IsExtractable(out _))
+                .Cast<ExtractionConfiguration>().ToArray();
+
+            if (available.Any())
                 _extractionConfiguration = SelectOne(available);
 
-            if(_extractionConfiguration == null)
+            if (_extractionConfiguration == null)
                 return;
         }
 

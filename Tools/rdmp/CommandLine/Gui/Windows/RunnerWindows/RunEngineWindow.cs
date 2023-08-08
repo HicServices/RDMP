@@ -34,6 +34,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
     public int Count => consoleOutput.Count;
     public int Length => consoleOutput.Count;
+
     public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
     {
         _red = ColorSettings.Instance.Red;
@@ -60,10 +61,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         Add(abort);
 
         var close = new Button("Cl_ose") { X = Pos.Right(abort) };
-        close.Clicked += () =>
-        {
-            Application.RequestStop();
-        };
+        close.Clicked += () => { Application.RequestStop(); };
 
         Add(close);
 
@@ -91,6 +89,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
             obj.Handled = true;
         }
     }
+
     private void ClearOutput()
     {
         lock (lockList)
@@ -136,7 +135,6 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     /// <param name="opts"></param>
     protected virtual void AdjustCommand(T opts, CommandLineActivity activity)
     {
-
     }
 
     private void Check()
@@ -166,16 +164,15 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
 
         if (!File.Exists(binary))
-        {
             // the program that launched this code isn't rdmp.exe.  Maybe rdmp is in the current directory though
             binary = $"./{expectedFileName}";
-        }
 
         if (!File.Exists(binary))
         {
             MessageBox.ErrorQuery("Could not find rdmp binary", $"Could not find {binary}", "Ok");
             return;
         }
+
         var cmd = new ExecuteCommandGenerateRunCommand(BasicActivator, commandGetter);
         var args = cmd.GetCommandText(true);
 
@@ -199,41 +196,33 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
             {
                 var line = process.StandardOutput.ReadLine().Trim();
 
-                lock(lockList)
+                lock (lockList)
                 {
-                    consoleOutput.Insert(0,line);
-                    Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
+                    consoleOutput.Insert(0, line);
+                    Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
                 }
-
             }
         });
     }
 
-    public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
+    public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width,
+        int start = 0)
     {
-
         lock (lockList)
         {
-            if (item >= consoleOutput.Count)
-            {
-                return;
-            }
+            if (item >= consoleOutput.Count) return;
 
             var str = consoleOutput[item];
 
-            str = str.Length > width ? str[..width] : str.PadRight(width,' ');
+            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
 
             _results.Move(col, line);
 
             ColorScheme scheme;
             if (str.Contains("ERROR"))
-            {
                 scheme = _red;
-            }
             else if (str.Contains("WARN"))
-            {
                 scheme = _yellow;
-            }
             else
                 scheme = _white;
 
@@ -242,17 +231,11 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         }
     }
 
-    public bool IsMarked(int item)
-    {
-        return false;
-    }
+    public bool IsMarked(int item) => false;
 
     public void SetMark(int item, bool value)
     {
     }
 
-    public IList ToList()
-    {
-        return consoleOutput;
-    }
+    public IList ToList() => consoleOutput;
 }

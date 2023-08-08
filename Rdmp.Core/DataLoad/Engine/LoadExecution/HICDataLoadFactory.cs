@@ -33,7 +33,8 @@ public class HICDataLoadFactory
 
     public ILoadMetadata LoadMetadata { get; private set; }
 
-    public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
+    public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+        HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
@@ -60,7 +61,8 @@ public class HICDataLoadFactory
                 new NotifyEventArgs(ProgressEventType.Warning, $"Found disabled ProcessTask{task}"));
 
         //Get all the runtime tasks which are not disabled
-        var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs, _cataloguesToLoad, _repository);
+        var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs,
+            _cataloguesToLoad, _repository);
 
         var getFiles = new LoadFiles(factory.GetRuntimeTasksForStage(LoadStage.GetFiles));
 
@@ -72,7 +74,7 @@ public class HICDataLoadFactory
 
         var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
 
-        var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration,_loadConfigurationFlags);
+        var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration, _loadConfigurationFlags);
 
         var postLoad = factory.CreateCompositeDataLoadComponentFor(LoadStage.PostLoad, "Post Load");
 
@@ -99,8 +101,7 @@ public class HICDataLoadFactory
             adjustStagingAndMigrateToLive,
             archiveFiles
         };
-            
-        return new SingleJobExecution(components);
 
+        return new SingleJobExecution(components);
     }
 }

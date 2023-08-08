@@ -19,7 +19,8 @@ using System.IO;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
-[SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "We are generating random metadata, security does not enter into the equation")]
+[SuppressMessage("Security", "SCS0005:Weak random number generator.",
+    Justification = "We are generating random metadata, security does not enter into the equation")]
 internal class NightmareDatasets : DataGenerator
 {
     private IRDMPPlatformRepositoryServiceLocator _repos;
@@ -34,7 +35,7 @@ internal class NightmareDatasets : DataGenerator
     /// </summary>
     public int Factor = 1;
 
-    public NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db) :base(new Random(123))
+    public NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db) : base(new Random(123))
     {
         _repos = repos;
         _db = db;
@@ -76,11 +77,11 @@ internal class NightmareDatasets : DataGenerator
         for (var i = 0; i < 500 * Factor; i++)
         {
             var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}")
- {
-     Description = GetRandomSentence(r)
- };
+            {
+                Description = GetRandomSentence(r)
+            };
             cata.SaveToDatabase();
-            Catalogues.Add(1,cata);
+            Catalogues.Add(1, cata);
 
             // half of datasets have linkage identifiers
             var hasExtractionIdentifier = false;
@@ -98,9 +99,9 @@ internal class NightmareDatasets : DataGenerator
                 if (r.Next(10) < 6)
                 {
                     var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name)
-                        {
-                            ExtractionCategory = extractionCategories.GetRandom(r)
-                        };
+                    {
+                        ExtractionCategory = extractionCategories.GetRandom(r)
+                    };
 
                     if (first)
                     {
@@ -117,7 +118,7 @@ internal class NightmareDatasets : DataGenerator
                     }
 
                     first = false;
-                }           
+                }
             }
 
             // half of the Catalogues have IsExtractionIdentifier
@@ -128,23 +129,20 @@ internal class NightmareDatasets : DataGenerator
                 ExtractableDatasets.Add(1, eds);
             }
         }
-            
+
         // There are 500 tables associated with Catalogues
         // but also 250 tables that are not linked to any Catalogues
-        for (var i = 0; i < 250 * Factor; i++)
-        {
-            CreateTable();
-        }
+        for (var i = 0; i < 250 * Factor; i++) CreateTable();
 
         // open a connection to the cohort db for creating external cohorts
         using var con = ect.Discover().Server.GetManagedConnection();
-            
+
         for (var i = 0; i < 200 * Factor; i++)
         {
             // each project
             var p = new Project(_repos.DataExportRepository, $"Project {i}")
             {
-                ProjectNumber = r.Next(50) == 0 ? 5:i, // it's ok for some projects to have the same number
+                ProjectNumber = r.Next(50) == 0 ? 5 : i, // it's ok for some projects to have the same number
                 ExtractionDirectory = extractionDir
             };
             p.SaveToDatabase();
@@ -153,7 +151,7 @@ internal class NightmareDatasets : DataGenerator
             // has an average of 5 ExtractionConfigurations but could have 0 to 10
             var numberOfConfigs = GetGaussianInt(0, 10);
 
-            for(var c = 0;c< numberOfConfigs; c++)
+            for (var c = 0; c < numberOfConfigs; c++)
             {
                 var config = new ExtractionConfiguration(_repos.DataExportRepository, p,
                     $"Extraction {GetRandomGPCode(r)}");
@@ -171,13 +169,14 @@ internal class NightmareDatasets : DataGenerator
                     config.AddDatasetToConfiguration(ds, out var sds);
 
                     var request = new CohortCreationRequest(p,
-                        new CohortDefinition(null,"Created by NightmareDatasets",1, p.ProjectNumber.Value, ect),
+                        new CohortDefinition(null, "Created by NightmareDatasets", 1, p.ProjectNumber.Value, ect),
                         _repos.DataExportRepository,
                         $"Nightmare dreamed on {DateTime.Now}");
 
                     request.PushToServer(con);
 
-                    var cohort = new ExtractableCohort(_repos.DataExportRepository, ect, request.NewCohortDefinition.ID.Value);
+                    var cohort = new ExtractableCohort(_repos.DataExportRepository, ect,
+                        request.NewCohortDefinition.ID.Value);
                     config.Cohort_ID = cohort.ID;
                     config.SaveToDatabase();
 
@@ -213,19 +212,19 @@ internal class NightmareDatasets : DataGenerator
         {
             var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,
                 $"Cohort Query {GetRandomGPCode(r)}");
-                
+
             // 25% of cics are associated with a specific project
-            if(r.Next(4) == 0)
+            if (r.Next(4) == 0)
             {
-                var projSpecific = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository, Projects.GetRandom(r), cic);
+                var projSpecific =
+                    new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository,
+                        Projects.GetRandom(r), cic);
             }
-                
         }
     }
 
     private void AddExtractionFiltersTo(IContainer container)
     {
-
         var numberOfFilters = GetGaussianInt(0, 2);
         for (var f = 0; f < numberOfFilters; f++)
         {
@@ -246,17 +245,18 @@ internal class NightmareDatasets : DataGenerator
         // 18415 columns
         // = average of 24 columns per table
         var ti = new TableInfo(_repos.CatalogueRepository, $"[MyDb].[Table{TablesCount++}]");
-            
+
         // let's not set the server name on 1 in 20 so we get all those
         // horrible null references out in the open
-        if(r.Next(20)!=0)
+        if (r.Next(20) != 0)
             ti.Server = _serverName;
 
         // let's not set the database name on 1 in 20 so we get all those
         // horrible null references out in the open
         if (r.Next(20) != 0)
-            ti.Database = r.Next(2) == 0 ? _databaseNameRuntime : _databaseNameWrapped; // some are "[mydb]" some will be "mydb"
-            
+            ti.Database =
+                r.Next(2) == 0 ? _databaseNameRuntime : _databaseNameWrapped; // some are "[mydb]" some will be "mydb"
+
         // 1 in 20 tables is a view
         ti.IsView = r.Next(20) == 0;
 
@@ -266,19 +266,11 @@ internal class NightmareDatasets : DataGenerator
 
         var numberOfColumns = GetGaussianInt(1, 48);
         for (var j = 0; j < numberOfColumns; j++)
-        {
             yield return new ColumnInfo(_repos.CatalogueRepository, $"MyCol{ColumnsCount++}", "varchar(10)", ti);
-        }
     }
 
     // we are not actually interested in these methods, just want to use GetGaussian etc
-    public override object[] GenerateTestDataRow(Person p)
-    {
-        throw new NotSupportedException();
-    }
+    public override object[] GenerateTestDataRow(Person p) => throw new NotSupportedException();
 
-    protected override string[] GetHeaders()
-    {
-        throw new NotSupportedException();
-    }
+    protected override string[] GetHeaders() => throw new NotSupportedException();
 }

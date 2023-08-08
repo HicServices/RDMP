@@ -36,21 +36,22 @@ public partial class DataFlowComponentVisualisation : UserControl
         get => pbPadlock.Visible;
         set => pbPadlock.Visible = value;
     }
+
     private readonly Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> _shouldAllowDrop;
 
     public DataFlowComponentVisualisation()
-        : this(PipelineComponentRole.Middle, null,null)
+        : this(PipelineComponentRole.Middle, null, null)
     {
-        if (LicenseManager.UsageMode != LicenseUsageMode.Designtime) //don't connect to database in design mode unless they passed in a fist full of nulls
+        if (LicenseManager.UsageMode !=
+            LicenseUsageMode
+                .Designtime) //don't connect to database in design mode unless they passed in a fist full of nulls
             throw new NotSupportedException("Do not use this constructor, it is for use by Visual Studio Designer");
     }
 
-    public PipelineComponentRole GetRole()
-    {
-        return _role;
-    }
+    public PipelineComponentRole GetRole() => _role;
 
-    public DataFlowComponentVisualisation(PipelineComponentRole role, object value, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
+    public DataFlowComponentVisualisation(PipelineComponentRole role, object value,
+        Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
     {
         Value = value;
         _role = role;
@@ -63,7 +64,7 @@ public partial class DataFlowComponentVisualisation : UserControl
 
         if (value == null)
         {
-            IsLocked = false;//cannot be locked AND empty!
+            IsLocked = false; //cannot be locked AND empty!
             _isEmpty = true;
             lblText.Text = "Empty";
             AllowDrop = _shouldAllowDrop != null;
@@ -72,7 +73,7 @@ public partial class DataFlowComponentVisualisation : UserControl
         {
             _checkable = value as ICheckable;
             _mandatoryChecker = new MandatoryPropertyChecker(value);
-            lblText.Text = value.ToString();//.GetType().Name;
+            lblText.Text = value.ToString(); //.GetType().Name;
             GenerateToolTipBasedOnProperties(value);
         }
 
@@ -92,7 +93,7 @@ public partial class DataFlowComponentVisualisation : UserControl
                 throw new ArgumentOutOfRangeException(nameof(role));
         }
 
-            
+
         Width = lblText.PreferredWidth + 80;
     }
 
@@ -119,15 +120,14 @@ public partial class DataFlowComponentVisualisation : UserControl
 
         var result = toolTip.ToString();
 
-        if(!string.IsNullOrWhiteSpace(result))
+        if (!string.IsNullOrWhiteSpace(result))
             _toolTip.SetToolTip(lblText,
                 $"{lblText.Text}{Environment.NewLine}Arguments:{Environment.NewLine}{result}");
     }
 
-    protected bool _isEmpty ;
+    protected bool _isEmpty;
     private Pen _emptyPen = new(new SolidBrush(Color.Black));
     protected Pen _fullPen = new(new SolidBrush(Color.Black));
-
 
 
     protected override void OnPaintBackground(PaintEventArgs e)
@@ -139,10 +139,10 @@ public partial class DataFlowComponentVisualisation : UserControl
 
     private void DataFlowComponentVisualisation_DragEnter(object sender, DragEventArgs e)
     {
-        if(_shouldAllowDrop == null)
+        if (_shouldAllowDrop == null)
             return;
 
-        var shouldAllow = _shouldAllowDrop(e,this);
+        var shouldAllow = _shouldAllowDrop(e, this);
 
         if (shouldAllow != DragDropEffects.None)
             pbInsertHere.Visible = true;
@@ -178,5 +178,4 @@ public partial class DataFlowComponentVisualisation : UserControl
             ragSmiley1.Fatal(e);
         }
     }
-
 }

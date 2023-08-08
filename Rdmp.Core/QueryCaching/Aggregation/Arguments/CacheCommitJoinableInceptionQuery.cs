@@ -19,15 +19,15 @@ namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 /// 
 /// <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
 ///</summary>
-public class CacheCommitJoinableInceptionQuery:CacheCommitArguments
+public class CacheCommitJoinableInceptionQuery : CacheCommitArguments
 {
-    public CacheCommitJoinableInceptionQuery(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest[] explicitTypes,int timeout)
+    public CacheCommitJoinableInceptionQuery(AggregateConfiguration configuration, string sql, DataTable results,
+        DatabaseColumnRequest[] explicitTypes, int timeout)
         : base(AggregateOperation.JoinableInceptionQuery, configuration, sql, results, timeout, explicitTypes)
     {
     }
 
     public override void CommitTableDataCompleted(DiscoveredTable resultingTable)
     {
-            
     }
 }

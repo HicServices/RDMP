@@ -25,30 +25,28 @@ public class CSVOutputFormat : FileOutputFormat
     public string DateFormat { get; set; }
 
     public int SeparatorsStrippedOut { get; private set; }
-    private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t","\""};
+    private static readonly string[] ThingsToStripOut = { "\r", "\n", "\t", "\"" };
     private StreamWriter _sw;
     private StringBuilder _sbWriteOutLinesBuffer;
     private const string _illegalCharactersReplacement = " ";
 
-    public CSVOutputFormat(string outputFilename,string separator, string dateFormat): base(outputFilename)
+    public CSVOutputFormat(string outputFilename, string separator, string dateFormat) : base(outputFilename)
     {
         Separator = separator;
         DateFormat = dateFormat;
     }
 
-    public override string GetFileExtension()
-    {
-        return ".csv";
-    }
+    public override string GetFileExtension() => ".csv";
 
     public override void Open()
     {
         _sw = new StreamWriter(OutputFilename);
         _sbWriteOutLinesBuffer = new StringBuilder();
     }
+
     public override void Open(bool append)
     {
-        _sw = new StreamWriter(OutputFilename,append);
+        _sw = new StreamWriter(OutputFilename, append);
         _sbWriteOutLinesBuffer = new StringBuilder();
     }
 
@@ -56,9 +54,8 @@ public class CSVOutputFormat : FileOutputFormat
     {
         //write headers separated by separator
         _sw.Write(string.Join(Separator, t.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray()));
-            
-        _sw.WriteLine();
 
+        _sw.WriteLine();
     }
 
     public override void Append(DataRow r)
@@ -86,7 +83,8 @@ public class CSVOutputFormat : FileOutputFormat
 
     public string CleanString(object o)
     {
-        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
+        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,
+            RoundFloatsTo);
 
         SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 
@@ -94,7 +92,8 @@ public class CSVOutputFormat : FileOutputFormat
     }
 
 
-    public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
+    public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat,
+        int? roundFloatsTo)
     {
         if (o is DateTime dt)
         {
@@ -105,10 +104,10 @@ public class CSVOutputFormat : FileOutputFormat
         if (roundFloatsTo.HasValue)
         {
             separatorsStrippedOut = 0;
-            switch(o)
+            switch (o)
             {
-                case float f : return f.ToString($"N{roundFloatsTo.Value}");
-                case decimal dec : return dec.ToString($"N{roundFloatsTo.Value}");
+                case float f: return f.ToString($"N{roundFloatsTo.Value}");
+                case decimal dec: return dec.ToString($"N{roundFloatsTo.Value}");
                 case double d: return d.ToString($"N{roundFloatsTo.Value}");
             }
         }
@@ -130,5 +129,4 @@ public class CSVOutputFormat : FileOutputFormat
 
         return o.ToString().Trim();
     }
-
 }

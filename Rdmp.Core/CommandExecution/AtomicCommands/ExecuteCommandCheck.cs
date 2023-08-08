@@ -20,7 +20,8 @@ public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
     private readonly ICheckable _checkable;
     private ICheckNotifier _notifier;
 
-    public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) : base(activator)
+    public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) :
+        base(activator)
     {
         _checkable = checkable;
         _notifier = notifier;
@@ -34,8 +35,5 @@ public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
     }
 
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
 }

@@ -32,6 +32,7 @@ public class ShareManager
     /// Tells the location of the platform databases to create objects/import references in
     /// </summary>
     public readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
+
     private readonly ICatalogueRepository _catalogueRepository;
 
     private const char PersistenceSeparator = '|';
@@ -47,19 +48,21 @@ public class ShareManager
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <param name="localReferenceGetter"></param>
-    public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, LocalReferenceGetterDelegate localReferenceGetter = null)
+    public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        LocalReferenceGetterDelegate localReferenceGetter = null)
     {
         RepositoryLocator = repositoryLocator;
         _catalogueRepository = repositoryLocator.CatalogueRepository;
         LocalReferenceGetter = localReferenceGetter ?? DefaultLocalReferenceGetter;
     }
 
-    private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
+    private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute,
+        ShareDefinition sharedefinition)
     {
         var defaults = RepositoryLocator.CatalogueRepository;
 
 
-        if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
+        if (property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
         {
             var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
@@ -68,7 +71,6 @@ public class ShareManager
 
         throw new SharingException(
             $"No default implementation exists for LocalReferenceGetterDelegate for property {property.Name}");
-
     }
 
     /// <summary>
@@ -104,9 +106,9 @@ public class ShareManager
         if (string.IsNullOrWhiteSpace(persistenceString))
             return null;
 
-        var elements = persistenceString.Split(new []{PersistenceSeparator},StringSplitOptions.None);
+        var elements = persistenceString.Split(new[] { PersistenceSeparator }, StringSplitOptions.None);
 
-        if(elements.Length < 4)
+        if (elements.Length < 4)
             throw new Exception($"Malformed persistenceString:{persistenceString}");
 
         //elements[0];//type name of the class we are fetching
@@ -115,7 +117,7 @@ public class ShareManager
         //elements[3]; // SharingUI if it has one
 
         //if it has a sharing UID
-        if(!string.IsNullOrWhiteSpace(elements[3]))
+        if (!string.IsNullOrWhiteSpace(elements[3]))
         {
             var localImport = GetExistingImport(elements[3]);
 
@@ -125,7 +127,8 @@ public class ShareManager
         }
 
         //otherwise get the existing master object
-        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ?? throw new Exception($"Could not find object for persistenceString:{persistenceString}");
+        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ??
+                throw new Exception($"Could not find object for persistenceString:{persistenceString}");
         return o;
     }
 
@@ -134,10 +137,8 @@ public class ShareManager
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
-    {
-        return _catalogueRepository.GetReferencesTo<ObjectExport>(o).Any();
-    }
+    public bool IsExportedObject(IMapsDirectlyToDatabaseTable o) =>
+        _catalogueRepository.GetReferencesTo<ObjectExport>(o).Any();
 
 
     /// <summary>
@@ -145,10 +146,8 @@ public class ShareManager
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
-    {
-        return _catalogueRepository.GetReferencesTo<ObjectImport>(o).Any();
-    }
+    public bool IsImportedObject(IMapsDirectlyToDatabaseTable o) =>
+        _catalogueRepository.GetReferencesTo<ObjectImport>(o).Any();
 
     /// <summary>
     /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by its <paramref name="sharingUID"/>
@@ -172,17 +171,19 @@ public class ShareManager
     /// <returns></returns>
     public ObjectExport GetNewOrExistingExportFor(IMapsDirectlyToDatabaseTable o)
     {
-        var existingExport = _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(o));
+        var existingExport =
+            _catalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(o));
 
         if (existingExport != null)
             return existingExport;
 
-        var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
+        var existingImport =
+            _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
 
         if (existingImport != null)
             return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
 
-        return new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
+        return new ObjectExport(_catalogueRepository, o, Guid.NewGuid());
     }
 
 
@@ -200,10 +201,7 @@ public class ShareManager
     }
 
     /// <inheritdoc cref="GetExistingImportObject(string)"/>
-    public object GetExistingImportObject(Guid sharingGuid)
-    {
-        return GetExistingImportObject(sharingGuid.ToString());
-    }
+    public object GetExistingImportObject(Guid sharingGuid) => GetExistingImportObject(sharingGuid.ToString());
 
     /// <summary>
     /// Returns the local object which was exported under the given <paramref name="sharingUID"/> (or null if the object has never
@@ -219,10 +217,7 @@ public class ShareManager
     }
 
     /// <inheritdoc cref="GetExistingExportObject(string)"/>
-    public object GetExistingExportObject(Guid sharingGuid)
-    {
-        return GetExistingExportObject(sharingGuid.ToString());
-    }
+    public object GetExistingExportObject(Guid sharingGuid) => GetExistingExportObject(sharingGuid.ToString());
 
 
     /// <summary>
@@ -230,32 +225,22 @@ public class ShareManager
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public ObjectImport GetExistingImport(string sharingUID)
-    {
-        return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).SingleOrDefault();
-    }
+    public ObjectImport GetExistingImport(string sharingUID) => _catalogueRepository
+        .GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).SingleOrDefault();
 
     /// <inheritdoc cref="GetExistingImport(string)"/>
-    public ObjectImport GetExistingImport(Guid sharingUID)
-    {
-        return GetExistingImport(sharingUID.ToString());
-    }
+    public ObjectImport GetExistingImport(Guid sharingUID) => GetExistingImport(sharingUID.ToString());
 
     /// <summary>
     /// Returns a matching ObjectExport for the provided sharingUID or null if the UID has never been imported
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public ObjectExport GetExistingExport(string sharingUID)
-    {
-        return _catalogueRepository.GetAllObjectsWhere<ObjectExport>("SharingUID", sharingUID).SingleOrDefault();
-    }
+    public ObjectExport GetExistingExport(string sharingUID) => _catalogueRepository
+        .GetAllObjectsWhere<ObjectExport>("SharingUID", sharingUID).SingleOrDefault();
 
     /// <inheritdoc cref="GetExistingExport(string)"/>
-    public ObjectExport GetExistingExport(Guid sharingUID)
-    {
-        return GetExistingExport(sharingUID.ToString());
-    }
+    public ObjectExport GetExistingExport(Guid sharingUID) => GetExistingExport(sharingUID.ToString());
 
     /// <summary>
     /// Marks the given local object <paramref name="o"/> as an imported instance of a shared object (identified by its <paramref name="sharingUID"/>)
@@ -263,19 +248,14 @@ public class ShareManager
     /// <param name="sharingUID"></param>
     /// <param name="o"></param>
     /// <returns></returns>
-    public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o)
-    {
-        return GetExistingImport(sharingUID) ?? new ObjectImport(_catalogueRepository, sharingUID, o);
-    }
+    public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o) =>
+        GetExistingImport(sharingUID) ?? new ObjectImport(_catalogueRepository, sharingUID, o);
 
     /// <summary>
     /// Gets all import definitions (ObjectImport) defined in the Catalogue database
     /// </summary>
     /// <returns></returns>
-    public ObjectImport[] GetAllImports()
-    {
-        return _catalogueRepository.GetAllObjects<ObjectImport>();
-    }
+    public ObjectImport[] GetAllImports() => _catalogueRepository.GetAllObjects<ObjectImport>();
 
     /// <summary>
     /// Deletes all import definitions (ObjectImport) for which the referenced object (IMapsDirectlyToDatabaseTable) no longer exists (has been deleted)
@@ -293,7 +273,8 @@ public class ShareManager
     /// <param name="sharedObjectsFile"></param>
     /// <param name="deleteExisting"></param>
     /// <returns></returns>
-    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile, bool deleteExisting = false)
+    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile,
+        bool deleteExisting = false)
     {
         var sr = new StreamReader(sharedObjectsFile);
         var text = sr.ReadToEnd();
@@ -307,7 +288,8 @@ public class ShareManager
     /// <param name="sharedObjectsFileText"></param>
     /// <param name="deleteExisting"></param>
     /// <returns></returns>
-    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
+    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText,
+        bool deleteExisting = false)
     {
         var toImport = GetShareDefinitionList(sharedObjectsFileText);
 
@@ -319,20 +301,17 @@ public class ShareManager
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public List<ShareDefinition> GetShareDefinitionList(string json)
-    {
-        return (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof (List<ShareDefinition>), RepositoryLocator);
-    }
+    public List<ShareDefinition> GetShareDefinitionList(string json) =>
+        (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof(List<ShareDefinition>),
+            RepositoryLocator);
 
     /// <summary>
     /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
     /// </summary>
     /// <param name="toImport"></param>
     /// <returns></returns>
-    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport)
-    {
-        return ImportSharedObject(toImport, false);
-    }
+    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport) =>
+        ImportSharedObject(toImport, false);
 
     /// <summary>
     /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
@@ -340,12 +319,12 @@ public class ShareManager
     /// <param name="toImport"></param>
     /// <param name="deleteExisting">Deletes the object if the object has already been imported previously (not a good idea).</param>
     /// <returns></returns>
-    internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport, bool deleteExisting)
+    internal IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport,
+        bool deleteExisting)
     {
         var created = new List<IMapsDirectlyToDatabaseTable>();
 
         foreach (var sd in toImport)
-        {
             try
             {
                 if (deleteExisting)
@@ -353,16 +332,17 @@ public class ShareManager
                     var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
                     actual?.DeleteInDatabase();
                 }
+
                 var objectConstructor = new ObjectConstructor();
-                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ?? throw new ObjectLacksCompatibleConstructorException(
-                        $"Could not find a ShareManager constructor for '{sd.Type}'");
+                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??
+                               throw new ObjectLacksCompatibleConstructorException(
+                                   $"Could not find a ShareManager constructor for '{sd.Type}'");
                 created.Add(instance);
             }
             catch (Exception e)
             {
                 throw new Exception($"Error constructing {sd.Type}", e);
             }
-        }
 
         return created;
     }
@@ -376,16 +356,17 @@ public class ShareManager
     /// <param name="relationshipAttribute">The attribute that decorates the <paramref name="property"/> which indicates what type of object the parent is etc</param>
     /// <param name="shareDefinition">The serialization of the child you are trying to import</param>
     /// <returns></returns>
-    public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
+    public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute,
+        ShareDefinition shareDefinition)
     {
-        if(property.DeclaringType == null)
+        if (property.DeclaringType == null)
             throw new Exception($"DeclaringType on Property '{property}' is null");
 
         if (relationshipAttribute.Type != RelationshipType.LocalReference)
             throw new Exception(
                 $"Relationship was of Type {relationshipAttribute.Type} expected {RelationshipType.LocalReference}");
 
-        if(LocalReferenceGetter == null)
+        if (LocalReferenceGetter == null)
             throw new Exception(
                 string.Format("No LocalReferenceGetter has been set, cannot populate Property {0} {1}",
                     property.Name,
@@ -411,13 +392,13 @@ public class ShareManager
         //for each property that isn't [NoMappingToDatabase]
         foreach (var kvp in shareDefinition.GetDictionaryForImport())
         {
-            if(kvp.Key == "Name")
+            if (kvp.Key == "Name")
                 continue;
 
             var prop = o.GetType().GetProperty(kvp.Key);
 
             //If the property is a relationship e.g. _ID skip it
-            if(relationshipPropertyFinder.GetAttribute(prop) != null)
+            if (relationshipPropertyFinder.GetAttribute(prop) != null)
                 continue;
 
             //do we skip this property?
@@ -430,18 +411,21 @@ public class ShareManager
                     //is it currently not null? (if so skip)
                     var oldVal = prop.GetValue(o);
 
-                    if(!(oldVal == DBNull.Value || oldVal == null || string.IsNullOrWhiteSpace(oldVal.ToString())))
+                    if (!(oldVal == DBNull.Value || oldVal == null || string.IsNullOrWhiteSpace(oldVal.ToString())))
                         continue;
                 }
                 else
+                {
                     continue; //always skip
+                }
             }
 
-            SetValue(prop,kvp.Value,o);
+            SetValue(prop, kvp.Value, o);
         }
     }
 
-    public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
+    public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition)
+        where T : class, IMapsDirectlyToDatabaseTable
     {
         IRepository repo;
 
@@ -460,7 +444,8 @@ public class ShareManager
 
         //If we have already got a local copy of this shared object?
         //either as an import or as an export
-        var actual = (T)GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)GetExistingExportObject(shareDefinition.SharingGuid);
+        var actual = (T)GetExistingImportObject(shareDefinition.SharingGuid) ??
+                     (T)GetExistingExportObject(shareDefinition.SharingGuid);
 
         //we already have a copy imported of the shared object
         if (actual != null)
@@ -469,14 +454,12 @@ public class ShareManager
 
             //copy all the values out of the share definition / database copy
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
-            {
                 //don't update any ID columns or any with relationships on UPDATE
                 if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
                     SetValue(prop, value, toCreate);
                 else
-                    prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
-
-            }
+                    prop.SetValue(toCreate,
+                        prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
 
             toCreate.Repository = actual.Repository;
 
@@ -494,7 +477,7 @@ public class ShareManager
 
                 //if it has a relationship attribute then we would expect the ShareDefinition to include a dependency relationship with the sharing UID of the parent
                 //and also that we had already imported it since dependencies must be imported in order
-                if(relationshipAttribute != null)
+                if (relationshipAttribute != null)
                 {
                     int? newValue;
 
@@ -506,15 +489,17 @@ public class ShareManager
                             //Confirm that the share definition includes the knowledge that there's a parent class to this object
                             if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
                                 //if it doesn't but the field is optional, ignore it
-                                if(relationshipAttribute.Type == RelationshipType.OptionalSharedObject)
+                                if (relationshipAttribute.Type == RelationshipType.OptionalSharedObject)
                                 {
                                     newValue = null;
                                     break;
                                 }
                                 else
                                     //otherwise we are missing a required shared object being referenced. That's bad news.
+                                {
                                     throw new Exception(
                                         $"Share Definition for object of Type {typeof(T)} is missing an expected RelationshipProperty called {property.Name}");
+                                }
 
                             //Get the SharingUID of the parent for this property
                             var importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
@@ -547,12 +532,12 @@ public class ShareManager
                     if (propertiesDictionary.ContainsKey(property.Name))
                         propertiesDictionary[property.Name] = newValue;
                     else
-                        propertiesDictionary.Add(property.Name,newValue);
+                        propertiesDictionary.Add(property.Name, newValue);
                 }
             }
 
             //insert the full dictionary into the database under the Type
-            repo.InsertAndHydrate(toCreate,propertiesDictionary);
+            repo.InsertAndHydrate(toCreate, propertiesDictionary);
 
             //document that a local import of the share now exists and should be updated/reused from now on when that same GUID comes in / gets used by child objects
             GetImportAs(shareDefinition.SharingGuid.ToString(), toCreate);
@@ -566,21 +551,22 @@ public class ShareManager
         var propertyType = prop.PropertyType;
 
         //if it is a nullable int etc
-        if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
+        if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
             propertyType = propertyType.GetGenericArguments()[0]; //let's pretend it's just int / whatever
 
         if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
             if (propertyType == typeof(Uri))
-                value = value is string s ? new Uri(s):(Uri) value;
-            else
-            if (typeof(Enum).IsAssignableFrom(propertyType))
-                value = Enum.ToObject(propertyType, value);//if the property is an enum
+                value = value is string s ? new Uri(s) : (Uri)value;
+            else if (typeof(Enum).IsAssignableFrom(propertyType))
+                value = Enum.ToObject(propertyType, value); //if the property is an enum
             else
                 value = UsefulStuff.ChangeType(value, propertyType); //the property is not an enum
 
-        prop.SetValue(onObject, value); //if it's a shared property (most properties) use the new shared value being imported
+        prop.SetValue(onObject,
+            value); //if it's a shared property (most properties) use the new shared value being imported
     }
 }
 
 /// <inheritdoc cref="ShareManager.LocalReferenceGetter"/>
-public delegate int? LocalReferenceGetterDelegate(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition);
+public delegate int? LocalReferenceGetterDelegate(PropertyInfo property, RelationshipAttribute relationshipAttribute,
+    ShareDefinition shareDefinition);

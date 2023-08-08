@@ -16,19 +16,16 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential;
 /// </summary>
 public class NoReleasePotential : ReleasePotential
 {
-    public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet): base(repositoryLocator, selectedDataSet)
+    public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSet) : base(repositoryLocator, selectedDataSet)
     {
     }
 
-    protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
-    {
-        return Releaseability.NeverBeenSuccessfullyExecuted;
-    }
+    protected override Releaseability GetSupplementalSpecificAssessment(
+        IExtractionResults supplementalExtractionResults) => Releaseability.NeverBeenSuccessfullyExecuted;
 
-    protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
-    {
-        return Releaseability.NeverBeenSuccessfullyExecuted;
-    }
+    protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults) =>
+        Releaseability.NeverBeenSuccessfullyExecuted;
 
     public override void Check(ICheckNotifier notifier)
     {

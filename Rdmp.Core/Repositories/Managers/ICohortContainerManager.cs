@@ -33,14 +33,14 @@ public interface ICohortContainerManager
     /// <param name="parent"></param>
     /// <param name="child"></param>
     /// <param name="order"></param>
-    void Add(CohortAggregateContainer parent,AggregateConfiguration child, int order);
+    void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order);
 
     /// <summary>
     /// Removes the <paramref name="child"/> configuration from the given container (to which it must belong already)
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="child"></param>
-    void Remove(CohortAggregateContainer parent,AggregateConfiguration child);
+    void Remove(CohortAggregateContainer parent, AggregateConfiguration child);
 
     /// <summary>
     /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
@@ -54,7 +54,7 @@ public interface ICohortContainerManager
     /// </summary>
     /// <returns></returns>
     IOrderable[] GetChildren(CohortAggregateContainer parent);
-        
+
     /// <summary>
     /// Removes the given <paramref name="child"/> container from its host parent container
     /// </summary>
@@ -75,5 +75,4 @@ public interface ICohortContainerManager
     /// <param name="parent"></param>
     /// <param name="child"></param>
     void Add(CohortAggregateContainer parent, CohortAggregateContainer child);
-
 }

@@ -32,6 +32,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private ToolTip tt = new();
     private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
+
     public IPipeline Pipeline
     {
         get => _pipeline;
@@ -60,7 +61,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         var context = _useCase.GetContext();
 
         //add pipelines sorted alphabetically
-        var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p=>p.Name).ToArray();
+        var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p => p.Name).ToArray();
 
         ddPipelines.Items.Add("<<None>>");
 
@@ -85,11 +86,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         //if there is only one pipeline select it
         ddPipelines.SelectedItem = ddPipelines.Items.OfType<Pipeline>().Count() == 1
-            ? (object) ddPipelines.Items.OfType<Pipeline>().Single()
+            ? (object)ddPipelines.Items.OfType<Pipeline>().Single()
             : "<<None>>";
     }
 
-    public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
+    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository)
     {
         _activator = activator;
         _useCase = useCase;
@@ -101,12 +102,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         RefreshPipelineList();
 
-        tt.SetToolTip(btnClonePipeline,"Create a new copy of the selected pipeline");
+        tt.SetToolTip(btnClonePipeline, "Create a new copy of the selected pipeline");
         tt.SetToolTip(btnEditPipeline, "Change which components are run in the Pipeline and with what settings");
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
         ddPipelines.DrawItem += new DrawItemEventHandler(cmb_Type_DrawItem);
-
     }
 
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
@@ -118,7 +118,9 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         if (e.Index == -1)
         {
             e.Graphics.FillRectangle(new SolidBrush(Color.Pink), e.Bounds);
-            TextRenderer.DrawText(e.Graphics, "Select Pipeline", italic, new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.Black, TextFormatFlags.Left);
+            TextRenderer.DrawText(e.Graphics, "Select Pipeline", italic,
+                new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.Black,
+                TextFormatFlags.Left);
             return;
         }
 
@@ -126,33 +128,34 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         var isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
 
 
-        if (Equals(ddPipelines.Items[e.Index],ShowAll))
+        if (Equals(ddPipelines.Items[e.Index], ShowAll))
         {
             // draw a line along the top
-            e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1), new Point(e.Bounds.Right, e.Bounds.Top + 1));
+            e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1),
+                new Point(e.Bounds.Right, e.Bounds.Top + 1));
 
-            if(showAll)
-            {
-                render = $"\u2713 {render}";
-            }
+            if (showAll) render = $"\u2713 {render}";
 
-            TextRenderer.DrawText(e.Graphics, render, italic , new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue, TextFormatFlags.Left);
+            TextRenderer.DrawText(e.Graphics, render, italic,
+                new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue,
+                TextFormatFlags.Left);
         }
         else
         {
-            TextRenderer.DrawText(e.Graphics, render, isIncompatible ? italic : ddPipelines.Font, e.Bounds, ddPipelines.ForeColor, TextFormatFlags.Left);
+            TextRenderer.DrawText(e.Graphics, render, isIncompatible ? italic : ddPipelines.Font, e.Bounds,
+                ddPipelines.ForeColor, TextFormatFlags.Left);
         }
 
         e.DrawFocusRectangle();
     }
+
     private void groupBox1_Enter(object sender, EventArgs e)
     {
-
     }
 
     private void ddPipelines_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(Equals(ddPipelines.SelectedItem , ShowAll))
+        if (Equals(ddPipelines.SelectedItem, ShowAll))
         {
             // toggle show all
             showAll = !showAll;
@@ -170,12 +173,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         btnDeletePipeline.Enabled = Pipeline != null;
         btnClonePipeline.Enabled = Pipeline != null;
 
-        if(!Equals(_previousSelection,Pipeline))
+        if (!Equals(_previousSelection, Pipeline))
         {
-            PipelineChanged?.Invoke(this,EventArgs.Empty);
+            PipelineChanged?.Invoke(this, EventArgs.Empty);
             _previousSelection = Pipeline;
         }
-
     }
 
     private void btnEditPipeline_Click(object sender, EventArgs e)
@@ -195,7 +197,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private void ShowEditPipelineDialog()
     {
         //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-        var dialog = new ConfigurePipelineUI(_activator,Pipeline,_useCase, _repository);
+        var dialog = new ConfigurePipelineUI(_activator, Pipeline, _useCase, _repository);
         dialog.ShowDialog();
 
         ddPipelines.Items.Remove(Pipeline);
@@ -210,7 +212,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void btnDeletePipeline_Click(object sender, EventArgs e)
     {
-        if(MessageBox.Show($"Are you sure you want to delete {Pipeline.Name}? ","Confirm deleting pipeline?",MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+        if (MessageBox.Show($"Are you sure you want to delete {Pipeline.Name}? ", "Confirm deleting pipeline?",
+                MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
         {
             Pipeline.DeleteInDatabase();
             Pipeline = null;
@@ -246,7 +249,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         ddPipelines.Location = new Point(0, 3);
         ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
-        foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
+        foreach (var button in new Control[]
+                     { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
         {
             Controls.Add(button);
             button.Location = new Point(2, 2);
@@ -259,6 +263,5 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         btnEditPipeline.Left = btnCreateNewPipeline.Left - btnEditPipeline.Width;
 
         ddPipelines.Width = btnEditPipeline.Left - 2;
-
     }
 }

@@ -14,7 +14,7 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction;
 /// <summary>
 /// Constructs IFilters etc for AggregateConfigurations (See IFilterFactory)
 /// </summary>
-public class AggregateFilterFactory :IFilterFactory
+public class AggregateFilterFactory : IFilterFactory
 {
     private readonly ICatalogueRepository _repository;
 
@@ -28,31 +28,17 @@ public class AggregateFilterFactory :IFilterFactory
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name)
-    {
-        return new AggregateFilter(_repository,name);
-    }
+    public IFilter CreateNewFilter(string name) => new AggregateFilter(_repository, name);
 
     /// <inheritdoc/>
-    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
-    {
-        return new AggregateFilterParameter(_repository,parameterSQL,(AggregateFilter)filter);
-    }
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
+        new AggregateFilterParameter(_repository, parameterSQL, (AggregateFilter)filter);
 
     /// <inheritdoc/>
-    public Type GetRootOwnerType()
-    {
-        return typeof (AggregateConfiguration);
-    }
+    public Type GetRootOwnerType() => typeof(AggregateConfiguration);
 
     /// <inheritdoc/>
-    public Type GetIContainerTypeIfAny()
-    {
-        return typeof (AggregateFilterContainer);
-    }
+    public Type GetIContainerTypeIfAny() => typeof(AggregateFilterContainer);
 
-    public IContainer CreateNewContainer()
-    {
-        return new AggregateFilterContainer(_repository,FilterContainerOperation.AND);
-    }
+    public IContainer CreateNewContainer() => new AggregateFilterContainer(_repository, FilterContainerOperation.AND);
 }

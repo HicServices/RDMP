@@ -26,7 +26,7 @@ public enum PipelineUsage
     /// destination. When used in DataFlowPipelineContextFactory this prevents the addition of IDataFlowDestination components
     /// </summary>
     FixedDestination = 1,
-        
+
     /// <summary>
     /// Pipeline puts data into a single <see cref="TableInfo"/>
     /// </summary>

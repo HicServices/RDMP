@@ -37,7 +37,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
 
         return base.GetName(tableName, convention);
     }
-        
+
     /// <inheritdoc/>
     public override string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
     {
@@ -57,7 +57,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
         if (s == null)
             return null;
 
-        var toReturn = s.Trim(new char[] { '[', ']', '`' ,'"'});
+        var toReturn = s.Trim(new char[] { '[', ']', '`', '"' });
 
         if (
             toReturn.Contains('[') ||

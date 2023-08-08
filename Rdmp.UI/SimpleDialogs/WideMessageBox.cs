@@ -53,7 +53,9 @@ public partial class WideMessageBox : Form
     };
 
     #region Static setup of dictionary of keywords
+
     public static CommentStore CommentStore;
+
     #endregion
 
     private Regex className = new(@"^\w+$");
@@ -61,15 +63,15 @@ public partial class WideMessageBox : Form
     public WideMessageBox(WideMessageBoxArgs args)
     {
         InitializeComponent();
-            
+
         Setup(args);
-            
+
         //can only write to clipboard in STA threads
         btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
         //try to resize form to fit bounds
         Size = GetPreferredSizeOfTextControl(richTextBox1);
-        Size = new Size(Size.Width + 10, Size.Height + 150);//leave a bit of padding
+        Size = new Size(Size.Width + 10, Size.Height + 150); //leave a bit of padding
 
         richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
@@ -91,6 +93,7 @@ public partial class WideMessageBox : Form
             WindowState = FormWindowState.Maximized;
         }
     }
+
     protected void Setup(WideMessageBoxArgs args)
     {
         Args = args;
@@ -98,7 +101,7 @@ public partial class WideMessageBox : Form
         btnBack.Enabled = _navigationStack.Any();
 
         btnViewStackTrace.Visible = args.EnvironmentDotStackTrace != null;
-            
+
         richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
         richTextBox1.Select(0, 0);
         richTextBox1.WordWrap = true;
@@ -113,7 +116,7 @@ public partial class WideMessageBox : Form
             message = title;
             title = null;
         }
-            
+
         //Replace single newlines with double new lines 
         if (Args.FormatAsParagraphs && CommentStore != null)
             message = CommentStore.FormatAsParagraphs(message);
@@ -121,7 +124,7 @@ public partial class WideMessageBox : Form
         //if there is a title
         if (!string.IsNullOrWhiteSpace(title))
         {
-            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE]: title;
+            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE] : title;
         }
         else
         {
@@ -133,7 +136,7 @@ public partial class WideMessageBox : Form
         SetMessage(message, args.KeywordNotToAdd);
 
         ApplyTheme(args.Theme);
-            
+
         if (args.Theme == WideMessageBoxTheme.Help)
             SetViewSourceCodeButton(args.Title);
     }
@@ -148,17 +151,21 @@ public partial class WideMessageBox : Form
             btnViewSourceCode.Tag = $"{title}.cs";
         }
         else
+        {
             btnViewSourceCode.Enabled = false;
+        }
     }
 
-    public static void Show(IHasSummary summary,bool isModalDialog = true)
+    public static void Show(IHasSummary summary, bool isModalDialog = true)
     {
         summary.GetSummary(out var title, out var body, out var stackTrace, out var level);
-        Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
+        Show(title, body, stackTrace, isModalDialog, null, GetTheme(level));
     }
-    public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
+
+    public static void Show(string title, DataGridViewRow row, bool isModalDialog = true,
+        WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
     {
-        Show(title, GetText(row), null,isModalDialog,null, theme);
+        Show(title, GetText(row), null, isModalDialog, null, theme);
     }
 
     private static string GetText(DataGridViewRow row)
@@ -172,35 +179,38 @@ public partial class WideMessageBox : Form
                 var v = row.Cells[c.Name].Value;
                 var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
-                if(stringval.Length > MAX_LENGTH_ELEMENT)
+                if (stringval.Length > MAX_LENGTH_ELEMENT)
                     stringval = $"{stringval[..MAX_LENGTH_ELEMENT]}...";
 
                 sb.AppendLine($"{c.Name}:{stringval}");
             }
-                    
-        if(sb.Length >= MAX_LENGTH_BODY)
+
+        if (sb.Length >= MAX_LENGTH_BODY)
             return sb.ToString(0, MAX_LENGTH_BODY);
 
         return sb.ToString();
     }
-    public static void Show(string title, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+
+    public static void Show(string title, string message, string environmentDotStackTrace = null,
+        bool isModalDialog = true, string keywordNotToAdd = null,
+        WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
     {
-        var wmb = new WideMessageBox(new WideMessageBoxArgs(title,message, environmentDotStackTrace, keywordNotToAdd, theme));
+        var wmb = new WideMessageBox(new WideMessageBoxArgs(title, message, environmentDotStackTrace, keywordNotToAdd,
+            theme));
 
         if (isModalDialog)
             wmb.ShowDialog();
         else
             wmb.Show();
-            
     }
 
     public static void Show(string title, string message, WideMessageBoxTheme theme)
     {
-        Show(title, message,null,theme:theme);
+        Show(title, message, null, theme: theme);
     }
+
     private void ApplyTheme(WideMessageBoxTheme theme)
     {
-
         pbIcon.Image = theme switch
         {
             WideMessageBoxTheme.Exception => (Image)Images.ErrorIcon.ImageToBitmap(),
@@ -245,17 +255,17 @@ public partial class WideMessageBox : Form
 
     private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
     {
-        if(e.LinkText.Contains('#'))
+        if (e.LinkText.Contains('#'))
         {
             var split = e.LinkText.Split('#');
-            if(split.Length >=2 && CommentStore.ContainsKey(split[1]))
+            if (split.Length >= 2 && CommentStore.ContainsKey(split[1]))
                 NavigateTo(split[1]);
         }
         else
         {
-            var text = e.LinkText.TrimEnd('.',')');
+            var text = e.LinkText.TrimEnd('.', ')');
 
-            if(CommentStore.ContainsKey(text))
+            if (CommentStore.ContainsKey(text))
                 NavigateTo(text);
         }
     }
@@ -263,16 +273,17 @@ public partial class WideMessageBox : Form
     private void NavigateTo(string keyword)
     {
         _navigationStack.Push(Args);
-            
-        Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){FormatAsParagraphs = true});
+
+        Setup(new WideMessageBoxArgs(keyword, CommentStore[keyword], null, keyword, WideMessageBoxTheme.Help)
+            { FormatAsParagraphs = true });
     }
 
     private void SetMessage(string message, string keywordNotToAdd = null)
     {
-        if(string.IsNullOrWhiteSpace(message))
-            message = "";            
+        if (string.IsNullOrWhiteSpace(message))
+            message = "";
 
-        if(message.Length > MAX_LENGTH_BODY)
+        if (message.Length > MAX_LENGTH_BODY)
             message = message[..MAX_LENGTH_BODY];
 
         //if we don't have help documentation available just set the message without looking for hyperlinks
@@ -287,7 +298,8 @@ public partial class WideMessageBox : Form
         foreach (var word in Regex.Split(message, @"(?<=[. ,;)(<>\n-])"))
         {
             //Try to match the trimmed keyword or the trimmed keyword without an s
-            var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-','\r','\n'));
+            var keyword = GetDocumentationKeyword(keywordNotToAdd,
+                word.Trim('.', ' ', ',', ';', '(', ')', '<', '>', '-', '\r', '\n'));
 
             if (keyword != null)
                 richTextBox1.InsertLink(word, keyword);
@@ -310,7 +322,7 @@ public partial class WideMessageBox : Form
     /// <returns></returns>
     private static string GetDocumentationKeyword(string keywordNotToAdd, string word)
     {
-        if(string.IsNullOrWhiteSpace(word))
+        if (string.IsNullOrWhiteSpace(word))
             return null;
 
         //do not highlight common words like "example"
@@ -318,7 +330,7 @@ public partial class WideMessageBox : Form
             return null;
 
         var keyword = CommentStore.GetDocumentationKeywordIfExists(word.Trim(), true);
-            
+
         if (keyword == keywordNotToAdd)
             return null;
 
@@ -327,7 +339,8 @@ public partial class WideMessageBox : Form
 
     private static void ShowHelpSection(HelpSection hs)
     {
-        new WideMessageBox(new WideMessageBoxArgs(hs.Keyword, hs.HelpText, Environment.StackTrace, hs.Keyword, WideMessageBoxTheme.Help)
+        new WideMessageBox(new WideMessageBoxArgs(hs.Keyword, hs.HelpText, Environment.StackTrace, hs.Keyword,
+            WideMessageBoxTheme.Help)
         {
             FormatAsParagraphs = true
         }).Show();
@@ -361,7 +374,7 @@ public partial class WideMessageBox : Form
 
     private void Back()
     {
-        if(!_navigationStack.Any())
+        if (!_navigationStack.Any())
             return;
 
         Setup(_navigationStack.Pop());
@@ -370,21 +383,22 @@ public partial class WideMessageBox : Form
     private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
     {
         if (
-            richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == 0 && e.KeyData == Keys.Up ||
-            richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down ||
-            richTextBox1.SelectionStart == richTextBox1.TextLength && e.KeyData == Keys.Right ||
-            richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left
+            (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == 0 && e.KeyData == Keys.Up) ||
+            (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) ==
+                richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down) ||
+            (richTextBox1.SelectionStart == richTextBox1.TextLength && e.KeyData == Keys.Right) ||
+            (richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left)
         ) e.Handled = true;
 
         if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))
             e.Handled = true;
 
-        if(e.KeyCode == Keys.C && e.Control)
+        if (e.KeyCode == Keys.C && e.Control)
         {
             e.Handled = true;
 
             //Ctrl+C with nothing selected copies it all
-            if(richTextBox1.SelectedText.Length == 0)
+            if (richTextBox1.SelectedText.Length == 0)
             {
                 //gets around formatting of hyperlinks appearing in Ctrl+C
                 Clipboard.SetText(Args.Title + Environment.NewLine + Environment.NewLine + Args.Message);
@@ -407,10 +421,8 @@ public partial class WideMessageBox : Form
                 var rtfHyperlinks = new Regex(@"\\v #([^\\]*)\\v");
 
                 foreach (Match m in rtfHyperlinks.Matches(richTextBox1.SelectedRtf))
-                {
                     //replace the hyperlink text in the 'unformatted' text
-                    text = text.Replace($"#{m.Groups[1].Value}","");
-                }
+                    text = text.Replace($"#{m.Groups[1].Value}", "");
 
                 Clipboard.SetText(text);
             }
@@ -426,11 +438,11 @@ public partial class WideMessageBox : Form
         var minimumHeight = 150;
 
         var maxSize = Screen.GetBounds(c);
-        maxSize.Height = Math.Min(maxSize.Height,800);
+        maxSize.Height = Math.Min(maxSize.Height, 800);
         maxSize.Width = Math.Min(maxSize.Width, 1024);
 
         return new Size(
-            (int)Math.Min(maxSize.Width, Math.Max(measureString.Width + 50,minimumWidth)),
-            (int)Math.Min(maxSize.Height,Math.Max(measureString.Height + 100,minimumHeight)));
+            (int)Math.Min(maxSize.Width, Math.Max(measureString.Width + 50, minimumWidth)),
+            (int)Math.Min(maxSize.Height, Math.Max(measureString.Height + 100, minimumHeight)));
     }
 }

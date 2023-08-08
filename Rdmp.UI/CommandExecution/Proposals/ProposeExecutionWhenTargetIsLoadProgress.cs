@@ -11,24 +11,19 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsLoadProgress:RDMPCommandExecutionProposal<LoadProgress>
+internal class ProposeExecutionWhenTargetIsLoadProgress : RDMPCommandExecutionProposal<LoadProgress>
 {
     public ProposeExecutionWhenTargetIsLoadProgress(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
-    public override bool CanActivate(LoadProgress target)
-    {
-        return true;
-    }
+    public override bool CanActivate(LoadProgress target) => true;
 
     public override void Activate(LoadProgress target)
     {
         ItemActivator.Activate<LoadProgressUI, LoadProgress>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadProgress target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadProgress target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

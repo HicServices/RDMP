@@ -18,7 +18,7 @@ public interface IGovernanceManager
 {
     void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue);
     void Link(GovernancePeriod governancePeriod, ICatalogue catalogue);
-        
+
     /// <summary>
     /// Returns the IDs of all <see cref="GovernancePeriod"/> with the corresponding set of <see cref="Catalogue"/> IDs which are covered by the governance.
     /// </summary>

@@ -16,7 +16,6 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// </summary>
 public interface INamed : IRevertable, INotifyPropertyChanged
 {
-        
     /// <summary>
     /// A user meaningful name for describing the entity, this should be suitable for display in minimal screen space.
     /// </summary>

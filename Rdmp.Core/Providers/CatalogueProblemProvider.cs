@@ -44,13 +44,13 @@ public class CatalogueProblemProvider : ProblemProvider
 
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
         var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
-            
+
         //now identify those which have an ExtractionInformation (that's a problem! they are extractable but orphaned)
         _orphanCatalogueItems = new HashSet<int>(
             orphans.Where(o => _childProvider.AllExtractionInformations.Any(ei => ei.CatalogueItem_ID == o.ID))
 
                 //store just the ID for performance
-                .Select(i=>i.ID));
+                .Select(i => i.ID));
 
         _usedJoinables = new HashSet<int>(
             childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
@@ -109,7 +109,7 @@ public class CatalogueProblemProvider : ProblemProvider
     {
         if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
             return "Load has no Catalogues therefore loads no tables";
-            
+
         return null;
     }
 
@@ -126,10 +126,7 @@ public class CatalogueProblemProvider : ProblemProvider
             if (desc != null && parameter is ExtractionFilterParameter)
             {
                 var filter = desc.Parents.OfType<ExtractionFilter>().FirstOrDefault();
-                if (filter != null && filter.ExtractionFilterParameterSets.Any())
-                {
-                    return null;
-                }
+                if (filter != null && filter.ExtractionFilterParameterSets.Any()) return null;
             }
 
             return "No value defined";
@@ -138,21 +135,17 @@ public class CatalogueProblemProvider : ProblemProvider
         var v = parameter.Value;
 
         var g = new Guesser();
-                
-        if(Culture != null)
+
+        if (Culture != null)
             g.Culture = Culture;
 
         g.AdjustToCompensateForValue(v);
 
         // if user has entered a date as the value
         if (g.Guess.CSharpType == typeof(DateTime))
-        {
             // and there are no delimiters
-            if(v.All(c=>c != '\'' && c != '"'))
-            {
+            if (v.All(c => c != '\'' && c != '"'))
                 return "Parameter value looks like a date but is not surrounded by quotes";
-            }
-        }
 
         return null;
     }
@@ -171,10 +164,9 @@ public class CatalogueProblemProvider : ProblemProvider
             if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
                 return "Patient Index Table is not joined to any cohort sets";
 
-        if(!aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any())
-        {
-            return "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query.";
-        }
+        if (!aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any())
+            return
+                "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query.";
 
         return null;
     }
@@ -224,7 +216,8 @@ public class CatalogueProblemProvider : ProblemProvider
                     expiredCatalogueIds.Remove(i);
         }
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
+        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
+            .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return
@@ -248,13 +241,15 @@ public class CatalogueProblemProvider : ProblemProvider
 
             if (catalogue.IsProjectSpecific(null))
             {
-                if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
+                if (extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
                     return
                         $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
             }
-            else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            else if (extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            {
                 return
                     $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
+            }
         }
 
         return null;
@@ -288,23 +283,22 @@ public class CatalogueProblemProvider : ProblemProvider
         // Make sure if the user has the default configuration (Root, Inclusion, Exclusion) that they do not mess up the ordering and get very confused
 
         // if the container is inclusion make sure the user hasn't reordered the container to make it act as exclusion instead!
-        if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ?? false)
+        if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ??
+            false)
         {
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
             if (parents != null && parents.Last() is CohortAggregateContainer parentContainer)
-            {
                 // which is EXCEPT
                 if (parentContainer.Operation == SetOperation.EXCEPT)
                 {
                     // then something called 'inclusion criteria' should be the first among them
-                    var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().OrderBy(o => o.Order).FirstOrDefault();
+                    var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().OrderBy(o => o.Order)
+                        .FirstOrDefault();
                     if (first != null && !first.Equals(container))
-                    {
-                        return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
-                    }
+                        return
+                            $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
                 }
-            }
         }
 
         //count children that are not disabled
@@ -325,8 +319,10 @@ public class CatalogueProblemProvider : ProblemProvider
                 return "You must have at least one element in the root container";
 
             //Excepts and Intersects must have at least 2
-            if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT || container.Operation == SetOperation.INTERSECT))
-                return "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
+            if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT ||
+                                               container.Operation == SetOperation.INTERSECT))
+                return
+                    "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
         }
         else
         {
@@ -334,11 +330,13 @@ public class CatalogueProblemProvider : ProblemProvider
             {
                 //if it's not a root, then there should be at least 2
                 if (enabledChildren.Length == 0)
-                    return "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
+                    return
+                        "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
 
 
                 if (enabledChildren.Length == 1)
-                    return "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
+                    return
+                        "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
             }
         }
 

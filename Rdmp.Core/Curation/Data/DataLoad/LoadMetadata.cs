@@ -41,13 +41,12 @@ public enum CacheArchiveType
     Zip = 1
 }
 
-
-
 /// <inheritdoc cref="ILoadMetadata"/>
-public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject, IHasFolder
+public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper,
+    ILoggedActivityRootObject, IHasFolder
 {
-
     #region Database Properties
+
     private string _locationOfFlatFiles;
     private string _anonymisationEngineClass;
     private string _name;
@@ -135,7 +134,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer OverrideRAWServer => OverrideRAWServer_ID.HasValue? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value): null;
+    public ExternalDatabaseServer OverrideRAWServer => OverrideRAWServer_ID.HasValue
+        ? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value)
+        : null;
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -151,11 +152,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
                 Repository.GetAllObjectsWithParent<ProcessTask>(this).Cast<IProcessTask>().OrderBy(pt => pt.Order);
         }
     }
+
     #endregion
 
     public LoadMetadata()
     {
-
     }
 
     /// <summary>
@@ -168,11 +169,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public LoadMetadata(ICatalogueRepository repository, string name = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name",name},
-            { "IgnoreTrigger",false/*todo could be system global default here*/},
-            {"Folder",FolderHelper.Root }
+            { "Name", name },
+            { "IgnoreTrigger", false /*todo could be system global default here*/ },
+            { "Folder", FolderHelper.Root }
         });
     }
 
@@ -183,16 +184,16 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         Name = r["Name"] as string;
         AnonymisationEngineClass = r["AnonymisationEngineClass"].ToString();
         Name = r["Name"].ToString();
-        Description = r["Description"] as string;//allows for nulls
+        Description = r["Description"] as string; //allows for nulls
         CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
         OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
-        IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"])??false;
+        IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
     }
 
-    internal LoadMetadata(ShareManager shareManager,ShareDefinition shareDefinition):base()
+    internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
     {
-        shareManager.UpsertAndHydrate(this,shareDefinition);
+        shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
     /// <inheritdoc/>
@@ -208,16 +209,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public IEnumerable<ICatalogue> GetAllCatalogues()
-    {
-        return Repository.GetAllObjectsWithParent<Catalogue>(this);
-    }
+    public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjectsWithParent<Catalogue>(this);
 
     /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
@@ -237,10 +232,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
     /// </summary>
     /// <returns></returns>
-    public DiscoveredServer GetDistinctLoggingDatabase()
-    {
-        return GetDistinctLoggingDatabase(out IExternalDatabaseServer whoCares);
-    }
+    public DiscoveredServer GetDistinctLoggingDatabase() => GetDistinctLoggingDatabase(out var whoCares);
 
     private IDataAccessPoint[] GetLoggingServers()
     {
@@ -261,17 +253,18 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var catalogueMetadatas = GetAllCatalogues().ToArray();
 
-        if(!catalogueMetadatas.Any())
+        if (!catalogueMetadatas.Any())
             throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
 
-        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+        var cataloguesWithoutLoggingTasks =
+            catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
 
-        if(cataloguesWithoutLoggingTasks.Any())
+        if (cataloguesWithoutLoggingTasks.Any())
             throw new Exception(
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
 
         var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
-        if(distinctLoggingTasks.Length >= 2)
+        if (distinctLoggingTasks.Length >= 2)
             throw new Exception(
                 $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})");
 
@@ -312,26 +305,20 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         if (normalTables.Any())
-            return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
-            
-        if(lookupTables.Any())
-            return DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
-            
+            return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad, true);
+
+        if (lookupTables.Any())
+            return DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad, true);
+
         throw new Exception(
             $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return null;
-    }
+    public IHasDependencies[] GetObjectsThisDependsOn() => null;
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return GetAllCatalogues().ToArray();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => GetAllCatalogues().ToArray();
 
     /// <summary>
     /// Tests that the logging database for the load is reachable and that it has an appropriate logging task for the load (if not a new task will be created 'Loading X')
@@ -349,10 +336,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             if (loggingServer != null)
                 catalogue.LiveLoggingServer_ID = loggingServer.ID;
             else
-                throw new NotSupportedException("You do not yet have any logging servers configured so cannot create data loads");
+                throw new NotSupportedException(
+                    "You do not yet have any logging servers configured so cannot create data loads");
         }
         else
+        {
             loggingServer = Repository.GetObjectByID<ExternalDatabaseServer>(catalogue.LiveLoggingServer_ID.Value);
+        }
 
         //if there's no logging task yet and there's a logging server
         if (string.IsNullOrWhiteSpace(catalogue.LoggingDataTask))
@@ -382,10 +372,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// </summary>
     /// <param name="runs"></param>
     /// <returns></returns>
-    public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
-    {
-        return runs;
-    }
+    public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs) => runs;
 
     public static bool UsesPersistentRaw(ILoadMetadata loadMetadata)
     {

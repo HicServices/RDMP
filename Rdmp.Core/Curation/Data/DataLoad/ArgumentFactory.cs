@@ -26,10 +26,8 @@ public class ArgumentFactory
     /// <inheritdoc cref = "CreateArgumentsForClassIfNotExistsGeneric(Type,IArgumentHost,IArgument[])"/>
     /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
     /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
-    public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
-    {
-        return CreateArgumentsForClassIfNotExistsGeneric(typeof (T),host,existingArguments);
-    }
+    public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>(IArgumentHost host,
+        IArgument[] existingArguments) => CreateArgumentsForClassIfNotExistsGeneric(typeof(T), host, existingArguments);
 
     /// <summary>
     /// Interrogates a class via reflection and enumerates its properties to find any that have the attribute [DemandsInitialization]
@@ -37,7 +35,7 @@ public class ArgumentFactory
     /// </summary>
     /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
     public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
-        Type underlyingClassTypeForWhichArgumentsWillPopulate,IArgumentHost host,
+        Type underlyingClassTypeForWhichArgumentsWillPopulate, IArgumentHost host,
         IArgument[] existingArguments)
     {
         var classType = underlyingClassTypeForWhichArgumentsWillPopulate;
@@ -82,7 +80,7 @@ public class ArgumentFactory
     public static List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
     {
         var required = new List<RequiredPropertyInfo>();
-            
+
         foreach (var propertyInfo in classType.GetProperties())
         {
             if (propertyInfo.GetCustomAttributes(typeof(DemandsNestedInitializationAttribute), true).Any())
@@ -95,11 +93,11 @@ public class ArgumentFactory
                     var attribute = nestedPropInfo.GetCustomAttribute<DemandsInitializationAttribute>();
 
                     if (attribute != null)
-                        required.Add(new RequiredPropertyInfo(attribute,nestedPropInfo,propertyInfo));
+                        required.Add(new RequiredPropertyInfo(attribute, nestedPropInfo, propertyInfo));
                 }
             }
 
-            var demands = propertyInfo.GetCustomAttributes(typeof (DemandsInitializationAttribute), true);
+            var demands = propertyInfo.GetCustomAttributes(typeof(DemandsInitializationAttribute), true);
 
             if (demands.Length > 1)
                 throw new Exception(
@@ -108,7 +106,7 @@ public class ArgumentFactory
             var demand = (DemandsInitializationAttribute)demands.SingleOrDefault();
 
             //found a tagged attribute
-            if(demand != null)
+            if (demand != null)
                 required.Add(new RequiredPropertyInfo(demand, propertyInfo));
         }
 
@@ -123,24 +121,27 @@ public class ArgumentFactory
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
     public static void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
     {
-        if(host.GetClassNameWhoArgumentsAreFor() != underlyingClassTypeForWhichArgumentsWillPopulate.FullName)
-            throw new ExpectedIdenticalStringsException("IArgumentHost is not currently hosting the Type requested for sync", host.GetClassNameWhoArgumentsAreFor(), underlyingClassTypeForWhichArgumentsWillPopulate.FullName);
+        if (host.GetClassNameWhoArgumentsAreFor() != underlyingClassTypeForWhichArgumentsWillPopulate.FullName)
+            throw new ExpectedIdenticalStringsException(
+                "IArgumentHost is not currently hosting the Type requested for sync",
+                host.GetClassNameWhoArgumentsAreFor(), underlyingClassTypeForWhichArgumentsWillPopulate.FullName);
 
         var existingArguments = host.GetAllArguments().ToList();
         var required = GetRequiredProperties(underlyingClassTypeForWhichArgumentsWillPopulate);
-            
+
         //get rid of arguments that are no longer required
         foreach (var argumentsNotRequired in existingArguments.Where(e => required.All(r => r.Name != e.Name)))
-            ((IDeleteable) argumentsNotRequired).DeleteInDatabase();
+            ((IDeleteable)argumentsNotRequired).DeleteInDatabase();
 
         //create new arguments
-        existingArguments.AddRange(CreateArgumentsForClassIfNotExistsGeneric(underlyingClassTypeForWhichArgumentsWillPopulate,host, existingArguments.ToArray()));
+        existingArguments.AddRange(CreateArgumentsForClassIfNotExistsGeneric(
+            underlyingClassTypeForWhichArgumentsWillPopulate, host, existingArguments.ToArray()));
 
         //handle mismatches of Type/incompatible values / unloaded Types etc
         foreach (var r in required)
         {
             var existing = existingArguments.SingleOrDefault(e => e.Name == r.Name) ?? throw new Exception(
-                    $"Despite creating new Arguments for class '{underlyingClassTypeForWhichArgumentsWillPopulate}' we do not have an IArgument called '{r.Name}' in the database (host='{host}')");
+                $"Despite creating new Arguments for class '{underlyingClassTypeForWhichArgumentsWillPopulate}' we do not have an IArgument called '{r.Name}' in the database (host='{host}')");
             if (existing.GetSystemType() != r.PropertyInfo.PropertyType)
             {
                 //user wants to fix the problem
@@ -157,7 +158,8 @@ public class ArgumentFactory
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
     /// <returns></returns>
-    public static Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+    public static Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host,
+        Type underlyingClassTypeForWhichArgumentsWillPopulate)
     {
         var toReturn = new Dictionary<IArgument, RequiredPropertyInfo>();
 
@@ -166,7 +168,7 @@ public class ArgumentFactory
         var required = GetRequiredProperties(underlyingClassTypeForWhichArgumentsWillPopulate);
 
         foreach (var key in host.GetAllArguments())
-            toReturn.Add(key,required.Single(e => e.Name == key.Name));
+            toReturn.Add(key, required.Single(e => e.Name == key.Name));
 
         return toReturn;
     }

@@ -25,18 +25,16 @@ public class TicketingSystemFactory
         _repository = repository;
     }
 
-    public Type[] GetAllKnownTicketingSystems()
-    {
-        return _repository.MEF.GetTypes<ITicketingSystem>().ToArray();
-    }
+    public Type[] GetAllKnownTicketingSystems() => _repository.MEF.GetTypes<ITicketingSystem>().ToArray();
 
     //public ITicketingSystem Create(string )
     public ITicketingSystem Create(string typeName, string url, IDataAccessCredentials credentials)
     {
-        if(string.IsNullOrWhiteSpace(typeName))
+        if (string.IsNullOrWhiteSpace(typeName))
             throw new NullReferenceException("Type name was blank, cannot create ITicketingSystem");
 
-        return _repository.MEF.CreateA<ITicketingSystem>(typeName, new TicketingSystemConstructorParameters(url, credentials));
+        return _repository.MEF.CreateA<ITicketingSystem>(typeName,
+            new TicketingSystemConstructorParameters(url, credentials));
     }
 
     public ITicketingSystem CreateIfExists(TicketingSystemConfiguration ticketingSystemConfiguration)
@@ -50,11 +48,12 @@ public class TicketingSystemFactory
             return null;
 
         IDataAccessCredentials creds = null;
-            
+
         //if there are credentials create with those (otherwise create with null credentials)
-        if(ticketingSystemConfiguration.DataAccessCredentials_ID != null)
-            creds = _repository.GetObjectByID<DataAccessCredentials>((int)ticketingSystemConfiguration.DataAccessCredentials_ID);
-            
+        if (ticketingSystemConfiguration.DataAccessCredentials_ID != null)
+            creds = _repository.GetObjectByID<DataAccessCredentials>((int)ticketingSystemConfiguration
+                .DataAccessCredentials_ID);
+
         return Create(ticketingSystemConfiguration.Type, ticketingSystemConfiguration.Url, creds);
     }
 }

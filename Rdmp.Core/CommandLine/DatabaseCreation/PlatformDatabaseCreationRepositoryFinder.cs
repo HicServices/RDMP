@@ -25,37 +25,27 @@ public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryS
 
     public IDataExportRepository DataExportRepository => _linkedRepositoryProvider.DataExportRepository;
 
-    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-    {
-        return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName, objectID);
-    }
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
+        string databaseObjectTypeName, int objectID) =>
+        _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName, objectID);
 
-    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-    {
-        return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName,databaseObjectTypeName,objectID);
-    }
+    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID) =>
+        _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
 
     /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
-    {
-        return _linkedRepositoryProvider.GetObjectByID<T>(value);
-    }
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable =>
+        _linkedRepositoryProvider.GetObjectByID<T>(value);
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
-    {
-        return _linkedRepositoryProvider.GetObjectByID(t,value);
-    }
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value) =>
+        _linkedRepositoryProvider.GetObjectByID(t, value);
 
-    public IEnumerable<IRepository> GetAllRepositories()
-    {
-        return _linkedRepositoryProvider.GetAllRepositories();
-    }
+    public IEnumerable<IRepository> GetAllRepositories() => _linkedRepositoryProvider.GetAllRepositories();
 
     public PlatformDatabaseCreationRepositoryFinder(PlatformDatabaseCreationOptions options)
     {
         var cata = options.GetBuilder(PlatformDatabaseCreation.DefaultCatalogueDatabaseName);
         var export = options.GetBuilder(PlatformDatabaseCreation.DefaultDataExportDatabaseName);
-            
+
         _linkedRepositoryProvider = new LinkedRepositoryProvider(cata.ConnectionString, export.ConnectionString);
     }
 }

@@ -15,6 +15,5 @@ public class AllDashboardsNode : SingletonNode
 {
     public AllDashboardsNode() : base("Dashboards")
     {
-
     }
 }

@@ -24,12 +24,15 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
         if (loadProgress.DataLoadProgress == null)
         {
             if (loadProgress.OriginDate == null)
-                throw new LoadOrCacheProgressUnclearException("Don't know when to start the data load, both DataLoadProgress and OriginDate are null");
+                throw new LoadOrCacheProgressUnclearException(
+                    "Don't know when to start the data load, both DataLoadProgress and OriginDate are null");
 
             _lastAssignedLoadDate = loadProgress.OriginDate.Value;
         }
         else
+        {
             _lastAssignedLoadDate = loadProgress.DataLoadProgress.Value;
+        }
     }
 
     /// <summary>
@@ -41,16 +44,16 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
     public List<DateTime> GetDates(int batchSize, bool allowLoadingFutureDates)
     {
         var dates = new List<DateTime>();
-            
+
         for (var i = 0; i < batchSize; i++)
         {
             _lastAssignedLoadDate = _lastAssignedLoadDate.Add(new TimeSpan(1, 0, 0, 0));
 
             //if we are about to order the loading of today or any later day
             if (_lastAssignedLoadDate.Date >= DateTime.Now.Date)
-                if (!allowLoadingFutureDates)//if user does not want to load future dates
-                    return dates;//he is done
-                
+                if (!allowLoadingFutureDates) //if user does not want to load future dates
+                    return dates; //he is done
+
             //it is not a future date or user wants to allow loading of future dates
             dates.Add(_lastAssignedLoadDate);
         }
@@ -64,8 +67,8 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
             throw new NotImplementedException();
 
         var numberOfDays = DateTime.Now.Date.Subtract(_lastAssignedLoadDate.Date).Days;
-        var totalNumberOfJobs = numberOfDays/batchSize;
-        if (numberOfDays%batchSize > 0) ++totalNumberOfJobs;
+        var totalNumberOfJobs = numberOfDays / batchSize;
+        if (numberOfDays % batchSize > 0) ++totalNumberOfJobs;
         return totalNumberOfJobs;
     }
 }

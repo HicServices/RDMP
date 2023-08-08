@@ -50,18 +50,14 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
             BasicActivator.IsWinForms)
         {
-
             // does the query look dangerous, if so give them a choice to back out
             var requireConfirm = RiskySql().IsMatch(SupportingSQLTable.SQL);
 
             if (requireConfirm)
-            {
                 if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
-                {
                     return null;
-                }
-            }
         }
+
         return collection;
     }
 

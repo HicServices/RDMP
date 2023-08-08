@@ -30,6 +30,8 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
             return;
 
         using (var stream = File.OpenWrite(_toExport.FullName))
+        {
             _definition.WriteXml(stream);
+        }
     }
 }

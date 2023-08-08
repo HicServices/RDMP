@@ -45,6 +45,7 @@ internal class ConsoleGuiSqlEditor : Window
     /// The number of seconds to allow queries to run for, can be changed by user
     /// </summary>
     private int _timeout = DefaultTimeout;
+
     private Tab queryTab;
     private Tab resultTab;
 
@@ -53,7 +54,7 @@ internal class ConsoleGuiSqlEditor : Window
     /// </summary>
     public const int DefaultTimeout = 300;
 
-    public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
+    public ConsoleGuiSqlEditor(IBasicActivateItems activator, IViewSQLAndResultsCollection collection)
     {
         Activator = activator;
         _collection = collection;
@@ -73,7 +74,7 @@ internal class ConsoleGuiSqlEditor : Window
             AllowsTab = false
         };
 
-        TabView.AddTab(queryTab = new Tab("Query", textView),true);
+        TabView.AddTab(queryTab = new Tab("Query", textView), true);
 
         tableView = new TableView
         {
@@ -92,30 +93,34 @@ internal class ConsoleGuiSqlEditor : Window
 
         // Buttons on top of control
 
-        _btnRunOrCancel = new Button("Run"){
-            X= 0,
-            Y= 0
+        _btnRunOrCancel = new Button("Run")
+        {
+            X = 0,
+            Y = 0
         };
 
-        _btnRunOrCancel.Clicked += ()=>RunOrCancel();
+        _btnRunOrCancel.Clicked += () => RunOrCancel();
         Add(_btnRunOrCancel);
 
-        var resetSql = new Button("Reset Sq_l"){
-            X= Pos.Right(_btnRunOrCancel)+1};
-
-        resetSql.Clicked += ()=>ResetSql();
-        Add(resetSql);
-
-        var clearSql = new Button("Clear S_ql"){
-            X= Pos.Right(resetSql)+1
+        var resetSql = new Button("Reset Sq_l")
+        {
+            X = Pos.Right(_btnRunOrCancel) + 1
         };
 
-        clearSql.Clicked += ()=>ClearSql();
+        resetSql.Clicked += () => ResetSql();
+        Add(resetSql);
+
+        var clearSql = new Button("Clear S_ql")
+        {
+            X = Pos.Right(resetSql) + 1
+        };
+
+        clearSql.Clicked += () => ClearSql();
         Add(clearSql);
 
         var lblTimeout = new Label("Timeout:")
         {
-            X = Pos.Right(clearSql)+1
+            X = Pos.Right(clearSql) + 1
         };
         Add(lblTimeout);
 
@@ -125,13 +130,14 @@ internal class ConsoleGuiSqlEditor : Window
             Width = 5
         };
         tbTimeout.TextChanged += TbTimeout_TextChanged;
-            
+
         Add(tbTimeout);
 
-        var btnSave = new Button("Save"){
-            X= Pos.Right(tbTimeout)+1
+        var btnSave = new Button("Save")
+        {
+            X = Pos.Right(tbTimeout) + 1
         };
-        btnSave.Clicked += ()=>Save();
+        btnSave.Clicked += () => Save();
         Add(btnSave);
 
         var btnOpen = new Button("Open")
@@ -143,20 +149,20 @@ internal class ConsoleGuiSqlEditor : Window
 
         Add(btnOpen);
 
-        var btnClose = new Button("Clos_e"){
-            X= Pos.Right(btnOpen) +1
+        var btnClose = new Button("Clos_e")
+        {
+            X = Pos.Right(btnOpen) + 1
         };
 
 
-        btnClose.Clicked += ()=>{
-            Application.RequestStop();
-        };
-                
+        btnClose.Clicked += () => { Application.RequestStop(); };
+
         Add(btnClose);
 
         var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
         collection.AdjustAutocomplete(auto);
-        var bits = auto.Items.SelectMany(AutoCompleteProvider.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+        var bits = auto.Items.SelectMany(AutoCompleteProvider.GetBits).OrderBy(a => a)
+            .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
         textView.Autocomplete.AllSuggestions = bits;
         textView.Autocomplete.MaxWidth = 40;
     }
@@ -184,10 +190,7 @@ internal class ConsoleGuiSqlEditor : Window
     private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)
     {
         var val = obj.Table.Rows[obj.Row][obj.Col];
-        if(val != null && val != DBNull.Value)
-        {
-            Activator.Show(val.ToString());
-        }
+        if (val != null && val != DBNull.Value) Activator.Show(val.ToString());
     }
 
     private void Save()
@@ -196,25 +199,25 @@ internal class ConsoleGuiSqlEditor : Window
         {
             var tbl = tableView.Table;
 
-            if(tbl == null)
+            if (tbl == null)
             {
-                MessageBox.ErrorQuery("Cannot Save","No Table Loaded","Ok");
+                MessageBox.ErrorQuery("Cannot Save", "No Table Loaded", "Ok");
                 return;
             }
 
-            var sfd = new SaveDialog("Save","Pick file location to save");
+            var sfd = new SaveDialog("Save", "Pick file location to save");
             Application.Run(sfd, ConsoleMainWindow.ExceptionPopup);
 
-            if(sfd.Canceled)
+            if (sfd.Canceled)
                 return;
 
-            if(sfd.FilePath != null)
+            if (sfd.FilePath != null)
             {
-                using(var writer = new StreamWriter(File.OpenWrite(sfd.FilePath.ToString())))
-                using(var w = new CsvWriter(writer,CultureInfo.CurrentCulture))
+                using (var writer = new StreamWriter(File.OpenWrite(sfd.FilePath.ToString())))
+                using (var w = new CsvWriter(writer, CultureInfo.CurrentCulture))
                 {
                     // write headers
-                    foreach(DataColumn c in tbl.Columns)
+                    foreach (DataColumn c in tbl.Columns)
                         w.WriteField(c.ColumnName);
 
                     w.NextRecord();
@@ -222,28 +225,24 @@ internal class ConsoleGuiSqlEditor : Window
                     // write rows
                     foreach (DataRow r in tbl.Rows)
                     {
-                        foreach (var item in r.ItemArray)
-                        {
-                            w.WriteField(item);
-                        }
+                        foreach (var item in r.ItemArray) w.WriteField(item);
 
                         w.NextRecord();
                     }
                 }
 
-                MessageBox.Query("File Saved","Save completed","Ok");
+                MessageBox.Query("File Saved", "Save completed", "Ok");
             }
         }
         catch (Exception ex)
         {
-            MessageBox.ErrorQuery("Save Failed",ex.Message,"Ok");
+            MessageBox.ErrorQuery("Save Failed", ex.Message, "Ok");
         }
-            
     }
 
     private void TbTimeout_TextChanged(NStack.ustring value)
     {
-        if(int.TryParse(value.ToString(),out var newTimeout))
+        if (int.TryParse(value.ToString(), out var newTimeout))
             _timeout = newTimeout < 0 ? DefaultTimeout : newTimeout;
         else
             _timeout = DefaultTimeout;
@@ -268,15 +267,15 @@ internal class ConsoleGuiSqlEditor : Window
     private void RunOrCancel()
     {
         // if task is still running we should cancel
-        if(_runSqlTask  != null && !_runSqlTask.IsCompleted)
+        if (_runSqlTask != null && !_runSqlTask.IsCompleted)
         {
             // Cancel the sql command and let that naturally end the task
             _runSqlCmd?.Cancel();
         }
         else
         {
-            Exception ex=null;
-            _runSqlTask = Task.Run(()=>
+            Exception ex = null;
+            _runSqlTask = Task.Run(() =>
             {
                 try
                 {
@@ -286,12 +285,10 @@ internal class ConsoleGuiSqlEditor : Window
                 {
                     ex = e;
                 }
-            }).ContinueWith((s,e)=> {
-                if(ex != null)
-                {
-                    Activator.ShowException("Failed to run query", ex);
-                }
-            },TaskScheduler.FromCurrentSynchronizationContext());
+            }).ContinueWith((s, e) =>
+            {
+                if (ex != null) Activator.ShowException("Failed to run query", ex);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
             _btnRunOrCancel.Text = "Cancel";
             _btnRunOrCancel.SetNeedsDisplay();
@@ -303,33 +300,35 @@ internal class ConsoleGuiSqlEditor : Window
         _btnRunOrCancel.Text = "Run";
         _btnRunOrCancel.SetNeedsDisplay();
     }
+
     private void RunSql()
     {
         try
         {
             var sql = textView.Text.ToString();
 
-            if(string.IsNullOrWhiteSpace(sql))
+            if (string.IsNullOrWhiteSpace(sql))
             {
                 tableView.Table = null;
                 return;
             }
 
-            var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
+            var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),
+                DataAccessContext.InternalDataProcessing);
 
-            using(var con = db.Server.GetConnection())
+            using (var con = db.Server.GetConnection())
             {
                 con.Open();
-                _runSqlCmd = db.Server.GetCommand(sql,con);
+                _runSqlCmd = db.Server.GetCommand(sql, con);
                 _runSqlCmd.CommandTimeout = _timeout;
 
-                using(var da = db.Server.GetDataAdapter(_runSqlCmd))
+                using (var da = db.Server.GetDataAdapter(_runSqlCmd))
                 {
                     var dt = new DataTable();
                     da.Fill(dt);
 
-                    Application.MainLoop.Invoke(() => {
-
+                    Application.MainLoop.Invoke(() =>
+                    {
                         tableView.Table = dt;
 
                         // if query resulted in some data show it
@@ -353,20 +352,15 @@ internal class ConsoleGuiSqlEditor : Window
 
     protected virtual void OnQueryCompleted(DataTable dt)
     {
-            
     }
 
     private class SqlAutocomplete : TextViewAutocomplete
     {
-        public override bool IsWordChar(Rune rune)
-        {
-            return (char)rune == '_' || base.IsWordChar(rune);
-        }
+        public override bool IsWordChar(Rune rune) => (char)rune == '_' || base.IsWordChar(rune);
     }
 
     private class SqlTextView : TextView
     {
-
         private readonly HashSet<string> _keywords = new(
             new[]
             {
@@ -378,6 +372,7 @@ internal class ConsoleGuiSqlEditor : Window
                 "truncate", "as", "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit",
                 "null", "is", "drop", "database", "table", "having", "in", "join", "on", "union", "exists"
             }, StringComparer.CurrentCultureIgnoreCase);
+
         private readonly Attribute _blue;
         private readonly Attribute _white;
 
@@ -395,7 +390,6 @@ internal class ConsoleGuiSqlEditor : Window
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
             _white = Driver.MakeAttribute(Color.White, Color.Black);
-                
         }
 
         // The next two are renamed in 1.8.2 of Terminal.Gui.  But we could upgrade because of this issue:
@@ -417,10 +411,7 @@ internal class ConsoleGuiSqlEditor : Window
         {
             var word = IdxToWord(line, idx);
 
-            if (string.IsNullOrWhiteSpace(word))
-            {
-                return false;
-            }
+            if (string.IsNullOrWhiteSpace(word)) return false;
 
             return _keywords.Contains(word);
         }
@@ -438,10 +429,7 @@ internal class ConsoleGuiSqlEditor : Window
             {
                 current = word;
                 count += word.Length;
-                if (count > idx)
-                {
-                    break;
-                }
+                if (count > idx) break;
             }
 
             return current?.Trim();

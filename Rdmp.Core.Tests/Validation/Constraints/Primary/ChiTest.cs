@@ -21,7 +21,7 @@ internal class ChiTest : ValidationTests
     {
         base.SetUp();
 
-        _chi = (IPrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
+        _chi = (IPrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
     }
 
     [TestCase("")]
@@ -47,10 +47,8 @@ internal class ChiTest : ValidationTests
     public void Validate_InvalidChi_ExceptionContainsRequiredInfo()
     {
         var result = _chi.Validate("banana");
-            
+
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(typeof(Chi), result.SourceConstraint.GetType());
-            
     }
-
 }

@@ -23,7 +23,7 @@ internal class MigrationStrategyTests : DatabaseTests
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-        var from = db.CreateTable("Bob",new[] {new DatabaseColumnRequest("Field", "int")});
+        var from = db.CreateTable("Bob", new[] { new DatabaseColumnRequest("Field", "int") });
         var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
         var connection = Mock.Of<IManagedConnection>();

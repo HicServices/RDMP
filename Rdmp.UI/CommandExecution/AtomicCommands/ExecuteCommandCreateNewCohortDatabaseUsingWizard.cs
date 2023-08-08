@@ -14,17 +14,15 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandExecution, IAtomicCommand
 {
-    public ExecuteCommandCreateNewCohortDatabaseUsingWizard(IActivateItems activator):base(activator)
+    public ExecuteCommandCreateNewCohortDatabaseUsingWizard(IActivateItems activator) : base(activator)
     {
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Create a new empty cohort list storage database with a private identifier that matches your datasets extraction identifier column name\\type (e.g. PatientId varchar(10)";
-    }
+    public override string GetCommandHelp() =>
+        "Create a new empty cohort list storage database with a private identifier that matches your datasets extraction identifier column name\\type (e.g. PatientId varchar(10)";
 
     public override void Execute()
     {
@@ -32,7 +30,7 @@ public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandEx
 
         var wizard = new CreateNewCohortDatabaseWizardUI(Activator);
         wizard.SetItemActivator(Activator);
-        var f = Activator.ShowWindow(wizard,true);
+        var f = Activator.ShowWindow(wizard, true);
         f.FormClosed += (s, e) =>
         {
             if (wizard.ExternalCohortTableCreatedIfAny != null)
@@ -40,8 +38,5 @@ public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandEx
         };
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(FamFamFamIcons.wand);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(FamFamFamIcons.wand);
 }

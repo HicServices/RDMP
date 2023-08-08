@@ -28,8 +28,5 @@ public class ManyCataloguesCombineable : ICombineToMakeCommand
     }
 
     /// <inheritdoc/>
-    public string GetSqlString()
-    {
-        return null;
-    }
+    public string GetSqlString() => null;
 }

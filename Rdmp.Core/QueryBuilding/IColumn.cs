@@ -19,7 +19,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// 
 /// <para>Note that many properties can be null including ColumnInfo and Alias etc.</para>
 /// </summary>
-public interface IColumn : IHasRuntimeName,ICheckable, IOrderable,IMapsDirectlyToDatabaseTable
+public interface IColumn : IHasRuntimeName, ICheckable, IOrderable, IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// Gets the underlying <see cref="ColumnInfo"/> behind this line of SELECT SQL.
@@ -33,7 +33,7 @@ public interface IColumn : IHasRuntimeName,ICheckable, IOrderable,IMapsDirectlyT
     /// </summary>
     [Sql]
     string SelectSQL { get; set; }
-        
+
     /// <summary>
     /// The alias (if any) for the column when it is included in a SELECT statement.  This should not include the " AS " bit only the text that would come after.
     /// <para>Only use if the <see cref="SelectSQL"/> is a transform e.g. "UPPER([mydb]..[mytbl].[mycol])" </para>
@@ -58,5 +58,4 @@ public interface IColumn : IHasRuntimeName,ICheckable, IOrderable,IMapsDirectlyT
     /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
     /// </summary>
     bool IsPrimaryKey { get; }
-        
 }

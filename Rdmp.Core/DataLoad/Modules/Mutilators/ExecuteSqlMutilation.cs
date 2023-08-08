@@ -24,12 +24,12 @@ public class ExecuteSqlMutilation : IPluginMutilateDataTables
     private DiscoveredDatabase _db;
     private LoadStage _loadStage;
 
-    [DemandsInitialization("Run the following SQL when this component is run in the DLE",DemandType = DemandType.SQL,Mandatory =true)]
-    public string Sql{get;set;}
+    [DemandsInitialization("Run the following SQL when this component is run in the DLE", DemandType = DemandType.SQL,
+        Mandatory = true)]
+    public string Sql { get; set; }
 
     public void Check(ICheckNotifier notifier)
     {
-            
     }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
@@ -40,12 +40,11 @@ public class ExecuteSqlMutilation : IPluginMutilateDataTables
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
     }
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
-        var sql = new ExecuteSqlInDleStage(job,_loadStage);
-        return sql.Execute(Sql,_db);
+        var sql = new ExecuteSqlInDleStage(job, _loadStage);
+        return sql.Execute(Sql, _db);
     }
 }

@@ -20,9 +20,10 @@ public class CatalogueItemsNode : Node, IOrderable
     public CatalogueItem[] CatalogueItems { get; }
 
     public ExtractionCategory? Category { get; }
+
     public int Order
     {
-        get => Category.HasValue ? (int)Category +1: 20;
+        get => Category.HasValue ? (int)Category + 1 : 20;
         set { } // no setter, we are orderable to enforce specific order in tree
     }
 
@@ -35,7 +36,7 @@ public class CatalogueItemsNode : Node, IOrderable
 
     public override string ToString()
     {
-        if(Category == null)
+        if (Category == null)
             return "Non Extractable";
 
         return Category switch
@@ -49,17 +50,15 @@ public class CatalogueItemsNode : Node, IOrderable
         };
     }
 
-    protected bool Equals(CatalogueItemsNode other)
-    {
-        return Catalogue.Equals(other.Catalogue) && Equals(Category,other.Category);
-    }
+    protected bool Equals(CatalogueItemsNode other) =>
+        Catalogue.Equals(other.Catalogue) && Equals(Category, other.Category);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof (CatalogueItemsNode)) return false;
-        return Equals((CatalogueItemsNode) obj);
+        if (obj.GetType() != typeof(CatalogueItemsNode)) return false;
+        return Equals((CatalogueItemsNode)obj);
     }
 
     public override int GetHashCode()

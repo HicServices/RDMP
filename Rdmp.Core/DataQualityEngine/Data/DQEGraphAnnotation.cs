@@ -30,15 +30,15 @@ public class DQEGraphAnnotation : DatabaseEntity
     public string Username { get; set; }
     public DateTime CreationDate { get; set; }
     public DQEGraphType AnnotationIsForGraph { get; set; }
-        
+
     public string PivotCategory { get; set; }
 
     public DQEGraphAnnotation()
     {
-
     }
 
-    public DQEGraphAnnotation(DQERepository repository, double startX, double startY, double endX, double endY, string text, Evaluation evaluation, DQEGraphType annotationIsForGraphType, string pivotCategory)
+    public DQEGraphAnnotation(DQERepository repository, double startX, double startY, double endX, double endY,
+        string text, Evaluation evaluation, DQEGraphType annotationIsForGraphType, string pivotCategory)
     {
         Repository = repository;
 
@@ -46,35 +46,35 @@ public class DQEGraphAnnotation : DatabaseEntity
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"StartX", startX},
-            {"StartY", startY},
-            {"EndX", endX},
-            {"EndY", endY},
-            {"Text", text},
-            {"Evaluation_ID", evaluation.ID},
-            {"Username", username},
-            {"CreationDate", DateTime.Now},
-            {"AnnotationIsForGraph", annotationIsForGraphType},
-            {"PivotCategory", pivotCategory}
-        });  
+            { "StartX", startX },
+            { "StartY", startY },
+            { "EndX", endX },
+            { "EndY", endY },
+            { "Text", text },
+            { "Evaluation_ID", evaluation.ID },
+            { "Username", username },
+            { "CreationDate", DateTime.Now },
+            { "AnnotationIsForGraph", annotationIsForGraphType },
+            { "PivotCategory", pivotCategory }
+        });
     }
 
-    public DQEGraphAnnotation(DQERepository repository, DbDataReader r): base(repository, r)
+    public DQEGraphAnnotation(DQERepository repository, DbDataReader r) : base(repository, r)
     {
         Repository = repository;
 
         //coordinates of the annotation
-        StartX          = double.Parse(r["StartX"].ToString());
-        StartY          = double.Parse(r["StartY"].ToString());
-        EndX            = double.Parse(r["EndX"].ToString());
-        EndY            = double.Parse(r["EndY"].ToString());
-            
+        StartX = double.Parse(r["StartX"].ToString());
+        StartY = double.Parse(r["StartY"].ToString());
+        EndX = double.Parse(r["EndX"].ToString());
+        EndY = double.Parse(r["EndY"].ToString());
+
         Text = r["Text"].ToString();
-        Evaluation_ID =  int.Parse(r["Evaluation_ID"].ToString());
-        Username =  r["Username"].ToString();
+        Evaluation_ID = int.Parse(r["Evaluation_ID"].ToString());
+        Username = r["Username"].ToString();
         CreationDate = (DateTime)r["CreationDate"];
-        PivotCategory = (string) r["PivotCategory"];
-        AnnotationIsForGraph = (DQEGraphType) Enum.Parse(typeof (DQEGraphType), r["AnnotationIsForGraph"].ToString());
+        PivotCategory = (string)r["PivotCategory"];
+        AnnotationIsForGraph = (DQEGraphType)Enum.Parse(typeof(DQEGraphType), r["AnnotationIsForGraph"].ToString());
     }
 }
 

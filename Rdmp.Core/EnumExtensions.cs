@@ -31,6 +31,5 @@ public static class EnumExtensions
             TriggerStatus.Missing => GlobalStrings.Missing,
             _ => throw new ArgumentOutOfRangeException(nameof(e))
         };
-
     }
 }

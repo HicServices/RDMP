@@ -29,9 +29,11 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IExtractionConfiguration"/>
-public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
+public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters, INamed,
+    ICustomSearchString
 {
     #region Database Properties
+
     private DateTime? _dtCreated;
     private int? _cohort_ID;
     private string _requestTicket;
@@ -52,7 +54,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     public int? CohortRefreshPipeline_ID
     {
         get => _cohortRefreshPipelineID;
-        set => SetField(ref _cohortRefreshPipelineID , value);
+        set => SetField(ref _cohortRefreshPipelineID, value);
     }
 
     /// <inheritdoc/>
@@ -86,13 +88,13 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public bool IsExtractable(out string reason)
     {
-        if(IsReleased)
+        if (IsReleased)
         {
             reason = "ExtractionConfiguration is released so cannot be executed";
             return false;
         }
 
-        if(Cohort_ID == null)
+        if (Cohort_ID == null)
         {
             reason = "No cohort has been configured for ExtractionConfiguration";
             return false;
@@ -103,7 +105,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             reason = "ExtractionConfiguration does not have an selected datasets";
             return false;
         }
-                
+
         reason = null;
         return true;
     }
@@ -114,36 +116,42 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         get => _requestTicket;
         set => SetField(ref _requestTicket, value);
     }
+
     /// <inheritdoc/>
     public string ReleaseTicket
     {
         get => _releaseTicket;
         set => SetField(ref _releaseTicket, value);
     }
+
     /// <inheritdoc/>
     public int Project_ID
     {
         get => _project_ID;
         set => SetField(ref _project_ID, value);
     }
+
     /// <inheritdoc/>
     public string Username
     {
         get => _username;
         set => SetField(ref _username, value);
     }
+
     /// <inheritdoc/>
     public string Separator
     {
         get => _separator;
         set => SetField(ref _separator, value);
     }
+
     /// <inheritdoc/>
     public string Description
     {
         get => _description;
         set => SetField(ref _description, value);
     }
+
     /// <inheritdoc/>
     public bool IsReleased
     {
@@ -182,38 +190,48 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults => Repository.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
+    public IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults =>
+        Repository.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults => Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
+    public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults =>
+        Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public IExtractableCohort Cohort => Cohort_ID == null ? null : Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
+    public IExtractableCohort Cohort =>
+        Cohort_ID == null ? null : Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ISelectedDataSets[] SelectedDataSets => Repository.GetAllObjectsWithParent<SelectedDataSets>(this).Cast<ISelectedDataSets>().ToArray();
+    public ISelectedDataSets[] SelectedDataSets => Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+        .Cast<ISelectedDataSets>().ToArray();
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IReleaseLog[] ReleaseLog
     {
-        get { return CumulativeExtractionResults.Select(c => c.GetReleaseLogEntryIfAny()).Where(l => l != null).ToArray(); }
+        get
+        {
+            return CumulativeExtractionResults.Select(c => c.GetReleaseLogEntryIfAny()).Where(l => l != null).ToArray();
+        }
     }
 
     /// <inheritdoc cref="DefaultPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline DefaultPipeline {
+    public IPipeline DefaultPipeline
+    {
         get
         {
             if (DefaultPipeline_ID == null)
                 return null;
 
             return
-                ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<Pipeline>(DefaultPipeline_ID.Value);
-        }}
+                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
+                    DefaultPipeline_ID.Value);
+        }
+    }
 
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
@@ -226,7 +244,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 return null;
 
             return
-                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
+                ((IDataExportRepository)Repository).CatalogueRepository
+                .GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
         }
     }
 
@@ -240,7 +259,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 return null;
 
             return
-                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID.Value);
+                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID
+                    .Value);
         }
     }
 
@@ -248,16 +268,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)
     /// </summary>
     /// <returns></returns>
-    public string GetLoggingRunName()
-    {
-        return $"{Project.Name} {GetExtractionLoggingName()}";
-    }
+    public string GetLoggingRunName() => $"{Project.Name} {GetExtractionLoggingName()}";
 
-    private string GetExtractionLoggingName()
-    {
-        return $"(ExtractionConfiguration ID={ID})";
-    }
-
+    private string GetExtractionLoggingName() => $"(ExtractionConfiguration ID={ID})";
 
     #endregion
 
@@ -286,26 +299,23 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"dtCreated", DateTime.Now},
-            {"Project_ID", project.ID},
-            {"Username", Environment.UserName},
-            {"Description", "Initial Configuration"},
-            {"Name",string.IsNullOrWhiteSpace(name) ? $"New ExtractionConfiguration{Guid.NewGuid()}" : name },
-            {"Separator",","}
+            { "dtCreated", DateTime.Now },
+            { "Project_ID", project.ID },
+            { "Username", Environment.UserName },
+            { "Description", "Initial Configuration" },
+            { "Name", string.IsNullOrWhiteSpace(name) ? $"New ExtractionConfiguration{Guid.NewGuid()}" : name },
+            { "Separator", "," }
         });
     }
+
     /// <summary>
     /// Provides a short human readable representation of the <see cref="Project"/> to which this
     /// <see cref="ExtractionConfiguration"/> is associated with
     /// </summary>
     /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
     /// <returns></returns>
-    public string GetProjectHint(bool shortString)
-    {
-        return
-            shortString ? $"({ Project.ProjectNumber})" :
-                $"'{Project.Name}' (PNo. { Project.ProjectNumber})";
-    }
+    public string GetProjectHint(bool shortString) =>
+        shortString ? $"({Project.ProjectNumber})" : $"'{Project.Name}' (PNo. {Project.ProjectNumber})";
 
     /// <summary>
     /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.
@@ -328,7 +338,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         if (dt == null || dt == DBNull.Value)
             dtCreated = null;
         else
-            dtCreated = (DateTime) dt;
+            dtCreated = (DateTime)dt;
 
         Username = r["Username"] as string;
         Description = r["Description"] as string;
@@ -347,25 +357,16 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <inheritdoc/>
-    public string GetSearchString()
-    {
-        return $"{ToString()}_{RequestTicket}_{ReleaseTicket}";
-    }
+    public string GetSearchString() => $"{ToString()}_{RequestTicket}_{ReleaseTicket}";
 
     /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters()
-    {
-        return GlobalExtractionFilterParameters;
-    }
+    public ISqlParameter[] GetAllParameters() => GlobalExtractionFilterParameters;
 
     /// <summary>
     /// Returns the configuration Name
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -409,14 +410,17 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     }
 
                     //clone should copy accross the forced joins (if any)
-                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
-                        new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
+                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
+                                 selected))
+                        new SelectedDataSetsForcedJoin((IDataExportRepository)Repository, newSelectedDataSet,
+                            oldForcedJoin.TableInfo);
 
                     // clone should copy any ExtractionProgresses
-                    if(selected.ExtractionProgressIfAny != null)
+                    if (selected.ExtractionProgressIfAny != null)
                     {
-                        var old =  selected.ExtractionProgressIfAny;
-                        var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet,old.StartDate,old.EndDate,old.NumberOfDaysPerBatch,old.Name,old.ExtractionInformation_ID);
+                        var old = selected.ExtractionProgressIfAny;
+                        var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet, old.StartDate,
+                            old.EndDate, old.NumberOfDaysPerBatch, old.Name, old.ExtractionInformation_ID);
 
                         // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the begining
                         // when it is run.  We don't want the user to have to manually reset it
@@ -441,14 +445,15 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     {
                         clone.DeleteInDatabase();
                         throw new Exception(
-                            $"Problem occurred during cloning filters, problem was {e.Message} deleted the clone configuration successfully",e);
+                            $"Problem occurred during cloning filters, problem was {e.Message} deleted the clone configuration successfully",
+                            e);
                     }
                 }
 
                 clone.dtCreated = DateTime.Now;
                 clone.IsReleased = false;
                 clone.Username = Environment.UserName;
-                clone.Description = "TO"+"DO:Populate change log here";
+                clone.Description = "TO" + "DO:Populate change log here";
                 clone.ReleaseTicket = null;
 
                 //wire up some changes
@@ -478,10 +483,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <inheritdoc/>
-    public IProject GetProject()
-    {
-        return Repository.GetObjectByID<Project>(Project_ID);
-    }
+    public IProject GetProject() => Repository.GetObjectByID<Project>(Project_ID);
 
     /// <inheritdoc/>
     public ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
@@ -490,6 +492,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             Repository.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)
                 .Where(e => e.ExtractableDataSet_ID == dataset.ID).ToArray();
     }
+
     /// <inheritdoc/>
     public IContainer GetFilterContainerFor(IExtractableDataSet dataset)
     {
@@ -502,22 +505,25 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         var uniqueLoggingServerID = -1;
 
-        var repo = (IDataExportRepository) Repository;
+        var repo = (IDataExportRepository)Repository;
 
-        foreach (int? catalogueID in GetAllExtractableDataSets().Select(ds=>ds.Catalogue_ID))
+        foreach (int? catalogueID in GetAllExtractableDataSets().Select(ds => ds.Catalogue_ID))
         {
-            if(catalogueID == null)
-                throw new Exception("Cannot get logging server because some ExtractableDatasets in the configuration do not have associated Catalogues (possibly the Catalogue was deleted)");
+            if (catalogueID == null)
+                throw new Exception(
+                    "Cannot get logging server because some ExtractableDatasets in the configuration do not have associated Catalogues (possibly the Catalogue was deleted)");
 
             var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
             var loggingServer = catalogue.LiveLoggingServer_ID ?? throw new Exception(
-                    $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
+                $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
             if (uniqueLoggingServerID == -1)
-                uniqueLoggingServerID = (int) catalogue.LiveLoggingServer_ID;
+            {
+                uniqueLoggingServerID = (int)catalogue.LiveLoggingServer_ID;
+            }
             else
             {
-                if(uniqueLoggingServerID != catalogue.LiveLoggingServer_ID)
+                if (uniqueLoggingServerID != catalogue.LiveLoggingServer_ID)
                     throw new Exception("Catalogues in configuration have different logging servers");
             }
         }
@@ -564,7 +570,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         selectedDataSet = null;
 
         //it is already part of the configuration
-        if( SelectedDataSets.Any(s => s.ExtractableDataSet_ID == extractableDataSet.ID))
+        if (SelectedDataSets.Any(s => s.ExtractableDataSet_ID == extractableDataSet.ID))
             return;
 
         var dataExportRepo = (IDataExportRepository)Repository;
@@ -590,7 +596,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             var globals = GlobalExtractionFilterParameters;
             var importer = new FilterImporter(new DeployedExtractionFilterFactory(dataExportRepo), globals);
 
-            var mandatoryFilters = importer.ImportAllFilters(rootFilterContainer,mandatoryExtractionFiltersToApplyToDataset, null);
+            var mandatoryFilters =
+                importer.ImportAllFilters(rootFilterContainer, mandatoryExtractionFiltersToApplyToDataset, null);
 
             foreach (var filter in mandatoryFilters.Cast<DeployedExtractionFilter>())
             {
@@ -603,7 +610,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         //add Core or ProjectSpecific columns
         foreach (var all in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
-            if(all.ExtractionCategory == ExtractionCategory.Core || all.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            if (all.ExtractionCategory == ExtractionCategory.Core ||
+                all.ExtractionCategory == ExtractionCategory.ProjectSpecific)
                 if (legacyColumns.All(l => l.CatalogueExtractionInformation_ID != all.ID))
                     AddColumnToExtraction(extractableDataSet, all);
     }
@@ -626,7 +634,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         if (string.IsNullOrWhiteSpace(column.SelectSQL))
             throw new ArgumentException(
-                $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager", "item");
+                $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager",
+                "item");
 
         var query = "";
         query = column.SelectSQL;
@@ -636,7 +645,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         if (column is ExtractionInformation information)
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, information, -1, query);
         else
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1,
+                query); // its custom column of some kind, not tied to a catalogue entry
 
         addMe.UpdateValuesToMatch(column);
 
@@ -649,7 +659,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <returns></returns>
     public LogManager GetExplicitLoggingDatabaseServerOrDefault()
     {
-        ExternalDatabaseServer loggingServer=null;
+        ExternalDatabaseServer loggingServer = null;
         try
         {
             loggingServer = GetDistinctLoggingServer(false);
@@ -667,7 +677,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 loggingServer = (ExternalDatabaseServer)defaultLoggingServer;
             else
                 //no, there is no default or user does not want to use it.
-                throw new Exception("There is no default logging server configured and there was a problem asking Catalogues for a logging server instead.  Configure a default logging server via ManageExternalServersUI", e);
+                throw new Exception(
+                    "There is no default logging server configured and there was a problem asking Catalogues for a logging server instead.  Configure a default logging server via ManageExternalServersUI",
+                    e);
         }
 
         var server = DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging);
@@ -679,15 +691,13 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             lm = new LogManager(server);
 
             if (!lm.ListDataTasks().Contains(ExecuteDatasetExtractionSource.AuditTaskName))
-            {
                 throw new Exception(
                     $"The logging database {server} does not contain a DataLoadTask called '{ExecuteDatasetExtractionSource.AuditTaskName}' (all data exports are logged under this task regardless of dataset/Catalogue)");
-
-            }
         }
         catch (Exception e)
         {
-            throw new Exception($"Problem figuring out what logging server to use:{Environment.NewLine}\t{e.Message}", e);
+            throw new Exception($"Problem figuring out what logging server to use:{Environment.NewLine}\t{e.Message}",
+                e);
         }
 
         return lm;
@@ -709,9 +719,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable[] GetGlobals()
     {
-        var sds = SelectedDataSets.FirstOrDefault(s=>s.ExtractableDataSet.Catalogue != null);
+        var sds = SelectedDataSets.FirstOrDefault(s => s.ExtractableDataSet.Catalogue != null);
 
-        if(sds == null)
+        if (sds == null)
             return Array.Empty<IMapsDirectlyToDatabaseTable>();
 
         var cata = sds.ExtractableDataSet.Catalogue;
@@ -736,19 +746,14 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {Project};
+        return new[] { Project };
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
 
-    public DiscoveredServer GetDistinctLoggingDatabase()
-    {
-        return GetDistinctLoggingServer(false).Discover(DataAccessContext.Logging).Server;
-    }
+    public DiscoveredServer GetDistinctLoggingDatabase() =>
+        GetDistinctLoggingServer(false).Discover(DataAccessContext.Logging).Server;
 
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
     {
@@ -756,10 +761,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         return serverChosen.Discover(DataAccessContext.Logging).Server;
     }
 
-    public string GetDistinctLoggingTask()
-    {
-        return ExecuteDatasetExtractionSource.AuditTaskName;
-    }
+    public string GetDistinctLoggingTask() => ExecuteDatasetExtractionSource.AuditTaskName;
 
     /// <summary>
     /// Returns runs from the data extraction task where the run was for this ExtractionConfiguration
@@ -769,6 +771,6 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
     {
         // allow for the project name changing but not our ID
-        return runs.Where(r=>r.Description.Contains(GetExtractionLoggingName()));
+        return runs.Where(r => r.Description.Contains(GetExtractionLoggingName()));
     }
 }

@@ -20,13 +20,15 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// </summary>
 public static class UserSettings
 {
-    private static Lazy<ISettings> implementation = new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    private static Lazy<ISettings> implementation =
+        new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
 
     private static ISettings AppSettings
     {
         get
         {
-            var ret = implementation.Value ?? throw new NotImplementedException("Isolated Storage does not work in this environment...");
+            var ret = implementation.Value ??
+                      throw new NotImplementedException("Isolated Storage does not work in this environment...");
             return ret;
         }
     }
@@ -46,7 +48,7 @@ public static class UserSettings
     /// </summary>
     public static string LicenseAccepted
     {
-        get => AppSettings.GetValueOrDefault("LicenseAccepted",null);
+        get => AppSettings.GetValueOrDefault("LicenseAccepted", null);
         set => AppSettings.AddOrUpdateValue("LicenseAccepted", value);
     }
 
@@ -130,7 +132,8 @@ public static class UserSettings
     public static int CreateDatabaseTimeout
     {
         get => AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30);
-        set => AppSettings.AddOrUpdateValue("CreateDatabaseTimeout", DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value,30));
+        set => AppSettings.AddOrUpdateValue("CreateDatabaseTimeout",
+            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value, 30));
     }
 
     /// <summary>
@@ -139,7 +142,7 @@ public static class UserSettings
     public static int TooltipAppearDelay
     {
         get => AppSettings.GetValueOrDefault("TooltipAppearDelay", 750);
-        set => AppSettings.AddOrUpdateValue("TooltipAppearDelay", Math.Max(10,value));
+        set => AppSettings.AddOrUpdateValue("TooltipAppearDelay", Math.Max(10, value));
     }
 
     /// <summary>
@@ -162,26 +165,31 @@ public static class UserSettings
 
 
     #region Catalogue flag visibility settings
+
     public static bool ShowInternalCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowInternalCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowInternalCatalogues", value);
     }
+
     public static bool ShowDeprecatedCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowDeprecatedCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowDeprecatedCatalogues", value);
     }
+
     public static bool ShowColdStorageCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowColdStorageCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowColdStorageCatalogues", value);
     }
+
     public static bool ShowProjectSpecificCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowProjectSpecificCatalogues", true);
         set => AppSettings.AddOrUpdateValue("ShowProjectSpecificCatalogues", value);
     }
+
     public static bool ShowNonExtractableCatalogues
     {
         get => AppSettings.GetValueOrDefault("ShowNonExtractableCatalogues", true);
@@ -270,7 +278,8 @@ public static class UserSettings
     /// <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
     /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
     /// </summary>
-    public static bool DebugPerformance {
+    public static bool DebugPerformance
+    {
         get => AppSettings.GetValueOrDefault("DebugPerformance", false);
         set => AppSettings.AddOrUpdateValue("DebugPerformance", value);
     }
@@ -279,7 +288,8 @@ public static class UserSettings
     /// <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
     /// <para>Can be disabled if problems arrise with column content or header visibility</para>
     /// </summary>
-    public static bool AutoResizeColumns {
+    public static bool AutoResizeColumns
+    {
         get => AppSettings.GetValueOrDefault("AutoResizeColumns", true);
         set => AppSettings.AddOrUpdateValue("AutoResizeColumns", value);
     }
@@ -288,7 +298,8 @@ public static class UserSettings
     /// <summary>
     /// Show a popup confirmation dialog at the end of a pipeline completing execution
     /// </summary>
-    public static bool ShowPipelineCompletedPopup {
+    public static bool ShowPipelineCompletedPopup
+    {
         get => AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true);
         set => AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value);
     }
@@ -343,6 +354,7 @@ public static class UserSettings
         get => AppSettings.GetValueOrDefault("FindWindowWidth", 730);
         set => AppSettings.AddOrUpdateValue("FindWindowWidth", value);
     }
+
     public static int FindWindowHeight
     {
         get => AppSettings.GetValueOrDefault("FindWindowHeight", 400);
@@ -418,7 +430,6 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value);
     }
 
-
     #endregion
 
     /// <summary>
@@ -439,22 +450,22 @@ public static class UserSettings
     /// </summary>
     /// <param name="errorCode"></param>
     /// <param name="value"></param>
-    public static void SetErrorReportingLevelFor(ErrorCode errorCode,CheckResult value)
+    public static void SetErrorReportingLevelFor(ErrorCode errorCode, CheckResult value)
     {
         AppSettings.AddOrUpdateValue($"EC_{errorCode.Code}", value.ToString());
     }
 
     public static bool GetTutorialDone(Guid tutorialGuid)
     {
-        if(tutorialGuid == Guid.Empty)
+        if (tutorialGuid == Guid.Empty)
             return false;
 
-        return AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false); 
+        return AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
     }
 
-    public static void SetTutorialDone(Guid tutorialGuid,bool value)
+    public static void SetTutorialDone(Guid tutorialGuid, bool value)
     {
-        if(tutorialGuid == Guid.Empty)
+        if (tutorialGuid == Guid.Empty)
             return;
 
         AppSettings.AddOrUpdateValue($"T_{tutorialGuid:N}", value);
@@ -465,7 +476,6 @@ public static class UserSettings
         if (columnGuid == Guid.Empty)
             return;
         SetColumnWidth(columnGuid.ToString("N"), width);
-
     }
 
     public static void SetColumnWidth(string colIdentifier, int width)
@@ -477,11 +487,11 @@ public static class UserSettings
     {
         if (columnGuid == Guid.Empty)
             return;
-            
-        SetColumnVisible(columnGuid.ToString("N"),visible);
+
+        SetColumnVisible(columnGuid.ToString("N"), visible);
     }
 
-    public static void SetColumnVisible(string colIdentifier,bool visible)
+    public static void SetColumnVisible(string colIdentifier, bool visible)
     {
         AppSettings.AddOrUpdateValue($"ColV_{colIdentifier}", visible);
     }
@@ -493,10 +503,9 @@ public static class UserSettings
 
         return GetColumnWidth(columnGuid.ToString("N"));
     }
-    public static int GetColumnWidth(string colIdentifier)
-    {
-        return AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
-    }
+
+    public static int GetColumnWidth(string colIdentifier) =>
+        AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
 
     public static bool GetColumnVisible(Guid columnGuid)
     {
@@ -506,17 +515,15 @@ public static class UserSettings
         return GetColumnVisible(columnGuid.ToString("N"));
     }
 
-    public static bool GetColumnVisible(string colIdentifier)
-    {
-        return AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
-    }
+    public static bool GetColumnVisible(string colIdentifier) =>
+        AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
 
     public static string[] GetHistoryForControl(Guid controlGuid)
     {
-        return AppSettings.GetValueOrDefault($"A_{controlGuid:N}", "").Split(new []{"#!#"},StringSplitOptions.None);
+        return AppSettings.GetValueOrDefault($"A_{controlGuid:N}", "").Split(new[] { "#!#" }, StringSplitOptions.None);
     }
 
-    public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
+    public static void SetHistoryForControl(Guid controlGuid, IEnumerable<string> history)
     {
         AppSettings.AddOrUpdateValue($"A_{controlGuid:N}", string.Join("#!#", history));
     }
@@ -527,16 +534,16 @@ public static class UserSettings
             return;
 
         var l = GetHistoryForControl(guid).ToList();
-            
+
         if (l.Contains(v))
             return;
 
-        l.Add(v);            
+        l.Add(v);
 
         SetHistoryForControl(guid, l.Distinct().ToList());
     }
 
-    public static Tuple<string,bool> GetLastColumnSortForCollection(Guid controlGuid)
+    public static Tuple<string, bool> GetLastColumnSortForCollection(Guid controlGuid)
     {
         lock (_oLockUserSettings)
         {
@@ -546,7 +553,7 @@ public static class UserSettings
             if (string.IsNullOrWhiteSpace(value))
                 return null;
 
-            var args = value.Split(new[] {"#!#"}, StringSplitOptions.RemoveEmptyEntries);
+            var args = value.Split(new[] { "#!#" }, StringSplitOptions.RemoveEmptyEntries);
 
             //or it doesn't split properly
             if (args.Length != 2)
@@ -564,6 +571,7 @@ public static class UserSettings
     }
 
     private static object _oLockUserSettings = new();
+
     public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
     {
         lock (_oLockUserSettings)
@@ -579,10 +587,8 @@ public static class UserSettings
     /// </summary>
     /// <param name="controlGuid"></param>
     /// <returns></returns>
-    public static int GetSplitterDistance(Guid controlGuid)
-    {
-        return AppSettings.GetValueOrDefault($"SplitterDistance_{controlGuid:N}",-1);
-    }
+    public static int GetSplitterDistance(Guid controlGuid) =>
+        AppSettings.GetValueOrDefault($"SplitterDistance_{controlGuid:N}", -1);
 
     /// <summary>
     /// Records that the user has manaully changed the splitter distance of the Control
@@ -598,9 +604,5 @@ public static class UserSettings
         }
     }
 
-    private static ISettings CreateSettings()
-    {
-        return new RDMPApplicationSettings();
-    }
-
+    private static ISettings CreateSettings() => new RDMPApplicationSettings();
 }

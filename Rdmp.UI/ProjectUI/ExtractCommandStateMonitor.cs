@@ -13,20 +13,17 @@ namespace Rdmp.UI.ProjectUI;
 
 internal class ExtractCommandStateMonitor
 {
-    private Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new();
+    private Dictionary<IExtractCommand, ExtractCommandState> CommandStates = new();
     private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new();
 
     private Dictionary<object, ExtractCommandState> GlobalsStates = new();
 
-    public bool Contains(IExtractCommand cmd)
-    {
-        return CommandStates.ContainsKey(cmd);
-    }
+    public bool Contains(IExtractCommand cmd) => CommandStates.ContainsKey(cmd);
 
     public void Add(IExtractDatasetCommand cmd)
     {
-        CommandStates.Add(cmd,cmd.State);
-        CommandSubStates.Add(cmd,cmd.DatasetBundle.States);
+        CommandStates.Add(cmd, cmd.State);
+        CommandSubStates.Add(cmd, cmd.DatasetBundle.States);
     }
 
     public void SaveState(IExtractDatasetCommand cmd)
@@ -42,7 +39,7 @@ internal class ExtractCommandStateMonitor
             toUpdateSubstates[substate.Key] = substate.Value;
         }
     }
-        
+
     public IEnumerable<object> GetAllChangedObjects(IExtractDatasetCommand cmd)
     {
         if (CommandStates[cmd] != cmd.State)
@@ -52,6 +49,7 @@ internal class ExtractCommandStateMonitor
             if (CommandSubStates[cmd][substate.Key] != substate.Value)
                 yield return substate.Key;
     }
+
     public void SaveState(GlobalsBundle globals)
     {
         foreach (var gkvp in globals.States)
@@ -65,17 +63,16 @@ internal class ExtractCommandStateMonitor
     public IEnumerable<object> GetAllChangedObjects(GlobalsBundle globals)
     {
         foreach (var gkvp in globals.States)
-        {
             if (!GlobalsStates.ContainsKey(gkvp.Key))
             {
                 GlobalsStates.Add(gkvp.Key, gkvp.Value);
-                yield return gkvp.Key;//new objects also are returned as changed
+                yield return gkvp.Key; //new objects also are returned as changed
             }
             else
                 //State has changed since last save
             if (GlobalsStates[gkvp.Key] != gkvp.Value)
+            {
                 yield return gkvp.Key;
-        }
-            
+            }
     }
 }

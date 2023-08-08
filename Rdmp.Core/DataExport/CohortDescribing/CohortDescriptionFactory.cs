@@ -43,18 +43,18 @@ public class CohortDescriptionFactory
     /// <returns></returns>
     public Dictionary<CohortDescriptionDataTableAsyncFetch, ExtractableCohortDescription[]> Create()
     {
-        var toReturn = new Dictionary<CohortDescriptionDataTableAsyncFetch,ExtractableCohortDescription[]>();
+        var toReturn = new Dictionary<CohortDescriptionDataTableAsyncFetch, ExtractableCohortDescription[]>();
 
         foreach (var source in _sources)
         {
             //setup the async data retreival which can take a long time if there are a lot of cohorts or millions of identifiers
             var asyncFetch = new CohortDescriptionDataTableAsyncFetch(source);
-            var cohorts = _cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).Select(c => new ExtractableCohortDescription(c, asyncFetch)).ToArray();
+            var cohorts = _cohorts.Where(c => c.ExternalCohortTable_ID == source.ID)
+                .Select(c => new ExtractableCohortDescription(c, asyncFetch)).ToArray();
 
             asyncFetch.Begin();
 
-            toReturn.Add(asyncFetch,cohorts);
-
+            toReturn.Add(asyncFetch, cohorts);
         }
 
         return toReturn;

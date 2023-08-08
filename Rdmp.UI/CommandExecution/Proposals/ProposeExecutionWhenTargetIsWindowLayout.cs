@@ -17,18 +17,13 @@ internal class ProposeExecutionWhenTargetIsWindowLayout : RDMPCommandExecutionPr
     {
     }
 
-    public override bool CanActivate(WindowLayout target)
-    {
-        return true;
-    }
+    public override bool CanActivate(WindowLayout target) => true;
 
     public override void Activate(WindowLayout target)
     {
         ItemActivator.WindowArranger.Setup(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, WindowLayout target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, WindowLayout target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

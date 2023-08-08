@@ -48,7 +48,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 
     public override void SetDatabaseObject(IActivateItems activator, SupportingDocument databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
 
         _supportingDocument = databaseObject;
 
@@ -58,7 +58,6 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 
         CommonFunctionality.AddHelp(cbExtractable, "SupportingDocument.Extractable");
         CommonFunctionality.AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
-
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -71,11 +70,11 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text", "ID",s=>s.ID);
-        Bind(tbDescription,"Text","Description",s=>s.Description);
-        Bind(tbName,"Text","Name",s=>s.Name);
-        Bind(cbExtractable,"Checked","Extractable", s=>s.Extractable);
-        Bind(cbIsGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
+        Bind(tbID, "Text", "ID", s => s.ID);
+        Bind(tbDescription, "Text", "Description", s => s.Description);
+        Bind(tbName, "Text", "Name", s => s.Name);
+        Bind(cbExtractable, "Checked", "Extractable", s => s.Extractable);
+        Bind(cbIsGlobal, "Checked", "IsGlobal", s => s.IsGlobal);
     }
 
     private void tbUrl_TextChanged(object sender, EventArgs e)
@@ -96,7 +95,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         }
     }
 
-    private static void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
+    private static void SetUriPropertyOn(TextBox tb, string propertyToSet, object toSetOn)
     {
         if (toSetOn == null) return;
         try
@@ -131,11 +130,9 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         if (ofd.ShowDialog() == DialogResult.OK)
             tbUrl.Text = ofd.FileName;
     }
-
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingDocumentUI_Design, UserControl>))]
 public abstract class SupportingDocumentUI_Design : RDMPSingleDatabaseObjectControl<SupportingDocument>
 {
-
 }

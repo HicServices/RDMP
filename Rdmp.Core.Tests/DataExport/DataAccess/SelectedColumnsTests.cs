@@ -12,31 +12,30 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.DataAccess;
 
-public class SelectedColumnsTests:DatabaseTests
+public class SelectedColumnsTests : DatabaseTests
 {
     //Simple test SelectedColumns in which an extraction configuration is built for a test dataset with a single column configured for extraction
     [Test]
     public void CreateAndAssociateColumns()
     {
         var cata = new Catalogue(CatalogueRepository, "MyCat");
-        var cataItem = new CatalogueItem(CatalogueRepository, cata,"MyCataItem");
+        var cataItem = new CatalogueItem(CatalogueRepository, cata, "MyCataItem");
         var TableInfo = new TableInfo(CatalogueRepository, "Cata");
-        var ColumnInfo = new ColumnInfo(CatalogueRepository, "Col","varchar(10)",TableInfo);
+        var ColumnInfo = new ColumnInfo(CatalogueRepository, "Col", "varchar(10)", TableInfo);
         var ExtractionInfo = new ExtractionInformation(CatalogueRepository, cataItem, ColumnInfo, "fish");
 
-        var ds = new ExtractableDataSet(DataExportRepository,cata);
+        var ds = new ExtractableDataSet(DataExportRepository, cata);
 
         var proj = new Project(DataExportRepository, "MyProj");
         var config = new ExtractionConfiguration(DataExportRepository, proj);
-            
+
         SelectedDataSets selectedDataSets;
 
         var extractableColumn = new ExtractableColumn(DataExportRepository, ds, config, ExtractionInfo, 1, "fish");
 
         try
         {
-                
-            selectedDataSets = new SelectedDataSets(DataExportRepository,config, ds,null);
+            selectedDataSets = new SelectedDataSets(DataExportRepository, config, ds, null);
 
             var cols = config.GetAllExtractableColumnsFor(ds);
 
@@ -58,8 +57,6 @@ public class SelectedColumnsTests:DatabaseTests
 
             TableInfo.DeleteInDatabase();
             cata.DeleteInDatabase();
-
         }
     }
-
 }

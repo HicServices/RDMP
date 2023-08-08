@@ -22,7 +22,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class BackfillTests : FromToDatabaseTests
 {
-
     private ICatalogue _catalogue;
 
 
@@ -44,13 +43,15 @@ public class BackfillTests : FromToDatabaseTests
         SingleTableSetup();
 
         #region Insert test data
+
         // add To data
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (10, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1)", connection);
+                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (10, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1)",
+                connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -64,6 +65,7 @@ public class BackfillTests : FromToDatabaseTests
                                      "(10, '2016-01-11T12:00:00', 'Newer than in To, should update To')", connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         // databases are now represent state after push to From and before migration
@@ -80,7 +82,8 @@ public class BackfillTests : FromToDatabaseTests
 
             cmd = new SqlCommand(@"SELECT Description FROM Samples", connection);
             var description = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual(description, "Newer than in To, should update To", "Description has been altered but is a valid update to To so should not have been touched.");
+            Assert.AreEqual(description, "Newer than in To, should update To",
+                "Description has been altered but is a valid update to To so should not have been touched.");
         }
     }
 
@@ -89,7 +92,7 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
         // Set SetUp catalogue entities
-        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ColumnInfo[] ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Samples", "ID", out var ciSamples, true);
 
         Assert.AreEqual(5, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
     }
@@ -98,7 +101,8 @@ public class BackfillTests : FromToDatabaseTests
     {
         var mutilator = new StagingBackfillMutilator
         {
-            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(c=>c.Name.Equals(timeColumnName)),
+            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>()
+                .Single(c => c.Name.Equals(timeColumnName)),
             TestContext = true,
             TableNamingScheme = new IdentityTableNamingScheme()
         };
@@ -114,13 +118,15 @@ public class BackfillTests : FromToDatabaseTests
         SingleTableSetup();
 
         #region Insert test data
+
         // add To data
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-10T12:00:00', 1)", connection);
+                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-10T12:00:00', 1)",
+                connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -131,9 +137,11 @@ public class BackfillTests : FromToDatabaseTests
 
             // newer update
             var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description) VALUES " +
-                                     "(1, '2016-01-09T12:00:00', 'Older than in To, should be deleted by the mutilator')", connection);
+                                     "(1, '2016-01-09T12:00:00', 'Older than in To, should be deleted by the mutilator')",
+                connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         // databases are now represent state after push to From and before migration
@@ -146,7 +154,8 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(0, numRows, "The record to be loaded is older than the corresponding record in To, should have been deleted");
+            Assert.AreEqual(0, numRows,
+                "The record to be loaded is older than the corresponding record in To, should have been deleted");
         }
     }
 
@@ -156,13 +165,16 @@ public class BackfillTests : FromToDatabaseTests
         SingleTableSetup();
 
         #region Insert test data
+
         // add To data
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
-            var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                     "(1, '2016-01-10T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-10T12:00:00', 1)", connection);
+            var cmd = new SqlCommand(
+                "INSERT INTO [Samples] (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+                "(1, '2016-01-10T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-10T12:00:00', 1)",
+                connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -173,9 +185,11 @@ public class BackfillTests : FromToDatabaseTests
 
             // newer update
             var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description) VALUES " +
-                                     "(2, '2016-01-09T12:00:00', 'Does not exist in To, should remain in From after mutilation.')", connection);
+                                     "(2, '2016-01-09T12:00:00', 'Does not exist in To, should remain in From after mutilation.')",
+                connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         // databases are now represent state after push to From and before migration
@@ -192,8 +206,8 @@ public class BackfillTests : FromToDatabaseTests
 
             cmd = new SqlCommand(@"SELECT Description FROM Samples", connection);
             var description = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual(description, "Does not exist in To, should remain in From after mutilation.", "Description has been altered but is a valid update to To so should not have been touched.");
-
+            Assert.AreEqual(description, "Does not exist in To, should remain in From after mutilation.",
+                "Description has been altered but is a valid update to To so should not have been touched.");
         }
     }
 
@@ -203,14 +217,17 @@ public class BackfillTests : FromToDatabaseTests
         SingleTableSetup();
 
         #region Insert test data
+
         // add To data
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
-            var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                     "(1, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1)," +
-                                     "(2, '2016-01-15T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-15T12:00:00', 2)", connection);
+            var cmd = new SqlCommand(
+                "INSERT INTO [Samples] (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+                "(1, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1)," +
+                "(2, '2016-01-15T12:00:00', 'Later than corresponding new data, should not be updated', '2016-01-15T12:00:00', 2)",
+                connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -225,6 +242,7 @@ public class BackfillTests : FromToDatabaseTests
                                      "(3, '2016-01-12T12:00:00', 'New data')", connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
@@ -236,15 +254,16 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(2, numRows, "Record 2 should have been deleted as it is an update to a record for which we have a later version.");
+            Assert.AreEqual(2, numRows,
+                "Record 2 should have been deleted as it is an update to a record for which we have a later version.");
         }
-
     }
 
     private void TwoTableSetupWhereTimePeriodIsParent()
     {
         CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
-        CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
+        CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID",
+            "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
         // Set SetUp catalogue entities
 
@@ -260,7 +279,7 @@ public class BackfillTests : FromToDatabaseTests
         Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Samples (1:M) Results join
-        new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
+        new JoinInfo(CatalogueRepository, ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
             ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
             ExtractionJoinType.Left, "");
     }
@@ -271,12 +290,15 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsParent();
 
         #region Insert To test data
-        const string liveSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
-        const string liveResultsSql = "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
-                                      "(11, 1, 234, '2016-01-10T12:00:00', 1)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
+
+        const string liveResultsSql =
+            "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
+            "(11, 1, 234, '2016-01-10T12:00:00', 1)";
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
@@ -288,9 +310,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveResultsSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description) VALUES " +
                                          "(1, '2016-01-15T12:00:00', 'Sample is later than corresponding record in To, contains a child update (ID=11), child insert (ID=12) and this updated description')";
@@ -310,7 +334,6 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingResultsSql, connection);
             cmd.ExecuteNonQuery();
         }
-
 
         #endregion
 
@@ -337,12 +360,15 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsParent();
 
         #region Insert To test data
-        const string liveSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
-        const string liveResultsSql = "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
-                                      "(11, 1, 234, '2016-01-10T12:00:00', 1)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
+
+        const string liveResultsSql =
+            "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
+            "(11, 1, 234, '2016-01-10T12:00:00', 1)";
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
@@ -354,9 +380,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveResultsSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description) VALUES " +
                                          "(1, '2016-01-09T12:00:00', 'Sample is earlier than corresponding record in To (also contains an item which has apparently been deleted in the set used for a later load)')";
@@ -376,7 +404,6 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingResultsSql, connection);
             cmd.ExecuteNonQuery();
         }
-
 
         #endregion
 
@@ -409,7 +436,8 @@ public class BackfillTests : FromToDatabaseTests
                 Assert.IsTrue(reader.HasRows);
 
                 reader.Read();
-                Assert.AreEqual("", reader["Description"].ToString(), "The To sample had a blank description which should have been copied in to the earlier From record.");
+                Assert.AreEqual("", reader["Description"].ToString(),
+                    "The To sample had a blank description which should have been copied in to the earlier From record.");
 
                 var hasMoreResults = reader.Read();
                 Assert.IsFalse(hasMoreResults, "Should only be one Samples row in From");
@@ -423,12 +451,15 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsParent();
 
         #region Insert To test data
-        const string liveSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
-        const string liveResultsSql = "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
-                                      "(11, 1, 234, '2016-01-10T12:00:00', 1)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
+
+        const string liveResultsSql =
+            "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
+            "(11, 1, 234, '2016-01-10T12:00:00', 1)";
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
@@ -440,9 +471,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveResultsSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description) VALUES " +
                                          "(2, '2016-01-15T12:00:00', 'New sample')";
@@ -462,7 +495,6 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingResultsSql, connection);
             cmd.ExecuteNonQuery();
         }
-
 
         #endregion
 
@@ -504,7 +536,7 @@ public class BackfillTests : FromToDatabaseTests
         Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
-        new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
+        new JoinInfo(CatalogueRepository, ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
             ciHeaders.Single(info => info.GetRuntimeName().Equals("ID")),
             ExtractionJoinType.Left, "");
     }
@@ -515,11 +547,13 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsChild();
 
         #region Insert To test data
+
         const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                      "(1, 'Biochemistry', '2016-01-10T12:00:00', 1)";
 
-        const string liveSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(10, 1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(10, 1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
@@ -532,9 +566,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                          "(1, 'Biochemistry')";
@@ -552,7 +588,6 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
-
 
         #endregion
 
@@ -584,11 +619,13 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsChild();
 
         #region Insert To test data
+
         const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                      "(1, 'Biochemistry', '2016-01-15T12:00:00', 1)";
 
-        const string liveSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(11, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 1)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(11, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 1)";
 
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
@@ -601,9 +638,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                          "(1, 'Haematology')"; // old and incorrect Discipline value
@@ -637,11 +676,13 @@ public class BackfillTests : FromToDatabaseTests
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Headers", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "Header should still be there (shouldn't be able to delete it as there should be a FK constraint with Samples)");
+            Assert.AreEqual(1, numRows,
+                "Header should still be there (shouldn't be able to delete it as there should be a FK constraint with Samples)");
 
             cmd = new SqlCommand(@"SELECT Discipline FROM Headers WHERE ID=1", connection);
             var discipline = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual("Biochemistry", discipline, "Header record in From be updated to reflect what is in To: the To record is authoritative as it contains at least one child from a later date.");
+            Assert.AreEqual("Biochemistry", discipline,
+                "Header record in From be updated to reflect what is in To: the To record is authoritative as it contains at least one child from a later date.");
         }
     }
 
@@ -651,12 +692,14 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsChild();
 
         #region Insert To test data
+
         const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                      "(1, 'Biochemistry', '2016-01-15T12:00:00', 1)";
 
-        const string liveSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(10, 1, '2016-01-15T10:00:00', '', '2016-01-15T12:00:00', 1), " +
-                                      "(11, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 1)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(10, 1, '2016-01-15T10:00:00', '', '2016-01-15T12:00:00', 1), " +
+            "(11, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 1)";
 
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
@@ -669,9 +712,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                          "(1, 'Haematology')"; // old and incorrect Discipline value
@@ -705,11 +750,13 @@ public class BackfillTests : FromToDatabaseTests
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Headers", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "Header should still be there (shouldn't be able to delete it as there should be a FK constraint with Samples)");
+            Assert.AreEqual(1, numRows,
+                "Header should still be there (shouldn't be able to delete it as there should be a FK constraint with Samples)");
 
             cmd = new SqlCommand(@"SELECT Discipline FROM Headers WHERE ID=1", connection);
             var discipline = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual("Haematology", discipline, "Header record in From should not be updated as it is 'correct'.");
+            Assert.AreEqual("Haematology", discipline,
+                "Header record in From should not be updated as it is 'correct'.");
         }
     }
 
@@ -719,18 +766,20 @@ public class BackfillTests : FromToDatabaseTests
         TwoTableSetupWhereTimePeriodIsChild();
 
         #region Insert To test data
+
         const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                      "(1, 'Haematology', '2016-01-15T12:00:00', 2), " +
                                      "(2, 'Haematology', '2016-01-05T12:00:00', 1), " +
                                      "(3, 'Biochemistry', '2016-01-15T12:00:00', 2), " +
                                      "(4, 'Haematology', '2016-01-15T12:00:00', 2)";
 
-        const string liveSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                      "(12, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2), " +
-                                      "(13, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2), " +
-                                      "(14, 2, '2016-01-05T12:00:00', '', '2016-01-05T12:00:00', 1), " +
-                                      "(15, 3, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2), " +
-                                      "(16, 4, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2)";
+        const string liveSamplesSql =
+            "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(12, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2), " +
+            "(13, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2), " +
+            "(14, 2, '2016-01-05T12:00:00', '', '2016-01-05T12:00:00', 1), " +
+            "(15, 3, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2), " +
+            "(16, 4, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2)";
 
 
         using (var connection = (SqlConnection)To.Server.GetConnection())
@@ -743,9 +792,11 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(liveSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
+
         #endregion
 
         #region Add From test data
+
         // add From data
         const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                          "(1, 'Biochemistry'), " +
@@ -819,7 +870,8 @@ public class BackfillTests : FromToDatabaseTests
         }
     }
 
-    private void CreateTables(string tableName, string columnDefinitions, string pkColumn, string fkConstraintString = null)
+    private void CreateTables(string tableName, string columnDefinitions, string pkColumn,
+        string fkConstraintString = null)
     {
         // todo: doesn't do combo primary keys yet
 
@@ -828,7 +880,8 @@ public class BackfillTests : FromToDatabaseTests
 
         var pkConstraint = $"CONSTRAINT PK_{tableName} PRIMARY KEY ({pkColumn})";
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + string.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
+        var liveTableDefinition = columnDefinitions +
+                                  string.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
 
         if (fkConstraintString != null)
         {
@@ -837,23 +890,25 @@ public class BackfillTests : FromToDatabaseTests
         }
 
 
-        using (var con = (SqlConnection) From.Server.GetConnection())
+        using (var con = (SqlConnection)From.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({stagingTableDefinition})",con).ExecuteNonQuery();
+            new SqlCommand($"CREATE TABLE {tableName} ({stagingTableDefinition})", con).ExecuteNonQuery();
         }
 
-        using(var con = (SqlConnection)To.Server.GetConnection())
+        using (var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery();
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})", con).ExecuteNonQuery();
         }
     }
 
-    [Test, Ignore("Restructuring tests")]
+    [Test]
+    [Ignore("Restructuring tests")]
     public void DeleteNewerCollisionsFromTable()
     {
         #region Set SetUp databases
+
         CreateTables("Header", "ID int NOT NULL, Discipline varchar(32) NOT NULL", "ID");
 
         CreateTables("Samples",
@@ -873,32 +928,38 @@ public class BackfillTests : FromToDatabaseTests
 
         // should be all entities set SetUp now
         Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+
         #endregion
 
         // add data
+
         #region Populate Tables
+
         var connection = (SqlConnection)To.Server.GetConnection();
         connection.Open();
 
-        const string liveHeaderDataSql = "INSERT INTO Header (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                         "(1, 'Biochemistry', '2016-01-15T15:00:00', 4), " +
-                                         "(3, 'Haematology', '2016-01-15T12:00:00', 3)";
+        const string liveHeaderDataSql =
+            "INSERT INTO Header (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(1, 'Biochemistry', '2016-01-15T15:00:00', 4), " +
+            "(3, 'Haematology', '2016-01-15T12:00:00', 3)";
         var liveHeaderDataSqlCommand = new SqlCommand(liveHeaderDataSql, connection);
         liveHeaderDataSqlCommand.ExecuteNonQuery();
 
-        const string liveSampleDataSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                         "(10, 1, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1), " +
-                                         "(11, 1, '2016-01-15T15:00:00', 'Later than corresponding new data, should not be touched', '2016-01-15T15:00:00', 4), " +
-                                         "(14, 3, '2016-01-15T12:00:00', 'Header data of newly loaded (but older) sample should *not* update this rows parent header', '2016-01-15T12:00:00', 3)";
+        const string liveSampleDataSql =
+            "INSERT INTO Samples (ID, HeaderID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(10, 1, '2016-01-10T12:00:00', 'Earlier than corresponding new data, should be updated', '2016-01-10T12:00:00', 1), " +
+            "(11, 1, '2016-01-15T15:00:00', 'Later than corresponding new data, should not be touched', '2016-01-15T15:00:00', 4), " +
+            "(14, 3, '2016-01-15T12:00:00', 'Header data of newly loaded (but older) sample should *not* update this rows parent header', '2016-01-15T12:00:00', 3)";
         var liveSampleDataSqlCommand = new SqlCommand(liveSampleDataSql, connection);
         liveSampleDataSqlCommand.ExecuteNonQuery();
 
-        const string liveResultDataSql = "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
-                                         "(100, 10, 999, '2016-01-10T12:00:00', 1), " +
-                                         "(101, 10, 888, '2016-01-10T12:00:00', 1), " +
-                                         "(102, 11, 456, '2016-01-15T15:00:00', 4), " +
-                                         "(103, 11, 654, '2016-01-15T15:00:00', 4), " +
-                                         "(107, 14, 111, '2016-01-15T12:00:00', 3)";
+        const string liveResultDataSql =
+            "INSERT INTO Results (ID, SampleID, Result, hic_validFrom, hic_dataLoadRunID) VALUES " +
+            "(100, 10, 999, '2016-01-10T12:00:00', 1), " +
+            "(101, 10, 888, '2016-01-10T12:00:00', 1), " +
+            "(102, 11, 456, '2016-01-15T15:00:00', 4), " +
+            "(103, 11, 654, '2016-01-15T15:00:00', 4), " +
+            "(107, 14, 111, '2016-01-15T12:00:00', 3)";
         var liveResultDataSqlCommand = new SqlCommand(liveResultDataSql, connection);
         liveResultDataSqlCommand.ExecuteNonQuery();
         connection.Close();
@@ -928,18 +989,19 @@ public class BackfillTests : FromToDatabaseTests
                                             "(104, 10, 666), " + // added this
                                             "(102, 11, 400), " + // earlier data (which is also wrong, 456 in To), To data is newer and corrected
                                             "(103, 11, 654), " +
-                                            "(105, 12, 123), " +  // new result (from new sample)
+                                            "(105, 12, 123), " + // new result (from new sample)
                                             "(106, 13, 123)"; // new result (from new sample)
         var stagingResultDataSqlCommand = new SqlCommand(stagingResultDataSql, connection);
         stagingResultDataSqlCommand.ExecuteNonQuery();
 
         connection.Close();
+
         #endregion
 
         // databases are now represent state after push to From and before migration
         var mutilator = new StagingBackfillMutilator
         {
-            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(ci=>ci.Name ==
+            TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(ci => ci.Name ==
                 $"[{DatabaseName}]..[Samples].[SampleDate]"),
             TestContext = true,
             TableNamingScheme = new IdentityTableNamingScheme()
@@ -950,6 +1012,7 @@ public class BackfillTests : FromToDatabaseTests
         mutilator.Mutilate(new ThrowImmediatelyDataLoadJob());
 
         #region Assert
+
         // check that From contains the correct data
         // Sample ID=2 should have been deleted, along with corresponding results 102 and 103
         connection = (SqlConnection)From.Server.GetConnection();
@@ -961,7 +1024,8 @@ public class BackfillTests : FromToDatabaseTests
 
         cmd = new SqlCommand(@"SELECT Discipline FROM Header WHERE ID=1", connection);
         var discipline = cmd.ExecuteScalar();
-        Assert.AreEqual("Biochemistry", discipline, "The mutilator should **NOT** have updated record 1 from Biochemistry to Haematology. Although the load updates one of the To samples, the most recent To sample is later than the most recent loaded sample so the parent data in To takes precedence over the parent data in From.");
+        Assert.AreEqual("Biochemistry", discipline,
+            "The mutilator should **NOT** have updated record 1 from Biochemistry to Haematology. Although the load updates one of the To samples, the most recent To sample is later than the most recent loaded sample so the parent data in To takes precedence over the parent data in From.");
 
         // Not convinced about this test case
         //cmd = new SqlCommand(@"SELECT Discipline FROM Header WHERE ID=3", connection);
@@ -974,7 +1038,8 @@ public class BackfillTests : FromToDatabaseTests
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
         numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(2, numRows, "Sample ID = 2 has been deleted but something has happened to the other samples (should be untouched)");
+        Assert.AreEqual(2, numRows,
+            "Sample ID = 2 has been deleted but something has happened to the other samples (should be untouched)");
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Results WHERE SampleID = 2", connection);
         numRows = cmd.ExecuteScalar();
@@ -982,9 +1047,11 @@ public class BackfillTests : FromToDatabaseTests
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Results", connection);
         numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(4, numRows, "Results belonging to Sample ID = 2 have been deleted but something has happeded to the other results (should be untouched)");
+        Assert.AreEqual(4, numRows,
+            "Results belonging to Sample ID = 2 have been deleted but something has happeded to the other results (should be untouched)");
 
         connection.Close();
+
         #endregion
 
         tiSamples.DeleteInDatabase();
@@ -1008,7 +1075,7 @@ public class BackfillTests : FromToDatabaseTests
         var ti = AddTableToCatalogue(databaseName, "Results", "ID", out var ciList);
 
         // setup join infos
-        new JoinInfo(CatalogueRepository,ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
+        new JoinInfo(CatalogueRepository, ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
             ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
             ExtractionJoinType.Left, "");
         return ti;
@@ -1019,7 +1086,7 @@ public class BackfillTests : FromToDatabaseTests
         var ti = AddTableToCatalogue(databaseName, "Header", "ID", out var ciList);
 
         // setup join infos
-        new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
+        new JoinInfo(CatalogueRepository, ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
             ciList.Single(info => info.GetRuntimeName().Equals("ID")),
             ExtractionJoinType.Left, "");
 
@@ -1029,9 +1096,11 @@ public class BackfillTests : FromToDatabaseTests
         return ti;
     }
 
-    private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
+    private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName,
+        out ColumnInfo[] ciList, bool createCatalogue = false)
     {
-        var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
+        var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName)
+            .ExpectTable(tableName);
         var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
 
         resultsImporter.DoImport(out var ti, out ciList);
@@ -1042,33 +1111,20 @@ public class BackfillTests : FromToDatabaseTests
 
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
-        {
-
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out CatalogueItem[] cataItems, out ExtractionInformation[] extractionInformations);
-        }
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out var cataItems,
+                out var extractionInformations);
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
 
         return ti;
     }
-
-
 }
 
 internal class IdentityTableNamingScheme : INameDatabasesAndTablesDuringLoads
 {
-    public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
-    {
-        return rootDatabaseName;
-    }
+    public string GetDatabaseName(string rootDatabaseName, LoadBubble convention) => rootDatabaseName;
 
-    public string GetName(string tableName, LoadBubble convention)
-    {
-        return tableName;
-    }
+    public string GetName(string tableName, LoadBubble convention) => tableName;
 
-    public static bool IsNamedCorrectly(string tableName, LoadBubble convention)
-    {
-        return true;
-    }
+    public static bool IsNamedCorrectly(string tableName, LoadBubble convention) => true;
 }

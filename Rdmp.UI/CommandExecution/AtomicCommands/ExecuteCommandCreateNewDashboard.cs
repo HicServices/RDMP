@@ -18,19 +18,16 @@ internal class ExecuteCommandCreateNewDashboard : BasicUICommandExecution, IAtom
 {
     public ExecuteCommandCreateNewDashboard(IActivateItems activator) : base(activator)
     {
+    }
 
-    }
-        
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.DashboardLayout, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.DashboardLayout, OverlayKind.Add);
 
     public override void Execute()
     {
         base.Execute();
 
-        if(TypeText("Dashboard Name","Name",out var name))
+        if (TypeText("Dashboard Name", "Name", out var name))
         {
             var l = new DashboardLayout(Activator.RepositoryLocator.CatalogueRepository, name);
             Publish(l);

@@ -36,11 +36,9 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
         var upperLimit = Time;
         if (bucketSize == BucketSize.Day)
             upperLimit = upperLimit.AddDays(1);
-        else
-        if (bucketSize == BucketSize.Month)
+        else if (bucketSize == BucketSize.Month)
             upperLimit = upperLimit.AddMonths(1);
-        else
-        if (bucketSize == BucketSize.Year)
+        else if (bucketSize == BucketSize.Year)
             upperLimit = upperLimit.AddYears(1);
 
         return toCheck >= Time && toCheck < upperLimit;
@@ -50,26 +48,26 @@ public class ExtractionTimeTimeCoverageAggregatorBucket
     {
         CountOfTimesSeen++;
 
-        if(identifier == DBNull.Value)
+        if (identifier == DBNull.Value)
             return;
 
-        if(identifier == null)
+        if (identifier == null)
             return;
-            
+
         if (!_identifiersSeen.Contains(identifier))
             _identifiersSeen.Add(identifier);
     }
 
     public static DateTime RoundDateTimeDownToNearestBucketFloor(DateTime toRound, BucketSize bucketSize)
     {
-        if(bucketSize == BucketSize.Day)
-            return new DateTime(toRound.Year,toRound.Month,toRound.Day);
-            
-        if(bucketSize == BucketSize.Month)
-            return new DateTime(toRound.Year,toRound.Month,1);
+        if (bucketSize == BucketSize.Day)
+            return new DateTime(toRound.Year, toRound.Month, toRound.Day);
 
-        if(bucketSize == BucketSize.Year)
-            return new DateTime(toRound.Year,1,1);
+        if (bucketSize == BucketSize.Month)
+            return new DateTime(toRound.Year, toRound.Month, 1);
+
+        if (bucketSize == BucketSize.Year)
+            return new DateTime(toRound.Year, 1, 1);
 
         throw new NotSupportedException($"Unknown bucket size {bucketSize}");
     }

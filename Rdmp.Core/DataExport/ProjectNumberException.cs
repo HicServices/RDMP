@@ -15,8 +15,7 @@ namespace Rdmp.Core.DataExport;
 /// </summary>
 public class ProjectNumberException : Exception
 {
-    public ProjectNumberException(string s):base(s)
+    public ProjectNumberException(string s) : base(s)
     {
-            
     }
 }

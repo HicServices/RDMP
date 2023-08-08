@@ -65,7 +65,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         olvRightColumns.RowHeight = 19;
         AssociatedCollection = RDMPCollection.Tables;
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -76,9 +76,10 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         _leftTableInfo = databaseObject;
         tbLeftTableInfo.Text = _leftTableInfo.ToString();
 
-        btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add).ImageToBitmap();
+        btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add)
+            .ImageToBitmap();
         UpdateValidityAssesment();
-            
+
         olvLeftColumns.ClearObjects();
         olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos);
 
@@ -88,28 +89,24 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
             pk2.IsValidGetter = c => c.TableInfo_ID == databaseObject.ID;
             pk3.IsValidGetter = c => c.TableInfo_ID == databaseObject.ID;
         }
-
     }
 
     private void btnChooseRightTableInfo_Click(object sender, EventArgs e)
     {
-
         if (Activator.SelectObject(new DialogArgs
                 {
                     TaskDescription = $"Which other table should be joined to '{_leftTableInfo.Name}'?"
                 }, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
                 out var selected))
-        {
             SetRightTableInfo(selected);
-        }
     }
 
     private void SetRightTableInfo(TableInfo t)
     {
         //it's the same as the last one!
-        if(_rightTableInfo != null && _rightTableInfo.ID == t.ID)
+        if (_rightTableInfo != null && _rightTableInfo.ID == t.ID)
             return;
-            
+
         _rightTableInfo = t;
         tbRightTableInfo.Text = t.ToString();
 
@@ -135,30 +132,34 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         ragSmiley1.Reset();
         try
         {
-            var fks = new ColumnInfo[] {fk1.SelectedColumn, fk2.SelectedColumn, fk3.SelectedColumn}.Where(f => f != null).ToArray();
-            var pks = new ColumnInfo[] { pk1.SelectedColumn, pk2.SelectedColumn, pk3.SelectedColumn }.Where(p => p != null).ToArray();
+            var fks = new ColumnInfo[] { fk1.SelectedColumn, fk2.SelectedColumn, fk3.SelectedColumn }
+                .Where(f => f != null).ToArray();
+            var pks = new ColumnInfo[] { pk1.SelectedColumn, pk2.SelectedColumn, pk3.SelectedColumn }
+                .Where(p => p != null).ToArray();
 
-            if(fk1.SelectedColumn == null || pk1.SelectedColumn == null)
-                throw new Exception("You must specify at least one pair of keys to join on, do this by dragging columns out of the collection into the key boxes");
+            if (fk1.SelectedColumn == null || pk1.SelectedColumn == null)
+                throw new Exception(
+                    "You must specify at least one pair of keys to join on, do this by dragging columns out of the collection into the key boxes");
 
-            if(
+            if (
                 pk2.SelectedColumn == null != (fk2.SelectedColumn == null)
                 ||
                 pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
-                throw new Exception("You must have the same number of primary and foregin keys (they must come in pairs)");
+                throw new Exception(
+                    "You must have the same number of primary and foregin keys (they must come in pairs)");
 
-            if(pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))
+            if (pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))
                 throw new Exception("All Primary Keys must come from the Left hand TableInfo");
 
-            if(fks.Any(f => f.TableInfo_ID != _rightTableInfo.ID))
+            if (fks.Any(f => f.TableInfo_ID != _rightTableInfo.ID))
                 throw new Exception("All Foreign Keys must come from the Right hand TableInfo");
 
-                
+
             ExtractionJoinType joinType;
-            if(rbAllLeftHandTableRecords.Checked)
-                joinType = ExtractionJoinType.Right; //confusing I know, basically JoinInfo database record has fk,pk and direction field assuming fk joins via that direction to pk which is the opposite to the layout of this form
-            else
-            if(rbAllRightHandTableRecords.Checked)
+            if (rbAllLeftHandTableRecords.Checked)
+                joinType = ExtractionJoinType
+                    .Right; //confusing I know, basically JoinInfo database record has fk,pk and direction field assuming fk joins via that direction to pk which is the opposite to the layout of this form
+            else if (rbAllRightHandTableRecords.Checked)
                 joinType = ExtractionJoinType.Left;
             else if (rbJoinInner.Checked)
                 joinType = ExtractionJoinType.Inner;
@@ -168,23 +169,26 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
             var cataRepo = _leftTableInfo.CatalogueRepository;
 
             for (var i = 0; i < pks.Length; i++)
-                if (cataRepo.GetAllObjects<JoinInfo>().Any(j => j.PrimaryKey_ID == pks[i].ID && j.ForeignKey_ID == fks[i].ID))
+                if (cataRepo.GetAllObjects<JoinInfo>()
+                    .Any(j => j.PrimaryKey_ID == pks[i].ID && j.ForeignKey_ID == fks[i].ID))
                     throw new Exception($"Join already exists between {fks[i]} and {pks[i].ID}");
 
-                
+
             if (actuallyDoIt)
             {
                 for (var i = 0; i < pks.Length; i++)
-                    new JoinInfo(cataRepo,fks[i], pks[i], joinType, tbCollation.Text);
+                    new JoinInfo(cataRepo, fks[i], pks[i], joinType, tbCollation.Text);
 
                 MessageBox.Show("Successfully Created Joins");
-                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_leftTableInfo));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_leftTableInfo));
 
-                foreach (var ui in new[] {pk1, pk2, pk3, fk1, fk2, fk3})
+                foreach (var ui in new[] { pk1, pk2, pk3, fk1, fk2, fk3 })
                     ui.Clear();
             }
             else
+            {
                 btnCreateJoinInfo.Enabled = true;
+            }
         }
         catch (Exception ex)
         {
@@ -197,18 +201,19 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         UpdateValidityAssesment(true);
     }
-        
+
     private void tbFilterLeft_TextChanged(object sender, EventArgs e)
     {
         olvLeftColumns.UseFiltering = true;
-        olvLeftColumns.ModelFilter = new TextMatchFilter(olvLeftColumns, tbFilterLeft.Text,StringComparison.CurrentCultureIgnoreCase);
+        olvLeftColumns.ModelFilter =
+            new TextMatchFilter(olvLeftColumns, tbFilterLeft.Text, StringComparison.CurrentCultureIgnoreCase);
     }
 
     private void tbFilterRight_TextChanged(object sender, EventArgs e)
     {
         olvRightColumns.UseFiltering = true;
-        olvRightColumns.ModelFilter = new TextMatchFilter(olvRightColumns, tbFilterRight.Text, StringComparison.CurrentCultureIgnoreCase);
-
+        olvRightColumns.ModelFilter = new TextMatchFilter(olvRightColumns, tbFilterRight.Text,
+            StringComparison.CurrentCultureIgnoreCase);
     }
 
     private void rb_CheckedChanged(object sender, EventArgs e)
@@ -232,8 +237,8 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     private void olvRightColumns_DragDrop(object sender, DragEventArgs e)
     {
         var tableInfo = GetTableInfoOrNullFromDrag(e);
-            
-        if(tableInfo != null)
+
+        if (tableInfo != null)
             SetRightTableInfo(tableInfo);
     }
 
@@ -255,7 +260,8 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void tbCollation_Leave(object sender, EventArgs e)
     {
-        if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
+        if (tbCollation.Text != null &&
+            tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
             tbCollation.Text = tbCollation.Text["collate".Length..].Trim();
     }
 
@@ -263,12 +269,12 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         var olv = (ObjectListView)sender;
 
-        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
+        if (olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<JoinConfiguration_Design, UserControl>))]
-public abstract class JoinConfiguration_Design:RDMPSingleDatabaseObjectControl<TableInfo>
+public abstract class JoinConfiguration_Design : RDMPSingleDatabaseObjectControl<TableInfo>
 {
 }

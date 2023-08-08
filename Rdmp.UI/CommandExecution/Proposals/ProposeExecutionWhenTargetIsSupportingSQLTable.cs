@@ -18,18 +18,13 @@ internal class ProposeExecutionWhenTargetIsSupportingSQLTable : RDMPCommandExecu
     {
     }
 
-    public override bool CanActivate(SupportingSQLTable target)
-    {
-        return true;
-    }
+    public override bool CanActivate(SupportingSQLTable target) => true;
 
     public override void Activate(SupportingSQLTable target)
     {
         ItemActivator.Activate<SupportingSQLTableUI, SupportingSQLTable>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingSQLTable target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingSQLTable target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

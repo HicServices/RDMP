@@ -27,8 +27,9 @@ public class HelpWorkflow
     private CancellationTokenSource _cancellationTokenSource;
     public HelpStage RootStage { get; set; }
     public HelpStage CurrentStage { get; set; }
-        
-    public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider):this(hostControl,null,progressProvider)
+
+    public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider) : this(
+        hostControl, null, progressProvider)
     {
         WorkflowGuid = workflowGuid;
     }
@@ -47,10 +48,10 @@ public class HelpWorkflow
     {
         if (RootStage == null)
             throw new Exception("No RootStage exists for Help, you will need to create one");
-            
-        if(!force && !ProgressProvider.ShouldShowUserWorkflow(this))
+
+        if (!force && !ProgressProvider.ShouldShowUserWorkflow(this))
             return;
-            
+
         _cancellationTokenSource = new CancellationTokenSource();
 
         _help = new TransparentHelpForm(HostControl);
@@ -61,7 +62,7 @@ public class HelpWorkflow
             _helpClosed = true;
             _cancellationTokenSource.Cancel();
         };
-            
+
         ShowStage(RootStage);
     }
 
@@ -73,24 +74,24 @@ public class HelpWorkflow
 
         if (HostControl.InvokeRequired)
         {
-            HostControl.Invoke(new MethodInvoker(()=>ShowStage(stage)));
+            HostControl.Invoke(new MethodInvoker(() => ShowStage(stage)));
             return;
         }
 
         CurrentStage = stage;
 
-        var helpBox = _help.ShowStage(this,CurrentStage);
+        var helpBox = _help.ShowStage(this, CurrentStage);
         helpBox.OptionTaken += () => ShowStage(CurrentStage.OptionDestination);
 
         var t = stage.Await(_cancellationTokenSource.Token);
         t.ContinueWith(r =>
         {
-            if(r.IsFaulted || r.IsCanceled)
+            if (r.IsFaulted || r.IsCanceled)
                 Abandon();
             else
                 try
                 {
-                    if(r.Result)
+                    if (r.Result)
                         ShowNextStageOrClose();
                 }
                 catch (Exception)
@@ -107,7 +108,7 @@ public class HelpWorkflow
             return false;
 
         if (HostControl.InvokeRequired)
-            return (bool) HostControl.Invoke(new Func<bool>(ShowNextStageOrClose));
+            return (bool)HostControl.Invoke(new Func<bool>(ShowNextStageOrClose));
 
         //if there is a next stage and help hasn't been closed
         if (CurrentStage != null && CurrentStage.Next != null && !_helpClosed)
@@ -115,7 +116,7 @@ public class HelpWorkflow
             ShowStage(CurrentStage.Next);
             return true;
         }
-            
+
         _help.Close();
         return false;
     }
@@ -125,7 +126,7 @@ public class HelpWorkflow
     /// </summary>
     public void Abandon()
     {
-        if(_help == null)
+        if (_help == null)
             return;
 
         if (HostControl.InvokeRequired)
@@ -133,6 +134,7 @@ public class HelpWorkflow
             HostControl.Invoke(new MethodInvoker(Abandon));
             return;
         }
+
         ProgressProvider.Completed(this);
         _help.Close();
         _help = null;

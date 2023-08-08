@@ -57,7 +57,8 @@ public class DQEStateOverDataLoadRunId
         //column level
         //ensure validation failures contain it
         if (!ColumnValidationFailuresByDataLoadRunID.ContainsKey(dataLoadRunID))
-            ColumnValidationFailuresByDataLoadRunID.Add(dataLoadRunID, new VerboseValidationResults(validator.ItemValidators.ToArray()));
+            ColumnValidationFailuresByDataLoadRunID.Add(dataLoadRunID,
+                new VerboseValidationResults(validator.ItemValidators.ToArray()));
 
         //ensure unconstrained columns have it
         if (!AllColumnStates.ContainsKey(dataLoadRunID))
@@ -66,11 +67,11 @@ public class DQEStateOverDataLoadRunId
 
             foreach (var col in queryBuilder.SelectColumns.Select(s => s.IColumn))
             {
-
                 var runtimeName = col.GetRuntimeName();
                 var validationXML = "";
 
-                var itemValidator = validator.ItemValidators.SingleOrDefault(iv => iv.TargetProperty.Equals(runtimeName));
+                var itemValidator =
+                    validator.ItemValidators.SingleOrDefault(iv => iv.TargetProperty.Equals(runtimeName));
 
                 //if it is a constrained column it is likely to have child ColumnConstraints results but whatever - the important thing is we should document the state of the ItemValidator for this col
                 if (itemValidator != null)
@@ -103,7 +104,7 @@ public class DQEStateOverDataLoadRunId
     }
 
     private bool _correctValuesCalculated = false;
-        
+
     /// <summary>
     /// Calculates the final counts for each Column based on the validation failures documented to date.  You can only call this method once and it
     /// must be called before committing to database.
@@ -119,31 +120,27 @@ public class DQEStateOverDataLoadRunId
         //adjust the counts for each data load run id \ column according to the dictionary of validation failures
         //per run id
         foreach (var dataLoadRunID in AllColumnStates.Keys)
-        {
             //per column
-            foreach (var column in AllColumnStates[dataLoadRunID])
+        foreach (var column in AllColumnStates[dataLoadRunID])
+            //if it is a constrained column
+            if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
+                .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var kvp))
             {
-                //if it is a constrained column
-                if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                    .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var kvp))
-                {
-                    //adjust our correct value downwards according to the results of the dictionary of failure
+                //adjust our correct value downwards according to the results of the dictionary of failure
+                column.CountMissing = kvp[Consequence.Missing];
+                column.CountWrong = kvp[Consequence.Wrong];
+                column.CountInvalidatesRow = kvp[Consequence.InvalidatesRow];
 
-                    column.CountMissing = kvp[Consequence.Missing];
-                    column.CountWrong = kvp[Consequence.Wrong];
-                    column.CountInvalidatesRow = kvp[Consequence.InvalidatesRow];
-
-                    column.CountCorrect -= kvp[Consequence.Missing];
-                    column.CountCorrect -= kvp[Consequence.Wrong];
-                    column.CountCorrect -= kvp[Consequence.InvalidatesRow];
-                }
+                column.CountCorrect -= kvp[Consequence.Missing];
+                column.CountCorrect -= kvp[Consequence.Wrong];
+                column.CountCorrect -= kvp[Consequence.InvalidatesRow];
             }
-        }
     }
 
-    public void CommitToDatabase(Evaluation evaluation, ICatalogue catalogue, DbConnection con, DbTransaction transaction)
+    public void CommitToDatabase(Evaluation evaluation, ICatalogue catalogue, DbConnection con,
+        DbTransaction transaction)
     {
-        if(!_correctValuesCalculated)
+        if (!_correctValuesCalculated)
             throw new Exception("You must call CalculateFinalValues before committing to the database");
 
         IEnumerable<int> novelDataLoadRunIDs = RowsPassingValidationByDataLoadRunID.Keys;
@@ -165,8 +162,7 @@ public class DQEStateOverDataLoadRunId
 
             //record the column states calculations (how many total values in column x are good/bad/ugly etc)
             foreach (var columnState in AllColumnStates[dataLoadRunID])
-                columnState.Commit(evaluation,_pivotCategory, con, transaction);
+                columnState.Commit(evaluation, _pivotCategory, con, transaction);
         }
-
     }
 }

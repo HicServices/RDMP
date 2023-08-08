@@ -17,117 +17,118 @@ public class TestConstants
 
     public static readonly Dictionary<string, object> ValidChiAndConsistentSex = new()
     {
-        {"chi", _VALID_CHI},
-        {"gender", "M"}
+        { "chi", _VALID_CHI },
+        { "gender", "M" }
     };
 
     public static readonly Dictionary<string, object> ValidChiAndInconsistentSex = new()
     {
-        {"chi", _VALID_CHI},
-        {"gender", "F"}
+        { "chi", _VALID_CHI },
+        { "gender", "F" }
     };
 
     public static readonly Dictionary<string, object> ValidChiAndNullSex = new()
     {
-        {"chi", _VALID_CHI},
-        {"gender", null}
+        { "chi", _VALID_CHI },
+        { "gender", null }
     };
 
     public static readonly Dictionary<string, object> InvalidChiAndNullSex = new()
     {
-        {"chi", _INVALID_CHI_CHECKSUM},
-        {"gender", null}
+        { "chi", _INVALID_CHI_CHECKSUM },
+        { "gender", null }
     };
 
     public static readonly Dictionary<string, object> InvalidChiAndValidSex = new()
     {
-        {"chi", _INVALID_CHI_CHECKSUM},
-        {"gender", "F"}
+        { "chi", _INVALID_CHI_CHECKSUM },
+        { "gender", "F" }
     };
 
     public static readonly Dictionary<string, object> NullChiAndValidSex = new()
     {
-        {"chi", null},
-        {"gender", "F"}
+        { "chi", null },
+        { "gender", "F" }
     };
 
     public static readonly Dictionary<string, object> NullChiAndNullSex = new()
     {
-        {"chi", null},
-        {"gender", null}
+        { "chi", null },
+        { "gender", null }
     };
 
     #region For testing date bounds
+
     public static readonly Dictionary<string, object> AdmissionDateOccursAfterDob = new()
     {
-        {"dob", new DateTime(1977, 3, 3)},
-        {"admission_date", new DateTime(1987, 3, 3)}
+        { "dob", new DateTime(1977, 3, 3) },
+        { "admission_date", new DateTime(1987, 3, 3) }
     };
 
     public static readonly Dictionary<string, object> AdmissionDateOccursBeforeDob = new()
     {
-        {"dob", new DateTime(1977, 3, 3)},
-        {"admission_date", new DateTime(1947, 3, 3)}
+        { "dob", new DateTime(1977, 3, 3) },
+        { "admission_date", new DateTime(1947, 3, 3) }
     };
 
     public static readonly Dictionary<string, object> AdmissionDateOccursOnDob = new()
     {
-        {"dob", new DateTime(1977, 3, 3)},
-        {"admission_date", new DateTime(1977, 3, 3)}
+        { "dob", new DateTime(1977, 3, 3) },
+        { "admission_date", new DateTime(1977, 3, 3) }
     };
 
     public static readonly Dictionary<string, object> ParentDobOccursBeforeDob = new()
     {
-        {"parent_dob", new DateTime(1917, 3, 3)},
-        {"dob", new DateTime(1947, 3, 3)}
+        { "parent_dob", new DateTime(1917, 3, 3) },
+        { "dob", new DateTime(1947, 3, 3) }
     };
 
     public static readonly Dictionary<string, object> ParentDobOccursAfterDob = new()
     {
-        {"parent_dob", new DateTime(2000, 3, 3)},
-        {"dob", new DateTime(1947, 3, 3)}
+        { "parent_dob", new DateTime(2000, 3, 3) },
+        { "dob", new DateTime(1947, 3, 3) }
     };
 
     public static readonly Dictionary<string, object> ParentDobOccursOnDob = new()
     {
-        {"parent_dob", new DateTime(2000, 3, 3)},
-        {"dob", new DateTime(2000, 3, 2)}
+        { "parent_dob", new DateTime(2000, 3, 3) },
+        { "dob", new DateTime(2000, 3, 2) }
     };
 
     public static readonly Dictionary<string, object> OperationOccursDuringStay = new()
     {
-        {"admission_date", new DateTime(2012, 1, 1)},
-        {"discharge_date", new DateTime(2012, 1, 5)},
-        {"operation_date", new DateTime(2012, 1, 3)}
+        { "admission_date", new DateTime(2012, 1, 1) },
+        { "discharge_date", new DateTime(2012, 1, 5) },
+        { "operation_date", new DateTime(2012, 1, 3) }
     };
 
     public static readonly Dictionary<string, object> OperationOccursBeforeStay = new()
     {
-        {"admission_date", new DateTime(2012, 1, 1)},
-        {"discharge_date", new DateTime(2012, 1, 5)},
-        {"operation_date", new DateTime(2011, 1, 3)}
+        { "admission_date", new DateTime(2012, 1, 1) },
+        { "discharge_date", new DateTime(2012, 1, 5) },
+        { "operation_date", new DateTime(2011, 1, 3) }
     };
 
     public static readonly Dictionary<string, object> OperationOccursAfterStay = new()
     {
-        {"admission_date", new DateTime(2012, 1, 1)},
-        {"discharge_date", new DateTime(2012, 1, 5)},
-        {"operation_date", new DateTime(2013, 1, 3)}
+        { "admission_date", new DateTime(2012, 1, 1) },
+        { "discharge_date", new DateTime(2012, 1, 5) },
+        { "operation_date", new DateTime(2013, 1, 3) }
     };
 
     public static readonly Dictionary<string, object> OperationOccursOnStartOfStay = new()
     {
-        {"admission_date", new DateTime(2012, 1, 1)},
-        {"discharge_date", new DateTime(2012, 1, 5)},
-        {"operation_date", new DateTime(2012, 1, 1)}
+        { "admission_date", new DateTime(2012, 1, 1) },
+        { "discharge_date", new DateTime(2012, 1, 5) },
+        { "operation_date", new DateTime(2012, 1, 1) }
     };
 
     public static readonly Dictionary<string, object> OperationOccursOnEndOfStay = new()
     {
-        {"admission_date", new DateTime(2012, 1, 1)},
-        {"discharge_date", new DateTime(2012, 1, 5)},
-        {"operation_date", new DateTime(2012, 1, 5)}
+        { "admission_date", new DateTime(2012, 1, 1) },
+        { "discharge_date", new DateTime(2012, 1, 5) },
+        { "operation_date", new DateTime(2012, 1, 5) }
     };
-    #endregion
 
+    #endregion
 }

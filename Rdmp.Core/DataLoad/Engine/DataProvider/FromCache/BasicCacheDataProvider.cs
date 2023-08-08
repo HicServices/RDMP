@@ -19,7 +19,6 @@ public class BasicCacheDataProvider : CachedFileRetriever
 {
     public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
     }
 
     public override ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)

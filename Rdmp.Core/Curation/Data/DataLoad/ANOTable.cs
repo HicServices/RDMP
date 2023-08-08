@@ -35,7 +35,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// NEVER deleting ANOTables that reference existing data  (in the ANOStore database).</para>
 /// 
 /// </summary>
-public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
+public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRevertable, IHasDependencies
 {
     /// <summary>
     /// Prefix to put on anonymous columns
@@ -59,7 +59,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     public string TableName
     {
         get => _tableName;
-        set => SetField(ref  _tableName, value);
+        set => SetField(ref _tableName, value);
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     public int NumberOfIntegersToUseInAnonymousRepresentation
     {
         get => _numberOfIntegersToUseInAnonymousRepresentation;
-        set => SetField(ref  _numberOfIntegersToUseInAnonymousRepresentation, value);
+        set => SetField(ref _numberOfIntegersToUseInAnonymousRepresentation, value);
     }
 
     /// <summary>
@@ -79,18 +79,18 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     public int NumberOfCharactersToUseInAnonymousRepresentation
     {
         get => _numberOfCharactersToUseInAnonymousRepresentation;
-        set => SetField(ref  _numberOfCharactersToUseInAnonymousRepresentation, value);
+        set => SetField(ref _numberOfCharactersToUseInAnonymousRepresentation, value);
     }
 
     /// <summary>
     /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the
     /// <see cref="ANOStorePatcher"/>
     /// </summary>
-    [Relationship(typeof(ExternalDatabaseServer),RelationshipType.SharedObject)]
+    [Relationship(typeof(ExternalDatabaseServer), RelationshipType.SharedObject)]
     public int Server_ID
     {
         get => _serverID;
-        set => SetField(ref  _serverID, value);
+        set => SetField(ref _serverID, value);
     }
 
     /// <summary>
@@ -103,6 +103,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         get => _suffix;
         set => SetField(ref _suffix, value);
     }
+
     #endregion
 
     #region Relationships
@@ -112,6 +113,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     public ExternalDatabaseServer Server => Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID);
 
     #endregion
+
     public ANOTable()
     {
         // Defaults
@@ -127,7 +129,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// <param name="externalDatabaseServer"></param>
     /// <param name="tableName"></param>
     /// <param name="suffix"></param>
-    public ANOTable(ICatalogueRepository repository, ExternalDatabaseServer externalDatabaseServer, string tableName, string suffix)
+    public ANOTable(ICatalogueRepository repository, ExternalDatabaseServer externalDatabaseServer, string tableName,
+        string suffix)
     {
         if (string.IsNullOrWhiteSpace(tableName))
             throw new NullReferenceException("ANOTable must have a name");
@@ -139,11 +142,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         if (repository.GetAllObjects<ANOTable>().Any(a => string.Equals(a.Suffix, suffix)))
             throw new Exception($"There is already another {nameof(ANOTable)} with the suffix '{suffix}'");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"TableName", tableName},
-            {"Suffix", suffix},
-            {"Server_ID", externalDatabaseServer.ID}
+            { "TableName", tableName },
+            { "Suffix", suffix },
+            { "Server_ID", externalDatabaseServer.ID }
         });
     }
 
@@ -153,14 +156,16 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         Server_ID = Convert.ToInt32(r["Server_ID"]);
         TableName = r["TableName"].ToString();
 
-        NumberOfIntegersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfIntegersToUseInAnonymousRepresentation"].ToString());
-        NumberOfCharactersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfCharactersToUseInAnonymousRepresentation"].ToString());
+        NumberOfIntegersToUseInAnonymousRepresentation =
+            Convert.ToInt32(r["NumberOfIntegersToUseInAnonymousRepresentation"].ToString());
+        NumberOfCharactersToUseInAnonymousRepresentation =
+            Convert.ToInt32(r["NumberOfCharactersToUseInAnonymousRepresentation"].ToString());
         Suffix = r["Suffix"].ToString();
     }
 
     internal ANOTable(ShareManager shareManager, ShareDefinition shareDefinition)
     {
-        shareManager.UpsertAndHydrate(this,shareDefinition);
+        shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
     /// <summary>
@@ -183,10 +188,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return TableName;
-    }
+    public override string ToString() => TableName;
 
     /// <summary>
     /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
@@ -199,27 +201,35 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
                 new CheckEventArgs(
                     "You must choose a suffix for your ANO identifiers so that they can be distinguished from regular identifiers",
                     CheckResult.Fail));
-        else
-        if (Suffix.StartsWith("_"))
-            notifier.OnCheckPerformed(new CheckEventArgs("Suffix will automatically include an underscore, there is no need to add it",CheckResult.Fail));
-            
+        else if (Suffix.StartsWith("_"))
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Suffix will automatically include an underscore, there is no need to add it", CheckResult.Fail));
+
         if (NumberOfIntegersToUseInAnonymousRepresentation < 0)
-            notifier.OnCheckPerformed(new CheckEventArgs("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative", CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative",
+                    CheckResult.Fail));
 
         if (NumberOfCharactersToUseInAnonymousRepresentation < 0)
-            notifier.OnCheckPerformed(new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative", CheckResult.Fail));
-            
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative",
+                    CheckResult.Fail));
+
         if (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation == 0)
-            notifier.OnCheckPerformed(new CheckEventArgs("Anonymous representations must have at least 1 integer or character", CheckResult.Fail));
-            
+            notifier.OnCheckPerformed(
+                new CheckEventArgs("Anonymous representations must have at least 1 integer or character",
+                    CheckResult.Fail));
+
         try
         {
             if (!IsTablePushed())
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} on server {Server}",CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} on server {Server}",
+                    CheckResult.Warning));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to get list of tables on server {Server}",CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to get list of tables on server {Server}",
+                CheckResult.Fail, e));
         }
     }
 
@@ -227,10 +237,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// Returns true if the anonymous mapping table (<see cref="TableName"/> exists in the referenced mapping database (<see cref="Server"/>)
     /// </summary>
     /// <returns></returns>
-    public bool IsTablePushed()
-    {
-        return GetPushedTable() != null;
-    }
+    public bool IsTablePushed() => GetPushedTable() != null;
 
     /// <summary>
     /// Connects to <see cref="Server"/> and returns a <see cref="DiscoveredTable"/> that contains the anonymous identifier mappings
@@ -257,13 +264,14 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         RevertToDatabaseState();
 
         var s = Server;
-        if(string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database) || string.IsNullOrWhiteSpace(TableName))
+        if (string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database) ||
+            string.IsNullOrWhiteSpace(TableName))
             return;
 
         var tbl = GetPushedTable();
 
         if (tbl != null && tbl.Exists())
-            if(!tbl.IsEmpty())
+            if (!tbl.IsEmpty())
                 throw new Exception(
                     $"Cannot delete ANOTable because it references {TableName} which is a table on server {Server} which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
             else
@@ -277,12 +285,13 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// <param name="notifier"></param>
     /// <param name="forceConnection"></param>
     /// <param name="forceTransaction"></param>
-    public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier, DbConnection forceConnection=null,DbTransaction forceTransaction = null)
+    public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier,
+        DbConnection forceConnection = null, DbTransaction forceTransaction = null)
     {
         var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
         //matches varchar(100) and has capture group 100
-        var regexGetLengthOfCharType =new Regex(@".*char.*\((\d*)\)");
+        var regexGetLengthOfCharType = new Regex(@".*char.*\((\d*)\)");
         var match = regexGetLengthOfCharType.Match(identifiableDatatype);
 
         //if user supplies varchar(100) and says he wants 3 ints and 3 chars in his anonymous identifiers he will soon run out of combinations
@@ -295,19 +304,21 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
                 NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})", CheckResult.Warning));
+                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})",
+                        CheckResult.Warning));
         }
 
-        var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
+        var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
 
         try
         {
-            if(forceConnection == null)
+            if (forceConnection == null)
                 con.Open();
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to ano server {Server}",CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to ano server {Server}", CheckResult.Fail,
+                e));
             return;
         }
 
@@ -335,34 +346,39 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         {
             cmd.Transaction = forceTransaction;
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}",
+                CheckResult.Success));
             try
             {
                 cmd.ExecuteNonQuery();
 
-                if(forceConnection == null)//if we opened this ourselves
-                    con.Close();//shut it
+                if (forceConnection == null) //if we opened this ourselves
+                    con.Close(); //shut it
             }
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server {Server}", CheckResult.Fail, e));
+                        $"Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server {Server}",
+                        CheckResult.Fail, e));
                 return;
             }
         }
 
         try
         {
-            if(forceTransaction == null)//if there was no transaction then this has hit the LIVE ANO database and is for real, so save the ANOTable such that it is synchronized with reality
+            if (forceTransaction ==
+                null) //if there was no transaction then this has hit the LIVE ANO database and is for real, so save the ANOTable such that it is synchronized with reality
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Saving state because table has been pushed",CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs("Saving state because table has been pushed",
+                    CheckResult.Success));
                 SaveToDatabase();
             }
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to save state after table was successfully? pushed to ANO server", CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Failed to save state after table was successfully? pushed to ANO server", CheckResult.Fail, e));
         }
     }
 
@@ -378,7 +394,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
     public string GetRuntimeDataType(LoadStage loadStage)
     {
         //cache answers
-        if(_identifiableDataType == null)
+        if (_identifiableDataType == null)
         {
             var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
@@ -387,9 +403,10 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             var expectedIdentifiableName = TableName["ANO".Length..];
 
             var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
-            var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
+            var identifiable =
+                columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedIdentifiableName));
 
-            if(anonymous == null)
+            if (anonymous == null)
                 throw new Exception(
                     $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
 
@@ -414,14 +431,8 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
     }
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
 
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => Repository.GetAllObjectsWithParent<ColumnInfo>(this);
 }

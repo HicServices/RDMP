@@ -33,7 +33,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// release identifiers assigned automatically either as autonums or GUIDs (I suggest using GUIDs to prevent accidental crosstalk from ever occuring if you handle magic numbers from
 /// other agencies). </para>
 /// </summary>
-public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDependencies,INamed
+public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDependencies, INamed
 {
     /// <summary>
     /// Name of the table in your database that contains the private to release identifier mappings (e.g. 'Cohort').
@@ -61,13 +61,13 @@ public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDepend
     /// The name of the field in the cohort (mapping) table which is a foreign key into <see cref="DefinitionTableName"/> (cohort descriptions) table (e.g. cohortDefinition_id).
     /// </summary>
     string DefinitionTableForeignKeyField { get; set; }
-        
+
     /// <summary>
     /// Returns an object for connecting to/interacting with the cohort database referenced by this object.
     /// </summary>
     /// <returns></returns>
     DiscoveredDatabase Discover();
-        
+
     /// <summary>
     /// Returns the cohort table (linkage table with the <see cref="PrivateIdentifierField"/> and <see cref="ReleaseIdentifierField"/>)
     /// </summary>

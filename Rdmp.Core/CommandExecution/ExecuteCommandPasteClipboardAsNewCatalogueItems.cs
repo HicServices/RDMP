@@ -29,7 +29,6 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
 
     [UseWithObjectConstructor]
     public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator,
-
         [DemandsInitialization("The Catalogue to add the new CatalogueItems to")]
         Catalogue catalogue,
         [DemandsInitialization("The contents of the OS clipboard or null to prompt user with a message box at runtime")]
@@ -39,15 +38,16 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         _clipboardContents = clipboardContents;
     }
 
-    public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator, Catalogue catalogue, Func<string> clipboardContentGetter) : base(activator)
+    public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator, Catalogue catalogue,
+        Func<string> clipboardContentGetter) : base(activator)
     {
         _catalogue = catalogue;
         _clipboardContentGetter = clipboardContentGetter;
     }
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
-    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
+
     public override void Execute()
     {
         base.Execute();
@@ -64,12 +64,9 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
                 if (!BasicActivator.TypeText(new DialogArgs
                     {
                         WindowTitle = "Paste Columns"
-
                     }, int.MaxValue, null, out clipboard, false))
-                {
                     // user cancelled search
                     return;
-                }
         }
 
         if (clipboard == null)
@@ -80,7 +77,7 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         if (toImport.Any())
         {
             foreach (var name in toImport)
-                _=new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
+                _ = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
 
             Publish(_catalogue);
         }
