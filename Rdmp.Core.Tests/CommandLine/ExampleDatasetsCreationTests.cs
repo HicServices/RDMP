@@ -28,13 +28,8 @@ internal class ExampleDatasetsCreationTests : DatabaseTests
         Assert.AreEqual(0, CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
 
         //create the pipelines
-<<<<<<< HEAD
         var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator,null,null);
         pipes.CreatePipelines(new PlatformDatabaseCreationOptions {});
-=======
-        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
-        pipes.CreatePipelines();
->>>>>>> a9b3318811dda8ffea546bf4a0e5a0e0278d4a00
 
         //create all the stuff
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
