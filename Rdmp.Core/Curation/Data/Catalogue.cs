@@ -527,10 +527,17 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer LiveLoggingServer =>
-        LiveLoggingServer_ID == null
-            ? null
-            : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
+     public ExternalDatabaseServer LiveLoggingServer {
+        get{
+            if(LiveLoggingServer_ID != null){  
+                ExternalDatabaseServer[] dbs = Repository.GetAllObjectsWhere<ExternalDatabaseServer>("id",(int)LiveLoggingServer_ID);
+                if(dbs.Length > 0){
+                    return dbs.First();
+                }                         
+            }
+            return null;
+        }
+     }
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
