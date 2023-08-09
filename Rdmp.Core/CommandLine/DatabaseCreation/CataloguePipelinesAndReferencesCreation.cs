@@ -52,7 +52,7 @@ public class CataloguePipelinesAndReferencesCreation
     private void CreateServers(PlatformDatabaseCreationOptions options)
     {
         var defaults = _repositoryLocator.CatalogueRepository;
-        if(!options.SkipLoggingServer){
+        if(!options.CreateLoggingServer){
             _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
                 {
                     Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
@@ -123,7 +123,7 @@ public class CataloguePipelinesAndReferencesCreation
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-        if(!options.SkipLoggingServer){
+        if(!options.CreateLoggingServer){
             SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
             SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
         }
