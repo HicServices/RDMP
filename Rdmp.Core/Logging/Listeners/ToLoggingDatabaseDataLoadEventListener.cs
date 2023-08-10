@@ -59,7 +59,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
     }
 
-    private int _maxMessageLength = 64000/ sizeof(Char); //loggingDB text column has max 64kb size, or 65535 chars
+    private readonly int _maxMessageLength = 64000/ sizeof(Char); //loggingDB text column has max 64kb size, or 65535 chars
     private bool IsMessageAValidLength(string message){
         return message.Length <= _maxMessageLength;
     }
