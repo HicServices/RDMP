@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -41,10 +42,8 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
         _query = query;
         _toFile = toFile;
 
-        var patcherType = activator.RepositoryLocator.CatalogueRepository.MEF.
-            // find the database type the user wants to query (the Patcher suffix is optional)
-            GetTypes<IPatcher>().FirstOrDefault(t => t.Name.Equals(databaseType) || t.Name.Equals(
-                $"{databaseType}Patcher"));
+        var patcherType = MEF.GetTypes<IPatcher>().FirstOrDefault(t => t.Name.Equals(databaseType) || t.Name.Equals(
+            $"{databaseType}Patcher"));
 
         if (patcherType == null)
         {

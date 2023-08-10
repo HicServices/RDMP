@@ -12,24 +12,14 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ExtractableCohortStateBasedIconProvider : IObjectStateBasedIconProvider
+internal sealed class ExtractableCohortStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
-    private readonly Image<Rgba32> _basicIcon;
+    private static readonly Image<Rgba32> BasicIcon = Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
 
-    public ExtractableCohortStateBasedIconProvider(IconOverlayProvider overlayProvider)
-    {
-        _overlayProvider = overlayProvider;
-        _basicIcon = Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
-    }
-
-    public Image<Rgba32> GetImageIfSupportedObject(object o)
-    {
-        if (o is ExtractableCohort cohort)
-            return cohort.IsDeprecated
-                ? _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Deprecated)
-                : _basicIcon;
-
-        return null;
-    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
+        o is ExtractableCohort cohort
+            ? cohort.IsDeprecated
+                ? IconOverlayProvider.GetOverlay(BasicIcon, OverlayKind.Deprecated)
+                : BasicIcon
+            : null;
 }

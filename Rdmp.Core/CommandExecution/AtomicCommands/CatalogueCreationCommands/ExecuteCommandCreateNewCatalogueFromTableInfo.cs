@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
 {
-    private TableInfo _tableInfo;
+    private readonly TableInfo _tableInfo;
 
     public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) :
         base(activator)

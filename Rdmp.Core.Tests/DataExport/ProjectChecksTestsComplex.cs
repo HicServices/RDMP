@@ -22,7 +22,7 @@ public class ProjectChecksTestsComplex : TestsRequiringAnExtractionConfiguration
     public void CheckBasicConfiguration()
     {
         new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(
-            new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            ThrowImmediatelyCheckNotifier.QuietPicky);
     }
 
     [Test]
@@ -34,17 +34,17 @@ public class ProjectChecksTestsComplex : TestsRequiringAnExtractionConfiguration
         //checking should fail
         var exception = Assert.Throws<Exception>(() =>
             new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(
-                new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
+                ThrowImmediatelyCheckNotifier.QuietPicky));
         Assert.AreEqual(
             "Dataset TestTable is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment",
             exception.Message);
 
         //but if the user goes ahead and executes the extraction that should fail too
         var source = new ExecuteDatasetExtractionSource();
-        source.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var exception2 = Assert.Throws<Exception>(() =>
-            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
 
-        Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2.Message);
+        Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2?.Message);
     }
 }

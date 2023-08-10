@@ -12,25 +12,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class TableInfoServerNodeStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class TableInfoServerNodeStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
-    private readonly DatabaseTypeIconProvider _databaseTypeIconProvider;
-    private readonly Image<Rgba32> _serverNode;
+    private static readonly DatabaseTypeIconProvider DatabaseTypeIconProvider = new();
+    private static readonly Image<Rgba32> ServerNode = Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
 
-    public TableInfoServerNodeStateBasedIconProvider(IconOverlayProvider overlayProvider)
-    {
-        _overlayProvider = overlayProvider;
-        _databaseTypeIconProvider = new DatabaseTypeIconProvider();
-
-        _serverNode = Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
-    }
-
-    public Image<Rgba32> GetImageIfSupportedObject(object o)
-    {
-        if (o is not TableInfoServerNode node)
-            return null;
-
-        return _overlayProvider.GetOverlay(_serverNode, _databaseTypeIconProvider.GetOverlay(node.DatabaseType));
-    }
+    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
+        o is not TableInfoServerNode node
+            ? null
+            : IconOverlayProvider.GetOverlay(ServerNode, DatabaseTypeIconProvider.GetOverlay(node.DatabaseType));
 }

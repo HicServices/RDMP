@@ -60,10 +60,9 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         // we have a cohort so can only create an ExtractionConfiguration for Projects that share
         // the cohorts project number
 
-        if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
-            return dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber);
-
-        return Enumerable.Empty<Project>();
+        return BasicActivator.CoreChildProvider is DataExportChildProvider dx
+            ? dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber)
+            : Enumerable.Empty<Project>();
     }
 
     [UseWithObjectConstructor]
@@ -147,12 +146,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         Emphasise(newConfig);
     }
 
-    private string GetTaskDescription()
-    {
-        if (CohortIfAny == null)
-            return "Select which Project to create the ExtractionConfiguration under";
-
-        return
-            $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
-    }
+    private string GetTaskDescription() =>
+        CohortIfAny == null
+            ? "Select which Project to create the ExtractionConfiguration under"
+            : $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
 }

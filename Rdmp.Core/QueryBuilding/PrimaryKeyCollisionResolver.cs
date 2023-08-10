@@ -49,7 +49,7 @@ WHERE DuplicateCount > 1";
     /// Get the SQL to run to delete records colliding on primary key
     /// </summary>
     /// <returns></returns>
-    public string GenerateSQL() => GenerateSQL(out var pks, out var resolvers);
+    public string GenerateSQL() => GenerateSQL(out _, out _);
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {
@@ -174,10 +174,8 @@ WHERE DuplicateCount > 1";
         basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-        basicSQL += string.Join("\r\n\t\tand",
-            pks.Select(pk =>
-                "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." +
-                _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL += string.Join("\r\n\t\tand", pks.Select(pk =>
+            $"\t\tchild.{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}= CTE.{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
         basicSQL += $"\tgroup by{Environment.NewLine}";
         basicSQL += string.Join(",\r\n", pks.Select(pk =>
@@ -224,17 +222,16 @@ WHERE DuplicateCount > 1";
         if (dataType.Contains("binary") || dataType.Contains("image"))
             return ValueType.Binary;
 
-        if (dataType.Equals("cursor") ||
-            dataType.Contains("timestamp") ||
-            dataType.Contains("hierarchyid") ||
-            dataType.Contains("uniqueidentifier") ||
-            dataType.Contains("sql_variant") ||
-            dataType.Contains("xml") ||
-            dataType.Contains("table") ||
-            dataType.Contains("spacial"))
-            return ValueType.Freaky;
-
-        throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
+        return dataType.Equals("cursor") ||
+               dataType.Contains("timestamp") ||
+               dataType.Contains("hierarchyid") ||
+               dataType.Contains("uniqueidentifier") ||
+               dataType.Contains("sql_variant") ||
+               dataType.Contains("xml") ||
+               dataType.Contains("table") ||
+               dataType.Contains("spacial")
+            ? ValueType.Freaky
+            : throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
     }
 
     /// <summary>
@@ -247,34 +244,19 @@ WHERE DuplicateCount > 1";
     {
         //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats...
         if (datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))
-            if (min)
-                return "-9223372036854775808";
-            else
-                return "9223372036854775807";
+            return min ? "-9223372036854775808" : "9223372036854775807";
 
         if (datatype.Equals("int"))
-            if (min)
-                return "-2147483648";
-            else
-                return "2147483647";
+            return min ? "-2147483648" : "2147483647";
 
         if (datatype.Equals("smallint"))
-            if (min)
-                return "-32768";
-            else
-                return "32767";
+            return min ? "-32768" : "32767";
 
         if (datatype.Equals("tinyint"))
-            if (min)
-                return "- 1.79E+308";
-            else
-                return "255";
+            return min ? "- 1.79E+308" : "255";
 
         if (datatype.Equals("bit"))
-            if (min)
-                return "0";
-            else
-                return "1";
+            return min ? "0" : "1";
 
         if (datatype.Contains("decimal") || datatype.Contains("numeric"))
         {
@@ -284,7 +266,7 @@ WHERE DuplicateCount > 1";
             if (min)
                 toReturn = "-";
 
-            //ignore element zero because elment zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
+            //ignore element zero because element zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
             if (digits.Groups.Count == 3 && string.IsNullOrWhiteSpace(digits.Groups[2].Value))
             {
                 for (var i = 0; i < Convert.ToInt32(digits.Groups[1].Value); i++)
@@ -310,36 +292,21 @@ WHERE DuplicateCount > 1";
 
         var valueType = GetDataType(datatype);
 
-        if (valueType == ValueType.CharacterString)
-            if (min)
-                return "''";
-            else
-                throw new NotSupportedException(
-                    "Cannot think what the maxmimum character string would be, maybe use min = true instead?");
-
-        if (valueType == ValueType.DateTime)
-            if (min)
-                return "'1753-1-1'";
-            else
-                throw new NotSupportedException(
-                    "Cannot think what the maxmimum date would be, maybe use min = true instead?");
-
-        if (valueType == ValueType.Time)
-            if (min)
-                return "'00:00:00'";
-            else
-                return "'23:59:59'";
-
-        if (valueType == ValueType.Freaky)
-            throw new NotSupportedException(
-                $"Cannot predict null value substitution for freaky datatypes like {datatype}");
-
-        if (valueType == ValueType.Binary)
-            throw new NotSupportedException(
-                $"Cannot predict null value substitution for binary datatypes like {datatype}");
-
-
-        throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}");
+        return valueType switch
+        {
+            ValueType.CharacterString when min => "''",
+            ValueType.CharacterString => throw new NotSupportedException(
+                "Cannot think what the maximum character string would be, maybe use min = true instead?"),
+            ValueType.DateTime when min => "'1753-1-1'",
+            ValueType.DateTime => throw new NotSupportedException(
+                "Cannot think what the maximum date would be, maybe use min = true instead?"),
+            ValueType.Time => min ? "'00:00:00'" : "'23:59:59'",
+            ValueType.Freaky => throw new NotSupportedException(
+                $"Cannot predict null value substitution for freaky data types like {datatype}"),
+            ValueType.Binary => throw new NotSupportedException(
+                $"Cannot predict null value substitution for binary data types like {datatype}"),
+            _ => throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}")
+        };
     }
 
     private enum ValueType

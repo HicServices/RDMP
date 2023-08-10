@@ -8,7 +8,6 @@ using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandLine.Interactive;
-using Rdmp.Core.Curation.Data;
 using System;
 using System.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -39,7 +38,7 @@ internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 
         Assert.AreEqual(5, tbl.GetRowCount());
 
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
         var cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);

@@ -76,21 +76,14 @@ public class ExecuteCommandDescribe : BasicCommandExecution
         _nonDatabaseObjectToDescribe = randomThing;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        if (_nonDatabaseObjectToDescribe != null)
-            return iconProvider.GetImage(_nonDatabaseObjectToDescribe);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => _nonDatabaseObjectToDescribe != null
+        ? iconProvider.GetImage(_nonDatabaseObjectToDescribe)
+        : base.GetImage(iconProvider);
 
-        return base.GetImage(iconProvider);
-    }
-
-    public override string GetCommandName()
-    {
-        if (_nonDatabaseObjectToDescribe != null)
-            return _nonDatabaseObjectToDescribe is Type t ? t.Name : _nonDatabaseObjectToDescribe.ToString();
-
-        return base.GetCommandName();
-    }
+    public override string GetCommandName() =>
+        _nonDatabaseObjectToDescribe != null
+            ? _nonDatabaseObjectToDescribe is Type t ? t.Name : _nonDatabaseObjectToDescribe.ToString()
+            : base.GetCommandName();
 
     public override string GetCommandHelp()
     {
@@ -222,7 +215,7 @@ public class ExecuteCommandDescribe : BasicCommandExecution
             {
                 var req = new RequiredArgument(p);
 
-                //automatic delegates require no user input or CLI entry (e.g. IActivateItems)                
+                //automatic delegates require no user input or CLI entry (e.g. IActivateItems)
                 if (invoker.GetDelegate(req).IsAuto)
                     continue;
 

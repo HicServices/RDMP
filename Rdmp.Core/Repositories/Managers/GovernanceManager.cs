@@ -43,26 +43,20 @@ internal class GovernanceManager : IGovernanceManager
         var toReturn = new Dictionary<int, HashSet<int>>();
 
         var server = _catalogueRepository.DiscoveredServer;
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd =
+            server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
         {
-            con.Open();
-            using (var cmd =
-                   server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue", con))
-            {
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                    {
-                        var gp = (int)r["GovernancePeriod_ID"];
-                        var cata = (int)r["Catalogue_ID"];
+            var gp = (int)r["GovernancePeriod_ID"];
+            var cata = (int)r["Catalogue_ID"];
 
-                        if (!toReturn.ContainsKey(gp))
-                            toReturn.Add(gp, new HashSet<int>());
+            if (!toReturn.ContainsKey(gp))
+                toReturn.Add(gp, new HashSet<int>());
 
-                        toReturn[gp].Add(cata);
-                    }
-                }
-            }
+            toReturn[gp].Add(cata);
         }
 
         return toReturn;

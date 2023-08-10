@@ -43,28 +43,26 @@ public class DilutionOperationTests : DatabaseTests
         var sql = o.GetMutilationSql(null);
 
         var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
-        using (var con = server.BeginNewTransactedConnection())
+        using var con = server.BeginNewTransactedConnection();
+        try
         {
-            try
-            {
-                var insert = input != null ? $"'{input}'" : "NULL";
+            var insert = input != null ? $"'{input}'" : "NULL";
 
-                server.GetCommand($@"CREATE TABLE DateRoundingTests(TestField datetime)
+            server.GetCommand($@"CREATE TABLE DateRoundingTests(TestField datetime)
 INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
 
-                UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
+            UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
-                var result = server.GetCommand("SELECT * from DateRoundingTests", con).ExecuteScalar();
+            var result = server.GetCommand("SELECT * from DateRoundingTests", con).ExecuteScalar();
 
-                if (expectedDilute == null)
-                    Assert.AreEqual(DBNull.Value, result);
-                else
-                    Assert.AreEqual(DateTime.Parse(expectedDilute), result);
-            }
-            finally
-            {
-                con.ManagedTransaction.AbandonAndCloseConnection();
-            }
+            if (expectedDilute == null)
+                Assert.AreEqual(DBNull.Value, result);
+            else
+                Assert.AreEqual(DateTime.Parse(expectedDilute), result);
+        }
+        finally
+        {
+            con.ManagedTransaction.AbandonAndCloseConnection();
         }
     }
 
@@ -104,28 +102,26 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
         var sql = o.GetMutilationSql(null);
 
         var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
-        using (var con = server.BeginNewTransactedConnection())
+        using var con = server.BeginNewTransactedConnection();
+        try
         {
-            try
-            {
-                var insert = input != null ? $"'{input}'" : "NULL";
+            var insert = input != null ? $"'{input}'" : "NULL";
 
-                server.GetCommand($@"CREATE TABLE ExcludeRight3OfPostcodes(TestField varchar(15))
+            server.GetCommand($@"CREATE TABLE ExcludeRight3OfPostcodes(TestField varchar(15))
     INSERT INTO ExcludeRight3OfPostcodes VALUES ({insert})", con).ExecuteNonQuery();
 
-                UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
+            UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
-                var result = server.GetCommand("SELECT * from ExcludeRight3OfPostcodes", con).ExecuteScalar();
+            var result = server.GetCommand("SELECT * from ExcludeRight3OfPostcodes", con).ExecuteScalar();
 
-                if (expectedDilute == null)
-                    Assert.AreEqual(DBNull.Value, result);
-                else
-                    Assert.AreEqual(expectedDilute, result);
-            }
-            finally
-            {
-                con.ManagedTransaction.AbandonAndCloseConnection();
-            }
+            if (expectedDilute == null)
+                Assert.AreEqual(DBNull.Value, result);
+            else
+                Assert.AreEqual(expectedDilute, result);
+        }
+        finally
+        {
+            con.ManagedTransaction.AbandonAndCloseConnection();
         }
     }
 
@@ -150,25 +146,23 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
         var sql = o.GetMutilationSql(null);
 
         var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
-        using (var con = server.BeginNewTransactedConnection())
+        using var con = server.BeginNewTransactedConnection();
+        try
         {
-            try
-            {
-                var insert = input != null ? $"'{input}'" : "NULL";
+            var insert = input != null ? $"'{input}'" : "NULL";
 
-                server.GetCommand($@"CREATE TABLE DiluteToBitFlagTests(TestField {inputDataType})
+            server.GetCommand($@"CREATE TABLE DiluteToBitFlagTests(TestField {inputDataType})
 INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
 
-                UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
+            UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
-                var result = server.GetCommand("SELECT * from DiluteToBitFlagTests", con).ExecuteScalar();
+            var result = server.GetCommand("SELECT * from DiluteToBitFlagTests", con).ExecuteScalar();
 
-                Assert.AreEqual(expectedDilute, Convert.ToBoolean(result));
-            }
-            finally
-            {
-                con.ManagedTransaction.AbandonAndCloseConnection();
-            }
+            Assert.AreEqual(expectedDilute, Convert.ToBoolean(result));
+        }
+        finally
+        {
+            con.ManagedTransaction.AbandonAndCloseConnection();
         }
     }
 
@@ -202,7 +196,7 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
         };
 
         dilution.Initialize(db, LoadStage.AdjustStaging);
-        dilution.Check(new ThrowImmediatelyCheckNotifier());
+        dilution.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server, namer), ti);
 

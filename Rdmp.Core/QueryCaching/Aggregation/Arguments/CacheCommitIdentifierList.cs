@@ -13,8 +13,8 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
 /// <summary>
-/// Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a CohortIdentificationConfiguration (it is a query that 
-/// identifies patients fitting certain criteria e.g. 'patients with HBA1c biochemistry results > 50').  
+/// Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a CohortIdentificationConfiguration (it is a query that
+/// identifies patients fitting certain criteria e.g. 'patients with HBA1c biochemistry results > 50').
 /// 
 /// <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
 /// </summary>
@@ -42,10 +42,9 @@ public class CacheCommitIdentifierList : CacheCommitArguments
             if (r[0] == null || r[0] == DBNull.Value)
                 results.Rows.Remove(r);
 
-        if (identifierColumn == null)
-            throw new Exception("You must specify the data type of the identifier column, identifierColumn was null");
-
-        _identifierColumn = identifierColumn;
+        _identifierColumn = identifierColumn ??
+                            throw new Exception(
+                                "You must specify the data type of the identifier column, identifierColumn was null");
         _identifierColumn.AllowNulls = false;
         _identifierColumn.ColumnName = results.Columns[0].ColumnName;
     }

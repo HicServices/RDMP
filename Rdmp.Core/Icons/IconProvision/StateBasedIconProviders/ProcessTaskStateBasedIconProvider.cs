@@ -35,16 +35,16 @@ public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         if (o is Type && o.Equals(typeof(ProcessTask))) return _plugin;
 
-        if (o is not ProcessTask pt)
-            return null;
-        return pt.ProcessTaskType switch
-        {
-            ProcessTaskType.Executable => _exe,
-            ProcessTaskType.SQLFile => _sql,
-            ProcessTaskType.Attacher => _attacher,
-            ProcessTaskType.DataProvider => _dataProvider,
-            ProcessTaskType.MutilateDataTable => _mutilateDataTables,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return o is not ProcessTask pt
+            ? null
+            : pt.ProcessTaskType switch
+            {
+                ProcessTaskType.Executable => _exe,
+                ProcessTaskType.SQLFile => _sql,
+                ProcessTaskType.Attacher => _attacher,
+                ProcessTaskType.DataProvider => _dataProvider,
+                ProcessTaskType.MutilateDataTable => _mutilateDataTables,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

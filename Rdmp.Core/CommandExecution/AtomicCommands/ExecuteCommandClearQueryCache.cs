@@ -17,12 +17,12 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Cleares cached cohort set data stored in an <see cref="ExternalDatabaseServer"/> that is acting
+/// Clears cached cohort set data stored in an <see cref="ExternalDatabaseServer"/> that is acting
 /// as a <see cref="QueryCachingPatcher"/>
 /// </summary>
-public class ExecuteCommandClearQueryCache : BasicCommandExecution
+public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
 {
-    private CohortIdentificationConfiguration _cic;
+    private readonly CohortIdentificationConfiguration _cic;
 
     /// <summary>
     /// Clears all cache entries in the cache used by <paramref name="cic"/>
@@ -50,12 +50,9 @@ public class ExecuteCommandClearQueryCache : BasicCommandExecution
         if (GetCacheCount() == 0) SetImpossible($"There are no cache entries for {cic}");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        var overlayProvider = new IconOverlayProvider();
-        return overlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        IconOverlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
             OverlayKind.Delete);
-    }
 
     public override void Execute()
     {
@@ -66,7 +63,7 @@ public class ExecuteCommandClearQueryCache : BasicCommandExecution
 
         foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
         {
-            // just incase they changed the role or something wierd we should nuke all its roles
+            // just in case they changed the role or something weird we should nuke all its roles
             deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList)
                 ? 1
                 : 0;
@@ -75,7 +72,7 @@ public class ExecuteCommandClearQueryCache : BasicCommandExecution
 
         foreach (var joinable in _cic.GetAllJoinables())
         {
-            // just incase they changed the role or something wierd we should nuke all its roles
+            // just in case they changed the role or something weird we should nuke all its roles
             deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration,
                 AggregateOperation.IndexedExtractionIdentifierList)
                 ? 1

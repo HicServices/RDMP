@@ -119,10 +119,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                 if (threadException != null)
                     throw threadException;
 
-                if (result == null)
-                    throw new Exception("UI test did not produce a result");
-
-                return result;
+                return result ?? throw new Exception("UI test did not produce a result");
             }
             catch (AggregateException ae)
             {

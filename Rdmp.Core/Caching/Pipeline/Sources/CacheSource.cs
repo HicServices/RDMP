@@ -31,7 +31,6 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     protected ICacheFetchRequest Request;
 
     protected ICatalogueRepository CatalogueRepository;
-    protected MEF MEF;
 
     /// <summary>
     /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author
@@ -70,7 +69,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
 
         Chunk = DoGetChunk(Request, listener, cancellationToken);
 
-        if (Chunk != null && Chunk.Request == null && Request != null)
+        if (Chunk is { Request: null } && Request != null)
             listener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Error,
                     "DoGetChunk completed and set a Chunk Successfully but the Chunk.Request was null.  Try respecting the Request property in your class when creating your Chunk."));
@@ -105,6 +104,5 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     public void PreInitialize(ICatalogueRepository value, IDataLoadEventListener listener)
     {
         CatalogueRepository = value;
-        MEF = value.MEF;
     }
 }

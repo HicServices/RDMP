@@ -26,12 +26,10 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
 {
     private readonly LoadBubble _bubble;
     public readonly DiscoveredDatabase Database;
-    private readonly TableInfo[] _loadTables;
-    private readonly HICDatabaseConfiguration _config;
 
     public LoadDiagramState State { get; set; }
 
-    public string DatabaseName { get; private set; }
+    public string DatabaseName { get; }
 
     public List<LoadDiagramTableNode> _anticipatedChildren = new();
     public List<UnplannedTable> _unplannedChildren = new();
@@ -42,12 +40,10 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
     {
         _bubble = bubble;
         Database = database;
-        _loadTables = loadTables;
-        _config = config;
 
         DatabaseName = Database.GetRuntimeName();
 
-        _anticipatedChildren.AddRange(_loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, _config)));
+        _anticipatedChildren.AddRange(loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, config)));
     }
 
     public IEnumerable<object> GetChildren() => _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
@@ -104,13 +100,7 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
         return Equals((LoadDiagramDatabaseNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return ((DatabaseName != null ? DatabaseName.GetHashCode() : 0) * 397) ^ (int)_bubble;
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(DatabaseName, _bubble);
 
     public string WhatIsThis()
     {

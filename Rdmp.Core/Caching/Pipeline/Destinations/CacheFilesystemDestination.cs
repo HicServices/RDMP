@@ -44,14 +44,9 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
     {
         // CacheDirectory overrides LoadDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
-        if (CacheDirectory == null)
-        {
-            if (value.Cache == null)
-                throw new Exception(
-                    "For some reason the LoadDirectory does not have a Cache specified and the FilesystemDestination component does not have an override CacheDirectory specified");
-
-            CacheDirectory = value.Cache;
-        }
+        CacheDirectory ??= value.Cache ??
+                           throw new Exception(
+                               "For some reason the LoadDirectory does not have a Cache specified and the FilesystemDestination component does not have an override CacheDirectory specified");
     }
 
     /// <summary>

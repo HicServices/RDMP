@@ -60,10 +60,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     private void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (_settingUp)
-            return;
-
-        SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+        if (!_settingUp) SelectedItemChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetUp(IEnumerable<IMapsDirectlyToDatabaseTable> available)

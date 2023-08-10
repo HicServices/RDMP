@@ -64,7 +64,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         Bind(tbPath, "Text", "Path", p => p.Path);
     }
 
-    private bool _bLoading = false;
+    private bool _bLoading;
 
     private void LoadFile()
     {

@@ -5,10 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Globalization;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using FAnsi.Extensions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
@@ -17,8 +14,8 @@ namespace Rdmp.UI.SimpleDialogs;
 internal class FindAndReplaceNode : IMasqueradeAs
 {
     private object _currentValue;
-    public IMapsDirectlyToDatabaseTable Instance { get; set; }
-    public PropertyInfo Property { get; set; }
+    public IMapsDirectlyToDatabaseTable Instance { get; }
+    public PropertyInfo Property { get; }
     public string PropertyName { get; private set; }
 
     public FindAndReplaceNode(IMapsDirectlyToDatabaseTable instance, PropertyInfo property)
@@ -65,13 +62,7 @@ internal class FindAndReplaceNode : IMasqueradeAs
         return Equals((FindAndReplaceNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return (Instance.GetHashCode() * 397) ^ Property.GetHashCode();
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(Instance, Property);
 
     #endregion
 }

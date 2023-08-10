@@ -84,8 +84,6 @@ public class ExtractionRunner : ManyRunner
             commands.Add(_globalsCommand);
         }
 
-        var factory = new ExtractCommandCollectionFactory();
-
         foreach (var sds in GetSelectedDataSets())
         {
             var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
@@ -112,7 +110,7 @@ public class ExtractionRunner : ManyRunner
                 ? new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand))
                 : new ForkDataLoadEventListener(logging, listener);
 
-        if (runnable is ExtractGlobalsCommand globalCommand)
+        if (runnable is ExtractGlobalsCommand)
         {
             var useCase = new ExtractionPipelineUseCase(_activator, _project, _globalsCommand, _pipeline, dataLoadInfo)
                 { Token = Token };
@@ -199,10 +197,7 @@ public class ExtractionRunner : ManyRunner
             {
                 var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == extractableData.ID);
 
-                if (sds == null)
-                    return null;
-
-                return ExtractCommands[sds].State;
+                return sds == null ? null : ExtractCommands[sds].State;
             }
 
         return null;
@@ -217,10 +212,7 @@ public class ExtractionRunner : ManyRunner
             return g?.GetWorst();
         }
 
-        if (_options.Command == CommandLineActivity.run && _globalsCommand != null)
-            return _globalsCommand.State;
-
-        return null;
+        return _options.Command == CommandLineActivity.run && _globalsCommand != null ? _globalsCommand.State : null;
     }
 
     private DataLoadInfo StartAudit()
@@ -251,9 +243,6 @@ public class ExtractionRunner : ManyRunner
     {
         var previouslyReleasedStuff = _configuration.ReleaseLog;
 
-        if (previouslyReleasedStuff.Any())
-            return true;
-
-        return false;
+        return previouslyReleasedStuff.Any();
     }
 }

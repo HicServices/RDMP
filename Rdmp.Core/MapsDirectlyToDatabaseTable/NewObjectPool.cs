@@ -43,7 +43,7 @@ public static class NewObjectPool
 
     /// <summary>
     /// Starts a new session tracking all new objects created.  Make sure you wrap the
-    /// returned session in a using statement.  
+    /// returned session in a using statement.
     /// </summary>
     /// <exception cref="Exception">If there is already a session ongoing</exception>
     /// <returns></returns>
@@ -51,10 +51,9 @@ public static class NewObjectPool
     {
         lock (currentScopeLock)
         {
-            if (CurrentScope != null)
-                throw new Exception("An existing session is already underway");
-
-            return CurrentScope = new Scope();
+            return CurrentScope != null
+                ? throw new Exception("An existing session is already underway")
+                : (IDisposable)(CurrentScope = new Scope());
         }
     }
 

@@ -20,7 +20,7 @@ using Rdmp.UI.Theme;
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar;
 
 /// <summary>
-/// Allows you to access the main object collections that make up the RDMP.  These include 
+/// Allows you to access the main object collections that make up the RDMP.  These include
 /// </summary>
 public partial class RDMPTaskBarUI : UserControl
 {
@@ -187,7 +187,7 @@ public partial class RDMPTaskBarUI : UserControl
         else if (button == btnFavourites)
             collectionToToggle = RDMPCollection.Favourites;
         else
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(button));
 
         return collectionToToggle;
     }

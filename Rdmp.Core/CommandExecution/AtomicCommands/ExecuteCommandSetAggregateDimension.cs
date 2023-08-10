@@ -38,7 +38,7 @@ public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomi
 
         _extractionInformation = ei;
 
-        if (_extractionInformation != null && !_extractionInformation.IsExtractionIdentifier)
+        if (_extractionInformation is { IsExtractionIdentifier: false })
         {
             SetImpossible($"'{_extractionInformation}' is not marked IsExtractionIdentifier");
             return;

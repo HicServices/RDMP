@@ -21,8 +21,6 @@ namespace Rdmp.Core.DataExport.DataExtraction;
 /// </summary>
 public class ExtractionDirectory : IExtractionDirectory
 {
-    private readonly DirectoryInfo root;
-
     public const string EXTRACTION_SUB_FOLDER_NAME = "Extractions";
     public const string STANDARD_EXTRACTION_PREFIX = "Extr_";
     public const string GLOBALS_DATA_NAME = "Globals";
@@ -47,7 +45,7 @@ public class ExtractionDirectory : IExtractionDirectory
             if (!Directory.Exists(rootExtractionDirectory))
                 throw new DirectoryNotFoundException($"Root directory \"{rootExtractionDirectory}\" does not exist");
 
-        root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
+        var root = new DirectoryInfo(Path.Combine(rootExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME));
         if (!root.Exists)
             root.Create();
 
@@ -95,10 +93,8 @@ public class ExtractionDirectory : IExtractionDirectory
         //The configuration number matches but directory isn't the currently configured Project extraction directory
         var p = configuration.Project;
 
-        if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME))
-            return false;
-
-        return directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
+        return directory.Parent.FullName == Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME) &&
+               directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
     }
 
     public DirectoryInfo GetDirectoryForCohortCustomData() =>

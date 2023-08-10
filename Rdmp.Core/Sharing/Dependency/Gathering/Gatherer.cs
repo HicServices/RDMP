@@ -32,7 +32,7 @@ public class Gatherer
         _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
         _functions.Add(typeof(ColumnInfo), o => GatherDependencies((ColumnInfo)o));
         _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-        _functions.Add(typeof(Curation.Data.Plugin), o => GatherDependencies((Curation.Data.Plugin)o));
+        _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
 
         _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
@@ -49,7 +49,7 @@ public class Gatherer
     }
 
     /// <summary>
-    /// Invokes the relevant overload if it exists. 
+    /// Invokes the relevant overload if it exists.
     /// <seealso cref="CanGatherDependencies"/>
     /// </summary>
     /// <param name="databaseEntity"></param>
@@ -67,7 +67,7 @@ public class Gatherer
         return root;
     }
 
-    public static GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
+    public static GatheredObject GatherDependencies(Plugin plugin)
     {
         var root = new GatheredObject(plugin);
 

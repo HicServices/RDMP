@@ -108,10 +108,10 @@ internal class Program
                         (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
                         errs =>
                         {
-                            if (HasHelpArguments(args))
-                                return returnCode = 0;
-                            return returnCode =
-                                RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                            return HasHelpArguments(args)
+                                ? returnCode = 0
+                                : returnCode =
+                                    RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
             logger.Info($"Exiting with code {returnCode}");
@@ -157,7 +157,7 @@ internal class Program
 
     private static int Run(PatchDatabaseOptions opts)
     {
-        opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+        opts.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
 
         var repo = opts.GetRepositoryLocator();
 
@@ -165,7 +165,7 @@ internal class Program
 
         var checker = new NLogICheckNotifier(true, false);
 
-        var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
+        var start = new Startup.Startup(repo);
         var badTimes = false;
 
         start.DatabaseFound += (s, e) =>
@@ -188,7 +188,7 @@ internal class Program
             }
         };
 
-        start.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        start.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         return badTimes ? -1 : 0;
     }

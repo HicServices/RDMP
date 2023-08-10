@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconOverlays;
@@ -112,8 +111,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ImageToBitmap();
 
-        var overlayer = new IconOverlayProvider();
-        btnResetSql.Image = overlayer
+        btnResetSql.Image = IconOverlayProvider
             .GetOverlay(Image.Load<Rgba32>(FamFamFamIcons.text_align_left), OverlayKind.Problem).ImageToBitmap();
 
         if (_scintilla == null)
@@ -220,7 +218,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         lblHelp.Visible = false;
 
         //it is already running and not completed
-        if (_task != null && !_task.IsCompleted)
+        if (_task is { IsCompleted: false })
             return;
 
         HideFatal();
@@ -239,24 +237,22 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             try
             {
                 //then execute the command
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
+                using var con = server.GetConnection();
+                con.Open();
 
-                    _cmd = server.GetCommand(sql, con);
-                    _cmd.CommandTimeout = _timeoutControls.Timeout;
+                _cmd = server.GetCommand(sql, con);
+                _cmd.CommandTimeout = _timeoutControls.Timeout;
 
-                    var a = server.GetDataAdapter(_cmd);
+                var a = server.GetDataAdapter(_cmd);
 
-                    var dt = new DataTable();
+                var dt = new DataTable();
 
-                    a.Fill(dt);
+                a.Fill(dt);
 
-                    MorphBinaryColumns(dt);
+                MorphBinaryColumns(dt);
 
-                    Invoke(new MethodInvoker(() => { dataGridView1.DataSource = dt; }));
-                    con.Close();
-                }
+                Invoke(new MethodInvoker(() => { dataGridView1.DataSource = dt; }));
+                con.Close();
             }
             catch (Exception e)
             {

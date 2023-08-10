@@ -63,29 +63,18 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     {
         var toReturn = new List<ArchivalDataSource>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}",
-                       con))
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                    toReturn.Add(new ArchivalDataSource(r));
-            }
-        }
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalDataSource(r));
 
         return toReturn;
     }
 
-    private static int? ToNullableInt(object i)
-    {
-        if (i == null || i == DBNull.Value)
-            return null;
-
-        return Convert.ToInt32(i);
-    }
+    private static int? ToNullableInt(object i) => i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
 
     public override string ToString() =>
         $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
@@ -93,10 +82,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     public int CompareTo(object obj)
     {
         if (obj is ArchivalTableLoadInfo other)
-            if (Start == other.Start)
-                return 0;
-            else
-                return Start > other.Start ? 1 : -1;
+            return Start == other.Start ? 0 : Start > other.Start ? 1 : -1;
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }

@@ -27,7 +27,7 @@ public abstract class Runner : IRunner
         ICheckNotifier checkNotifier, GracefulCancellationToken token);
 
     /// <summary>
-    /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can 
+    /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can
     /// just be the ID e.g. "5" or could be an RDMP command line expression e.g. "LoadMetadata:*Load*Biochemistry*"
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -47,11 +47,10 @@ public abstract class Runner : IRunner
         }
 
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
-        if (!picker[0].HasValueOfType(typeof(T)))
-            throw new ArgumentException(
-                $"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
-
-        return (T)picker[0].GetValueForParameterOfType(typeof(T));
+        return !picker[0].HasValueOfType(typeof(T))
+            ? throw new ArgumentException(
+                $"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.")
+            : (T)picker[0].GetValueForParameterOfType(typeof(T));
     }
 
     protected static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator,
@@ -68,10 +67,9 @@ public abstract class Runner : IRunner
         }
 
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
-        if (!picker[0].HasValueOfType(typeof(T[])))
-            throw new ArgumentException(
-                $"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
-
-        return (T[])picker[0].GetValueForParameterOfType(typeof(T[])) ?? Enumerable.Empty<T>();
+        return !picker[0].HasValueOfType(typeof(T[]))
+            ? throw new ArgumentException(
+                $"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.")
+            : (T[])picker[0].GetValueForParameterOfType(typeof(T[])) ?? Enumerable.Empty<T>();
     }
 }

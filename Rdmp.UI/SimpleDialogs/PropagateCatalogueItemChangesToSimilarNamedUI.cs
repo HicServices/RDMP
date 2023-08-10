@@ -138,10 +138,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
             var beingChanged = pi[0].GetValue(_catalogueItemBeingSaved);
 
-            if (beingChanged != null && r.Equals(beingChanged))
-                return "Identical";
-
-            return "Different";
+            return beingChanged != null && r.Equals(beingChanged) ? "Identical" : (object)"Different";
         }
 
         return null;
@@ -210,12 +207,9 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         var sOld = previewOldValue.Text;
         var sNew = previewNewValue.Text;
 
-        var highlighter = new ScintillaLineHighlightingHelper();
-
         ScintillaLineHighlightingHelper.ClearAll(previewNewValue);
         ScintillaLineHighlightingHelper.ClearAll(previewOldValue);
 
-        var diff = new Diff();
         foreach (var item in Diff.DiffText(sOld, sNew))
         {
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)

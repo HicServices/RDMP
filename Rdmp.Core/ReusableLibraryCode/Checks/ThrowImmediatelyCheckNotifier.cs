@@ -10,15 +10,26 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
 /// ICheckNotifier which converts failed CheckEventArgs into Exceptions.  Can optionally also throw on Warning messages.  By default all messages are written
-/// to the Console.  The use case for this is any time you want to run Checks programatically (i.e. without user intervention via a UI component) before running
+/// to the Console.  The use case for this is any time you want to run Checks programmatically (i.e. without user intervention via a UI component) before running
 /// and you don't expect any Checks to fail but want to make sure.  Or when you are in a Test and you want to make sure that a specific configuration bombs
 /// when Checked with an appropriate failure message.
 /// </summary>
 public class ThrowImmediatelyCheckNotifier : ICheckNotifier
 {
+    public static readonly ThrowImmediatelyCheckNotifier Quiet = new(false, false);
+    public static readonly ThrowImmediatelyCheckNotifier Noisy = new(true, false);
+    public static readonly ThrowImmediatelyCheckNotifier QuietPicky = new(false, true);
+    public static readonly ThrowImmediatelyCheckNotifier NoisyPicky = new(true, true);
+
+    private ThrowImmediatelyCheckNotifier(bool write, bool picky)
+    {
+        WriteToConsole = write;
+        ThrowOnWarning = picky;
+    }
+
+    [Obsolete("Use the singleton Luke")]
     public ThrowImmediatelyCheckNotifier()
     {
-        WriteToConsole = false;
     }
 
     public virtual bool OnCheckPerformed(CheckEventArgs args)
@@ -38,10 +49,10 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
     /// <summary>
     /// By default this class will only throw Fail results but if you set this flag then it will also throw warning messages
     /// </summary>
-    public bool ThrowOnWarning { get; set; }
+    public readonly bool ThrowOnWarning;
 
     /// <summary>
     /// By default this class will not log to the Console. Set to true to get a console flood
     /// </summary>
-    public bool WriteToConsole { get; set; }
+    public readonly bool WriteToConsole;
 }

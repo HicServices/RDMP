@@ -20,9 +20,9 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 /// </summary>
 public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
 {
-    public Pipeline Pipeline { get; set; }
-    public PipelineUseCase UseCase { get; set; }
-    private Type _useCaseType;
+    public Pipeline Pipeline { get; }
+    public PipelineUseCase UseCase { get; }
+    private readonly Type _useCaseType;
 
     public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase) :
         base(null)
@@ -57,13 +57,7 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
         return Equals((PipelineCompatibleWithUseCaseNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return (_useCaseType.GetHashCode() * 397) ^ Pipeline.GetHashCode();
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(_useCaseType, Pipeline);
 
     #endregion
 }

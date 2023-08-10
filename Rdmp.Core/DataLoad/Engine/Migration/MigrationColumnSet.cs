@@ -14,9 +14,9 @@ namespace Rdmp.Core.DataLoad.Engine.Migration;
 
 /// <summary>
 /// Defines the role of every field involved in a STAGING to LIVE migration during DLE execution.  When performing a selective UPDATE it is important not to
-/// overwrite current records with new records where the 'newness' is an artifact of data loading rather than source data.  For example the field 
+/// overwrite current records with new records where the 'newness' is an artifact of data loading rather than source data.  For example the field
 /// hic_dataLoadRunID will always be different between STAGING and LIVE.  This class stores which columns should be used to identify records which exist
-/// in both (PrimaryKeys), which columns indicate significant change and should be promoted (FieldsToDiff) and which are not significant changes but should 
+/// in both (PrimaryKeys), which columns indicate significant change and should be promoted (FieldsToDiff) and which are not significant changes but should
 /// be copied across anyway in the event that the row is new or there is a difference in another significant field in that record (FieldsToUpdate).
 /// </summary>
 public class MigrationColumnSet

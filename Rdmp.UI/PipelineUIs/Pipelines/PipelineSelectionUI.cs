@@ -86,7 +86,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         //if there is only one pipeline select it
         ddPipelines.SelectedItem = ddPipelines.Items.OfType<Pipeline>().Count() == 1
-            ? (object)ddPipelines.Items.OfType<Pipeline>().Single()
+            ? ddPipelines.Items.OfType<Pipeline>().Single()
             : "<<None>>";
     }
 
@@ -106,7 +106,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         tt.SetToolTip(btnEditPipeline, "Change which components are run in the Pipeline and with what settings");
 
         ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
-        ddPipelines.DrawItem += new DrawItemEventHandler(cmb_Type_DrawItem);
+        ddPipelines.DrawItem += cmb_Type_DrawItem;
     }
 
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)

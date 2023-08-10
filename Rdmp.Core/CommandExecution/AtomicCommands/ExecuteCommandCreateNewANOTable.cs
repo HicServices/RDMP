@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -14,11 +15,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewANOTable : BasicCommandExecution, IAtomicCommand
+internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution, IAtomicCommand
 {
-    private IExternalDatabaseServer _anoStoreServer;
+    private readonly IExternalDatabaseServer _anoStoreServer;
 
-    public ExecuteCommandCreateNewANOTable(IBasicActivateItems activator) : base(activator)
+    internal ExecuteCommandCreateNewANOTable(IBasicActivateItems activator) : base(activator)
     {
         _anoStoreServer = BasicActivator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
@@ -36,18 +37,16 @@ public class ExecuteCommandCreateNewANOTable : BasicCommandExecution, IAtomicCom
     {
         base.Execute();
 
-        if (TypeText("ANO Concept Name", "Name", 500, null, out var name))
-            if (TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix))
-            {
-                if (!name.StartsWith("ANO"))
-                    name = $"ANO{name}";
+        if (!TypeText("ANO Concept Name", "Name", 500, null, out var name)) return;
+        if (!TypeText("Type Concept Suffix", "Suffix", 5, null, out var suffix)) return;
 
-                var s = suffix.Trim('_');
+        if (!name.StartsWith("ANO", StringComparison.Ordinal))
+            name = $"ANO{name}";
+        suffix = suffix.Trim('_');
 
-                var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository,
-                    (ExternalDatabaseServer)_anoStoreServer, name, s);
-                Publish(anoTable);
-                Activate(anoTable);
-            }
+        var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository,
+            (ExternalDatabaseServer)_anoStoreServer, name, suffix);
+        Publish(anoTable);
+        Activate(anoTable);
     }
 }

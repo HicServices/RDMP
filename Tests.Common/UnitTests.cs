@@ -40,7 +40,6 @@ using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Validation;
 
 namespace Tests.Common;
 
@@ -76,7 +75,7 @@ public class UnitTests
     /// </summary>
     /// <returns></returns>
     protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null) =>
-        new ConsoleInputManager(locator ?? RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        new ConsoleInputManager(locator ?? RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
     /// <summary>
@@ -106,7 +105,7 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
-    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected T WhenIHaveA<T>() where T : DatabaseEntity => WhenIHaveA<T>(Repository);
 
 
@@ -117,6 +116,7 @@ public class UnitTests
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T WhenIHaveA<T>(MemoryDataExportRepository repository) where T : DatabaseEntity
     {
         if (typeof(T) == typeof(Catalogue))
@@ -157,13 +157,12 @@ public class UnitTests
             return (T)(object)col;
         }
 
-        if (typeof(T) == typeof(AggregateConfiguration))
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out var otherEi);
+        if (typeof(T) == typeof(AggregateConfiguration)) return (T)(object)WhenIHaveA(repository, out _, out _);
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
             return (T)(object)Save(new ExternalDatabaseServer(repository, "My Server", null));
 
-        if (typeof(T) == typeof(ANOTable)) return (T)(object)WhenIHaveA<ANOTable>(repository, out var server);
+        if (typeof(T) == typeof(ANOTable)) return (T)(object)WhenIHaveA(repository, out ExternalDatabaseServer _);
 
         if (typeof(T) == typeof(LoadMetadata))
         {
@@ -238,11 +237,11 @@ public class UnitTests
         if (typeof(T) == typeof(Favourite))
             return (T)(object)new Favourite(repository, WhenIHaveA<Catalogue>(repository));
 
-        if (typeof(T) == typeof(ObjectExport)) return (T)(object)WhenIHaveA<ObjectExport>(repository, out var sm);
+        if (typeof(T) == typeof(ObjectExport)) return (T)(object)WhenIHaveA(repository, out ShareManager _);
 
         if (typeof(T) == typeof(ObjectImport))
         {
-            var export = WhenIHaveA<ObjectExport>(repository, out var sm);
+            var export = WhenIHaveA(repository, out ShareManager sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
 
@@ -271,22 +270,21 @@ public class UnitTests
             return (T)(object)joinable.AddUser(config);
         }
 
-        if (typeof(T) == typeof(Rdmp.Core.Curation.Data.Plugin))
-            return (T)(object)new Rdmp.Core.Curation.Data.Plugin(repository, new FileInfo("bob.nupkg"),
-                new Version(1, 1, 1), new Version(1, 1, 1));
+        if (typeof(T) == typeof(Plugin))
+            return (T)(object)new Plugin(repository, new FileInfo("bob.nupkg"), new Version(1, 1, 1),
+                new Version(1, 1, 1));
 
         if (typeof(T) == typeof(LoadModuleAssembly))
         {
             var dll = Path.Combine(TestContext.CurrentContext.TestDirectory, "a.nupkg");
             File.WriteAllBytes(dll, new byte[] { 0x11 });
 
-            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll),
-                WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
+            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll), WhenIHaveA<Plugin>(repository));
         }
 
         if (typeof(T) == typeof(AggregateContinuousDateAxis))
         {
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out var otherEi);
+            var config = WhenIHaveA(repository, out var dateEi, out _);
 
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
@@ -364,7 +362,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(JoinInfo))
         {
-            WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
+            WhenIHaveTwoTables(repository, out var col1, out var col2, out _);
 
             return (T)(object)new JoinInfo(repository, col1, col2, ExtractionJoinType.Left, null);
         }
@@ -401,7 +399,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(PreLoadDiscardedColumn))
             return (T)(object)new PreLoadDiscardedColumn(repository, WhenIHaveA<TableInfo>(repository),
-                "MyDiscardedColum");
+                "MyDiscardedColumn");
 
 
         if (typeof(T) == typeof(ProcessTask))
@@ -439,7 +437,7 @@ public class UnitTests
             //And we need another column too just for sanity sakes (in the same table)
             var ci2 = new CatalogueItem(repository, ei.CatalogueItem.Catalogue, "ci2");
             var col2 = new ColumnInfo(repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
-            var ei2 = new ExtractionInformation(repository, ci2, col2, col2.GetFullyQualifiedName());
+            _ = new ExtractionInformation(repository, ci2, col2, col2.GetFullyQualifiedName());
 
             return (T)(object)new ExtractableDataSet(repository, ei.CatalogueItem.Catalogue);
         }
@@ -455,9 +453,7 @@ public class UnitTests
             var config = WhenIHaveA<ExtractionConfiguration>(repository);
 
             foreach (var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
-            {
-                var ec = new ExtractableColumn(repository, eds, config, ei, ei.Order, ei.SelectSQL);
-            }
+                _ = new ExtractableColumn(repository, eds, config, ei, ei.Order, ei.SelectSQL);
 
             return (T)(object)new SelectedDataSets(repository, config, eds, null);
         }
@@ -469,7 +465,7 @@ public class UnitTests
             File.WriteAllText(file, "omg rows");
 
             var sds = WhenIHaveA<SelectedDataSets>(repository);
-            new CumulativeExtractionResults(repository, sds.ExtractionConfiguration, sds.ExtractableDataSet,
+            _ = new CumulativeExtractionResults(repository, sds.ExtractionConfiguration, sds.ExtractableDataSet,
                 "SELECT * FROM ANYWHERE");
             var potential = new FlatFileReleasePotential(new RepositoryProvider(repository), sds);
 
@@ -591,7 +587,7 @@ public class UnitTests
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository, out ColumnInfo col1,
         out ColumnInfo col2, out ColumnInfo col3)
     {
-        WhenIHaveTwoTables(repository, out var ti1, out var ti2, out col1, out col2, out col3);
+        WhenIHaveTwoTables(repository, out _, out _, out col1, out col2, out col3);
     }
 
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository, out TableInfo ti1, out TableInfo ti2,
@@ -624,8 +620,8 @@ public class UnitTests
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static AggregateConfiguration WhenIHaveA<T>(MemoryDataExportRepository repository,
-        out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
+    protected static AggregateConfiguration WhenIHaveA(MemoryDataExportRepository repository,
+        out ExtractionInformation dateEi, out ExtractionInformation otherEi)
     {
         var ti = WhenIHaveA<TableInfo>(repository);
         var dateCol = new ColumnInfo(repository, "MyDateCol", "datetime2", ti);
@@ -638,22 +634,19 @@ public class UnitTests
         otherEi = new ExtractionInformation(repository, otherCi, otherCol, otherCol.Name);
 
         var config = new AggregateConfiguration(repository, cata, "My graph");
-        new AggregateDimension(repository, otherEi, config);
+        _ = new AggregateDimension(repository, otherEi, config);
         return config;
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static ANOTable WhenIHaveA<T>(MemoryDataExportRepository repository, out ExternalDatabaseServer server)
-        where T : ANOTable
+    protected static ANOTable WhenIHaveA(MemoryDataExportRepository repository, out ExternalDatabaseServer server)
     {
         server = new ExternalDatabaseServer(repository, "ANO Server", new ANOStorePatcher());
-        var anoTable = new ANOTable(repository, server, "ANOFish", "F");
-        return anoTable;
+        return new ANOTable(repository, server, "ANOFish", "F");
     }
 
     /// <inheritdoc cref="WhenIHaveA{T}()"/>
-    protected static ObjectExport WhenIHaveA<T>(MemoryDataExportRepository repository, out ShareManager shareManager)
-        where T : ObjectExport
+    protected static ObjectExport WhenIHaveA(MemoryDataExportRepository repository, out ShareManager shareManager)
     {
         shareManager = new ShareManager(new RepositoryProvider(repository));
         return shareManager.GetNewOrExistingExportFor(WhenIHaveA<Catalogue>(repository));
@@ -663,23 +656,6 @@ public class UnitTests
     {
         s.SaveToDatabase();
         return s;
-    }
-
-    protected MEF MEF;
-
-    /// <summary>
-    /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
-    /// 
-    /// <para>This must be called before you 'launch' your ui</para>
-    /// </summary>
-    protected void SetupMEF()
-    {
-        MEF = new MEF();
-        MEF.Setup(
-            new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(), TestContext.CurrentContext.TestDirectory));
-        Repository.CatalogueRepository.MEF = MEF;
-
-        Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog, new ThrowImmediatelyCheckNotifier());
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
@@ -744,16 +720,16 @@ public class UnitTests
                 return;
             }
 
-            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable> value)
+            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable> tables)
             {
-                AssertAreEqual(value, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue, false);
+                AssertAreEqual(tables, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue, false);
                 return;
             }
 
-            if (memValue is DateTime time && dbValue is DateTime dateTime)
-                if (!AreAboutTheSameTime(time, dateTime))
+            if (memValue is DateTime memTime && dbValue is DateTime dbTime)
+                if (!AreAboutTheSameTime(memTime, dbTime))
                     Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",
-                        memObj.GetType().Name, property.Name, time, dateTime);
+                        memObj.GetType().Name, property.Name, memTime, dbTime);
                 else
                     return;
 
@@ -795,22 +771,18 @@ public class UnitTests
     /// <returns></returns>
     public IEnumerable<DatabaseEntity> WhenIHaveAll()
     {
-        var types = typeof(Catalogue).Assembly.GetTypes()
-            .Where(t => t != null && typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
-            .ToArray();
-
         var methodWhenIHaveA = GetWhenIHaveAMethod();
+        var repo = new object[] { Repository };
+        var types = typeof(Catalogue).Assembly.GetTypes()
+            .Where(t => !t.Name.StartsWith("Spontaneous") && !SkipTheseTypes.Contains(t.Name) &&
+                        typeof(DatabaseEntity).IsAssignableFrom(t) && !typeof(SpontaneousObject).IsAssignableFrom(t) &&
+                        !t.IsAbstract && !t.IsInterface);
 
         foreach (var t in types)
         {
-            //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
-                typeof(SpontaneousObject).IsAssignableFrom(t))
-                continue;
-
+            Console.Error.WriteLine("WhenIHaveAll: {0}", t.Name);
             //ensure that the method supports the Type
-            var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
-            yield return (DatabaseEntity)genericWhenIHaveA.Invoke(this, null);
+            yield return (DatabaseEntity)methodWhenIHaveA.MakeGenericMethod(t).Invoke(this, repo);
         }
     }
 
@@ -830,8 +802,6 @@ public class UnitTests
 
     private MethodInfo GetWhenIHaveAMethod()
     {
-        var methods =
-            typeof(UnitTests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        return methods.Single(m => m.Name.Equals(nameof(WhenIHaveA)) && !m.GetParameters().Any());
+        return typeof(UnitTests).GetMethod(nameof(WhenIHaveA), 1, new[] { typeof(MemoryDataExportRepository) });
     }
 }

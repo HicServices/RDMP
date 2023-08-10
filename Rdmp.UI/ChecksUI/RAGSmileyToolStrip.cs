@@ -81,9 +81,9 @@ public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 
     public bool IsFatal() => _worst == CheckResult.Fail;
 
-    private Bitmap _green = Images.TinyGreen.ImageToBitmap();
-    private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
-    private Bitmap _red = Images.TinyRed.ImageToBitmap();
+    private readonly Bitmap _green = Images.TinyGreen.ImageToBitmap();
+    private readonly Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
+    private readonly Bitmap _red = Images.TinyRed.ImageToBitmap();
 
     private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
@@ -191,7 +191,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
         lock (oTaskLock)
         {
             //if there is already a Task and it has not completed
-            if (_checkTask != null && !_checkTask.IsCompleted)
+            if (_checkTask is { IsCompleted: false })
                 return;
 
             dialog = new YesNoYesToAllDialog();

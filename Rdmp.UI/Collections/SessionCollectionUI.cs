@@ -44,7 +44,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
     public IPersistableObjectCollection GetCollection() => Collection;
 
-    public string GetTabName() => Collection?.SessionName ?? "Unamed Session";
+    public string GetTabName() => Collection?.SessionName ?? "Unnamed Session";
 
     public string GetTabToolTip() => null;
 
@@ -83,7 +83,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         var toRemove = Activator.SelectMany("Remove From Session", typeof(IMapsDirectlyToDatabaseTable),
             Collection.DatabaseObjects.ToArray());
 
-        if (toRemove != null && toRemove.Length > 0) Remove(toRemove);
+        if (toRemove is { Length: > 0 }) Remove(toRemove);
     }
 
     /// <summary>
@@ -93,11 +93,13 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     public void Add(params IMapsDirectlyToDatabaseTable[] toAdd)
     {
         for (var i = 0; i < toAdd.Length; i++)
-            //unwrap pipelines
-            if (toAdd[i] is PipelineCompatibleWithUseCaseNode pcn)
-                toAdd[i] = pcn.Pipeline;
-            else if (toAdd[i] is SpontaneousObject)
-                throw new NotSupportedException("Object cannot be added to sessions");
+            toAdd[i] = toAdd[i] switch
+            {
+                //unwrap pipelines
+                PipelineCompatibleWithUseCaseNode pcn => pcn.Pipeline,
+                SpontaneousObject => throw new NotSupportedException("Object cannot be added to sessions"),
+                _ => toAdd[i]
+            };
 
         Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
         RefreshSessionObjects();
@@ -140,7 +142,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator, Collection.DatabaseObjects.Contains)
             .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
 
-        //no change in root favouratism
+        //no change in root favouritism
         if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))
             return;
 
@@ -157,14 +159,14 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
         olvTree.RebuildAll(true);
     }
 
-    public override string ToString() => Collection?.SessionName ?? "Unamed Session";
+    public override string ToString() => Collection?.SessionName ?? "Unnamed Session";
 
     #region InitializeComponent
 
     private void InitializeComponent()
     {
         olvTree = new BrightIdeasSoftware.TreeListView();
-        olvName = (BrightIdeasSoftware.OLVColumn)new BrightIdeasSoftware.OLVColumn();
+        olvName = new BrightIdeasSoftware.OLVColumn();
         ((System.ComponentModel.ISupportInitialize)olvTree).BeginInit();
         SuspendLayout();
         // 

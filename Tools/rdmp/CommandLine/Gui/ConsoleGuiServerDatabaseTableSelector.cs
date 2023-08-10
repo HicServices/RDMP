@@ -33,7 +33,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
     public string Table => tbTable.Text.ToString();
 
     /// <summary>
-    /// Returns the DatabaseType that is selected in the dropdown or 
+    /// Returns the DatabaseType that is selected in the dropdown or
     /// <see cref="DatabaseType.MicrosoftSQLServer"/> if none selected
     /// </summary>
     public DatabaseType DatabaseType => cbxDatabaseType.SelectedItem < 0
@@ -174,7 +174,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
                 return;
             }
 
-            // if loaded correctly then 
+            // if loaded correctly then
             if (tables != null)
                 Application.MainLoop.Invoke(() =>
                     tbTable.Autocomplete.AllSuggestions = tables);
@@ -206,7 +206,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
                 return;
             }
 
-            // if loaded correctly then 
+            // if loaded correctly then
             if (databases != null)
                 Application.MainLoop.Invoke(() =>
                     tbDatabase.Autocomplete.AllSuggestions = databases
@@ -264,7 +264,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
                 return;
             }
 
-            // if loaded correctly then 
+            // if loaded correctly then
             if (message != null)
                 Application.MainLoop.Invoke(() =>
                     _activator.Show("Create Database", message));
@@ -282,10 +282,9 @@ public partial class ConsoleGuiServerDatabaseTableSelector
         if (string.IsNullOrWhiteSpace(Server))
             return null;
 
-        if (string.IsNullOrWhiteSpace(Database))
-            return null;
-
-        return new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database);
+        return string.IsNullOrWhiteSpace(Database)
+            ? null
+            : new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database);
     }
 
 
@@ -300,12 +299,11 @@ public partial class ConsoleGuiServerDatabaseTableSelector
         if (string.IsNullOrWhiteSpace(Database))
             return null;
 
-        if (TableType == TableType.TableValuedFunction)
-            return new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
-                .ExpectTableValuedFunction(Table, Schema);
-
-        return new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
-            .ExpectTable(Table, Schema, TableType);
+        return TableType == TableType.TableValuedFunction
+            ? new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
+                .ExpectTableValuedFunction(Table, Schema)
+            : new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database)
+                .ExpectTable(Table, Schema, TableType);
     }
 
 

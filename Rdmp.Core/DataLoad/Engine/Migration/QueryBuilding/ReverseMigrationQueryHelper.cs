@@ -10,7 +10,7 @@ using System.Linq;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Reverse  of LiveMigrationQueryHelper.  Builds 'migration' query for updating STAGING to match LIVE when doing a backfill data load (See 
+/// Reverse  of LiveMigrationQueryHelper.  Builds 'migration' query for updating STAGING to match LIVE when doing a backfill data load (See
 /// StagingBackfillMutilator).
 /// </summary>
 public class ReverseMigrationQueryHelper : MigrationQueryHelper

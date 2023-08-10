@@ -20,9 +20,9 @@ using Rdmp.UI.Versioning;
 namespace Rdmp.UI.LocationsMenu;
 
 /// <summary>
-/// The RDMP Data Catalogue database is the central resource for storing all information about what is where, what datasets there are, what servers they are on etc.  This includes 
+/// The RDMP Data Catalogue database is the central resource for storing all information about what is where, what datasets there are, what servers they are on etc.  This includes
 /// keeping track of the locations of other servers such as the Logging server/database, Data Quality Engine reporting database, anonymisation databases, query caching databases
-/// etc. 
+/// etc.
 /// 
 /// <para>This dialog lets you set which server references (ExternalDatabaseServer) are used for each of the defaults that RDMP has (e.g. which logging server should be used by default)</para>
 ///  
@@ -92,7 +92,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
         var toAdd = allServers;
 
-        if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
+        if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database
         {
             var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
                 .Where(s => s.WasCreatedBy(patcher)).ToArray();

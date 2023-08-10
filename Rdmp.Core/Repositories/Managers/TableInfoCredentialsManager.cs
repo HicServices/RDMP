@@ -16,8 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials 
-/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called 
+/// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials
+/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called
 /// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
 /// 
 /// <para></para>
@@ -26,7 +26,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 {
     private readonly CatalogueRepository _repository;
 
-    //returns of querying these links are either 
+    //returns of querying these links are either
     //          Dictionary<DataAccessContext,DataAccessCredentials> for all links where there is only one access point 1 - M (1 point many credentials)
     //OR        Dictionary<DataAccessContext, List<TableInfo>>      for all links where the query originates with a credentials M-M (credential is used by many users under many different contexts including potentially used by the same user under two+ different contexts)
 
@@ -47,20 +47,18 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
         using (var con = _repository.GetConnection())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "INSERT INTO DataAccessCredentials_TableInfo(DataAccessCredentials_ID,TableInfo_ID,Context) VALUES (@cid,@tid,@context)",
-                       con.Connection, con.Transaction))
-            {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@cid", cmd));
-                cmd.Parameters["@cid"].Value = credentials.ID;
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                "INSERT INTO DataAccessCredentials_TableInfo(DataAccessCredentials_ID,TableInfo_ID,Context) VALUES (@cid,@tid,@context)",
+                con.Connection, con.Transaction);
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@cid", cmd));
+            cmd.Parameters["@cid"].Value = credentials.ID;
 
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
-                cmd.Parameters["@tid"].Value = tableInfo.ID;
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
+            cmd.Parameters["@tid"].Value = tableInfo.ID;
 
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@context", cmd));
-                cmd.Parameters["@context"].Value = context;
-                cmd.ExecuteNonQuery();
-            }
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@context", cmd));
+            cmd.Parameters["@context"].Value = context;
+            cmd.ExecuteNonQuery();
         }
 
         tableInfo.ClearAllInjections();
@@ -100,31 +98,27 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
         using (var con = _repository.GetConnection())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={(int)DataAccessContext.Any}) ",
-                       con.Connection, con.Transaction))
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={(int)DataAccessContext.Any}) ",
+                con.Connection, con.Transaction);
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
+            cmd.Parameters["@tid"].Value = tableInfo.ID;
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@context", cmd));
+            cmd.Parameters["@context"].Value = context;
+
+            using var r = cmd.ExecuteReader();
+            //gets the first liscenced usage
+            if (r.Read())
             {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
-                cmd.Parameters["@tid"].Value = tableInfo.ID;
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@context", cmd));
-                cmd.Parameters["@context"].Value = context;
+                //there is one
+                //get it by its id
+                toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
-                using (var r = cmd.ExecuteReader())
-                {
-                    //gets the first liscenced usage
+                //if the first record is liscenced for Any
+                if (Convert.ToInt32(r["Context"]) == (int)DataAccessContext.Any)
+                    //see if there is a more specific second record (e.g. DataLoad)
                     if (r.Read())
-                    {
-                        //there is one 
-                        //get it by its id
                         toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
-
-                        //if the first record is liscenced for Any
-                        if (Convert.ToInt32(r["Context"]) == (int)DataAccessContext.Any)
-                            //see if there is a more specific second record (e.g. DataLoad)
-                            if (r.Read())
-                                toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
-                    }
-                }
             }
         }
 
@@ -139,18 +133,14 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
         using (var con = _repository.GetConnection())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid",
-                       con.Connection, con.Transaction))
-            {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
-                cmd.Parameters["@tid"].Value = tableInfo.ID;
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                "SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid",
+                con.Connection, con.Transaction);
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
+            cmd.Parameters["@tid"].Value = tableInfo.ID;
 
-                using (var r = cmd.ExecuteReader())
-                {
-                    toReturn = GetLinksFromReader(r);
-                }
-            }
+            using var r = cmd.ExecuteReader();
+            toReturn = GetLinksFromReader(r);
         }
 
         return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
@@ -165,36 +155,30 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
         var toReturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
-        using (var con = _repository.GetConnection())
+        using var con = _repository.GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            "SELECT DataAccessCredentials_ID,TableInfo_ID,Context FROM DataAccessCredentials_TableInfo",
+            con.Connection, con.Transaction);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT DataAccessCredentials_ID,TableInfo_ID,Context FROM DataAccessCredentials_TableInfo",
-                       con.Connection, con.Transaction))
-            {
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                    {
-                        //get the context
-                        var context = GetContext(r);
+            //get the context
+            var context = GetContext(r);
 
-                        var tid = Convert.ToInt32(r["TableInfo_ID"]);
-                        var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
+            var tid = Convert.ToInt32(r["TableInfo_ID"]);
+            var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
-                        //async error? someone created a new credential usage between the allCredentials array being fetched and us reaching this methods execution?
-                        if (!allTablesDictionary.ContainsKey(tid) || !allCredentialsDictionary.ContainsKey(cid))
-                            continue; //should be super rare never gonna happen
+            //async error? someone created a new credential usage between the allCredentials array being fetched and us reaching this methods execution?
+            if (!allTablesDictionary.ContainsKey(tid) || !allCredentialsDictionary.ContainsKey(cid))
+                continue; //should be super rare never gonna happen
 
-                        var t = allTablesDictionary[tid];
-                        var c = allCredentialsDictionary[cid];
+            var t = allTablesDictionary[tid];
+            var c = allCredentialsDictionary[cid];
 
-                        if (!toReturn.ContainsKey(t))
-                            toReturn.Add(t, new List<DataAccessCredentialUsageNode>());
+            if (!toReturn.ContainsKey(t))
+                toReturn.Add(t, new List<DataAccessCredentialUsageNode>());
 
-                        toReturn[t].Add(new DataAccessCredentialUsageNode(c, t, context));
-                    }
-                }
-            }
+            toReturn[t].Add(new DataAccessCredentialUsageNode(c, t, context));
         }
 
         return toReturn;
@@ -215,24 +199,20 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
         using (var con = _repository.GetConnection())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT TableInfo_ID,Context FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid",
-                       con.Connection, con.Transaction))
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                "SELECT TableInfo_ID,Context FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid",
+                con.Connection, con.Transaction);
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@cid", cmd));
+            cmd.Parameters["@cid"].Value = credentials.ID;
+
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
             {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@cid", cmd));
-                cmd.Parameters["@cid"].Value = credentials.ID;
+                //get the context
+                var context = GetContext(r);
 
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                    {
-                        //get the context
-                        var context = GetContext(r);
-
-                        //add the TableInfo under that context
-                        toReturn[context].Add((int)r["TableInfo_ID"]);
-                    }
-                }
+                //add the TableInfo under that context
+                toReturn[context].Add((int)r["TableInfo_ID"]);
             }
         }
 
@@ -291,12 +271,9 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return null;
     }
 
-    private static DataAccessContext GetContext(DbDataReader r)
-    {
+    private static DataAccessContext GetContext(DbDataReader r) =>
         //if it's not a valid context something has gone very wrong
-        if (!Enum.TryParse((string)r["Context"], out DataAccessContext context))
-            throw new Exception($"Invalid DataAccessContext {r["Context"]}");
-
-        return context;
-    }
+        !Enum.TryParse((string)r["Context"], out DataAccessContext context)
+            ? throw new Exception($"Invalid DataAccessContext {r["Context"]}")
+            : context;
 }

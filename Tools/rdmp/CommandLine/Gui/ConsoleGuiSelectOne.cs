@@ -93,12 +93,11 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
         else
             _scorer.ID = null;
 
-        var dict = _scorer.ScoreMatches(_masterCollection, searchText, token, null);
+        var dict = _scorer.ScoreMatches(_masterCollection, searchText, null, token);
 
         //can occur if user punches many keys at once
-        if (dict == null)
-            return new List<IMapsDirectlyToDatabaseTable>();
-
-        return SearchablesMatchScorer.ShortList(dict, MaxMatches, _activator);
+        return dict == null
+            ? new List<IMapsDirectlyToDatabaseTable>()
+            : (IList<IMapsDirectlyToDatabaseTable>)SearchablesMatchScorer.ShortList(dict, MaxMatches, _activator);
     }
 }

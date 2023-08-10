@@ -10,7 +10,7 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
+public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _explicitPatternProvided;

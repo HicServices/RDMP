@@ -36,11 +36,8 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
     }
 
     /// <inheritdoc/>
-    public virtual string GetName(string tableName, LoadBubble convention)
-    {
-        if (!Suffixes.TryGetValue(convention, out var suffix))
-            throw new ArgumentException($"Do not have a suffix for convention: {convention}");
-
-        return $"{tableName}{suffix}";
-    }
+    public virtual string GetName(string tableName, LoadBubble convention) =>
+        !Suffixes.ContainsKey(convention)
+            ? throw new ArgumentException($"Do not have a suffix for convention: {convention}")
+            : tableName + Suffixes[convention];
 }

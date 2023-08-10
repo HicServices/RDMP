@@ -10,7 +10,6 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
-using YamlDotNet.Core;
 using Parser = CommandLine.Parser;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
@@ -18,11 +17,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 public abstract class AutomationCommandExecution : BasicCommandExecution
 {
     protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-    public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
 
-    private TableRepository _cataTableRepo;
-    private TableRepository _dataExportTableRepo;
-    private YamlRepository _yamlRepository;
+    public static readonly string AutomationServiceExecutable =
+        Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
+
+    private readonly TableRepository _cataTableRepo;
+    private readonly TableRepository _dataExportTableRepo;
+    private readonly YamlRepository _yamlRepository;
 
 
     protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) :
@@ -30,7 +31,7 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
     {
         CommandGetter = commandGetter;
 
-        // repository locator must be one of these types for us to properly assemble 
+        // repository locator must be one of these types for us to properly assemble
         // CLI args
         _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
         _yamlRepository = activator.RepositoryLocator.CatalogueRepository as YamlRepository;

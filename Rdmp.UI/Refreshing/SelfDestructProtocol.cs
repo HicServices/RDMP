@@ -46,7 +46,7 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
         if (!OriginalObject.Exists()) //object no longer exists!
         {
             var parent = User.ParentForm;
-            if (parent != null && !parent.IsDisposed)
+            if (parent is { IsDisposed: false })
                 parent.Close(); //self destruct because object was deleted
 
             return;

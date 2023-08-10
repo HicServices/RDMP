@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Arguments for the <see cref="MetadataReport"/> class which generates a descriptive human readable report about what columns are extracted from the dataset and the 
+/// Arguments for the <see cref="MetadataReport"/> class which generates a descriptive human readable report about what columns are extracted from the dataset and the
 /// data in the underlying tables.
 /// </summary>
 public class MetadataReportArgs
@@ -43,7 +43,7 @@ public class MetadataReportArgs
 
     /// <summary>
     /// The class responsible for figuring out the span of time covered by data in the <see cref="Catalogue"/>.  This might include throwing out outliers etc.  It may be
-    /// based on the last DQE run on the dataset (therefore could be out of date). 
+    /// based on the last DQE run on the dataset (therefore could be out of date).
     /// </summary>
     public IDetermineDatasetTimespan TimespanCalculator { get; set; }
 

@@ -149,7 +149,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
     {
-        if (t != null && t.IsTableValuedFunction)
+        if (t is { IsTableValuedFunction: true })
         {
             WideMessageBox.Show("Lookup table not valid",
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");

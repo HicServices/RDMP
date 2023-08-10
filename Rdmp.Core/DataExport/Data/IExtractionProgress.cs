@@ -25,7 +25,7 @@ public interface IExtractionProgress : IMapsDirectlyToDatabaseTable, ISaveable, 
     DateTime? StartDate { get; set; }
 
     /// <summary>
-    /// The absolute end date of the dataset after which there is assumed to be no data.  If null then 
+    /// The absolute end date of the dataset after which there is assumed to be no data.  If null then
     /// the current datetime is expected
     /// </summary>
     DateTime? EndDate { get; set; }

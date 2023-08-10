@@ -26,7 +26,7 @@ namespace Rdmp.Core.Curation.ANOEngineering;
 /// Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class stores which anonymisation transforms/dilutions
 /// etc to apply to which columns, which TableInfos are to be mirated etc.  Also stores whether the LoadMetadata that is to be created should be a single one off
 /// load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the source table to be migrated in one go - e.g.
-/// tens of millions of records). 
+/// tens of millions of records).
 /// </summary>
 public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstructorFinishedCallback
 {
@@ -60,8 +60,8 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private ICatalogue _catalogue;
 
     /// <summary>
-    /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should 
-    /// instead use the overload. 
+    /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should
+    /// instead use the overload.
     /// </summary>
     public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -69,9 +69,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
         DilutionOperations = new List<IDilutionOperation>();
 
-        var constructor = new ObjectConstructor();
-
-        foreach (var operationType in repositoryLocator.CatalogueRepository.MEF.GetTypes<IDilutionOperation>())
+        foreach (var operationType in MEF.GetTypes<IDilutionOperation>())
             DilutionOperations.Add((IDilutionOperation)ObjectConstructor.Construct(operationType));
     }
 
@@ -84,13 +82,9 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             plan.SetToRecommendedPlan();
     }
 
-    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
-    {
-        if (!Plans.ContainsKey(col))
-            throw new Exception($"No plan found for column {col}");
-
-        return Plans[col];
-    }
+    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col) => !Plans.ContainsKey(col)
+        ? throw new Exception($"No plan found for column {col}")
+        : Plans[col];
 
     public IExternalDatabaseServer GetIdentifierDumpServer() =>
         Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
@@ -113,7 +107,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         try
         {
             var joinInfos = GetJoinInfosRequiredCatalogue();
-            notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL succesfully", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL successfully", CheckResult.Success));
 
             foreach (var joinInfo in joinInfos)
                 notifier.OnCheckPerformed(new CheckEventArgs(
@@ -127,7 +121,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
                 //for each key involved in the lookup
                 foreach (var c in new[] { lookup.ForeignKey, lookup.PrimaryKey, lookup.Description })
                 {
-                    //lookup / table has already been migrated 
+                    //lookup / table has already been migrated
                     if (SkippedTables.Any(t => t.ID == c.TableInfo_ID))
                         continue;
 

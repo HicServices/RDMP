@@ -68,7 +68,7 @@ public class AggregateDataBasedTests : DatabaseTests
     private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue,
         out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
     {
-        var listener = new ThrowImmediatelyDataLoadEventListener();
+        var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var db = GetCleanedServer(type);
 
@@ -98,15 +98,13 @@ public class AggregateDataBasedTests : DatabaseTests
     {
         var sql = builder.SQL;
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
-            var da = tbl.Database.Server.GetDataAdapter(sql, con);
-            var toReturn = new DataTable();
-            da.Fill(toReturn);
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
+        var da = tbl.Database.Server.GetDataAdapter(sql, con);
+        var toReturn = new DataTable();
+        da.Fill(toReturn);
 
-            return toReturn;
-        }
+        return toReturn;
     }
 
 

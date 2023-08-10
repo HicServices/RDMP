@@ -29,13 +29,8 @@ public class PeriodicityCube
         _consequenceCube.Add(Consequence.InvalidatesRow, new PeriodicityState(year, month, Consequence.InvalidatesRow));
     }
 
-    public PeriodicityState GetStateForConsequence(Consequence? consequence)
-    {
-        if (consequence == null)
-            return _passingValidation;
-
-        return _consequenceCube[(Consequence)consequence];
-    }
+    public PeriodicityState GetStateForConsequence(Consequence? consequence) =>
+        consequence == null ? _passingValidation : _consequenceCube[(Consequence)consequence];
 
     public void CommitToDatabase(Evaluation evaluation, string pivotCategory)
     {

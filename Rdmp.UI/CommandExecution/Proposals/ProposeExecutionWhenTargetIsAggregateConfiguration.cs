@@ -30,42 +30,31 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandE
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
         AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
     {
-        if (cmd is ContainerCombineable cc)
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator, targetAggregateConfiguration,
-                cc.Container);
-
-        //if it is an aggregate being dragged
-        if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)
+        return cmd switch
         {
-            //source and target are the same
-            if (sourceAggregateCommand.Aggregate.Equals(targetAggregateConfiguration))
-                return null;
-
-            //that is part of cohort identification already and being dragged above/below the current aggregate
-            if (sourceAggregateCommand.ContainerIfAny != null && insertOption != InsertOption.Default)
-                return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
-                    targetAggregateConfiguration, insertOption);
-        }
-
-        if (cmd is CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand)
-        {
-            //can never drag the root container elsewhere
-            if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)
-                return null;
-
-            //above or below
-            if (insertOption != InsertOption.Default)
-                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
-                    targetAggregateConfiguration, insertOption);
-        }
-
-        if (cmd is ExtractionFilterParameterSetCombineable efps)
-            return new ExecuteCommandCreateNewFilter(ItemActivator, targetAggregateConfiguration)
+            ContainerCombineable cc => new ExecuteCommandImportFilterContainerTree(ItemActivator,
+                targetAggregateConfiguration, cc.Container),
+            //if it is an aggregate being dragged
+            AggregateConfigurationCombineable sourceAggregateCommand =>
+                !sourceAggregateCommand.Aggregate.Equals(targetAggregateConfiguration)
+                    ? sourceAggregateCommand.ContainerIfAny != null && insertOption != InsertOption.Default
+                        ? new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
+                            targetAggregateConfiguration, insertOption)
+                        : null
+                    : null,
+            CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand =>
+                sourceCohortAggregateContainerCommand.ParentContainerIfAny != null
+                    ? insertOption != InsertOption.Default
+                        ? new ExecuteCommandReOrderAggregateContainer(ItemActivator,
+                            sourceCohortAggregateContainerCommand, targetAggregateConfiguration, insertOption)
+                        : null
+                    : null,
+            ExtractionFilterParameterSetCombineable efps => new ExecuteCommandCreateNewFilter(ItemActivator,
+                targetAggregateConfiguration)
             {
-                BasedOn = efps.ParameterSet.ExtractionFilter,
-                ParameterSet = efps.ParameterSet
-            };
-
-        return null;
+                BasedOn = efps.ParameterSet.ExtractionFilter, ParameterSet = efps.ParameterSet
+            },
+            _ => null
+        };
     }
 }

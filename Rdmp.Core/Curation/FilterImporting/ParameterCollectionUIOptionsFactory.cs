@@ -117,31 +117,19 @@ public class ParameterCollectionUIOptionsFactory
 
     public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
     {
-        if (host is TableInfo info)
-            return Create(info);
-
-        if (host is ExtractionFilterParameterSet set)
-            return Create(set);
-
-        if (host is AggregateConfiguration configuration)
-            return Create(configuration, coreChildProvider);
-
-        if (host is IFilter filter)
+        return host switch
         {
-            var factory = new FilterUIOptionsFactory();
-            var globals = FilterUIOptionsFactory.Create(filter).GetGlobalParametersInFilterScope();
-
-            return Create(filter, globals);
-        }
-
-        if (host is CohortIdentificationConfiguration identificationConfiguration)
-            return Create(identificationConfiguration, coreChildProvider);
-
-        if (host is ExtractionConfiguration extractionConfiguration)
-            return Create(extractionConfiguration);
-
-        throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with",
-            nameof(host));
+            TableInfo tableInfo => Create(tableInfo),
+            ExtractionFilterParameterSet extractionFilterParameterSet => Create(extractionFilterParameterSet),
+            AggregateConfiguration aggregateConfiguration => Create(aggregateConfiguration, coreChildProvider),
+            IFilter filter => Create(filter,
+                FilterUIOptionsFactory.Create(filter).GetGlobalParametersInFilterScope()),
+            CohortIdentificationConfiguration cohortIdentificationConfiguration => Create(
+                cohortIdentificationConfiguration, coreChildProvider),
+            ExtractionConfiguration extractionConfiguration => Create(extractionConfiguration),
+            _ => throw new ArgumentException(
+                "Host Type was not recognised as one of the Types we know how to deal with", nameof(host))
+        };
     }
 
     private static ParameterCollectionUIOptions Create(

@@ -135,10 +135,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         chosen = available.SingleOrDefault(t => t.Name.Equals(chosenStr));
 
-        if (chosen == null)
-            throw new Exception($"Unknown or incompatible Type '{chosen}'");
-
-        return true;
+        return chosen == null ? throw new Exception($"Unknown or incompatible Type '{chosen}'") : true;
     }
 
 
@@ -150,11 +147,10 @@ public class ConsoleInputManager : BasicActivateItems
 
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
-        if (unavailable.Any())
-            throw new Exception(
-                $"The following objects were not among the listed available objects {string.Join(",", unavailable.Select(o => o.ToString()))}");
-
-        return value.DatabaseEntities.ToArray();
+        return unavailable.Any()
+            ? throw new Exception(
+                $"The following objects were not among the listed available objects {string.Join(",", unavailable.Select(o => o.ToString()))}")
+            : value.DatabaseEntities.ToArray();
     }
 
     /// <summary>
@@ -214,11 +210,9 @@ public class ConsoleInputManager : BasicActivateItems
         IMapsDirectlyToDatabaseTable[] availableObjects)
     {
         if (DisallowInput)
-        {
-            if (args.AllowAutoSelect && availableObjects.Length == 1) return availableObjects[0];
-
-            throw new InputDisallowedException($"Value required for '{args}'");
-        }
+            return args.AllowAutoSelect && availableObjects.Length == 1
+                ? availableObjects[0]
+                : throw new InputDisallowedException($"Value required for '{args}'");
 
         if (availableObjects.Length == 0)
             throw new Exception("No available objects found");
@@ -239,10 +233,9 @@ public class ConsoleInputManager : BasicActivateItems
         if (chosen == null)
             return null;
 
-        if (!availableObjects.Contains(chosen))
-            throw new Exception("Picked object was not one of the listed available objects");
-
-        return chosen;
+        return !availableObjects.Contains(chosen)
+            ? throw new Exception("Picked object was not one of the listed available objects")
+            : chosen;
     }
 
     public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
@@ -274,7 +267,7 @@ public class ConsoleInputManager : BasicActivateItems
                 GetPromptFor(args, true, pickers).Trim()));
 
 
-        var cli = new CommandLineObjectPicker(new[] { line }, RepositoryLocator, pickers);
+        var cli = new CommandLineObjectPicker(new[] { line }, pickers);
         return cli[0];
     }
 
@@ -295,13 +288,9 @@ public class ConsoleInputManager : BasicActivateItems
         return result.IsBasicallyNull() ? null : new DirectoryInfo(result);
     }
 
-    public override FileInfo SelectFile(string prompt)
-    {
-        if (DisallowInput)
-            throw new InputDisallowedException($"Value required for '{prompt}'");
-
-        return SelectFile(prompt, null, null);
-    }
+    public override FileInfo SelectFile(string prompt) => DisallowInput
+        ? throw new InputDisallowedException($"Value required for '{prompt}'")
+        : SelectFile(prompt, null, null);
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
@@ -353,10 +342,9 @@ public class ConsoleInputManager : BasicActivateItems
 
             var dir = new DirectoryInfo(dirStr);
 
-            if (!dir.Exists)
-                throw new DirectoryNotFoundException($"Could not find directory:{dirStr}");
-
-            return dir.GetFiles(searchPattern).ToArray();
+            return !dir.Exists
+                ? throw new DirectoryNotFoundException($"Could not find directory:{dirStr}")
+                : dir.GetFiles(searchPattern).ToArray();
         }
 
         return new[] { new FileInfo(file) };
@@ -372,11 +360,8 @@ public class ConsoleInputManager : BasicActivateItems
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
         var result = GetString(args, new List<string> { "Yes", "No", "Cancel" });
-
-
         chosen = result == "Yes";
-
-        //user made a noncancel decision?
+        //user made a non-cancel decision?
         return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
     }
 

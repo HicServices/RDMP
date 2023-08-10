@@ -18,9 +18,9 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Describes the use case in which a <see cref="Pipeline"/> takes artifacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.  
-/// The artifacts may be CSV files, tables in an extraction database etc.  The artifacts should be gathered and sent to the recipient (e.g. zipped up and moved to FTP
-/// server / output folder).  
+/// Describes the use case in which a <see cref="Pipeline"/> takes artefacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.
+/// The artefacts may be CSV files, tables in an extraction database etc.  The artefacts should be gathered and sent to the recipient (e.g. zipped up and moved to FTP
+/// server / output folder).
 /// 
 /// <para>The configurations should be marked as released.</para>
 /// </summary>
@@ -45,15 +45,13 @@ public sealed class ReleaseUseCase : PipelineUseCase
 
         if (releasePotentialWithKnownDestination == null)
         {
-            ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+            ExplicitSource = new NullReleaseSource();
         }
         else
         {
-            var destinationType = catalogueRepository.MEF
-                .GetType(
-                    releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
-                    typeof(IExecuteDatasetExtractionDestination));
-            var constructor = new ObjectConstructor();
+            var destinationType = MEF.GetType(
+                releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
+                typeof(IExecuteDatasetExtractionDestination));
             var destinationUsedAtExtraction =
                 (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
 
@@ -61,7 +59,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
                 destinationUsedAtExtraction.GetReleaseSource(catalogueRepository);
 
             ExplicitSource = fixedReleaseSource;
-            // destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));    
+            // destinationUsedAtExtraction.GetReleaseSource(); // new FixedSource<ReleaseAudit>(notifier => CheckRelease(notifier));
         }
 
         AddInitializationObject(project);
@@ -91,7 +89,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
         typeof(CatalogueRepository)
     })
     {
-        ExplicitSource = new NullReleaseSource<ReleaseAudit>();
+        ExplicitSource = new NullReleaseSource();
         GenerateContext();
     }
 

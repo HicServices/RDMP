@@ -48,9 +48,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     public IJoinManager JoinManager { get; set; }
 
     /// <inheritdoc/>
-    public MEF MEF { get; set; }
-
-    /// <inheritdoc/>
     public CommentStore CommentStore { get; set; }
 
     /// <inheritdoc/>
@@ -80,7 +77,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         TableInfoCredentialsManager = new TableInfoCredentialsManager(this);
         JoinManager = new JoinManager(this);
         CohortContainerManager = new CohortContainerManager(this);
-        MEF = new MEF();
         FilterManager = new AggregateFilterManager(this);
         EncryptionManager = new PasswordEncryptionKeyLocation(this);
         PluginManager = new PluginManager(this);
@@ -100,8 +96,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(StandardRegex), (rep, r) => new StandardRegex((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AnyTableSqlParameter),
             (rep, r) => new AnyTableSqlParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Curation.Data.Plugin),
-            (rep, r) => new Curation.Data.Plugin((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Plugin), (rep, r) => new Plugin((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(ANOTable), (rep, r) => new ANOTable((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AggregateConfiguration),
             (rep, r) => new AggregateConfiguration((ICatalogueRepository)rep, r));
@@ -176,10 +171,9 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         var type = parent.GetType();
 
-        if (!AnyTableSqlParameter.IsSupportedType(type))
-            throw new NotSupportedException($"This table does not support parents of type {type.Name}");
-
-        return GetReferencesTo<AnyTableSqlParameter>(parent);
+        return !AnyTableSqlParameter.IsSupportedType(type)
+            ? throw new NotSupportedException($"This table does not support parents of type {type.Name}")
+            : (IEnumerable<AnyTableSqlParameter>)GetReferencesTo<AnyTableSqlParameter>(parent);
     }
 
     /// <inheritdoc/>
@@ -187,23 +181,19 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         var configuration = GetAllObjects<TicketingSystemConfiguration>().Where(t => t.IsActive).ToArray();
 
-        if (configuration.Length == 0)
-            return null;
-
-        if (configuration.Length == 1)
-            return configuration[0];
-
-        throw new NotSupportedException(
-            $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}");
+        return configuration.Length switch
+        {
+            0 => null,
+            1 => configuration[0],
+            _ => throw new NotSupportedException(
+                $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}")
+        };
     }
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        if (Constructors.TryGetValue(t, out var constructor))
-            return constructor(this, reader);
-
-        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
-    }
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
+        Constructors.TryGetValue(t, out var constructor)
+            ? constructor(this, reader)
+            : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
 
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
 
@@ -234,18 +224,14 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
 
     public bool IsLookupTable(ITableInfo tableInfo)
     {
-        using (var con = GetConnection())
-        {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       @"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
+        using var con = GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            @"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
 select 1
 else
-select 0", con.Connection, con.Transaction))
-            {
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
-                return Convert.ToBoolean(cmd.ExecuteScalar());
-            }
-        }
+select 0", con.Connection, con.Transaction);
+        DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
+        return Convert.ToBoolean(cmd.ExecuteScalar());
     }
 
     public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo) =>
@@ -318,7 +304,7 @@ select 0", con.Connection, con.Transaction))
         if (toChange == PermissableDefaults.None)
             throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
-        var sql =
+        const string sql =
             "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
         var affectedRows = Update(sql, new Dictionary<string, object>

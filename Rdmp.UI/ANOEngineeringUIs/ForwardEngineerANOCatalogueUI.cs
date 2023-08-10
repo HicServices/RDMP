@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -38,7 +39,7 @@ namespace Rdmp.UI.ANOEngineeringUIs;
 /// </summary>
 public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogueUI_Design
 {
-    private bool _setup = false;
+    private bool _setup;
     private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
     private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
     private ForwardEngineerANOCataloguePlanManager _planManager;
@@ -49,11 +50,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         serverDatabaseTableSelector1.HideTableComponents();
 
 
-        olvSuffix.AspectGetter = o => o is ANOTable table ? table.Suffix : null;
+        olvSuffix.AspectGetter = o => o is ANOTable anoTable ? anoTable.Suffix : null;
         olvNumberOfCharacters.AspectGetter = o =>
-            o is ANOTable table ? (object)table.NumberOfCharactersToUseInAnonymousRepresentation : null;
+            o is ANOTable anoTable ? anoTable.NumberOfCharactersToUseInAnonymousRepresentation : null;
         olvNumberOfDigits.AspectGetter = o =>
-            o is ANOTable table ? (object)table.NumberOfIntegersToUseInAnonymousRepresentation : null;
+            o is ANOTable anoTable ? anoTable.NumberOfIntegersToUseInAnonymousRepresentation : null;
 
         olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
 
@@ -89,19 +90,13 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (rowobject is ColumnInfo col)
             return _planManager.GetPlanForColumnInfo(col).Plan;
 
-        if (_planManager.SkippedTables.Contains(table))
-            return "Already Exists";
-
-        return null;
+        return _planManager.SkippedTables.Contains(table) ? "Already Exists" : (object)null;
     }
 
-    private Image PickedANOTable_ImageGetter(object rowObject)
-    {
-        if (rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
-            return imageList1.Images["ANOTable"];
-
-        return null;
-    }
+    private Image PickedANOTable_ImageGetter(object rowObject) =>
+        rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null
+            ? imageList1.Images["ANOTable"]
+            : null;
 
     private object PickedANOTableAspectGetter(object rowobject)
     {
@@ -582,24 +577,22 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            var ofd = new OpenFileDialog
+            using var ofd = new OpenFileDialog
             {
                 Filter = "Plans (*.plan)|*.plan"
             };
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var fi = new FileInfo(ofd.FileName);
-                var json = File.ReadAllText(fi.FullName);
-                _planManager = (ForwardEngineerANOCataloguePlanManager)
-                    JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager),
-                        Activator.RepositoryLocator);
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            var fi = new FileInfo(ofd.FileName);
+            var json = File.ReadAllText(fi.FullName);
+            _planManager = (ForwardEngineerANOCataloguePlanManager)
+                JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager),
+                    Activator.RepositoryLocator);
 
-                if (_planManager.StartDate != null)
-                    tbStartDate.Text = _planManager.StartDate.Value.ToString();
+            if (_planManager.StartDate != null)
+                tbStartDate.Text = _planManager.StartDate.Value.ToString(CultureInfo.CurrentCulture);
 
-                cbDateBasedLoad.Checked = _planManager.DateColumn != null;
-                ddDateColumn.SelectedItem = _planManager.DateColumn;
-            }
+            cbDateBasedLoad.Checked = _planManager.DateColumn != null;
+            ddDateColumn.SelectedItem = _planManager.DateColumn;
         }
         catch (Exception exception)
         {

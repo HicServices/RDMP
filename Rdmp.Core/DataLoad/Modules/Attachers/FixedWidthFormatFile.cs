@@ -40,7 +40,7 @@ public class FixedWidthFormatFile
         //now add values
         for (var index = 0; index < readAllLines.Length - 1; index++)
         {
-            //skip header line 
+            //skip header line
             var cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
 
             FormatColumns[index].From = int.Parse(cellsOnRowAsSplitString[0]);
@@ -53,7 +53,7 @@ public class FixedWidthFormatFile
                 FormatColumns[index].DateFormat =
                     cellsOnRowAsSplitString[4]
                         .Replace("ccyy",
-                            "yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
+                            "yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong
 
             if (FormatColumns[index].From + FormatColumns[index].Size - 1 != FormatColumns[index].To)
                 throw new FlatFileLoadException(

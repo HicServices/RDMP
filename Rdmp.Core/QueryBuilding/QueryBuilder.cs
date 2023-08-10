@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to 
+/// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to
 /// extract this set of ExtractionInformation objects only from the database.  This includes determining which ExtractionInformation
 /// are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo in the catalogue
 /// 
@@ -30,7 +30,7 @@ namespace Rdmp.Core.QueryBuilding;
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
-    private object oSQLLock = new();
+    private readonly object oSQLLock = new();
 
     /// <inheritdoc/>
     public string SQL
@@ -69,12 +69,12 @@ public class QueryBuilder : ISqlQueryBuilder
 
     /// <summary>
     /// Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary key tables e.g. in a star schema.
-    /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception 
+    /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception
     /// </summary>
     public ITableInfo PrimaryExtractionTable { get; set; }
 
     /// <summary>
-    /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
+    /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your
     /// own container tree at runtime rather than referencing a database entity)
     /// </summary>
     public IContainer RootFilterContainer
@@ -91,7 +91,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public bool CheckSyntax { get; set; }
 
 
-    private string _salt = null;
+    private string _salt;
 
     /// <summary>
     /// Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a QueryEditor all fields so marked will be hashed using the
@@ -109,7 +109,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public void SetLimitationSQL(string limitationSQL)
     {
         if (limitationSQL != null && limitationSQL.Contains("top"))
-            throw new Exception("Use TopX property instead of limitation SQL to acheive this");
+            throw new Exception("Use TopX property instead of limitation SQL to achieve this");
 
         LimitationSQL = limitationSQL;
         SQLOutOfDate = true;
@@ -119,7 +119,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public List<IFilter> Filters { get; private set; }
 
     /// <summary>
-    /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum 
+    /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum
     /// </summary>
     public int TopX
     {
@@ -141,7 +141,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public bool SQLOutOfDate { get; set; }
 
     private IContainer _rootFilterContainer;
-    private string _hashingAlgorithm;
+    private readonly string _hashingAlgorithm;
     private int _topX;
 
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
@@ -198,11 +198,11 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it. 
+    /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it.
     /// </summary>
     public void RegenerateSQL()
     {
-        var checkNotifier = new ThrowImmediatelyCheckNotifier();
+        var checkNotifier = ThrowImmediatelyCheckNotifier.Quiet;
 
         _sql = "";
 
@@ -215,7 +215,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
         SelectColumns.Sort();
 
-        //work out all the filters 
+        //work out all the filters
         Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
 
         TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
@@ -259,8 +259,8 @@ public class QueryBuilder : ISqlQueryBuilder
         foreach (var parameter in ParameterManager.GetFinalResolvedParametersList())
         {
             //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
-            var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
-            needsToldTheSyntaxHelper?.InjectKnown(QuerySyntaxHelper);
+            if (parameter is IInjectKnown<IQuerySyntaxHelper> needsToldTheSyntaxHelper)
+                needsToldTheSyntaxHelper.InjectKnown(QuerySyntaxHelper);
 
             if (CheckSyntax)
                 parameter.Check(checkNotifier);

@@ -142,7 +142,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 
             var ecById = childProvider.ExtractionConfigurations.ToDictionary(k => k.ID);
 
-            // The root object that makes most sense to the user e.g. they select an extraction 
+            // The root object that makes most sense to the user e.g. they select an extraction
             var fromConfiguration
                 =
                 childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
@@ -227,11 +227,10 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <returns></returns>
     private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
     {
-        if (arg.RootCohortAggregateContainer_ID == null)
-            return Array.Empty<AggregateConfiguration>();
-
-        return arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-            .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
+        return arg.RootCohortAggregateContainer_ID == null
+            ? Array.Empty<AggregateConfiguration>()
+            : arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
+                .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
     }
 
     /// <summary>

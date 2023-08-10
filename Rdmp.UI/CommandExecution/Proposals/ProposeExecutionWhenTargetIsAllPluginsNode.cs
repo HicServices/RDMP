@@ -8,7 +8,6 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
@@ -21,20 +20,12 @@ internal class ProposeExecutionWhenTargetIsAllPluginsNode : RDMPCommandExecution
 
     public override void Activate(AllPluginsNode target)
     {
-        if (ItemActivator.RepositoryLocator.CatalogueRepository.MEF.DownloadDirectory.Exists)
-            UsefulStuff.ShowPathInWindowsExplorer(ItemActivator.RepositoryLocator.CatalogueRepository.MEF
-                .DownloadDirectory);
     }
 
     public override bool CanActivate(AllPluginsNode target) => true;
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllPluginsNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
+        InsertOption insertOption = InsertOption.Default) =>
         //drop files on to attempt to upload plugins
-        if (cmd is FileCollectionCombineable f)
-            return new ExecuteCommandAddPlugins(ItemActivator, f);
-
-        return null;
-    }
+        cmd is FileCollectionCombineable f ? new ExecuteCommandAddPlugins(ItemActivator, f) : (ICommandExecution)null;
 }

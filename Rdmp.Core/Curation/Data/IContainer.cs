@@ -13,7 +13,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes which logical keyword to use to interspace IFilters (and sub IContainers) within an IContainer.  If you have an IContainer with only one IFilter in it then
-/// it makes no difference which FilterContainerOperation you specify.  Once an IContainer has more than one IFilter they will be seperated with the 
+/// it makes no difference which FilterContainerOperation you specify.  Once an IContainer has more than one IFilter they will be seperated with the
 /// FilterContainerOperation (AND / OR See SqlQueryBuilderHelper)
 /// </summary>
 public enum FilterContainerOperation
@@ -30,7 +30,7 @@ public enum FilterContainerOperation
 }
 
 /// <summary>
-/// Interface for grouping IFilters (lines of WHERE Sql) into an AND/OR tree e.g. WHERE ('Hb is Tayside' OR 'Record is older than 5 months') AND 
+/// Interface for grouping IFilters (lines of WHERE Sql) into an AND/OR tree e.g. WHERE ('Hb is Tayside' OR 'Record is older than 5 months') AND
 /// ('result is clinically significant').  Each subcontainer / IFilter are seperated with the Operation (See FilterContainerOperation) when building SQL
 /// (See SqlQueryBuilderHelper).
 /// </summary>
@@ -38,7 +38,7 @@ public interface IContainer : IRevertable, IMightBeReadOnly
 {
     /// <summary>
     /// Defines the boolean operation (AND / OR) to separate contained lines of WHERE Sql (See <see cref="IFilter"/>).  If the container has only one IFilter
-    /// then no operation is used, if there are 2+ then the resultant SQL built will be each filter's WhereSQL separated by the AND/OR.  This also applies to 
+    /// then no operation is used, if there are 2+ then the resultant SQL built will be each filter's WhereSQL separated by the AND/OR.  This also applies to
     /// subcontainers e.g. an IContainer AND with two subcontainers will have the resultant SQL from compiling the two subcontainers separated by the AND/OR of the
     /// current IContainer.
     /// </summary>
@@ -101,7 +101,7 @@ public interface IContainer : IRevertable, IMightBeReadOnly
     List<IContainer> GetAllSubContainersRecursively();
 
     /// <summary>
-    /// Returns all IFilters that are declared in the current container or any of its subcontainers (recursively).  This includes children of children 
+    /// Returns all IFilters that are declared in the current container or any of its subcontainers (recursively).  This includes children of children
     /// etc down the tree.
     /// </summary>
     /// <returns></returns>

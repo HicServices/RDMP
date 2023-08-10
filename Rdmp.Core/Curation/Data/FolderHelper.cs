@@ -28,17 +28,13 @@ public static class FolderHelper
 
     public static string Adjust(string candidate)
     {
-        if (IsValidPath(candidate, out var reason))
-        {
-            candidate = candidate.ToLower();
-            candidate = candidate.TrimEnd('\\');
+        if (!IsValidPath(candidate, out var reason)) throw new NotSupportedException(reason);
+        candidate = candidate.ToLower();
+        candidate = candidate.TrimEnd('\\');
 
-            if (string.IsNullOrWhiteSpace(candidate)) candidate = Root;
+        if (string.IsNullOrWhiteSpace(candidate)) candidate = Root;
 
-            return candidate;
-        }
-
-        throw new NotSupportedException(reason);
+        return candidate;
     }
 
     public static bool IsValidPath(string candidatePath, out string reason)

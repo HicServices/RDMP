@@ -31,9 +31,8 @@ namespace Rdmp.Core.Icons.IconProvision;
 public class CatalogueIconProvider : ICoreIconProvider
 {
     private readonly IIconProvider[] _pluginIconProviders;
-    public IconOverlayProvider OverlayProvider { get; private set; }
 
-    protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new();
+    protected readonly List<IObjectStateBasedIconProvider> StateBasedIconProviders = new();
 
     protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
     protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
@@ -45,41 +44,37 @@ public class CatalogueIconProvider : ICoreIconProvider
         IIconProvider[] pluginIconProviders)
     {
         _pluginIconProviders = pluginIconProviders;
-        OverlayProvider = new IconOverlayProvider();
         ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
         StateBasedIconProviders.Add(CatalogueStateBasedIconProvider =
-            new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository, OverlayProvider));
+            new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository));
         StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
-        StateBasedIconProviders.Add(new ExtractableColumnStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new ExtractableColumnStateBasedIconProvider());
         StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
         StateBasedIconProviders.Add(new CohortAggregateContainerStateBasedIconProvider());
         StateBasedIconProviders.Add(new SupportingObjectStateBasedIconProvider());
-        StateBasedIconProviders.Add(new ColumnInfoStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new ColumnInfoStateBasedIconProvider());
         StateBasedIconProviders.Add(new TableInfoStateBasedIconProvider());
-        StateBasedIconProviders.Add(new AggregateConfigurationStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new AggregateConfigurationStateBasedIconProvider());
         StateBasedIconProviders.Add(new CohortIdentificationConfigurationStateBasedIconProvider());
-        StateBasedIconProviders.Add(new ExternalDatabaseServerStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new ExternalDatabaseServerStateBasedIconProvider());
         StateBasedIconProviders.Add(new LoadStageNodeStateBasedIconProvider(this));
         StateBasedIconProviders.Add(new ProcessTaskStateBasedIconProvider());
-        StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider(OverlayProvider));
-        StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
-        StateBasedIconProviders.Add(new CatalogueItemsNodeStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new TableInfoServerNodeStateBasedIconProvider());
+        StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider());
+        StateBasedIconProviders.Add(new CatalogueItemsNodeStateBasedIconProvider());
         StateBasedIconProviders.Add(new ReleaseabilityStateBasedIconProvider());
-        StateBasedIconProviders.Add(new ExtractableCohortStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new ExtractableCohortStateBasedIconProvider());
         StateBasedIconProviders.Add(new PipelineComponentStateBasedIconProvider());
-        StateBasedIconProviders.Add(new FilterStateBasedIconProvider(OverlayProvider));
+        StateBasedIconProviders.Add(new FilterStateBasedIconProvider());
 
         StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
     }
 
-    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
-    {
-        if (concept is IDisableable { IsDisabled: true })
-            return OverlayProvider.GetGrayscale(GetImageImpl(concept, kind));
-
-        return GetImageImpl(concept, kind);
-    }
+    public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None) =>
+        concept is IDisableable { IsDisabled: true }
+            ? IconOverlayProvider.GetGreyscale(GetImageImpl(concept, kind))
+            : GetImageImpl(concept, kind);
 
     protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
     {
@@ -241,16 +236,8 @@ public class CatalogueIconProvider : ICoreIconProvider
     /// <param name="t"></param>
     /// <param name="concept"></param>
     /// <returns></returns>
-    public static bool ConceptIs(Type t, object concept)
-    {
-        if (t.IsInstanceOfType(concept))
-            return true;
-
-        if (concept is Type type && t.IsAssignableFrom(type))
-            return true;
-
-        return false;
-    }
+    public static bool ConceptIs(Type t, object concept) =>
+        t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
 
 
     /// <summary>
@@ -268,17 +255,12 @@ public class CatalogueIconProvider : ICoreIconProvider
             imageList.Add(concept.ToString(), img);
 
             if (addFavouritesOverlayKeysToo)
-                imageList.Add($"{concept}Favourite", OverlayProvider.GetOverlay(img, OverlayKind.FavouredItem));
+                imageList.Add($"{concept}Favourite", IconOverlayProvider.GetOverlay(img, OverlayKind.FavouredItem));
         }
 
         return imageList;
     }
 
-    private Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
-    {
-        if (kind == OverlayKind.None)
-            return img;
-
-        return OverlayProvider.GetOverlay(img, kind);
-    }
+    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind) =>
+        kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
 }

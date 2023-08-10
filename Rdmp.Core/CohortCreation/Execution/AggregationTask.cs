@@ -18,16 +18,16 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 
+/// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from
 /// TableX where ...'.  The  query result table can/will be committed as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
 /// </summary>
 public class AggregationTask : CacheableTask
 {
     public AggregateConfiguration Aggregate { get; private set; }
 
-    private string _catalogueName;
-    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private List<CohortAggregateContainer> _allParentContainers;
+    private readonly string _catalogueName;
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private readonly List<CohortAggregateContainer> _allParentContainers;
 
     public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler) : base(compiler)
     {
@@ -56,10 +56,7 @@ public class AggregationTask : CacheableTask
 
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
-        if (name.StartsWith(expectedTrimStart))
-            return name[expectedTrimStart.Length..];
-
-        return name;
+        return name.StartsWith(expectedTrimStart) ? name[expectedTrimStart.Length..] : name;
     }
 
     public override IDataAccessPoint[] GetDataAccessPoints() => Aggregate.Catalogue.GetTableInfoList(false);

@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.  
+/// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.
 /// </summary>
 public interface ISelectedDataSets : IDeleteable, IRevertable, IMightBeReadOnly, IRootFilterContainerHost
 {

@@ -29,15 +29,18 @@ public class BoundDate : Bound
 
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        if (value == null)
-            return null;
-
-        if (value is string s)
+        switch (value)
         {
-            value = SafeConvertToDate(s);
-
-            if (!((DateTime?)value).HasValue)
+            case null:
                 return null;
+            case string stringValue:
+            {
+                value = SafeConvertToDate(stringValue);
+
+                if (!((DateTime?)value).HasValue)
+                    return null;
+                break;
+            }
         }
 
         var d = (DateTime)value;
@@ -45,10 +48,9 @@ public class BoundDate : Bound
         if (value != null && !IsWithinRange(d))
             return new ValidationFailure(CreateViolationReportUsingDates(d), this);
 
-        if (value != null && !IsWithinRange(d, otherColumns, otherColumnNames))
-            return new ValidationFailure(CreateViolationReportUsingFieldNames(d), this);
-
-        return null;
+        return value != null && !IsWithinRange(d, otherColumns, otherColumnNames)
+            ? new ValidationFailure(CreateViolationReportUsingFieldNames(d), this)
+            : null;
     }
 
     private bool IsWithinRange(DateTime d)
@@ -141,10 +143,9 @@ public class BoundDate : Bound
         if (Lower != null)
             return GreaterThanMessage(d, Lower.ToString());
 
-        if (Upper != null)
-            return LessThanMessage(d, Upper.ToString());
-
-        throw new InvalidOperationException("Illegal state.");
+        return Upper != null
+            ? LessThanMessage(d, Upper.ToString())
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
@@ -155,10 +156,9 @@ public class BoundDate : Bound
         if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!string.IsNullOrWhiteSpace(UpperFieldName))
-            return LessThanMessage(d, UpperFieldName);
-
-        throw new InvalidOperationException("Illegal state.");
+        return !string.IsNullOrWhiteSpace(UpperFieldName)
+            ? LessThanMessage(d, UpperFieldName)
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string BetweenMessage(DateTime d, string l, string u) =>

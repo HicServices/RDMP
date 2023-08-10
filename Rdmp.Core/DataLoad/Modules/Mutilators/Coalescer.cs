@@ -36,7 +36,7 @@ public class Coalescer : MatchingTablesMutilator
         var server = table.Database.Server;
 
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"About to run Coalese on table {table}"));
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Coalesce on table {table}"));
 
         var allCols = table.DiscoverColumns();
 
@@ -61,14 +61,14 @@ public class Coalescer : MatchingTablesMutilator
             con.Open();
 
             if (CreateIndex)
-                using (var idxCmd =
-                       server.GetCommand(
-                           string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", table.GetRuntimeName(),
-                               string.Join(",", pks.Select(p => p.GetRuntimeName()))), con))
-                {
-                    idxCmd.CommandTimeout = Timeout;
-                    idxCmd.ExecuteNonQuery();
-                }
+            {
+                using var idxCmd =
+                    server.GetCommand(
+                        string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", table.GetRuntimeName(),
+                            string.Join(",", pks.Select(p => p.GetRuntimeName()))), con);
+                idxCmd.CommandTimeout = Timeout;
+                idxCmd.ExecuteNonQuery();
+            }
 
             //Get an update command for each non primary key column
             foreach (var nonPk in nonPks)
@@ -89,8 +89,11 @@ public class Coalescer : MatchingTablesMutilator
     {
         var sqlLines = new List<CustomLine>
         {
-            new(string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk.GetRuntimeName()), QueryComponent.WHERE),
-            new(string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk.GetRuntimeName()), QueryComponent.SET)
+            new($"(t1.{nonPk.GetRuntimeName()} is null AND t2.{nonPk.GetRuntimeName()} is not null)",
+                QueryComponent.WHERE),
+            new(
+                $"t1.{nonPk.GetRuntimeName()} = COALESCE(t1.{nonPk.GetRuntimeName()},t2.{nonPk.GetRuntimeName()})",
+                QueryComponent.SET)
         };
         sqlLines.AddRange(pks.Select(p =>
             new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()), QueryComponent.JoinInfoJoin)));

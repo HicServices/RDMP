@@ -117,25 +117,16 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private object GetState(object rowObject)
     {
-        if (checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner)
-            return null;
-
-        if (rowObject is IExtractionConfiguration configuration)
-            return releaseRunner.GetState(configuration);
-
-        if (rowObject is ISelectedDataSets sds)
-            return releaseRunner.GetState(sds);
-
-        if (rowObject is SupportingDocument supportingDocument)
-            return releaseRunner.GetState(supportingDocument);
-
-        if (rowObject is SupportingSQLTable supportingSqlTable)
-            return releaseRunner.GetState(supportingSqlTable);
-
-        if (rowObject.Equals(_globalsNode))
-            return releaseRunner.GetGlobalReleaseState();
-
-        return null;
+        return checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner
+            ? null
+            : rowObject switch
+            {
+                IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
+                ISelectedDataSets sds => releaseRunner.GetState(sds),
+                SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
+                SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
+                _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
+            };
     }
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
@@ -160,21 +151,18 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private static string ToIdList(int[] ints)
     {
-        return string.Join(",", ints.Select(i => i.ToString()).ToArray());
+        return string.Join(",", ints.Select(i => i.ToString()));
     }
 
     private IEnumerable ChildrenGetter(object model)
     {
-        if (model is Project p)
-            return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
-
-        if (model is ExtractionConfiguration ec)
-            return _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
-
-        if (Equals(model, _globalsNode))
-            return _globals;
-
-        return null;
+        return model switch
+        {
+            Project p => _configurations = _childProvider.GetActiveConfigurationsOnly(p),
+            ExtractionConfiguration ec =>
+                _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>(),
+            _ => Equals(model, _globalsNode) ? _globals : null
+        };
     }
 
     private bool CanExpandGetter(object model)
@@ -226,7 +214,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
         CommonFunctionality.Add(_pipelinePanel);
         CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline",
-            "The sequence of components that will be executed in order to gather the extracted artifacts and assemble them into a single release folder/database. This will start with a source component that gathers the artifacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
+            "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
 
         checkAndExecuteUI1.SetItemActivator(activator);
 

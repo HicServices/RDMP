@@ -31,10 +31,7 @@ public class Prediction : SecondaryConstraint
 
     public Prediction(PredictionRule rule, string targetColumn)
     {
-        if (rule == null)
-            throw new ArgumentException("You must specify a PredictionRule to follow", nameof(rule));
-
-        Rule = rule;
+        Rule = rule ?? throw new ArgumentException("You must specify a PredictionRule to follow", nameof(rule));
         TargetColumn = targetColumn;
     }
 
@@ -55,11 +52,10 @@ public class Prediction : SecondaryConstraint
 
         var i = Array.IndexOf(otherColumnNames, TargetColumn);
 
-        if (i == -1)
-            throw new MissingFieldException(
-                $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})");
-
-        return Rule.Predict(this, value, otherColumns[i]);
+        return i == -1
+            ? throw new MissingFieldException(
+                $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})")
+            : Rule.Predict(this, value, otherColumns[i]);
     }
 
 
@@ -73,11 +69,8 @@ public class Prediction : SecondaryConstraint
             TargetColumn = newName;
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        if (Rule == null)
-            return "Normally checks input against prediction rule but no rule has yet been configured";
-
-        return $"Checks that input follows its prediciton rule: '{Rule.GetType().Name}'";
-    }
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        Rule == null
+            ? "Normally checks input against prediction rule but no rule has yet been configured"
+            : $"Checks that input follows its prediction rule: '{Rule.GetType().Name}'";
 }

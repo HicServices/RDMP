@@ -144,13 +144,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
                 e.SubItem.ForeColor = Color.Red;
     }
 
-    private object Issues_AspectGetter(object rowObject)
-    {
-        if (rowObject is ExtractableColumn ec && ec.IsOutOfSync())
-            return "Different";
-
-        return "None";
-    }
+    private object Issues_AspectGetter(object rowObject) =>
+        rowObject is ExtractableColumn ec && ec.IsOutOfSync() ? "Different" : (object)"None";
 
     private object SelectedCatalogue_AspectGetter(object rowObject)
     {
@@ -183,9 +178,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         var cata = ei.CatalogueItem.Catalogue;
 
-        string toReturn = null;
-
-        toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific
+        var toReturn = ei.ExtractionCategory == ExtractionCategory.ProjectSpecific
             ? $"{ei.ExtractionCategory}::{cata.Name}"
             : ei.ExtractionCategory.ToString();
 
@@ -259,19 +252,17 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         // Tell our columns about their CatalogueItems by using CoreChildProvider
         // Prevents later queries to db to figure out things like column name etc
         foreach (var ec in allExtractableColumns)
-            if (ec.CatalogueExtractionInformation_ID != null)
-            {
-                var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
-                var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
+        {
+            if (ec.CatalogueExtractionInformation_ID == null) continue;
+            var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+            var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-                if (eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei))
-                {
-                    ec.InjectKnown(ei);
-                    ec.InjectKnown(ei.ColumnInfo);
+            if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
+            ec.InjectKnown(ei);
+            ec.InjectKnown(ei.ColumnInfo);
 
-                    if (ciDict.TryGetValue(ei.CatalogueItem_ID, out var value)) ec.InjectKnown(value);
-                }
-            }
+            if (ciDict.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
+        }
 
 
         //now get all the ExtractableColumns that are already configured for this configuration (previously)
@@ -565,10 +556,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         var n = (AvailableForceJoinNode)rowobject;
 
         //it is jecked if there is a forced join or if the columns make it a requirement
-        if (n.IsIncludedInQuery)
-            return CheckState.Checked;
-
-        return CheckState.Unchecked;
+        return n.IsIncludedInQuery ? CheckState.Checked : CheckState.Unchecked;
     }
 
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
@@ -627,13 +615,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         SelectedDataSet.GetCatalogue().GetTableInfos(Activator.CoreChildProvider, out var normal, out _);
 
         // Add all tables as optional joins that the Catalogue has
-        foreach (var t in normal)
-        {
-            var node = new AvailableForceJoinNode((TableInfo)t, false);
-
-            if (!nodes.Contains(node))
-                nodes.Add(node);
-        }
+        foreach (var node in normal.Select(t => new AvailableForceJoinNode((TableInfo)t, false))) nodes.Add(node);
 
         // Add all tables under other ProjectSpecific Catalogues that are associated with this Project
         foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
@@ -642,15 +624,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             projectCatalogue.GetTableInfos(Activator.CoreChildProvider, out var projNormal, out _);
 
             // that are not lookups
-            foreach (TableInfo projectSpecificTables in projNormal)
-            {
-                // add the potential to join to them
-                var node = new AvailableForceJoinNode(projectSpecificTables, false);
-
-                //.Equals works on TableInfo so we avoid double adding
-                if (!nodes.Contains(node))
-                    nodes.Add(node);
-            }
+            foreach (var node in projNormal.Cast<TableInfo>()
+                         .Select(projectSpecificTables => new AvailableForceJoinNode(projectSpecificTables, false)))
+                nodes.Add(node);
         }
 
 
@@ -766,10 +742,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
     {
         var node = (AvailableForceJoinNode)rowObject;
 
-        if (node.JoinInfos.Any())
-            return "Show";
-
-        return "Configure";
+        return node.JoinInfos.Any() ? "Show" : (object)"Configure";
     }
 
     #endregion

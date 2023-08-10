@@ -21,7 +21,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : CatalogueCreationCommandExecution
 {
-    private DiscoveredTable _importTable;
+    private readonly DiscoveredTable _importTable;
 
 
     public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : this(activator,
@@ -56,13 +56,13 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
 
         var c = BasicActivator.CreateAndConfigureCatalogue(ti, null, "Existing table", ProjectSpecific, TargetFolder);
 
-        if (c == null || !c.Exists())
-            if (BasicActivator.IsInteractive
-                && BasicActivator.YesNo(
-                    "You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?",
-                    "Delete TableInfo", out var chosen)
-                && chosen)
-                ti.DeleteInDatabase();
+        if (c?.Exists() == true) return;
+        if (BasicActivator.IsInteractive
+            && BasicActivator.YesNo(
+                "You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?",
+                "Delete TableInfo", out var chosen)
+            && chosen)
+            ti.DeleteInDatabase();
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

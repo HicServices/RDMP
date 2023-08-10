@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -34,12 +33,9 @@ public static class Rfc4180Writer
 
         foreach (DataRow row in sourceTable.Rows)
         {
-            var line = new List<string>();
-
-            foreach (DataColumn col in sourceTable.Columns)
-                line.Add(QuoteValue(GetStringRepresentation(row[col],
-                    typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
-
+            var line = (from DataColumn col in sourceTable.Columns
+                select QuoteValue(GetStringRepresentation(row[col],
+                    typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper))).ToList();
             writer.WriteLine(string.Join(",", line));
         }
 
@@ -51,12 +47,13 @@ public static class Rfc4180Writer
         if (o == null || o == DBNull.Value)
             return null;
 
-        if (o is string s && allowDates)
-            if (DateTime.TryParse(s, out var dt))
+        switch (o)
+        {
+            case string s when allowDates && DateTime.TryParse(s, out var dt):
                 return GetStringRepresentation(dt);
-
-        if (o is DateTime time)
-            return GetStringRepresentation(time);
+            case DateTime dateTime:
+                return GetStringRepresentation(dateTime);
+        }
 
         var str = o.ToString();
 
@@ -65,19 +62,8 @@ public static class Rfc4180Writer
         return str;
     }
 
-    private static string GetStringRepresentation(DateTime dt)
-    {
-        if (dt.TimeOfDay == TimeSpan.Zero)
-            return dt.ToString("yyyy-MM-dd");
+    private static string GetStringRepresentation(DateTime dt) =>
+        dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
 
-        return dt.ToString("yyyy-MM-dd HH:mm:ss.fff");
-    }
-
-    private static string QuoteValue(string value)
-    {
-        if (value == null)
-            return "NULL";
-
-        return $"\"{value}\"";
-    }
+    private static string QuoteValue(string value) => value == null ? "NULL" : $"\"{value}\"";
 }

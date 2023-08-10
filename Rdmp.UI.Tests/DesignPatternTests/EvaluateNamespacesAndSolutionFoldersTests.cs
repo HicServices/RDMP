@@ -72,13 +72,13 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
         //      dependencies.FindProblems(sln);
 
-        InterfaceDeclarationsCorrect.FindProblems(CatalogueRepository.MEF);
+        InterfaceDeclarationsCorrect.FindProblems();
 
         var documented = new AllImportantClassesDocumented();
         documented.FindProblems(_csFilesFound);
 
         var uiStandardisationTest = new UserInterfaceStandardisationChecker();
-        uiStandardisationTest.FindProblems(_csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
+        uiStandardisationTest.FindProblems(_csFilesFound);
 
         var crossExamination = new DocumentationCrossExaminationTest(solutionDir);
         crossExamination.FindProblems(_csFilesFound);
@@ -87,16 +87,15 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         var otherTestRunner = new RDMPFormInitializationTests();
         otherTestRunner.FindUninitializedForms(_csFilesFound);
 
-        var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
+        var propertyChecker = new SuspiciousRelationshipPropertyUse();
         propertyChecker.FindPropertyMisuse(_csFilesFound);
 
         var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
         ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
 
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
-        AutoCommentsEvaluator.FindProblems(CatalogueRepository.MEF, _csFilesFound);
+        AutoCommentsEvaluator.FindProblems(_csFilesFound);
 
-        var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
 
         //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
@@ -252,9 +251,9 @@ public class CopyrightHeaderEvaluator
     }
 }
 
-public class AutoCommentsEvaluator
+public partial class AutoCommentsEvaluator
 {
-    public static void FindProblems(MEF mef, List<string> csFilesFound)
+    public static void FindProblems(List<string> csFilesFound)
     {
         var suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -278,18 +277,17 @@ public class AutoCommentsEvaluator
                 {
                     var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
 
-                    var t = mef.GetType(currentClassName);
+                    var t = MEF.GetType(currentClassName);
 
                     //if the previous line isn't a summary comment
                     if (!text[i - 1].Trim().StartsWith("///"))
                     {
                         var next = text[i + 1];
 
-                        var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
+                        var m = PublicRegex().Match(next);
                         if (m.Success)
                         {
                             var whitespace = m.Groups[1].Value;
-                            var type = m.Groups[2].Value;
                             var member = m.Groups[3].Value;
 
                             Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
@@ -298,7 +296,7 @@ public class AutoCommentsEvaluator
                             if (t.GetProperty($"{member}_ID") != null)
                             {
                                 changes = true;
-                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{$"{member}_ID"}\"/>");
+                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{member}_ID\"/>");
                             }
                             else
                             {
@@ -346,7 +344,8 @@ public class AutoCommentsEvaluator
                         sbSuggestedText.AppendLine(text[i]);
 
                         //add the para tag
-                        var nextLine = text[i + 1].Insert(text[i + 1].IndexOf("///") + 4, "<para>");
+                        var nextLine = text[i + 1].Insert(text[i + 1].IndexOf("///", StringComparison.Ordinal) + 4,
+                            "<para>");
                         sbSuggestedText.AppendLine(nextLine);
                         i++;
                         paraOpened = true;
@@ -384,4 +383,7 @@ public class AutoCommentsEvaluator
             _ => typename
         };
     }
+
+    [GeneratedRegex("(.*)public\\b(.*)\\s+(.*)\\b")]
+    private static partial Regex PublicRegex();
 }

@@ -12,9 +12,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddFavourite : BasicCommandExecution
+public sealed class ExecuteCommandAddFavourite : BasicCommandExecution
 {
-    private DatabaseEntity _databaseEntity;
+    private readonly DatabaseEntity _databaseEntity;
 
     public ExecuteCommandAddFavourite(IBasicActivateItems activator) : base(activator)
     {
@@ -24,17 +24,14 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
     public ExecuteCommandAddFavourite(IBasicActivateItems activator, DatabaseEntity databaseEntity) : this(activator)
     {
         _databaseEntity = databaseEntity;
-
-        Weight = 100.1f;
     }
 
-    public override string GetCommandName()
-    {
-        if (_databaseEntity == null)
-            return base.GetCommandName();
-
-        return BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity) ? "UnFavourite" : "Favourite";
-    }
+    public override string GetCommandName() =>
+        _databaseEntity == null
+            ? base.GetCommandName()
+            : BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity)
+                ? "UnFavourite"
+                : "Favourite";
 
     public override void Execute()
     {
@@ -60,11 +57,8 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        if (_databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
-            return Image.Load<Rgba32>(CatalogueIcons.StarHollow);
-
-        return iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        _databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity)
+            ? Image.Load<Rgba32>(CatalogueIcons.StarHollow)
+            : iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
 }

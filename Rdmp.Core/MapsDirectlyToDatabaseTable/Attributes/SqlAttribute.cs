@@ -12,7 +12,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 /// Used to indicate a property that contains sql e.g. Where logic, Select logic etc.  Using this property makes the Attribute
 /// 'find and replaceable' through the FindAndReplaceUI
 /// </summary>
-[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public class SqlAttribute : Attribute
 {
     /// <summary>

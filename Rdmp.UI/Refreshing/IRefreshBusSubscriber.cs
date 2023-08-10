@@ -16,7 +16,7 @@ namespace Rdmp.UI.Refreshing;
 public interface IRefreshBusSubscriber
 {
     /// <summary>
-    /// Called when 
+    /// Called when
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>

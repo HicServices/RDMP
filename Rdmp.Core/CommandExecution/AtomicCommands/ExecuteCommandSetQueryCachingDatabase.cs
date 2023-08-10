@@ -15,19 +15,17 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
-    private ExternalDatabaseServer[] _caches;
+    private readonly ExternalDatabaseServer[] _caches;
 
     public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator, CohortIdentificationConfiguration cic) :
         base(activator)
     {
         _cic = cic;
-
         _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-            .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
-
+            .Where(static s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
         if (!_caches.Any())
             SetImpossible("There are no Query Caching databases set up");
     }
@@ -36,16 +34,11 @@ public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAto
     {
         base.Execute();
 
-        if (SelectOne(_caches.ToList(), out var selected))
-        {
-            if (selected == null)
-                _cic.QueryCachingServer_ID = null;
-            else
-                _cic.QueryCachingServer_ID = selected.ID;
+        if (!SelectOne(_caches.ToList(), out var selected)) return;
 
-            _cic.SaveToDatabase();
-            Publish(_cic);
-        }
+        _cic.QueryCachingServer_ID = selected?.ID;
+        _cic.SaveToDatabase();
+        Publish(_cic);
     }
 
     public override string GetCommandName() =>

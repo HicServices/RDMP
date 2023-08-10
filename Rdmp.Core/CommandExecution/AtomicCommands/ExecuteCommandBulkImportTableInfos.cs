@@ -26,9 +26,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Import references to many tables at once from a database as <see cref="TableInfo"/>.  Optionally importing descriptive metadata for them from <see cref="ShareDefinition"/> files
 /// </summary>
-public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomicCommand
 {
-    private IExternalDatabaseServer _loggingServer;
+    private readonly IExternalDatabaseServer _loggingServer;
 
     public ExecuteCommandBulkImportTableInfos(IBasicActivateItems activator) : base(activator)
     {
@@ -63,13 +63,13 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
             if (chosen != null)
                 foreach (var f in chosen)
-                    using (var stream = File.Open(f.FullName, FileMode.Open))
-                    {
-                        var newObjects = shareManager.ImportSharedObject(stream);
+                {
+                    using var stream = File.Open(f.FullName, FileMode.Open);
+                    var newObjects = shareManager.ImportSharedObject(stream);
 
-                        if (newObjects != null)
-                            catalogues.AddRange(newObjects.OfType<ICatalogue>());
-                    }
+                    if (newObjects != null)
+                        catalogues.AddRange(newObjects.OfType<ICatalogue>());
+                }
         }
 
         var generateCatalogues = false;
@@ -84,15 +84,12 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
         ITableInfo anyNewTable = null;
 
-        var novel = new List<DiscoveredTable>();
-
-        foreach (var discoveredTable in db.DiscoverTables(false))
-        {
-            var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
-            if (collide == null) novel.Add(discoveredTable);
-        }
-
-        if (!BasicActivator.SelectObjects("Import", novel.ToArray(), out var selected)) return;
+        if (!BasicActivator.SelectObjects("Import", db.DiscoverTables(false)
+                .Select(discoveredTable =>
+                    new { discoveredTable, collide = existing.FirstOrDefault(t => t.Is(discoveredTable)) })
+                .Where(static t1 => t1.collide == null)
+                .Select(static t1 => t1.discoveredTable).ToArray(), out var selected))
+            return;
 
         foreach (var discoveredTable in selected)
         {
@@ -146,12 +143,12 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
         }
 
         if (married.Any() && YesNo($"Found {married.Count} columns, make them all extractable?", "Make Extractable"))
-            foreach (var kvp in married)
+            foreach (var (catalogueItem, columnInfo) in married)
                 // don't mark it extractable twice
-                if (kvp.Key.ExtractionInformation == null)
-                    //yup thats how we roll, the database is main memory!
-                    new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value,
-                        kvp.Value.Name);
+                if (catalogueItem.ExtractionInformation == null)
+                    //yup that's how we roll, the database is main memory!
+                    _ = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, catalogueItem,
+                        columnInfo, columnInfo.Name);
 
         if (anyNewTable != null)
         {
@@ -160,15 +157,11 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
         }
     }
 
-    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute,
-        ShareDefinition sharedefinition)
-    {
-        if (property.Name.EndsWith("LoggingServer_ID"))
-            return _loggingServer.ID;
-
-
-        throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
-    }
+    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,
+        ShareDefinition shareDefinition) =>
+        property.Name.EndsWith("LoggingServer_ID", StringComparison.Ordinal)
+            ? _loggingServer.ID
+            : throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
 
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

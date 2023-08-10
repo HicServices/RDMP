@@ -18,7 +18,7 @@ namespace Rdmp.Core.Sharing.Dependency;
 /// </summary>
 public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
 {
-    private ShareManager _shareManager;
+    private readonly ShareManager _shareManager;
 
     public ObjectSharingObscureDependencyFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -34,9 +34,6 @@ public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        if (_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
-            return;
-
         if (oTableWrapperObject.GetType() != typeof(ObjectImport))
             _shareManager.DeleteAllOrphanImportDefinitions();
     }

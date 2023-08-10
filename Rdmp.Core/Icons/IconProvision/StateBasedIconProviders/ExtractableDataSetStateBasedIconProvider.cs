@@ -12,18 +12,14 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
+internal sealed class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
     private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
-    private readonly Image<Rgba32> _disabled;
+    private static readonly Image<Rgba32> _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
 
-    public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider,
-        CatalogueStateBasedIconProvider catalogueIconProvider)
+    public ExtractableDataSetStateBasedIconProvider(CatalogueStateBasedIconProvider catalogueIconProvider)
     {
         _catalogueIconProvider = catalogueIconProvider;
-        _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
-        _overlayProvider = overlayProvider;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -36,7 +32,7 @@ public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconPro
         if (cataOne == null)
             return null;
 
-        var withE = _overlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
+        var withE = IconOverlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
 
         return ds.IsCatalogueDeprecated || ds.DisableExtraction ? _disabled : withE;
     }

@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -71,7 +70,7 @@ public abstract class SyntaxChecker : ICheckable
 
             if (matchValue.Success && matchLength.Success)
             {
-                var userSpecifiedLength = int.Parse(matchLength.Value.Substring(1, matchLength.Value.Length - 2));
+                var userSpecifiedLength = int.Parse(matchLength.Value[1..^1]);
                 var actualLength = matchValue.Value.Trim().Length - 2;
 
                 if (actualLength > userSpecifiedLength)

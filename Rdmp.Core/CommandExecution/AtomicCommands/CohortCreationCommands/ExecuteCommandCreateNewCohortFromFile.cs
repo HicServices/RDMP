@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
 {
-    private FileInfo _file;
+    private readonly FileInfo _file;
 
     public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable)
         :
@@ -82,7 +82,6 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
             flatFile = new FlatFileToLoad(_file);
         }
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(flatFile.File));
 
         //user choose to cancel the cohort creation request dialogue

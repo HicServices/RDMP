@@ -35,7 +35,7 @@ internal class CommitCohortExample : DatabaseTests
         //create the cohort store table
         var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
         var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);
-        var externalCohortTable = wizard.CreateDatabase(privateColumn, new ThrowImmediatelyCheckNotifier());
+        var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(dbType, externalCohortTable.DatabaseType);
 
@@ -66,17 +66,17 @@ internal class CommitCohortExample : DatabaseTests
         pipelineDestination.PreInitialize(
             new CohortCreationRequest(project, definition, DataExportRepository,
                 "A cohort created in an example unit test"),
-            new ThrowImmediatelyDataLoadEventListener());
+            ThrowImmediatelyDataLoadEventListener.Quiet);
 
         //process the cohort data table
-        pipelineDestination.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
+        pipelineDestination.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
         //there should be no cohorts yet
         Assert.IsEmpty(DataExportRepository.GetAllObjects<ExtractableCohort>());
 
         //dispose of the pipeline
-        pipelineDestination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        pipelineDestination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         //now there should be one
         var cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();

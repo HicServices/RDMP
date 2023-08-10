@@ -18,11 +18,10 @@ using Rdmp.UI.TestsAndSetup;
 
 namespace ResearchDataManagementPlatform;
 
-internal static class Program
+internal static partial class Program
 {
-    [DllImport("kernel32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool AttachConsole([MarshalAs(UnmanagedType.U4)] int dwProcessId);
+    [LibraryImport("kernel32.dll")]
+    private static partial void AttachConsole(int dwProcessId);
 
     /// <summary>
     /// The main entry point for the application.
@@ -30,10 +29,6 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
-        // if user has the command line built and runnable from the windows
-        // client then don't load the dlls (or we end up with 2 copies!).
-        SafeDirectoryCatalog.IgnoreDll = f => Path.GetFileName(f.DirectoryName)?.Equals("cli") == true;
-
         try
         {
             AttachConsole(-1);
@@ -47,14 +42,14 @@ internal static class Program
 
         UsefulStuff.GetParser()
             .ParseArguments<ResearchDataManagementPlatformOptions>(args)
-            .MapResult(RunApp, err => -1);
+            .MapResult(RunApp, _ => -1);
     }
 
     private static object RunApp(ResearchDataManagementPlatformOptions arg)
     {
         try
         {
-            arg.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+            arg.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
         }
         catch (Exception ex)
         {
@@ -63,11 +58,14 @@ internal static class Program
         }
 
         var bootStrapper =
-            new RDMPBootStrapper<RDMPMainForm>(
-                new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
-                arg);
+            new RDMPBootStrapper(arg, locator =>
+            {
+                var form = new RDMPMainForm();
+                form.SetRepositoryLocator(locator);
+                return form;
+            });
 
-        bootStrapper.Show(false);
+        bootStrapper.Show();
         return 0;
     }
 }

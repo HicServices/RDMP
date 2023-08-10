@@ -54,7 +54,7 @@ public class FTPDownloader : IPluginDataProvider
     public int TimeoutInSeconds { get; set; }
 
     [DemandsInitialization(
-        "Tick to delete files from the FTP server when the load is succesful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
+        "Tick to delete files from the FTP server when the load is successful (ends with .Success not .OperationNotRequired - which happens when LoadNotRequired state).  This will only delete the files if they were actually fetched from the FTP server.  If the files were already in forLoading then the remote files are not deleted")]
     public bool DeleteFilesOffFTPServerAfterSuccesfulDataLoad { get; set; }
 
     [DemandsInitialization(
@@ -160,11 +160,7 @@ public class FTPDownloader : IPluginDataProvider
                 return SkipReason.DidNotMatchPattern; //skip because it did not match pattern
 
         //if the file on the FTP already exists in the forLoading directory, skip it
-        if (destination.ForLoading.GetFiles(file).Any())
-            return SkipReason.InForLoading;
-
-
-        return SkipReason.DoNotSkip;
+        return destination.ForLoading.GetFiles(file).Any() ? SkipReason.InForLoading : SkipReason.DoNotSkip;
     }
 
 
@@ -255,24 +251,7 @@ public class FTPDownloader : IPluginDataProvider
 
         using (var writeStream = new FileStream(destinationFileName, FileMode.Create))
         {
-            var Length = 2048;
-            var buffer = new byte[Length];
-            var bytesRead = responseStream.Read(buffer, 0, Length);
-            var totalBytesReadSoFar = bytesRead;
-
-            while (bytesRead > 0)
-            {
-                writeStream.Write(buffer, 0, bytesRead);
-                bytesRead = responseStream.Read(buffer, 0, Length);
-
-
-                //notify whoever is listening of how far along the process we are
-                totalBytesReadSoFar += bytesRead;
-                job.OnProgress(this,
-                    new ProgressEventArgs(destinationFileName,
-                        new ProgressMeasurement(totalBytesReadSoFar / 1024, ProgressType.Kilobytes), s.Elapsed));
-            }
-
+            responseStream.CopyTo(writeStream);
             writeStream.Close();
         }
 
@@ -287,10 +266,9 @@ public class FTPDownloader : IPluginDataProvider
         if (exitCode == ExitCodeType.Success && DeleteFilesOffFTPServerAfterSuccesfulDataLoad)
             foreach (var file in _filesRetrieved)
             {
-                FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014
                 // Type or member is obsolete
-                reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
+                var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
 #pragma warning restore SYSLIB0014
                 // Type or member is obsolete
                 reqFTP.Credentials = new NetworkCredential(_username, _password);

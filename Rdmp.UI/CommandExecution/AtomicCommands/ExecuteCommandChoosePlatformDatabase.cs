@@ -36,7 +36,7 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution, IAtom
     {
         _repositoryLocator = locator;
         if (_repositoryLocator is not UserSettingsRepositoryFinder)
-            SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
+            SetImpossible("Platform databases location is read-only (probably passed as command line parameter?).");
     }
 
     public override string GetCommandHelp() => "Change which RDMP platform metadata databases you are connected to";

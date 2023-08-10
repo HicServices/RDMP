@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>HIC.RDMP.Plugin</PackageId>
     <version>$(version)</version>
@@ -22,12 +22,18 @@
     <NoWarn>$(NoWarn);NU5104</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
+      <SGenTypes>Rdmp.Core.DataLoad.Modules.DataProvider.WebServiceConfiguration</SGenTypes>
+  </PropertyGroup>
+  <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
+    <Compile Remove="Startup\PluginManagement\**" />
     <EmbeddedResource Remove="Databases\CatalogueDatabase\up\views\**" />
+    <EmbeddedResource Remove="Startup\PluginManagement\**" />
     <None Remove="Databases\CatalogueDatabase\up\views\**" />
+    <None Remove="Startup\PluginManagement\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Curation\KeywordHelp.txt" />
@@ -284,6 +290,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Equ" Version="2.3.0" />
     <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
     <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="HIC.FAnsiSql" Version="3.1.0" />
@@ -292,16 +299,18 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.XmlSerializer.Generator" Version="7.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.2.3" />
-    <PackageReference Include="NPOI" Version="2.5.5" />
+    <PackageReference Include="NPOI" Version="2.6.0" />
+    <PackageReference Include="NLog" Version="5.2.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
     <PackageReference Include="System.Threading" Version="4.3.0" />
     <PackageReference Include="System.Globalization" Version="4.3.0" />
@@ -314,8 +323,11 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="SSH.NET" Version="2020.0.2" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+    <PackageReference Include="Terminal.Gui" Version="1.13.1" />
     <PackageReference Include="YamlDotNet" Version="13.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Curation\KeywordHelp.txt">
@@ -324,7 +336,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReusableLibraryCode\" />
-    <Folder Include="Startup\PluginManagement\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="GlobalStrings.Designer.cs">

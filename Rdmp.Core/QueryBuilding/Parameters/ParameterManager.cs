@@ -16,8 +16,8 @@ namespace Rdmp.Core.QueryBuilding.Parameters;
 
 /// <summary>
 /// Handles the accumulation of Parameters in SQL queries ('DECLARE @bob as varchar(10); SET @bob = 'bob').  Because ISqlParameters can exist at many levels
-/// (e.g. IFilter vs AggregateConfiguration) ParameterManager has to consider what ParameterLevel it finds ISqlParameters at and whether ISqlParameters are 
-/// functionality identical or not.  For example if a CohortIdentificationConfiguration has two AggregateConfigurations each with an IFilter for healthboard 
+/// (e.g. IFilter vs AggregateConfiguration) ParameterManager has to consider what ParameterLevel it finds ISqlParameters at and whether ISqlParameters are
+/// functionality identical or not.  For example if a CohortIdentificationConfiguration has two AggregateConfigurations each with an IFilter for healthboard
 /// containing an ISqlParameter @hb.  If the declaration and value are the same then the ParameterManager can ignore one.  If the values are different then
 /// the ParameterManager needs to create renamed versions in memory (SpontaneouslyInventedSqlParameter) and update the IFilter.  However if there is an ISqlParameter
 /// @hb declared at the root (the CohortIdentificationConfiguration) then it will override both and be used instead.
@@ -33,7 +33,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters;
 public class ParameterManager
 {
     /// <summary>
-    /// <see cref="ParameterManager"/> is a state driven object, it gathers all <see cref="ISqlParameter"/> then resolves them into a final list.  This 
+    /// <see cref="ParameterManager"/> is a state driven object, it gathers all <see cref="ISqlParameter"/> then resolves them into a final list.  This
     /// property records which stage of that lifecycle it is at.
     /// </summary>
     public ParameterManagerLifecycleState State { get; private set; }
@@ -135,7 +135,7 @@ public class ParameterManager
 
 
     /// <summary>
-    /// Resolves all <see cref="ISqlParameter"/> found so far and merges/overrides as appropriate to accomodate identical side by side parameters and 
+    /// Resolves all <see cref="ISqlParameter"/> found so far and merges/overrides as appropriate to accomodate identical side by side parameters and
     /// global overriding ones etc.
     /// </summary>
     /// <returns></returns>
@@ -155,12 +155,10 @@ public class ParameterManager
         if (emptyParameter != null)
         {
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
+            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ??
+                                   throw new QueryBuildingException(exceptionMessage);
 
-            //problem was in a freaky parameter e.g. a constant one that doesn't come from database (rare to happen I would expect)
-            if (emptyParameter.Parameter is not IMapsDirectlyToDatabaseTable asConcreteObject)
-                throw new QueryBuildingException(exceptionMessage);
-
-            //problem was from a user one from their Catalogue Database, tell them the ProblemObject aswell
+            //problem was from a user one from their Catalogue Database, tell them the ProblemObject as well
             throw new QueryBuildingException(exceptionMessage, new[] { asConcreteObject });
         }
 
@@ -219,7 +217,7 @@ public class ParameterManager
         }
         else
         {
-            existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters 
+            existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters
         }
     }
 
@@ -254,7 +252,7 @@ public class ParameterManager
 
     /// <summary>
     /// Imports all TableInfo level paramaters into a super set (with all TableInfo level paramaters from every manager you have imported).  Also imports all
-    /// QueryLevel parameters but for these it will do renames where there are conflicting named parameters, you must 
+    /// QueryLevel parameters but for these it will do renames where there are conflicting named parameters, you must
     /// 
     /// </summary>
     /// <param name="toImport"></param>
@@ -281,7 +279,7 @@ public class ParameterManager
             //it does not already exist
             if (!ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Any(p =>
                     p.ParameterName.Equals(parameterToImport.ParameterName, StringComparison.CurrentCultureIgnoreCase)))
-                ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(parameterToImport); //import it 
+                ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(parameterToImport); //import it
         //Do not handle renaming here because it is likely the user doesn't even know this parameter exists as it is a tableinfo level one i.e. a default they declared when they first imported their table valued fuction (or there is a QueryLevel override anyway)
         toImport.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Clear();
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,9 +307,9 @@ public class ParameterManager
                 if (AreIdentical(existing, parameterToImport))
                     continue; //skip it
 
-                //it is different so we have to handle the conflict.  This could be because user has a filter @icdCode in 2 datasets with 2 different meanings and 2 different values 
+                //it is different so we have to handle the conflict.  This could be because user has a filter @icdCode in 2 datasets with 2 different meanings and 2 different values
 
-                //however! if we have a global override configured for this parameter 
+                //however! if we have a global override configured for this parameter
                 var overridingGlobal = GetOverrideIfAnyFor(existing);
 
                 //with the same declaration SQL then we can discard the parameter because all values are going to be replaced by the global anyway!
@@ -472,14 +470,12 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterLevel? GetLevelForParameter(ISqlParameter parameter)
     {
-        if (!ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter)))
-            return null;
-
-        return
-            ParametersFoundSoFarInQueryGeneration
+        return ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter))
+            ? ParametersFoundSoFarInQueryGeneration
                 //take the bottom most level it was found at
-                .OrderBy(kvp => kvp.Key)
-                .First(k => k.Value.Contains(parameter)).Key;
+                .OrderBy(static kvp => kvp.Key)
+                .First(k => k.Value.Contains(parameter)).Key
+            : null;
     }
 
     /// <summary>

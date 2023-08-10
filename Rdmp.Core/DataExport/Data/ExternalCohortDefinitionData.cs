@@ -50,13 +50,7 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public static DateTime? ObjectToNullableDateTime(object o)
-    {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return (DateTime)o;
-    }
+    public static DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
 
     /// <summary>
     /// Describes the lack of available external data for an <see cref="ExtractableCohort"/> because the data has

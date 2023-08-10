@@ -10,6 +10,7 @@ using Rdmp.Core.DataViewing;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Terminal.Gui;
 using Terminal.Gui.Graphs;
@@ -151,9 +152,8 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, minY, maxY);
-        graphView.MarginLeft =
-            (uint)Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length) + 1;
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, minY);
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY).Length, FormatValue(minY, minY).Length) + 1;
 
         var legend = GetLegend(dt, boundsWidth, boundsHeight);
 
@@ -233,7 +233,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // work out how to space x axis without scrolling
         graphView.AxisX.Increment = 10 * xIncrement;
         graphView.AxisX.ShowLabelsEvery = 1;
-        graphView.AxisX.LabelGetter = v => FormatValue(v.Value, min, max);
+        graphView.AxisX.LabelGetter = v => FormatValue(v.Value, min);
         graphView.AxisX.Text = countColumnName;
 
         graphView.AxisY.Increment = 1;
@@ -316,12 +316,12 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.Series.Add(barSeries);
         graphView.MarginBottom = 2;
-        graphView.MarginLeft = (uint)Math.Max(FormatValue(max, min, max).Length, FormatValue(min, min, max).Length) + 1;
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(max, min).Length, FormatValue(min, min).Length) + 1;
 
         // work out how to space x axis without scrolling
         graphView.AxisY.Increment = yIncrement * 5;
         graphView.AxisY.ShowLabelsEvery = 1;
-        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, min, max);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, min);
         graphView.AxisY.Text = countColumnName;
 
         graphView.AxisX.Increment = numberOfBars + 1;
@@ -330,20 +330,17 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.AxisX.Text = dt.Columns[0].ColumnName;
     }
 
-    private static string FormatValue(float val, float min, float max)
+    private static string FormatValue(float val, float min)
     {
-        if (val < min)
-            return "";
-
-        if (val > 1) return val.ToString("N0");
-
-        if (val >= 0.01f)
-            return val.ToString("N2");
-        if (val > 0.0001f)
-            return val.ToString("N4");
-        if (val > 0.000001f)
-            return val.ToString("N6");
-
-        return val.ToString();
+        return val < min
+            ? ""
+            : val switch
+            {
+                > 1 => val.ToString("N0"),
+                >= 0.01f => val.ToString("N2"),
+                > 0.0001f => val.ToString("N4"),
+                > 0.000001f => val.ToString("N6"),
+                _ => val.ToString(CultureInfo.InvariantCulture)
+            };
     }
 }

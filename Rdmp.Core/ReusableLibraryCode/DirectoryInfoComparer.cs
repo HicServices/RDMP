@@ -19,17 +19,10 @@ public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
     {
         if (ReferenceEquals(x, y))
             return true;
-        if (x == null || y == null)
-            return false;
-        return x.FullName == y.FullName;
+        return x != null && y != null && x.FullName == y.FullName;
     }
 
-    public int GetHashCode(DirectoryInfo obj)
-    {
-        if (obj == null)
-            return 0;
-        return obj.FullName.GetHashCode();
-    }
+    public int GetHashCode(DirectoryInfo obj) => obj.FullName.GetHashCode();
 }
 
 public static class DirectoryInfoExtensions

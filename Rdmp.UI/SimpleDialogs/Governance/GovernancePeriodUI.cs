@@ -28,7 +28,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance;
 /// provider.  This control lets you configure a period of governance (GovernancePeriod) which can be open ended (never expires).  You must then choose which datasets (Catalogues)
 /// the governance permission applies to.  Finally you can attach documents that prove the permission (See GovernanceDocumentUI).
 /// 
-/// <para>You should make sure you name and describe the governance period.  The name should correspond to the period.  For example you might have 3 periods 'Fife approvals 2001-2002', 
+/// <para>You should make sure you name and describe the governance period.  The name should correspond to the period.  For example you might have 3 periods 'Fife approvals 2001-2002',
 /// 'Fife approvals 2002-2003' and 'Fife open ended approvals 2003-Forever'.  </para>
 /// 
 /// <para>If you are doing yearly approvals you can import the dataset list from the last year as the basis of governanced datasets.</para>

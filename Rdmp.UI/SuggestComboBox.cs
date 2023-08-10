@@ -305,13 +305,9 @@ public class SuggestComboBox : ComboBox
 
     private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
 
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
-        // the keysstrokes of our interest should not be processed be base class:
-        if (_suggLb.Visible && KeysToHandle.Contains(keyData))
-            return true;
-        return base.ProcessCmdKey(ref msg, keyData);
-    }
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData) =>
+        // the keystrokes of interest should not be processed by base class:
+        (_suggLb.Visible && KeysToHandle.Contains(keyData)) || base.ProcessCmdKey(ref msg, keyData);
 
     #endregion
 }

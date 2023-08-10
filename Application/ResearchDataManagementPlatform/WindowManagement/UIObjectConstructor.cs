@@ -13,7 +13,7 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// <summary>
 /// Provides UI specific helpful overloads to ObjectConstructor (which is defined in a data class)
 /// </summary>
-public class UIObjectConstructor : ObjectConstructor
+public sealed class UIObjectConstructor : ObjectConstructor
 {
     public static object Construct(Type t, IActivateItems itemActivator, bool allowBlankConstructors = true) =>
         ObjectConstructor.Construct(t, itemActivator, allowBlankConstructors);

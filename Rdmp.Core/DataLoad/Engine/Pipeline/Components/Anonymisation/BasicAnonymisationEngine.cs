@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 /// </summary>
 public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
-    private bool _bInitialized = false;
+    private bool _bInitialized;
 
     private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
     private IdentifierDumper _dumper;
@@ -84,7 +84,7 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
         //Dump Identifiers
         stopwatch_TimeSpentDumping.Start();
         _dumper.DumpAllIdentifiersInTable(
-            toProcess); //do the dumping of all the rest of the columns (those that must disapear from pipeline as opposed to those above which were substituted for ANO versions)
+            toProcess); //do the dumping of all the rest of the columns (those that must disappear from pipeline as opposed to those above which were substituted for ANO versions)
         stopwatch_TimeSpentDumping.Stop();
 
         if (_dumper.HaveDumpedRecords)
@@ -94,13 +94,13 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
                     stopwatch_TimeSpentDumping.Elapsed)); //time taken to dump identifiers
 
         //Process ANO Identifier Substitutions
-        //for each column with an ANOTrasformer
+        //for each column with an ANOTransformer
         foreach (var (column, transformer) in columnsToAnonymise)
         {
             didAno = true;
 
             //add an ANO version
-            var ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);
+            var ANOColumn = new DataColumn($"{ANOTable.ANOPrefix}{column}");
             toProcess.Columns.Add(ANOColumn);
 
             //populate ANO version

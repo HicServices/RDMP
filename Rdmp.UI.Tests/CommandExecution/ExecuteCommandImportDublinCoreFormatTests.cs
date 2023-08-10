@@ -15,7 +15,7 @@ namespace Rdmp.UI.Tests.CommandExecution;
 internal class ExecuteCommandImportDublinCoreFormatTests
 {
     /// <summary>
-    /// This test also appears in the Rdmp.Tests project since it behaves differently in different runtime. 
+    /// This test also appears in the Rdmp.Tests project since it behaves differently in different runtime.
     /// </summary>
     [Test]
     public void Test_DublinCore_WriteReadFile_Net461()
@@ -40,11 +40,9 @@ internal class ExecuteCommandImportDublinCoreFormatTests
             def1.WriteXml(outStream);
         }
 
-        using (var inStream = fi.OpenRead())
-        {
-            var def2 = new DublinCoreDefinition();
-            var doc = XDocument.Load(inStream);
-            def2.LoadFrom(doc.Root);
-        }
+        using var inStream = fi.OpenRead();
+        var def2 = new DublinCoreDefinition();
+        var doc = XDocument.Load(inStream);
+        def2.LoadFrom(doc.Root);
     }
 }

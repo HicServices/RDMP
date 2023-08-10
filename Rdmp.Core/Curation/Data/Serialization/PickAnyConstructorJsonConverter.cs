@@ -21,7 +21,6 @@ namespace Rdmp.Core.Curation.Data.Serialization;
 public class PickAnyConstructorJsonConverter : JsonConverter
 {
     private readonly object[] _constructorObjects;
-    private ObjectConstructor _objectConstructor;
 
     /// <summary>
     /// Creates a JSON deserializer that can use any constructors on the class which match <paramref name="constructorObjects"/>
@@ -30,7 +29,6 @@ public class PickAnyConstructorJsonConverter : JsonConverter
     public PickAnyConstructorJsonConverter(params object[] constructorObjects)
     {
         _constructorObjects = constructorObjects;
-        _objectConstructor = new ObjectConstructor();
     }
 
     /// <summary>
@@ -50,7 +48,7 @@ public class PickAnyConstructorJsonConverter : JsonConverter
     }
 
     /// <summary>
-    /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/> 
+    /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/>
     /// whitch matches the parameters provided to <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
     /// 
     /// <para>If the <paramref name="objectType"/> is <see cref="IPickAnyConstructorFinishedCallback"/> then <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/>
@@ -69,8 +67,8 @@ public class PickAnyConstructorJsonConverter : JsonConverter
 
         serializer.Populate(reader, instance);
 
-        var callback = instance as IPickAnyConstructorFinishedCallback;
-        callback?.AfterConstruction();
+        if (instance is IPickAnyConstructorFinishedCallback callback)
+            callback.AfterConstruction();
 
         return instance;
     }
@@ -93,11 +91,10 @@ public class PickAnyConstructorJsonConverter : JsonConverter
         if (constructors.Count == 0)
             return false;
 
-        if (constructors.Count == 1)
-            return true;
-
-        throw new ObjectLacksCompatibleConstructorException(
-            $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
+        return constructors.Count == 1
+            ? true
+            : throw new ObjectLacksCompatibleConstructorException(
+                $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 
     private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType) =>

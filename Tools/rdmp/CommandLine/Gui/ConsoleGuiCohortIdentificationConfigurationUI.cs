@@ -179,10 +179,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
         if (col < 0 || row < 0)
             return false;
 
-        if (col > tableview1.Table.Columns.Count || row > tableview1.Table.Rows.Count)
-            return false;
-
-        return true;
+        return col <= tableview1.Table.Columns.Count && row <= tableview1.Table.Rows.Count;
     }
 
     protected override void Dispose(bool disposing)

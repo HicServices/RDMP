@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -27,8 +26,8 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering;
 /// </summary>
 public class GatheredObject : IHasDependencies, IMasqueradeAs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; set; }
-    public List<GatheredObject> Children { get; private set; }
+    public IMapsDirectlyToDatabaseTable Object { get; }
+    public List<GatheredObject> Children { get; }
 
     public GatheredObject(IMapsDirectlyToDatabaseTable o)
     {
@@ -81,8 +80,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
             var attribute = relationshipFinder.GetAttribute(property);
 
             //if it's a relationship to a shared object
-            if (attribute != null && (attribute.Type == RelationshipType.SharedObject ||
-                                      attribute.Type == RelationshipType.OptionalSharedObject))
+            if (attribute is { Type: RelationshipType.SharedObject or RelationshipType.OptionalSharedObject })
             {
                 var idOfParent = property.GetValue(Object);
                 var typeOfParent = attribute.Cref;
@@ -151,7 +149,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         return Equals((GatheredObject)obj);
     }
 
-    public override int GetHashCode() => Object != null ? Object.GetHashCode() : 0;
+    public override int GetHashCode() => HashCode.Combine(Object);
 
     public object MasqueradingAs() => Object;
 

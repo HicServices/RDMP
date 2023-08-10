@@ -88,23 +88,16 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         GetAllObjects<CumulativeExtractionResults>(
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
 
-    private readonly ObjectConstructor _constructor = new();
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
-    {
-        if (Constructors.TryGetValue(t, out var constructor))
-            return constructor(this, reader);
-
-        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
-    }
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
+        Constructors.TryGetValue(t, out var constructor)
+            ? constructor(this, reader)
+            : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
 
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
-        if (eds == null)
-            return new CatalogueExtractabilityStatus(false, false);
-
-        return eds.GetCatalogueExtractabilityStatus();
+        return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
@@ -136,10 +129,9 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {
         //we know of no children
-        if (!_packageContentsDictionary.Value.ContainsKey(package.ID))
-            return Array.Empty<ExtractableDataSet>();
-
-        return _packageContentsDictionary.Value[package.ID].Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
+        return !_packageContentsDictionary.Value.TryGetValue(package.ID, out var contents)
+            ? Array.Empty<IExtractableDataSet>()
+            : contents.Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
     }
 
 
@@ -172,8 +164,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     }
 
     /// <summary>
-    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
+    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents
+    /// in memory.
     /// 
     /// <para>This change is immediately written to the database</para>
     ///
@@ -191,7 +183,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
         }
         else
         {
-            _packageContentsDictionary.Value.Add(package.ID, contents = new List<int>());
+            _packageContentsDictionary.Value.Add(package.ID, new List<int>());
         }
 
         using (var con = GetConnection())
@@ -201,13 +193,13 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
                 con).ExecuteNonQuery();
         }
 
-        contents.Add(dataSet.ID);
+        _packageContentsDictionary.Value[package.ID].Add(dataSet.ID);
     }
 
 
     /// <summary>
-    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
+    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents
+    /// in memory.
     /// 
     /// <para>This change is immediately written to the database</para>
     ///

@@ -17,7 +17,7 @@ namespace Rdmp.Core.Repositories.Construction;
 
 /// <summary>
 /// Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable Constructor on a class Type based on the
-/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'heres a TableInfo, construct class X with the TableInfo paramter or if
+/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'here's a TableInfo, construct class X with the TableInfo parameter or if
 /// it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.  If there are multiple matching constructors
 /// it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
 /// 
@@ -25,7 +25,7 @@ namespace Rdmp.Core.Repositories.Construction;
 /// </summary>
 public class ObjectConstructor
 {
-    private static readonly BindingFlags BindingFlags =
+    private const BindingFlags TargetBindingFlags =
         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
     /// <summary>
@@ -115,18 +115,16 @@ public class ObjectConstructor
     private static List<ConstructorInfo> GetConstructors<T>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
-        ConstructorInfo exactMatch = null;
 
-        foreach (var constructor in type.GetConstructors(BindingFlags))
+        foreach (var constructor in type.GetConstructors(TargetBindingFlags))
         {
             var p = constructor.GetParameters();
 
             switch (p.Length)
             {
                 //is it an exact match i.e. ctor(T bob)
-                case 1 when p[0].ParameterType == typeof(T):
-                    exactMatch = constructor;
-                    break;
+                case 1 when p[0].ParameterType == typeof(T): // Exact match found
+                    return new List<ConstructorInfo>(new[] { constructor });
                 case 1:
                 {
                     if (p[0].ParameterType
@@ -138,7 +136,7 @@ public class ObjectConstructor
             }
         }
 
-        return exactMatch != null ? new List<ConstructorInfo>(new[] { exactMatch }) : toReturn;
+        return toReturn;
     }
 
 
@@ -152,22 +150,24 @@ public class ObjectConstructor
     private static List<ConstructorInfo> GetConstructors<T, T2>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
-        ConstructorInfo exactMatch = null;
 
-        foreach (var constructor in type.GetConstructors(BindingFlags))
+        foreach (var constructor in type.GetConstructors(TargetBindingFlags))
         {
             var p = constructor.GetParameters();
 
-            if (p.Length == 2)
-                if (p[0].ParameterType == typeof(T) && p[1].ParameterType == typeof(T2))
-                    exactMatch = constructor;
-                else if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
-                         p[1].ParameterType.IsAssignableFrom(typeof(T2)))
-                    toReturn.Add(constructor);
+            switch (p.Length)
+            {
+                case 2 when p[0].ParameterType == typeof(T) && p[1].ParameterType == typeof(T2): // Exact match found
+                    return new List<ConstructorInfo>(new[] { constructor });
+                case 2:
+                {
+                    if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
+                        p[1].ParameterType.IsAssignableFrom(typeof(T2)))
+                        toReturn.Add(constructor);
+                    break;
+                }
+            }
         }
-
-        if (exactMatch != null)
-            return new List<ConstructorInfo>(new[] { exactMatch });
 
         return toReturn;
     }
@@ -186,7 +186,7 @@ public class ObjectConstructor
     {
         var toReturn = new Dictionary<ConstructorInfo, List<object>>();
 
-        foreach (var constructor in type.GetConstructors(BindingFlags))
+        foreach (var constructor in type.GetConstructors(TargetBindingFlags))
         {
             if (constructor.IsPrivate && !allowPrivate)
                 continue;
@@ -196,9 +196,7 @@ public class ObjectConstructor
             //if it is a blank constructor
             if (!p.Any())
             {
-                if (!allowBlankConstructor) //if we do not allow blank constructors ignore it
-                    continue;
-                else
+                if (allowBlankConstructor) //if we do not allow blank constructors ignore it
                     toReturn.Add(constructor,
                         new List<object>()); //otherwise add it to the return list with no objects for invoking (because it's blank duh!)
             }
@@ -250,15 +248,14 @@ public class ObjectConstructor
             //look for an assignable one instead
             matches = parameterObjects.Where(parameterType.IsInstanceOfType).ToArray();
 
-        //if there is one exact match on Type, use that to hydrate it
-        if (matches.Length == 1)
-            return matches[0];
-
-        if (matches.Length == 0)
-            return null;
-
-        throw new ObjectLacksCompatibleConstructorException(
-            $"Could not pick a suitable parameterObject for populating {parameterType} (found {matches.Length} compatible parameter objects)");
+        return matches.Length switch
+        {
+            //if there is one exact match on Type, use that to hydrate it
+            1 => matches[0],
+            0 => null,
+            _ => throw new ObjectLacksCompatibleConstructorException(
+                $"Could not pick a suitable parameterObject for populating {parameterType} (found {matches.Length} compatible parameter objects)")
+        };
     }
 
     private static object InvokeBestConstructor(List<ConstructorInfo> constructors, params object[] parameters)
@@ -268,11 +265,10 @@ public class ObjectConstructor
 
         var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute)))
             .ToArray();
-        if (importDecorated.Length == 1)
-            return importDecorated[0].Invoke(parameters);
-
-        throw new ObjectLacksCompatibleConstructorException(
-            $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
+        return importDecorated.Length == 1
+            ? importDecorated[0].Invoke(parameters)
+            : throw new ObjectLacksCompatibleConstructorException(
+                $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
     }
 
     private static object GetUsingBlankConstructor(Type t)
@@ -282,13 +278,6 @@ public class ObjectConstructor
                                    $"Type '{t}' did not contain a blank constructor");
         return blankConstructor.Invoke(Array.Empty<object>());
     }
-
-    /// <summary>
-    /// Returns true if the Type has a blank constructor
-    /// </summary>
-    /// <param name="arg"></param>
-    /// <returns></returns>
-    public static bool HasBlankConstructor(Type arg) => arg.GetConstructor(Type.EmptyTypes) != null;
 
     /// <summary>
     /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
@@ -305,7 +294,7 @@ public class ObjectConstructor
     {
         var compatible = new List<ConstructorInfo>();
 
-        foreach (var constructor in typeToConstruct.GetConstructors(BindingFlags))
+        foreach (var constructor in typeToConstruct.GetConstructors(TargetBindingFlags))
         {
             var p = constructor.GetParameters();
 
@@ -332,10 +321,7 @@ public class ObjectConstructor
                 compatible.Add(constructor);
         }
 
-        if (compatible.Any())
-            return InvokeBestConstructor(compatible, constructorValues);
-
-        return null;
+        return compatible.Any() ? InvokeBestConstructor(compatible, constructorValues) : null;
     }
 
     /// <summary>
@@ -346,32 +332,16 @@ public class ObjectConstructor
     /// <returns></returns>
     public static ConstructorInfo GetRepositoryConstructor(Type type)
     {
-        var compatible = new List<ConstructorInfo>();
+        var compatible = type.GetConstructors()
+            .Select(constructorInfo => new { constructorInfo, parameters = constructorInfo.GetParameters() })
+            .Where(@t => @t.parameters.All(p => p.GetType() != typeof(ShareManager)))
+            .Where(@t => @t.parameters.All(p => p.GetType() != typeof(DbDataReader)))
+            .Where(@t => @t.parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
+            .Select(@t => @t.constructorInfo).ToList();
 
-        foreach (var constructorInfo in type.GetConstructors())
-        {
-            var parameters = constructorInfo.GetParameters();
-
-            //don't use this constructor
-            if (parameters.Any(p => p.GetType() == typeof(ShareManager)))
-                continue;
-
-            //this is for fetching existing instances
-            if (parameters.Any(p => p.GetType() == typeof(DbDataReader)))
-                continue;
-
-            //at least one parameter must be an IRepository
-            if (!parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
-                continue;
-
-            //yay it's compatible
-            compatible.Add(constructorInfo);
-        }
-
-        if (compatible.Count == 1)
-            return compatible.Single();
-
-        throw new ObjectLacksCompatibleConstructorException(
-            $"No best constructor found for Type {type} (found {compatible.Count})");
+        return compatible.Count == 1
+            ? compatible.Single()
+            : throw new ObjectLacksCompatibleConstructorException(
+                $"No best constructor found for Type {type} (found {compatible.Count})");
     }
 }

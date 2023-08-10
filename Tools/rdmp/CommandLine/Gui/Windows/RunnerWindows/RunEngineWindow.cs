@@ -45,19 +45,19 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
         var check = new Button("_Check") { X = 0 };
-        check.Clicked += () => Check();
+        check.Clicked += Check;
         Add(check);
 
         var execute = new Button("_Execute") { X = Pos.Right(check) };
-        execute.Clicked += () => Execute();
+        execute.Clicked += Execute;
         Add(execute);
 
         var clear = new Button("C_lear Output") { X = Pos.Right(execute) };
-        clear.Clicked += () => ClearOutput();
+        clear.Clicked += ClearOutput;
         Add(clear);
 
         var abort = new Button("A_bort") { X = Pos.Right(clear) };
-        abort.Clicked += () => Abort();
+        abort.Clicked += Abort;
         Add(abort);
 
         var close = new Button("Cl_ose") { X = Pos.Right(abort) };

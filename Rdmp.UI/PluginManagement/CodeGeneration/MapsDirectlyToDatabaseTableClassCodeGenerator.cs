@@ -30,7 +30,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
             throw new CodeGenerationException(
-                "Table must have an ID automnum column to become an IMapsDirectlyToDatabaseTable class");
+                "Table must have an ID autonum column to become an IMapsDirectlyToDatabaseTable class");
 
         var classStart = new StringBuilder();
 
@@ -74,7 +74,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
             var propertyName = col.GetRuntimeName();
             var fieldString = col.GetRuntimeName();
 
-            //cammel case it
+            //camel case it
             fieldString = $"_{fieldString[..1].ToLower()}{fieldString[1..]}";
 
             databaseFields.AppendLine($"\tprivate {type} {fieldString};");
@@ -109,7 +109,6 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
         if (col.DataType.GetLengthIfString() != -1)
         {
             setCode = col.AllowNulls ? $"{r} as string;" : $"{r}.ToString();";
-
             return "string";
         }
 

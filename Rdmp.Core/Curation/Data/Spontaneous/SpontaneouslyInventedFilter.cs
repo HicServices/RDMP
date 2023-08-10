@@ -64,16 +64,9 @@ public class SpontaneouslyInventedFilter : ConcreteFilter
     public override int? FilterContainer_ID { get; set; }
     public override ISqlParameter[] GetAllParameters() => _filterParametersIfAny ?? Array.Empty<ISqlParameter>();
 
-    public override IContainer FilterContainer
-    {
-        get
-        {
-            if (FilterContainer_ID.HasValue)
-                return _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value);
-
-            return null;
-        }
-    }
+    public override IContainer FilterContainer => FilterContainer_ID.HasValue
+        ? _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value)
+        : null;
 
     public override ColumnInfo GetColumnInfoIfExists() => null;
 

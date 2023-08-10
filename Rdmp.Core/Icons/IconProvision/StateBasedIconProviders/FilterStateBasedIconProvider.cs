@@ -13,32 +13,18 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly Image<Rgba32> _basicIcon;
-    private readonly IconOverlayProvider _overlayProvider;
-
-    public FilterStateBasedIconProvider(IconOverlayProvider overlayProvider)
-    {
-        _basicIcon = Image.Load<Rgba32>(CatalogueIcons.Filter);
-        _overlayProvider = overlayProvider;
-    }
+    private static readonly Image<Rgba32> BasicIcon = Image.Load<Rgba32>(CatalogueIcons.Filter);
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is ExtractionFilter f)
-        {
-            // has known parameter values?
-            if (f.ExtractionFilterParameterSets.Any())
-                return _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Parameter);
-
+        if (o is not ExtractionFilter f) return CatalogueIconProvider.ConceptIs(typeof(IFilter), o) ? BasicIcon : null;
+        // has known parameter values?
+        return f.ExtractionFilterParameterSets.Any()
+            ? IconOverlayProvider.GetOverlay(BasicIcon, OverlayKind.Parameter)
+            :
             // just a regular filter then
-            return _basicIcon;
-        }
-
-        if (CatalogueIconProvider.ConceptIs(typeof(IFilter), o))
-            return _basicIcon;
-
-        return null;
+            BasicIcon;
     }
 }

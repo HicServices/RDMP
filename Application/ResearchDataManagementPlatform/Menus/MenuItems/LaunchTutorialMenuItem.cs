@@ -17,7 +17,6 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems;
 [System.ComponentModel.DesignerCategory("")]
 public class LaunchTutorialMenuItem : ToolStripMenuItem
 {
-    private IActivateItems _activator;
     private readonly Tutorial _tutorial;
     private readonly TutorialTracker _tracker;
 
@@ -25,7 +24,6 @@ public class LaunchTutorialMenuItem : ToolStripMenuItem
         TutorialTracker tracker)
     {
         parent.DropDownOpening += parent_DropDownOpening;
-        _activator = activator;
         _tutorial = tutorial;
         _tracker = tracker;
 

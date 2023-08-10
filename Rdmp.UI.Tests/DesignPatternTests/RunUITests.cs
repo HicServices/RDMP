@@ -18,7 +18,6 @@ using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests;
@@ -82,7 +81,6 @@ public class RunUITests : DatabaseTests
     {
         var uiTests = new UITests();
         var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
-        activator.RepositoryLocator.CatalogueRepository.MEF = CatalogueRepository.MEF;
 
         allowedToBeIncompatible.AddRange(activator.GetIgnoredCommands());
 
@@ -90,7 +88,7 @@ public class RunUITests : DatabaseTests
 
         Assert.IsTrue(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
 
-        var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+        var notSupported = MEF.GetAllTypes()
             .Where(t => typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract &&
                         !t.IsInterface) //must be something we would normally expect to be a supported Type
             .Except(allowedToBeIncompatible) //and isn't a permissible one
@@ -105,7 +103,7 @@ public class RunUITests : DatabaseTests
     [Test]
     public void Test_IsSupported_BasicActivator()
     {
-        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
+        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
 
         var commandCaller = new CommandInvoker(basic);
         foreach (var t in new[]

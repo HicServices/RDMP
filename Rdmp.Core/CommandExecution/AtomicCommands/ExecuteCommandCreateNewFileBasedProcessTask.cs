@@ -22,7 +22,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
     private readonly ProcessTaskType _taskType;
     private readonly LoadMetadata _loadMetadata;
     private readonly LoadStage _loadStage;
-    private LoadDirectory _LoadDirectory;
+    private readonly LoadDirectory _loadDirectory;
     private FileInfo _file;
 
     public ExecuteCommandCreateNewFileBasedProcessTask(IBasicActivateItems activator, ProcessTaskType taskType,
@@ -34,14 +34,14 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         try
         {
-            _LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
+            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
         }
         catch (Exception)
         {
             SetImpossible("Could not construct LoadDirectory");
         }
 
-        if (!(taskType == ProcessTaskType.SQLFile || taskType == ProcessTaskType.Executable))
+        if (taskType is not (ProcessTaskType.SQLFile or ProcessTaskType.Executable))
             SetImpossible("Only SQLFile and Executable task types are supported by this command");
 
         if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
@@ -61,7 +61,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                 if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
                         out var selected, false))
                 {
-                    var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, selected);
+                    var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
 
                     if (!target.EndsWith(".sql"))
                         target += ".sql";
@@ -113,25 +113,22 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        switch (_taskType)
+        return _taskType switch
         {
-            case ProcessTaskType.Executable:
-                return "Add Run .exe File Task";
-            case ProcessTaskType.SQLFile:
-                return "Add Run SQL Script Task";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ProcessTaskType.Executable => "Add Run .exe File Task",
+            ProcessTaskType.SQLFile => "Add Run SQL Script Task",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        if (_taskType == ProcessTaskType.SQLFile)
-            return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
-
-        if (_taskType == ProcessTaskType.Executable)
-            return new IconOverlayProvider().GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add);
-
-        return null;
+        return _taskType switch
+        {
+            ProcessTaskType.SQLFile => iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add),
+            ProcessTaskType.Executable => IconOverlayProvider.GetOverlayNoCache(
+                Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add),
+            _ => null
+        };
     }
 }

@@ -57,8 +57,8 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
                 {
                     EntryLabel = "Name",
                     TaskDescription =
-                        "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
-                    WindowTitle = "Add Paramater"
+                        "A name is required for the parameter.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
+                    WindowTitle = "Add Parameter"
                 }, 99, "@myVariable", out var name, false))
                 // user did type a name
                 n = name;

@@ -19,17 +19,17 @@ namespace Rdmp.Core.DataExport.DataExtraction;
 /// Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset (linked to the project cohort).  The input
 /// to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing records out to the ExtractionDirectory.
 /// </summary>
-public class ExtractionTimeTimeCoverageAggregator
+public partial class ExtractionTimeTimeCoverageAggregator
 {
     public int countOfBrokenDates { get; private set; }
     public int countOfNullsSeen { get; private set; }
     public Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket> Buckets { get; private set; }
 
     private readonly ICatalogue _catalogue;
-    private string _expectedTimeFieldInOutputBuffer = null;
-    private string _expectedExtractionIdentifierInOutputBuffer = null;
+    private string _expectedTimeFieldInOutputBuffer;
+    private string _expectedExtractionIdentifierInOutputBuffer;
 
-    private bool haveCheckedTimeFieldExists = false;
+    private bool haveCheckedTimeFieldExists;
 
 
     private const ExtractionTimeTimeCoverageAggregatorBucket.BucketSize BucketSize =
@@ -70,7 +70,7 @@ public class ExtractionTimeTimeCoverageAggregator
         if (!haveCheckedTimeFieldExists)
             if (!row.Table.Columns.Contains(_expectedTimeFieldInOutputBuffer))
                 throw new MissingFieldException(
-                    $"Catalogue {_catalogue.Name} specifies that the time periodicity field of the dataset is called {_expectedTimeFieldInOutputBuffer} but the pipeline did not contain a field with this name, the fileds in the pipeline are ({string.Join(",", row.Table.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})");
+                    $"Catalogue {_catalogue.Name} specifies that the time periodicity field of the dataset is called {_expectedTimeFieldInOutputBuffer} but the pipeline did not contain a field with this name, the fields in the pipeline are ({string.Join(",", row.Table.Columns.Cast<DataColumn>().Select(c => c.ColumnName))})");
             else
                 haveCheckedTimeFieldExists = true;
 
@@ -117,7 +117,7 @@ public class ExtractionTimeTimeCoverageAggregator
                 var valueAsString = s;
 
                 //trim off times
-                if (Regex.IsMatch(valueAsString, "[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
+                if (TimeRegex().IsMatch(valueAsString))
                     valueAsString = valueAsString[..^"00:00:00".Length].Trim();
 
                 key = DateTime.ParseExact(valueAsString, "dd/MM/yyyy", null);
@@ -193,7 +193,7 @@ public class ExtractionTimeTimeCoverageAggregator
         else
         {
             throw new Exception(
-                $"Could not work out how to extend agregation buckets where dictionary of datetimes had a max of {Buckets.Keys.Max()} and a min of{Buckets.Keys.Min()} which could not be extended in either direction to encompas{key}");
+                $"Could not work out how to extend aggregation buckets where dictionary of datetimes had a max of {Buckets.Keys.Max()} and a min of{Buckets.Keys.Min()} which could not be extended in either direction to encompass {key}");
         }
 
         if (addCount == somethingHasGoneWrongIfAddedThisManyBuckets)
@@ -202,10 +202,9 @@ public class ExtractionTimeTimeCoverageAggregator
 
     public static bool HasColumn(DbDataReader Reader, string ColumnName)
     {
-        foreach (DataRow row in Reader.GetSchemaTable().Rows)
-            if (row["ColumnName"].ToString() == ColumnName)
-                return true; //Still here? Column not found.
-
-        return false;
+        return Reader.GetSchemaTable().Rows.Cast<DataRow>().Any(row => row["ColumnName"].ToString() == ColumnName);
     }
+
+    [GeneratedRegex("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]")]
+    private static partial Regex TimeRegex();
 }

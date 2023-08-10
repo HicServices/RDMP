@@ -279,13 +279,8 @@ public class TestDataAccess : DatabaseTests
             Password = password;
         }
 
-        public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-        {
-            if (Username != null)
-                return this;
-
-            return null;
-        }
+        public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+            Username != null ? this : (IDataAccessCredentials)null;
 
 
         public string GetDecryptedPassword() => Password ?? "";

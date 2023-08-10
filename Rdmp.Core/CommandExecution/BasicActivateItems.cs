@@ -100,14 +100,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
         });
 
     /// <inheritdoc/>
-    public bool Confirm(DialogArgs args)
-    {
+    public bool Confirm(DialogArgs args) =>
         // auto confirm if not in user interactive mode
-        if (!IsInteractive)
-            return true;
-
-        return YesNo(args);
-    }
+        !IsInteractive || YesNo(args);
 
     /// <inheritdoc/>
     public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
@@ -181,15 +176,9 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     private void ConstructPluginChildProviders()
     {
-        // if startup has not taken place then we won't have any plugins
-        if (RepositoryLocator.CatalogueRepository.MEF == null)
-            return;
-
         PluginUserInterfaces = new List<IPluginUserInterface>();
 
-        var constructor = new ObjectConstructor();
-
-        foreach (var pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
+        foreach (var pluginType in MEF.GetTypes<IPluginUserInterface>())
             try
             {
                 PluginUserInterfaces.Add((IPluginUserInterface)ObjectConstructor.Construct(pluginType, this, false));
@@ -290,7 +279,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         out Type chosen)
     {
         var available =
-            RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+            MEF.GetAllTypes()
                 .Where(t =>
                     (baseTypeIfAny == null || baseTypeIfAny.IsAssignableFrom(t)) &&
                     (allowAbstract || !t.IsAbstract) &&
@@ -387,63 +376,65 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         var databaseObject = deleteable as DatabaseEntity;
 
-        //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-
-        if (databaseObject is Catalogue c)
-            if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
-            {
-                if (YesNo(
-                        "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
-                        "Make Non Extractable"))
-                {
-                    var cmd = new ExecuteCommandChangeExtractability(this, c);
-                    cmd.Execute();
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-        if (databaseObject is ExtractionFilter f)
+        switch (databaseObject)
         {
-            var children = f.ExtractionFilterParameterSets;
-
-            if (children.Any())
+            case Catalogue c:
             {
-                if (!YesNo(
-                        $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
-                        "Delete"))
-                    return false;
+                if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                {
+                    if (YesNo(
+                            "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
+                            "Make Non Extractable"))
+                    {
+                        var cmd = new ExecuteCommandChangeExtractability(this, c);
+                        cmd.Execute();
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
 
-                foreach (var child in children) child.DeleteInDatabase();
+                break;
+            }
+            case ExtractionFilter f:
+            {
+                var children = f.ExtractionFilterParameterSets;
 
-                f.ClearAllInjections();
+                if (children.Any())
+                {
+                    if (!YesNo(
+                            $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
+                            "Delete"))
+                        return false;
 
-                f.DeleteInDatabase();
-                return true;
+                    foreach (var child in children) child.DeleteInDatabase();
+
+                    f.ClearAllInjections();
+
+                    f.DeleteInDatabase();
+                    return true;
+                }
+
+                break;
+            }
+            case AggregateConfiguration ac when ac.IsJoinablePatientIndexTable():
+            {
+                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
+                if (users != null)
+                {
+                    users = users.ToArray();
+                    if (users.Any())
+                    {
+                        Show(
+                            $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
+                        return false;
+                    }
+                }
+
+                break;
             }
         }
-
-        if (databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
-        {
-            var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
-            if (users != null)
-            {
-                users = users.ToArray();
-                if (users.Any())
-                {
-                    Show(
-                        $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
-                    return false;
-                }
-            }
-        }
-
-        string overrideConfirmationText = null;
-
-        if (deleteable is IDeletableWithCustomMessage customMessageDeletable)
-            overrideConfirmationText = $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?";
 
         //it has already been deleted before
         if (databaseObject != null && !databaseObject.Exists())
@@ -467,10 +458,14 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     return false;
         }
 
+        var overrideConfirmationText =
+            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
+            deleteable is IDeletableWithCustomMessage customMessageDeletable
+                ? $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?"
+                : $"Are you sure you want to delete '{deleteable}'?{Environment.NewLine}({deleteable.GetType().Name}{idText})";
         if (
             YesNo(
-                overrideConfirmationText ??
-                $"{"Are you sure you want to delete '" + deleteable + "'?"}{Environment.NewLine}({deleteable.GetType().Name}{idText})",
+                overrideConfirmationText,
                 $"Delete {deleteable.GetType().Name}"))
         {
             deleteable.DeleteInDatabase();
@@ -482,13 +477,13 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
-            if (deleteable is IMasqueradeAs @as)
-                databaseObject ??= @as.MasqueradingAs() as DatabaseEntity;
+            if (deleteable is IMasqueradeAs masqueradeAs)
+                databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
 
-            if (databaseObject == null)
-                throw new NotSupportedException(
-                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)");
-            return true;
+            return databaseObject == null
+                ? throw new NotSupportedException(
+                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
+                : true;
         }
 
         return false;
@@ -648,7 +643,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         var projectNumber = project?.ProjectNumber;
 
         if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
-            throw new Exception("User chose not to enter a name for the cohortand none was provided");
+            throw new Exception("User chose not to enter a name for the cohort and none was provided");
 
 
         if (projectNumber == null)

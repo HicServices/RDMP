@@ -91,11 +91,15 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Catalogue cata)
-            SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
-
-        if (target is ExtractionInformation ei)
-            SetExtractionIdentifierColumn(ei);
+        switch (target)
+        {
+            case Catalogue cata:
+                SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
+                break;
+            case ExtractionInformation ei:
+                SetExtractionIdentifierColumn(ei);
+                break;
+        }
 
         return base.SetTarget(target);
     }
@@ -136,7 +140,6 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
         base.Execute();
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request =
             GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
 
@@ -146,7 +149,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
         request.ExtractionIdentifierColumn = _extractionIdentifierColumn;
         var configureAndExecute = GetConfigureAndExecuteControl(request,
-            $"Import column {_extractionIdentifierColumn} as cohort and commmit results", _extractionIdentifierColumn);
+            $"Import column {_extractionIdentifierColumn} as cohort and commit results", _extractionIdentifierColumn);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

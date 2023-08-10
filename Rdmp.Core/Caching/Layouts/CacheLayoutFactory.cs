@@ -17,7 +17,7 @@ namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
 /// Creates <see cref="ICacheLayout"/> instances based on the <see cref="ICachedDataProvider"/>s declared in the load <see cref="ILoadMetadata"/>.  There
-/// can be multiple <see cref="ILoadProgress"/> in a load (e.g. Tayside / Fife) so you will also need to provide which <see cref="ILoadProgress"/> you are 
+/// can be multiple <see cref="ILoadProgress"/> in a load (e.g. Tayside / Fife) so you will also need to provide which <see cref="ILoadProgress"/> you are
 /// trying to execute.
 /// </summary>
 public class CacheLayoutFactory
@@ -29,7 +29,7 @@ public class CacheLayoutFactory
         var cp = loadProgress.CacheProgress;
 
         var factory = new CachingPipelineUseCase(cp);
-        var destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
+        var destination = factory.CreateDestinationOnly(ThrowImmediatelyDataLoadEventListener.Quiet);
 
         return destination.CreateCacheLayout();
     }
@@ -51,7 +51,7 @@ public class CacheLayoutFactory
                 continue;
 
 
-            var type = task.CatalogueRepository.MEF.GetType(task.Path);
+            var type = Repositories.MEF.GetType(task.Path);
 
             if (typeof(ICachedDataProvider).IsAssignableFrom(type))
                 compatibleProviders.Add(task);

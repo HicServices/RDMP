@@ -14,13 +14,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomicCommand
 {
-    private CohortAggregateContainer _container;
+    private readonly CohortAggregateContainer _container;
 
     public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container) :
         base(activator)
     {
         Weight = 0.12f;
-
         _container = container;
 
         if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);

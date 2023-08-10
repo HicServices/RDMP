@@ -49,8 +49,8 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 public class AtomicCommandFactory : CommandFactoryBase
 {
-    private IBasicActivateItems _activator;
-    private GoToCommandFactory _goto;
+    private readonly IBasicActivateItems _activator;
+    private readonly GoToCommandFactory _goto;
     public const string Add = "Add";
     public const string Batching = "Batching";
     public const string New = "New";
@@ -130,13 +130,12 @@ public class AtomicCommandFactory : CommandFactoryBase
                     SuggestedCategory = Extraction
                 };
 
-                if (c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
-                    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
+                yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
+                    ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
                     {
                         Weight = -99.0009f, SuggestedCategory = Extraction
-                    };
-                else
-                    yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
+                    }
+                    : new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
                     {
                         Weight = -99.0009f, SuggestedCategory = Extraction
                     };
@@ -265,16 +264,14 @@ public class AtomicCommandFactory : CommandFactoryBase
             {
                 yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
 
-                if (_activator.RepositoryLocator.CatalogueRepository
+                yield return _activator.RepositoryLocator.CatalogueRepository
                     .GetExtendedProperties(ExtendedProperty.IsTemplate, ac)
-                    .Any(v => v.Value.Equals("true")))
-                    yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac },
-                        ExtendedProperty.IsTemplate, null)
+                    .Any(v => v.Value.Equals("true"))
+                    ? new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
                     {
                         OverrideCommandName = "Make Non Template"
-                    };
-                else
-                    yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac },
+                    }
+                    : (IAtomicCommand)new ExecuteCommandSetExtendedProperty(_activator, new[] { ac },
                         ExtendedProperty.IsTemplate, "true")
                     {
                         OverrideCommandName = "Make Reusable Template"
@@ -688,10 +685,9 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec) { Weight = -99.4f };
 
-            if (ec.IsReleased)
-                yield return new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
-            else
-                yield return new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
+            yield return ec.IsReleased
+                ? new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f }
+                : new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
 
             yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec) { Weight = 1.3f };
 
@@ -887,7 +883,7 @@ public class AtomicCommandFactory : CommandFactoryBase
                 { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
 
             yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
-                cohortAggregateContainer) { OverrideCommandName = "Seperate Cohort Builder Query" };
+                cohortAggregateContainer) { OverrideCommandName = "Separate Cohort Builder Query" };
         }
 
         if (Is(o, out IDisableable disable))

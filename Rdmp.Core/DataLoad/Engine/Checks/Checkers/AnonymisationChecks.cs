@@ -38,7 +38,7 @@ public class AnonymisationChecks : ICheckable
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Synchronization of Anonymsiation configurations of table {_tableInfo.GetRuntimeName()} failed with Exception",
+                $"Synchronization of Anonymisation configurations of table {_tableInfo.GetRuntimeName()} failed with Exception",
                 CheckResult.Fail, e, null));
         }
 

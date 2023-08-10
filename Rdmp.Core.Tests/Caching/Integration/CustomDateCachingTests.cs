@@ -22,6 +22,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -34,9 +35,8 @@ public class CustomDateCachingTests : DatabaseTests
     [TestCase(true)]
     public void FetchMultipleDays_Success(bool singleDay)
     {
-        var mef = RepositoryLocator.CatalogueRepository.MEF;
-        mef.AddTypeToCatalogForTesting(typeof(TestCacheSource));
-        mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
+        MEF.AddTypeToCatalogForTesting(typeof(TestCacheSource));
+        MEF.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
         // Create a pipeline that will record the cache chunks
         var sourceComponent = Mock.Of<IPipelineComponent>(x =>

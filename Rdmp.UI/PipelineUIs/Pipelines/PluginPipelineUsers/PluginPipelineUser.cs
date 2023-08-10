@@ -35,7 +35,6 @@ public sealed class PluginPipelineUser : PipelineUseCase, IPipelineUser
         if (demanderInstance is not IDemandToUseAPipeline pipeDemander)
             throw new NotSupportedException(
                 $"Class {demanderInstance.GetType().Name} does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
-
         _useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
 
         ExplicitSource = _useCase.ExplicitSource;

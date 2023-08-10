@@ -34,11 +34,11 @@ internal class ANOTableUITests : UITests
     [UITimeout(50000)]
     public void Test_ANOTableUI_ServerWrongType()
     {
-        var anoTable = WhenIHaveA<ANOTable>(Repository, out var srv);
+        var anoTable = WhenIHaveA(Repository, out ExternalDatabaseServer srv);
         srv.CreatedByAssembly = null;
         srv.SaveToDatabase();
 
-        var ui = AndLaunch<ANOTableUI>(anoTable);
+        AndLaunch<ANOTableUI>(anoTable);
 
         //should be an error on the server showing that it is misconfigured
         AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Server is not an ANO server");

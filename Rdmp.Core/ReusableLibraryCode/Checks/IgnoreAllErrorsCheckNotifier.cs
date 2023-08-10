@@ -12,5 +12,11 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 /// </summary>
 public class IgnoreAllErrorsCheckNotifier : ICheckNotifier
 {
+    public static readonly IgnoreAllErrorsCheckNotifier Instance = new();
+
+    public IgnoreAllErrorsCheckNotifier()
+    {
+    }
+
     public bool OnCheckPerformed(CheckEventArgs args) => true;
 }

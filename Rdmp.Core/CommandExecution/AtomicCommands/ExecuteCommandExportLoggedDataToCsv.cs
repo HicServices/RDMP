@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Globalization;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -45,11 +44,11 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
         var server = db.Discover(DataAccessContext.Logging).Server;
 
         if (db != null)
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+        {
+            using var con = server.GetConnection();
+            con.Open();
 
-                var sql = string.Format(@"SELECT * FROM (
+            var sql = string.Format(@"SELECT * FROM (
 SELECT [dataLoadRunID]
       ,eventType
       ,[description]
@@ -70,12 +69,12 @@ SELECT [dataLoadRunID]
  ) as x
 order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
 
-                var output = BasicActivator.SelectFile("Output CSV file");
+            var output = BasicActivator.SelectFile("Output CSV file");
 
-                var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
-                    CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
+            var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
+                CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
 
-                extract.DoExtraction();
-            }
+            extract.DoExtraction();
+        }
     }
 }

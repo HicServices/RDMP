@@ -13,9 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 using Rdmp.Core.Validation.Constraints.Secondary;
@@ -155,7 +153,7 @@ public class Validator
 
 
     /// <summary>
-    /// Validate against the suppled domain object, which takes the form of a Dictionary.
+    /// Validate against the supplied domain object, which takes the form of a Dictionary.
     /// </summary>
     /// <param name="d"></param>
     public ValidationFailure Validate(Dictionary<string, object> d)
@@ -169,7 +167,7 @@ public class Validator
     private static XmlSerializer _serializer;
 
     /// <summary>
-    /// Instatiate a Validator from a (previously saved) XML string.
+    /// Instantiate a Validator from a (previously saved) XML string.
     /// </summary>
     /// <param name="xml"></param>
     /// <returns>a Validator</returns>
@@ -186,7 +184,7 @@ public class Validator
 
     private static void InitializeSerializer()
     {
-        _serializer ??= new XmlSerializer(typeof(Validator), GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof(Validator), GetExtraTypes().ToArray());
     }
 
     /// <summary>
@@ -207,43 +205,35 @@ public class Validator
         return sb.ToString();
     }
 
-    private static object oLockExtraTypes = new();
-    private static Type[] _extraTypes = null;
+    private static readonly object _oLockExtraTypes = new();
+    private static List<Type> _extraTypes;
 
-    public static void RefreshExtraTypes(SafeDirectoryCatalog mef, ICheckNotifier notifier)
+    private static List<Type> RefreshExtraTypes()
     {
-        lock (oLockExtraTypes)
+        lock (_oLockExtraTypes)
         {
-            _extraTypes = null;
-
-            var extraTypes = new List<Type>();
-
-            //Get all the Types in the assembly that are compatible with Constraint (primary or secondary)
-            extraTypes.AddRange(mef.GetAllTypes().Where(
-                    //type is
-                    type =>
-                        type != null &&
-                        //of the correct Type
-                        (typeof(IConstraint).IsAssignableFrom(type) ||
-                         typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
-                        &&
-                        !type.IsAbstract
-                        &&
-                        !type.IsInterface
-                        &&
-                        type.IsClass
-                )
-            );
-
-            _extraTypes = extraTypes.ToArray();
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(
+                //type is
+                type =>
+                    type != null &&
+                    //of the correct Type
+                    (typeof(IConstraint).IsAssignableFrom(type) ||
+                     typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+                    &&
+                    !type.IsAbstract
+                    &&
+                    !type.IsInterface
+                    &&
+                    type.IsClass
+            ).ToList();
         }
     }
 
-    public static Type[] GetExtraTypes()
+    public static List<Type> GetExtraTypes()
     {
-        lock (oLockExtraTypes)
+        lock (_oLockExtraTypes)
         {
-            return _extraTypes ?? Type.EmptyTypes;
+            return _extraTypes ??= RefreshExtraTypes();
         }
     }
 
@@ -356,9 +346,7 @@ public class Validator
                     $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in dictionary.");
             }
 
-        if (eList.Count > 0) return new ValidationFailure("There are validation errors.", eList);
-
-        return null;
+        return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
     private ValidationFailure ValidateAgainstDomainObject()
@@ -372,35 +360,33 @@ public class Validator
 
         var o = _domainObject;
 
-        if (o is DbDataReader reader)
+        switch (o)
         {
-            names = new string[reader.FieldCount];
-            values = new object[reader.FieldCount];
-
-            for (var i = 0; i < reader.FieldCount; i++)
+            case DbDataReader reader:
             {
-                names[i] = reader.GetName(i);
+                names = new string[reader.FieldCount];
+                values = new object[reader.FieldCount];
 
-                if (reader[i] == DBNull.Value)
-                    values[i] = null;
-                else
-                    values[i] = reader[i].ToString();
+                for (var i = 0; i < reader.FieldCount; i++)
+                {
+                    names[i] = reader.GetName(i);
+                    values[i] = reader[i] == DBNull.Value ? null : reader[i].ToString();
+                }
+
+                break;
             }
-        }
-
-        if (o is DataRow row)
-        {
-            names = new string[row.Table.Columns.Count];
-            values = new object[row.Table.Columns.Count];
-
-            for (var i = 0; i < row.Table.Columns.Count; i++)
+            case DataRow row:
             {
-                names[i] = row.Table.Columns[i].ColumnName;
+                names = new string[row.Table.Columns.Count];
+                values = new object[row.Table.Columns.Count];
 
-                if (row[i] == DBNull.Value)
-                    values[i] = null;
-                else
-                    values[i] = row[i].ToString();
+                for (var i = 0; i < row.Table.Columns.Count; i++)
+                {
+                    names[i] = row.Table.Columns[i].ColumnName;
+                    values[i] = row[i] == DBNull.Value ? null : row[i].ToString();
+                }
+
+                break;
             }
         }
 
@@ -414,44 +400,41 @@ public class Validator
 
             try
             {
-                ValidationFailure result = null;
+                ValidationFailure result;
 
                 //see if it has property with this name
-                object value = null;
-                if (o is DbDataReader dataReader)
+                object value;
+                switch (o)
                 {
-                    value = dataReader[itemValidator.TargetProperty];
-                    if (value == DBNull.Value)
-                        value = null;
-
-                    result = itemValidator.ValidateAll(value, values, names);
-                }
-                else if (o is DataRow dataRow)
-                {
-                    result = itemValidator.ValidateAll(dataRow[itemValidator.TargetProperty], values, names);
-                }
-                else
-                {
-                    var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
-
-                    if (propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out var value1))
+                    case DbDataReader reader:
                     {
-                        value = value1;
+                        value = reader[itemValidator.TargetProperty];
+                        if (value == DBNull.Value)
+                            value = null;
+
+                        result = itemValidator.ValidateAll(value, values, names);
+                        break;
+                    }
+                    case DataRow row:
+                        result = itemValidator.ValidateAll(row[itemValidator.TargetProperty], values, names);
+                        break;
+                    default:
+                    {
+                        var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
+
+                        if (!propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
+                            throw new MissingFieldException(
+                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
 
                         result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
                             propertiesDictionary.Keys.ToArray());
-                    }
-                    else
-                    {
-                        throw new MissingFieldException(
-                            $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                        break;
                     }
                 }
 
                 if (result != null)
                 {
                     result.SourceItemValidator ??= itemValidator;
-
                     eList.Add(result);
                 }
             }
@@ -462,9 +445,7 @@ public class Validator
             }
         }
 
-        if (eList.Count > 0) return new ValidationFailure("There are validation errors.", eList);
-
-        return null;
+        return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
     private static Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)

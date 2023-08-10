@@ -17,6 +17,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -44,7 +45,7 @@ public class PayloadTest : DatabaseTests
         };
         lmd.SaveToDatabase();
 
-        CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
+        MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
 
         b.catalogue.LoadMetadata_ID = lmd.ID;
         b.catalogue.LoggingDataTask = "TestPayloadInjection";
@@ -62,10 +63,10 @@ public class PayloadTest : DatabaseTests
 
         var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
         var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
-        var execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
+        var execution = factory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm,
-            new ThrowImmediatelyDataLoadEventListener(), execution, config);
+            ThrowImmediatelyDataLoadEventListener.Quiet, execution, config);
 
         proceedure.Run(new GracefulCancellationToken(), payload);
 

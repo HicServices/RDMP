@@ -87,7 +87,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="results"></param>
     /// <param name="aggregate"></param>
     /// <param name="cache"></param>
-    /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types) 
+    /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types)
     /// then pass true.  If everything is a string and you want types to be assigned for these for querying later pass false.</param>
     protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate,
         CachedAggregateConfigurationResultsManager cache, bool knownTypes)

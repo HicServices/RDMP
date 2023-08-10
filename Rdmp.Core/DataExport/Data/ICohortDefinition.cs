@@ -19,12 +19,12 @@ public interface ICohortDefinition
     int? ID { get; set; }
 
     /// <summary>
-    /// Value to store in or read from <see cref="IExternalCohortTable.DefinitionTableName"/> 
+    /// Value to store in or read from <see cref="IExternalCohortTable.DefinitionTableName"/>
     /// </summary>
     string Description { get; set; }
 
     /// <summary>
-    /// Version number to store in or read from <see cref="IExternalCohortTable.DefinitionTableName"/> 
+    /// Version number to store in or read from <see cref="IExternalCohortTable.DefinitionTableName"/>
     /// </summary>
     int Version { get; set; }
 

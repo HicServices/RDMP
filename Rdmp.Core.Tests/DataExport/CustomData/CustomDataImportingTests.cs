@@ -37,7 +37,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         {
             _request = new ExtractDatasetCommand(_configuration,
                 new ExtractableDatasetBundle(CustomExtractableDataSet));
-            Execute(out var useCase, out var results);
+            Execute(out _, out var results);
 
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
@@ -104,7 +104,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             blk.Upload(dt);
         }
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
@@ -180,7 +180,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             blk.Upload(dt);
         }
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
@@ -255,8 +255,8 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         //then give them the null
         engine.Destination.ProcessPipelineData( null,listener, token.Token);
 
-        engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null );
-        engine.Destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        engine.Source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null );
+        engine.Destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         //batches are 1 record each so
         Assert.AreEqual(numberOfBatches, listener.LastProgressRecieivedByTaskName["Comitting rows to cohort 99_unitTestDataForCohort_V1fish"].Progress.Value);
@@ -302,7 +302,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         }
         finally
         {
-            engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+            engine.Source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             File.Delete(filename);
         }
     }
@@ -326,7 +326,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         }
         finally
         {
-            engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+            engine.Source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             File.Delete(filename);
         }
     }
@@ -352,10 +352,10 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             PipelineUsage.LoadsSingleTableInfo |
             PipelineUsage.LoadsSingleFlatFile);
 
-        DataFlowPipelineEngine<DataTable> engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, new ThrowImmediatelyDataLoadEventListener());
+        DataFlowPipelineEngine<DataTable> engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         engine.Initialize(_extractableCohort,new FlatFileToLoad(new FileInfo(filename)));
-        source.Check(new ThrowImmediatelyCheckNotifier());
+        source.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         return engine;
     }

@@ -276,7 +276,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void ddPipeline_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var factory = GetFactory();
+        GetFactory();
 
         if (ddPipeline.SelectedItem is not Pipeline p)
             return;
@@ -344,8 +344,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private UploadFileUseCase GetUseCase() =>
         new(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(), Activator);
 
-    private DataFlowPipelineEngineFactory GetFactory() =>
-        new(GetUseCase(), Activator.RepositoryLocator.CatalogueRepository.MEF);
+    private DataFlowPipelineEngineFactory GetFactory() => new(GetUseCase());
 
     private void btnExecute_Click(object sender, EventArgs e)
     {
@@ -373,29 +372,28 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             var dest = (DataTableUploadDestination)engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
 
-            var cts = new CancellationTokenSource();
+            using var cts = new CancellationTokenSource();
             var t = Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
-                    }
-                    catch (PipelineCrashedException ex)
-                    {
-                        Activator.ShowException("Error uploading", ex.InnerException ?? ex);
-                        if (dest.CreatedTable)
-                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
-                        crashed = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Activator.ShowException("Error uploading", ex);
-                        if (dest.CreatedTable)
-                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
-                        crashed = true;
-                    }
+                    engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
                 }
-            );
+                catch (PipelineCrashedException ex)
+                {
+                    Activator.ShowException("Error uploading", ex.InnerException ?? ex);
+                    if (dest.CreatedTable)
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                    crashed = true;
+                }
+                catch (Exception ex)
+                {
+                    Activator.ShowException("Error uploading", ex);
+                    if (dest.CreatedTable)
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                    crashed = true;
+                }
+            }, cts.Token);
 
             Activator.Wait("Uploading Table...", t, cts);
 

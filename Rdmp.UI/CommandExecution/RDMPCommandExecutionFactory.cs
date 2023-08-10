@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -32,11 +33,9 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         _activator = activator;
 
-        foreach (var proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF
-                     .GetTypes<ICommandExecutionProposal>())
+        foreach (var proposerType in MEF.GetTypes<ICommandExecutionProposal>())
             try
             {
-                var constructor = new ObjectConstructor();
                 _proposers.Add((ICommandExecutionProposal)ObjectConstructor.Construct(proposerType, activator));
             }
             catch (Exception ex)
@@ -124,45 +123,35 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     }
 
     private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask,
-        InsertOption insertOption)
-    {
-        if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
-            return new ExecuteCommandReOrderProcessTask(_activator, sourceProcessTaskCommand, targetProcessTask,
-                insertOption);
-
-        return null;
-    }
+        InsertOption insertOption) =>
+        cmd is ProcessTaskCombineable sourceProcessTaskCommand
+            ? new ExecuteCommandReOrderProcessTask(_activator, sourceProcessTaskCommand, targetProcessTask,
+                insertOption)
+            : (ICommandExecution)null;
 
 
     private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
     {
-        if (cmd is IHasFolderCombineable sourceFolderable)
-            return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
-
-        if (cmd is ManyCataloguesCombineable sourceManyCatalogues)
-            return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
-
-        if (cmd is FileCollectionCombineable file)
-            if (file.Files.Length == 1)
-            {
-                var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator, file.Files[0])
+        return cmd switch
+        {
+            IHasFolderCombineable sourceFolderable => new ExecuteCommandPutIntoFolder(_activator, sourceFolderable,
+                targetFolder.FullName),
+            ManyCataloguesCombineable sourceManyCatalogues => new ExecuteCommandPutIntoFolder(_activator,
+                sourceManyCatalogues, targetFolder.FullName),
+            FileCollectionCombineable file when file.Files.Length == 1 => new
+                ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator, file.Files[0])
                 {
                     TargetFolder = targetFolder.FullName
-                };
-                return toReturn;
-            }
-
-        return null;
+                },
+            _ => null
+        };
     }
 
-    private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)
-    {
-        if (cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable)
-            return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,
-                sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo);
-
-        return null;
-    }
+    private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo) =>
+        cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable
+            ? new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,
+                sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo)
+            : (ICommandExecution)null;
 
 
     private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICombineToMakeCommand cmd,
@@ -173,21 +162,17 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
                 return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,
                     sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
 
-        if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-            return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
-                sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
-
-        return null;
+        return cmd is CatalogueCombineable sourceCatalogueCombineable
+            ? new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
+                sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration)
+            : (ICommandExecution)null;
     }
 
 
     private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICombineToMakeCommand cmd,
-        PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
-    {
-        if (cmd is ColumnInfoCombineable sourceColumnInfoCombineable)
-            return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,
-                targetPreLoadDiscardedColumnsNode.TableInfo, sourceColumnInfoCombineable);
-
-        return null;
-    }
+        PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode) =>
+        cmd is ColumnInfoCombineable sourceColumnInfoCombineable
+            ? new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, targetPreLoadDiscardedColumnsNode.TableInfo,
+                sourceColumnInfoCombineable)
+            : (ICommandExecution)null;
 }

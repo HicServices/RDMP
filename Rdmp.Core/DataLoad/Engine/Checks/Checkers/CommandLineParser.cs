@@ -21,7 +21,6 @@ internal class CommandLineParser
         cmd = null;
         buf = null;
         i = -1;
-        return;
     }
 
     public IEnumerable<string> Parse(string commandLine)
@@ -36,12 +35,18 @@ internal class CommandLineParser
 
             if (char.IsWhiteSpace(ch)) throw new InvalidOperationException();
 
-            if (ch == '\\')
-                ParseEscapeSequence();
-            else if (ch == '"')
-                ParseQuotedWord();
-            else
-                ParseBareWord();
+            switch (ch)
+            {
+                case '\\':
+                    ParseEscapeSequence();
+                    break;
+                case '"':
+                    ParseQuotedWord();
+                    break;
+                default:
+                    ParseBareWord();
+                    break;
+            }
 
             if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
             {
@@ -95,12 +100,10 @@ internal class CommandLineParser
             if (ch == '"') break; // lead-in quote starts a quoted word
             if (ch == '\\') break; // escape sequence terminates the bareword
 
-            buf.Append(ch); // otherwise, keep reading this word                
+            buf.Append(ch); // otherwise, keep reading this word
 
             ++i;
         }
-
-        return;
     }
 
     /// <summary>

@@ -147,7 +147,7 @@ public partial class PipelineDiagramUI : UserControl
 
                     //create it
                     var pipelineInstance =
-                        _pipelineFactory.Create(pipeline, new ThrowImmediatelyDataLoadEventListener());
+                        _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
 
                     //initialize it (unless it is design time)
                     if (!_useCase.IsDesignTime)
@@ -169,7 +169,7 @@ public partial class PipelineDiagramUI : UserControl
                     AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
                         pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
                 else
-                    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet 
+                    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet
 
 
                 foreach (var middleComponent in pipeline.PipelineComponents.Where(c =>
@@ -195,7 +195,7 @@ public partial class PipelineDiagramUI : UserControl
                 else
                 {
                     AddDividerIfReorderingAvailable();
-                    AddBlankComponent(PipelineComponentRole.Destination); //the user hasn't put one in yet 
+                    AddBlankComponent(PipelineComponentRole.Destination); //the user hasn't put one in yet
                 }
 
 
@@ -203,7 +203,7 @@ public partial class PipelineDiagramUI : UserControl
             }
 
 
-            //Fallback 
+            //Fallback
             //user has not picked a pipeline yet, show him the shell (factory)
             //factory has no source, add empty source
             if (_useCase.ExplicitSource == null)
@@ -250,7 +250,7 @@ public partial class PipelineDiagramUI : UserControl
             {
                 if (!_useCase.IsDesignTime)
                 {
-                    _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), value,
+                    _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, value,
                         _useCase.GetInitializationObjects().ToArray());
                     component.Check();
                 }
@@ -316,7 +316,7 @@ public partial class PipelineDiagramUI : UserControl
         try
         {
             if (!_useCase.IsDesignTime)
-                _useCase.GetContext().PreInitializeGeneric(new ThrowImmediatelyDataLoadEventListener(), component.Value,
+                _useCase.GetContext().PreInitializeGeneric(ThrowImmediatelyDataLoadEventListener.Quiet, component.Value,
                     _useCase.GetInitializationObjects().ToArray());
         }
         catch (Exception e)
@@ -368,10 +368,7 @@ public partial class PipelineDiagramUI : UserControl
         var vis = (PipelineComponentVisualisation)arg.Data.GetData(typeof(PipelineComponentVisualisation));
 
         //only middle components can be reordered
-        if (vis.GetRole() == PipelineComponentRole.Middle)
-            return DragDropEffects.Move;
-
-        return DragDropEffects.None;
+        return vis.GetRole() == PipelineComponentRole.Middle ? DragDropEffects.Move : DragDropEffects.None;
     }
 
     private void divider_DragDrop(object sender, DragEventArgs e)
@@ -494,17 +491,9 @@ public partial class PipelineDiagramUI : UserControl
         return toReturn;
     }
 
-    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
-    {
-        if (e.Data is OLVDataObject dataObject)
-        {
-            if (dataObject.ModelObjects.Count == 1 &&
-                dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext)
-                return (AdvertisedPipelineComponentTypeUnderContext)dataObject.ModelObjects[0];
-
-            return null;
-        }
-
-        return null;
-    }
+    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e) =>
+        e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
+        dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context
+            ? context
+            : null;
 }

@@ -301,19 +301,11 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
 
         runner.Run(new CancellationToken());
 
-        if (dbType == DatabaseType.MySql)
-        {
-            var crashed = compiler.Tasks.Single(t => t.Key.State == CompilationState.Crashed);
-            StringAssert.Contains("INTERSECT / UNION / EXCEPT are not supported by MySql",
-                crashed.Key.CrashMessage.Message);
-            return;
-        }
-
         AssertNoErrors(compiler);
 
 
         Assert.AreEqual(
-            compiler.Tasks.Single(t => t.Value != null && t.Value.IsResultsForRootContainer).Key.FinalRowCount, 0);
+            compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, 0);
         Assert.Greater(
             compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount,
             0); //both ac should have the same total
@@ -321,7 +313,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
             compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount,
             0); // that is not 0
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
             "Expected EXCEPT container to use the cache");
     }
 

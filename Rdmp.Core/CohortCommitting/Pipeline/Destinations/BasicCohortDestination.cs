@@ -19,7 +19,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 
 /// <summary>
 /// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the
-/// ICohortCreationRequest.  This 
+/// ICohortCreationRequest.  This
 /// </summary>
 public class BasicCohortDestination : IPluginCohortDestination
 {
@@ -137,13 +137,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
 
-    private static bool IsNull(object o)
-    {
-        if (o == null || o == DBNull.Value)
-            return true;
-
-        return string.IsNullOrWhiteSpace(o.ToString());
-    }
+    private static bool IsNull(object o) => o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
 
     /// <summary>
     /// Commits the cohort created into the database (assuming no error occured during pipeline processing - See <paramref name="pipelineFailureExceptionIfAny"/>).
@@ -183,7 +177,7 @@ public class BasicCohortDestination : IPluginCohortDestination
                     // don't add 2 columns if they are the same column!
                     if (!isIdentifiable) dt.Columns.Add(_releaseIdentifier);
 
-                    //add the ID as another column 
+                    //add the ID as another column
                     dt.Columns.Add(_fk);
 
                     foreach (var kvp in _cohortDictionary)
@@ -206,12 +200,12 @@ public class BasicCohortDestination : IPluginCohortDestination
         }
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Succesfully uploaded {_cohortDictionary.Count} records"));
+            $"Successfully uploaded {_cohortDictionary.Count} records"));
 
         var id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID={id} <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:{Request.NewCohortDefinition.ID})"));
+            $"Cohort successfully committed to destination and imported as an RDMP ExtractableCohort (ID={id} <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:{Request.NewCohortDefinition.ID})"));
     }
 
     /// <summary>
@@ -261,7 +255,7 @@ public class BasicCohortDestination : IPluginCohortDestination
 
         if (ReleaseIdentifierAllocator == null)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                "No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated afer committing manually",
+                "No ReleaseIdentifierAllocator has been set, this means that Release Identifiers must be provided in the cohort uploaded or populated after committing manually",
                 CheckResult.Warning));
 
         notifier.OnCheckPerformed(new CheckEventArgs(

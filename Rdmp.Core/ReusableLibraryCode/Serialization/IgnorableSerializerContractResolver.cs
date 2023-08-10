@@ -48,9 +48,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
         if (!Ignores.ContainsKey(type)) return false;
 
         // if no properties provided, ignore the type entirely
-        if (Ignores[type].Count == 0) return true;
-
-        return Ignores[type].Contains(propertyName);
+        return Ignores[type].Count == 0 || Ignores[type].Contains(propertyName);
     }
 
     /// <summary>
@@ -65,9 +63,9 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
 
         if (IsIgnored(property.DeclaringType, property.PropertyName)
             // need to check basetype as well for EF -- @per comment by user576838 - LT: but it can be null, so check that too!
-            || (property.DeclaringType.BaseType != null &&
+            || (property.DeclaringType?.BaseType != null &&
                 IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
-            property.ShouldSerialize = instance => { return false; };
+            property.ShouldSerialize = _ => false;
 
         return property;
     }

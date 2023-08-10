@@ -49,7 +49,7 @@ public class TableVarcharMaxerTests : DatabaseTests
         };
 
         maxer.Initialize(db, LoadStage.AdjustRaw);
-        maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+        maxer.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
 
         var job = Mock.Of<IDataLoadJob>(x =>
             x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
@@ -98,7 +98,7 @@ public class TableVarcharMaxerTests : DatabaseTests
         };
 
         maxer.Initialize(db, LoadStage.AdjustRaw);
-        maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+        maxer.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
 
         var job = new ThrowImmediatelyDataLoadJob
         {

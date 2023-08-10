@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class DocumentationNode : Node
 {
-    public Catalogue Catalogue { get; set; }
+    public Catalogue Catalogue { get; }
     public SupportingDocument[] SupportingDocuments { get; set; }
     public SupportingSQLTable[] SupportingSQLTables { get; set; }
 
@@ -33,9 +33,8 @@ public class DocumentationNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof(DocumentationNode)) return false;
-        return Equals((DocumentationNode)obj);
+        return obj.GetType() == typeof(DocumentationNode) && Equals((DocumentationNode)obj);
     }
 
-    public override int GetHashCode() => Catalogue != null ? Catalogue.GetHashCode() : 0;
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue);
 }

@@ -211,7 +211,7 @@ public class ExtractionQueryBuilder
         var project = configuration.Project;
 
         if (project.ProjectNumber == null)
-            throw new ProjectNumberException("Project number has not been entered, cannot create constant paramaters");
+            throw new ProjectNumberException("Project number has not been entered, cannot create constant parameters");
 
         if (extractableCohort == null)
             throw new Exception("Cohort has not been selected, cannot create constant parameters");

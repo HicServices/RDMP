@@ -23,33 +23,33 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
 {
     private Project _associateWithProject;
-    private string _name;
+    private readonly string _name;
 
     /// <summary>
     /// True to prompt the user to pick a Project if no explicit Project is configured
     /// yet on this command.
     /// </summary>
-    public bool PromptToPickAProject { get; set; } = false;
+    public bool PromptToPickAProject { get; init; } = false;
 
     /// <summary>
     /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>
     /// </summary>
-    public string Folder { get; set; } = FolderHelper.Root;
+    public string Folder { get; init; } = FolderHelper.Root;
 
     /// <summary>
     /// Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort Configuration Wizard)
     /// </summary>
-    public static string RootContainerName = "Root Container";
+    public const string RootContainerName = "Root Container";
 
     /// <summary>
     /// Name to give the inclusion component of new cics created by this command
     /// </summary>
-    public static string InclusionCriteriaName = "Inclusion Criteria";
+    public const string InclusionCriteriaName = "Inclusion Criteria";
 
     /// <summary>
     /// Name to give the exclusion component of new cics created by this command
     /// </summary>
-    public static string ExclusionCriteriaName = "Exclusion Criteria";
+    public const string ExclusionCriteriaName = "Exclusion Criteria";
 
     public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
     {

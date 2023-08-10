@@ -41,12 +41,9 @@ internal class ConsoleGuiContextMenuFactory
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct();
 
-        var miCategories = new Dictionary<string, List<MenuItem>>();
+        var miCategories = categories.ToDictionary(category => category, _ => new List<MenuItem>());
 
-        foreach (var category in categories)
-            miCategories.Add(category, new List<MenuItem>());
-
-        var items = new List<MenuItem>();
+        List<MenuItem> items = new();
 
         // Build commands into menu items
         foreach (var cmd in commands.OrderBy(c => c.Weight))
@@ -148,11 +145,9 @@ internal class ConsoleGuiContextMenuFactory
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)
             };
 
-        if (o == null)
-            return Array.Empty<IAtomicCommand>();
-
-        return
-            GetExtraCommands(activator, o)
+        return o == null
+            ? Array.Empty<IAtomicCommand>()
+            : GetExtraCommands(activator, o)
                 .Union(factory.CreateCommands(o))
                 .Union(activator.PluginUserInterfaces.SelectMany(p => p.GetAdditionalRightClickMenuItems(o)))
                 .OrderBy(c => c.Weight);

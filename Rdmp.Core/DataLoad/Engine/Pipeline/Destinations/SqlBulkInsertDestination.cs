@@ -52,7 +52,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     }
 
 
-    private int _recordsWritten = 0;
+    private int _recordsWritten;
 
     public virtual void SubmitChunk(DataTable chunk, IDataLoadEventListener job)
     {
@@ -154,7 +154,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         CloseConnection(listener);
     }
 
-    private bool _isDisposed = false;
+    private bool _isDisposed;
 
 
     private void CloseConnection(IDataLoadEventListener listener)

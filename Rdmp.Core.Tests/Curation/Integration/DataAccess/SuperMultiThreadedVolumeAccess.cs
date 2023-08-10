@@ -32,7 +32,7 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
         foreach (
             var catalogue in
             CatalogueRepository.GetAllObjects<Catalogue>()
-                .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
+                .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue", StringComparison.Ordinal)))
             catalogue.DeleteInDatabase();
 
         DatabaseCommandHelper.GlobalTimeout = timeoutBefore;
@@ -44,7 +44,7 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
         foreach (
             var catalogue in
             CatalogueRepository.GetAllObjects<Catalogue>()
-                .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
+                .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue", StringComparison.Ordinal)))
             catalogue.DeleteInDatabase();
     }
 

@@ -93,7 +93,7 @@ public class ParameterCreatorTests
 
         p.Verify(m => m.SaveToDatabase(), Times.Never);
         factory.Verify(m => m.CreateNewParameter(f, It.IsAny<string>()),
-            Times.Never); //should never be called because the filter already has 
+            Times.Never); //should never be called because the filter already has
     }
 
     [Test]
@@ -170,7 +170,7 @@ public class ParameterCreatorTests
         "[MyTable].[MyCol] = @name2")] //No match since it is a substring
     [TestCase("[MyTable].[MyCol] = @name_2", "@name", "@cthulhu", "[MyTable].[MyCol] = @name_2")]
     [TestCase("[MyTable].[MyCol] = @name@@coconuts", "@name", "@cthulhu",
-        "[MyTable].[MyCol] = @name@@coconuts")] //No match since @ is a legit word to use in a parameter name making @name@coconuts legal name for a 
+        "[MyTable].[MyCol] = @name@@coconuts")] //No match since @ is a legit word to use in a parameter name making @name@coconuts legal name for a
     [TestCase("@a=a", "@a", "@b", "@b=a")]
     [TestCase(@"a=@a
     OR

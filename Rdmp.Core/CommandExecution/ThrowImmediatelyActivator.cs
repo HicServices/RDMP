@@ -20,15 +20,13 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws 
+/// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws
 /// </summary>
 public class ThrowImmediatelyActivator : BasicActivateItems
 {
     // DONE: This should not inherit from ConsoleInputManager
-    private static readonly ThrowImmediatelyCheckNotifier Notifier = new();
-
     public ThrowImmediatelyActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ICheckNotifier notifier = null) : base(repositoryLocator, notifier ?? Notifier)
+        ICheckNotifier notifier = null) : base(repositoryLocator, notifier ?? ThrowImmediatelyCheckNotifier.Quiet)
     {
     }
 

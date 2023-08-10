@@ -30,19 +30,11 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         olvProjectNumber.IsEditable = false;
     }
 
-    private object AspectGetter_Version(object rowObject)
-    {
-        var c = rowObject as ExtractableCohort;
+    private object AspectGetter_Version(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalVersion : null;
 
-        return c?.ExternalVersion;
-    }
-
-    private object AspectGetter_ProjectNumber(object rowObject)
-    {
-        var c = rowObject as ExtractableCohort;
-
-        return c?.ExternalProjectNumber;
-    }
+    private object AspectGetter_ProjectNumber(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalProjectNumber : null;
 
     public override void SetItemActivator(IActivateItems activator)
     {

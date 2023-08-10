@@ -28,7 +28,7 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        void adjust(DelimitedFlatFileDataFlowSource a)
+        void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.ThrowOnEmptyFiles = true;
@@ -38,17 +38,17 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
         switch (strategy)
         {
             case BadDataHandlingStrategy.ThrowException:
-                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
-                Assert.AreEqual("Bad data found on line 9", ex.Message);
+                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, Adjust));
+                Assert.AreEqual("Bad data found on line 9", ex?.Message);
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
-                var dt = RunGetChunk(file, adjust);
+                var dt = RunGetChunk(file, Adjust);
                 Assert.AreEqual(2, dt.Rows.Count); //reads first 2 rows and chucks the rest!
                 break;
             case BadDataHandlingStrategy.DivertRows:
 
                 //read 2 rows and rejected the rest
-                var dt2 = RunGetChunk(file, adjust);
+                var dt2 = RunGetChunk(file, Adjust);
                 Assert.AreEqual(2, dt2.Rows.Count);
                 AssertDivertFileIsExactly(
                     $"Frank,\"Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}");
@@ -70,14 +70,14 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        static void adjust(DelimitedFlatFileDataFlowSource a)
+        static void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = true;
         }
 
-        var dt2 = RunGetChunk(file, adjust);
+        var dt2 = RunGetChunk(file, Adjust);
         Assert.AreEqual(5, dt2.Rows.Count);
         Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
     }

@@ -33,7 +33,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
     public int SampleSize { get; set; } = 100;
 
     [DemandsInitialization(
-        "Determines components behaviour if not enough unique identifiers are being comitted.  True to crash.  False to pass on however many records there are.",
+        "Determines components behaviour if not enough unique identifiers are being committed.  True to crash.  False to pass on however many records there are.",
         DefaultValue = true)]
     public bool FailIfNotEnoughIdentifiers { get; set; } = true;
 

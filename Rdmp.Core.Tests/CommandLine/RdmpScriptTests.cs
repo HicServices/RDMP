@@ -35,10 +35,8 @@ internal class RdmpScriptTests : UnitTests
             }
         });
 
-        SetupMEF();
-
-        var exitCode = runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-            new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+        var exitCode = runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+            ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(0, exitCode);
         Assert.AreEqual(1, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Length);
@@ -69,10 +67,8 @@ internal class RdmpScriptTests : UnitTests
             }
         });
 
-        SetupMEF();
-
-        var exitCode = runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-            new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+        var exitCode = runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+            ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(0, exitCode);
         Assert.AreEqual(1, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Length);

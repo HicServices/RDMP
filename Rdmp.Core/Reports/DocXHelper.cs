@@ -61,14 +61,14 @@ public class DocXHelper
 
     private static int GetSize(int headSize)
     {
-        switch (headSize)
+        return headSize switch
         {
-            case 1: return H1Size;
-            case 2: return H2Size;
-            case 3: return H3Size;
-            case 4: return H4Size;
-            default: throw new ArgumentOutOfRangeException();
-        }
+            1 => H1Size,
+            2 => H2Size,
+            3 => H3Size,
+            4 => H4Size,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     protected static void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
@@ -104,18 +104,16 @@ public class DocXHelper
 
     protected static XWPFPicture GetPicture(XWPFRun run, Image bmp)
     {
-        using (var ms = new MemoryStream())
-        {
-            bmp.SaveAsPng(ms);
+        using var ms = new MemoryStream();
+        bmp.SaveAsPng(ms);
 
-            ms.Seek(0, 0);
+        ms.Seek(0, 0);
 
-            // Add an image into the document.
-            var picture = run.AddPicture(ms, PICTURE_TYPE_PNG, "", Units.ToEMU(bmp.Width * PICTURE_SCALING),
-                Units.ToEMU(bmp.Height * PICTURE_SCALING));
+        // Add an image into the document.
+        var picture = run.AddPicture(ms, PICTURE_TYPE_PNG, "", Units.ToEMU(bmp.Width * PICTURE_SCALING),
+            Units.ToEMU(bmp.Height * PICTURE_SCALING));
 
-            return picture;
-        }
+        return picture;
     }
 
     protected static XWPFTable InsertTable(XWPFDocument document, int rowCount, int colCount)
@@ -222,8 +220,8 @@ public class DocXHelper
 
     protected static void SetLandscape(XWPFDocumentFile document)
     {
-        document.Document.body.sectPr = document.Document.body.sectPr ?? new CT_SectPr();
-        document.Document.body.sectPr.pgSz = document.Document.body.sectPr.pgSz ?? new CT_PageSz();
+        document.Document.body.sectPr ??= new CT_SectPr();
+        document.Document.body.sectPr.pgSz ??= new CT_PageSz();
 
         document.Document.body.sectPr.pgSz.orient = ST_PageOrientation.landscape;
         document.Document.body.sectPr.pgSz.w = 842 * 20;
@@ -252,7 +250,7 @@ public class DocXHelper
     /// <param name="marginSize"></param>
     protected static void SetMargins(XWPFDocumentFile document, int marginSize)
     {
-        document.Document.body.sectPr = document.Document.body.sectPr ?? new CT_SectPr();
+        document.Document.body.sectPr ??= new CT_SectPr();
         document.Document.body.sectPr.pgMar.right = (ulong)(marginSize * 14.60);
         document.Document.body.sectPr.pgMar.left = (ulong)(marginSize * 14.60);
 
@@ -281,7 +279,7 @@ public class DocXHelper
         }
 
 
-        public void Dispose()
+        public new void Dispose()
         {
             //saves?
             Write(_stream);

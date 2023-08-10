@@ -25,7 +25,6 @@ public class SelectSQLRefactorerTests : UnitTests
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
 
-        var refactorer = new SelectSQLRefactorer();
         SelectSQLRefactorer.RefactorTableName(columnInfo, tableInfo, "[database]..[table2]");
 
         Assert.AreEqual("[database]..[table2].[column]", columnInfo.Name);
@@ -102,14 +101,13 @@ public class SelectSQLRefactorerTests : UnitTests
         foreach (IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
 
-        var refactorer = new SelectSQLRefactorer();
         Assert.IsTrue(SelectSQLRefactorer.IsRefactorable(ti));
 
         Assert.AreEqual(1, SelectSQLRefactorer.RefactorTableName(ti, newName));
         Assert.AreEqual(newName, ti.Name);
     }
 
-    [TestCase("[Donkey]..[MyTbl]", "[Fish]..[MyTbl2]", "'[Donkey]..[MyTbl]' has incorrect database propery 'Fish'")]
+    [TestCase("[Donkey]..[MyTbl]", "[Fish]..[MyTbl2]", "'[Donkey]..[MyTbl]' has incorrect database property 'Fish'")]
     public void RefactorTableName_IsNotRefactorable_TableInfoWithNoColumnInfos(string oldName, string newName,
         string expectedReason)
     {
@@ -151,8 +149,6 @@ public class SelectSQLRefactorerTests : UnitTests
         var col = WhenIHaveA<ColumnInfo>();
         col.Name = columnName;
         col.SaveToDatabase();
-
-        var refactorer = new SelectSQLRefactorer();
 
         var oldName = findTableName;
         var newName = oldName.Replace("MyTbl", "MyNewTbl");

@@ -23,8 +23,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 /// <summary>
 /// Prepares the Environment and the Source Database for the ReleaseEngine.
 /// </summary>
-/// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
-public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
+public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
     private readonly ICatalogueRepository _catalogueRepository;
     private DiscoveredDatabase _database;
@@ -193,8 +192,7 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
             File.Exists(Path.Combine(dbOutputFolder.FullName, $"{databaseName}_log.ldf")))
         {
             if (notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"It seems that database {databaseName} was already detached previously into {dbOutputFolder.FullName} " +
-                    "but not released or cleaned from the extraction folder",
+                    $"It seems that database {databaseName} was already detached previously into {dbOutputFolder.FullName} but not released or cleaned from the extraction folder",
                     CheckResult.Warning,
                     null,
                     "Do you want to delete it? You should check the contents first. Clicking 'No' will abort the Release.")))
@@ -213,11 +211,6 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         }
     }
 
-    protected override DirectoryInfo PrepareSourceGlobalFolder()
-    {
-        if (_releaseData.ReleaseGlobals)
-            return base.PrepareSourceGlobalFolder();
-
-        return null;
-    }
+    protected override DirectoryInfo PrepareSourceGlobalFolder() =>
+        _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
 }

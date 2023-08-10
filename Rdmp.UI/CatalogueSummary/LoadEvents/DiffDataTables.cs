@@ -18,8 +18,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// </summary>
 public partial class DiffDataTables : UserControl
 {
-    private string DifferenceSymbol = "-|-";
-    private string WhitespaceDifference = "(WHITESPACE DIFFERENCE!)";
+    private const string DifferenceSymbol = "-|-";
+    private const string WhitespaceDifference = "(WHITESPACE DIFFERENCE!)";
 
     public DiffDataTables()
     {
@@ -36,10 +36,10 @@ public partial class DiffDataTables : UserControl
             dtResult.Columns.Add(col.ColumnName);
 
         if (dt1.Columns.Count != dt2.Columns.Count)
-            throw new NotSupportedException("Exected DataTables to have the same number of columns");
+            throw new NotSupportedException("Expected DataTables to have the same number of columns");
 
         if (dt1.Rows.Count != dt2.Rows.Count)
-            throw new NotSupportedException("Exected DataTables to have the same number of rows");
+            throw new NotSupportedException("Expected DataTables to have the same number of rows");
 
         for (var r = 0; r < dt1.Rows.Count; r++)
         {
@@ -53,9 +53,9 @@ public partial class DiffDataTables : UserControl
                 if (val1.Equals(val2))
                     copyToRow[c] = val1; //regular difference
                 else if (val1.Trim().Equals(val2.Trim())) //whitespace difference
-                    copyToRow[c] = val1 + WhitespaceDifference;
+                    copyToRow[c] = $"{val1}{WhitespaceDifference}";
                 else
-                    copyToRow[c] = val1 + DifferenceSymbol + val2;
+                    copyToRow[c] = $"{val1}{DifferenceSymbol}{val2}";
             }
         }
 

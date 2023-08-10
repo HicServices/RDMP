@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.LoadExecutionUIs;
@@ -23,8 +22,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// </summary>
 public class PersistenceDecisionFactory
 {
-    private PersistStringHelper _persistStringHelper = new();
-
     public PersistenceDecisionFactory()
     {
         //ensure dashboard UI assembly is loaded
@@ -62,13 +59,10 @@ public class PersistenceDecisionFactory
         return new DeserializeInstruction(controlType);
     }
 
-    public static RDMPCollection? ShouldCreateCollection(string persistString)
-    {
-        if (!persistString.StartsWith(PersistableToolboxDockContent.Prefix))
-            return null;
-
-        return PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
-    }
+    public static RDMPCollection? ShouldCreateCollection(string persistString) =>
+        !persistString.StartsWith(PersistableToolboxDockContent.Prefix)
+            ? null
+            : PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
 
     public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString,
         IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -104,7 +98,6 @@ public class PersistenceDecisionFactory
         var uiType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
         var collectionType = GetTypeByName(tokens[2], typeof(IPersistableObjectCollection), repositoryLocator);
 
-        var objectConstructor = new ObjectConstructor();
         var collectionInstance = (IPersistableObjectCollection)ObjectConstructor.Construct(collectionType);
 
         if (collectionInstance.DatabaseObjects == null)
@@ -125,12 +118,10 @@ public class PersistenceDecisionFactory
     private static Type GetTypeByName(string s, Type expectedBaseClassType,
         IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s) ??
-                       throw new TypeLoadException($"Could not find Type called '{s}'");
-        if (expectedBaseClassType != null)
-            if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                throw new TypeLoadException(
-                    $"Persistence string included a reference to Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
+        var toReturn = MEF.GetType(s) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
+        if (expectedBaseClassType?.IsAssignableFrom(toReturn) == false)
+            throw new TypeLoadException(
+                $"Persistence string included a reference to Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
 
         return toReturn;
     }

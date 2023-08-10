@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.SharpZipLib.Zip;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -122,6 +123,35 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         ClearAllInjections();
     }
 
+    /// <summary>
+    /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
+    /// </summary>
+    internal static IEnumerable<ValueTuple<string, MemoryStream>> GetContents(Stream pluginStream)
+    {
+        var isWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
+        if (!pluginStream.CanSeek)
+            throw new ArgumentException("Seek needed", nameof(pluginStream));
+        using var zip = new ZipFile(pluginStream);
+        foreach (var e in zip.Cast<ZipEntry>()
+                     .Where(static e => e.IsFile && e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                     .Where(e => isWin || !e.Name.Contains("/windows/")))
+        {
+            using var s = zip.GetInputStream(e);
+            using var ms2 = new MemoryStream();
+            s.CopyTo(ms2);
+            ms2.Position = 0;
+            yield return (e.Name, ms2);
+        }
+    }
+
+    /// <summary>
+    /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
+    /// </summary>
+    internal IEnumerable<ValueTuple<string, MemoryStream>> GetContents()
+    {
+        using var ms = new MemoryStream(Bin);
+        return GetContents(ms);
+    }
 
     /// <summary>
     /// Downloads the plugin nupkg to the given directory
@@ -182,10 +212,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 
     private static bool AreEqual(byte[] readAllBytes, byte[] dll)
     {
-        if (readAllBytes.Length != dll.Length)
-            return false;
-
-        return !dll.Where((t, i) => !readAllBytes[i].Equals(t)).Any();
+        return readAllBytes.Length == dll.Length && !dll.Where((t, i) => !readAllBytes[i].Equals(t)).Any();
     }
 
     public void InjectKnown(Plugin instance)

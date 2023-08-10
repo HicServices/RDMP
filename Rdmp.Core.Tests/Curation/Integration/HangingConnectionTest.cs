@@ -68,18 +68,16 @@ public class HangingConnectionTest : DatabaseTests
             new DiscoveredServer(new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn
                 .Builder.ConnectionString));
         serverCopy.ChangeDatabase("master");
-        using (var con = serverCopy.GetConnection())
-        {
-            con.Open();
-            var r = serverCopy.GetCommand("exec sp_who2", con).ExecuteReader();
-            while (r.Read())
-                if (r["DBName"].Equals(testDbName))
-                {
-                    var vals = new object[r.VisibleFieldCount];
-                    r.GetValues(vals);
-                    throw new Exception(
-                        $"Someone is locking {testDbName}:{Environment.NewLine}{string.Join(",", vals)}");
-                }
-        }
+        using var con = serverCopy.GetConnection();
+        con.Open();
+        var r = serverCopy.GetCommand("exec sp_who2", con).ExecuteReader();
+        while (r.Read())
+            if (r["DBName"].Equals(testDbName))
+            {
+                var vals = new object[r.VisibleFieldCount];
+                r.GetValues(vals);
+                throw new Exception(
+                    $"Someone is locking {testDbName}:{Environment.NewLine}{string.Join(",", vals)}");
+            }
     }
 }

@@ -106,7 +106,7 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         //cascade should have deleted the import definition since the imported object version is gone
         Assert.IsFalse(importDefinition.Exists());
 
-        //clear SetUp the exported version too 
+        //clear SetUp the exported version too
         exportDefinition.DeleteInDatabase();
         p.DeleteInDatabase();
     }

@@ -106,15 +106,12 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
 
     public override string GetCommandName()
     {
-        switch (_viewType)
+        return _viewType switch
         {
-            case ViewType.TOP_100:
-                return "View Extract";
-            case ViewType.Aggregate:
-                return "View Aggregate";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ViewType.TOP_100 => "View Extract",
+            ViewType.Aggregate => "View Aggregate",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     protected override IViewSQLAndResultsCollection GetCollection()
@@ -131,10 +128,9 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
         if (_container != null)
             collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _container);
 
-        if (collection == null)
-            throw new Exception("ViewFilterMatchData Command had no filter or container");
-
-        return collection;
+        return collection == null
+            ? throw new Exception("ViewFilterMatchData Command had no filter or container")
+            : (IViewSQLAndResultsCollection)collection;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

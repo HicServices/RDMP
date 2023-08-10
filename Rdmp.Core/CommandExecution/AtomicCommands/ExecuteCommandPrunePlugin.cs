@@ -7,7 +7,6 @@
 using System;
 using NLog;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.Core.Startup;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
@@ -24,15 +23,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
 /// those files.
 /// </summary>
-public class ExecuteCommandPrunePlugin : BasicCommandExecution
+public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
-    private string file;
+    private string _file;
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandPrunePlugin(string file) : base()
+    public ExecuteCommandPrunePlugin(string file)
     {
-        this.file = file;
+        _file = file;
     }
 
     /// <summary>
@@ -49,33 +48,37 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
         base.Execute();
 
         // make runtime decision about the file to run on
-        if (file == null && BasicActivator != null)
-            file = BasicActivator.SelectFile("Select plugin to prune")?.FullName;
+        _file ??= BasicActivator?.SelectFile("Select plugin to prune")?.FullName;
 
-        if (file == null) return;
+        if (_file == null)
+            return;
 
         var logger = LogManager.GetCurrentClassLogger();
 
-        var main = new Regex($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        var windows = new Regex($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        var context = new AssemblyLoadContext(nameof(ExecuteCommandPrunePlugin), true);
-        using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
+        var main = MainRegex();
+        var windows = WinRegex();
+        var keep = KeepRegex();
+        AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin), true);
+        using (var zf = ZipFile.Open(_file, ZipArchiveMode.Update))
         {
-            var current = UsefulStuff.GetExecutableDirectory();
-
-            logger.Info($"Reading RDMP core dlls in directory '{current}'");
-
-            var rdmpCoreFiles = current.GetFiles("*.dll");
-
-            var inMain = new List<ZipArchiveEntry>();
+            var rdmpCoreFiles = UsefulStuff.GetExecutableDirectory().GetFiles("*.dll");
+            var inMain = new HashSet<string>();
             var inWindows = new List<ZipArchiveEntry>();
 
             foreach (var e in zf.Entries.ToArray())
             {
-                if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                // Purge anything but directories, DLLs and plugin metadata
+                if (!keep.IsMatch(e.Name))
+                {
+                    logger.Info($"Deleting '{e.FullName}' (non-DLL)");
+                    e.Delete();
                     continue;
+                }
+
+                // Now we filter the DLLs to keep only .NET assemblies, and de-duplicate those too
+                if (!e.Name.EndsWith(".dll", StringComparison.Ordinal))
+                    continue;
+
                 Assembly assembly;
                 if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) ||
                     rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
@@ -92,7 +95,9 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
                 catch (Exception exception)
                 {
-                    logger.Warn($"Ignoring corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    logger.Info(exception,
+                        $"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    e.Delete();
                     continue;
                 }
 
@@ -104,17 +109,31 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
 
                 if (main.IsMatch(e.FullName))
-                    inMain.Add(e);
-                else if (windows.IsMatch(e.FullName)) inWindows.Add(e);
+                    inMain.Add(e.Name);
+                else if (windows.IsMatch(e.FullName))
+                    inWindows.Add(e);
+                else
+                    logger.Warn($"Unclassified plugin component {e.FullName}");
             }
 
-            foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())
+            foreach (var dup in inWindows.Where(e => inMain.Contains(e.Name)))
             {
                 logger.Info($"Deleting '{dup.FullName}' because it is already in 'main' subdir");
                 dup.Delete();
             }
+
+            context.Unload();
         }
 
         BasicActivator?.Show("Prune Completed");
     }
+
+    [GeneratedRegex("/main/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex MainRegex();
+
+    [GeneratedRegex("/windows/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex WinRegex();
+
+    [GeneratedRegex("(.nuspec|.dll|.rdmp|/)$", RegexOptions.CultureInvariant)]
+    private static partial Regex KeepRegex();
 }

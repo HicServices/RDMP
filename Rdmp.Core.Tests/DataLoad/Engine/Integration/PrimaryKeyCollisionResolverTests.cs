@@ -38,7 +38,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.DuplicateRecordResolutionIsAscending = false;
             c3.SaveToDatabase();
 
-            Assert.DoesNotThrow(() => mutilation.Check(new ThrowImmediatelyCheckNotifier()));
+            Assert.DoesNotThrow(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
         }
         finally
         {
@@ -50,7 +50,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNoColumnOrderConfigured()
     {
-        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
+        SetupTableInfos(out var t, out _, out _, out _);
         try
         {
             var mutilation = new PrimaryKeyCollisionResolverMutilation
@@ -59,7 +59,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             };
             try
             {
-                mutilation.Check(new ThrowImmediatelyCheckNotifier());
+                mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet);
                 Assert.Fail("Should have crashed before here");
             }
             catch (Exception e)
@@ -82,7 +82,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     {
         var mutilation = new PrimaryKeyCollisionResolverMutilation();
 
-        var ex = Assert.Throws<Exception>(() => mutilation.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
         StringAssert.Contains(
             "Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",
             ex.Message);
@@ -128,7 +128,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoColumnOrdersConfigured_ThrowsException()
     {
-        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
+        SetupTableInfos(out var t, out var c1, out _, out _);
         try
         {
             c1.IsPrimaryKey = true;
@@ -149,7 +149,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoPrimaryKeys_ThrowsException()
     {
-        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
+        SetupTableInfos(out var t, out _, out _, out _);
 
         try
         {

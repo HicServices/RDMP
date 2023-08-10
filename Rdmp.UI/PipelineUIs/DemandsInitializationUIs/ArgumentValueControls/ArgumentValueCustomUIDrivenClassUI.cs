@@ -41,24 +41,23 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var expectedUIClassName = $"{t.FullName}UI";
 
-            _uiType = _args.CatalogueRepository.MEF.GetType(expectedUIClassName);
+            _uiType = Core.Repositories.MEF.GetType(expectedUIClassName);
 
             //if we did not find one with the exact name (including namespace), try getting it just by the end of its name (omit namespace)
             if (_uiType == null)
             {
                 var shortUIClassName = $"{t.Name}UI";
-                var candidates = _args.CatalogueRepository.MEF.GetAllTypes()
-                    .Where(type => type.Name.Equals(shortUIClassName)).ToArray();
+                var candidates = Core.Repositories.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName))
+                    .ToArray();
 
-                if (candidates.Length > 1)
-                    throw new Exception(
-                        $"Found {candidates.Length} classes called '{shortUIClassName}' : ({string.Join(",", candidates.Select(c => c.Name))})");
-
-                if (candidates.Length == 0)
-                    throw new Exception(
-                        $"Could not find UI class called {shortUIClassName} make sure that it exists, is public and is marked with class attribute ");
-
-                _uiType = candidates[0];
+                _uiType = candidates.Length switch
+                {
+                    > 1 => throw new Exception(
+                        $"Found {candidates.Length} classes called '{shortUIClassName}' : ({string.Join(",", candidates.Select(c => c.Name))})"),
+                    0 => throw new Exception(
+                        $"Could not find UI class called {shortUIClassName} make sure that it exists, is public and is marked with class attribute "),
+                    _ => candidates[0]
+                };
             }
 
 

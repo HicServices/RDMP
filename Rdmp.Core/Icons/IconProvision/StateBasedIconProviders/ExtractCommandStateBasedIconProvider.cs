@@ -30,21 +30,20 @@ public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvide
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is not ExtractCommandState ecs)
-            return null;
-
-        return ecs switch
-        {
-            ExtractCommandState.NotLaunched => _waiting,
-            ExtractCommandState.WaitingForSQLServer => _waiting,
-            ExtractCommandState.WritingToFile => _writing,
-            ExtractCommandState.Crashed => _failed,
-            ExtractCommandState.UserAborted => _failed,
-            ExtractCommandState.Completed => _tick,
-            ExtractCommandState.Warning => _warning,
-            ExtractCommandState.WritingMetadata => _writing,
-            ExtractCommandState.WaitingToExecute => _waiting,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return o is not ExtractCommandState ecs
+            ? null
+            : ecs switch
+            {
+                ExtractCommandState.NotLaunched => _waiting,
+                ExtractCommandState.WaitingForSQLServer => _waiting,
+                ExtractCommandState.WritingToFile => _writing,
+                ExtractCommandState.Crashed => _failed,
+                ExtractCommandState.UserAborted => _failed,
+                ExtractCommandState.Completed => _tick,
+                ExtractCommandState.Warning => _warning,
+                ExtractCommandState.WritingMetadata => _writing,
+                ExtractCommandState.WaitingToExecute => _waiting,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

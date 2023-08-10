@@ -96,7 +96,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             NumberOfIntegersToUseInAnonymousRepresentation = 2
         };
         _anoConditionTable.SaveToDatabase();
-        _anoConditionTable.PushToANOServerAsNewTable("varchar(4)", new ThrowImmediatelyCheckNotifier());
+        _anoConditionTable.PushToANOServerAsNewTable("varchar(4)", ThrowImmediatelyCheckNotifier.Quiet);
     }
 
     private void DeleteANOEndpoint()
@@ -130,7 +130,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         var converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
         var ex = Assert.Throws<Exception>(() =>
             converter.ConvertFullColumnInfo(s => true,
-                new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
+                ThrowImmediatelyCheckNotifier.Quiet)); //say  yes to everything it proposes
 
         StringAssert.IsMatch(
             @"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",

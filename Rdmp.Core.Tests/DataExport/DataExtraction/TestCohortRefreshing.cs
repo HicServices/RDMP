@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
@@ -34,7 +33,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.Name = "RefreshPipe";
         pipe.SaveToDatabase();
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out _);
 
         var oldcohort = _configuration.Cohort;
 
@@ -44,7 +43,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         _configuration.CohortRefreshPipeline_ID = pipe.ID;
         _configuration.SaveToDatabase();
 
-        var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+        var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
 
         Assert.NotNull(engine.Request.NewCohortDefinition);
 
@@ -93,7 +92,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         pipe.DestinationPipelineComponent_ID = dest.ID;
         pipe.SaveToDatabase();
 
-        Execute(out var useCase, out var results);
+        Execute(out _, out _);
 
         var oldcohort = _configuration.Cohort;
 
@@ -106,7 +105,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         if (cachedb.Exists())
             cachedb.Drop();
 
-        new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
+        new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p, ThrowImmediatelyCheckNotifier.Quiet);
         queryCacheServer.SetProperties(cachedb);
 
         //Create a Cohort Identification configuration (query) that will identify the cohort
@@ -131,7 +130,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             _configuration.SaveToDatabase();
 
             //get a refreshing engine
-            var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+            var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
             engine.Execute();
 
             Assert.NotNull(engine.Request.NewCohortDefinition);

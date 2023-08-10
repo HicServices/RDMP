@@ -25,7 +25,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
 /// <summary>
 /// Many researchers like flat tables they can load into SPSS or STATA or Excel and thus would prefer not to deal with multiple tables if possible.  Storing datasets as flat
-/// tables however is often suboptimal in terms of performance and storage space.  Therefore it is possible to configure a dataset (Catalogue) which includes columns from 
+/// tables however is often suboptimal in terms of performance and storage space.  Therefore it is possible to configure a dataset (Catalogue) which includes columns from
 /// multiple tables.  For example if you have a Header and Results table in which Header tells you when a test was done and by whom including sample volume etc and each test
 /// gives multiple results (white blood cell count, red blood cell count etc) then you will obviously want to store it as two separate tables.
 /// 
@@ -36,12 +36,12 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 /// integrity constraints into your database!).</para>
 ///  
 /// <para>You might wonder why you have to configure JoinInfo information into RDMP when it is possibly already implemented in your data model (e.g. with foreign key constraints).  The
-/// explicit record in the RDMP database allows you to hold corrupt/unlinkable data (which would violate a foreign key constraint) and still know that the tables must be joined. 
+/// explicit record in the RDMP database allows you to hold corrupt/unlinkable data (which would violate a foreign key constraint) and still know that the tables must be joined.
 /// Additionally it lets you configure joins between tables in different databases and to specify an explicit direction (LEFT / RIGHT / INNER) which is always the same when it comes
 /// time to extract your data for researchers.</para>
 /// 
 /// <para>If you need to join on more than 1 column then just create a JoinInfo for each pair of columns (making sure the direction - LEFT/RIGHT/INNER matches).  For example if the join is
-/// Header.LabNumber = Results.LabNumber AND Header.Hospital = Results.Hospital (because of crossover in LabNumber between hospitals) then you would configure a JoinInfo for 
+/// Header.LabNumber = Results.LabNumber AND Header.Hospital = Results.Hospital (because of crossover in LabNumber between hospitals) then you would configure a JoinInfo for
 /// Header.LabNumber = Results.LabNumber and another for Header.Hospital = Results.Hospital.</para>
 /// </summary>
 public partial class JoinConfigurationUI : JoinConfiguration_Design
@@ -78,7 +78,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
         btnChooseRightTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add)
             .ImageToBitmap();
-        UpdateValidityAssesment();
+        UpdateValidityAssessment();
 
         olvLeftColumns.ClearObjects();
         olvLeftColumns.AddObjects(_leftTableInfo.ColumnInfos);
@@ -124,10 +124,10 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void k_SelectedColumnChanged()
     {
-        UpdateValidityAssesment();
+        UpdateValidityAssessment();
     }
 
-    private void UpdateValidityAssesment(bool actuallyDoIt = false)
+    private void UpdateValidityAssessment(bool actuallyDoIt = false)
     {
         ragSmiley1.Reset();
         try
@@ -146,7 +146,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
                 ||
                 pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
                 throw new Exception(
-                    "You must have the same number of primary and foregin keys (they must come in pairs)");
+                    "You must have the same number of primary and foreign keys (they must come in pairs)");
 
             if (pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))
                 throw new Exception("All Primary Keys must come from the Left hand TableInfo");
@@ -199,7 +199,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void btnCreateJoinInfo_Click(object sender, EventArgs e)
     {
-        UpdateValidityAssesment(true);
+        UpdateValidityAssessment(true);
     }
 
     private void tbFilterLeft_TextChanged(object sender, EventArgs e)
@@ -218,7 +218,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private void rb_CheckedChanged(object sender, EventArgs e)
     {
-        UpdateValidityAssesment();
+        UpdateValidityAssessment();
     }
 
     public void SetOtherTableInfo(TableInfo otherTableInfo)
@@ -244,18 +244,14 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private static TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
     {
-        if (e.Data is not OLVDataObject data)
-            return null;
-
-        if (data.ModelObjects.Count != 1)
-            return null;
-
-        var ticmd = data.ModelObjects[0] as TableInfoCombineable;
-
-        if (data.ModelObjects[0] is TableInfo ti)
-            return ti;
-
-        return ticmd?.TableInfo;
+        return e.Data is not OLVDataObject data || data.ModelObjects.Count != 1
+            ? null
+            : data.ModelObjects[0] switch
+            {
+                TableInfo ti => ti,
+                TableInfoCombineable ticmd => ticmd.TableInfo,
+                _ => null
+            };
     }
 
     private void tbCollation_Leave(object sender, EventArgs e)

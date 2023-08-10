@@ -13,10 +13,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAtomicCommand
 {
     private readonly GovernancePeriod _period;
-    private FileInfo _file;
+    private readonly FileInfo _file;
 
     public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period) :
         base(activator)
@@ -25,9 +25,8 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAt
     }
 
     public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period, FileInfo file)
-        : base(activator)
+        : this(activator, period)
     {
-        _period = period;
         _file = file;
     }
 
@@ -39,21 +38,16 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAt
         var f = _file;
 
         if (p == null)
-        {
-            if (BasicActivator.SelectObject(new DialogArgs
+            if (!BasicActivator.SelectObject(new DialogArgs
                     {
                         WindowTitle = "Add Governance Document",
                         TaskDescription = "Select which GovernancePeriod you want to attach the document to."
                     }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
-                    out var selected))
-                p = selected;
-            else
+                    out p))
                 // user cancelled selecting a Catalogue
                 return;
-        }
 
         f ??= BasicActivator.SelectFile("Document to add");
-
         if (f == null)
             return;
 

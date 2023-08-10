@@ -18,7 +18,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandViewCommits : BasicUICommandExecution
 {
-    private IMapsDirectlyToDatabaseTable _o;
+    private readonly IMapsDirectlyToDatabaseTable _o;
 
     public ExecuteCommandViewCommits(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : base(activator)
     {

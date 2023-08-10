@@ -58,17 +58,6 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         set => SetField(ref _createdByAssembly, value);
     }
 
-
-    public int MaxfreeFormStringLength {
-        get => _maxFreeFormStringLength;
-        set => SetField(ref _maxFreeFormStringLength,value);
-    }
-
-    public bool ShouldTruncateFreeFormString {
-        get => _shouldTruncateFreeFormStrings;
-        set => SetField(ref _shouldTruncateFreeFormStrings,value);
-    }
-
     /// <summary>
     /// The public network share of the Data path where the physical database files are stored if applicable.  Sharing your database directory on the network is a
     /// terrible idea (don't do it).  You can use this to automate detatching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
@@ -269,13 +258,9 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     }
 
     /// <inheritdoc/>
-    public bool WasCreatedBy(IPatcher patcher)
-    {
-        if (string.IsNullOrWhiteSpace(CreatedByAssembly))
-            return false;
-
-        return patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly;
-    }
+    public bool WasCreatedBy(IPatcher patcher) => !string.IsNullOrWhiteSpace(CreatedByAssembly) &&
+                                                  (patcher.Name == CreatedByAssembly ||
+                                                   patcher.LegacyName == CreatedByAssembly);
 
     /// <inheritdoc/>
     public DiscoveredDatabase Discover(DataAccessContext context) => _selfCertifyingDataAccessPoint.Discover(context);

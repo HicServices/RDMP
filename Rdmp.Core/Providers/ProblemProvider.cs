@@ -29,10 +29,9 @@ public abstract class ProblemProvider : IProblemProvider
 
     public string DescribeProblem(object o)
     {
-        if (o is INamed n && !IgnoreBadNamesFor.Any(t => t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name))
-            return "Name contains illegal characters";
-
-        return DescribeProblemImpl(o);
+        return o is INamed n && !IgnoreBadNamesFor.Any(t => t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name)
+            ? "Name contains illegal characters"
+            : DescribeProblemImpl(o);
     }
 
     protected abstract string DescribeProblemImpl(object o);

@@ -56,26 +56,15 @@ public class NotifyEventArgs
 
     public CheckEventArgs ToCheckEventArgs()
     {
-        CheckResult result;
-        switch (ProgressEventType)
+        var result = ProgressEventType switch
         {
-            case ProgressEventType.Trace:
-            case ProgressEventType.Debug:
-                result = CheckResult.Success;
-                break;
-            case ProgressEventType.Information:
-                result = CheckResult.Success;
-                break;
-            case ProgressEventType.Warning:
-                result = CheckResult.Warning;
-                break;
-            case ProgressEventType.Error:
-                result = CheckResult.Fail;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
+            ProgressEventType.Trace => CheckResult.Success,
+            ProgressEventType.Debug => CheckResult.Success,
+            ProgressEventType.Information => CheckResult.Success,
+            ProgressEventType.Warning => CheckResult.Warning,
+            ProgressEventType.Error => CheckResult.Fail,
+            _ => throw new ArgumentOutOfRangeException()
+        };
         return new CheckEventArgs(Message, result, Exception);
     }
 }

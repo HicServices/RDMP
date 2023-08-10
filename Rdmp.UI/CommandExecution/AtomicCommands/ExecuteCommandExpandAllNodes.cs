@@ -35,12 +35,10 @@ public class ExecuteCommandExpandAllNodes : BasicUICommandExecution, IAtomicComm
         Weight = 100.4f;
     }
 
-    public override string GetCommandName()
-    {
-        if (_rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName)) return "Expand All";
-
-        return base.GetCommandName();
-    }
+    public override string GetCommandName() =>
+        _rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? "Expand All"
+            : base.GetCommandName();
 
     public override void Execute()
     {

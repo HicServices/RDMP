@@ -73,8 +73,7 @@ internal class MarkdownCodeBlockTests
             {
                 if (obj is null) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != GetType()) return false;
-                return Equals((FrozenExtractionConfigurationsNode)obj);
+                return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
             }
 
             public override int GetHashCode() => Project?.GetHashCode() ?? 0;
@@ -268,13 +267,10 @@ internal class MarkdownCodeBlockTests
             #region 59f55fa3ef50404291c7ae3996772635
 
             public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
-                InsertOption insertOption = InsertOption.Default)
-            {
-                if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-                    return new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue);
-
-                return null;
-            }
+                InsertOption insertOption = InsertOption.Default) =>
+                cmd is CatalogueCombineable sourceCatalogueCombineable
+                    ? new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue)
+                    : (ICommandExecution)null;
 
             #endregion
 

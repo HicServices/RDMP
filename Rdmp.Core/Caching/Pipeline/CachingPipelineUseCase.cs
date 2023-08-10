@@ -31,8 +31,8 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
 {
     private readonly ICacheProgress _cacheProgress;
     private readonly ICacheFetchRequestProvider _providerIfAny;
-    private IPipeline _pipeline;
-    private IPermissionWindow _permissionWindow;
+    private readonly IPipeline _pipeline;
+    private readonly IPermissionWindow _permissionWindow;
 
     /// <summary>
     /// Class for helping you to construct a caching pipeline engine instance with the correct context and initialization objects
@@ -104,11 +104,10 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         // get the current destination
         var destination = GetEngine(_pipeline, listener).DestinationObject ??
                           throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
-        if (destination is not ICacheFileSystemDestination systemDestination)
-            throw new NotSupportedException(
-                $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}");
-
-        return systemDestination;
+        return destination is not ICacheFileSystemDestination systemDestination
+            ? throw new NotSupportedException(
+                $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}")
+            : systemDestination;
     }
 
     public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener) => GetEngine(_pipeline, listener);

@@ -19,13 +19,13 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement;
 
 /// <summary>
 /// <para>Allows you to specify the private and release identifier column name/datatypes for the cohort database you are creating.  It is anticipated that you will have some datasets already
-/// configured in the Data Catalogue Database and have marked your patient identifier columns as IsExtractionIdentifier (See ExtractionInformationUI, ImportSQLTable and 
+/// configured in the Data Catalogue Database and have marked your patient identifier columns as IsExtractionIdentifier (See ExtractionInformationUI, ImportSQLTable and
 /// ForwardEngineerCatalogue).</para>
 /// 
-/// <para>Once you have understood and configured your cohort database schema including private / release identifier datatypes you can now choose which database/server to 
+/// <para>Once you have understood and configured your cohort database schema including private / release identifier datatypes you can now choose which database/server to
 /// create the database on (Sql Server).  Enter the server details.  If you omit username and password then Windows Authentication (Integrated Security) is used, if you enter a
 /// username/password then these will be stored in the Data Export Manager database in encrypted form (See PasswordEncryptionKeyLocationUI) and used to do Sql Authentication when
-/// doing data extractions.</para> 
+/// doing data extractions.</para>
 ///  
 /// <para>You can use <see cref="CreateNewCohortDatabaseWizard"/> to create a suitable database based on the private identifiers you
 /// hold in your existing datasets.</para>

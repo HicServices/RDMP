@@ -54,10 +54,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
-        btnAllCatalogues.Click += new EventHandler(btnAllCatalogues_Click);
-        btnSingleCatalogue.Click += new EventHandler(btnSingleCatalogue_Click);
-        btnShowLabels.CheckStateChanged += new EventHandler(btnShowLabels_CheckStateChanged);
-        btnRefresh.Click += new EventHandler(btnRefresh_Click);
+        btnAllCatalogues.Click += btnAllCatalogues_Click;
+        btnSingleCatalogue.Click += btnSingleCatalogue_Click;
+        btnShowLabels.CheckStateChanged += btnShowLabels_CheckStateChanged;
+        btnRefresh.Click += btnRefresh_Click;
 
         //put edit mode on for the designer
         NotifyEditModeChange(false);
@@ -255,19 +255,17 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     private void btnSingleCatalogue_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
+        if (!Activator.SelectObject(new DialogArgs
             {
                 TaskDescription = "Which Catalogue should the graph depict?"
-            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-        {
-            _collection.SetSingleCatalogueMode(selected);
+            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected)) return;
+        _collection.SetSingleCatalogueMode(selected);
 
-            btnAllCatalogues.Checked = false;
-            btnSingleCatalogue.Checked = true;
+        btnAllCatalogues.Checked = false;
+        btnSingleCatalogue.Checked = true;
 
-            SaveCollectionChanges();
-            GenerateChart();
-        }
+        SaveCollectionChanges();
+        GenerateChart();
     }
 
     private void btnRefresh_Click(object sender, EventArgs e)

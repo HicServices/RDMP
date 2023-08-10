@@ -132,7 +132,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"));
 
         tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
-        tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
+        tt.SetToolTip(btnAbortLoad, "Cancels execution of any running cohort sets");
     }
 
 
@@ -391,13 +391,8 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         var menuItem = new ToolStripMenuItem(title);
 
-        if (Common.Compiler.Tasks.TryGetValue(c, out var exe))
-        {
-            if (exe != null && enabledFunc(exe))
-                menuItem.Click += (s, e) => action(exe);
-            else
-                menuItem.Enabled = false;
-        }
+        if (Common.Compiler.Tasks.TryGetValue(c, out var task) && task != null && enabledFunc(task))
+            menuItem.Click += (s, e) => action(task);
         else
         {
             menuItem.Enabled = false;

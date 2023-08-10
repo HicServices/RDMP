@@ -158,7 +158,7 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
         Catalogue = databaseObject.GetCatalogue();
         _extractionFilter = databaseObject;
 
-        ParameterCollectionUIOptions options = null;
+        ParameterCollectionUIOptions options;
         try
         {
             var factory = new ParameterCollectionUIOptionsFactory();
@@ -216,14 +216,13 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if (e.Object is not IFilter filter)
+        if (e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
             return;
 
-        if (filter.Equals(_extractionFilter))
-            if (!filter.Exists()) //its deleted
-                ParentForm.Close();
-            else
-                _extractionFilter = filter;
+        if (!filter.Exists()) //it's deleted
+            ParentForm?.Close();
+        else
+            _extractionFilter = filter;
     }
 }
 

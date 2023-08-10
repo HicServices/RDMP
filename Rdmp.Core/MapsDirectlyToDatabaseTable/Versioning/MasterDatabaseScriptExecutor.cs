@@ -15,7 +15,6 @@ using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
-using Version = System.Version;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
@@ -229,11 +228,8 @@ public class MasterDatabaseScriptExecutor
 
         try
         {
-            var i = 0;
             foreach (var patch in patches)
             {
-                i++;
-
                 var shouldRun = patchPreviewShouldIRunIt(patch.Value);
 
                 if (shouldRun)
@@ -259,11 +255,7 @@ public class MasterDatabaseScriptExecutor
 
             SetVersion("Patching", maxPatchVersion.ToString());
             notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}",
-                CheckResult.Success, null));
-
-            //all went fine
-            notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed",
-                CheckResult.Success, null));
+                CheckResult.Success));
 
             return true;
         }
@@ -415,7 +407,7 @@ public class MasterDatabaseScriptExecutor
     /// Creates a new platform database and patches it
     /// </summary>
     /// <param name="patcher">Determines the SQL schema created</param>
-    /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
+    /// <param name="notifier">audit object, can be a ThrowImmediatelyCheckNotifier.Quiet if you aren't in a position to pass one</param>
     public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
     {
         var initialPatch = patcher.GetInitialCreateScriptContents(Database);

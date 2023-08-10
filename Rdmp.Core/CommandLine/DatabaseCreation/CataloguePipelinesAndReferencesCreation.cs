@@ -20,7 +20,6 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -46,10 +45,11 @@ public class CataloguePipelinesAndReferencesCreation
 
     private void DoStartup()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(), _repositoryLocator);
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        var startup = new Startup.Startup(_repositoryLocator);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
-    private void CreateServers(PlatformDatabaseCreationOptions options)
+
+    private void CreateServers()
     {
         var defaults = _repositoryLocator.CatalogueRepository;
         if(options.CreateLoggingServer){
@@ -59,18 +59,25 @@ public class CataloguePipelinesAndReferencesCreation
                     Database = _logging.InitialCatalog
                 };
 
-            if(_logging.UserID != null)
-            {
-                _edsLogging.Username = _logging.UserID;
-                _edsLogging.Password = _logging.Password;
-            }
+        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",
+            new LoggingDatabasePatcher())
+        {
+            Server = _logging.DataSource,
+            Database = _logging.InitialCatalog
+        };
 
-            _edsLogging.SaveToDatabase();
-            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
-            Console.WriteLine("Successfully configured default logging server");
+        if (_logging.UserID != null)
+        {
+            _edsLogging.Username = _logging.UserID;
+            _edsLogging.Password = _logging.Password;
         }
 
-        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
+        _edsLogging.SaveToDatabase();
+        defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
+        Console.WriteLine("Successfully configured default logging server");
+
+        var edsDQE =
+            new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
             {
                 Server = _dqe.DataSource,
                 Database = _dqe.InitialCatalog
@@ -123,11 +130,11 @@ public class CataloguePipelinesAndReferencesCreation
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-        if(options.CreateLoggingServer){
-            SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
-            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
-        }
-        var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File",typeof (DelimitedFlatFileDataFlowSource), typeof (BasicCohortDestination));
+        SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
+        SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
+
+        var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File", typeof(DelimitedFlatFileDataFlowSource),
+            typeof(BasicCohortDestination));
         SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");
 
         CreatePipeline("CREATE COHORT:By Executing Cohort Identification Configuration",

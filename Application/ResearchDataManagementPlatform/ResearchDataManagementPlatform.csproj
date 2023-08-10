@@ -20,6 +20,7 @@
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>Icon\main.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Updates\UpdaterUI.cs" />
@@ -39,7 +40,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
@@ -68,9 +69,7 @@
       <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>
     <Content Include="Icon\main.ico" />
-    <Content Include="Icon\main.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Icon\main.png" />
     <Content Include="NLog.template.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -104,7 +103,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\LICENSE">
       <Link>WindowManagement\Licenses\LICENSE</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\LIBRARYLICENSES">
       <Link>WindowManagement\Licenses\LIBRARYLICENSES</Link>

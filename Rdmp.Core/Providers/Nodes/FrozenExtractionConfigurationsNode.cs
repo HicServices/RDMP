@@ -14,7 +14,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 internal class FrozenExtractionConfigurationsNode : Node, IOrderable
 {
-    public Project Project { get; set; }
+    public Project Project { get; }
 
     public FrozenExtractionConfigurationsNode(Project project)
     {
@@ -33,7 +33,7 @@ internal class FrozenExtractionConfigurationsNode : Node, IOrderable
         return Equals((FrozenExtractionConfigurationsNode)obj);
     }
 
-    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
     public int Order
     {

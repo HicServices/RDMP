@@ -118,9 +118,7 @@ public class ExecutableRuntimeTask : RuntimeTask
     private static ExitCodeType ParseExitCode(int value)
     {
         var success = Enum.TryParse(value.ToString(), out ExitCodeType exitCode);
-        if (!success)
-            throw new ArgumentException($"Could not parse exit code from value: {value}");
-        return exitCode;
+        return !success ? throw new ArgumentException($"Could not parse exit code from value: {value}") : exitCode;
     }
 
     public override bool Exists() => File.Exists(ExeFilepath);
@@ -160,7 +158,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         var exeParsed = parser.Parse(ExeFilepath).ToArray();
 
         //if it is an SQL file they are pointing us at by accident
-        if (new FileInfo(exeParsed[0]).Extension.Equals(".sql")) //yes it is 
+        if (new FileInfo(exeParsed[0]).Extension.Equals(".sql")) //yes it is
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"ProcessTask called {ProcessTask.Name} is marked as an Executable but seems to point at an SQL file.  You should set the process task type to SQLFile instead",

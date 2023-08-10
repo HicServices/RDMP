@@ -66,7 +66,7 @@ public class SimpleExampleTests : DatabaseTests
         //the credentials should be different
         Assert.AreNotEqual(tbl.Database.Server.ExplicitUsernameIfAny, newTbl.Database.Server.ExplicitUsernameIfAny);
 
-        //try re-reading the data 
+        //try re-reading the data
         Assert.AreEqual(1, newTbl.GetRowCount());
         Assert.AreEqual(1, newTbl.DiscoverColumns().Length);
         Assert.IsTrue(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);

@@ -21,12 +21,10 @@ namespace Rdmp.UI.Menus;
 internal class LoadStageNodeMenu : RDMPContextMenuStrip
 {
     private readonly LoadStageNode _loadStageNode;
-    private MEF _mef;
 
     public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode) : base(args, loadStageNode)
     {
         _loadStageNode = loadStageNode;
-        _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
 
         args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
 
@@ -39,7 +37,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
 
     private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
     {
-        var types = _mef.GetTypes<T>().Where(filterTypes).ToArray();
+        var types = MEF.GetTypes<T>().Where(filterTypes).ToArray();
         var menu = new ToolStripMenuItem(menuName);
 
         ProcessTaskType taskType;
@@ -51,7 +49,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
         else if (typeof(T) == typeof(IMutilateDataTables))
             taskType = ProcessTaskType.MutilateDataTable;
         else
-            throw new ArgumentException($"Type '{typeof(T)}' was not expected", "T");
+            throw new ArgumentException($"Type '{typeof(T)}' was not expected", nameof(T));
 
         foreach (var type in types)
         {

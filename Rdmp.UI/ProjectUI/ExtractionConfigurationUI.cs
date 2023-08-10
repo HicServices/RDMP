@@ -28,7 +28,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.ProjectUI;
 
 /// <summary>
-/// Allows you to change high level attributes of an ExtractionConfiguration in a data extraction Project.  Executing an ExtractionConfiguration involves joining the 
+/// Allows you to change high level attributes of an ExtractionConfiguration in a data extraction Project.  Executing an ExtractionConfiguration involves joining the
 /// selected datasets against the selected cohort (and substituting the private identifiers for project specific anonymous release identifiers) as well as applying any
 /// configured filters (See ConfigureDatasetUI).  You can have multiple active configurations in a project, for example you might extract 'Prescribing', 'Biochemistry' and 'Demography' for the cohort 'CasesForProject123' and
 /// only datasets 'Biochemistry' and 'Demography' for the cohort 'ControlsForProject123'.
@@ -37,7 +37,7 @@ namespace Rdmp.UI.ProjectUI;
 /// 
 /// <para>You can also define global SQL parameters which will be available to all Filters in all datasets extracted as part of the configuration.</para>
 /// 
-/// <para>You can associate a specific CohortIdentificationConfiguration with the ExtractionConfiguration.  This will allow you to do a 'cohort refresh' (replace the current saved cohort 
+/// <para>You can associate a specific CohortIdentificationConfiguration with the ExtractionConfiguration.  This will allow you to do a 'cohort refresh' (replace the current saved cohort
 /// identifier list with a new version built by executing the query - helpful if you have new data being loaded regularly and this results in the study cohort changing).</para>
 /// </summary>
 public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Design, ISaveableUI
@@ -91,7 +91,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         _extractionConfiguration.SaveToDatabase();
     }
 
-    private bool _bLoading = false;
+    private bool _bLoading;
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
     {
@@ -174,7 +174,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         try
         {
             new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline,
-                new ThrowImmediatelyDataLoadEventListener());
+                ThrowImmediatelyDataLoadEventListener.Quiet);
         }
         catch (Exception ex)
         {

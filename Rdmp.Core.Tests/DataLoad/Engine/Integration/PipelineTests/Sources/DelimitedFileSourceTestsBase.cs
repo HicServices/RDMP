@@ -54,7 +54,7 @@ public abstract class DelimitedFileSourceTestsBase
     protected static DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
     {
         var source = new DelimitedFlatFileDataFlowSource();
-        source.PreInitialize(file, new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(file, ThrowImmediatelyDataLoadEventListener.Quiet);
         source.Separator = ",";
         source.StronglyTypeInput = true; //makes the source interpret the file types properly
         source.StronglyTypeInputBatchSize = 100;
@@ -63,11 +63,11 @@ public abstract class DelimitedFileSourceTestsBase
 
         try
         {
-            return source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            return source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         }
         finally
         {
-            source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
     }
 }

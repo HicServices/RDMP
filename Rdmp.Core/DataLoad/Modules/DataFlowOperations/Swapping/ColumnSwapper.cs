@@ -17,7 +17,6 @@ using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 using Rdmp.Core.Repositories;
 using TypeGuesser;
 using System.Globalization;
-using TypeGuesser.Deciders;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -173,7 +172,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 catch (Exception ex)
                 {
                     throw new Exception(
-                        $"Error building Type convertion decider for the mapping table key type {_keyType}", ex);
+                        $"Error building Type conversion decider for the mapping table key type {_keyType}", ex);
                 }
         }
 
@@ -219,7 +218,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 {
                     case AliasResolutionStrategy.CrashIfAliasesFound:
                         throw new AliasException(
-                            $"The value '{fromValue}' maps to mulitple ouptut values:{string.Join(",", results.Select(v => $"'{v}'"))}");
+                            $"The value '{fromValue}' maps to multiple output values:{string.Join(",", results.Select(v => $"'{v}'"))}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
 
@@ -281,41 +280,37 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
             con.Open();
             var sql = GetMappingTableSql();
 
-            using (var cmd = server.GetCommand(sql, con))
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = Timeout;
+
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
             {
-                cmd.CommandTimeout = Timeout;
+                var keyVal = r[fromColumnName];
 
-                using (var r = cmd.ExecuteReader())
+                if (keyVal != DBNull.Value)
                 {
-                    while (r.Read())
+                    if (_keyType == null)
                     {
-                        var keyVal = r[fromColumnName];
-
-                        if (keyVal != DBNull.Value)
-                        {
-                            if (_keyType == null)
-                            {
-                                _keyType = keyVal.GetType();
-                            }
-                            else
-                            {
-                                if (_keyType != keyVal.GetType())
-                                    throw new Exception(
-                                        $"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
-                            }
-                        }
-                        else
-                        {
-                            nulls++;
-                            continue;
-                        }
-
-                        if (!_mappingTable.ContainsKey(keyVal))
-                            _mappingTable.Add(keyVal, new List<object>());
-
-                        _mappingTable[keyVal].Add(r[toColumnName]);
+                        _keyType = keyVal.GetType();
+                    }
+                    else
+                    {
+                        if (_keyType != keyVal.GetType())
+                            throw new Exception(
+                                $"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
                     }
                 }
+                else
+                {
+                    nulls++;
+                    continue;
+                }
+
+                if (!_mappingTable.ContainsKey(keyVal))
+                    _mappingTable.Add(keyVal, new List<object>());
+
+                _mappingTable[keyVal].Add(r[toColumnName]);
             }
         }
 

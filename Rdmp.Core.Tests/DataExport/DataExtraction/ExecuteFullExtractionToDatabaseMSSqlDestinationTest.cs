@@ -12,7 +12,6 @@ using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
@@ -26,7 +25,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 {
     private ExternalDatabaseServer _extractionServer;
 
-    private readonly string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
+    private const string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
     private ColumnInfo _columnToTransform;
     private Pipeline _pipeline;
 
@@ -95,7 +94,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         }
         finally
         {
-            if (dbToExtractTo != null && dbToExtractTo.Exists())
+            if (dbToExtractTo?.Exists() == true)
                 dbToExtractTo.Drop();
 
             _pipeline?.DeleteInDatabase();
@@ -172,9 +171,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
         var lookupTbl = tbl2.Database.CreateTable("z_fff", dtLookup);
 
-        Import(lookupTbl, out var ti, out var columnInfos);
+        Import(lookupTbl, out _, out var columnInfos);
 
-        var lookup = new Lookup(CatalogueRepository, columnInfos[0],
+        _=new Lookup(CatalogueRepository, columnInfos[0],
             _columnToTransform,
             columnInfos[1],
             ExtractionJoinType.Left, null);

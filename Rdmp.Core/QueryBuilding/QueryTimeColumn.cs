@@ -75,13 +75,7 @@ public class QueryTimeColumn : IComparable
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        if (IColumn == null)
-            return -1;
-
-        return IColumn.ID;
-    }
+    public override int GetHashCode() => IColumn == null ? -1 : IColumn.ID;
 
     /// <inheritdoc/>
     public override bool Equals(object obj)
@@ -95,14 +89,11 @@ public class QueryTimeColumn : IComparable
     }
 
     /// <inheritdoc/>
-    public int CompareTo(object obj)
-    {
-        if (obj is QueryTimeColumn column)
-            return IColumn.Order -
-                   column.IColumn.Order;
-
-        return 0;
-    }
+    public int CompareTo(object obj) =>
+        obj is QueryTimeColumn
+            ? IColumn.Order -
+              (obj as QueryTimeColumn).IColumn.Order
+            : 0;
 
     /// <summary>
     /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the
@@ -292,7 +283,7 @@ public class QueryTimeColumn : IComparable
         //make sure to only throw SyntaxErrorException errors in here
         try
         {
-            IColumn.Check(new ThrowImmediatelyCheckNotifier());
+            IColumn.Check(ThrowImmediatelyCheckNotifier.Quiet);
             var runtimeName = IColumn.GetRuntimeName();
 
             if (string.IsNullOrWhiteSpace(runtimeName))

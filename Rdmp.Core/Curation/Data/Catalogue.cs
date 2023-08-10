@@ -509,16 +509,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public LoadMetadata LoadMetadata
-    {
-        get
-        {
-            if (LoadMetadata_ID == null)
-                return null;
-
-            return Repository.GetObjectByID<LoadMetadata>((int)LoadMetadata_ID);
-        }
-    }
+    public LoadMetadata LoadMetadata =>
+        LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int)LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -865,7 +857,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is Catalogue) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
+        if (obj is Catalogue)
+            return -string.Compare(obj.ToString(), ToString(),
+                StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -886,7 +880,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 CheckResult.Success));
 
         var tables = GetTableInfoList(true);
-        foreach (TableInfo t in tables)
+        foreach (var t in tables)
             t.Check(notifier);
 
         var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
@@ -918,50 +912,44 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             {
                 var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, false);
 
-                using (var con = server.GetConnection())
+                using var con = server.GetConnection();
+                con.Open();
+
+                string sql;
+                try
                 {
-                    con.Open();
-
-                    string sql;
-                    try
+                    var qb = new QueryBuilder(null, null)
                     {
-                        var qb = new QueryBuilder(null, null)
-                        {
-                            TopX = 1
-                        };
-                        qb.AddColumnRange(extractionInformations);
+                        TopX = 1
+                    };
+                    qb.AddColumnRange(extractionInformations);
 
-                        sql = qb.SQL;
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}",
-                            CheckResult.Success));
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs($"Could not generate extraction SQL for Catalogue {this}",
-                                CheckResult.Fail, e));
-                        return;
-                    }
-
-                    using (var cmd = DatabaseCommandHelper.GetCommand(sql, con))
-                    {
-                        cmd.CommandTimeout = 10;
-                        using (var r = cmd.ExecuteReader())
-                        {
-                            if (r.Read())
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"successfully read a row of data from the extraction SQL of Catalogue {this}",
-                                    CheckResult.Success));
-                            else
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"The query produced an empty result set for Catalogue{this}",
-                                    CheckResult.Warning));
-                        }
-                    }
-
-                    con.Close();
+                    sql = qb.SQL;
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
                 }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs($"Could not generate extraction SQL for Catalogue {this}",
+                            CheckResult.Fail, e));
+                    return;
+                }
+
+                using (var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = 10;
+                    using var r = cmd.ExecuteReader();
+                    if (r.Read())
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"successfully read a row of data from the extraction SQL of Catalogue {this}",
+                            CheckResult.Success));
+                    else
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
+                }
+
+                con.Close();
             }
             catch (Exception e)
             {
@@ -982,16 +970,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         GetTableInfos(out var normalTables, out var lookupTables);
 
-        if (includeLookupTables)
-            return normalTables.Union(lookupTables).ToArray();
-
-        return normalTables.ToArray();
+        return includeLookupTables ? normalTables.Union(lookupTables).ToArray() : normalTables.ToArray();
     }
 
     /// <inheritdoc/>
     public ITableInfo[] GetLookupTableInfoList()
     {
-        GetTableInfos(out var normalTables, out var lookupTables);
+        GetTableInfos(out _, out var lookupTables);
 
         return lookupTables.ToArray();
     }
@@ -1020,11 +1005,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     private IEnumerable<ColumnInfo> GetColumnInfos()
     {
-        if (CatalogueItems.All(ci => ci.IsColumnInfoCached()))
-            return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
-
-        return Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
-            .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
+        return CatalogueItems.All(ci => ci.IsColumnInfoCached())
+            ? CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null)
+            : Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue)
+                .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
     }
 
     /// <inheritdoc/>
@@ -1075,14 +1059,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         var type = tables.Select(t => t.DatabaseType).Distinct().ToArray();
 
-        if (type.Length == 0)
-            return null;
-
-        if (type.Length == 1)
-            return type[0];
-
-        throw new AmbiguousDatabaseTypeException(
-            $"The Catalogue '{this}' has TableInfos belonging to multiple DatabaseTypes ({string.Join(",", tables.Select(t => $"{t.GetRuntimeName()}(ID={t.ID} is {t.DatabaseType})"))}");
+        return type.Length switch
+        {
+            0 => null,
+            1 => type[0],
+            _ => throw new AmbiguousDatabaseTypeException(
+                $"The Catalogue '{this}' has TableInfos belonging to multiple DatabaseTypes ({string.Join(",", tables.Select(t => $"{t.GetRuntimeName()}(ID={t.ID} is {t.DatabaseType})"))}")
+        };
     }
 
     /// <summary>
@@ -1154,7 +1137,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
 
-    private string GetFetchSQL<T>(FetchOptions fetch) where T : IMapsDirectlyToDatabaseTable
+    private string GetFetchSQL(FetchOptions fetch)
     {
         return fetch switch
         {
@@ -1227,7 +1210,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
     {
         var e = GetExtractabilityStatus(dataExportRepository);
-        return e != null && e.IsProjectSpecific;
+        return e is { IsProjectSpecific: true };
     }
 
     /// <summary>
@@ -1274,7 +1257,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
-    public static bool IsAcceptableName(string name) => IsAcceptableName(name, out var whoCares);
+    public static bool IsAcceptableName(string name) => IsAcceptableName(name, out _);
 
     #endregion
 
@@ -1298,10 +1281,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             return false;
         }
 
-        if (CatalogueRepository.MEF == null)
-            throw new Exception("MEF has not been loaded yet so cannot find compatible IPluginCohortCompilers");
-
-        plugin = new PluginCohortCompilerFactory(CatalogueRepository.MEF)
+        plugin = PluginCohortCompilerFactory
             .CreateAll().FirstOrDefault(p => p.ShouldRun(this));
 
         return true;

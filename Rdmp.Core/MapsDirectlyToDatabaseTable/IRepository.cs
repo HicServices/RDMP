@@ -14,7 +14,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
 /// Persistence location (usually database) for IMapsDirectlyToDatabaseTable objects.  IMapsDirectlyToDatabaseTable objects cannot exist in memory without
-/// also simultaneously having a database record existing in an IRepository (e.g. TableRepository).  This is how RDMP handles persistence, referential 
+/// also simultaneously having a database record existing in an IRepository (e.g. TableRepository).  This is how RDMP handles persistence, referential
 /// integrity etc in a multi user environment.
 /// 
 /// <para>IRepository supports saving objects, loading objects by ID, Type etc </para>
@@ -40,7 +40,7 @@ public interface IRepository
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
 
     /// <summary>
-    /// Called when <see cref="SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> is 
+    /// Called when <see cref="SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> is
     /// occurring on any object.  Allows cancellation etc.
     /// </summary>
     public event EventHandler<SaveEventArgs> Saving;
@@ -98,7 +98,7 @@ public interface IRepository
     IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
 
     /// <summary>
-    /// Returns child objects of type T which belong to parent.  If the repository does not think the parent type and T types are 
+    /// Returns child objects of type T which belong to parent.  If the repository does not think the parent type and T types are
     /// related you should throw an Exception
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -196,7 +196,7 @@ public interface IRepository
     bool SupportsObjectType(Type type);
 
     /// <summary>
-    /// Throw an Exception if the repository persists to a location that is currently innaccessible (e.g. a database)
+    /// Throw an Exception if the repository persists to a location that is currently inaccessible (e.g. a database)
     /// </summary>
     void TestConnection();
 

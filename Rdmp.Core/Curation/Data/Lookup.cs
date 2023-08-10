@@ -98,40 +98,19 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo Description
-    {
-        get
-        {
-            _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
-            return _description;
-        }
-    }
+    public ColumnInfo Description => _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
 
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey
-    {
-        get
-        {
-            _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
-            return _foreignKey;
-        }
-    }
+    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey
-    {
-        get
-        {
-            _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
-            return _primaryKey;
-        }
-    }
+    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -196,7 +175,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <inheritdoc/>
     public override string ToString() => ToStringCached();
 
-    private string _cachedToString = null;
+    private string _cachedToString;
 
     private string ToStringCached()
     {
@@ -221,30 +200,26 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             throw new NotSupportedException("TableInfos come from different repositories!");
 
         var repo = (CatalogueRepository)foreignKeyTable.Repository;
-        using (var con = repo.GetConnection())
-        {
-            using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
+        using var con = repo.GetConnection();
+        using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
   WHERE 
   (SELECT TableInfo_ID FROM ColumnInfo where ID = PrimaryKey_ID) = @primaryKeyTableID
   AND
   (SELECT TableInfo_ID FROM ColumnInfo where ID = [ForeignKey_ID]) = @foreignKeyTableID"
-                       , con.Connection, con.Transaction))
-            {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
+                   , con.Connection, con.Transaction))
+        {
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
 
-                cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
-                cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
+            cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
+            cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
 
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                        toReturn.Add(new Lookup(repo, r));
-                }
-            }
-
-            return toReturn.ToArray();
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+                toReturn.Add(new Lookup(repo, r));
         }
+
+        return toReturn.ToArray();
     }
 
     /// <summary>

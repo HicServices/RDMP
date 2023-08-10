@@ -235,13 +235,7 @@ public partial class ArgumentCollectionUI : UserControl
         p.BringToFront();
     }
 
-    private static string GetSystemTypeName(Type type)
-    {
-        if (typeof(Enum).IsAssignableFrom(type))
-            return "Enum";
-
-        return type?.Name;
-    }
+    private static string GetSystemTypeName(Type type) => typeof(Enum).IsAssignableFrom(type) ? "Enum" : type?.Name;
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)
     {

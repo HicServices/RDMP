@@ -27,7 +27,6 @@ public class PersistableToolboxDockContent : DockContent
     public const string Prefix = "Toolbox";
 
     public readonly RDMPCollection CollectionType;
-    private PersistStringHelper persistStringHelper = new();
 
     public PersistableToolboxDockContent(RDMPCollection collectionType)
     {
@@ -41,26 +40,20 @@ public class PersistableToolboxDockContent : DockContent
             { "Toolbox", CollectionType.ToString() }
         };
 
-
-        return Prefix + PersistStringHelper.Separator + PersistStringHelper.SaveDictionaryToString(args);
+        return $"{Prefix}{PersistStringHelper.Separator}{PersistStringHelper.SaveDictionaryToString(args)}";
     }
 
     public RDMPCollectionUI GetCollection() => Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
 
     public static RDMPCollection? GetToolboxFromPersistString(string persistString)
     {
-        var helper = new PersistStringHelper();
         var s = persistString[(Prefix.Length + 1)..];
 
         var args = PersistStringHelper.LoadDictionaryFromString(s);
 
-
-        if (args.TryGetValue("Toolbox", out var arg))
-        {
-            Enum.TryParse(arg, true, out RDMPCollection collection);
-            return collection;
-        }
-
-        return null;
+        return args.TryGetValue("Toolbox", out var toolbox) &&
+               Enum.TryParse(toolbox, true, out RDMPCollection collection)
+            ? collection
+            : null;
     }
 }

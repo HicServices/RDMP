@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ProjectCataloguesNode : Node, IOrderable
 {
-    public Project Project { get; set; }
+    public Project Project { get; }
 
     public int Order
     {
@@ -40,5 +40,5 @@ public class ProjectCataloguesNode : Node, IOrderable
         return Equals((ProjectCataloguesNode)obj);
     }
 
-    public override int GetHashCode() => Project.GetHashCode();
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 }

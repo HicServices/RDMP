@@ -42,13 +42,10 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 {
-    private RDMPCollection _collection;
-
-
     /// <summary>
     /// The collection if any that this <see cref="Tree"/> represents in the UI
     /// </summary>
-    public RDMPCollection Collection => _collection;
+    public RDMPCollection Collection { get; private set; }
 
     private IActivateItems _activator;
     public TreeListView Tree;
@@ -69,7 +66,6 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public Func<IActivateItems, IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
 
-    public IDColumnProvider IDColumnProvider { get; set; }
     public OLVColumn IDColumn { get; set; }
     public CheckColumnProvider CheckColumnProvider { get; set; }
     public OLVColumn CheckColumn { get; set; }
@@ -188,7 +184,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         OLVColumn renameableColumn, RDMPCollectionCommonFunctionalitySettings settings)
     {
         Settings = settings;
-        _collection = collection;
+        Collection = collection;
         IsSetup = true;
         _activator = activator;
         _activator.RefreshBus.Subscribe(this);
@@ -255,7 +251,6 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         if (settings.AddIDColumn)
         {
-            IDColumnProvider = new IDColumnProvider(tree);
             IDColumn = IDColumnProvider.CreateColumn();
 
             Tree.AllColumns.Add(IDColumn);
@@ -448,7 +443,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         var hasProblems = _activator.HasProblem(e.Model);
 
-        if (e.Model is IDisableable disableable && disableable.IsDisabled)
+        if (e.Model is IDisableable { IsDisabled: true } disableable)
         {
             e.Item.ForeColor = Color.FromArgb(152, 152, 152);
 
@@ -529,14 +524,12 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
-        var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
-
         //get the parental hierarchy
-        var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+        var descendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
 
-        if (decendancyList != null)
-            //for each parent in the decendandy list
-            foreach (var parent in decendancyList.Parents)
+        if (descendancyList != null)
+            //for each parent in the descendancy list
+            foreach (var parent in descendancyList.Parents)
             {
                 //parent isn't in our tree
                 if (Tree.IndexOf(parent) == -1)
@@ -590,22 +583,15 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             ExpandToDepth(expansionDepth - 1, o);
     }
 
-    private IEnumerable ChildrenGetter(object model)
-    {
-        if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
-            return Array.Empty<object>();
-
-        return CoreChildProvider.GetChildren(model);
-    }
+    private IEnumerable ChildrenGetter(object model) => AxeChildren != null && AxeChildren.Contains(model.GetType())
+        ? Array.Empty<object>()
+        : (IEnumerable)CoreChildProvider.GetChildren(model);
 
     private bool CanExpandGetter(object model)
     {
         var result = ChildrenGetter(model);
 
-        if (result == null)
-            return false;
-
-        return result.Cast<object>().Any();
+        return result?.Cast<object>().Any() == true;
     }
 
     private Bitmap ImageGetter(object rowObject)
@@ -728,7 +714,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
-        foreach (var menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+        foreach (var menuType in MEF.GetTypes<RDMPContextMenuStrip>())
         {
             if (menuType.IsAbstract || menuType.IsInterface || menuType == typeof(RDMPContextMenuStrip))
                 continue;
@@ -737,12 +723,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             var menu = ConstructMenu(menuType, args, o);
 
             //find first menu that's compatible
-            if (menu != null)
-            {
-                _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
+            if (menu == null) continue;
+            _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
 
-                return menu;
-            }
+            return menu;
         }
 
         //we know there are no menus compatible with this type
@@ -797,11 +781,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             {
                 coll.Add(item);
 
-                if (item is ToolStripMenuItem mi)
+                if (item is ToolStripMenuItem { DropDownItems.Count: > 0 } mi)
                     // if menu item has submenus
-                    if (mi.DropDownItems.Count > 0)
-                        // sort those too - recurisvely
-                        OrderMenuItems(mi.DropDownItems);
+                    // sort those too - recurisvely
+                    OrderMenuItems(mi.DropDownItems);
             }
 
             // if there are more buckets to come

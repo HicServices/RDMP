@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using FAnsi;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -188,8 +187,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
     public AllPluginsNode AllPluginsNode { get; private set; }
-    public Curation.Data.Plugin[] AllPlugins { get; private set; }
-    public Curation.Data.Plugin[] AllCompatiblePlugins { get; private set; }
+    public Plugin[] AllPlugins { get; private set; }
+    public Plugin[] AllCompatiblePlugins { get; private set; }
 
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
 
@@ -207,7 +206,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
     protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
-    private int _progress = 0;
+    private int _progress;
 
     /// <summary>
     /// 
@@ -223,7 +222,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         _catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
 
-        _errorsCheckNotifier = errorsCheckNotifier ?? new IgnoreAllErrorsCheckNotifier();
+        _errorsCheckNotifier = errorsCheckNotifier ?? IgnoreAllErrorsCheckNotifier.Instance;
 
         if (UserSettings.DebugPerformance)
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
@@ -433,7 +432,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After Governance");
 
         AllPluginsNode = new AllPluginsNode();
-        AllPlugins = GetAllObjects<Curation.Data.Plugin>(repository);
+        AllPlugins = GetAllObjects<Plugin>(repository);
         AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
 
         AddChildren(AllPluginsNode);
@@ -1306,6 +1305,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         //all our children (containers and aggregates)
 
+
         //get subcontainers
         var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 
@@ -1326,6 +1326,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             OrphanAggregateConfigurations.Remove(configuration);
         }
 
+        //all our children (containers and aggregates)
         //children are all aggregates and containers at the current hierarchy level in order
         var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
 
@@ -1537,15 +1538,14 @@ public class CatalogueChildProvider : ICoreChildProvider
             var exactMatches = GetAllSearchables().Keys.Where(t => t is not IMasqueradeAs).Where(type.IsInstanceOfType);
 
             //Union the unwrapped masqueraders
-            if (unwrapMasqueraders)
-                return exactMatches.Union(
+            return unwrapMasqueraders
+                ? exactMatches.Union(
                         AllMasqueraders
                             .Select(kvp => kvp.Key)
                             .OfType<IMapsDirectlyToDatabaseTable>()
                             .Where(type.IsInstanceOfType))
-                    .Distinct();
-
-            return exactMatches;
+                    .Distinct()
+                : exactMatches;
         }
     }
 
@@ -1564,10 +1564,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
 
-            if (descendancy != null && descendancy.Parents.Any())
-                return descendancy.Parents[0];
-
-            return objectToEmphasise;
+            return descendancy != null && descendancy.Parents.Any() ? descendancy.Parents[0] : objectToEmphasise;
         }
     }
 
@@ -1641,10 +1638,12 @@ public class CatalogueChildProvider : ICoreChildProvider
                         {
                             //get the descendancy of the parent
                             var parentDescendancy = GetDescendancyListIfAnyFor(o);
-
                             var newDescendancy = parentDescendancy == null
                                 ? new DescendancyList(new[] { o })
                                 : //if the parent is a root level object start a new descendancy list from it
+                                parentDescendancy
+                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                            newDescendancy =
                                 parentDescendancy
                                     .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
 
@@ -1683,9 +1682,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return AllMasqueraders.TryGetValue(o, out var result)
-                ? (IEnumerable<IMasqueradeAs>)result
-                : Array.Empty<IMasqueradeAs>();
+            return AllMasqueraders.TryGetValue(o, out var result) ? result : Array.Empty<IMasqueradeAs>();
         }
     }
 

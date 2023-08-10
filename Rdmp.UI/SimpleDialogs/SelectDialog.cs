@@ -22,7 +22,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -42,7 +41,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private const int MaxMatches = 500;
     private object oMatches = new();
 
-    private Task _lastFetchTask = null;
+    private Task _lastFetchTask;
     private CancellationTokenSource _lastCancellationToken;
     private int _runCount;
 
@@ -301,15 +300,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         foreach (var propertyInfo in type.GetProperties())
         {
             var useful = _usefulPropertyFinder.GetAttribute(propertyInfo);
-            if (useful != null)
-            {
-                //add a column
-                var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
-                olv.AllColumns.Add(newCol);
+            if (useful == null) continue;
+            //add a column
+            var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
+            olv.AllColumns.Add(newCol);
 
 
-                RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
-            }
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
         }
     }
 
@@ -326,8 +323,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.Column == olvHierarchy) e.SubItem.ForeColor = Color.Gray;
     }
 
-    private IconOverlayProvider provider = new();
-
     private Bitmap GetHierarchyImage(object rowObject)
     {
         if (rowObject is not IMapsDirectlyToDatabaseTable m)
@@ -335,21 +330,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            if (_searchables == null)
-                return null;
+            if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
 
-            if (_searchables.TryGetValue(m, out var searchable))
-            {
-                var parent = searchable?.GetMostDescriptiveParent();
-
-                if (parent == null)
-                    return null;
-
-                return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
-            }
+            var parent = searchable?.GetMostDescriptiveParent();
+            return parent == null
+                ? null
+                : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
         }
-
-        return null;
     }
 
     private object GetHierarchy(object rowObject)
@@ -359,12 +346,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            if (_searchables == null)
-                return null;
-
-            if (_searchables.TryGetValue(m, out var searchable))
-                return searchable != null
-                    ? Regex.Replace(string.Join('\\', searchable.GetUsefulParents()), "\\\\+", "\\").Trim('\\')
+            if (_searchables?.TryGetValue(m, out var descendancy) == true)
+                return descendancy != null
+                    ? Backslashes().Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\").Trim('\\')
                     : null;
         }
 
@@ -376,9 +360,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
         _typeNames = new HashSet<string>(_types.Select(t => t.Name));
 
-        foreach (var t in StartingEasyFilters.SelectMany(v => v.Value))
-            if (!_typeNames.Contains(t.Name))
-                _typeNames.Add(t.Name);
+        foreach (var t in StartingEasyFilters.SelectMany(v => v.Value)) _typeNames.Add(t.Name);
         Type[] startingFilters = null;
 
         if (focusedCollection != RDMPCollection.None &&
@@ -504,10 +486,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (!AllowMultiSelect)
             return null;
 
-        if (rowObject == null)
-            return false;
-
-        return MultiSelected.Contains((T)rowObject);
+        return rowObject == null ? false : (object)MultiSelected.Contains((T)rowObject);
     }
 
     private void FetchMatches(string text, CancellationToken cancellationToken)
@@ -524,7 +503,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (AlwaysFilterOn != null) showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
 
-        var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
+        var scores = scorer.ScoreMatches(_searchables, text, showOnlyTypes, cancellationToken);
 
         if (scores == null)
         {
@@ -581,7 +560,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
             DialogResult = DialogResult.OK;
-            Selected = olv.SelectedObject as T ?? default;
+            Selected = olv.SelectedObject as T;
 
             // if there are some multi selected items already
             if (AllowMultiSelect && MultiSelected.Any())
@@ -642,7 +621,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
 
         //cancel the last execution if it has not completed yet
-        if (_lastFetchTask != null && !_lastFetchTask.IsCompleted)
+        if (_lastFetchTask is { IsCompleted: false })
             _lastCancellationToken.Cancel();
 
         _lastCancellationToken = new CancellationTokenSource();
@@ -815,4 +794,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         MultiSelected = new HashSet<T>(toSelect);
         tbFilter_TextChanged(null, null);
     }
+
+    [GeneratedRegex("\\\\+")]
+    private static partial Regex Backslashes();
 }

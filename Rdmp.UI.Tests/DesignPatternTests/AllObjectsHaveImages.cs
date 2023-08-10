@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -35,7 +34,7 @@ public class AllObjectsHaveImages : DatabaseTests
             //not required , it's only ever dependent on itself and it doesn't have any visualisation on Catalogue / Export
         };
 
-        var missingConcepts = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+        var missingConcepts = Core.Repositories.MEF.GetAllTypes()
             .Where(t => typeof(IHasDependencies).IsAssignableFrom(t) && !t.IsInterface)
             .Where(type => !typeof(IMasqueradeAs).IsAssignableFrom(type))
             .Select(type => type.Name)

@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -27,7 +28,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
     protected AggregateConfiguration AggregateConfiguration;
     protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
-    private bool _haveSentData = false;
+    private bool _haveSentData;
 
     [DemandsInitialization(
         "The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.",
@@ -73,36 +74,32 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
 
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+
+        var sql = GetSQL();
+
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
+
+        var dt = new DataTable();
+        dt.BeginLoadData();
+
+        using (var cmd = server.GetCommand(sql, con))
         {
-            con.Open();
-
-            var sql = GetSQL();
-
-            listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
-
-            var dt = new DataTable();
-
-            using (var cmd = server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = timeout;
-
-                using (var da = server.GetDataAdapter(cmd))
-                {
-                    da.Fill(dt);
-                }
-            }
-
-
-            dt.TableName = TableName;
-
-            listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"successfully read {dt.Rows.Count} rows from source"));
-
-
-            return dt;
+            cmd.CommandTimeout = timeout;
+            using var da = server.GetDataAdapter(cmd);
+            da.Fill(dt);
         }
+
+
+        dt.TableName = TableName;
+
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"successfully read {dt.Rows.Count} rows from source"));
+
+        dt.EndLoadData();
+        return dt;
     }
 
     public DataTable TryGetPreview() => GetDataTable(10, null);
@@ -139,5 +136,6 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         CohortIdentificationConfigurationIfAny = value.GetCohortIdentificationConfigurationIfAny();
     }
 
+    [NotNull]
     public override string ToString() => GetType().Name;
 }

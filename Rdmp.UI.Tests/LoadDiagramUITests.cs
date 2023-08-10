@@ -19,10 +19,7 @@ public class LoadDiagramUITests : UITests
     public void Test_LoadDiagramUITests_NormalState()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
-
-        SetupMEF();
-
-        var ui = AndLaunch<LoadDiagramUI>(lmd);
+        _ = AndLaunch<LoadDiagramUI>(lmd);
 
         //it isn't impossible to show us
         AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
@@ -39,11 +36,9 @@ public class LoadDiagramUITests : UITests
         //delete the Catalogue so the load is an orphan
         lmd.GetAllCatalogues().Single().DeleteInDatabase();
 
-        SetupMEF();
+        _ = AndLaunch<LoadDiagramUI>(lmd);
 
-        var ui = AndLaunch<LoadDiagramUI>(lmd);
-
-        //cant launch the command
+        //can't launch the command
         AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd),
             "does not have any associated Catalogues");
 

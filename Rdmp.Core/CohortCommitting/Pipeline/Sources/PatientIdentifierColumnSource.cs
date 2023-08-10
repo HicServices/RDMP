@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-/// Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column referenced by the <see cref="IPipelineRequirement{T}"/> 
+/// Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column referenced by the <see cref="IPipelineRequirement{T}"/>
 /// <see cref="ExtractionInformation"/>.
 /// </summary>
 public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
@@ -25,7 +25,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
 {
     private ExtractionInformation _extractionInformation;
 
-    private bool _haveSentData = false;
+    private bool _haveSentData;
 
     [DemandsInitialization("How long to wait for the select query to run before giving up in seconds",
         DemandType.Unspecified, 60)]
@@ -57,21 +57,14 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
         var dt = new DataTable();
         dt.Columns.Add(colName);
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = server.GetCommand(qb.SQL, con))
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd = server.GetCommand(qb.SQL, con);
+        cmd.CommandTimeout = timeout;
 
-            {
-                cmd.CommandTimeout = timeout;
-
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                        dt.Rows.Add(new[] { r[colName] });
-                }
-            }
-        }
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            dt.Rows.Add(new[] { r[colName] });
 
         return dt;
     }

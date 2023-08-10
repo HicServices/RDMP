@@ -45,15 +45,22 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
 
     private void UpdateViabilityForTarget(IDisableable target)
     {
-        //don't let them disable the root container
-        if (target is CohortAggregateContainer container && container.IsRootContainer() && !container.IsDisabled)
-            SetImpossible("You cannot disable the root container of a cic");
-
-        if (target is AggregateConfiguration aggregateConfiguration)
-            if (!aggregateConfiguration.IsCohortIdentificationAggregate)
+        switch (target)
+        {
+            //don't let them disable the root container
+            case CohortAggregateContainer container when container.IsRootContainer() && !container.IsDisabled:
+                SetImpossible("You cannot disable the root container of a cic");
+                break;
+            case AggregateConfiguration { IsCohortIdentificationAggregate: false }:
                 SetImpossible("Only cohort identification aggregates can be disabled");
-            else if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                SetImpossible("Joinable Patient Index Tables cannot be disabled");
+                break;
+            case AggregateConfiguration aggregateConfiguration:
+            {
+                if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                    SetImpossible("Joinable Patient Index Tables cannot be disabled");
+                break;
+            }
+        }
 
         if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
@@ -80,9 +87,6 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
         if (_targets.Length == 1)
             return _targets[0].IsDisabled ? "Enable" : "Disable";
 
-        if (_targets.Length > 1)
-            return _targets.All(d => d.IsDisabled) ? "Enable All" : "Disable All";
-
-        return "Enable All";
+        return _targets.Length > 1 ? _targets.All(d => d.IsDisabled) ? "Enable All" : "Disable All" : "Enable All";
     }
 }

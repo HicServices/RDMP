@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
-using System.Reflection;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -62,19 +61,18 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         // if command doesn't know which to add, ask user
         if (add == null)
         {
-            var mef = BasicActivator.RepositoryLocator.CatalogueRepository.MEF;
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
-            bool filter(Type t, object o) => t.IsGenericType &&
+            bool Filter(Type t, object o) => t.IsGenericType &&
                                              (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
                                               t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
 
             //get any source and flow components compatible with any context
             offer.AddRange(
-                mef.GetAllTypes()
+                Repositories.MEF.GetAllTypes()
                     .Where(t => !t.IsInterface && !t.IsAbstract)
-                    .Where(t => t.FindInterfaces(filter, null).Any())
+                    .Where(t => t.FindInterfaces(Filter, null).Any())
                     .Where(t => context == null || context.IsAllowable(t))
             );
 
@@ -85,15 +83,8 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         // Only proceed if we have a component type to add to the pipe
         if (add == null) return;
 
-        // check if it is a source or destination (or if both are false it is a middle component)
-        bool sourceFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
-
-        bool destFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
-
-        var isSource = add.FindInterfaces(sourceFilter, null).Any();
-        var isDest = add.FindInterfaces(destFilter, null).Any();
+        var isSource = add.FindInterfaces(SourceFilter, null).Any();
+        var isDest = add.FindInterfaces(DestFilter, null).Any();
 
         if (isSource)
         {
@@ -110,7 +101,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         }
 
         // if we don't know the order yet and it's important
-        if (!order.HasValue && !isDest && !isSource)
+        if (!order.HasValue)
         {
             if (BasicActivator.SelectValueType("Order", typeof(int), 0, out var chosen))
                 order = (int)chosen;
@@ -119,7 +110,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         }
 
         var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline,
-            add, order ?? 0);
+            add, (int)order);
         newComponent.CreateArgumentsForClassIfNotExists(add);
 
         if (isSource)
@@ -136,5 +127,13 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
 
         Publish(newComponent);
         Emphasise(newComponent);
+        return;
+
+        // check if it is a source or destination (or if both are false it is a middle component)
+        bool SourceFilter(Type t, object o) =>
+            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+
+        bool DestFilter(Type t, object o) =>
+            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
     }
 }

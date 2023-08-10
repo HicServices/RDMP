@@ -155,7 +155,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         CloseFile(listener, true);
     }
 
-    private bool _fileAlreadyClosed = false;
+    private bool _fileAlreadyClosed;
 
     /// <summary>
     /// If performing a batch resume then this file will be a copy of the flat file
@@ -204,7 +204,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         ISelectedDataSets selectedDataSet) => new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new FlatFileReleaseSource<ReleaseAudit>();
+        new FlatFileReleaseSource();
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,

@@ -23,7 +23,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     private readonly AggregateConfigurationCombineable _aggregateConfigurationCombineable;
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
     private readonly bool _offerCohortAggregates;
-    private AggregateConfiguration[] _available;
+    private readonly AggregateConfiguration[] _available;
 
     public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
 
@@ -109,12 +109,9 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             return base.GetCommandName();
 
         // if an execute time decision is expected then command name should reflect the kind of available objects the user can add
-        if (_available?.Any() ?? false)
-            return _offerCohortAggregates
-                ? "Import (Copy of) Cohort Set into container"
-                : "Add Aggregate(s) into container";
-
-        return base.GetCommandName();
+        return _available?.Any() ?? false
+            ? _offerCohortAggregates ? "Import (Copy of) Cohort Set into container" : "Add Aggregate(s) into container"
+            : base.GetCommandName();
     }
 
     public override void Execute()

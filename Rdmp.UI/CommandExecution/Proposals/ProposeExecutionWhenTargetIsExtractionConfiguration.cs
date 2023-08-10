@@ -33,29 +33,28 @@ internal class
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
         ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
     {
-        //user is trying to set the cohort of the configuration
-        if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+        switch (cmd)
         {
-            var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
-            var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds =>
-                ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
+            //user is trying to set the cohort of the configuration
+            case CatalogueCombineable sourceCatalogueCombineable:
+            {
+                var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
+                var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds =>
+                    ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
 
-            if (eds == null)
-                return new ImpossibleCommand("Catalogue is not Extractable");
-
-            return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds, targetExtractionConfiguration);
+                return eds == null
+                    ? new ImpossibleCommand("Catalogue is not Extractable")
+                    : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds, targetExtractionConfiguration);
+            }
+            case ExtractableCohortCombineable sourceExtractableCohortCombineable:
+                return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator,
+                    sourceExtractableCohortCombineable, targetExtractionConfiguration);
+            //user is trying to add datasets to a configuration
+            case ExtractableDataSetCombineable sourceExtractableDataSetCommand:
+                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand,
+                    targetExtractionConfiguration);
+            default:
+                return null;
         }
-
-        if (cmd is ExtractableCohortCombineable sourceExtractableCohortCombineable)
-            return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator,
-                sourceExtractableCohortCombineable, targetExtractionConfiguration);
-
-        //user is trying to add datasets to a configuration
-
-        if (cmd is ExtractableDataSetCombineable sourceExtractableDataSetCommand)
-            return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand,
-                targetExtractionConfiguration);
-
-        return null;
     }
 }

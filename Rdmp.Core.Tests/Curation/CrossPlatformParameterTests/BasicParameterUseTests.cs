@@ -84,19 +84,17 @@ public class BasicParameterUseTests : DatabaseTests
             qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
                 new[] { filter }, FilterContainerOperation.AND);
 
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
+            using var con = db.Server.GetConnection();
+            con.Open();
 
-                var sql = qb.SQL;
+            var sql = qb.SQL;
 
-                var cmd = db.Server.GetCommand(sql, con);
-                var r = cmd.ExecuteReader();
-                Assert.IsTrue(r.Read());
-                Assert.AreEqual(
-                    20,
-                    r[extractionInformation.GetRuntimeName()]);
-            }
+            var cmd = db.Server.GetCommand(sql, con);
+            var r = cmd.ExecuteReader();
+            Assert.IsTrue(r.Read());
+            Assert.AreEqual(
+                20,
+                r[extractionInformation.GetRuntimeName()]);
             ///////////////////////////////////////////////////////////////////////////////////////
         }
         finally

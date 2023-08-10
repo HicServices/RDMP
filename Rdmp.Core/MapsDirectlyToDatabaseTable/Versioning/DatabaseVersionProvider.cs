@@ -13,8 +13,8 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
 /// Fetches the version number of a platform database.  Platform databases managed by an IPatcher whose assembly contains both the object definitions (IMapsDirectlyToDatabaseTable)
-/// and the SQL schema / patches for the database.  It is important that the version numbers of the host assembly and database match.  To this end when the database is deployed or 
-/// patched (updated) the IPatcher assembly version is written into the database.  
+/// and the SQL schema / patches for the database.  It is important that the version numbers of the host assembly and database match.  To this end when the database is deployed or
+/// patched (updated) the IPatcher assembly version is written into the database.
 /// 
 /// <para>This prevents running mismatched versions of the RDMP software with out dated object definitions.</para>
 /// </summary>
@@ -30,9 +30,6 @@ public class DatabaseVersionProvider
                 r["version"] == DBNull.Value ? new Version(0, 0, 0, 0) : new Version(r["version"].ToString()))
             .ToArray();
 
-        if (versions.Length == 0)
-            return new Version(0, 0, 0, 0);
-
-        return versions.Max();
+        return versions.Length == 0 ? new Version(0, 0, 0, 0) : versions.Max();
     }
 }

@@ -23,7 +23,7 @@ public abstract class PluginUserInterface : IPluginUserInterface
     /// <summary>
     /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
     /// </summary>
-    /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to 
+    /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to
     /// determine if the currently running UI layer is one you support in your plugin.</param>
     protected PluginUserInterface(IBasicActivateItems itemActivator)
     {

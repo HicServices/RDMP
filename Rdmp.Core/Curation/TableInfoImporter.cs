@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Implementation;
@@ -120,13 +120,16 @@ public class TableInfoImporter : ITableInfoImporter
 
         var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-        if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
-            tableName +=
-                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
-        else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
-            tableName += ".";
-        else
-            throw new NotSupportedException($"Unknown Type:{_type}");
+        tableName += _type switch
+        {
+            DatabaseType.MicrosoftSQLServer =>
+                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.",
+            DatabaseType.PostgreSql =>
+                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.",
+            DatabaseType.MySql => ".",
+            DatabaseType.Oracle => ".",
+            _ => throw new NotSupportedException($"Unknown Type:{_type}")
+        };
 
         tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
         var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
@@ -146,20 +149,13 @@ public class TableInfoImporter : ITableInfoImporter
 
         parent.SaveToDatabase();
 
-        var newCols = new List<ColumnInfo>();
-
-        foreach (var discoveredColumn in discoveredColumns)
-            newCols.Add(CreateNewColumnInfo(parent, discoveredColumn));
-
         tableInfoCreated = parent;
-        columnInfosCreated = newCols.ToArray();
+        columnInfosCreated = discoveredColumns.Select(discoveredColumn => CreateNewColumnInfo(parent, discoveredColumn))
+            .ToArray();
 
         //if there is a username then we need to associate it with the TableInfo we just created
         if (!string.IsNullOrWhiteSpace(_username))
-        {
-            var credentialsFactory = new DataAccessCredentialsFactory(_repository);
-            credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
-        }
+            new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
     }
 
     /// <inheritdoc/>

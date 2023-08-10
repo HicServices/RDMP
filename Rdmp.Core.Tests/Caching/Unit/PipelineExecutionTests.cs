@@ -28,7 +28,7 @@ public class PipelineExecutionTests
         var engine2 = new Mock<IDataFlowPipelineEngine>();
 
         var tokenSource = new GracefulCancellationTokenSource();
-        var listener = new ThrowImmediatelyDataLoadEventListener();
+        var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         // set SetUp the engine map
         // set SetUp the lock provider
@@ -54,7 +54,7 @@ public class PipelineExecutionTests
         var engine1 = new Mock<IDataFlowPipelineEngine>();
         var engine2 = new Mock<IDataFlowPipelineEngine>();
         var tokenSource = new GracefulCancellationTokenSource();
-        var listener = new ThrowImmediatelyDataLoadEventListener();
+        var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         // first time both engines return that they have more data, second time they are both complete
         engine1.SetupSequence(engine => engine.ExecuteSinglePass(It.IsAny<GracefulCancellationToken>()))

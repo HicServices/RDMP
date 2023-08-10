@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -89,7 +88,7 @@ public partial class CSharpLexer
                     break;
 
                 case STATE_NUMBER:
-                    if (char.IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') || c == 'x')
+                    if (char.IsDigit(c) || c is >= 'a' and <= 'f' || c is >= 'A' and <= 'F' || c == 'x')
                     {
                         length++;
                     }

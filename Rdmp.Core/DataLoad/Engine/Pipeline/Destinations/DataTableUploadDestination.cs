@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using FAnsi.Extensions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -30,9 +29,9 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
 /// <summary>
-/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform 
+/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform
 /// targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable and a table will be created with the
-/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take 
+/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take
 /// place.
 /// </summary>
 public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>,
@@ -78,7 +77,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public string TargetTableName { get; private set; }
 
     /// <summary>
-    /// True if a new table was created or re-created by the execution of this destination.  False if 
+    /// True if a new table was created or re-created by the execution of this destination.  False if
     /// the table already existed e.g. data was simply added
     /// </summary>
     public bool CreatedTable { get; private set; }
@@ -127,11 +126,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         RemoveInvalidCharactersInSchema(toProcess);
 
         IDatabaseColumnRequestAdjuster adjuster = null;
-        if (Adjuster != null)
-        {
-            var constructor = new ObjectConstructor();
-            adjuster = (IDatabaseColumnRequestAdjuster)ObjectConstructor.Construct(Adjuster);
-        }
+        if (Adjuster != null) adjuster = (IDatabaseColumnRequestAdjuster)ObjectConstructor.Construct(Adjuster);
 
         //work out the table name for the table we are going to create
         if (TargetTableName == null)
@@ -301,7 +296,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         var oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key,
             v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess), StringComparer.CurrentCultureIgnoreCase);
 
-        //columns in 
+        //columns in
         var sharedColumns = new List<string>();
 
         //for each destination column
@@ -311,7 +306,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 sharedColumns.Add(col); //it is a shared column
 
 
-        //adjust the computer to 
+        //adjust the computer to
         //for each shared column adjust the corresponding computer for all rows
         Parallel.ForEach(sharedColumns, col =>
         {
@@ -404,7 +399,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
 
                     listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back sucessfully"));
+                        new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
 
                     _bulkcopy?.Dispose();
                 }
@@ -415,7 +410,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     _bulkcopy?.Dispose();
 
                     listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
+                        new NotifyEventArgs(ProgressEventType.Information, "Transaction committed successfully"));
                 }
             }
         }
@@ -427,8 +422,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
 
         //if we have a primary key to create
-        if (pipelineFailureExceptionIfAny == null && _primaryKey != null && _primaryKey.Any() &&
-            _discoveredTable != null && _discoveredTable.Exists())
+        if (pipelineFailureExceptionIfAny == null && _primaryKey?.Any() == true && _discoveredTable?.Exists() == true)
         {
             //Find the columns in the destination
             var allColumns = _discoveredTable.DiscoverColumns();

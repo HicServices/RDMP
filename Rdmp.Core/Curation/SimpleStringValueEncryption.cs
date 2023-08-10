@@ -64,7 +64,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     }
 
     /// <summary>
-    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
+    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString()
     /// </summary>
     /// <param name="toDecrypt"></param>
     /// <returns></returns>
@@ -116,9 +116,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
 
     public bool IsStringEncrypted(string value)
     {
-        if (value == null || string.IsNullOrWhiteSpace(value))
-            return false;
-
-        return value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47;
+        return value != null && !string.IsNullOrWhiteSpace(value) &&
+               (value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47);
     }
 }

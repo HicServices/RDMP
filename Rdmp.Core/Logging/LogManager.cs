@@ -11,7 +11,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Logging.PastEvents;
@@ -26,7 +25,7 @@ namespace Rdmp.Core.Logging;
 /// 
 /// <para>You can both create new logging records and fetch old ones.  New logging objects are generally maintained for future use e.g. when you want to record
 /// that a new table is being loaded during a given load (DataLoadInfo) you must pass the load log object (DataLoadInfo).  Live logging objects generally
-/// must be closed to indicate that they are completed (succesfully or otherwise), if you do not close a logging object then the EndTime will be left
+/// must be closed to indicate that they are completed (successfully or otherwise), if you do not close a logging object then the EndTime will be left
 /// blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing accumulation of log events, errors etc).</para>
 /// 
 /// <para>Fetching old records is done based on ID, Task Name etc and is also handled by this class. The objects returned will be ArchivalDataLoadInfo objects
@@ -62,29 +61,15 @@ public class LogManager : ILogManager
     {
         var tasks = new List<string>();
 
-        using (var con = Server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con))
-            {
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                        if (hideTests)
-                        {
-                            if (!(bool)r["isTest"])
-                                tasks.Add(r["name"].ToString());
-                            //else it is a test, and we are hidding them
-                        }
-                        else
-                        {
-                            tasks.Add(r["name"].ToString()); //we are not hiding tests
-                        }
-                }
-            }
+        using var con = Server.GetConnection();
+        con.Open();
+        using var cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            if (!hideTests || !(bool)r["isTest"])
+                tasks.Add(r["name"].ToString()); //we are not hiding tests, or it isn't a test.
 
-            return tasks.ToArray();
-        }
+        return tasks.ToArray();
     }
 
     /// <summary>
@@ -102,46 +87,38 @@ public class LogManager : ILogManager
         if (topX.HasValue)
             prefix = $"TOP {topX.Value}";
 
-        return GetAsTable(string.Format(
-            "SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc ? "Desc" : "Asc"), prefix,
-            where));
+        return GetAsTable(
+            $"SELECT {prefix} * FROM {filter.LoggingTable}  WITH (NOLOCK) {where} ORDER BY ID {(sortDesc ? "Desc" : "Asc")}");
     }
 
     private DataTable GetAsTable(string sql)
     {
         var dt = new DataTable();
+        dt.BeginLoadData();
+        using var con = Server.GetConnection();
+        con.Open();
 
-        using (var con = Server.GetConnection())
-        {
-            con.Open();
+        using var cmd = Server.GetCommand(sql, con);
+        using var da = Server.GetDataAdapter(cmd);
+        da.Fill(dt);
+        dt.EndLoadData();
 
-            using (var cmd = Server.GetCommand(sql, con))
-            using (var da = Server.GetDataAdapter(cmd))
-            {
-                da.Fill(dt);
-            }
-
-            return dt;
-        }
+        return dt;
     }
 
     public string[] ListDataSets()
     {
         var tasks = new List<string>();
 
-        using (var con = Server.GetConnection())
-        {
-            con.Open();
+        using var con = Server.GetConnection();
+        con.Open();
 
-            using (var cmd = Server.GetCommand("SELECT * FROM DataSet", con))
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                    tasks.Add(r["dataSetID"].ToString());
-            }
+        using var cmd = Server.GetCommand("SELECT * FROM DataSet", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            tasks.Add(r["dataSetID"].ToString());
 
-            return tasks.ToArray();
-        }
+        return tasks.ToArray();
     }
 
     /// <summary>
@@ -158,94 +135,82 @@ public class LogManager : ILogManager
         var db = Server.GetCurrentDatabase();
         var run = db.ExpectTable("DataLoadRun");
 
-        using (var con = Server.GetConnection())
+        using var con = Server.GetConnection();
+        con.Open();
+
+        var dataTaskId = GetDataTaskId(dataTask, Server, con);
+
+        using var cmd = Server.GetCommand("", con);
+        string where;
+        if (specificDataLoadRunIDOnly != null)
         {
-            con.Open();
+            where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
+        }
+        else
+        {
+            where = "WHERE dataLoadTaskID = @dataTaskId";
+            var p = cmd.CreateParameter();
+            p.ParameterName = "@dataTaskId";
+            p.Value = dataTaskId;
+            cmd.Parameters.Add(p);
+        }
 
-            var dataTaskId = GetDataTaskId(dataTask, Server, con);
+        TopXResponse top = null;
 
-            using (var cmd = Server.GetCommand("", con))
+        if (topX.HasValue)
+            top = Server.GetQuerySyntaxHelper().HowDoWeAchieveTopX(topX.Value);
+
+        var sb = new StringBuilder("SELECT ");
+
+        if (top?.Location == QueryComponent.SELECT) sb.AppendLine(top.SQL);
+
+        sb.AppendLine($" * FROM {run.GetFullyQualifiedName()}  {where} ORDER BY ID desc");
+
+        if (top?.Location == QueryComponent.Postfix) sb.AppendLine(top.SQL);
+
+        cmd.CommandText = sb.ToString();
+
+        DbDataReader r;
+        if (token == null)
+        {
+            r = cmd.ExecuteReader();
+        }
+        else
+        {
+            var rTask = cmd.ExecuteReaderAsync(token.Value);
+            rTask.Wait(token.Value);
+
+            if (rTask.IsCompleted)
             {
-                var where = "";
-                if (specificDataLoadRunIDOnly != null)
-                {
-                    where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
-                }
-                else
-                {
-                    where = "WHERE dataLoadTaskID = @dataTaskId";
-                    var p = cmd.CreateParameter();
-                    p.ParameterName = "@dataTaskId";
-                    p.Value = dataTaskId;
-                    cmd.Parameters.Add(p);
-                }
-
-                TopXResponse top = null;
-
-                if (topX.HasValue)
-                    top = Server.GetQuerySyntaxHelper().HowDoWeAchieveTopX(topX.Value);
-
-                var sb = new StringBuilder();
-
-
-                sb.Append("SELECT ");
-
-                if (top?.Location == QueryComponent.SELECT) sb.AppendLine(top.SQL);
-
-                sb.Append(" *");
-
-
-                sb.AppendLine($" FROM {run.GetFullyQualifiedName()}  {where} ORDER BY ID desc");
-
-                if (top?.Location == QueryComponent.Postfix) sb.AppendLine(top.SQL);
-
-                cmd.CommandText = sb.ToString();
-
-                DbDataReader r;
-                if (token == null)
-                {
-                    r = cmd.ExecuteReader();
-                }
-                else
-                {
-                    var rTask = cmd.ExecuteReaderAsync(token.Value);
-                    rTask.Wait(token.Value);
-
-                    if (rTask.IsCompleted)
-                    {
-                        r = rTask.Result;
-                    }
-                    else
-                    {
-                        cmd.Cancel();
-
-                        if (rTask.IsFaulted && rTask.Exception != null)
-                            throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
-
-                        yield break;
-                    }
-                }
-
-                using (r)
-                {
-                    while (r.Read())
-                        yield return new ArchivalDataLoadInfo(r, db);
-                }
+                r = rTask.Result;
             }
+            else
+            {
+                cmd.Cancel();
+
+                if (rTask.IsFaulted && rTask.Exception != null)
+                    throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
+
+                yield break;
+            }
+        }
+
+        using (r)
+        {
+            while (r.Read())
+                yield return new ArchivalDataLoadInfo(r, db);
         }
     }
 
     private static int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
     {
-        using (var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con))
-        {
-            var p = cmd.CreateParameter();
-            p.ParameterName = "@name";
-            p.Value = dataTask;
-            cmd.Parameters.Add(p);
+        using var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con);
+        var p = cmd.CreateParameter();
+        p.ParameterName = "@name";
+        p.Value = dataTask;
+        cmd.Parameters.Add(p);
 
-            return Convert.ToInt32(cmd.ExecuteScalar());
-        }
+        return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
 
@@ -270,42 +235,29 @@ public class LogManager : ILogManager
     /// <param name="dataSetID"></param>
     public void CreateNewLoggingTask(int id, string dataSetID)
     {
-        using (var conn = Server.GetConnection())
-        {
-            conn.Open();
-            {
-                var sql =
-                    $"INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
+        using var conn = Server.GetConnection();
+        conn.Open();
+        var sql =
+            $"INSERT INTO DataLoadTask (ID, description, name, createTime, userAccount, statusID, isTest, dataSetID) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, 0, @dataSetID)";
 
-                using (var cmd = Server.GetCommand(sql, conn))
-                {
-                    Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
-                    Server.AddParameterWithValueToCommand("@dataSetID", cmd, dataSetID);
-                    Server.AddParameterWithValueToCommand("@username", cmd, Environment.UserName);
+        using var cmd = Server.GetCommand(sql, conn);
+        Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
+        Server.AddParameterWithValueToCommand("@dataSetID", cmd, dataSetID);
+        Server.AddParameterWithValueToCommand("@username", cmd, Environment.UserName);
 
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
+        cmd.ExecuteNonQuery();
     }
 
     private void CreateNewDataSet(string datasetName)
     {
-        using (var conn = Server.GetConnection())
+        using var conn = Server.GetConnection();
+        conn.Open();
         {
-            conn.Open();
-            {
-                var sql =
-                    "INSERT INTO DataSet (dataSetID,name) " +
-                    "VALUES " +
-                    "(@datasetName,@datasetName)";
+            const string sql = "INSERT INTO DataSet (dataSetID,name) VALUES (@datasetName,@datasetName)";
 
-                using (var cmd = Server.GetCommand(sql, conn))
-                {
-                    Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            using var cmd = Server.GetCommand(sql, conn);
+            Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName);
+            cmd.ExecuteNonQuery();
         }
     }
 
@@ -321,47 +273,29 @@ public class LogManager : ILogManager
 
     private int GetMaxTaskID()
     {
-        using (var conn = Server.GetConnection())
-        {
-            conn.Open();
-            {
-                var sql =
-                    "SELECT MAX(ID) FROM DataLoadTask";
+        using var conn = Server.GetConnection();
+        conn.Open();
+        const string sql = "SELECT MAX(ID) FROM DataLoadTask";
 
-                using (var cmd = Server.GetCommand(sql, conn))
-                {
-                    var result = cmd.ExecuteScalar();
-                    if (result == null || result == DBNull.Value)
-                        return 0;
-
-                    return int.Parse(result.ToString());
-                }
-            }
-        }
+        using var cmd = Server.GetCommand(sql, conn);
+        var result = cmd.ExecuteScalar();
+        return result == null || result == DBNull.Value ? 0 : int.Parse(result.ToString());
     }
 
     public void ResolveFatalErrors(int[] ids, DataLoadInfo.FatalErrorStates newState, string newExplanation)
     {
-        using (var conn = Server.GetConnection())
-        {
-            conn.Open();
-            {
-                var sql =
-                    $"UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in ({string.Join(",", ids)})";
+        using var conn = Server.GetConnection();
+        conn.Open();
+        var sql =
+            $"UPDATE FatalError SET explanation =@explanation, statusID=@statusID where ID in ({string.Join(",", ids)})";
 
-                int affectedRows;
+        using var cmd = Server.GetCommand(sql, conn);
+        Server.AddParameterWithValueToCommand("@explanation", cmd, newExplanation);
+        Server.AddParameterWithValueToCommand("@statusID", cmd, Convert.ToInt32(newState));
+        var affectedRows = cmd.ExecuteNonQuery();
 
-                using (var cmd = Server.GetCommand(sql, conn))
-                {
-                    Server.AddParameterWithValueToCommand("@explanation", cmd, newExplanation);
-                    Server.AddParameterWithValueToCommand("@statusID", cmd, Convert.ToInt32(newState));
-                    affectedRows = cmd.ExecuteNonQuery();
-                }
-
-                if (affectedRows != ids.Length)
-                    throw new Exception(
-                        $"Query {sql} resulted in {affectedRows}, we were expecting there to be {ids.Length} updates because that is how many FatalError IDs that were passed to this method");
-            }
-        }
+        if (affectedRows != ids.Length)
+            throw new Exception(
+                $"Query {sql} resulted in {affectedRows}, we were expecting there to be {ids.Length} updates because that is how many FatalError IDs that were passed to this method");
     }
 }

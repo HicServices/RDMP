@@ -35,17 +35,16 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode : RDMPCommandExecutionP
         if (cmd is FileCollectionCombineable sourceFileTaskCommand && sourceFileTaskCommand.Files.Length == 1)
         {
             var f = sourceFileTaskCommand.Files.Single();
-
-            if (f.Extension == ".sql")
-                return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,
-                    targetStage.LoadMetadata, targetStage.LoadStage, f);
-
-
-            if (f.Extension == ".exe")
-                return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable,
-                    targetStage.LoadMetadata, targetStage.LoadStage, f);
+            switch (f.Extension)
+            {
+                case ".sql":
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
+                case ".exe":
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
+            }
         }
-
 
         return null;
     }

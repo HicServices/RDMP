@@ -24,28 +24,28 @@ public class LoadProgressUnitTests : UnitTests
     {
         var lp = WhenIHaveA<LoadProgress>();
 
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         //Bad Origin Date
         lp.OriginDate = DateTime.Now.AddDays(1);
-        Assert.Throws<Exception>(() => lp.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.Throws<Exception>(() => lp.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         //Back to normal
         lp.RevertToDatabaseState();
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         //Bad ProgressDate
         lp.DataLoadProgress = DateTime.Now.AddDays(1);
-        Assert.Throws<Exception>(() => lp.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.Throws<Exception>(() => lp.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         //Back to normal
         lp.RevertToDatabaseState();
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         // valid progress (1 year)
         lp.OriginDate = new DateTime(2001, 1, 1);
         lp.DataLoadProgress = new DateTime(2002, 1, 1);
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet);
     }
 
     [Test]
@@ -59,11 +59,11 @@ public class LoadProgressUnitTests : UnitTests
         // We are fully up-to-date
         lp.DataLoadProgress = DateTime.Now;
 
-        lp.Check(new ThrowImmediatelyCheckNotifier());
+        lp.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var stratFactory =
             new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
-        var strat = stratFactory.Create(lp, new ThrowImmediatelyDataLoadEventListener());
+        var strat = stratFactory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
             "LoadProgress_JobFactory_NoDates", true);
@@ -80,7 +80,7 @@ public class LoadProgressUnitTests : UnitTests
         lmd.SaveToDatabase();
 
         var jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);
-        var job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
+        var job = jobFactory.Create(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         Assert.IsNull(job);
 
@@ -88,10 +88,10 @@ public class LoadProgressUnitTests : UnitTests
         lp.DataLoadProgress = DateTime.Now.AddDays(-2);
         lp.SaveToDatabase();
 
-        strat = stratFactory.Create(lp, new ThrowImmediatelyDataLoadEventListener());
+        strat = stratFactory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet);
         jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);
 
-        job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
+        job = jobFactory.Create(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, null);
         Assert.AreEqual(1, ((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
     }
 }

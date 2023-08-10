@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
@@ -37,12 +37,12 @@ public class ANOTableTests : TestsRequiringANOStore
         Assert.AreEqual("ANOMyTable", anoTable.TableName);
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 20;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 20;
-        anoTable.PushToANOServerAsNewTable(datatypeForPush, new ThrowImmediatelyCheckNotifier());
+        anoTable.PushToANOServerAsNewTable(datatypeForPush, ThrowImmediatelyCheckNotifier.Quiet);
 
         var discoveredTable = ANOStore_Database.DiscoverTables(false)
             .SingleOrDefault(t => t.GetRuntimeName().Equals("ANOMyTable"));
 
-        //server should have 
+        //server should have
         Assert.NotNull(discoveredTable);
         Assert.IsTrue(discoveredTable.Exists());
 
@@ -149,7 +149,7 @@ public class ANOTableTests : TestsRequiringANOStore
         var anoTable = GetANOTable();
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
-        anoTable.PushToANOServerAsNewTable("varchar(10)", new ThrowImmediatelyCheckNotifier());
+        anoTable.PushToANOServerAsNewTable("varchar(10)", ThrowImmediatelyCheckNotifier.Quiet);
 
 
         var dt = new DataTable();
@@ -160,7 +160,7 @@ public class ANOTableTests : TestsRequiringANOStore
         dt.Rows.Add("0101010102", DBNull.Value);
         dt.Rows.Add("0101010101", DBNull.Value); //duplicates
 
-        var transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
+        var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"]);
 
         Assert.IsTrue((string)dt.Rows[0][0] == "0101010101");
@@ -214,11 +214,11 @@ public class ANOTableTests : TestsRequiringANOStore
         //should not exist yet
         Assert.False(ANOtable.Exists());
 
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("CHI");
         dt.Columns.Add("ANOCHI");
         dt.Rows.Add("0101010101", DBNull.Value);
-        var transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
+        var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], true);
 
         Assert.IsTrue(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
@@ -238,13 +238,14 @@ public class ANOTableTests : TestsRequiringANOStore
         var anoTable = GetANOTable();
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
-        anoTable.PushToANOServerAsNewTable("varchar(10)", new ThrowImmediatelyCheckNotifier());
+        anoTable.PushToANOServerAsNewTable("varchar(10)", ThrowImmediatelyCheckNotifier.Quiet);
 
 
         var sw = new Stopwatch();
         sw.Start();
 
-        var dt = new DataTable();
+        using var dt = new DataTable();
+        dt.BeginLoadData();
         dt.Columns.Add("CHI");
         dt.Columns.Add("ANOCHI");
 
@@ -257,15 +258,14 @@ public class ANOTableTests : TestsRequiringANOStore
         {
             var val = r.NextDouble() * 9999999999;
             val = Math.Round(val);
-            var valAsString = val.ToString();
+            var valAsString = val.ToString(CultureInfo.InvariantCulture);
 
             while (valAsString.Length < 10)
                 valAsString = $"0{valAsString}";
 
-            if (!uniqueSourceSet.Contains(valAsString))
-                uniqueSourceSet.Add(valAsString);
+            uniqueSourceSet.Add(valAsString);
 
-            dt.Rows.Add(valAsString, DBNull.Value); //duplicates    
+            dt.Rows.Add(valAsString, DBNull.Value); //duplicates
         }
 
         Console.WriteLine($"Time to allocate in C# memory:{sw.Elapsed}");
@@ -274,7 +274,7 @@ public class ANOTableTests : TestsRequiringANOStore
         sw.Reset();
         sw.Start();
 
-        var transformer = new ANOTransformer(anoTable, new ThrowImmediatelyDataLoadEventListener());
+        var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"]);
         Console.WriteLine($"Time to perform SQL transform and allocation:{sw.Elapsed}");
 
@@ -285,8 +285,7 @@ public class ANOTableTests : TestsRequiringANOStore
         foreach (DataRow row in dt.Rows)
         {
             var ANOid = row["ANOCHI"].ToString();
-            if (!uniqueSet.Contains(ANOid))
-                uniqueSet.Add(ANOid);
+            uniqueSet.Add(ANOid);
 
             Assert.IsTrue(_anochiPattern.IsMatch(ANOid));
         }

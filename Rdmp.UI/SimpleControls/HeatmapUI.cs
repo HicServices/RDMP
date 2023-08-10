@@ -18,8 +18,8 @@ namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
 /// Displays complicated many dimension pivot Aggregate graphs in an understandable format.  Requires a result data table that contains an axis in the first column of hte data table
-/// followed by any number (usually high e.g. 500+) additional columns which contain values that correspond to the axis.  A typical usage of this control would be to display drug 
-/// prescriptions by month where there are thousands of different prescribeable drugs.  
+/// followed by any number (usually high e.g. 500+) additional columns which contain values that correspond to the axis.  A typical usage of this control would be to display drug
+/// prescriptions by month where there are thousands of different prescribeable drugs.
 /// 
 /// <para>The HeatmapUI renders each column as a row of heat map with each cell in the column as a 'pixel' (where the pixel width depends on the number of increments in the axis).  The color
 /// of each pixel ranges from blue to red (with 0 appearing as black).  The effect of this is to show the distribution of popular vs rare pivot values across time (or whatever the axis is).</para>
@@ -49,7 +49,7 @@ public partial class HeatmapUI : UserControl
     //              Heat Lines                                                   |
     //              Heat Lines                                                   |
     //              Heat Lines                                                   |
-    //              ...                        plot area                         | 
+    //              ...                        plot area                         |
     //                                                                           |
     //                                                                           |
     //                                                                           |
@@ -57,7 +57,7 @@ public partial class HeatmapUI : UserControl
     //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    ///Table is interpreted in the following way: 
+    ///Table is interpreted in the following way:
     /// - First column is the axis in direction X (horizontally) containing (in order) the axis label values that will be each pixel in each heat lane
     /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
     private RainbowColorPicker _rainbow = new(NumberOfColors);
@@ -68,7 +68,7 @@ public partial class HeatmapUI : UserControl
     private const double MaxLabelsWidth = 150;
     private const double LabelsHorizontalPadding = 10.0;
 
-    private double _currentLabelsWidth = 0;
+    private double _currentLabelsWidth;
 
     private object oDataTableLock = new();
 
@@ -158,7 +158,7 @@ public partial class HeatmapUI : UserControl
     private int toolTipDelayInTicks = 500;
     private Point _lastHoverPoint;
     private int _lastHoverTickCount;
-    private bool _useEntireControlAsVisibleArea = false;
+    private bool _useEntireControlAsVisibleArea;
 
 
     private void hoverToolTipTimer_Tick(object sender, EventArgs e)
@@ -225,11 +225,9 @@ public partial class HeatmapUI : UserControl
         if (dataTableRow >= _dataTable.Rows.Count)
             return _dataTable.Columns[dataTableCol].ColumnName;
 
-        if (dataTableCol == 0)
-            return _dataTable.Rows[dataTableRow][dataTableCol];
-
-        return
-            $"{_dataTable.Rows[dataTableRow][0]}:{_dataTable.Columns[dataTableCol].ColumnName}{Environment.NewLine}{_dataTable.Rows[dataTableRow][dataTableCol]}";
+        return dataTableCol == 0
+            ? _dataTable.Rows[dataTableRow][dataTableCol]
+            : $"{_dataTable.Rows[dataTableRow][0]}:{_dataTable.Columns[dataTableCol].ColumnName}{Environment.NewLine}{_dataTable.Rows[dataTableRow][dataTableCol]}";
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -313,7 +311,7 @@ public partial class HeatmapUI : UserControl
 
                 var visibleClipBoundsTop = visibleArea.Top;
 
-                //now draw the axis 
+                //now draw the axis
                 //axis starts at the first visible pixel
                 double axisYStart = Math.Max(0, visibleClipBoundsTop);
 

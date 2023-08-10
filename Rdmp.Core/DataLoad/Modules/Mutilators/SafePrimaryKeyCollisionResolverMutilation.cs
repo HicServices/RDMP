@@ -72,23 +72,19 @@ False - Delete the larger value")]
   AND ({2})",
             tbl.GetRuntimeName(), join, deleteConditional);
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = tbl.Database.Server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = Timeout;
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
+        using var cmd = tbl.Database.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = Timeout;
 
-                var affectedRows = cmd.ExecuteNonQuery();
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Deleted {affectedRows} rows"));
-            }
-        }
+        var affectedRows = cmd.ExecuteNonQuery();
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Deleted {affectedRows} rows"));
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        if (ColumnToResolveOn != null && ColumnToResolveOn.IsPrimaryKey)
+        if (ColumnToResolveOn is { IsPrimaryKey: true })
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"You cannot use {ColumnToResolveOn} to resolve primary key collisions because it is part of the primary key",
                 CheckResult.Fail));

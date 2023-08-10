@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -40,8 +41,8 @@ public class EndToEndCacheTest : DatabaseTests
     {
         base.SetUp();
 
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
         _LoadDirectory =
@@ -78,15 +79,15 @@ public class EndToEndCacheTest : DatabaseTests
     [Test]
     public void FireItUpManually()
     {
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         var cachingHost = new CachingHost(CatalogueRepository)
         {
             CacheProgress = _cp
         };
 
-        cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        cachingHost.Start(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // should be numDaysToCache days in cache
         Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Length);
@@ -109,8 +110,8 @@ public class EndToEndCacheTest : DatabaseTests
 
             var auto = new CacheRunner(new CacheOptions
                 { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
-            auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-                new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
         });
 
         Assert.True(t.Wait(60000));

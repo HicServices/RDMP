@@ -9,7 +9,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// A collection of ExtractableDataSet which share a common concept e.g. 'Core datasets', 'Supplemental Datasets', 'Diabetes datasets' etc. These allow you to add a collection of 
+/// A collection of ExtractableDataSet which share a common concept e.g. 'Core datasets', 'Supplemental Datasets', 'Diabetes datasets' etc. These allow you to add a collection of
 /// datasets to a project extraction in one go and to standardise who gets what datasets.
 /// </summary>
 public interface IExtractableDataSetPackage : INamed, IMapsDirectlyToDatabaseTable

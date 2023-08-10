@@ -51,7 +51,9 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
 
     private int _numberOfColumns;
 
-    private bool firstChunk = true;
+    private bool _firstChunk = true;
+
+    private DataTable schema = null;
 
     public DataTable GetChunk(IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
@@ -69,13 +71,16 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
 
             _reader = cmd.ExecuteReaderAsync(cancellationToken.AbortToken).Result;
             _numberOfColumns = _reader.FieldCount;
+
+            schema = GetChunkSchema(_reader);
         }
 
         var readThisBatch = 0;
         timer.Start();
         try
         {
-            var chunk = GetChunkSchema(_reader);
+            var chunk = schema.Clone();
+            chunk.BeginLoadData();
 
             while (_reader.HasRows && _reader.Read())
             {
@@ -84,22 +89,31 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
                 AddRowToDataTable(chunk, _reader);
                 readThisBatch++;
 
-                //we reached batch limit
-                if (readThisBatch == BatchSize)
-                    return chunk;
+                // loop until we reach the batch limit
+                if (readThisBatch != BatchSize) continue;
+
+                chunk.EndLoadData();
+                return chunk;
             }
 
             //if data was read
             if (readThisBatch > 0)
+            {
+                chunk.EndLoadData();
                 return chunk;
+            }
 
             //data is exhausted
 
             //if data was exhausted on first read and we are allowing empty result sets
-            if (firstChunk && AllowEmptyResultSets)
+            if (_firstChunk && AllowEmptyResultSets)
+            {
+                chunk.EndLoadData();
                 return chunk; //return the empty chunk
+            }
 
             //data exhausted
+            schema.Dispose();
             return null;
         }
         catch (Exception e)
@@ -109,7 +123,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         }
         finally
         {
-            firstChunk = false;
+            _firstChunk = false;
             timer.Stop();
             job.OnProgress(this,
                 new ProgressEventArgs(_taskBeingPerformed, new ProgressMeasurement(TotalRowsRead, ProgressType.Records),
@@ -194,18 +208,11 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
     public DataTable TryGetPreview()
     {
         var chunk = new DataTable();
-        using (var con = DatabaseCommandHelper.GetConnection(_builder))
-        {
-            con.Open();
-            using (var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con)))
-            {
-                var read = da.Fill(0, 100, chunk);
+        using var con = DatabaseCommandHelper.GetConnection(_builder);
+        con.Open();
+        using var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con));
+        var read = da.Fill(0, 100, chunk);
 
-                if (read == 0)
-                    return null;
-            }
-
-            return chunk;
-        }
+        return read == 0 ? null : chunk;
     }
 }

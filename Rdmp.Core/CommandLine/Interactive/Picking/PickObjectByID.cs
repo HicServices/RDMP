@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,7 +16,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 /// <summary>
 /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on ID (e.g. "Catalogue:23")
 /// </summary>
-public class PickObjectByID : PickObjectBase
+public partial class PickObjectByID : PickObjectBase
 {
     /*
         Console.WriteLine("Format \"\" e.g. \"Catalogue:*mysql*\" or \"Catalogue:12,23,34\"");
@@ -46,7 +45,7 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
 
     public PickObjectByID(IBasicActivateItems activator)
         : base(activator,
-            new Regex("^([A-Za-z]+):([0-9,]+)$", RegexOptions.IgnoreCase))
+            HasId())
     {
     }
 
@@ -63,4 +62,7 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
 
         return new CommandLineObjectPickerArgumentValue(arg, idx, objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }
+
+    [GeneratedRegex("^([A-Za-z]+):([0-9,]+)$", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex HasId();
 }

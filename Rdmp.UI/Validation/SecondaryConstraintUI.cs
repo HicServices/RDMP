@@ -56,7 +56,7 @@ public partial class SecondaryConstraintUI : UserControl
     internal event RequestDeletionHandler RequestDeletion;
 
 
-    private bool loadingComplete = false;
+    private bool loadingComplete;
 
     public SecondaryConstraintUI(ICatalogueRepository repository, SecondaryConstraint secondaryConstriant,
         string[] otherColumns)
@@ -131,15 +131,17 @@ public partial class SecondaryConstraintUI : UserControl
             else if (_requiredProperties[i].PropertyType == typeof(PredictionRule)) //Hard Typed property PredictionRule
             {
                 //for prediction rules fields
-                var cbx = new ComboBox();
+                var cbx = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    DisplayMember = "Name",
+                    Tag = i,
+                    Width = 200
+                };
                 cbx.Items.AddRange(Validator.GetPredictionExtraTypes());
                 cbx.Items.Add("");
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbx.DisplayMember = "Name";
-                cbx.Tag = i;
                 cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant,
                     cbx.SelectedItem is Type type ? Activator.CreateInstance(type) : null);
-                cbx.Width = 200;
 
                 //The dropdown box is a list of Types but we are actually instantiating a value when user selects it (for XML Serialization).  Consequently we must now get the Type for selection purposes
                 if (currentValue != null)
@@ -159,16 +161,18 @@ public partial class SecondaryConstraintUI : UserControl
                 if (_requiredProperties[i].IsDefined(typeof(ExpectsColumnNameAsInput), true))
                 {
                     //for column fields
-                    var cbx = new ComboBox();
+                    var cbx = new ComboBox
+                    {
+                        DropDownStyle = ComboBoxStyle.DropDownList,
+                        Tag = i,
+                        Width = 350
+                    };
                     cbx.Items.AddRange(_otherColumns);
                     cbx.Items.Add("");
-                    cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                    cbx.Tag = i;
                     cbx.SelectedIndexChanged += (s, e) =>
                         _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant,
                             UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType),
                             null);
-                    cbx.Width = 350;
 
                     valueControl = cbx;
                 }
@@ -205,10 +209,10 @@ public partial class SecondaryConstraintUI : UserControl
                     }
 
                     //See if it has a value
-                    var v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
 
                     //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
-                    v?.RevertToDatabaseState();
+                    if (_requiredProperties[i].GetValue(SecondaryConstriant, null) is IRevertable v)
+                        v.RevertToDatabaseState();
 
                     valueControl = dd;
                 }

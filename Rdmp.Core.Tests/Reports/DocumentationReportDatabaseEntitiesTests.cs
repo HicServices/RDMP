@@ -27,8 +27,6 @@ internal class DocumentationReportDatabaseEntitiesTests : UnitTests
         var store = new CommentStore();
         store.ReadComments(TestContext.CurrentContext.TestDirectory);
 
-        SetupMEF();
-
         var reporter = new DocumentationReportDatabaseEntities();
 
         Image img = new Image<Rgba32>(19, 19);
@@ -36,6 +34,6 @@ internal class DocumentationReportDatabaseEntitiesTests : UnitTests
 
         var iconProvider = Mock.Of<IIconProvider>(m => m.GetImage(It.IsAny<object>(), It.IsAny<OverlayKind>()) == img);
 
-        reporter.GenerateReport(store, new ThrowImmediatelyCheckNotifier(), iconProvider, MEF, false);
+        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
     }
 }

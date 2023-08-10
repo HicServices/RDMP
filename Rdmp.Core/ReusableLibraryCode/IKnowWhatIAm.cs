@@ -12,7 +12,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 public interface IKnowWhatIAm
 {
     /// <summary>
-    /// Return an alternative description of yourself (e.g. dependent on your state) that serves to describe the general purpose of your object.  
+    /// Return an alternative description of yourself (e.g. dependent on your state) that serves to describe the general purpose of your object.
     /// This will be provided to consumers as an alternative to your class xmldoc (summary comments).
     /// </summary>
     /// <returns></returns>

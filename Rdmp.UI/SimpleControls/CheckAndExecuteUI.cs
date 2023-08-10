@@ -34,7 +34,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     public CommandGetterHandler CommandGetter;
 
     public bool ChecksPassed { get; private set; }
-    public bool IsExecuting => _runningTask != null && !_runningTask.IsCompleted;
+    public bool IsExecuting => _runningTask is { IsCompleted: false };
 
     /// <summary>
     /// Called every time the execution of the runner completes (does not get called if the runner was detached - running

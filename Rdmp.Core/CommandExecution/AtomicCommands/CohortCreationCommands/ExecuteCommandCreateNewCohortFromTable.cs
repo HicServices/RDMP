@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using SixLabors.ImageSharp;
-using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
@@ -19,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// <summary>
 /// Generates and runs an SQL query to fetch all private identifiers contained in a table
 /// and commits them as a new cohort using the specified <see cref="Pipeline"/>.  Note that
-/// this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/> 
+/// this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/>
 /// if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecution
@@ -60,7 +59,6 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
 
         base.Execute();
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(col));
 
         //user choose to cancel the cohort creation request dialogue
@@ -85,7 +83,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
 
         request.ExtractionIdentifierColumn = fakeExtractionInformation;
         var configureAndExecute = GetConfigureAndExecuteControl(request,
-            $"Import column {col.GetFullyQualifiedName()} as cohort and commmit results", fakeExtractionInformation);
+            $"Import column {col.GetFullyQualifiedName()} as cohort and commit results", fakeExtractionInformation);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

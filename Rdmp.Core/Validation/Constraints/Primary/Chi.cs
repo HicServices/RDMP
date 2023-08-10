@@ -6,6 +6,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Validation.Constraints.Primary;
 
@@ -25,10 +26,7 @@ public partial class Chi : PrimaryConstraint
             return new ValidationFailure(
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}", this);
 
-        if (!IsValidChi(valueAsString, out var reason))
-            return new ValidationFailure(reason, this);
-
-        return null;
+        return !IsValidChi(valueAsString, out var reason) ? new ValidationFailure(reason, this) : null;
     }
 
 
@@ -39,8 +37,9 @@ public partial class Chi : PrimaryConstraint
     public override string GetHumanReadableDescriptionOfValidation() =>
         "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
 
-    public static bool IsValidChi(string columnValueAsString, out string reason)
+    public static bool IsValidChi([NotNull] string columnValueAsString, [CanBeNull] out string reason)
     {
+        ArgumentNullException.ThrowIfNull(columnValueAsString);
         if (columnValueAsString.Length != 10)
         {
             reason = "CHI was not 10 characters long";
@@ -51,15 +50,15 @@ public partial class Chi : PrimaryConstraint
         var mm = columnValueAsString.Substring(2, 2);
         var yy = columnValueAsString.Substring(4, 2);
 
-        //maybe tryparse instead
-        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out var outDt) == false)
+        //maybe TryParse instead
+        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out _) == false)
         {
             reason = "First 6 numbers of CHI did not constitute a valid date";
             return false;
         }
 
 
-        if (columnValueAsString[^1..] != GetCHICheckDigit(columnValueAsString))
+        if (columnValueAsString[^1] != GetCHICheckDigit(columnValueAsString))
         {
             reason = "CHI check digit did not match";
             return false;
@@ -74,23 +73,23 @@ public partial class Chi : PrimaryConstraint
     /// </summary>
     /// <param name="sCHI"></param>
     /// <returns></returns>
-    private static string GetCHICheckDigit(string sCHI)
+    [NotNull]
+    private static char GetCHICheckDigit([NotNull] string sCHI)
     {
-        int sum = 0, c = 0, lsCHI = 0;
+        var lsCHI =
+            //sCHI = "120356785";
+            sCHI.Length; // Must be 10!!
 
-        //sCHI = "120356785";
-        lsCHI = sCHI.Length; // Must be 10!!
-
-        sum = 0;
-        c = '0';
+        var sum = 0;
+        int c = '0';
         for (var i = 0; i < lsCHI - 1; i++)
-            sum += (sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
+            sum += ((int)sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
         sum %= 11;
 
         c = 11 - sum;
         if (c == 11) c = 0;
 
-        return ((char)(c + '0')).ToString();
+        return (char)(c + '0');
     }
 
     /// <summary>
@@ -100,7 +99,7 @@ public partial class Chi : PrimaryConstraint
     /// <returns>1 for male and 0 for female</returns>
     public static int GetSex(string chi)
     {
-        if (!IsValidChiNumber(chi, out var errorReport))
+        if (!IsValidChiNumber(chi, out _))
             throw new ArgumentException("Invalid CHI");
 
         var sexChar = chi[8];

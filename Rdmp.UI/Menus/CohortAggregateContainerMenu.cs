@@ -16,22 +16,18 @@ namespace Rdmp.UI.Menus;
 
 internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
 {
-    private CohortAggregateContainer _container;
-
     public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container) : base(args,
         container)
     {
-        _container = container;
-
         // Don't add the 'Edit' button but do allow double clicking
         args.SkipCommand<ExecuteCommandActivate>();
 
-        var cic = _container.GetCohortIdentificationConfiguration();
+        var cic = container.GetCohortIdentificationConfiguration();
 
         //Add Graph results of container commands
 
         //this requires cache to exist (and be populated for the container)
-        if (cic != null && cic.QueryCachingServer_ID != null)
+        if (cic is { QueryCachingServer_ID: not null })
         {
             var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",
                 _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());

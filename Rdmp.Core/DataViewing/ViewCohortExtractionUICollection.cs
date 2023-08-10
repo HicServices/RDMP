@@ -22,7 +22,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 {
     public int Top
     {
-        get => _arguments.TryGetValue(TopKey, out var value) ? int.Parse(value) : 100;
+        get => _arguments.TryGetValue(TopKey, out var t) ? int.Parse(t) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
 
@@ -36,7 +36,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// </summary>
     public bool IncludeCohortID
     {
-        get => !_arguments.TryGetValue(IncludeCohortIDKey, out var value) || bool.Parse(value);
+        get => !_arguments.ContainsKey(IncludeCohortIDKey) || bool.Parse(_arguments[IncludeCohortIDKey]);
         set => _arguments[IncludeCohortIDKey] = value.ToString();
     }
 
@@ -99,10 +99,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// <returns></returns>
     private string GetSelectList(IExternalCohortTable ect)
     {
-        var selectList = new List<string>
-        {
-            ect.PrivateIdentifierField
-        };
+        var selectList = new List<string> { ect.PrivateIdentifierField };
 
         // if it is not an identifiable extraction
         if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))

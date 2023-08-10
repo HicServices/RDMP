@@ -42,7 +42,7 @@ internal class AggregateEditorUITests : UITests
         var ei = config.Catalogue.CatalogueItems[0].ExtractionInformation;
 
         //create a new dimension to the config in the database
-        var dim = new AggregateDimension(Repository, ei, config);
+        _ = new AggregateDimension(Repository, ei, config);
 
         //publish a refresh
         Publish(config);
@@ -117,12 +117,12 @@ internal class AggregateEditorUITests : UITests
 
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions() =>
-        GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
+        GetAggregateConfigurationWithNoDimensions(out _, out _);
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi,
         out ExtractionInformation otherEi)
     {
-        var config = WhenIHaveA<AggregateConfiguration>(Repository, out dateEi, out otherEi);
+        var config = WhenIHaveA(Repository, out dateEi, out otherEi);
 
         //remove any existing dimensions
         foreach (var d in config.AggregateDimensions)

@@ -37,7 +37,7 @@ internal class ExternalCohortTableTests : UnitTests
         };
         table.SaveToDatabase();
 
-        var ex = Assert.Throws<Exception>(() => table.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => table.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.AreEqual("Could not connect to Cohort database called 'My Cohort Database'", ex.Message);
     }
 

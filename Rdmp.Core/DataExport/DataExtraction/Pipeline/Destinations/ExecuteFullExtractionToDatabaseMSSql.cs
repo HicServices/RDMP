@@ -26,7 +26,6 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using TypeGuesser;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
@@ -259,8 +258,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     $"Set Type for {columnName} to {destinationType} (IsPrimaryKey={(addedType.IsPrimaryKey ? "true" : "false")}) to match the source table"));
         }
 
-        foreach (ReleaseIdentifierSubstitution sub in datasetCommand.QueryBuilder.SelectColumns
-                     .Where(sc => sc.IColumn is ReleaseIdentifierSubstitution).Select(sc => sc.IColumn))
+        foreach (var sub in datasetCommand.QueryBuilder.SelectColumns.Select(static sc=>sc.IColumn).OfType<ReleaseIdentifierSubstitution>())
         {
             var columnName = sub.GetRuntimeName();
             var isPk = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
@@ -343,11 +341,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //otherwise, fetch and cache answer
         var cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
-        if (string.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
-            throw new Exception(
-                $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'");
-
-        return cachedGetTableNameAnswer;
+        return string.IsNullOrWhiteSpace(cachedGetTableNameAnswer)
+            ? throw new Exception(
+                $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'")
+            : cachedGetTableNameAnswer;
     }
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -384,7 +381,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     {
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Information,
-                                $"Making {tbl} distinct incase there are duplicate rows from bad batch resumes"));
+                                $"Making {tbl} distinct in case there are duplicate rows from bad batch resumes"));
                         tbl.MakeDistinct(50000000);
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Information, $"Finished distincting {tbl}"));
@@ -419,10 +416,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private string GetDestinationDescription(string suffix = "")
     {
         if (_toProcess == null)
-            if (_request is ExtractGlobalsCommand)
-                return "Globals";
-            else
-                throw new Exception("Could not describe destination because _toProcess was null");
+            return _request is ExtractGlobalsCommand
+                ? "Globals"
+                : throw new Exception("Could not describe destination because _toProcess was null");
 
         var tblName = _toProcess.TableName;
         var dbName = GetDatabaseName();
@@ -435,7 +431,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         ISelectedDataSets selectedDataSet) => new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
+        new MsSqlReleaseSource(catalogueRepository);
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
@@ -448,38 +444,34 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to download SQL for global SupportingSQL {sqlTable.SQL}"));
-        using (var con = sqlTable.GetServer().GetConnection())
+        using var con = sqlTable.GetServer().GetConnection();
+        con.Open();
+
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Connection opened successfully, about to send SQL command {sqlTable.SQL}"));
+
+        using var dt = new DataTable();
+        using (var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
+        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
-            con.Open();
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Connection opened successfully, about to send SQL command {sqlTable.SQL}"));
-
-            using (var dt = new DataTable())
-            {
-                using (var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
-                using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-                {
-                    var sw = new Stopwatch();
-
-                    sw.Start();
-                    da.Fill(dt);
-                }
-
-                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper()
-                    .GetSensibleEntityNameFromString(sqlTable.Name));
-                linesWritten = dt.Rows.Count;
-
-                var destinationDb = GetDestinationDatabase(listener);
-                var tbl = destinationDb.ExpectTable(dt.TableName);
-
-                if (tbl.Exists())
-                    tbl.Drop();
-
-                destinationDb.CreateTable(dt.TableName, dt);
-                destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
-            }
+            var sw = Stopwatch.StartNew();
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
         }
+
+        dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper()
+            .GetSensibleEntityNameFromString(sqlTable.Name));
+        linesWritten = dt.Rows.Count;
+
+        var destinationDb = GetDestinationDatabase(listener);
+        var tbl = destinationDb.ExpectTable(dt.TableName);
+
+        if (tbl.Exists())
+            tbl.Drop();
+
+        destinationDb.CreateTable(dt.TableName, dt);
+        destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
     }
 
 

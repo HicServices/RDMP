@@ -54,7 +54,7 @@ public class SqlQueryBuilderHelper
     /// <inheritdoc cref="QueryTimeColumn.SetLookupStatus"/>
     public static void FindLookups(ISqlQueryBuilder qb)
     {
-        //if there is only one table then user us selecting stuff from the lookup table only 
+        //if there is only one table then user us selecting stuff from the lookup table only
         if (qb.TablesUsedInQuery.Count == 1)
             return;
 
@@ -63,8 +63,8 @@ public class SqlQueryBuilderHelper
 
 
     /// <summary>
-    /// Must be called only after the ISqlQueryBuilder.TablesUsedInQuery has been set (see GetTablesUsedInQuery).  This method will resolve how 
-    /// the various tables can be linked together.  Throws QueryBuildingException if it is not possible to join the tables with any known 
+    /// Must be called only after the ISqlQueryBuilder.TablesUsedInQuery has been set (see GetTablesUsedInQuery).  This method will resolve how
+    /// the various tables can be linked together.  Throws QueryBuildingException if it is not possible to join the tables with any known
     /// JoinInfos / Lookup knowledge
     /// </summary>
     /// <param name="qb"></param>
@@ -162,12 +162,10 @@ public class SqlQueryBuilderHelper
             }
         }
 
-        if (qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false)
-            throw new QueryBuildingException(
-                "Specified PrimaryExtractionTable was not found amongst the chosen extraction columns");
-
-
-        return Joins;
+        return qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false
+            ? throw new QueryBuildingException(
+                "Specified PrimaryExtractionTable was not found amongst the chosen extraction columns")
+            : Joins;
     }
 
     /// <summary>
@@ -289,7 +287,7 @@ public class SqlQueryBuilderHelper
         if (tables.Length == 1)
             return tables[0]; // go with that
 
-        // what tables have IsExtractionIdentifier column(s)? 
+        // what tables have IsExtractionIdentifier column(s)?
         var extractionIdentifierTables = qb.SelectColumns
             .Where(c => c.IColumn?.IsExtractionIdentifier ?? false)
             .Select(t => t.UnderlyingColumn?.TableInfo_ID)
@@ -335,8 +333,8 @@ public class SqlQueryBuilderHelper
     }
 
     /// <summary>
-    /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for 
-    /// this process to work 
+    /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for
+    /// this process to work
     /// </summary>
     /// <param name="qb"></param>
     /// <returns></returns>
@@ -398,7 +396,7 @@ public class SqlQueryBuilderHelper
         }
         else if (qb.PrimaryExtractionTable != null)
         {
-            //user has specified which table to start from 
+            //user has specified which table to start from
             toReturn += qb.PrimaryExtractionTable.Name;
 
             //now find any joins which involve the primary extraction table
@@ -439,8 +437,8 @@ public class SqlQueryBuilderHelper
                     var fkTableID = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
 
 
-                    //if we have already seen foreign key table before 
-                    //if we already have 
+                    //if we have already seen foreign key table before
+                    //if we already have
                     if (tablesAddedSoFar.Contains(fkTableID) && tablesAddedSoFar.Contains(pkTableID))
                     {
                         unneededJoins.Add(qb.JoinsUsedInQuery[i]);
@@ -498,7 +496,7 @@ public class SqlQueryBuilderHelper
     private static bool TableIsLookupTable(ITableInfo tableInfo, ISqlQueryBuilder qb)
     {
         return
-            //tables where there is any columns which 
+            //tables where there is any columns which
             qb.SelectColumns.Any(
                 //are lookup descriptions and belong to this table
                 c => c.IsLookupDescription && c.UnderlyingColumn.TableInfo_ID == tableInfo.ID);
@@ -604,7 +602,7 @@ public class SqlQueryBuilderHelper
         for (var i = 0; i < filtersInContainer.Length; i++)
         {
             if (qb.CheckSyntax)
-                filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
+                filtersInContainer[i].Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             toReturn += $@"{tabs}/*{filtersInContainer[i].Name}*/{Environment.NewLine}";
 
@@ -632,7 +630,7 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IContainer container) =>
         //skip disabled containers
-        container is not IDisableable dis || !dis.IsDisabled;
+        container is not IDisableable { IsDisabled: true };
 
     /// <summary>
     /// Filters are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
@@ -641,11 +639,11 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IFilter filter) =>
         //skip disabled filters
-        filter is not IDisableable dis || !dis.IsDisabled;
+        filter is not IDisableable { IsDisabled: true };
 
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
-    /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para> 
+    /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para>
     /// </summary>
     /// <param name="tablesUsedInQuery"></param>
     /// <returns></returns>
@@ -657,11 +655,10 @@ public class SqlQueryBuilderHelper
 
 
         var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
-        if (databaseTypes.Length > 1)
-            throw new QueryBuildingException(
-                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}");
-
-        return DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
+        return databaseTypes.Length > 1
+            ? throw new QueryBuildingException(
+                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}")
+            : DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
     }
 
     /// <summary>

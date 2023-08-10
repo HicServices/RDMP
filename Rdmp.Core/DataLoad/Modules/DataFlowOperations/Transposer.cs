@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
 /// Pipeline component which rotates DataTables flowing through it by 90 degrees such that the first column becomes the new headers.  Only use this if you have
-/// been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the 
+/// been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the
 /// DataTable growing horizontally).
 /// 
 /// <para>IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component unless you set the chunk size large enough
@@ -26,7 +26,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 /// </summary>
 public class Transposer : IPluginDataFlowComponent<DataTable>
 {
-    private bool _haveServedResult = false;
+    private bool _haveServedResult;
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
         DemandType.Unspecified, true)]
@@ -83,7 +83,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
             outputTable.Columns.Add(newColName);
         }
 
-        // Add rows by looping columns        
+        // Add rows by looping columns
         for (var rCount = 1; rCount <= inputTable.Columns.Count - 1; rCount++)
         {
             var newRow = outputTable.NewRow();

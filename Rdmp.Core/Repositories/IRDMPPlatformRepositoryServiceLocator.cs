@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// A class which can find the location (connection strings) of the of Catalogue and Data Export databases.  This might come from a user settings file or from a 
+/// A class which can find the location (connection strings) of the of Catalogue and Data Export databases.  This might come from a user settings file or from a
 /// config file or whatever (depending on how you implement this interface).
 /// </summary>
 public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositoryServiceLocator,

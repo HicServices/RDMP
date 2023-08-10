@@ -31,7 +31,7 @@ internal class TableInfoCloneOperationTests : DatabaseTests
 
         //create a RAW table schema called TableName_Isolation
         var cloner = new TableInfoCloneOperation(config, (TableInfo)ti, LoadBubble.Live,
-            new ThrowImmediatelyDataLoadEventListener());
+            ThrowImmediatelyDataLoadEventListener.Quiet);
         cloner.CloneTable(tbl.Database, tbl.Database, tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true,
             ti.PreLoadDiscardedColumns);
 

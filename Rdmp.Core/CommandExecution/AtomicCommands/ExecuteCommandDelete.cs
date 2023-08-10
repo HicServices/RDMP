@@ -66,21 +66,16 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
     private string GetDeleteVerbIfAny()
     {
-        // if all objects are IDeletableWithCustomMessage
-        if (OverrideCommandName == null && _deletables.Count > 0 &&
-            _deletables.All(static d => d is IDeletableWithCustomMessage))
-        {
-            // Get the verbs (e.g. Remove, Disassociate etc)
-            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct()
-                .ToArray();
+        // Null unless all objects are IDeletableWithCustomMessage
+        if (OverrideCommandName != null || _deletables.Count <= 0 ||
+            !_deletables.All(static d => d is IDeletableWithCustomMessage)) return null;
 
-            // if they agree on one specific verb
-            if (verbs.Length == 1)
-                return verbs[0]; // use that
-        }
+        // Get the verbs (e.g. Remove, Disassociate etc)
+        var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct()
+            .ToArray();
 
-        // couldn't agree on a verb or not all are IDeletableWithCustomMessage
-        return null;
+        // if they agree on one specific verb
+        return verbs.Length == 1 ? verbs[0] : null;
     }
 
     public override void Execute()
@@ -101,17 +96,12 @@ public class ExecuteCommandDelete : BasicCommandExecution
     }
 
     private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable) =>
-        deleteable is CatalogueItem ||
-        deleteable is ExtractionInformation;
+        deleteable is CatalogueItem or ExtractionInformation;
 
-    private string GetDescription()
-    {
-        if (_deletables.Count == 1)
-            return $"Delete '{_deletables.Single()}'";
-
-
-        return $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
-    }
+    private string GetDescription() =>
+        _deletables.Count == 1
+            ? $"Delete '{_deletables.Single()}'"
+            : $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
 
     private void ExecuteImpl()
     {
@@ -137,10 +127,8 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
         try
         {
-            foreach (var d in _deletables)
-                if (d is not DatabaseEntity exists ||
-                    exists.Exists()) //don't delete stuff that doesn't exist!
-                    d.DeleteInDatabase();
+            foreach (var d in _deletables.Where(d => d is not DatabaseEntity exists || exists.Exists()))
+                d.DeleteInDatabase();
         }
         finally
         {

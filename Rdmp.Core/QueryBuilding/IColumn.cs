@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Interface for defining classes which store a single line of SELECT Sql for use in query building (See ISqlQueryBuilder).  This includes basic stuff like SelectSQL 
+/// Interface for defining classes which store a single line of SELECT Sql for use in query building (See ISqlQueryBuilder).  This includes basic stuff like SelectSQL
 /// and Alias but also logical things like Order (which column order it should appear in the select statement being built).
 /// 
 /// <para>Note that many properties can be null including ColumnInfo and Alias etc.</para>
@@ -53,7 +53,7 @@ public interface IColumn : IHasRuntimeName, ICheckable, IOrderable, IMapsDirectl
     bool IsExtractionIdentifier { get; }
 
     /// <summary>
-    /// Indicates whether this column is the Primary Key (or part of a composite Primary Key) when extracted.  This flag is not copied / imputed from 
+    /// Indicates whether this column is the Primary Key (or part of a composite Primary Key) when extracted.  This flag is not copied / imputed from
     /// <see cref="Curation.Data.ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
     /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
     /// </summary>

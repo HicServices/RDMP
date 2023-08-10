@@ -88,8 +88,6 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
-        SetupMEF();
-
         var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
         {
             ProcessTaskType = ProcessTaskType.Attacher,
@@ -121,7 +119,7 @@ public class ShareLoadMetadataTests : UnitTests
 
         var stg = Mock.Of<IStageArgs>(x => x.LoadStage == LoadStage.Mounting);
 
-        f.Create(pt1, stg);
+        RuntimeTaskFactory.Create(pt1, stg);
     }
 
 
@@ -135,8 +133,6 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
-        //setup Reflection / MEF
-        SetupMEF();
         var f = new RuntimeTaskFactory(Repository);
         var stg = Mock.Of<IStageArgs>(x =>
             x.LoadStage == LoadStage.Mounting &&
@@ -158,7 +154,7 @@ public class ShareLoadMetadataTests : UnitTests
         pta.SaveToDatabase();
 
         //check that reflection can assemble the master ProcessTask
-        var t = (MutilateDataTablesRuntimeTask)f.Create(pt1, stg);
+        var t = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(pt1, stg);
         Assert.IsNotNull(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn);
 
         //share to the second repository (which won't have that ColumnInfo)
@@ -166,10 +162,9 @@ public class ShareLoadMetadataTests : UnitTests
 
         //create a new reflection factory for the new repo
         var f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
-        lmd2.CatalogueRepository.MEF = MEF;
 
         //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
-        var t2 = (MutilateDataTablesRuntimeTask)f2.Create(lmd2.ProcessTasks.Single(), stg);
+        var t2 = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(lmd2.ProcessTasks.Single(), stg);
         Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
     }
 

@@ -61,8 +61,8 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private bool _choicesFinalised;
     private HelpWorkflow _workflow;
     private CatalogueItem[] _catalogueItems;
-    private bool _ddChangeAllChanged = false;
-    private bool _importedNewTable = false;
+    private bool _ddChangeAllChanged;
+    private bool _importedNewTable;
 
     /// <summary>
     /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
@@ -94,7 +94,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer,
         string initialDescription, IProject projectSpecificIfAny) : this(activator)
     {
-        importer.DoImport(out _tableInfo, out var cols);
+        importer.DoImport(out _tableInfo, out _);
 
         _importedNewTable = true;
 
@@ -255,10 +255,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowObject;
 
-        if (n.ExtractionInformation == null)
-            return false;
-
-        return n.ExtractionInformation.IsExtractionIdentifier;
+        return n.ExtractionInformation == null ? false : (object)n.ExtractionInformation.IsExtractionIdentifier;
     }
 
 
@@ -282,10 +279,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowObject;
 
-        if (n.ExtractionInformation == null)
-            return false;
-
-        return n.ExtractionInformation.HashOnDataRelease;
+        return n.ExtractionInformation == null ? false : (object)n.ExtractionInformation.HashOnDataRelease;
     }
 
     private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
@@ -341,10 +335,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowobject;
 
-        if (n.ExtractionInformation == null)
-            return "Not Extractable";
-
-        return n.ExtractionInformation.ExtractionCategory;
+        return n.ExtractionInformation == null ? "Not Extractable" : n.ExtractionInformation.ExtractionCategory;
     }
 
 
@@ -417,7 +408,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private void FinaliseExtractability()
     {
-        new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
+        _ = new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
         if (_projectSpecific == null) return;
 
@@ -704,13 +695,13 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
-            if (node.ExtractionInformation != null && node.ExtractionInformation.IsExtractionIdentifier)
+            if (node.ExtractionInformation is { IsExtractionIdentifier: true })
             {
                 node.ExtractionInformation.IsExtractionIdentifier = false;
                 node.ExtractionInformation.SaveToDatabase();
             }
 
-        //we cleared them all, now did they want one selected (i.e. they selected anythign except <<None>>)
+        //we cleared them all, now did they want one selected (i.e. they selected anything except <<None>>)
         if (ddIsExtractionIdentifier.SelectedItem is ColPair n)
         {
             if (n.ExtractionInformation == null)

@@ -28,8 +28,8 @@ public class ProjectChecksTestsSimple : DatabaseTests
         {
             var ex = Assert.Throws<Exception>(() =>
                 new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(
-                    new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Project does not have any ExtractionConfigurations yet", ex.Message);
+                    ThrowImmediatelyCheckNotifier.Quiet));
+            Assert.AreEqual("Project does not have any ExtractionConfigurations yet", ex?.Message);
         }
         finally
         {
@@ -42,7 +42,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     {
         var p = GetProjectWithConfig(out var config);
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
+        Assert.AreEqual("Project does not have an ExtractionDirectory", ex?.Message);
     }
 
     [Test]
@@ -138,7 +138,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     [Test]
     public void Configuration_NoDatasets()
     {
-        var p = GetProjectWithConfigDirectory(out var config, out var dir);
+        var p = GetProjectWithConfigDirectory(out var config, out _);
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
         StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",
             ex.Message);
@@ -148,7 +148,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     [Test]
     public void Configuration_NoProjectNumber()
     {
-        var p = GetProjectWithConfigDirectory(out var config, out var dir);
+        var p = GetProjectWithConfigDirectory(out var config, out _);
         p.ProjectNumber = null;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
         StringAssert.Contains(
@@ -161,7 +161,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
         try
         {
             new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(notifier ??
-                new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+                ThrowImmediatelyCheckNotifier.QuietPicky);
         }
         finally
         {

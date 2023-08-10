@@ -15,7 +15,7 @@ namespace Rdmp.UI;
 /// <summary>
 /// Text box with support for hyperlinks.
 /// </summary>
-public class RichTextBoxEx : RichTextBox
+public partial class RichTextBoxEx : RichTextBox
 {
     #region Interop-Defines
 
@@ -47,8 +47,8 @@ public class RichTextBoxEx : RichTextBox
         public byte bReserved1;
     }
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    [LibraryImport("user32.dll")]
+    private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     private const int WM_USER = 0x0400;
     private const int EM_GETCHARFORMAT = WM_USER + 58;

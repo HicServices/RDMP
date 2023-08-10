@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching;
 
 /// <summary>
-/// Boot straps a 
+/// Boot straps a
 /// </summary>
 public class CachingHost
 {
@@ -35,7 +35,7 @@ public class CachingHost
 
     private readonly ICatalogueRepository _repository;
 
-    // this is more because we can't retrieve CacheWindows from LoadProgresss (yet) 
+    // this is more because we can't retrieve CacheWindows from LoadProgresss (yet)
     private List<PermissionWindowCacheDownloader> _downloaders;
 
     /// <summary>
@@ -55,7 +55,7 @@ public class CachingHost
     }
 
     /// <summary>
-    /// Runs the first (which must be the only) <see cref="CacheProgress"/> 
+    /// Runs the first (which must be the only) <see cref="CacheProgress"/>
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>

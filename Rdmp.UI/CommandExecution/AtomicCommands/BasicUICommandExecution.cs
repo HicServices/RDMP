@@ -29,10 +29,7 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
         {
             Filter = filter
         };
-        if (sfd.ShowDialog() == DialogResult.OK)
-            return new FileInfo(sfd.FileName);
-
-        return null;
+        return sfd.ShowDialog() == DialogResult.OK ? new FileInfo(sfd.FileName) : null;
     }
 
     protected static FileInfo SelectOpenFile(string filter)

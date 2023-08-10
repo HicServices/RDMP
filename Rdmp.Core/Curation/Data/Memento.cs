@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
-/// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
+/// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/>
 /// the memento would point to an old <see cref="ExtractionInformation"/> which may be subsequently deleted
 /// </summary>
 public class Memento : ReferenceOtherObjectDatabaseEntity

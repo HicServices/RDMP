@@ -16,9 +16,9 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional IDataAccessCredentials (username and encrypted password).  These
-/// These are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections use integrated/windows security).  
+/// These are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections use integrated/windows security).
 /// 
-/// <para>Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a 
+/// <para>Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a
 /// DataAccessPortal.</para>
 /// </summary>
 public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessCredentials, IDataAccessPoint

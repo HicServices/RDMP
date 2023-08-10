@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
@@ -48,10 +47,8 @@ public class CommandLineObjectPicker
     /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
     /// </summary>
     /// <param name="args"></param>
-    /// <param name="repositoryLocator"></param>
     /// <param name="pickers"></param>
-    public CommandLineObjectPicker(string[] args, IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        IEnumerable<PickObjectBase> pickers)
+    public CommandLineObjectPicker(string[] args, IEnumerable<PickObjectBase> pickers)
     {
         foreach (var p in pickers)
             _pickers.Add(p);
@@ -78,12 +75,7 @@ public class CommandLineObjectPicker
     /// <param name="idx"></param>
     /// <param name="paramType"></param>
     /// <returns></returns>
-    public bool HasArgumentOfType(int idx, Type paramType)
-    {
+    public bool HasArgumentOfType(int idx, Type paramType) =>
         //if the index is greater than the number of arguments we have
-        if (idx >= Arguments.Count)
-            return false;
-
-        return Arguments.ElementAt(idx).HasValueOfType(paramType);
-    }
+        idx < Arguments.Count && Arguments.ElementAt(idx).HasValueOfType(paramType);
 }

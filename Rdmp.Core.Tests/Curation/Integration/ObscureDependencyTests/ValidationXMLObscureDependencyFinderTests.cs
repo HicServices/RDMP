@@ -11,7 +11,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency;
@@ -51,18 +50,8 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
   </ItemValidators>
 </Validator>";
 
-        var kaizerSoze = false;
-        foreach (var suspect in finder.TheUsualSuspects)
-        {
-            var pattern = string.Format(suspect.Pattern, 10029);
-
-            kaizerSoze = Regex.IsMatch(testXML, pattern, RegexOptions.Singleline);
-
-            if (kaizerSoze)
-                break;
-        }
-
-        Assert.IsTrue(kaizerSoze);
+        Assert.IsTrue(finder.TheUsualSuspects.Select(suspect => string.Format(suspect.Pattern, 10029))
+            .Any(pattern => Regex.IsMatch(testXML, pattern, RegexOptions.Singleline)));
     }
 
 
@@ -114,8 +103,8 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
     [Test]
     public void Test_DeleteAColumnInfoThatIsReferenced()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(), RepositoryLocator);
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        var startup = new Startup.Startup(RepositoryLocator);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         var testData = SetupTestData(out var l2ColumnInfo);
 
@@ -136,10 +125,10 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
     [Test]
     public void TestRunningSetupMultipleTimes()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(), RepositoryLocator);
+        var startup = new Startup.Startup(RepositoryLocator);
         try
         {
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+            startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
         }
         catch (InvalidPatchException patchException)
         {
@@ -151,9 +140,9 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
             ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
             .OtherDependencyFinders.Count;
 
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         //there should not be any replication! and doubling SetUp!
         Assert.AreEqual(numberAfterFirstRun,

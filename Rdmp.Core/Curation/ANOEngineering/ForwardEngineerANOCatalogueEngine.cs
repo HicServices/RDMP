@@ -336,7 +336,7 @@ public class ForwardEngineerANOCatalogueEngine
             catch (Exception ex)
             {
                 _catalogueRepository.EndTransaction(false);
-                throw new Exception("Failed to create ANO version, transaction rolled back succesfully", ex);
+                throw new Exception("Failed to create ANO version, transaction rolled back successfully", ex);
             }
         }
     }
@@ -360,11 +360,11 @@ public class ForwardEngineerANOCatalogueEngine
 
         var toReturn = FindNewColumnNamed(syntaxHelper, col, col.GetRuntimeName(), isOptional) ??
                        FindNewColumnNamed(syntaxHelper, col, $"ANO{col.GetRuntimeName()}", isOptional);
+
         if (toReturn == null)
-            if (isOptional)
-                return null;
-            else
-                throw new Exception(
+            return isOptional
+                ? null
+                : throw new Exception(
                     $"Catalogue '{_planManager.Catalogue}' contained a CatalogueItem referencing Column '{col}' the ColumnInfo was not migrated (which is fine) but we then could not find ColumnInfo in the new ANO dataset (if it was part of SkippedTables why doesn't the Catalogue have a reference to the new location?)");
 
         _parenthoodDictionary.Add(col, toReturn);
@@ -393,13 +393,11 @@ public class ForwardEngineerANOCatalogueEngine
                 null,
                 col.TableInfo.GetRuntimeName(),
                 expectedName),
-
             syntaxHelper.EnsureFullyQualified(
                 _planManager.TargetDatabase.GetRuntimeName(),
                 syntaxHelper.GetDefaultSchemaIfAny(),
                 col.TableInfo.GetRuntimeName(),
                 expectedName),
-
             syntaxHelper.EnsureFullyQualified(
                 _planManager.TargetDatabase.GetRuntimeName(),
                 col.TableInfo.Schema,
@@ -439,11 +437,10 @@ public class ForwardEngineerANOCatalogueEngine
         if (columnsFromCorrectServerThatAreaAlsoLocalImports.Length == 1)
             return columnsFromCorrectServerThatAreaAlsoLocalImports[0];
 
-        if (isOptional)
-            return null;
-
-        throw new Exception(
-            $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
+        return isOptional
+            ? null
+            : throw new Exception(
+                $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
     }
 
     private Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();

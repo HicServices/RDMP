@@ -18,19 +18,19 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetUserSetting : BasicCommandExecution
+public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
 {
     private readonly PropertyInfo _property;
-    private ErrorCode _errorCode;
-    private CheckResult _errorCodeValue;
+    private readonly ErrorCode _errorCode;
+    private readonly CheckResult _errorCodeValue;
 
     /// <summary>
     /// The new value chosen by the user during command execution
     /// </summary>
-    public object NewValue { get; private set; }
+    private object NewValue { get; }
 
     /// <summary>
-    /// True if the command was successfully completed 
+    /// True if the command was successfully completed
     /// </summary>
     public bool Success { get; private set; }
 

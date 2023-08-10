@@ -36,7 +36,7 @@ public class CatalogueConstraintReport : DataQualityReport
 {
     private readonly string _dataLoadRunFieldName;
 
-    //where the data is located 
+    //where the data is located
     private DiscoveredServer _server;
     private QueryBuilder _queryBuilder;
     private Validator _validator;
@@ -89,7 +89,7 @@ public class CatalogueConstraintReport : DataQualityReport
         }
     }
 
-    private bool haveComplainedAboutNullCategories = false;
+    private bool haveComplainedAboutNullCategories;
 
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
@@ -172,10 +172,10 @@ public class CatalogueConstraintReport : DataQualityReport
                     //if there is a value in the current record for the pivot column
                     if (pivotValue != null)
                     {
-                        //if it is a novel 
+                        //if it is a novel
                         if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
                         {
-                            //we will need to expand the dictionaries 
+                            //we will need to expand the dictionaries
                             if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
                                 throw new OverflowException(
                                     $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
@@ -250,7 +250,7 @@ public class CatalogueConstraintReport : DataQualityReport
         }
     }
 
-    private bool _haveComplainedAboutTrailingWhitespaces = false;
+    private bool _haveComplainedAboutTrailingWhitespaces;
 
     private string GetStringValueForPivotField(object o, IDataLoadEventListener listener)
     {
@@ -480,7 +480,7 @@ public class CatalogueConstraintReport : DataQualityReport
     private void SetupAdditionalValidationRules(ICheckNotifier notifier)
     {
         //for each description
-        foreach (var descQtc in _queryBuilder.SelectColumns.Where(qtc => qtc.IsLookupDescription))
+        foreach (var descQtc in _queryBuilder.SelectColumns.Where(static qtc => qtc.IsLookupDescription))
             try
             {
                 //if we have a the foreign key too
@@ -500,11 +500,11 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
 
                     //if it doesn't already have a prediction
-                    if (itemValidator.SecondaryConstraints.All(constraint =>
+                    if (itemValidator.SecondaryConstraints.All(static constraint =>
                             constraint.GetType() != typeof(Prediction)))
                     {
-                        //Add an item validator onto the fk column that targets the description column with a nullness prediction
-                        var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName)
+                        //Add an item validator onto the fk column that targets the description column with a nullity prediction
+                        var newRule = new Prediction(new ValuePredictsOtherValueNullity(), foreignKeyFieldName)
                         {
                             Consequence = Consequence.Missing
                         };
@@ -514,7 +514,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
-                                $"Dynamically added value->value Nullnes constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue",
+                                $"Dynamically added value->value Nullity constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue",
                                 CheckResult.Success));
                     }
                 }
@@ -534,12 +534,12 @@ public class CatalogueConstraintReport : DataQualityReport
         //make sure all the results dictionaries
         states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
 
-        //ask the validator to validate! 
+        //ask the validator to validate!
         _validator.ValidateVerboseAdditive(
             r, //validate the data reader
             states.ColumnValidationFailuresByDataLoadRunID[
                 dataLoadRunIDOfCurrentRecord], //additively adjust the validation failures dictionary
-            out var worstConsequence); //and tell us what the worst consequence in the row was 
+            out var worstConsequence); //and tell us what the worst consequence in the row was
 
 
         //increment the time periodicity hypercube!

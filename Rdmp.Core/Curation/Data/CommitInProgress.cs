@@ -21,8 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class CommitInProgress : IDisposable
 {
-    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates =
-        new();
+    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new();
 
     public CommitInProgressSettings Settings { get; }
 
@@ -209,9 +208,9 @@ public class CommitInProgress : IDisposable
 
         // no visible changes... but yaml is different which is odd.
         // Either way abandon this commit.
-        if (!props.Any()) return null;
-
-        return $"Update {kv.Key.GetType().Name} {string.Join(", ", props.Select(p => p.Name).ToArray())}";
+        return !props.Any()
+            ? null
+            : $"Update {kv.Key.GetType().Name} {string.Join(", ", props.Select(p => p.Name).ToArray())}";
     }
 
     public void Dispose()

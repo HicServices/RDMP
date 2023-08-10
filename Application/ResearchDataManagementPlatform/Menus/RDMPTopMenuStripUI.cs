@@ -82,7 +82,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void BuildSwitchInstanceMenuItems()
     {
-        var args = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments;
+        var args = RDMPBootStrapper.ApplicationArguments;
 
         // somehow app was launched without populating the load args
         if (args == null) return;
@@ -103,7 +103,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
         // also add yaml files from wherever they got their original yaml file
-        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
+        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
     }
 
@@ -120,14 +120,14 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
                                   yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
             var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
-                (s, e) => { LaunchNew(connectionStrings); })
+                (_, _) => { LaunchNew(connectionStrings); })
             {
                 Checked = isSameAsCurrent,
                 ToolTipText = connectionStrings.Description ?? yaml.FullName
             };
 
             var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
-                (s, e) => { SwitchTo(connectionStrings); })
+                (_, _) => { SwitchTo(connectionStrings); })
             {
                 Enabled = !isSameAsCurrent,
                 Checked = isSameAsCurrent,
@@ -244,7 +244,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
             new PopupChecksUI("Generating class summaries", false),
             Activator.CoreIconProvider,
-            Activator.RepositoryLocator.CatalogueRepository.MEF,
             true);
     }
 
@@ -349,7 +348,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void WindowFactory_TabChanged(object sender, IDockContent newTab)
     {
-        closeToolStripMenuItem.Enabled = newTab != null && newTab is not PersistableToolboxDockContent;
+        closeToolStripMenuItem.Enabled = newTab is not null and not PersistableToolboxDockContent;
         showHelpToolStripMenuItem.Enabled = newTab is RDMPSingleControlTab;
 
         if (newTab is not RDMPSingleControlTab singleObjectControlTab)
@@ -484,8 +483,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var file = new FileInfo(Path.GetTempFileName());
-        File.WriteAllLines(file.FullName,
-            Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t => t.FullName));
+        File.WriteAllLines(file.FullName, Rdmp.Core.Repositories.MEF.GetAllTypes().Select(t => t.FullName));
         UsefulStuff.ShowPathInWindowsExplorer(file);
     }
 

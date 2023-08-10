@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -40,8 +39,8 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         "If ticked, will Freeze the CohortIdentificationConfiguration if the import pipeline terminates successfully")]
     public bool FreezeAfterSuccessfulImport { get; set; }
 
-    private bool haveSentData = false;
-    private CancellationTokenSource _cancelGlobalOperations = new();
+    private bool haveSentData;
+    private readonly CancellationTokenSource _cancelGlobalOperations = new();
 
     /// <summary>
     /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
@@ -77,11 +76,11 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         _cancelGlobalOperations.Cancel();
     }
 
-    public DataTable TryGetPreview() => GetDataTable(new ThrowImmediatelyDataLoadEventListener());
+    public DataTable TryGetPreview() => GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
-        listener ??= new ThrowImmediatelyDataLoadEventListener();
+        listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));
@@ -92,11 +91,12 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
         var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
 
-        var rootContainerTask =
-            //no caching set up so no point in running CohortCompilerRunner
-            _cohortIdentificationConfiguration.QueryCachingServer_ID == null
-                ? RunRootContainerOnlyNoCaching(cohortCompiler)
-                : RunAllTasksWithRunner(cohortCompiler, listener);
+        ICompileable rootContainerTask;
+        //no caching set up so no point in running CohortCompilerRunner
+        if (_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
+            rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
+        else
+            rootContainerTask = RunAllTasksWithRunner(cohortCompiler, listener);
 
         if (rootContainerTask.State == CompilationState.Executing)
         {

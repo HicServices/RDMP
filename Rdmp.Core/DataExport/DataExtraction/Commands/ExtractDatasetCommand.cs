@@ -150,21 +150,11 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         ReleaseIdentifierSubstitutions = substitutions;
     }
 
-    public override string ToString()
-    {
-        if (this == EmptyCommand)
-            return "EmptyCommand";
+    public override string ToString() => this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();
 
-        return DatasetBundle.DataSet.ToString();
-    }
-
-    public override DirectoryInfo GetExtractionDirectory()
-    {
-        if (this == EmptyCommand)
-            return new DirectoryInfo(Path.GetTempPath());
-
-        return Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
-    }
+    public override DirectoryInfo GetExtractionDirectory() => this == EmptyCommand
+        ? new DirectoryInfo(Path.GetTempPath())
+        : Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
 
     public override string DescribeExtractionImplementation() => QueryBuilder.SQL;
 

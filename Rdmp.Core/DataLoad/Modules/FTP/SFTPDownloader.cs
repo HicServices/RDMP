@@ -48,14 +48,14 @@ public class SFTPDownloader : FTPDownloader
             var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events
-            void callback(ulong totalBytes) => job.OnProgress(this,
+            void Callback(ulong totalBytes) => job.OnProgress(this,
                 new ProgressEventArgs(destinationFilePath,
                     new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
 
             using (var fs = new FileStream(destinationFilePath, FileMode.CreateNew))
             {
                 //download
-                sftp.DownloadFile(fullFilePath, fs, callback);
+                sftp.DownloadFile(fullFilePath, fs, Callback);
                 fs.Close();
             }
 
@@ -68,41 +68,37 @@ public class SFTPDownloader : FTPDownloader
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (exitCode == ExitCodeType.Success)
-            using (var sftp = new SftpClient(_host, _username, _password))
-            {
-                sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
-                sftp.Connect();
+        if (exitCode != ExitCodeType.Success) return;
+        using var sftp = new SftpClient(_host, _username, _password);
+        sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
+        sftp.Connect();
 
-                foreach (var retrievedFiles in _filesRetrieved)
-                    try
-                    {
-                        sftp.DeleteFile(retrievedFiles);
-                        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                            $"Deleted SFTP file {retrievedFiles} from SFTP server"));
-                    }
-                    catch (Exception e)
-                    {
-                        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                            $"Could not delete SFTP file {retrievedFiles} from SFTP server", e));
-                    }
+        foreach (var retrievedFiles in _filesRetrieved)
+            try
+            {
+                sftp.DeleteFile(retrievedFiles);
+                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Deleted SFTP file {retrievedFiles} from SFTP server"));
+            }
+            catch (Exception e)
+            {
+                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Could not delete SFTP file {retrievedFiles} from SFTP server", e));
             }
     }
 
 
     protected override string[] GetFileList()
     {
-        using (var sftp = new SftpClient(_host, _username, _password))
-        {
-            sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
-            sftp.Connect();
+        using var sftp = new SftpClient(_host, _username, _password);
+        sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
+        sftp.Connect();
 
-            var directory = RemoteDirectory;
+        var directory = RemoteDirectory;
 
-            if (string.IsNullOrWhiteSpace(directory))
-                directory = ".";
+        if (string.IsNullOrWhiteSpace(directory))
+            directory = ".";
 
-            return sftp.ListDirectory(directory).Select(d => d.Name).ToArray();
-        }
+        return sftp.ListDirectory(directory).Select(d => d.Name).ToArray();
     }
 }

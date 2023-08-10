@@ -26,9 +26,6 @@ internal class NoBadNamesRule<T> : BinderRule<T> where T : IMapsDirectlyToDataba
         if (ProblemProvider.IgnoreBadNamesFor.Any(t => t.IsAssignableFrom(typeof(T))))
             return null;
 
-        if (currentValue is string s)
-            return UsefulStuff.IsBadName(s) ? "Name contains illegal characters" : null;
-
-        return null;
+        return currentValue is string s ? UsefulStuff.IsBadName(s) ? "Name contains illegal characters" : null : null;
     }
 }

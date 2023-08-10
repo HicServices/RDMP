@@ -94,7 +94,7 @@ public class CohortQueryBuilderDependency
         var eis = cohortSet?.AggregateDimensions?.Where(d => d.IsExtractionIdentifier).ToArray();
 
         //Multiple IsExtractionIdentifier columns is a big problem but it's handled elsewhere
-        if (eis != null && eis.Length == 1)
+        if (eis is { Length: 1 })
             ExtractionIdentifierColumn = eis[0];
 
         if (PatientIndexTableIfAny != null)
@@ -298,9 +298,6 @@ public class CohortQueryBuilderDependency
         if (SqlPartiallyCached != null)
             return "Partially Cached";
 
-        if (SqlCacheless != null)
-            return "Not Cached";
-
-        return "Not Built";
+        return SqlCacheless != null ? "Not Cached" : "Not Built";
     }
 }

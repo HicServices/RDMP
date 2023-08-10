@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -25,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.ProjectUI;
 
 /// <summary>
-/// Allows you to view/edit a data extraction project including the extraction configurations that make it up (See ExtractionConfigurationUI).  
+/// Allows you to view/edit a data extraction project including the extraction configurations that make it up (See ExtractionConfigurationUI).
 /// 
 /// <para>First make sure your Project has a nice unique name that lets you rapidly identify it.  Next choose the 'Extraction Directory', this is the location where extracted data will be
 /// generated (See ExecuteExtractionUI).  Make sure that the extraction directory is accessible to every data analyst who is using the software / working on the project (e.g. it could
@@ -36,8 +35,8 @@ namespace Rdmp.UI.ProjectUI;
 /// <para>Add a ProjectNumber, this number must be unique.  This number must match the project number of the cohorts you intend to use with the project in the Cohort Database (you only need
 /// to worry about a mismatch here if you are manually hacking your cohort database or if you change the project number halfway through its lifecycle).</para>
 ///  
-/// <para>Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of 
-/// datasets linked against a cohort private identifier and released against an anonymous project specific identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once 
+/// <para>Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of
+/// datasets linked against a cohort private identifier and released against an anonymous project specific identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once
 /// you have a few Extraction Configurations, they will appear in the datagrid too.</para>
 /// 
 /// <para>Selecting 'Check Project' will check all current and released extraction configurations in the project for problems (empty result sets, broken extraction SQL etc).</para>
@@ -49,18 +48,14 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void SetCohorts()
     {
-        if (_project == null || _project.ProjectNumber == null)
+        if (_project?.ProjectNumber == null)
             return;
 
-        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider) return;
+        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
+            return;
 
-        var toShow = new List<ExtractableCohort>();
-
-        foreach (var c in dxChildProvider.Cohorts)
-            if (c.ExternalProjectNumber == _project.ProjectNumber)
-                toShow.Add(c);
-
-        extractableCohortCollection1.SetupFor(toShow.ToArray());
+        extractableCohortCollection1.SetupFor(dxChildProvider.Cohorts
+            .Where(c => c.ExternalProjectNumber == _project.ProjectNumber).ToArray());
     }
 
     //menu item setup
@@ -78,7 +73,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         InitializeComponent();
 
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
-        mi_SetDescription.Click += new EventHandler(mi_SetDescription_Click);
+        mi_SetDescription.Click += mi_SetDescription_Click;
 
         tcMasterTicket.Title = "Master Ticket";
         tcMasterTicket.TicketTextChanged += tcMasterTicket_TicketTextChanged;
@@ -104,7 +99,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
-        //now load the UI form 
+        //now load the UI form
         _project = databaseObject;
 
         dataGridView1.DataSource = LoadDatagridFor(_project);

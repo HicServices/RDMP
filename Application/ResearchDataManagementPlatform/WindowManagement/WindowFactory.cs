@@ -26,7 +26,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Translates Controls into docked tabs (DockContent).  Provides overloads for the two main control Types IRDMPSingleDatabaseObjectControl and 
+/// Translates Controls into docked tabs (DockContent).  Provides overloads for the two main control Types IRDMPSingleDatabaseObjectControl and
 /// IObjectCollectionControl (for <see cref="RDMPCollectionUI"/> see <see cref="WindowManager"/>).
 /// </summary>
 public class WindowFactory
@@ -136,19 +136,17 @@ public class WindowFactory
             content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
 
             //Create handler for AfterPublish
-            RefreshObjectEventHandler handler = null;
-            handler = (s, e) =>
+            void Handler(object s, RefreshObjectEventArgs e)
             {
                 // After global changes, rebuild the context menu
 
                 if (!content.IsDisposed)
                     content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
-                else if (handler != null)
-                    activator.RefreshBus.AfterPublish -= handler; //don't leak handlers
-            };
+                else activator.RefreshBus.AfterPublish -= Handler; //don't leak handlers
+            }
 
             //register the event handler
-            activator.RefreshBus.AfterPublish += handler;
+            activator.RefreshBus.AfterPublish += Handler;
         }
     }
 }

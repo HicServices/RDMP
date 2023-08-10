@@ -33,7 +33,7 @@ public class QueryCachingDatabaseTests : DatabaseTests
 
         var scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
         var p = new QueryCachingPatcher();
-        scripter.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
+        scripter.CreateAndPatchDatabase(p, ThrowImmediatelyCheckNotifier.Quiet);
 
         QueryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, QueryCachingDatabaseName, p);
         QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);

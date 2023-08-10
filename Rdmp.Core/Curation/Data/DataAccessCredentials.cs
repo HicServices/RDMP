@@ -132,14 +132,11 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        if (_encryptedPasswordHost == null)
-            throw new Exception(
-                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-        return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
-    }
+    public string GetDecryptedPassword() =>
+        _encryptedPasswordHost == null
+            ? throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+            : _encryptedPasswordHost.GetDecryptedPassword() ?? "";
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
@@ -154,10 +151,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INa
     {
         var p = GetDecryptedPassword();
 
-        if (string.IsNullOrWhiteSpace(p))
-            return string.IsNullOrWhiteSpace(password);
-
-        return p.Equals(password);
+        return string.IsNullOrWhiteSpace(p) ? string.IsNullOrWhiteSpace(password) : p.Equals(password);
     }
 
     internal void SetRepository(ICatalogueRepository repository)

@@ -65,8 +65,8 @@ e.g. /$i/$a")]
     protected IProject _project;
 
     //state variables
-    protected bool haveOpened = false;
-    private bool haveWrittenBundleContents = false;
+    protected bool haveOpened;
+    private bool haveWrittenBundleContents;
     private Stopwatch stopwatch = new();
 
     public TableLoadInfo TableLoadInfo { get; private set; }
@@ -147,15 +147,15 @@ e.g. /$i/$a")]
     {
         _request.ElevateState(ExtractCommandState.WritingToFile);
 
-        if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
+        if (!haveWrittenBundleContents && _request is ExtractDatasetCommand extractDatasetCommand)
         {
-            WriteBundleContents(((ExtractDatasetCommand)_request).DatasetBundle, job, cancellationToken);
+            WriteBundleContents(extractDatasetCommand.DatasetBundle, job, cancellationToken);
             haveWrittenBundleContents = true;
         }
 
-        if (_request is ExtractGlobalsCommand)
+        if (_request is ExtractGlobalsCommand extractGlobalsCommand)
         {
-            ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);
+            ExtractGlobals(extractGlobalsCommand, job, _dataLoadInfo);
             return null;
         }
 

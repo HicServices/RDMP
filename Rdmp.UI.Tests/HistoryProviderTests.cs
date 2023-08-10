@@ -16,13 +16,6 @@ namespace Rdmp.UI.Tests;
 
 internal class HistoryProviderTests : UnitTests
 {
-    protected override void SetUp()
-    {
-        base.SetUp();
-
-        SetupMEF();
-    }
-
     [Test]
     public void TestHistoryProvider_DuplicateAdding()
     {

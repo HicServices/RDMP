@@ -42,13 +42,13 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
         _bubble = bubble;
         ColumnName = _column.GetRuntimeName(_bubble.ToLoadStage());
 
-        if (_column is PreLoadDiscardedColumn preLoadDiscarded)
-            _expectedDataType = preLoadDiscarded.SqlDataType;
-        else if (_column is ColumnInfo colInfo)
-            _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
-        else
-            throw new Exception(
-                $"Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:{_column.GetType().Name}");
+        _expectedDataType = _column switch
+        {
+            PreLoadDiscardedColumn preLoadDiscarded => preLoadDiscarded.SqlDataType,
+            ColumnInfo colInfo => colInfo.GetRuntimeDataType(_bubble.ToLoadStage()),
+            _ => throw new Exception(
+                $"Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:{_column.GetType().Name}")
+        };
     }
 
     public bool IsDynamicColumn
@@ -110,28 +110,22 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
 
     public string WhatIsThis()
     {
-        switch (State)
+        return State switch
         {
-            case LoadDiagramState.Different:
-            case LoadDiagramState.Anticipated:
-            case LoadDiagramState.Found:
-                return _bubble switch
-                {
-                    LoadBubble.Raw =>
-                        "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
-                    LoadBubble.Staging =>
-                        "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
-                    _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
-                };
-            case LoadDiagramState.NotFound:
-                return
-                    "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
-            case LoadDiagramState.New:
-                return
-                    "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoadDiagramState.Different or LoadDiagramState.Anticipated or LoadDiagramState.Found => _bubble switch
+            {
+                LoadBubble.Raw =>
+                    "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
+                LoadBubble.Staging =>
+                    "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
+                _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
+            },
+            LoadDiagramState.NotFound =>
+                "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.",
+            LoadDiagramState.New =>
+                "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     #endregion

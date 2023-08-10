@@ -49,7 +49,7 @@ Start out by overriding the ToString method to return the text you want to appea
 ```csharp
 namespace Rdmp.Core.Providers.Nodes
 {
-    class FrozenExtractionConfigurationsNode
+    private class FrozenExtractionConfigurationsNode
     {
         public override string ToString()
         {
@@ -99,8 +99,7 @@ private class FrozenExtractionConfigurationsNode
 	{
 		if (obj is null) return false;
 		if (ReferenceEquals(this, obj)) return true;
-		if (obj.GetType() != GetType()) return false;
-		return Equals((FrozenExtractionConfigurationsNode)obj);
+		return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
 	}
 
 	public override int GetHashCode() => Project?.GetHashCode() ?? 0;

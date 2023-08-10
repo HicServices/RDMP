@@ -13,8 +13,8 @@ namespace Rdmp.Core.Providers.Nodes;
 
 public class TableInfoDatabaseNode : Node
 {
-    public TableInfoServerNode Server { get; private set; }
-    public string DatabaseName { get; private set; }
+    public TableInfoServerNode Server { get; }
+    public string DatabaseName { get; }
     public TableInfo[] Tables { get; }
 
     public const string NullDatabaseNode = "Null Database";

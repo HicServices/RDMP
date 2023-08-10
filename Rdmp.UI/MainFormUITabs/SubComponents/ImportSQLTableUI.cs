@@ -68,18 +68,20 @@ public partial class ImportSQLTableUI : RDMPForm
         {
             var tbl = serverDatabaseTableSelector1.GetDiscoveredTable();
 
-            if (tbl == null)
+            switch (tbl)
             {
-                btnImport.Enabled = false;
-                return;
+                case null:
+                    btnImport.Enabled = false;
+                    return;
+                //if it isn't a table valued function
+                case DiscoveredTableValuedFunction discoveredTableValuedFunction:
+                    Importer = new TableValuedFunctionImporter(cataRepo, discoveredTableValuedFunction,
+                        (DataAccessContext)ddContext.SelectedValue);
+                    break;
+                default:
+                    Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext)ddContext.SelectedValue);
+                    break;
             }
-
-            //if it isn't a table valued function
-            if (tbl is DiscoveredTableValuedFunction function)
-                Importer = new TableValuedFunctionImporter(cataRepo, function,
-                    (DataAccessContext)ddContext.SelectedValue);
-            else
-                Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext)ddContext.SelectedValue);
 
             btnImport.Enabled = true;
         }
@@ -104,7 +106,7 @@ public partial class ImportSQLTableUI : RDMPForm
         {
             // logic to add credentials
             // parent.SetCredentials();
-            Importer.DoImport(out var ti, out var cols);
+            Importer.DoImport(out var ti, out _);
 
             if (ti is DatabaseEntity de)
                 Activator.Publish(de);

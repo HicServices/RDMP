@@ -25,16 +25,9 @@ namespace Rdmp.Core.Tests.CommandExecution;
 /// </summary>
 public abstract class CommandCliTests : UnitTests
 {
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     protected CommandInvoker GetInvoker()
     {
-        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
         {
             DisallowInput = true
         });
@@ -66,7 +59,7 @@ public abstract class CommandCliTests : UnitTests
         };
 
         var runner = new ExecuteCommandRunner(opts);
-        return runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-            new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+        return runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+            ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
     }
 }
