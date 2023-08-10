@@ -74,10 +74,10 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
-            if(IsMessageAValidLength(e.Message)){
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
-                    e.Message);
-            }
+                if(IsMessageAValidLength(e.Message)){
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
+                        e.Message);
+                }
                 break;
             case ProgressEventType.Warning:
                 var msg = e.Message + (e.Exception == null
