@@ -19,13 +19,13 @@ internal class TestExecuteCommandClearUserSettings : CommandCliTests
     {
         UserSettings.Wait5SecondsAfterStartupUI = false;
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "true"}, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting), new CommandLineObjectPicker(new[] { nameof(UserSettings.Wait5SecondsAfterStartupUI), "true" }, GetActivator()));
 
         Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "false"}, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting), new CommandLineObjectPicker(new[] { nameof(UserSettings.Wait5SecondsAfterStartupUI), "false" }, GetActivator()));
         Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandClearUserSettings),new CommandLineObjectPicker(new string[]{ } ,GetActivator()));
-            
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandClearUserSettings), new CommandLineObjectPicker(new string[] { }, GetActivator()));
+
         Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
 
     }
