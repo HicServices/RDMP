@@ -67,13 +67,8 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         if (DataLoadInfo == null){
             StartLogging();
         }
-        //todo have to find out the server we're logging to
-        // var loggingServer = catalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-        // ExternalDatabaseServer loggingServer = CatalogueRepository.Instance.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-        int maxMessageLength = 0;//this should be configurable
-        //todo may want to log first x chars if ifs too big
-
+        int maxMessageLength = 64000/ sizeof(Char); //loggingDB text column has max 64kb size, or 65535 chars
 
         switch (e.ProgressEventType)
         {

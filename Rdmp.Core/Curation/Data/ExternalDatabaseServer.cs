@@ -35,8 +35,6 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     private string _createdByAssembly;
     private string _mappedDataPath;
     private readonly SelfCertifyingDataAccessPoint _selfCertifyingDataAccessPoint;
-    private int _maxFreeFormStringLength;
-    private bool _shouldTruncateFreeFormStrings;
     /// <summary>
     /// Human readable name for the server e.g. 'My Favourite Logging Database'
     /// </summary>
@@ -46,19 +44,6 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         get => _name;
         set => SetField(ref _name, value);
-    }
-
-
-    public int MaxFreeFormStringLength
-    {
-        get => _maxFreeFormStringLength;
-        set => SetField(ref _maxFreeFormStringLength, value);
-    }
-
-    public bool ShouldtruncateFreeFormStrings
-    {
-        get => _shouldTruncateFreeFormStrings;
-        set => SetField(ref _shouldTruncateFreeFormStrings, value);
     }
 
     /// <summary>
