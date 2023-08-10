@@ -59,6 +59,10 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
     }
 
+    private int _maxMessageLength = 64000/ sizeof(Char); //loggingDB text column has max 64kb size, or 65535 chars
+    private bool IsMessageAValidLength(string message){
+        return message.Length <= _maxMessageLength;
+    }
     public virtual void OnNotify(object sender, NotifyEventArgs e)
     {
         if (DataLoadInfo == null)
@@ -70,20 +74,26 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
+            if(IsMessageAValidLength(e.Message)){
                 DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
                     e.Message);
+            }
                 break;
             case ProgressEventType.Warning:
                 var msg = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
+                if(IsMessageAValidLength(msg)){
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
+                }
                 break;
             case ProgressEventType.Error:
                 var err = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogFatalError(sender.ToString(), err);
+                if(IsMessageAValidLength(err)){
+                    DataLoadInfo.LogFatalError(sender.ToString(), err);
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
