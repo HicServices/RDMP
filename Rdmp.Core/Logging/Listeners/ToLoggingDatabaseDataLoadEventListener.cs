@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -64,6 +65,9 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         if (DataLoadInfo == null){
             StartLogging();
         }
+        //todo have to find out the server we're logging to
+        // var loggingServer = catalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+
         int maxMessageLength = 0;//this should be configurable
         //todo may want to log first x chars if ifs too big
 
