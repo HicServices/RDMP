@@ -61,8 +61,11 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 
     public virtual void OnNotify(object sender, NotifyEventArgs e)
     {
-        if (DataLoadInfo == null)
+        if (DataLoadInfo == null){
             StartLogging();
+        }
+        int maxMessageLength = 0;//this should be configurable
+        //todo may want to log first x chars if ifs too big
 
         switch (e.ProgressEventType)
         {
@@ -70,20 +73,26 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
+                if(e.Message.Length < maxMessageLength){
                 DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
                     e.Message);
+                }
                 break;
             case ProgressEventType.Warning:
                 var msg = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
+                if(msg.Length <= maxMessageLength){
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
+                }
                 break;
             case ProgressEventType.Error:
                 var err = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogFatalError(sender.ToString(), err);
+                if(err.Length <= maxMessageLength){
+                    DataLoadInfo.LogFatalError(sender.ToString(), err);
+                }
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
