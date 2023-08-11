@@ -608,11 +608,5 @@ public static class UserSettings
     public static void ClearUserSettings(){
         AppSettings.Clear();
     }
-
-    private static ISettings CreateSettings()
-    {
-        return new RDMPApplicationSettings();
-    }
-
     private static ISettings CreateSettings() => new RDMPApplicationSettings();
 }
