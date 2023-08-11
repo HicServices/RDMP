@@ -24,7 +24,7 @@ public interface ICustomUIDrivenClass
     /// then <paramref name="value"/> may be null
     /// </summary>
     /// <param name="value"></param>
-    void RestoreStateFrom([CanBeNull]string value);
+    void RestoreStateFrom([CanBeNull] string value);
 
     /// <summary>
     /// Persist the current state of the <see cref="ICustomUIDrivenClass"/> as a string.  This must be compatible with <see cref="RestoreStateFrom"/>

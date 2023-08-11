@@ -54,19 +54,19 @@ public class HICDatabaseConfiguration
     /// </summary>
     /// <param name="lmd"></param>
     /// <param name="namer"></param>
-    public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
-        this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository,lmd.OverrideRAWServer)
+    public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null) :
+        this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository, lmd.OverrideRAWServer)
     {
         var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
 
-        if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
+        if (globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
             IgnoreColumns = new Regex(globalIgnorePattern.Regex);
-
     }
 
     public static StandardRegex GetGlobalIgnorePatternIfAny(ICatalogueRepository repository)
     {
-        return repository.GetAllObjects<StandardRegex>().OrderBy(r=>r.ID).FirstOrDefault(r=>r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
+        return repository.GetAllObjects<StandardRegex>().OrderBy(r => r.ID)
+            .FirstOrDefault(r => r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
     }
 
     /// <summary>
@@ -76,10 +76,12 @@ public class HICDatabaseConfiguration
     /// <param name="namer">optionally lets you specify how to pick database names for the temporary bubbles STAGING and RAW</param>
     /// <param name="defaults">optionally specifies the location to get RAW default server from</param>
     /// <param name="overrideRAWServer">optionally specifies an explicit server to use for RAW</param>
-    public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
+    public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null,
+        IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
     {
         //respects the override of LIVE server
-        var liveDatabase = liveServer.GetCurrentDatabase() ?? throw new Exception("Cannot load live without having a unique live named database");
+        var liveDatabase = liveServer.GetCurrentDatabase() ??
+                           throw new Exception("Cannot load live without having a unique live named database");
 
         // Default namer
         //create the DLE tables on the live database because postgres can't handle cross database references
@@ -89,15 +91,18 @@ public class HICDatabaseConfiguration
 
         //if there are defaults
         if (overrideRAWServer == null && defaults != null)
-            overrideRAWServer = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
+            overrideRAWServer =
+                defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer); //get the raw default if there is one
 
         DiscoveredServer rawServer;
         //if there was defaults and a raw default server
-        rawServer = overrideRAWServer != null ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false) : //get the raw server connection
+        rawServer = overrideRAWServer != null
+            ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false)
+            : //get the raw server connection
             liveServer; //there is no raw override so we will have to use the live server for RAW too.
 
         //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
-        DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);
+        DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer, rawServer);
 
         RequiresStagingTableCreation = true;
     }
@@ -117,7 +122,7 @@ public class HICDatabaseConfiguration
         foreach (var t in job.RegularTablesToLoad)
             yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
 
-        if(includeLookups)
+        if (includeLookups)
             foreach (var t in job.LookupTablesToLoad)
                 yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
     }

@@ -25,19 +25,18 @@ public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
         InitializeComponent();
         AssociatedCollection = RDMPCollection.DataLoad;
     }
-        
+
     protected override void SetBindings(BinderWithErrorProviderFactory rules, LoadMetadata databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",l=>l.ID);
-        Bind(tbName,"Text","Name",l=>l.Name);
-        Bind(tbDescription,"Text","Description",l=>l.Description);
+        Bind(tbID, "Text", "ID", l => l.ID);
+        Bind(tbName, "Text", "Name", l => l.Name);
+        Bind(tbDescription, "Text", "Description", l => l.Description);
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadMetadataUI_Design, UserControl>))]
 public abstract class LoadMetadataUI_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
 {
-
 }

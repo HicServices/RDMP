@@ -35,7 +35,7 @@ public class AtomicCommandToolStripItem : ToolStripButton
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-            
+
         _command.Execute();
     }
 }

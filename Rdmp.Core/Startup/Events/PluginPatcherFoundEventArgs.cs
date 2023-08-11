@@ -18,7 +18,8 @@ namespace Rdmp.Core.Startup.Events;
 /// </summary>
 public class PluginPatcherFoundEventArgs
 {
-    public PluginPatcherFoundEventArgs(Type type, IPatcher instance, PluginPatcherStatus status, Exception exception=null)
+    public PluginPatcherFoundEventArgs(Type type, IPatcher instance, PluginPatcherStatus status,
+        Exception exception = null)
     {
         Type = type;
         Instance = instance;
@@ -27,7 +28,7 @@ public class PluginPatcherFoundEventArgs
     }
 
     public Type Type { get; set; }
-    public IPatcher Instance { get; set; } 
-    public PluginPatcherStatus Status {get;set;}
+    public IPatcher Instance { get; set; }
+    public PluginPatcherStatus Status { get; set; }
     public Exception Exception { get; set; }
 }

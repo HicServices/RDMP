@@ -32,7 +32,9 @@ public class FlatFileEventHandlers
     /// </summary>
     public FileInfo DivertErrorsFile;
 
-    public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher, bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener, int maximumErrorsToReport, bool ignoreBadDataEvents)
+    public FlatFileEventHandlers(FlatFileToLoad fileToLoad, FlatFileToDataTablePusher dataPusher,
+        bool throwOnEmptyFiles, BadDataHandlingStrategy strategy, IDataLoadEventListener listener,
+        int maximumErrorsToReport, bool ignoreBadDataEvents)
     {
         _fileToLoad = fileToLoad;
         _dataPusher = dataPusher;
@@ -50,7 +52,7 @@ public class FlatFileEventHandlers
 
         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {_fileToLoad} is empty"));
     }
-        
+
     public bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
     {
         var line = new FlatFileLine(args.Exception.Context);
@@ -58,7 +60,7 @@ public class FlatFileEventHandlers
         switch (_strategy)
         {
             case BadDataHandlingStrategy.IgnoreRows:
-                if (_maximumErrorsToReport-- >0)
+                if (_maximumErrorsToReport-- > 0)
                     _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                         $"Ignored ReadingException on {line.GetLineDescription()}", args.Exception));
 
@@ -82,7 +84,7 @@ public class FlatFileEventHandlers
         return true;
     }
 
-    public void BadDataFound(FlatFileLine line, bool isFromCsvHelper=false)
+    public void BadDataFound(FlatFileLine line, bool isFromCsvHelper = false)
     {
         if (_ignoreBadDataEvents && isFromCsvHelper)
             if (_maximumErrorsToReport-- > 0)

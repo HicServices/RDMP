@@ -18,7 +18,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
 
     private ICacheFetchRequest _initialRequest;
     public ICacheFetchRequest Current { get; private set; }
-        
+
     /// <summary>
     /// Sets up the class to generate <see cref="ICacheFetchRequest"/> for the given <see cref="ICacheProgress"/>
     /// </summary>
@@ -37,7 +37,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     public virtual ICacheFetchRequest CreateInitialRequest()
     {
         var lp = CacheProgress.LoadProgress;
-            
+
         // Figure out when to start loading from
         DateTime startDate;
         if (CacheProgress.CacheFillProgress.HasValue)
@@ -45,7 +45,8 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
         else if (lp.OriginDate.HasValue)
             startDate = lp.OriginDate.Value;
         else
-            throw new Exception("Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.");
+            throw new Exception(
+                "Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.");
 
         var initialFetchRequest = new CacheFetchRequest(CacheProgress.Repository)
         {
@@ -74,7 +75,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     private ICacheFetchRequest CreateNext()
     {
         var nextStart = Current.Start.Add(Current.ChunkPeriod);
-        return new CacheFetchRequest(CacheProgress.Repository,nextStart)
+        return new CacheFetchRequest(CacheProgress.Repository, nextStart)
         {
             CacheProgress = Current.CacheProgress,
             PermissionWindow = Current.PermissionWindow,

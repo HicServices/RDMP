@@ -186,4 +186,7 @@
   <data name="FromFile" xml:space="preserve">
     <value>Catalogue from File...</value>
   </data>
+   <data name="CreateALoggingServer" xml:space="preserve">
+    <value>Create a logging server</value>
+  </data>
 </root>

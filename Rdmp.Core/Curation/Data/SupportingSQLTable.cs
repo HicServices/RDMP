@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in 
 /// an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets. </para>
 /// </summary>
-public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
+public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
 {
     /// <summary>
     /// The subfolder of extractions in which to put <see cref="Extractable"/> <see cref="SupportingSQLTable"/> when doing project extractions
@@ -36,6 +36,7 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     public const string ExtractionFolderName = "SupportingDataTables";
 
     #region Database Properties
+
     private int _catalogue_ID;
     private string _description;
     private string _name;
@@ -124,19 +125,21 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     #endregion
 
     #region Relationships
+
     /// <inheritdoc cref="Catalogue_ID"/>
     [NoMappingToDatabase]
     public Catalogue Catalogue => Repository.GetObjectByID<Catalogue>(Catalogue_ID);
 
     /// <inheritdoc cref="ExternalDatabaseServer_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer ExternalDatabaseServer => ExternalDatabaseServer_ID == null ? null : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
+    public ExternalDatabaseServer ExternalDatabaseServer => ExternalDatabaseServer_ID == null
+        ? null
+        : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
 
     #endregion
 
     public SupportingSQLTable()
     {
-
     }
 
     /// <summary>
@@ -147,10 +150,10 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// <param name="name"></param>
     public SupportingSQLTable(ICatalogueRepository repository, ICatalogue parent, string name)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"Catalogue_ID", parent.ID}
+            { "Name", name },
+            { "Catalogue_ID", parent.ID }
         });
     }
 
@@ -160,24 +163,21 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
         Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());
         Description = r["Description"] as string;
         Name = r["Name"] as string;
-        Extractable = (bool) r["Extractable"];
-        IsGlobal = (bool) r["IsGlobal"];
+        Extractable = (bool)r["Extractable"];
+        IsGlobal = (bool)r["IsGlobal"];
         SQL = r["SQL"] as string;
 
-        if(r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
-            ExternalDatabaseServer_ID = null; 
+        if (r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
+            ExternalDatabaseServer_ID = null;
         else
-            ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]); 
+            ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]);
 
         Ticket = r["Ticket"] as string;
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
-        
+    public override string ToString() => Name;
+
     /// <summary>
     /// Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID - which can be null).  If there is no 
     /// ExternalDatabaseServer_ID associated with the SupportingSQLTable then a NotSupportedException will be thrown

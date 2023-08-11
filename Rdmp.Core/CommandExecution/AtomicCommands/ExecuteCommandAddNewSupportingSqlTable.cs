@@ -14,21 +14,20 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
     private readonly string _name;
 
-    public ExecuteCommandAddNewSupportingSqlTable(IBasicActivateItems activator, Catalogue catalogue, string name = null) : base(activator)
+    public ExecuteCommandAddNewSupportingSqlTable(IBasicActivateItems activator, Catalogue catalogue,
+        string name = null) : base(activator)
     {
         _catalogue = catalogue;
         _name = name;
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
-    }
+    public override string GetCommandHelp() =>
+        "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
 
     public override void Execute()
     {
@@ -44,31 +43,23 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution,IAto
                 {
                     WindowTitle = "Add Supporting SQL Table",
                     TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
-
                 }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-            {
                 c = selected;
-            }
             else
-            {
                 // user cancelled selecting a Catalogue
                 return;
-            }
         }
 
         if (name == null && BasicActivator.IsInteractive)
-        {
             if (!BasicActivator.TypeText(new DialogArgs
                 {
                     WindowTitle = "Supporting SQL Table Name",
-                    TaskDescription = "Enter a name that describes what data the query will show.  This is a human readable name not a table name.",
+                    TaskDescription =
+                        "Enter a name that describes what data the query will show.  This is a human readable name not a table name.",
                     EntryLabel = "Name"
                 }, 255, null, out name, false))
-            {
                 // user cancelled typing a name
                 return;
-            }
-        }
 
         var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name ??
             $"New Supporting SQL Table {Guid.NewGuid()}");
@@ -76,9 +67,7 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution,IAto
         Activate(newSqlTable);
         Publish(c);
     }
-        
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
-    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
 }

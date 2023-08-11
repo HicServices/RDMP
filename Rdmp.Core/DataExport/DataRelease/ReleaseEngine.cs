@@ -38,10 +38,11 @@ public class ReleaseEngine
     public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsToRelease { get; private set; }
 
     public ReleaseEngineSettings ReleaseSettings { get; set; }
-        
+
     public ReleaseAudit ReleaseAudit { get; set; }
 
-    public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener, ReleaseAudit releaseAudit)
+    public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener,
+        ReleaseAudit releaseAudit)
     {
         _repository = project.DataExportRepository;
         Project = project;
@@ -54,7 +55,8 @@ public class ReleaseEngine
         ReleaseAudit = releaseAudit;
     }
 
-    public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
+    public virtual void DoRelease(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease,
+        Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
     {
         ConfigurationsToRelease = toRelease;
 
@@ -76,10 +78,10 @@ public class ReleaseEngine
             sw.Flush();
             sw.Close();
         }
-            
+
         ReleaseSuccessful = true;
     }
-        
+
     protected virtual StreamWriter PrepareAuditFile()
     {
         var sw = new StreamWriter(Path.Combine(ReleaseAudit.ReleaseFolder.FullName, "contents.txt"));
@@ -100,12 +102,15 @@ public class ReleaseEngine
         //if we found at least one global folder and all the global folders we did find had the same contents
         if (ReleaseAudit.SourceGlobalFolder != null)
         {
-            var destination = new DirectoryInfo(Path.Combine(ReleaseAudit.ReleaseFolder.FullName, ReleaseAudit.SourceGlobalFolder.Name));
+            var destination = new DirectoryInfo(Path.Combine(ReleaseAudit.ReleaseFolder.FullName,
+                ReleaseAudit.SourceGlobalFolder.Name));
             ReleaseAudit.SourceGlobalFolder.CopyAll(destination);
         }
     }
 
-    protected virtual void ReleaseAllExtractionConfigurations(Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw, Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
+    protected virtual void ReleaseAllExtractionConfigurations(
+        Dictionary<IExtractionConfiguration, List<ReleasePotential>> toRelease, StreamWriter sw,
+        Dictionary<IExtractionConfiguration, ReleaseEnvironmentPotential> environments, bool isPatch)
     {
         //for each configuration, all the release potentials can be released
         foreach (var kvp in toRelease)
@@ -154,7 +159,8 @@ public class ReleaseEngine
         }
     }
 
-    protected virtual DirectoryInfo ReleaseCustomData(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
+    protected virtual DirectoryInfo ReleaseCustomData(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
     {
         //if there is custom data copy that across for the specific cohort
         var fromCustomData = ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(kvp);
@@ -163,22 +169,27 @@ public class ReleaseEngine
             var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.FullName, fromCustomData.Name));
             fromCustomData.CopyAll(destination);
         }
+
         return fromCustomData;
     }
 
-    protected virtual DirectoryInfo ReleaseMasterData(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
+    protected virtual DirectoryInfo ReleaseMasterData(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
     {
         //if there is custom data copy that across for the specific cohort
         var fromMasterData = ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(kvp);
         if (fromMasterData != null)
         {
-            var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, fromMasterData.Name));
+            var destination =
+                new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, fromMasterData.Name));
             fromMasterData.CopyAll(destination);
         }
+
         return fromMasterData;
     }
 
-    protected virtual DirectoryInfo ReleaseMetadata(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, DirectoryInfo configurationSubDirectory)
+    protected virtual DirectoryInfo ReleaseMetadata(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp,
+        DirectoryInfo configurationSubDirectory)
     {
         //if there is custom data copy that across for the specific cohort
         var folderFound = GetAllFoldersCalled(ExtractionDirectory.METADATA_FOLDER_NAME, kvp);
@@ -189,10 +200,12 @@ public class ReleaseEngine
             var destination = new DirectoryInfo(Path.Combine(configurationSubDirectory.Parent.FullName, source.Name));
             source.CopyAll(destination);
         }
+
         return source;
     }
 
-    protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
+    protected virtual void AuditExtractionConfigurationDetails(StreamWriter sw, DirectoryInfo configurationSubDirectory,
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp, string extractionIdentifier)
     {
         //audit in contents.txt
         sw.WriteLine($"Folder:{configurationSubDirectory.Name}");
@@ -206,38 +219,40 @@ public class ReleaseEngine
         sw.WriteLine($"CohortID:{kvp.Key.Cohort_ID}");
     }
 
-    protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
+    protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment,
+        DirectoryInfo rpDirectory, bool isPatch)
     {
         FileInfo datasetFile = null;
-            
+
         if (rp.ExtractFile != null)
         {
             var expectedFilename = rp.ExtractFile.Name;
             datasetFile = rpDirectory.EnumerateFiles().SingleOrDefault(f => f.Name.Equals(expectedFilename));
             if (datasetFile == null)
-            {
                 throw new Exception(
                     $"Expected to find file called {expectedFilename} in directory {rpDirectory.FullName}, but could not");
-            }
         }
 
         //creates a new one in the database
-        new ReleaseLog(_repository,rp, environment,isPatch, rpDirectory, datasetFile);
+        new ReleaseLog(_repository, rp, environment, isPatch, rpDirectory, datasetFile);
     }
 
-    protected static DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected static DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         var customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CUSTOM_COHORT_DATA_FOLDER_NAME, toRelease);
         return GetUniqueDirectoryFrom(customDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
     }
 
-    protected static DirectoryInfo ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected static DirectoryInfo ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         var masterDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.MASTER_DATA_FOLDER_NAME, toRelease);
         return GetUniqueDirectoryFrom(masterDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
     }
 
-    protected static IEnumerable<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected static IEnumerable<DirectoryInfo> GetAllFoldersCalled(string folderName,
+        KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         return toRelease.Value.Where(releasePotential => releasePotential.ExtractDirectory?.Parent != null)
             .Select(releasePotential => releasePotential.ExtractDirectory.Parent
@@ -256,8 +271,10 @@ public class ReleaseEngine
 
         foreach (var directoryInfo in directoryInfos)
         {
-            ConfirmValidityOfGlobalsOrCustomDataDirectory(directoryInfo); //check there are no pollution in globals directories
-            UsefulStuff.ConfirmContentsOfDirectoryAreTheSame(first, directoryInfo); //this checks first against first then first against second, then first against third etc
+            ConfirmValidityOfGlobalsOrCustomDataDirectory(
+                directoryInfo); //check there are no pollution in globals directories
+            UsefulStuff.ConfirmContentsOfDirectoryAreTheSame(first,
+                directoryInfo); //this checks first against first then first against second, then first against third etc
         }
 
         return first;
@@ -269,7 +286,7 @@ public class ReleaseEngine
             throw new Exception(
                 $"Folder \"{globalsDirectoryInfo.FullName}\" contains subdirectories, this is not permitted");
     }
-        
+
     protected void CutTreeRecursive(DirectoryInfo from, DirectoryInfo into, StreamWriter audit, int tabDepth)
     {
         //found files in current directory
@@ -282,7 +299,6 @@ public class ReleaseEngine
 
         //found subdirectory
         foreach (var dir in from.GetDirectories())
-        {
             //if it is not completely empty, copy it across
             if (dir.GetFiles().Any() || dir.GetDirectories().Any())
             {
@@ -290,7 +306,6 @@ public class ReleaseEngine
                 AuditDirectoryCreation(dir.Name, audit, tabDepth);
                 CutTreeRecursive(dir, into.CreateSubdirectory(dir.Name), audit, tabDepth + 1);
             }
-        }
     }
 
     protected static void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
@@ -307,6 +322,5 @@ public class ReleaseEngine
             audit.Write("\t");
 
         audit.WriteLine($"+{dir}");
-
     }
 }

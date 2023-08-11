@@ -50,7 +50,6 @@ public delegate void DataTableHandler(object sender, DataTable dt);
 /// </summary>
 public partial class AggregateGraphUI : AggregateGraph_Design
 {
-
     /// <summary>
     /// The maximum number of cells in a DataTable before we warn the user that rendering it is likely to hang
     /// up System.Windows.Forms.DataVisualization.Charting for a minutes/hours
@@ -63,9 +62,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// the sensible descision is taken e.g. to not try to render.
     /// 
     /// </summary>
-    public bool Silent { get;set;}
+    public bool Silent { get; set; }
 
-    public Scintilla QueryEditor { get;private set; }
+    public Scintilla QueryEditor { get; private set; }
 
     public int Timeout
     {
@@ -93,16 +92,18 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         #region Query Editor setup
 
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create();
 
-        QueryEditor.Text = "/*Graph load has not been attempted yet, wait till the system calls LoadGraphAsync() or LoadGraph()*/";
+        QueryEditor.Text =
+            "/*Graph load has not been attempted yet, wait till the system calls LoadGraphAsync() or LoadGraph()*/";
 
         QueryEditor.ReadOnly = true;
 
         tpCode.Controls.Add(QueryEditor);
+
         #endregion QueryEditor
 
         SetToolbarButtonsEnabled(true);
@@ -131,11 +132,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         if (InvokeRequired)
         {
-            Invoke(new MethodInvoker(()=>SetToolbarButtonsEnabled(enabled)));
+            Invoke(new MethodInvoker(() => SetToolbarButtonsEnabled(enabled)));
             return;
         }
 
-        miSaveImages.Enabled = enabled && _dt != null && _dt.Rows.Count>0;
+        miSaveImages.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
         miClipboardCsv.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
         miClipboardWord.Enabled = enabled && _dt != null && _dt.Rows.Count > 0;
         btnResendQuery.Enabled = enabled;
@@ -176,7 +177,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         SetToolbarButtonsEnabled(false);
         Done = false;
         Crashed = false;
-        Exception = null; 
+        Exception = null;
 
         chart1.Visible = false;
 
@@ -200,15 +201,15 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         _loadTask.Start();
     }
 
-    protected virtual string GetDescription()
-    {
-        return string.IsNullOrWhiteSpace(AggregateConfiguration.Description)
+    protected virtual string GetDescription() =>
+        string.IsNullOrWhiteSpace(AggregateConfiguration.Description)
             ? "No description"
             : AggregateConfiguration.Description;
-    }
 
     private DbCommand _cmd;
-    private ChartDashStyle[] StyleList = {
+
+    private ChartDashStyle[] StyleList =
+    {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,
         ChartDashStyle.Dot,
@@ -249,7 +250,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
             var server =
                 AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(
-                    DataAccessContext.InternalDataProcessing,true);
+                    DataAccessContext.InternalDataProcessing, true);
 
             Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
 
@@ -269,7 +270,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 _cmd = null;
 
                 //trim all leading/trailing whitespace from column
-                foreach(DataColumn c in _dt.Columns)
+                foreach (DataColumn c in _dt.Columns)
                     c.ColumnName = c.ColumnName.Trim();
 
                 if (_dt.Rows.Count == 0)
@@ -317,14 +318,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
             SetToolbarButtonsEnabled(true);
             Done = true;
-
         }
     }
 
     private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
     {
         var haveSetSource = false;
-        if(chart1.Legends.Count == 0)
+        if (chart1.Legends.Count == 0)
             chart1.Legends.Add(new Legend());
 
         chart1.Titles.Clear();
@@ -501,7 +501,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 chart1.Series[index].ChartType = SeriesChartType.Line;
 
                 //alternate in rotating style the various lines on the graph
-                chart1.Series[index].BorderDashStyle = StyleList[index%StyleList.Length];
+                chart1.Series[index].BorderDashStyle = StyleList[index % StyleList.Length];
                 chart1.Series[index].BorderWidth = 2;
             }
             else
@@ -519,7 +519,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     chart1.ChartAreas[0].AxisX.Interval = 1;
                     chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
                 }
-
             }
 
             //name series based on column 3 or the aggregate name
@@ -527,7 +526,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         }
 
         //don't show legend if there's only one series
-        if(chart1.Series.Count == 1)
+        if (chart1.Series.Count == 1)
             chart1.Legends.Clear();
 
         lblLoadStage.Text = $"Data Binding Chart ({_dt.Columns.Count} columns)";
@@ -537,11 +536,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         var abandon = false;
 
-        if(cells > MAXIMUM_CELLS_BEFORE_WARNING)
-            if(Silent)
+        if (cells > MAXIMUM_CELLS_BEFORE_WARNING)
+            if (Silent)
                 throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
             else
-                abandon = !Activator.YesNo($"Data Table has {$"{cells:n0}"} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
+                abandon = !Activator.YesNo(
+                    $"Data Table has {$"{cells:n0}"} cells.  Are you sure you want to attempt to graph it?",
+                    "Render Graph?");
 
         if (!abandon)
         {
@@ -554,18 +555,18 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         lblLoadStage.Visible = false;
 
         //set publish enabledness to the enabledness of
-        btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+        btnCache.Enabled =
+            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults
+                .WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
         //Make publish button enabledness be dependant on cache
         if (btnCache.Enabled)
-        {
             //let them clear if there is a query caching server and the manager has cached results already
             btnClearFromCache.Enabled =
                 GetCacheManager()
                     .GetLatestResultsTableUnsafe(AggregateConfiguration,
                         AggregateOperation.ExtractableAggregateResults) != null;
-        }
 
         SetToolbarButtonsEnabled(true);
     }
@@ -578,10 +579,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             return;
         }
 
-        if(show && !tabControl1.TabPages.Contains(tpHeatmap))
+        if (show && !tabControl1.TabPages.Contains(tpHeatmap))
             tabControl1.TabPages.Add(tpHeatmap);
 
-        if(!show && tabControl1.TabPages.Contains(tpHeatmap))
+        if (!show && tabControl1.TabPages.Contains(tpHeatmap))
             tabControl1.TabPages.Remove(tpHeatmap);
     }
 
@@ -598,10 +599,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         QueryEditor.ReadOnly = true;
     }
 
-    protected virtual AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
-    {
-        return aggregateConfiguration.GetQueryBuilder();
-    }
+    protected virtual AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration) =>
+        aggregateConfiguration.GetQueryBuilder();
 
 
     private static string GetSeriesName(object o)
@@ -612,7 +611,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         return o.ToString();
     }
 
-    public void SaveTo(DirectoryInfo subdir, string nameOfFile, ICheckNotifier notifier, Dictionary<AggregateGraphUI, string> graphSaveLocations = null)
+    public void SaveTo(DirectoryInfo subdir, string nameOfFile, ICheckNotifier notifier,
+        Dictionary<AggregateGraphUI, string> graphSaveLocations = null)
     {
         if (!Done)
         {
@@ -631,16 +631,17 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
             notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
-            graphSaveLocations?.Add(this,imgSavePath);
+            graphSaveLocations?.Add(this, imgSavePath);
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save image to {imgSavePath}", CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save image to {imgSavePath}", CheckResult.Fail,
+                e));
         }
 
         try
         {
-            var dt = (DataTable) dataGridView1.DataSource;
+            var dt = (DataTable)dataGridView1.DataSource;
             using var dataSaveStream = new StreamWriter(dataSavePath);
             dt.SaveAsCsv(dataSaveStream);
 
@@ -648,7 +649,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save chart data to {dataSavePath}",CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save chart data to {dataSavePath}",
+                CheckResult.Fail, e));
         }
 
         try
@@ -658,7 +660,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save SQL query to {querySavePath}",CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to save SQL query to {querySavePath}",
+                CheckResult.Fail, e));
         }
     }
 
@@ -671,7 +674,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         try
         {
-            GetCacheManager().DeleteCacheEntryIfAny(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults);
+            GetCacheManager()
+                .DeleteCacheEntryIfAny(AggregateConfiguration, AggregateOperation.ExtractableAggregateResults);
             MessageBox.Show(
                 "Cached results deleted, they should no longer appear on the website (subject to website page level caching in IIS etc of course)");
             btnClearFromCache.Enabled = false;
@@ -680,15 +684,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             ExceptionViewer.Show(exception);
         }
-
     }
 
-    private CachedAggregateConfigurationResultsManager GetCacheManager()
-    {
-        return new CachedAggregateConfigurationResultsManager(
-            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID)
+    private CachedAggregateConfigurationResultsManager GetCacheManager() =>
+        new(
+            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults
+                .WebServiceQueryCachingServer_ID)
         );
-    }
 
     /// <summary>
     /// Normally you don't need to worry about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
@@ -700,11 +702,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
 
         BuildMenu(activator);
 
-        SetAggregate(activator,databaseObject);
+        SetAggregate(activator, databaseObject);
     }
 
     protected void BuildMenu(IActivateItems activator)
@@ -713,7 +715,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             menuInitialized = true;
 
-            if(DatabaseObject != null)
+            if (DatabaseObject != null)
                 CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, DatabaseObject));
 
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
@@ -736,11 +738,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="graph"></param>
-    public void SetAggregate(IActivateItems activator,AggregateConfiguration graph)
+    public void SetAggregate(IActivateItems activator, AggregateConfiguration graph)
     {
         //graphs cant edit so no need to even record refresher/activator
         _aggregateConfiguration = graph;
-            
+
         SetItemActivator(activator);
 
         SetupRibbon();
@@ -750,11 +752,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     {
         if (_ribbonInitialized)
             return;
-            
+
         _ribbonInitialized = true;
 
         foreach (var o in GetRibbonObjects())
-        {
             switch (o)
             {
                 case string s:
@@ -767,26 +768,22 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     throw new NotSupportedException(
                         $"GetRibbonObjects can only return strings or DatabaseEntity objects, object '{o}' is not valid because it is a '{o.GetType().Name}'");
             }
-        }
-            
     }
 
 
-    protected virtual object[] GetRibbonObjects()
-    {
-        return Array.Empty<object>();
-    }
+    protected virtual object[] GetRibbonObjects() => Array.Empty<object>();
 
 
     public IEnumerable<BitmapWithDescription> GetImages()
     {
         var b = new Bitmap(chart1.Width, chart1.Height);
         chart1.DrawToBitmap(b, new Rectangle(new Point(0, 0), new Size(chart1.Width, chart1.Height)));
-            
-        yield return new BitmapWithDescription(b.LegacyToImage(),AggregateConfiguration.Name,AggregateConfiguration.Description);
+
+        yield return new BitmapWithDescription(b.LegacyToImage(), AggregateConfiguration.Name,
+            AggregateConfiguration.Description);
 
         if (heatmapUI.HasDataTable())
-            yield return new BitmapWithDescription(heatmapUI.GetImage(800).LegacyToImage(),null,null);
+            yield return new BitmapWithDescription(heatmapUI.GetImage(800).LegacyToImage(), null, null);
     }
 
     private void MiSaveImagesClick(object sender, EventArgs e)
@@ -815,13 +812,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private void ClipboardClick(object sender, EventArgs e)
     {
-        if(sender == miClipboardWord)
+        if (sender == miClipboardWord)
         {
             var s = UsefulStuff.DataTableToHtmlDataTable(_dt);
 
             var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
 
-            Clipboard.SetText(formatted,TextDataFormat.Html);
+            Clipboard.SetText(formatted, TextDataFormat.Html);
         }
 
         if (sender == miClipboardCsv)
@@ -836,10 +833,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         LoadGraphAsync();
     }
 
-    public override string GetTabName()
-    {
-        return $"Graph:{base.GetTabName()}";
-    }
+    public override string GetTabName() => $"Graph:{base.GetTabName()}";
 
     private void btnCache_Click(object sender, EventArgs e)
     {
@@ -847,10 +841,15 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             var cacheManager = GetCacheManager();
 
-            var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
+            var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text,
+                (DataTable)dataGridView1.DataSource, Timeout);
             cacheManager.CommitResults(args);
 
-            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ?? throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
+            var result =
+                cacheManager.GetLatestResultsTable(AggregateConfiguration,
+                    AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ??
+                throw new NullReferenceException(
+                    "CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
             MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
             btnClearFromCache.Enabled = true;
         }

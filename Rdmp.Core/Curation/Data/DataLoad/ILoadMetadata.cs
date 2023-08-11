@@ -36,7 +36,7 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// <summary>
     /// Set to true to ignore the requirement for live tables to need the backup archive trigger
     /// </summary>
-    bool IgnoreTrigger {get;}
+    bool IgnoreTrigger { get; }
 
     /// <summary>
     /// Optional - Overrides the <see cref="ServerDefaults"/> RAWDataLoadServer with an explicit RAW server to use this load only.
@@ -47,7 +47,7 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// List of all the user configured steps in a data load.  For example you could have 2 ProcessTasks, one that downloads files from an FTP server and one that loads RAW.
     /// </summary>
     IOrderedEnumerable<IProcessTask> ProcessTasks { get; }
-        
+
     /// <summary>
     /// Returns all datasets this load is responsible for supplying data to.  This determines which <see cref="TableInfo"/> are 
     /// available during RAW=>STAGING=>LIVE migration (the super set of all tables underlying all catalogues).

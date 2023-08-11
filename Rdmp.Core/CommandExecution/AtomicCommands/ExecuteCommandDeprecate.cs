@@ -14,12 +14,12 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
 {
     private readonly IMightBeDeprecated[] _o;
     private readonly bool _desiredState;
-      
+
     [UseWithObjectConstructor]
-    public ExecuteCommandDeprecate(IBasicActivateItems itemActivator, 
+    public ExecuteCommandDeprecate(IBasicActivateItems itemActivator,
         [DemandsInitialization("The object you want to deprecate/undeprecate")]
-        IMightBeDeprecated[] o, 
-        [DemandsInitialization("True to deprecate.  False to undeprecate",DefaultValue = true)]
+        IMightBeDeprecated[] o,
+        [DemandsInitialization("True to deprecate.  False to undeprecate", DefaultValue = true)]
         bool desiredState = true) : base(itemActivator)
     {
         _o = o;
@@ -38,13 +38,10 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
     {
         base.Execute();
 
-        if(_o == null || _o.Length == 0)
+        if (_o == null || _o.Length == 0)
             return;
 
-        if(ExecuteWithCommit(ExecuteImpl, GetDescription(),_o))
-        {
-            Publish((DatabaseEntity)_o[0]);
-        }
+        if (ExecuteWithCommit(ExecuteImpl, GetDescription(), _o)) Publish((DatabaseEntity)_o[0]);
     }
 
     private void ExecuteImpl()

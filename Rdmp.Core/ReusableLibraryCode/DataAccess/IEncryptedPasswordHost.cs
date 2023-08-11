@@ -17,7 +17,7 @@ public interface IEncryptedPasswordHost
     /// to get the decrypted string.
     /// </summary>
     string Password { get; set; }
-        
+
     /// <summary>
     /// Decrypts the encrypted Password property.  This method will throw an Exception if the user doesn't have access to the resources required
     /// to decrypt the Password (e.g. access to an RSA private key).

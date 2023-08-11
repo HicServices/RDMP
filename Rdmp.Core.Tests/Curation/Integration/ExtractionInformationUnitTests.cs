@@ -26,15 +26,15 @@ public class ExtractionInformationUnitTests : UnitTests
             ei.Order = explicitOrder.Value;
             ei.SaveToDatabase();
         }
-                
-        Assert.AreEqual(explicitOrder ?? 1,ei.Order);
+
+        Assert.AreEqual(explicitOrder ?? 1, ei.Order);
 
         // Newly created ones should have the right Order to not collide
         var cata = ei.CatalogueItem.Catalogue;
         var cataItem = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem, ei.ColumnInfo, "fff");
 
-        Assert.AreEqual((explicitOrder ?? 1) + 1,ei2.Order);
+        Assert.AreEqual((explicitOrder ?? 1) + 1, ei2.Order);
     }
 
     [Test]
@@ -48,16 +48,16 @@ public class ExtractionInformationUnitTests : UnitTests
         var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem2, ei1.ColumnInfo, "fff");
 
-        Assert.AreEqual(2,ei2.Order);
+        Assert.AreEqual(2, ei2.Order);
 
         var cataItem3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei3 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem3, ei1.ColumnInfo, "fff");
 
-        Assert.AreEqual(3,ei3.Order);
+        Assert.AreEqual(3, ei3.Order);
 
         var cataItem4 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei4 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem4, ei1.ColumnInfo, "fff");
 
-        Assert.AreEqual(4,ei4.Order);
+        Assert.AreEqual(4, ei4.Order);
     }
 }

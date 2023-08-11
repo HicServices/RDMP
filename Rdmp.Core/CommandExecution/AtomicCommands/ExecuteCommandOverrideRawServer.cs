@@ -14,19 +14,20 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicCommand,IAtomicCommandWithTarget
+public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCommand, IAtomicCommandWithTarget
 {
     private readonly LoadMetadata _loadMetadata;
     private ExternalDatabaseServer _server;
     private ExternalDatabaseServer[] _available;
 
-    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator,LoadMetadata loadMetadata) : base(activator)
+    public ExecuteCommandOverrideRawServer(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
         _loadMetadata = loadMetadata;
         _available =
-            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly)).ToArray();
+            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
+                .ToArray();
 
-        if(!_available.Any())
+        if (!_available.Any())
             SetImpossible("There are no compatible servers");
     }
 
@@ -36,7 +37,7 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
 
         if (_server == null)
         {
-            if (SelectOne(_available,out var selected))
+            if (SelectOne(_available, out var selected))
                 _server = selected;
             else
                 return;
@@ -48,10 +49,8 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
         Publish(_loadMetadata);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

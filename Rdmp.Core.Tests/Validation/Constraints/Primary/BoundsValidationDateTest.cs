@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-internal class BoundsValidationDateTest: ValidationTests
+internal class BoundsValidationDateTest : ValidationTests
 {
     private Dictionary<string, object> _d;
 
@@ -23,7 +23,7 @@ internal class BoundsValidationDateTest: ValidationTests
     {
         base.SetUp();
 
-        _d = new Dictionary<string, object> {{"somedate", new DateTime(2013, 06, 13)}};
+        _d = new Dictionary<string, object> { { "somedate", new DateTime(2013, 06, 13) } };
     }
 
     #region Literal Dates
@@ -31,7 +31,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_two_literal_dates_VALID()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.Upper = DateTime.MaxValue;
         var v = CreateLiteralDateValidator(b);
@@ -42,7 +42,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_two_literal_dates_INVALID_after()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.Upper = DateTime.MinValue.AddYears(1);
         var v = CreateLiteralDateValidator(b);
@@ -53,7 +53,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_two_literal_dates_INVALID_before()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MaxValue.AddYears(-1);
         b.Upper = DateTime.MaxValue;
         var v = CreateLiteralDateValidator(b);
@@ -64,7 +64,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_two_literal_dates_INVALID_onlower()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = new DateTime(2013, 06, 13);
         b.Upper = DateTime.MaxValue;
         b.Inclusive = false;
@@ -77,7 +77,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_two_literal_dates_INVALID_onupper()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.Upper = new DateTime(2013, 06, 13);
         b.Inclusive = false;
@@ -89,7 +89,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_inclusively_between_two_literal_dates_VALID_onlower()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = new DateTime(2013, 06, 13);
         b.Upper = DateTime.MaxValue;
         b.Inclusive = true;
@@ -101,7 +101,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_inclusively_between_two_literal_dates_VALID_onupper()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.Upper = new DateTime(2013, 06, 13);
         b.Inclusive = true;
@@ -117,7 +117,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_after_field_VALID()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
 
@@ -130,7 +130,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_after_field_INVALID_before()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
 
@@ -142,7 +142,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_after_field_INVALID_same()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
         b.Inclusive = false;
@@ -154,28 +154,27 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_after_field_INVALID_violation_report()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
 
         var v = CreateAdmissionDateValidator(b);
 
         var result = v.Validate(TestConstants.AdmissionDateOccursBeforeDob);
-            
-        if(result == null)
+
+        if (result == null)
             Assert.Fail();
 
         var l = result.GetExceptionList();
 
         StringAssert.EndsWith($"Expected a date greater than [{b.LowerFieldName}].", l[0].Message);
         Console.WriteLine(result.Message);
-            
     }
 
     [Test]
     public void must_occur_before_field_VALID()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = "dob";
 
@@ -187,7 +186,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_before_field_INVALID_same()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = "dob";
 
@@ -199,7 +198,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_before_field_INVALID_after()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = "dob";
 
@@ -211,28 +210,27 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_before_field_INVALID_violation_report()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = "dob";
 
         var v = CreateParentDobValidator(b);
 
-        var result = v.Validate(TestConstants.ParentDobOccursAfterDob); 
-            
-        if(result == null)
+        var result = v.Validate(TestConstants.ParentDobOccursAfterDob);
+
+        if (result == null)
             Assert.Fail();
 
         var l = result.GetExceptionList();
 
         StringAssert.EndsWith($"Expected a date less than [{b.UpperFieldName}].", l[0].Message);
         Console.WriteLine(result.Message);
-            
     }
 
     [Test]
     public void must_occur_between_fields_VALID()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
 
@@ -244,7 +242,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_inclusively_between_fields_VALID_onstart()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
         b.Inclusive = true;
@@ -257,7 +255,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_inclusively_between_fields_VALID_onend()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
         b.Inclusive = true;
@@ -270,7 +268,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_fields_INVALID_onstart()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
         b.Inclusive = false;
@@ -282,7 +280,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_fields_INVALID_onend()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
         b.Inclusive = false;
@@ -294,7 +292,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_fields_INVALID_before()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
 
@@ -306,7 +304,7 @@ internal class BoundsValidationDateTest: ValidationTests
     [Test]
     public void must_occur_between_fields_INVALID_after()
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
         b.LowerFieldName = "admission_date";
         b.UpperFieldName = "discharge_date";
 
@@ -325,7 +323,7 @@ internal class BoundsValidationDateTest: ValidationTests
         var v = new Validator();
         v.EnsureThatValue("INVALID").OccursAfter("dob");
 
-        Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.AdmissionDateOccursAfterDob));
+        Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.AdmissionDateOccursAfterDob));
     }
 
     [Test]
@@ -334,7 +332,7 @@ internal class BoundsValidationDateTest: ValidationTests
         var v = new Validator();
         v.EnsureThatValue("admission_date").OccursAfter("INVALID");
 
-        Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.AdmissionDateOccursAfterDob));
+        Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.AdmissionDateOccursAfterDob));
     }
 
     [Test]
@@ -387,13 +385,14 @@ internal class BoundsValidationDateTest: ValidationTests
     {
         var v = new Validator();
         v.EnsureThatValue("parent_dob").OccursBefore("dob");
-            
+
         Assert.NotNull(v.Validate(TestConstants.ParentDobOccursOnDob));
     }
 
     #endregion
 
     #region Helper Methods
+
     private static Validator CreateLiteralDateValidator(BoundDate b)
     {
         var v = new Validator();
@@ -410,7 +409,7 @@ internal class BoundsValidationDateTest: ValidationTests
         var i = new ItemValidator();
         i.AddSecondaryConstraint(b);
         v.AddItemValidator(i, "admission_date", typeof(DateTime));
-            
+
         return v;
     }
 

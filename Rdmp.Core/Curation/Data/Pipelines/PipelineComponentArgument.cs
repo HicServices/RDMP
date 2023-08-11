@@ -30,11 +30,11 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     public int PipelineComponent_ID
     {
         get => _pipelineComponentID;
-        set => SetField(ref  _pipelineComponentID, value);
+        set => SetField(ref _pipelineComponentID, value);
     }
 
     #endregion
-        
+
     #region Relationships
 
     /// <inheritdoc cref="PipelineComponent_ID"/>
@@ -45,7 +45,6 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 
     public PipelineComponentArgument()
     {
-
     }
 
     /// <summary>
@@ -58,10 +57,11 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     public PipelineComponentArgument(ICatalogueRepository repository, PipelineComponent parent)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
-        { 
-            {"PipelineComponent_ID",parent.ID},
-            {"Name", $"Parameter{Guid.NewGuid()}" },
-            {"Type", typeof (string).ToString()} });
+        {
+            { "PipelineComponent_ID", parent.ID },
+            { "Name", $"Parameter{Guid.NewGuid()}" },
+            { "Type", typeof(string).ToString() }
+        });
     }
 
     internal PipelineComponentArgument(ICatalogueRepository repository, DbDataReader r)
@@ -75,32 +75,27 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     }
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new[] {PipelineComponent};
+        return new[] { PipelineComponent };
     }
+
     /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
+    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
 
     /// <inheritdoc/>
     public void Clone(PipelineComponent intoTargetComponent)
     {
         var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent)
-            {
-                Name = Name,
-                Value = Value,
-                Type = Type,
-                Description = Description
-            };
+        {
+            Name = Name,
+            Value = Value,
+            Type = Type,
+            Description = Description
+        };
 
         cloneArg.SaveToDatabase();
     }

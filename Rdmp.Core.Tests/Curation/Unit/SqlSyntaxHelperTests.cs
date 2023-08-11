@@ -18,17 +18,24 @@ public class SqlSyntaxHelperTests
     [Test]
     public void GetNullSubstituteTests()
     {
-        Assert.AreEqual("-999", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
-        Assert.AreEqual("-9999999999", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
-        Assert.AreEqual("-99.9", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
-        Assert.AreEqual("-.9999", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
+        Assert.AreEqual("-999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
+        Assert.AreEqual("-9999999999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
+        Assert.AreEqual("-99.9",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
+        Assert.AreEqual("-.9999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
 
 
-        Assert.AreEqual("999", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
-        Assert.AreEqual("9999999999", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
-        Assert.AreEqual("99.9", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
-        Assert.AreEqual(".9999", PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
-
+        Assert.AreEqual("999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
+        Assert.AreEqual("9999999999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
+        Assert.AreEqual("99.9",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
+        Assert.AreEqual(".9999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
     }
 
     [Test]
@@ -36,10 +43,10 @@ public class SqlSyntaxHelperTests
     {
         var syntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
-        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)",out var method, out var contents);
-            
-        Assert.AreEqual("count",method);
-        Assert.AreEqual("*",contents);
+        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)", out var method, out var contents);
+
+        Assert.AreEqual("count", method);
+        Assert.AreEqual("*", contents);
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count()", out method, out contents);
 

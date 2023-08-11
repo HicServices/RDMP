@@ -21,7 +21,6 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 /// <summary>
@@ -61,7 +60,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
         _processTask = databaseObject;
         base.SetDatabaseObject(activator, databaseObject);
 
-        if(_argumentCollection == null)
+        if (_argumentCollection == null)
         {
             var repo = databaseObject.CatalogueRepository;
 
@@ -69,9 +68,9 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
             var className = databaseObject.GetClassNameWhoArgumentsAreFor();
 
-            if(string.IsNullOrWhiteSpace(className))
+            if (string.IsNullOrWhiteSpace(className))
             {
-                activator.KillForm(ParentForm,new Exception(
+                activator.KillForm(ParentForm, new Exception(
                     $"No class has been specified on ProcessTask '{databaseObject}'"));
                 return;
             }
@@ -80,18 +79,19 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
             {
                 _underlyingType = repo.MEF.GetType(className);
 
-                if(_underlyingType == null)
-                    activator.KillForm(ParentForm,new Exception(
+                if (_underlyingType == null)
+                    activator.KillForm(ParentForm, new Exception(
                         $"Could not find Type '{className}' for ProcessTask '{databaseObject}'"));
             }
             catch (Exception e)
             {
-                activator.KillForm(ParentForm,new Exception(
-                    $"MEF crashed while trying to look up Type '{className}' for ProcessTask '{databaseObject}'",e));
+                activator.KillForm(ParentForm, new Exception(
+                    $"MEF crashed while trying to look up Type '{className}' for ProcessTask '{databaseObject}'", e));
                 return;
             }
 
-            _argumentCollection.Setup(Activator, databaseObject, _underlyingType,Activator.RepositoryLocator.CatalogueRepository);
+            _argumentCollection.Setup(Activator, databaseObject, _underlyingType,
+                Activator.RepositoryLocator.CatalogueRepository);
 
             _argumentCollection.Dock = DockStyle.Fill;
             pArguments.Controls.Add(_argumentCollection);
@@ -100,10 +100,11 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
         CommonFunctionality.Add(_ragSmiley);
 
         CheckComponent();
-            
-        loadStageIconUI1.Setup(Activator.CoreIconProvider,_processTask.LoadStage);
 
-        CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh.ImageToBitmap(), (s, e) => CheckComponent()));
+        loadStageIconUI1.Setup(Activator.CoreIconProvider, _processTask.LoadStage);
+
+        CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            (s, e) => CheckComponent()));
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
@@ -122,8 +123,9 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
             var lmd = _processTask.LoadMetadata;
             var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
-            var mefTask = (IMEFRuntimeTask) factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
-            
+            var mefTask =
+                (IMEFRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
+
             _ragSmiley.StartChecking(mefTask.MEFPluginClassInstance);
         }
         catch (Exception e)
@@ -145,6 +147,6 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PluginProcessTaskUI_Design, UserControl>))]
-public abstract class PluginProcessTaskUI_Design:RDMPSingleDatabaseObjectControl<ProcessTask>
+public abstract class PluginProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
 {
 }

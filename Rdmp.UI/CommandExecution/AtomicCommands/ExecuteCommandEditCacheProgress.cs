@@ -14,11 +14,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandEditCacheProgress : BasicUICommandExecution,IAtomicCommand
+internal class ExecuteCommandEditCacheProgress : BasicUICommandExecution, IAtomicCommand
 {
     private readonly CacheProgress _cacheProgress;
 
-    public ExecuteCommandEditCacheProgress(IActivateItems activator, CacheProgress cacheProgress):base(activator)
+    public ExecuteCommandEditCacheProgress(IActivateItems activator, CacheProgress cacheProgress) : base(activator)
     {
         _cacheProgress = cacheProgress;
     }
@@ -29,13 +29,8 @@ internal class ExecuteCommandEditCacheProgress : BasicUICommandExecution,IAtomic
         Activator.Activate<CacheProgressUI, CacheProgress>(_cacheProgress);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(_cacheProgress);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(_cacheProgress);
 
-    public override string GetCommandHelp()
-    {
-        return "Change which pipeline is used to fetch data, what date the cache has progressed to etc";
-    }
+    public override string GetCommandHelp() =>
+        "Change which pipeline is used to fetch data, what date the cache has progressed to etc";
 }

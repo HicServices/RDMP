@@ -15,12 +15,12 @@ namespace Rdmp.Core.QueryBuilding;
 /// Input class for <see cref="CohortQueryBuilderHelper"/> that assists in building the Sql query for a single cohort set in a <see cref="AggregateConfiguration"/>
 /// This can include arbitrary hacks like replacing the patient identifier with * and applying TopX etc (see base class <see cref="QueryBuilderCustomArgs"/>).
 /// </summary>
-public class QueryBuilderArgs: QueryBuilderCustomArgs
+public class QueryBuilderArgs : QueryBuilderCustomArgs
 {
     public JoinableCohortAggregateConfigurationUse JoinIfAny { get; }
     public AggregateConfiguration JoinedTo { get; }
     public CohortQueryBuilderDependencySql JoinSql { get; }
-    public ISqlParameter[] Globals { get;}
+    public ISqlParameter[] Globals { get; }
 
     /// <summary>
     /// Creates basic arguments for an <see cref="AggregateConfiguration"/> that does not have a join to a patient index table
@@ -39,17 +39,19 @@ public class QueryBuilderArgs: QueryBuilderCustomArgs
     /// <param name="joinSql">The full SQL of the join</param>
     /// <param name="customisations"></param>
     /// <param name="globals"></param>
-    public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join,AggregateConfiguration joinedTo,CohortQueryBuilderDependencySql joinSql, QueryBuilderCustomArgs customisations, ISqlParameter[] globals):this(customisations,globals)
+    public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join, AggregateConfiguration joinedTo,
+        CohortQueryBuilderDependencySql joinSql, QueryBuilderCustomArgs customisations,
+        ISqlParameter[] globals) : this(customisations, globals)
     {
         JoinIfAny = join;
         JoinedTo = joinedTo;
         JoinSql = joinSql;
 
-        if(JoinIfAny == null !=  (JoinedTo == null )||  JoinIfAny == null != (JoinSql == null))
+        if (JoinIfAny == null != (JoinedTo == null) || JoinIfAny == null != (JoinSql == null))
             throw new Exception("You must provide all arguments or no arguments");
 
-        if(JoinedTo != null)
-            if(!JoinedTo.IsCohortIdentificationAggregate || !JoinedTo.IsJoinablePatientIndexTable())
-                throw new ArgumentException($"JoinedTo ({JoinedTo}) was not a patient index table",nameof(joinedTo));
+        if (JoinedTo != null)
+            if (!JoinedTo.IsCohortIdentificationAggregate || !JoinedTo.IsJoinablePatientIndexTable())
+                throw new ArgumentException($"JoinedTo ({JoinedTo}) was not a patient index table", nameof(joinedTo));
     }
 }

@@ -21,9 +21,10 @@ namespace Rdmp.Core.Curation.Data;
 /// can provide a name and a description for the concept.  Then you create a value for each parameter in the associated filter.  See ExtractionFilterParameterSetValue for
 /// the value recordings.
 /// </summary>
-public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,INamed
+public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameters, INamed
 {
     #region Database Properties
+
     private string _name;
     private string _description;
     private int _extractionFilterID;
@@ -33,7 +34,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     public string Name
     {
         get => _name;
-        set => SetField(ref _name , value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -42,7 +43,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     public string Description
     {
         get => _description;
-        set => SetField(ref _description , value);
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -66,13 +67,13 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// Gets all the individual parameter values required for populating the filter to achieve this concept (e.g. 'Diabetes Drugs' might have 2 parameter values @DrugList='123.122.1,1.2... etc' and @DrugCodeFormat='bnf')
     /// </summary>
     [NoMappingToDatabase]
-    public IEnumerable<ExtractionFilterParameterSetValue> Values => Repository.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);
+    public IEnumerable<ExtractionFilterParameterSetValue> Values =>
+        Repository.GetAllObjectsWithParent<ExtractionFilterParameterSetValue>(this);
 
     #endregion
 
     public ExtractionFilterParameterSet()
     {
-
     }
 
     internal ExtractionFilterParameterSet(ICatalogueRepository repository, DbDataReader r)
@@ -94,25 +95,19 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     {
         name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name",name},
-            {"ExtractionFilter_ID",filter.ID}
+            { "Name", name },
+            { "ExtractionFilter_ID", filter.ID }
         });
     }
 
 
     /// <inheritdoc/>
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
     /// <inheritdoc cref="Values"/>
-    public ISqlParameter[] GetAllParameters()
-    {
-        return Values.ToArray();
-    }
+    public ISqlParameter[] GetAllParameters() => Values.ToArray();
 
     /// <summary>
     /// Identifies all parameters which do not exist yet as declared values
@@ -120,7 +115,8 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// <returns></returns>
     public IEnumerable<ExtractionFilterParameter> GetMissingEntries()
     {
-        var existingCatalogueParameters = ExtractionFilter.GetAllParameters().Cast<ExtractionFilterParameter>().ToArray();
+        var existingCatalogueParameters =
+            ExtractionFilter.GetAllParameters().Cast<ExtractionFilterParameter>().ToArray();
 
         var personalChildren = Values.ToArray();
 
@@ -128,6 +124,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
             if (personalChildren.All(c => c.ExtractionFilterParameter_ID != catalogueParameter.ID))
                 yield return catalogueParameter;
     }
+
     /// <summary>
     /// Creates new value entries for each parameter in the filter that does not yet have a value in this value set
     /// </summary>
@@ -138,17 +135,15 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
 
         foreach (var catalogueParameter in GetMissingEntries())
             //we have a master that does not have any child values yet
-            toReturn.Add(new ExtractionFilterParameterSetValue((ICatalogueRepository) Repository, this, catalogueParameter));
+            toReturn.Add(new ExtractionFilterParameterSetValue((ICatalogueRepository)Repository, this,
+                catalogueParameter));
 
         return toReturn.ToArray();
     }
 
     public override void DeleteInDatabase()
     {
-        foreach(var v in Values)
-        {
-            v.DeleteInDatabase();
-        }
+        foreach (var v in Values) v.DeleteInDatabase();
 
         base.DeleteInDatabase();
     }

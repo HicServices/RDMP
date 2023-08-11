@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.ValidationPluginTests;
 
-public class LegacySerializationTest:DatabaseTests
+public class LegacySerializationTest : DatabaseTests
 {
     [Test]
     public void TestLegacyDeserialization()

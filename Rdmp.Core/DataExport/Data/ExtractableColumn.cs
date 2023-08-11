@@ -31,13 +31,15 @@ namespace Rdmp.Core.DataExport.Data;
 /// that if you clone a 10 year old extraction you will still get the same SQL (along with lots of warnings about orphan CatalogueExtractionInformation_ID etc).  It even allows you
 /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).</para>
 /// </summary>
-public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<CatalogueItem>,IInjectKnown<ColumnInfo>, IInjectKnown<ExtractionInformation>
+public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<CatalogueItem>, IInjectKnown<ColumnInfo>,
+    IInjectKnown<ExtractionInformation>
 {
     #region Database Properties
+
     private int _extractableDataSet_ID;
     private int _extractionConfiguration_ID;
     private int? _catalogueExtractionInformation_ID;
-        
+
     /// <summary>
     /// The dataset to which this column belongs.  This is used with <see cref="ExtractionConfiguration_ID"/> to specify which dataset in which extraction 
     /// this line of SELECT sql is used.
@@ -76,9 +78,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     }
 
     #endregion
-        
-    #region Relationships
 
+    #region Relationships
 
     /// <inheritdoc cref="CatalogueExtractionInformation_ID"/>
     [NoMappingToDatabase]
@@ -107,18 +108,22 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// <param name="extractionInformation"></param>
     /// <param name="order"></param>
     /// <param name="selectSQL"></param>
-    public ExtractableColumn(IDataExportRepository repository, IExtractableDataSet dataset, ExtractionConfiguration configuration, ExtractionInformation extractionInformation, int order, string selectSQL)
+    public ExtractableColumn(IDataExportRepository repository, IExtractableDataSet dataset,
+        ExtractionConfiguration configuration, ExtractionInformation extractionInformation, int order, string selectSQL)
     {
         Repository = repository;
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ExtractableDataSet_ID", dataset.ID},
-            {"ExtractionConfiguration_ID", configuration.ID},
-            {"CatalogueExtractionInformation_ID", extractionInformation == null ? DBNull.Value : (object)extractionInformation.ID},
-            {"Order", order},
-            {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL}
+            { "ExtractableDataSet_ID", dataset.ID },
+            { "ExtractionConfiguration_ID", configuration.ID },
+            {
+                "CatalogueExtractionInformation_ID",
+                extractionInformation == null ? DBNull.Value : (object)extractionInformation.ID
+            },
+            { "Order", order },
+            { "SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL }
         });
-            
+
         ClearAllInjections();
     }
 
@@ -138,12 +143,13 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         Alias = r["Alias"] as string;
         HashOnDataRelease = (bool)r["HashOnDataRelease"];
         IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
-        IsPrimaryKey = (bool) r["IsPrimaryKey"];
-            
+        IsPrimaryKey = (bool)r["IsPrimaryKey"];
+
         ClearAllInjections();
     }
 
     #region value caching and injection
+
     private Lazy<CatalogueItem> _knownCatalogueItem;
     private Lazy<ColumnInfo> _knownColumnInfo;
     private Lazy<ExtractionInformation> _knownExtractionInformation;
@@ -184,7 +190,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformation);
         _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfo);
     }
-    #endregion 
+
+    #endregion
 
     /// <summary>
     /// Returns the <see cref="ConcreteColumn.SelectSQL"/> or <see cref="ConcreteColumn.Alias"/> of the column (if it has one)
@@ -192,20 +199,17 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// <returns></returns>
     public override string ToString()
     {
-        if(!string.IsNullOrWhiteSpace(Alias))
+        if (!string.IsNullOrWhiteSpace(Alias))
             return Alias;
 
         return SelectSQL;
     }
-        
+
     /// <summary>
     /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since its creation.
     /// </summary>
     /// <returns></returns>
-    public bool HasOriginalExtractionInformationVanished()
-    {
-        return ColumnInfo == null;
-    }
+    public bool HasOriginalExtractionInformationVanished() => ColumnInfo == null;
 
     private ColumnInfo FetchColumnInfo()
     {
@@ -228,10 +232,11 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         //it's not based on a Catalogue column
         if (!CatalogueExtractionInformation_ID.HasValue)
             return null;
-            
+
         try
         {
-            return ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
+            return ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(
+                CatalogueExtractionInformation_ID.Value);
         }
         catch (KeyNotFoundException)
         {
@@ -251,9 +256,9 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         if (ei != null)
             if (ei.IsExtractionIdentifier != IsExtractionIdentifier ||
                 IsPrimaryKey != ei.IsPrimaryKey ||
-                ei.SelectSQL != SelectSQL || 
-                ei.Order != Order || 
-                ei.Alias != Alias || 
+                ei.SelectSQL != SelectSQL ||
+                ei.Order != Order ||
+                ei.Alias != Alias ||
                 ei.HashOnDataRelease != HashOnDataRelease)
                 return true;
 
@@ -281,7 +286,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         var eds = DataExportRepository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
         var config = DataExportRepository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
 
-        var clone = new ExtractableColumn(DataExportRepository, eds, config, CatalogueExtractionInformation, Order, SelectSQL);
+        var clone = new ExtractableColumn(DataExportRepository, eds, config, CatalogueExtractionInformation, Order,
+            SelectSQL);
         CopyShallowValuesTo(clone);
         return clone;
     }

@@ -18,7 +18,8 @@ public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconPro
     private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
     private readonly Image<Rgba32> _disabled;
 
-    public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider, CatalogueStateBasedIconProvider catalogueIconProvider)
+    public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider,
+        CatalogueStateBasedIconProvider catalogueIconProvider)
     {
         _catalogueIconProvider = catalogueIconProvider;
         _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);

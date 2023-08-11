@@ -14,7 +14,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// <summary>
 /// See RuntimeTask
 /// </summary>
-public interface IRuntimeTask : IDataLoadComponent,ICheckable
+public interface IRuntimeTask : IDataLoadComponent, ICheckable
 {
     bool Exists();
     void Abort(IDataLoadEventListener postLoadEventListener);

@@ -17,18 +17,18 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAtomicCommand
+public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution, IAtomicCommand
 {
     private CacheProgress _cacheProgress;
     private ICacheFetchFailure[] _failures;
 
-    public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress):base(activator)
+    public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress) : base(activator)
     {
         _cacheProgress = cacheProgress;
 
         _failures = _cacheProgress.CacheFetchFailures.Where(f => f.ResolvedOn == null).ToArray();
 
-        if(!_failures.Any())
+        if (!_failures.Any())
             SetImpossible("There are no unresolved CacheFetchFailures");
     }
 
@@ -48,12 +48,9 @@ public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAto
         foreach (var f in _failures)
             dt.Rows.Add(f.FetchRequestStart, f.FetchRequestEnd, f.ExceptionText, f.LastAttempt, f.ResolvedOn);
 
-        var ui = new DataTableViewerUI(dt,"Cache Failures");
+        var ui = new DataTableViewerUI(dt, "Cache Failures");
         Activator.ShowWindow(ui, true);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(_cacheProgress);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(_cacheProgress);
 }

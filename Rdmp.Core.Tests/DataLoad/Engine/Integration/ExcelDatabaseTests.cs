@@ -28,10 +28,11 @@ public class ExcelDatabaseTests : DatabaseTests
         // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
         var creator = new CataloguePipelinesAndReferencesCreation(
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-        creator.CreatePipelines();
+        creator.CreatePipelines(new PlatformDatabaseCreationOptions {});
 
         // find the excel loading pipeline
-        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID).FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
+        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
 
         // run an import of the file using the pipeline
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
@@ -46,9 +47,9 @@ public class ExcelDatabaseTests : DatabaseTests
 
         var cols = tbl.DiscoverColumns();
         Assert.AreEqual(2, cols.Length);
-        Assert.AreEqual("Field1",cols[0].GetRuntimeName());
+        Assert.AreEqual("Field1", cols[0].GetRuntimeName());
         Assert.AreEqual("Field2", cols[1].GetRuntimeName());
-                        
+
         Assert.AreEqual(2, tbl.GetRowCount());
     }
 }

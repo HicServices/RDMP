@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public class CommandLineObjectPicker
 {
     public IReadOnlyCollection<CommandLineObjectPickerArgumentValue> Arguments { get; }
-        
+
     public CommandLineObjectPickerArgumentValue this[int i] => Arguments.ElementAt(i);
 
     public int Length => Arguments.Count;
@@ -50,27 +50,28 @@ public class CommandLineObjectPicker
     /// <param name="args"></param>
     /// <param name="repositoryLocator"></param>
     /// <param name="pickers"></param>
-    public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
+    public CommandLineObjectPicker(string[] args, IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        IEnumerable<PickObjectBase> pickers)
     {
-        foreach(var p in pickers)
+        foreach (var p in pickers)
             _pickers.Add(p);
 
         Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
     }
 
-    private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
+    private CommandLineObjectPickerArgumentValue ParseValue(string arg, int idx)
     {
         //find a picker that recognizes the format
         var pickers = _pickers.Where(p => p.IsMatch(arg, idx)).ToArray();
 
         if (pickers.Any())
-            return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p=>p.Parse(arg,idx)));
-            
+            return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p => p.Parse(arg, idx)));
+
         //nobody recognized it, use the raw value (maybe it's just a regular string, int etc).  Delay hard typing it till we know
         //what constructor we are trying to match it to.
-        return new CommandLineObjectPickerArgumentValue(arg,idx);
+        return new CommandLineObjectPickerArgumentValue(arg, idx);
     }
-        
+
     /// <summary>
     /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
     /// </summary>

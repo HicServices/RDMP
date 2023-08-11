@@ -14,20 +14,20 @@ namespace Rdmp.UI.SingleControlForms;
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public class SingleControlForm:Form
+public class SingleControlForm : Form
 {
     public SingleControlForm(Control control, bool showOkButton = false)
     {
         SetClientSizeCore(control.Width, control.Height);
-        Text = !string.IsNullOrWhiteSpace(control.Text)?control.Text:control.Name;
+        Text = !string.IsNullOrWhiteSpace(control.Text) ? control.Text : control.Name;
 
         Controls.Add(control);
-        control.Anchor = AnchorStyles.Top | AnchorStyles.Left| AnchorStyles.Right | AnchorStyles.Bottom;
+        control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
 
         if (control is IConsultableBeforeClosing consult)
             FormClosing += consult.ConsultAboutClosing;
 
-        if(showOkButton)
+        if (showOkButton)
         {
             var okButton = new Button
             {
@@ -52,8 +52,6 @@ public class SingleControlForm:Form
         }
     }
 
-    public static DialogResult ShowDialog(Control control,bool showOkButton = false)
-    {
-        return new SingleControlForm(control,showOkButton).ShowDialog();
-    }
+    public static DialogResult ShowDialog(Control control, bool showOkButton = false) =>
+        new SingleControlForm(control, showOkButton).ShowDialog();
 }

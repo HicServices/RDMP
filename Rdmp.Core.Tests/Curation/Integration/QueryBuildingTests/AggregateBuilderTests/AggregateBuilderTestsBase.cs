@@ -51,5 +51,4 @@ public class AggregateBuilderTestsBase : DatabaseTests
         _dimension2.Order = 2;
         _dimension2.SaveToDatabase();
     }
-
 }

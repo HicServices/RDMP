@@ -17,8 +17,9 @@ public class ExtractionFilterTests : DatabaseTests
     public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_DirectlyFails()
     {
         var filter = GetFilterWithParameterSet();
-        var ex = Assert.Throws<Exception>(()=>filter.DeleteInDatabase());
-        Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it", ex.Message);
+        var ex = Assert.Throws<Exception>(() => filter.DeleteInDatabase());
+        Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it",
+            ex.Message);
     }
 
     private ExtractionFilter GetFilterWithParameterSet()
@@ -38,7 +39,7 @@ public class ExtractionFilterTests : DatabaseTests
 
         var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");
         paramSet.CreateNewValueEntries();
-            
+
         return filter;
     }
 }

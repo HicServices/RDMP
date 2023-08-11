@@ -28,7 +28,7 @@ public class FlatFileToLoad
     /// The file you are trying to load
     /// </summary>
     public FileInfo File { get; set; }
-        
+
     /// <summary>
     /// Returns the filename of the file you are trying to load
     /// </summary>

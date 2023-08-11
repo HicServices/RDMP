@@ -16,14 +16,14 @@ public interface IRevertable : IMapsDirectlyToDatabaseTable, ISaveable
     /// Resets all public properties on the class to match the values stored in the <see cref="IRepository"/>
     /// </summary>
     void RevertToDatabaseState();
-        
+
     /// <summary>
     /// Connects to the database <see cref="IRepository"/> and checks the values of public properties against the currently held (in memory)
     /// version of the class.
     /// </summary>
     /// <returns>Report about the differences if any to the class</returns>
     RevertableObjectReport HasLocalChanges();
-        
+
     /// <summary>
     /// Connects to the database <see cref="IRepository"/> and returns true if the object (in memory) still exists in the database.
     /// </summary>

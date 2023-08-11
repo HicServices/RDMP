@@ -16,12 +16,12 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <inheritdoc/>
-public abstract class Patcher:IPatcher
+public abstract class Patcher : IPatcher
 {
     public const string InitialScriptName = "Initial Create";
 
     /// <inheritdoc/>
-    public bool SqlServerOnly { get; protected init; }= true;
+    public bool SqlServerOnly { get; protected init; } = true;
 
     /// <inheritdoc/>
     public virtual Assembly GetDbAssembly() => GetType().Assembly;
@@ -34,9 +34,10 @@ public abstract class Patcher:IPatcher
 
     public string Name =>
         $"{GetDbAssembly().GetName().Name}{(string.IsNullOrEmpty(ResourceSubdirectory) ? "" : $"/{ResourceSubdirectory}")}";
+
     public string LegacyName { get; protected set; }
 
-    protected Patcher(int tier,string resourceSubdirectory)
+    protected Patcher(int tier, string resourceSubdirectory)
     {
         Tier = tier;
         ResourceSubdirectory = resourceSubdirectory;
@@ -49,7 +50,8 @@ public abstract class Patcher:IPatcher
     /// <param name="description"></param>
     /// <param name="version"></param>
     /// <returns></returns>
-    protected static string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
+    protected static string GetHeader(DatabaseType dbType, string description, Version version) =>
+        $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
 
     // some DBMS don't like the -- notation so we need to wrap with C style comments
     private static string CommentFor(DatabaseType dbType, string sql) =>
@@ -74,15 +76,15 @@ public abstract class Patcher:IPatcher
         {
             case 1:
             {
-                    var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
+                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
 
-                    var sql = sr.ReadToEnd();
+                var sql = sr.ReadToEnd();
 
                 if (!sql.Contains(Patch.VersionKey))
                     sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
 
 
-                return new Patch(InitialScriptName,  sql);
+                return new Patch(InitialScriptName, sql);
             }
             case 0:
                 throw new FileNotFoundException(

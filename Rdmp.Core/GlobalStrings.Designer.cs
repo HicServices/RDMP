@@ -250,6 +250,12 @@ namespace Rdmp.Core {
         public static string ClearUserSettingsTooltip {
             get {
                 return ResourceManager.GetString("ClearUserSettingsTooltip");
+			}
+		}
+		
+        public static string CreateALoggingServer {
+            get {
+                return ResourceManager.GetString("CreateALoggingServer");
             }
         }
     }

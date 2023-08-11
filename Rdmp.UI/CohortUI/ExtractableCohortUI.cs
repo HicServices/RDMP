@@ -43,7 +43,7 @@ namespace Rdmp.UI.CohortUI;
 /// additional release identifier columns into your cohort table and want to use that column instead of the listed release identifier column (again this is a really bad idea).</para>
 /// 
 /// </summary>
-public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableUI
+public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveableUI
 {
     private ExtractableCohort _extractableCohort;
     private RDMPCollectionCommonFunctionality _commonFunctionality1 = new();
@@ -51,9 +51,9 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 
     private void GenerateSQLPreview()
     {
-        if(VisualStudioDesignMode)
+        if (VisualStudioDesignMode)
             return;
-            
+
         QueryPreview.ReadOnly = false;
         try
         {
@@ -75,7 +75,6 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             toShow += sql;
 
             QueryPreview.Text = toShow;
-
         }
         catch (Exception ex)
         {
@@ -83,15 +82,14 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         }
         finally
         {
-
             QueryPreview.ReadOnly = true;
         }
     }
-        
+
     public ExtractableCohortUI()
     {
         InitializeComponent();
-            
+
         if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
@@ -104,12 +102,16 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 
         AssociatedCollection = RDMPCollection.SavedCohorts;
 
-        helpIcon1.SetHelpText("Override Release Identifier","Not Recommended.  Setting this lets you change which release identifier column is extracted (for this cohort only).");
+        helpIcon1.SetHelpText("Override Release Identifier",
+            "Not Recommended.  Setting this lets you change which release identifier column is extracted (for this cohort only).");
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCohortUsage, olvUsedIn, new Guid("0c402777-2c70-486a-adb3-32b6f2fbfe80"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCohortUsage, olvUsedIn,
+            new Guid("0c402777-2c70-486a-adb3-32b6f2fbfe80"));
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvPreviousVersions,olvOtherVersions, new Guid("4e753b4a-9989-4bf0-b2d4-7462e68b2fa3"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvPreviousVersions, olvVersion, new Guid("a5b4573f-5aad-456d-a431-d63d69e46e47"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvPreviousVersions, olvOtherVersions,
+            new Guid("4e753b4a-9989-4bf0-b2d4-7462e68b2fa3"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvPreviousVersions, olvVersion,
+            new Guid("a5b4573f-5aad-456d-a431-d63d69e46e47"));
     }
 
     private void AuditLogEditorOnTextChanged(object sender, EventArgs eventArgs)
@@ -117,17 +119,16 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         _extractableCohort.AuditLog = auditLogEditor.Text;
     }
 
-    [DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryPreview { get; set; }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     private Scintilla auditLogEditor;
 
-        
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractableCohort databaseObject)
     {
-        base.SetDatabaseObject(activator,databaseObject);
+        base.SetDatabaseObject(activator, databaseObject);
         _extractableCohort = databaseObject;
 
         //if the object passed in was null we set it to "" otherwise we are going to set it to the Name property (unless that is null in which case it's still going to end up as "")
@@ -143,7 +144,6 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 
 
         if (!_commonFunctionality1.IsSetup)
-        {
             _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage, activator, olvUsedIn, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
@@ -154,10 +154,8 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
                     SuppressChildrenAdder = true
                 }
             );
-        }
 
         if (!_commonFunctionality2.IsSetup)
-        {
             _commonFunctionality2.SetUp(RDMPCollection.None, tlvPreviousVersions, activator, olvOtherVersions, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
@@ -168,24 +166,24 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
                     SuppressChildrenAdder = true
                 }
             );
-        }
 
-        if(Activator.CoreChildProvider is DataExportChildProvider dx)
+        if (Activator.CoreChildProvider is DataExportChildProvider dx)
         {
             tlvCohortUsage.ClearObjects();
-            tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e=>e.Cohort_ID == _extractableCohort.ID).ToArray());
-                
+            tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
+                .ToArray());
+
             tlvPreviousVersions.ClearObjects();
             tlvPreviousVersions.AddObjects(
                 dx.Cohorts.Where(
                     c =>
                         c.ID != _extractableCohort.ID &&
-                        c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID && 
+                        c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID &&
                         c.GetExternalData().ExternalDescription ==
                         _extractableCohort.GetExternalData().ExternalDescription &&
                         c.ExternalProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray());
         }
-            
+
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(activator, null)
         {
             CohortIfAny = databaseObject,
@@ -197,14 +195,14 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 
     private void tbOverrideReleaseIdentifierSQL_TextChanged(object sender, EventArgs e)
     {
-
         var syntax = _extractableCohort.GetQuerySyntaxHelper();
 
         if (
-            !string.IsNullOrWhiteSpace(tbOverrideReleaseIdentifierSQL.Text)//if it has an override
+            !string.IsNullOrWhiteSpace(tbOverrideReleaseIdentifierSQL.Text) //if it has an override
             &&
             syntax.GetRuntimeName(tbOverrideReleaseIdentifierSQL.Text)
-                .Equals(syntax.GetRuntimeName(_extractableCohort.GetPrivateIdentifier())))//and that ovoerride is the same as the private identifier they are trying to release identifiable data on the sly!
+                .Equals(syntax.GetRuntimeName(_extractableCohort
+                    .GetPrivateIdentifier()))) //and that ovoerride is the same as the private identifier they are trying to release identifiable data on the sly!
         {
             //release identifier cannot be the same as private identififer (I AM THE LAW!)
             tbOverrideReleaseIdentifierSQL.ForeColor = Color.Red;
@@ -217,32 +215,31 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
 
     private void btnShowProject_Click(object sender, EventArgs e)
     {
-        var dx = (DataExportChildProvider) Activator.CoreChildProvider;
+        var dx = (DataExportChildProvider)Activator.CoreChildProvider;
 
         var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
 
         if (!projects.Any())
+        {
             MessageBox.Show($"No Projects exist with ProjectNumber {_extractableCohort.ExternalProjectNumber}");
+        }
         else if (projects.Length == 1)
+        {
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
+        }
         else
         {
             var show = Activator.SelectOne(new DialogArgs
             {
-                TaskDescription = $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
+                TaskDescription =
+                    $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
             }, projects);
-                
-            if(show != null)
-            {
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
-            }   
+
+            if (show != null) Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
         }
     }
 
-    public override string GetTabName()
-    {
-        return $"{_extractableCohort} (V{_extractableCohort.ExternalVersion})";
-    }
+    public override string GetTabName() => $"{_extractableCohort} (V{_extractableCohort.ExternalVersion})";
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractableCohortUI_Design, UserControl>))]

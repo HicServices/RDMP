@@ -16,6 +16,7 @@ public partial class TaskDescriptionLabel : UserControl
 {
     private Color _backColour;
     private Color _foreColour;
+
     public TaskDescriptionLabel()
     {
         InitializeComponent();
@@ -25,7 +26,7 @@ public partial class TaskDescriptionLabel : UserControl
     {
         var task = args.TaskDescription;
         var entryLabel = args.EntryLabel;
-            
+
 
         tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
         tbTaskDescription.Text = task;
@@ -38,8 +39,8 @@ public partial class TaskDescriptionLabel : UserControl
         // set prompt text. If theres a TaskDescription too then leave a bit of extra space
         tbEntryLabel.Text = entryLabel;
 
-        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
-                      (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
+        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) +
+                 (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
 
         //Switch style based on args.DesciptionSeverity
         switch (args.DesciptionSeverity)
@@ -68,6 +69,7 @@ public partial class TaskDescriptionLabel : UserControl
     /// Returns the width this control would ideally like to take up
     /// </summary>
     public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
+
     public int PreferredHeight => Height;
 
     private void textBox1_Resize(object sender, EventArgs e)

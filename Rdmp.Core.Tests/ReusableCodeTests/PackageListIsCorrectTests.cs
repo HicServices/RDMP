@@ -20,7 +20,8 @@ namespace Rdmp.Core.Tests.ReusableCodeTests;
 /// </summary>
 public class PackageListIsCorrectTests
 {
-    private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
+    private static readonly EnumerationOptions EnumerationOptions = new()
+        { RecurseSubdirectories = true, MatchCasing = MatchCasing.CaseInsensitive, IgnoreInaccessible = true };
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     private static readonly Regex RPackageRef =
@@ -38,7 +39,7 @@ public class PackageListIsCorrectTests
     /// </summary>
     /// <param name="rootPath"></param>
     [TestCase]
-    public void TestPackagesDocumentCorrect(string rootPath=null)
+    public void TestPackagesDocumentCorrect(string rootPath = null)
     {
         var root = FindRoot(rootPath);
         var undocumented = new StringBuilder();
@@ -46,8 +47,8 @@ public class PackageListIsCorrectTests
         // Extract the named packages from PACKAGES.md
         var packagesMarkdown = File.ReadAllLines(GetPackagesMarkdown(root))
             .Select(line => RMarkdownEntry.Match(line))
-            .Where(m=>m.Success)
-            .Skip(2)    // Jump over the header
+            .Where(m => m.Success)
+            .Skip(2) // Jump over the header
             .Select(m => m.Groups[1].Value)
             .ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
@@ -71,7 +72,8 @@ public class PackageListIsCorrectTests
     /// </summary>
     /// <param name="package"></param>
     /// <returns></returns>
-    private static object BuildRecommendedMarkdownLine(string package) => $"| {package} | [GitHub]() | LICENCE GOES HERE | |";
+    private static object BuildRecommendedMarkdownLine(string package) =>
+        $"| {package} | [GitHub]() | LICENCE GOES HERE | |";
 
     /// <summary>
     /// Find the root of this repo, which is usually the directory containing the .sln file
@@ -86,6 +88,7 @@ public class PackageListIsCorrectTests
             if (!Path.IsPathRooted(path)) path = Path.Combine(TestContext.CurrentContext.TestDirectory, path);
             return new DirectoryInfo(path);
         }
+
         var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         while (!root.EnumerateFiles("*.sln", SearchOption.TopDirectoryOnly).Any() && root.Parent != null)
             root = root.Parent;
@@ -100,7 +103,8 @@ public class PackageListIsCorrectTests
     /// <returns></returns>
     private static IEnumerable<string> GetCsprojFiles(DirectoryInfo root)
     {
-        return root.EnumerateFiles("*.csproj", EnumerationOptions).Select(f => f.FullName).Where(f => !f.Contains("tests", StringComparison.InvariantCultureIgnoreCase));
+        return root.EnumerateFiles("*.csproj", EnumerationOptions).Select(f => f.FullName)
+            .Where(f => !f.Contains("tests", StringComparison.InvariantCultureIgnoreCase));
     }
 
     /// <summary>
@@ -114,5 +118,4 @@ public class PackageListIsCorrectTests
         Assert.IsNotNull(path, "Could not find packages.md");
         return path;
     }
-
 }

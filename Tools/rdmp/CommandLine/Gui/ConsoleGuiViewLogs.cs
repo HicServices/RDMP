@@ -148,29 +148,26 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     private void FetchLogs()
     {
-        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch))
-        {
-            fetch = 1000;
-        }
+        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch)) fetch = 1000;
 
         // no negative sized batches!
         fetch = Math.Max(0, fetch);
 
         try
         {
-
             var db = _rootObject.GetDistinctLoggingDatabase();
             var task = _rootObject.GetDistinctLoggingTask();
 
             var lm = new LogManager(db);
-            _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
+            _archivalDataLoadInfos =
+                _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
 
             _treeView.ClearObjects();
             _treeView.AddObjects(_archivalDataLoadInfos);
         }
         catch (Exception ex)
         {
-            _activator.ShowException("Failed to fetch logs",ex);
+            _activator.ShowException("Failed to fetch logs", ex);
         }
     }
 
@@ -199,10 +196,9 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     public bool SupportsCanExpand => true;
 
-    public bool CanExpand(object model)
-    {
-        return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any()) || model is ArchivalTableLoadInfo;
-    }
+    public bool CanExpand(object model) => model is ArchivalDataLoadInfo ||
+                                           (model is Category c && c.GetChildren().Any()) ||
+                                           model is ArchivalTableLoadInfo;
 
     public IEnumerable<object> GetChildren(object model)
     {
@@ -214,10 +210,8 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         }
 
         if (model is Category c)
-        {
             foreach (var child in c.GetChildren())
                 yield return child;
-        }
 
         if (model is ArchivalTableLoadInfo ti)
             foreach (var source in ti.DataSources)
@@ -239,6 +233,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
             _dli = dli;
             _type = type;
         }
+
         public override string ToString()
         {
             return _type switch

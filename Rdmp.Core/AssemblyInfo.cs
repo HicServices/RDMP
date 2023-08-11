@@ -25,4 +25,4 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 
-[assembly:InternalsVisibleTo("Rdmp.Core.Tests")]
+[assembly: InternalsVisibleTo("Rdmp.Core.Tests")]

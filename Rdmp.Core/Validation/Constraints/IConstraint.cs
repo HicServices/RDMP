@@ -15,7 +15,7 @@ public interface IConstraint
     /// The consequences of the rule being broken
     /// </summary>
     Consequence? Consequence { get; set; }
-       
+
     /// <summary>
     /// Updates the state / persistence of the <see cref="IConstraint"/> to reflect that it's currently
     /// referencing column (<paramref name="originalName"/>) has been renamed (<paramref name="newName"/>)

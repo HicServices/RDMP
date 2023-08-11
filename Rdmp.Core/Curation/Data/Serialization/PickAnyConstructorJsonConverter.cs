@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data.Serialization;
 /// arguments to classes you want to deserialize.  This JsonConverter will assert that it CanConvert any object for which it finds no default constructor and
 /// a single constructor which is compatible with the constructorObjects (or a subset of them)
 /// </summary>
-public class PickAnyConstructorJsonConverter:JsonConverter
+public class PickAnyConstructorJsonConverter : JsonConverter
 {
     private readonly object[] _constructorObjects;
     private ObjectConstructor _objectConstructor;
@@ -67,7 +67,7 @@ public class PickAnyConstructorJsonConverter:JsonConverter
 
         var instance = constructor.Key.Invoke(constructor.Value.ToArray());
 
-        serializer.Populate(reader,instance);
+        serializer.Populate(reader, instance);
 
         var callback = instance as IPickAnyConstructorFinishedCallback;
         callback?.AfterConstruction();
@@ -100,8 +100,6 @@ public class PickAnyConstructorJsonConverter:JsonConverter
             $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 
-    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)
-    {
-        return ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
-    }
+    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType) =>
+        ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
 }

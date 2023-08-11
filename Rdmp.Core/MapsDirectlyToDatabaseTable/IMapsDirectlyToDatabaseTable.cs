@@ -23,7 +23,7 @@ public interface IMapsDirectlyToDatabaseTable : IDeleteable, INotifyPropertyChan
     /// Therefore for a given <see cref="IRepository"/> this uniquely identifies a given object.
     /// </summary>
     int ID { get; set; }
-        
+
     /// <summary>
     /// The persistence database that stores the object.  For example a <see cref="TableRepository"/>.
     /// </summary>
@@ -36,7 +36,7 @@ public interface IMapsDirectlyToDatabaseTable : IDeleteable, INotifyPropertyChan
     void SetReadOnly();
 
     //you must have a Property for each thing in your database table (With the same name)
-        
+
     //use MapsDirectlyToDatabaseTableRepository to fully utilise this interface
 
     //ensure you have a the same class name as the table name DIRECTLY

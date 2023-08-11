@@ -34,6 +34,5 @@ public class CopyPasteProvider
             if (command != null)
                 Clipboard.SetDataObject(command);
         }
-            
     }
 }

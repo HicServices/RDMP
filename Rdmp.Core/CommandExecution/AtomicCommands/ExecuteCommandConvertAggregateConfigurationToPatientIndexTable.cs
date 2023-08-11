@@ -18,27 +18,29 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
     private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortIdentificationConfiguration cic) 
-        : this(activator,new AggregateConfigurationCombineable(aggregate),cic)
+    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator,
+        AggregateConfiguration aggregate, CohortIdentificationConfiguration cic)
+        : this(activator, new AggregateConfigurationCombineable(aggregate), cic)
     {
-
     }
 
-    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
+    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator,
+        AggregateConfigurationCombineable sourceAggregateConfigurationCommand,
+        CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
     {
         _sourceAggregateConfigurationCombineable = sourceAggregateConfigurationCommand;
         _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
 
-        if(sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
+        if (sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
             SetImpossible("Aggregate is already a Patient Index Table");
 
         var cic = _sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny;
 
-        if( cic != null && cic.ID != _cohortIdentificationConfiguration.ID)
+        if (cic != null && cic.ID != _cohortIdentificationConfiguration.ID)
             SetImpossible(
                 $"Aggregate '{_sourceAggregateConfigurationCombineable.Aggregate}'  belongs to a different Cohort Identification Configuration");
-            
-        if(cic != null && cic.ShouldBeReadOnly(out var reason))
+
+        if (cic != null && cic.ShouldBeReadOnly(out var reason))
             SetImpossible(reason);
     }
 
@@ -53,8 +55,9 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
         parent?.RemoveChild(sourceAggregate);
 
         //create a new patient index table usage allowance for this aggregate
-        new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
-            
+        new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,
+            _cohortIdentificationConfiguration, sourceAggregate);
+
         Publish(_cohortIdentificationConfiguration);
         Emphasise(sourceAggregate);
     }

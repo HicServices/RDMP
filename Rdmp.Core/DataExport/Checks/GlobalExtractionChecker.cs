@@ -34,12 +34,15 @@ public class GlobalExtractionChecker : ICheckable
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="configuration"></param>
-    public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration) : this (activator,configuration, null, null)
-    { }
+    public GlobalExtractionChecker(IBasicActivateItems activator, ExtractionConfiguration configuration) : this(
+        activator, configuration, null, null)
+    {
+    }
 
 
     /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
-    public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
+    public GlobalExtractionChecker(IBasicActivateItems activator, ExtractionConfiguration configuration,
+        ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
     {
         _configuration = configuration;
         _command = command;
@@ -62,7 +65,8 @@ public class GlobalExtractionChecker : ICheckable
 
         if (_alsoCheckPipeline != null && _command != null)
         {
-            var engine = new ExtractionPipelineUseCase(_activator,_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
+            var engine = new ExtractionPipelineUseCase(_activator, _configuration.Project, _command, _alsoCheckPipeline,
+                    DataLoadInfo.Empty)
                 .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
             engine.Check(notifier);
         }

@@ -34,8 +34,7 @@ public class CatalogueCollectionFilter : IModelFilter
         _isNonExtractable = UserSettings.ShowNonExtractableCatalogues;
     }
 
-    public bool Filter(object modelObject)
-    {
-        return SearchablesMatchScorer.Filter(modelObject, ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage, _isProjectSpecific, _isNonExtractable);
-    }
+    public bool Filter(object modelObject) => SearchablesMatchScorer.Filter(modelObject,
+        ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage,
+        _isProjectSpecific, _isNonExtractable);
 }

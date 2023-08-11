@@ -16,7 +16,7 @@ public enum JoinInfoType
     /// Either <see cref="ForeignKey"/> or <see cref="PrimaryKey"/> (only valid for querying)
     /// </summary>
     AnyKey,
-        
+
     /// <summary>
     /// The child table which contains a field referencing the primary key of the parent table
     /// </summary>

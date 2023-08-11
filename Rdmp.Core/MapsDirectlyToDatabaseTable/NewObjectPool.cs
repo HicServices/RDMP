@@ -17,7 +17,7 @@ public static class NewObjectPool
 
     public static void Add(IMapsDirectlyToDatabaseTable toCreate)
     {
-        lock(currentScopeLock)
+        lock (currentScopeLock)
         {
             CurrentScope?.Objects.Add(toCreate);
         }
@@ -68,7 +68,7 @@ public static class NewObjectPool
 
     private class Scope : IDisposable
     {
-        public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
+        public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new();
 
 
         public void Dispose()

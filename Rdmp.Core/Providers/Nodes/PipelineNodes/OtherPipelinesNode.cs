@@ -14,12 +14,11 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 /// pipelines for which are not compatible with core RDMP use cases (these might be broken or designed for plugin code / custom goals - 
 /// e.g. loading imaging data).
 /// </summary>
-public class OtherPipelinesNode:SingletonNode
+public class OtherPipelinesNode : SingletonNode
 {
-    public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
+    public List<Pipeline> Pipelines { get; } = new();
 
-    public OtherPipelinesNode():base("Other Pipelines")
+    public OtherPipelinesNode() : base("Other Pipelines")
     {
-            
     }
 }

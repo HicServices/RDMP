@@ -11,7 +11,7 @@ namespace Rdmp.Core.CommandLine.Options;
 /// <summary>
 /// Abstract base for all engines which execute operations in parallel (e.g. data extraction)
 /// </summary>
-public abstract class ConcurrentRDMPCommandLineOptions:RDMPCommandLineOptions
+public abstract class ConcurrentRDMPCommandLineOptions : RDMPCommandLineOptions
 {
     /// <summary>
     /// Maximum number of operations to perform at once

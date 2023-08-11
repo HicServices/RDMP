@@ -18,10 +18,10 @@ internal class ConsoleInputManagerTests : UnitTests
     public void TestDisallowInput()
     {
         var manager = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
- {
-     DisallowInput = true
- };
+        {
+            DisallowInput = true
+        };
 
-        Assert.Throws<InputDisallowedException>(()=>manager.GetString(new DialogArgs { WindowTitle = "bob" }, null));
+        Assert.Throws<InputDisallowedException>(() => manager.GetString(new DialogArgs { WindowTitle = "bob" }, null));
     }
 }

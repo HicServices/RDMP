@@ -35,7 +35,6 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// </summary>
 public abstract class Argument : DatabaseEntity, IArgument
 {
-
     /// <summary>
     /// All Types that are supported for <see cref="Type"/> and <see cref="Value"/> of <see cref="IArgument"/>s.
     /// 
@@ -43,7 +42,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     /// </summary>
     public static readonly Type[] PermissableTypes =
     {
-        typeof(char?),typeof(char),
+        typeof(char?), typeof(char),
         typeof(int?), typeof(int),
         typeof(DateTime?), typeof(DateTime),
         typeof(double?), typeof(double),
@@ -54,21 +53,23 @@ public abstract class Argument : DatabaseEntity, IArgument
         typeof(string), typeof(FileInfo),
         typeof(DirectoryInfo),
         typeof(Enum), typeof(Uri), typeof(Regex),
-            
+
         typeof(Type),
 
         //IMapsDirectlyToDatabaseTable
-        typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), typeof(LoadMetadata),
-        typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
-        typeof(RemoteRDMP),typeof(Catalogue),typeof(CatalogueItem),
+        typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress),
+        typeof(LoadMetadata),
+        typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),
+        typeof(CohortIdentificationConfiguration),
+        typeof(RemoteRDMP), typeof(Catalogue), typeof(CatalogueItem),
         typeof(DataAccessCredentials),
-           
+
         //wierd special cases
         typeof(ICustomUIDrivenClass), typeof(EncryptedString),
-            
+
         //special static argument type, always gets the same value never has a database persisted value
-        typeof(CatalogueRepository), 
-            
+        typeof(CatalogueRepository),
+
         //user must be IDemandToUseAPipeline<T>
         typeof(Pipeline)
     };
@@ -84,7 +85,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <inheritdoc/>
@@ -92,27 +93,27 @@ public abstract class Argument : DatabaseEntity, IArgument
     public string Value
     {
         get => _value;
-        set => SetField(ref  _value, value);
+        set => SetField(ref _value, value);
     }
 
     /// <inheritdoc/>
     public string Type
     {
         get => _type;
-        protected set => SetField(ref  _type, value);
+        protected set => SetField(ref _type, value);
     }
 
     /// <inheritdoc/>
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     #endregion
 
     /// <inheritdoc/>
-    protected Argument():base()
+    protected Argument() : base()
     {
     }
 
@@ -123,10 +124,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     }
 
     /// <inheritdoc/>
-    public object GetValueAsSystemType()
-    {
-        return Deserialize(Value, Type);
-    }
+    public object GetValueAsSystemType() => Deserialize(Value, Type);
 
     private object Deserialize(string value, string type)
     {
@@ -216,7 +214,6 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
             try
             {
-
                 return Repository.GetObjectByID(concreteType, Convert.ToInt32(value));
             }
             catch (KeyNotFoundException)
@@ -242,15 +239,12 @@ public abstract class Argument : DatabaseEntity, IArgument
             }
         }
 
-        if (typeof(IDictionary).IsAssignableFrom(concreteType))
-        {
-            return DeserializeDictionary(value,concreteType);
-        }
+        if (typeof(IDictionary).IsAssignableFrom(concreteType)) return DeserializeDictionary(value, concreteType);
 
         if (type.Equals(typeof(EncryptedString).ToString()))
             return new EncryptedString(CatalogueRepository) { Value = value };
 
-        if(type.Equals(typeof(CultureInfo).ToString()))
+        if (type.Equals(typeof(CultureInfo).ToString()))
             return new CultureInfo(value);
 
         throw new NotSupportedException($"Custom arguments cannot be of type {type}");
@@ -272,26 +266,27 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 var constructor = new ObjectConstructor();
 
-                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository) Repository);
-
+                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository)Repository);
             }
             catch (Exception e)
             {
                 throw new Exception(
-                    $"Failed to create an ICustomUIDrivenClass of type {concreteType.FullName} make sure that you mark your class as public, commit it to the catalogue and mark it with the export ''", e);
+                    $"Failed to create an ICustomUIDrivenClass of type {concreteType.FullName} make sure that you mark your class as public, commit it to the catalogue and mark it with the export ''",
+                    e);
             }
 
             try
             {
-                result.RestoreStateFrom(value);//, (CatalogueRepository)Repository);
+                result.RestoreStateFrom(value); //, (CatalogueRepository)Repository);
             }
             catch (Exception e)
             {
                 throw new Exception(
-                    $"RestoreState failed on your ICustomUIDrivenClass called {concreteType.FullName} the restore value was the string value '{value}'", e);
+                    $"RestoreState failed on your ICustomUIDrivenClass called {concreteType.FullName} the restore value was the string value '{value}'",
+                    e);
             }
 
-            answer =  result;
+            answer = result;
             return true;
         }
 
@@ -300,20 +295,15 @@ public abstract class Argument : DatabaseEntity, IArgument
     }
 
     /// <inheritdoc/>
-    public Type GetSystemType()
-    {
-        return GetSystemType(Type);
-    }
+    public Type GetSystemType() => GetSystemType(Type);
 
     private Type GetSystemType(string type)
     {
         //if we know they type (it is exactly one we are expecting)
         foreach (var knownType in PermissableTypes)
-        {
             //return the type
             if (knownType.ToString().Equals(type))
                 return knownType;
-        }
 
         var arrayType = new Regex(@"(.*)\[]");
         var arrayMatch = arrayType.Match(type);
@@ -324,27 +314,25 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
             var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString) ?? throw new Exception(
-                    $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
+                $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
             return Array.CreateInstance(elementType, 0).GetType();
         }
 
         if (IsDictionary(type, out var kType, out var vType))
         {
             var genericClass = typeof(Dictionary<,>);
-            var constructedClass = genericClass.MakeGenericType(kType,vType);
+            var constructedClass = genericClass.MakeGenericType(kType, vType);
             return constructedClass;
         }
 
         //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-        var anyType = CatalogueRepository.MEF.GetType(type) ?? throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
+        var anyType = CatalogueRepository.MEF.GetType(type) ??
+                      throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
         return anyType;
     }
 
     /// <inheritdoc/>
-    public Type GetConcreteSystemType()
-    {
-        return GetConcreteSystemType(Type);
-    }
+    public Type GetConcreteSystemType() => GetConcreteSystemType(Type);
 
     /// <inheritdoc cref="GetConcreteSystemType()"/>
     public Type GetConcreteSystemType(string typeAsString)
@@ -372,6 +360,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         Type = t.ToString();
     }
+
     /// <inheritdoc/>
     public void SetValue(object o)
     {
@@ -423,12 +412,11 @@ public abstract class Argument : DatabaseEntity, IArgument
                 $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
         }
 
-        if (type != null && typeof (IDictionary).IsAssignableFrom(type))
-            return SerializeDictionary((IDictionary) o);
+        if (type != null && typeof(IDictionary).IsAssignableFrom(type))
+            return SerializeDictionary((IDictionary)o);
 
         //if we already have a known type set on us
         if (!string.IsNullOrWhiteSpace(asType))
-        {
             //if we are not being passed an Enum
             if (!typeof(Enum).IsAssignableFrom(type))
             {
@@ -448,9 +436,7 @@ public abstract class Argument : DatabaseEntity, IArgument
                         throw new Exception(
                             $"Cannot set value {o} (of Type {o.GetType().FullName}) to on ProcessTaskArgument because it has an incompatible Type specified ({type.FullName})");
                     }
-
             }
-        }
 
         if (o is IMapsDirectlyToDatabaseTable table)
             return table.ID.ToString();
@@ -459,6 +445,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     }
 
     #region Dictionary Handling
+
     private IDictionary DeserializeDictionary(string value, Type type)
     {
         var instance = (IDictionary)Activator.CreateInstance(type);
@@ -481,7 +468,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 var valueInstance = Deserialize(vValue, vType);
 
-                instance.Add(keyInstance,valueInstance);
+                instance.Add(keyInstance, valueInstance);
             }
         }
 
@@ -505,13 +492,14 @@ public abstract class Argument : DatabaseEntity, IArgument
                     var keyObjectType = keyObject.GetType().ToString();
 
                     var valueObject = entry.Value;
-                    var valueObjectType = valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
+                    var valueObjectType =
+                        valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
 
                     xmlWriter.WriteStartElement("entry");
 
                     xmlWriter.WriteStartElement("key");
                     xmlWriter.WriteAttributeString("type", keyObjectType);
-                    xmlWriter.WriteAttributeString("o", Serialize(keyObject,keyObjectType));
+                    xmlWriter.WriteAttributeString("o", Serialize(keyObject, keyObjectType));
                     xmlWriter.WriteEndElement();
 
                     xmlWriter.WriteStartElement("value");
@@ -524,8 +512,8 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 xmlWriter.WriteEndDocument();
                 xmlWriter.Close();
-
             }
+
             return sw.ToString();
         }
     }
@@ -559,5 +547,6 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         return true;
     }
+
     #endregion
 }

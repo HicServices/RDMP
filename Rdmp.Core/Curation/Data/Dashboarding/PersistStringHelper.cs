@@ -65,7 +65,7 @@ public sealed class PersistStringHelper
     /// <returns></returns>
     public static Dictionary<string, string> LoadDictionaryFromString(string str)
     {
-        if(string.IsNullOrWhiteSpace(str))
+        if (string.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
 
         var rootElement = XElement.Parse(str);
@@ -95,7 +95,6 @@ public sealed class PersistStringHelper
     /// <returns></returns>
     public static string GetObjectCollectionPersistString(params IMapsDirectlyToDatabaseTable[] objects)
     {
-
         var sb = new StringBuilder();
 
         //output [obj1,obj2,obj3]
@@ -111,7 +110,9 @@ public sealed class PersistStringHelper
         return sb.ToString();
     }
 
-    private static readonly Regex CollectionPattern = new($"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}",RegexOptions.CultureInvariant);
+    private static readonly Regex CollectionPattern =
+        new($"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}",
+            RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Returns the object list section of any <paramref name="persistenceString"/>. This string must take the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]
@@ -140,13 +141,15 @@ public sealed class PersistStringHelper
     /// <param name="allObjectsString">A string with a list of objects ID's, should have the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]</param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static List<IMapsDirectlyToDatabaseTable> GetObjectCollectionFromPersistString(string allObjectsString,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
         allObjectsString = allObjectsString.Trim(CollectionStartDelimiter, CollectionEndDelimiter);
 
-        var objectStrings = allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
+        var objectStrings =
+            allObjectsString.Split(new[] { CollectionObjectSeparator }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var objectString in objectStrings)
         {
@@ -156,7 +159,8 @@ public sealed class PersistStringHelper
                 throw new PersistenceException(
                     $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
 
-            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], int.Parse(objectTokens[2]));
+            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1],
+                int.Parse(objectTokens[2]));
 
             if (dbObj != null)
                 toReturn.Add(dbObj);
@@ -192,10 +196,9 @@ public sealed class PersistStringHelper
     /// <returns></returns>
     public static bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing)
     {
-        if(dict == null || !dict.ContainsKey(key))
+        if (dict == null || !dict.ContainsKey(key))
             return valueIfMissing;
 
         return bool.Parse(dict[key]);
     }
-
 }

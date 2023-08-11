@@ -53,19 +53,13 @@ public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
         {
             toFile = BasicActivator.SelectFile("Save as", "Comma Separated Values", "*.csv");
             if (toFile == null)
-            {
                 // user cancelled selecting a file
                 return;
-            }
         }
 
         if (toFile != null)
-        {
             ExtractTableVerbatim.ExtractDataToFile(collection, toFile);
-        }
         else
-        {
             BasicActivator.ShowData(collection);
-        }
     }
 }

@@ -31,31 +31,18 @@ public class ExtractionFilterFactory : IFilterFactory
     }
 
     /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name)
-    {
-        return new ExtractionFilter(_repository, name, _extractionInformation);
-    }
+    public IFilter CreateNewFilter(string name) => new ExtractionFilter(_repository, name, _extractionInformation);
 
     /// <inheritdoc/>
-    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
-    {
-        return new ExtractionFilterParameter(_repository, parameterSQL, (ExtractionFilter)filter);
-    }
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
+        new ExtractionFilterParameter(_repository, parameterSQL, (ExtractionFilter)filter);
 
     /// <inheritdoc/>
-    public Type GetRootOwnerType()
-    {
-        return typeof(ExtractionInformation);
-    }
+    public Type GetRootOwnerType() => typeof(ExtractionInformation);
 
     /// <inheritdoc/>
-    public Type GetIContainerTypeIfAny()
-    {
-        return null;
-    }
+    public Type GetIContainerTypeIfAny() => null;
 
-    public IContainer CreateNewContainer()
-    {
+    public IContainer CreateNewContainer() =>
         throw new NotSupportedException("Catalogue level master filters do not support IContainers");
-    }
 }

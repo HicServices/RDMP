@@ -21,27 +21,23 @@ public partial class Chi : PrimaryConstraint
             return null;
 
 
-        if(value is not string valueAsString)
+        if (value is not string valueAsString)
             return new ValidationFailure(
-                $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}",this);
+                $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}", this);
 
         if (!IsValidChi(valueAsString, out var reason))
-            return new ValidationFailure(reason,this);
-           
+            return new ValidationFailure(reason, this);
+
         return null;
     }
 
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return
-            "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
-    }
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
 
     public static bool IsValidChi(string columnValueAsString, out string reason)
     {
@@ -56,7 +52,7 @@ public partial class Chi : PrimaryConstraint
         var yy = columnValueAsString.Substring(4, 2);
 
         //maybe tryparse instead
-        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out DateTime outDt) == false)
+        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out var outDt) == false)
         {
             reason = "First 6 numbers of CHI did not constitute a valid date";
             return false;
@@ -71,7 +67,6 @@ public partial class Chi : PrimaryConstraint
 
         reason = null;
         return true;
-
     }
 
     /// <summary>
@@ -96,7 +91,6 @@ public partial class Chi : PrimaryConstraint
         if (c == 11) c = 0;
 
         return ((char)(c + '0')).ToString();
-
     }
 
     /// <summary>
@@ -106,8 +100,7 @@ public partial class Chi : PrimaryConstraint
     /// <returns>1 for male and 0 for female</returns>
     public static int GetSex(string chi)
     {
-
-        if (!IsValidChiNumber(chi, out string errorReport))
+        if (!IsValidChiNumber(chi, out var errorReport))
             throw new ArgumentException("Invalid CHI");
 
         var sexChar = chi[8];
@@ -162,10 +155,7 @@ public partial class Chi : PrimaryConstraint
     {
         var sum = 0;
         var factor = 10;
-        for (var i = 0; i < 9; i++)
-        {
-            sum += (chi[i] - 48) * factor--;
-        }
+        for (var i = 0; i < 9; i++) sum += (chi[i] - 48) * factor--;
 
         return sum;
     }

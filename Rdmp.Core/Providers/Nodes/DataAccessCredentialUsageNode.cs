@@ -13,41 +13,35 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <summary>
 /// Tree Node for documenting the allowed usage of a specific DataAccessCredentials (username / password) under a given DataAccessContext (loading, extracting etc).
 /// </summary>
-public class DataAccessCredentialUsageNode:Node, IDeleteable
+public class DataAccessCredentialUsageNode : Node, IDeleteable
 {
     public DataAccessCredentials Credentials { get; private set; }
     public ITableInfo TableInfo { get; private set; }
     public DataAccessContext Context { get; private set; }
 
-    public DataAccessCredentialUsageNode(DataAccessCredentials credentials,ITableInfo tableInfo,DataAccessContext context)
+    public DataAccessCredentialUsageNode(DataAccessCredentials credentials, ITableInfo tableInfo,
+        DataAccessContext context)
     {
         Credentials = credentials;
         TableInfo = tableInfo;
         Context = context;
     }
 
-    public override string ToString()
-    {
-        return $"{Credentials} (Under Context:{Context})";
-    }
+    public override string ToString() => $"{Credentials} (Under Context:{Context})";
 
-    protected bool Equals(DataAccessCredentialUsageNode other)
-    {
-        return Equals(Credentials, other.Credentials) && Equals(TableInfo, other.TableInfo) && Context == other.Context;
-    }
+    protected bool Equals(DataAccessCredentialUsageNode other) => Equals(Credentials, other.Credentials) &&
+                                                                  Equals(TableInfo, other.TableInfo) &&
+                                                                  Context == other.Context;
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((DataAccessCredentialUsageNode) obj);
+        return Equals((DataAccessCredentialUsageNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return System.HashCode.Combine(Credentials, TableInfo, Context);
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Credentials, TableInfo, Context);
 
     public void DeleteInDatabase()
     {

@@ -29,7 +29,7 @@ public class Tutorial
     public bool UserHasSeen
     {
         get => UserSettings.GetTutorialDone(Guid);
-        set => UserSettings.SetTutorialDone(Guid,value);
+        set => UserSettings.SetTutorialDone(Guid, value);
     }
 
     public Tutorial(string name, ICommandExecution commandExecutionExecution, Guid guid)
@@ -39,5 +39,4 @@ public class Tutorial
         Guid = guid;
         CommandType = commandExecutionExecution.GetType();
     }
-
 }

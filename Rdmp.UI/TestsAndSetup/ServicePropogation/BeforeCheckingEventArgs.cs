@@ -14,7 +14,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 public class BeforeCheckingEventArgs : EventArgs
 {
     public ICheckable Checkable { get; private set; }
-    public ICheckNotifier CheckNotifier{ get; private set; }
+    public ICheckNotifier CheckNotifier { get; private set; }
 
     /// <summary>
     /// True to cancel the checking process

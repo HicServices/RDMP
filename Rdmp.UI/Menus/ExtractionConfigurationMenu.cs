@@ -13,19 +13,19 @@ using Rdmp.UI.ProjectUI;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class ExtractionConfigurationMenu:RDMPContextMenuStrip
+internal class ExtractionConfigurationMenu : RDMPContextMenuStrip
 {
     public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
-        : base( args,extractionConfiguration)
+        : base(args, extractionConfiguration)
     {
-        Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
+        Items.Add("Edit", null,
+            (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
 
-        Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f}.SetTarget(extractionConfiguration));
+        Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f }.SetTarget(extractionConfiguration));
         Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
         Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
 
         ReBrandActivateAs("Configure/Run Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
     }
-
 }

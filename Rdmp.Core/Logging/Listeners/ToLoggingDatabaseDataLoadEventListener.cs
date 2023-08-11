@@ -35,7 +35,8 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     /// </summary>
     public IDataLoadInfo DataLoadInfo { get; private set; }
 
-    public ToLoggingDatabaseDataLoadEventListener(object hostingApplication, LogManager logManager, string loggingTask, string runDescription)
+    public ToLoggingDatabaseDataLoadEventListener(object hostingApplication, LogManager logManager, string loggingTask,
+        string runDescription)
     {
         _hostingApplication = hostingApplication;
         _logManager = logManager;
@@ -54,7 +55,8 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     {
         _logManager.CreateNewLoggingTaskIfNotExists(_loggingTask);
 
-        DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
+        DataLoadInfo =
+            _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
     }
 
     public virtual void OnNotify(object sender, NotifyEventArgs e)
@@ -68,15 +70,20 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(), e.Message);
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
+                    e.Message);
                 break;
             case ProgressEventType.Warning:
-                var msg = e.Message + (e.Exception == null?"": Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true));
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning,sender.ToString(), msg);
+                var msg = e.Message + (e.Exception == null
+                    ? ""
+                    : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
                 break;
             case ProgressEventType.Error:
-                var err = e.Message + (e.Exception == null ? "" : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogFatalError(sender.ToString(),err);
+                var err = e.Message + (e.Exception == null
+                    ? ""
+                    : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
+                DataLoadInfo.LogFatalError(sender.ToString(), err);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -87,16 +94,17 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     {
         if (DataLoadInfo == null)
             StartLogging();
-            
+
         Debug.Assert(DataLoadInfo != null, "DataLoadInfo != null");
 
         if (e.Progress.UnitOfMeasurement == ProgressType.Records)
         {
             //if(!tableLoads.Any(tbl=>tbl.))
-            if(!TableLoads.ContainsKey(e.TaskDescription))
+            if (!TableLoads.ContainsKey(e.TaskDescription))
             {
-                var t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription, new[] {new DataSource(sender.ToString())},e.Progress.KnownTargetValue);
-                TableLoads.Add(e.TaskDescription,t);
+                var t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription,
+                    new[] { new DataSource(sender.ToString()) }, e.Progress.KnownTargetValue);
+                TableLoads.Add(e.TaskDescription, t);
             }
 
             TableLoads[e.TaskDescription].Inserts = e.Progress.Value;
@@ -108,7 +116,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         foreach (var tableLoadInfo in TableLoads.Values)
             tableLoadInfo.CloseAndArchive();
 
-        if(!_wasAlreadyOpen)
+        if (!_wasAlreadyOpen)
             DataLoadInfo.CloseAndMarkComplete();
     }
 }

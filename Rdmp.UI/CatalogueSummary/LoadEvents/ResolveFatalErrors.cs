@@ -30,13 +30,15 @@ public partial class ResolveFatalErrors : RDMPForm
     private readonly ArchivalFatalError[] _toResolve;
     public Scintilla Explanation { get; set; }
 
-    public ResolveFatalErrors(IActivateItems activator,LogManager logManager, ArchivalFatalError[] toResolve):base(activator)
+    public ResolveFatalErrors(IActivateItems activator, LogManager logManager, ArchivalFatalError[] toResolve) :
+        base(activator)
     {
         _logManager = logManager;
         _toResolve = toResolve;
         InitializeComponent();
 
-        if (VisualStudioDesignMode || logManager == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode ||
+            logManager == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         Explanation = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
@@ -53,19 +55,17 @@ public partial class ResolveFatalErrors : RDMPForm
     private void btnSaveAndClose_Click(object sender, EventArgs e)
     {
         var newState = DataLoadInfo.FatalErrorStates.Resolved;
-            
+
         if (string.IsNullOrEmpty(Explanation.Text))
-            Explanation.Text = "No Explanation"; 
+            Explanation.Text = "No Explanation";
 
         //resolve it in the database
         _logManager.ResolveFatalErrors(_toResolve.Select(f => f.ID).ToArray(), newState, Explanation.Text);
-            
+
         //resolve it in memory
         foreach (var error in _toResolve)
             error.Explanation = Explanation.Text;
 
         Close();
     }
-
-        
 }

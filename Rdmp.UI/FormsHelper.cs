@@ -30,9 +30,8 @@ public static class FormsHelper
             rect = Rectangle.Intersect(rect, c.RectangleToScreen(c.ClientRectangle));
             c = c.Parent;
         }
+
         rect = originalControl.RectangleToClient(rect);
         return rect;
     }
-        
-        
 }

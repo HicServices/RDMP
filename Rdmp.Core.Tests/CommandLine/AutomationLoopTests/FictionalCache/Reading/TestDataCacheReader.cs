@@ -38,17 +38,11 @@ public class TestDataCacheReader : ICachedDataProvider
         throw new NotImplementedException();
     }
 
-    public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-    {
+    public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken) =>
         throw new NotImplementedException();
-    }
 
     public CacheArchiveType CacheArchiveType { get; set; }
     public string CacheDateFormat { get; set; }
     public Type CacheLayoutType { get; set; }
-    public ILoadCachePathResolver CreateResolver(ILoadProgress loadProgress)
-    {
-        throw new NotImplementedException();
-    }
-
+    public ILoadCachePathResolver CreateResolver(ILoadProgress loadProgress) => throw new NotImplementedException();
 }

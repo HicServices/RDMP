@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data;
 /// A line of WHERE sql which can be combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes 
 /// up the IFilter) or SpontaneouslyInventedFilter.
 /// </summary>
-public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,ICheckable, IMightBeReadOnly
+public interface IFilter : ICollectSqlParameters, INamed, IHasQuerySyntaxHelper, ICheckable, IMightBeReadOnly
 {
     /// <summary>
     /// Single line of WHERE Sql for use in query generation.  Does not include the WHERE keyword.
@@ -29,7 +29,7 @@ public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,I
     /// Human readable description of what the WHERE logic is supposed to achieve (e.g. Tayside records only)
     /// </summary>
     string Description { get; set; }
-        
+
     /// <summary>
     /// True if the <see cref="IFilter"/> should always be used with the <see cref="Catalogue"/> it is associated with if any (See <see cref="GetCatalogue"/>).
     /// 
@@ -54,7 +54,7 @@ public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,I
 
     /// <inheritdoc cref="FilterContainer_ID"/>
     [NoMappingToDatabase]
-    IContainer FilterContainer { get;}
+    IContainer FilterContainer { get; }
 
     /// <summary>
     /// Fetches the underlying <see cref="ColumnInfo"/> for the column (e.g. <see cref="CatalogueItem"/>) which this <see cref="IFilter"/> is ultimately associated with).
@@ -77,5 +77,4 @@ public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,I
     /// </summary>
     /// <returns></returns>
     Catalogue GetCatalogue();
-        
 }

@@ -69,7 +69,7 @@ public interface ICacheProgress : INamed, ILoggedActivityRootObject
     IEnumerable<ICacheFetchFailure> CacheFetchFailures { get; }
 
     /// <inheritdoc cref="LoadProgress_ID"/>
-    ILoadProgress LoadProgress { get;}
+    ILoadProgress LoadProgress { get; }
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
     CacheLagPeriod GetCacheLagPeriod();

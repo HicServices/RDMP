@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class LoadMetadataScheduleNode : Node,IOrderable
+public class LoadMetadataScheduleNode : Node, IOrderable
 {
     public LoadMetadata LoadMetadata { get; private set; }
 
@@ -18,29 +18,23 @@ public class LoadMetadataScheduleNode : Node,IOrderable
         LoadMetadata = loadMetadata;
     }
 
-    public override string ToString()
-    {
-        return "Scheduling";
-    }
+    public override string ToString() => "Scheduling";
 
-    protected bool Equals(LoadMetadataScheduleNode other)
-    {
-        return Equals(LoadMetadata, other.LoadMetadata);
-    }
+    protected bool Equals(LoadMetadataScheduleNode other) => Equals(LoadMetadata, other.LoadMetadata);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadMetadataScheduleNode) obj);
+        return Equals((LoadMetadataScheduleNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+
+    public int Order
     {
-        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+        get => 0;
+        set { }
     }
-
-    public int Order { get => 0;
-        set{} }
 }

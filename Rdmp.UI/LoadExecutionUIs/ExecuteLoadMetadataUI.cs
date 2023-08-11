@@ -48,13 +48,15 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         StopAfterSTAGING,
         SkipArchiving
     }
-               
+
     public ExecuteLoadMetadataUI()
     {
         InitializeComponent();
 
-        helpIconRunRepeatedly.SetHelpText("Run Repeatedly", "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
-        helpIconAbortShouldCancel.SetHelpText("Abort Behaviour", "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
+        helpIconRunRepeatedly.SetHelpText("Run Repeatedly",
+            "By default running a scheduled load will run the number of days specified as a single load (e.g. 5 days of data).  Ticking this box means that if the load is succesful a further 5 days will be executed and again until either a data load fails or the load is up to date.");
+        helpIconAbortShouldCancel.SetHelpText("Abort Behaviour",
+            "By default clicking the Abort button (in Controls) will issue an Abort flag on a run which usually results in it completing the current stage (e.g. Migrate RAW to STAGING) then stop.  Ticking this button in a Load Progress based load will make the button instead issue a Cancel notification which means the data load will complete the current LoadProgress and then not start a new one.  This is only an option when you have ticked 'Run Repeatedly' (left)");
 
         AssociatedCollection = RDMPCollection.DataLoad;
 
@@ -64,28 +66,28 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         dd_DebugOptions.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         dd_DebugOptions.ComboBox.DataSource = Enum.GetValues(typeof(DebugOptions));
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _loadMetadata = databaseObject;
 
         checkAndExecuteUI1.SetItemActivator(activator);
-            
-        SetButtonStates(null,null);
+
+        SetButtonStates(null, null);
 
         SetLoadProgressGroupBoxState();
-            
+
 
         CommonFunctionality.Add(new ExecuteCommandViewLoadDiagram(activator, _loadMetadata));
 
         CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
-            
-        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata) databaseObject));
-            
+
+        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata)databaseObject));
+
         CommonFunctionality.Add(dd_DebugOptions);
     }
-        
+
     private void SetLoadProgressGroupBoxState()
     {
         _allLoadProgresses = _loadMetadata.LoadProgresses;
@@ -96,10 +98,10 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             gbLoadProgresses.Visible = true;
 
             //give the user the dropdown options for which load progress he wants to run
-            var loadProgressData = new Dictionary<int, string>( );
+            var loadProgressData = new Dictionary<int, string>();
 
             //if there are more than 1 let them pick any
-            if(_allLoadProgresses.Length > 1)
+            if (_allLoadProgresses.Length > 1)
                 loadProgressData.Add(0, "Any Available");
 
             foreach (var loadProgress in _allLoadProgresses)
@@ -119,7 +121,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
         gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
     }
-        
+
     private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
     {
         var lp = GetLoadProgressIfAny();
@@ -139,7 +141,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 
         if (lp != null)
             options.LoadProgress = lp.ID.ToString();
-            
+
         return options;
     }
 
@@ -148,7 +150,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         base.ConsultAboutClosing(sender, e);
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
-        
+
     private LoadProgress GetLoadProgressIfAny()
     {
         if (ddLoadProgress.SelectedIndex == -1)
@@ -161,7 +163,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         return Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
     }
 
-        
+
     private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
     {
         var loadprogress = GetLoadProgressIfAny();
@@ -173,13 +175,12 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
                 udDaysPerJob.Value = progresses[0].DefaultNumberOfDaysToLoadEachTime;
         }
         else
+        {
             udDaysPerJob.Value = loadprogress.DefaultNumberOfDaysToLoadEachTime;
+        }
     }
 
-    public override string GetTabName()
-    {
-        return $"Execution:{base.GetTabName()}";
-    }
+    public override string GetTabName() => $"Execution:{base.GetTabName()}";
 
     private void cbRunIteratively_CheckedChanged(object sender, EventArgs e)
     {

@@ -35,8 +35,8 @@ public class QueryBuilder : ISqlQueryBuilder
     /// <inheritdoc/>
     public string SQL
     {
-        get {
-
+        get
+        {
             lock (oSQLLock)
             {
                 if (SQLOutOfDate)
@@ -48,21 +48,25 @@ public class QueryBuilder : ISqlQueryBuilder
 
     /// <inheritdoc/>
     public string LimitationSQL { get; private set; }
+
     /// <inheritdoc/>
     public List<QueryTimeColumn> SelectColumns { get; private set; }
+
     /// <inheritdoc/>
     public List<ITableInfo> TablesUsedInQuery { get; private set; }
+
     /// <inheritdoc/>
     public List<JoinInfo> JoinsUsedInQuery { get; private set; }
+
     /// <inheritdoc/>
     public List<CustomLine> CustomLines { get; private set; }
 
     /// <inheritdoc/>
     public CustomLine TopXCustomLine { get; set; }
-        
+
     /// <inheritdoc/>
     public ParameterManager ParameterManager { get; private set; }
-        
+
     /// <summary>
     /// Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary key tables e.g. in a star schema.
     /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception 
@@ -76,12 +80,13 @@ public class QueryBuilder : ISqlQueryBuilder
     public IContainer RootFilterContainer
     {
         get => _rootFilterContainer;
-        set {
+        set
+        {
             _rootFilterContainer = value;
             SQLOutOfDate = true;
         }
     }
-        
+
     /// <inheritdoc/>
     public bool CheckSyntax { get; set; }
 
@@ -95,7 +100,7 @@ public class QueryBuilder : ISqlQueryBuilder
     /// <param name="salt">A 3 letter string indicating the desired SALT</param>
     public void SetSalt(string salt)
     {
-        if(string.IsNullOrWhiteSpace(salt))
+        if (string.IsNullOrWhiteSpace(salt))
             throw new NullReferenceException("Salt cannot be blank");
 
         _salt = salt;
@@ -103,7 +108,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
     public void SetLimitationSQL(string limitationSQL)
     {
-        if(limitationSQL != null && limitationSQL.Contains("top"))
+        if (limitationSQL != null && limitationSQL.Contains("top"))
             throw new Exception("Use TopX property instead of limitation SQL to acheive this");
 
         LimitationSQL = limitationSQL;
@@ -122,7 +127,7 @@ public class QueryBuilder : ISqlQueryBuilder
         set
         {
             //it already has that value
-            if(_topX == value)
+            if (_topX == value)
                 return;
 
             _topX = value;
@@ -138,7 +143,7 @@ public class QueryBuilder : ISqlQueryBuilder
     private IContainer _rootFilterContainer;
     private string _hashingAlgorithm;
     private int _topX;
-        
+
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
 
     /// <summary>
@@ -168,7 +173,7 @@ public class QueryBuilder : ISqlQueryBuilder
         //add the new ones to the list
         foreach (var col in columnsToAdd)
             AddColumn(col);
-                
+
         SQLOutOfDate = true;
     }
 
@@ -182,7 +187,7 @@ public class QueryBuilder : ISqlQueryBuilder
         {
             SelectColumns.Add(toAdd);
             SQLOutOfDate = true;
-        }   
+        }
     }
 
     /// <inheritdoc/>
@@ -191,7 +196,7 @@ public class QueryBuilder : ISqlQueryBuilder
         SQLOutOfDate = true;
         return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
     }
-        
+
     /// <summary>
     /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it. 
     /// </summary>
@@ -200,18 +205,19 @@ public class QueryBuilder : ISqlQueryBuilder
         var checkNotifier = new ThrowImmediatelyCheckNotifier();
 
         _sql = "";
-            
+
         //reset the Parameter knowledge
         ParameterManager.ClearNonGlobals();
 
         #region Setup to output the query, where we figure out all the joins etc
+
         //reset everything
-            
+
         SelectColumns.Sort();
-            
+
         //work out all the filters 
         Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
-           
+
         TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
 
         //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if there's WHERE sql that references them but no columns
@@ -221,7 +227,7 @@ public class QueryBuilder : ISqlQueryBuilder
                     TablesUsedInQuery.Add(force);
 
         PrimaryExtractionTable = primary;
-            
+
         SqlQueryBuilderHelper.FindLookups(this);
 
         JoinsUsedInQuery = SqlQueryBuilderHelper.FindRequiredJoins(this);
@@ -246,6 +252,7 @@ public class QueryBuilder : ISqlQueryBuilder
         /////////////////////////////////////////////Assemble Query///////////////////////////////
 
         #region Preamble (including variable declarations/initializations)
+
         //assemble the query - never use Environment.Newline, use TakeNewLine() so that QueryBuilder knows what line its got up to
         var toReturn = "";
 
@@ -255,7 +262,7 @@ public class QueryBuilder : ISqlQueryBuilder
             var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
             needsToldTheSyntaxHelper?.InjectKnown(QuerySyntaxHelper);
 
-            if(CheckSyntax)
+            if (CheckSyntax)
                 parameter.Check(checkNotifier);
 
             toReturn += GetParameterDeclarationSQL(parameter);
@@ -267,6 +274,7 @@ public class QueryBuilder : ISqlQueryBuilder
         #endregion
 
         #region Select (including all IColumns)
+
         toReturn += Environment.NewLine;
         toReturn += $"SELECT {LimitationSQL}{Environment.NewLine}";
 
@@ -274,8 +282,8 @@ public class QueryBuilder : ISqlQueryBuilder
         toReturn += Environment.NewLine;
 
         toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
-            
-        for (var i = 0; i < SelectColumns.Count;i++ )
+
+        for (var i = 0; i < SelectColumns.Count; i++)
         {
             //output each of the ExtractionInformations that the user requested and record the line number for posterity
             var columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
@@ -294,14 +302,14 @@ public class QueryBuilder : ISqlQueryBuilder
 
         //add user custom JOIN lines
         toReturn = AppendCustomLines(toReturn, QueryComponent.JoinInfoJoin);
-            
+
         #region Filters (WHERE)
 
         toReturn += SqlQueryBuilderHelper.GetWHERESQL(this);
-            
+
         toReturn = AppendCustomLines(toReturn, QueryComponent.WHERE);
         toReturn = AppendCustomLines(toReturn, QueryComponent.Postfix);
-            
+
         _sql = toReturn;
         SQLOutOfDate = false;
 
@@ -321,11 +329,8 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <inheritdoc/>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups()
-    {
-        return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
-    }
-        
+    public IEnumerable<Lookup> GetDistinctRequiredLookups() => SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+
     /// <summary>
     /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.
     /// </summary>
@@ -337,20 +342,20 @@ public class QueryBuilder : ISqlQueryBuilder
 
         if (!string.IsNullOrWhiteSpace(sqlParameter.Comment))
             toReturn += $"/*{sqlParameter.Comment}*/{Environment.NewLine}";
-            
+
         toReturn += sqlParameter.ParameterSQL + Environment.NewLine;
 
         //it's a table valued parameter! advanced
-        if (!string.IsNullOrEmpty(sqlParameter.Value) && Regex.IsMatch(sqlParameter.Value, @"\binsert\s+into\b",RegexOptions.IgnoreCase))
+        if (!string.IsNullOrEmpty(sqlParameter.Value) &&
+            Regex.IsMatch(sqlParameter.Value, @"\binsert\s+into\b", RegexOptions.IgnoreCase))
             toReturn += $"{sqlParameter.Value};{Environment.NewLine}";
         else
-            toReturn += $"SET {sqlParameter.ParameterName}={sqlParameter.Value};{Environment.NewLine}";//its a regular value
-            
+            toReturn +=
+                $"SET {sqlParameter.ParameterName}={sqlParameter.Value};{Environment.NewLine}"; //its a regular value
+
         return toReturn;
     }
 
-    public static string GetParameterDeclarationSQL(IEnumerable<ISqlParameter> sqlParameters)
-    {
-        return string.Join("", sqlParameters.Select(GetParameterDeclarationSQL));
-    }
+    public static string GetParameterDeclarationSQL(IEnumerable<ISqlParameter> sqlParameters) =>
+        string.Join("", sqlParameters.Select(GetParameterDeclarationSQL));
 }

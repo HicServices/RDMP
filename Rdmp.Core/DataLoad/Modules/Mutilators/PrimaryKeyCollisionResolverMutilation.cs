@@ -34,16 +34,17 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// </summary>
 public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 {
-
-    [DemandsInitialization("The table on which to resolve primary key collisions, must have PrimaryKeyCollision resolution setup for it in the Data Catalogue", Mandatory = true)]
+    [DemandsInitialization(
+        "The table on which to resolve primary key collisions, must have PrimaryKeyCollision resolution setup for it in the Data Catalogue",
+        Mandatory = true)]
     public TableInfo TargetTable { get; set; }
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-
     }
 
     private DiscoveredDatabase _dbInfo;
+
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
         if (loadStage != LoadStage.AdjustRaw)
@@ -62,8 +63,7 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 
     private void ResolvePrimaryKeyConflicts(IDataLoadEventListener job)
     {
-
-        using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
+        using (var con = (SqlConnection)_dbInfo.Server.GetConnection())
         {
             con.Open();
 
@@ -76,7 +76,8 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
             //if there are no primary key collisions
             if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
+                job.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
                 return;
             }
 
@@ -97,7 +98,6 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 
     public void Check(ICheckNotifier notifier)
     {
-     
         if (TargetTable == null)
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",
@@ -111,8 +111,7 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Failed to check PrimaryKeyCollisionResolver on {TargetTable}",CheckResult.Fail, e));
+                $"Failed to check PrimaryKeyCollisionResolver on {TargetTable}", CheckResult.Fail, e));
         }
-            
     }
 }

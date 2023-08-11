@@ -29,7 +29,7 @@ public abstract class Bundle
         foreach (var o in finalObjectsDoNotAddToThisLater)
             States.Add(o, ExtractCommandState.NotLaunched);
     }
-        
+
     public void SetAllStatesTo(ExtractCommandState state)
     {
         foreach (var k in States.Keys.ToArray())
@@ -44,5 +44,6 @@ public abstract class Bundle
         //tell child to remove the object too
         OnDropContent(toDrop);
     }
+
     protected abstract void OnDropContent(object toDrop);
 }

@@ -22,7 +22,7 @@ public struct FixedWidthColumn
     /// are the same number then a 1 character is allotted for that column
     /// </summary>
     public int To;
-        
+
     /// <summary>
     /// The column name to ascribe to the column
     /// </summary>

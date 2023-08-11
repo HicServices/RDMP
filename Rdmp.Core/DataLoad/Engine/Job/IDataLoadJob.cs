@@ -41,6 +41,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     /// returned (but otherwise the load will complete normally).
     /// </summary>
     IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages { get; }
+
     List<ITableInfo> RegularTablesToLoad { get; }
     List<ITableInfo> LookupTablesToLoad { get; }
 
@@ -50,7 +51,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     void CloseLogging();
 
     HICDatabaseConfiguration Configuration { get; }
-        
+
     /// <summary>
     /// True to automatically skip creating/dropping the RAW database
     /// </summary>
@@ -62,10 +63,10 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     /// </summary>
     /// <param name="cloner"></param>
     /// <param name="stage"></param>
-    void CreateTablesInStage(DatabaseCloner cloner,LoadBubble stage);
+    void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage);
 
     void PushForDisposal(IDisposeAfterDataLoad disposeable);
-        
+
     /// <summary>
     /// Returns all <see cref="ColumnInfo"/> in <see cref="RegularTablesToLoad "/> and <see cref="LookupTablesToLoad"/>
     /// </summary>

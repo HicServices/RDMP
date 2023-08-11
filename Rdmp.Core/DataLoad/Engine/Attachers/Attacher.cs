@@ -21,10 +21,14 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers;
 /// </summary>
 public abstract class Attacher : IAttacher
 {
-    public const string Culture_DemandDescription = "Culture to use for bulk insert operations (determines date formats etc)";
-    public const string ExplicitDateTimeFormat_DemandDescription =  "Optional - explicit format for all date columns e.g. yyyy-MM-dd. See https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings";
+    public const string Culture_DemandDescription =
+        "Culture to use for bulk insert operations (determines date formats etc)";
+
+    public const string ExplicitDateTimeFormat_DemandDescription =
+        "Optional - explicit format for all date columns e.g. yyyy-MM-dd. See https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings";
 
     private CultureInfo _culture;
+
     [DemandsInitialization(Culture_DemandDescription)]
     public virtual CultureInfo Culture
     {
@@ -33,17 +37,20 @@ public abstract class Attacher : IAttacher
     }
 
     private string _explicitDateTimeFormat;
+
     [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
-    public virtual string ExplicitDateTimeFormat{
+    public virtual string ExplicitDateTimeFormat
+    {
         get => _explicitDateTimeFormat;
-        set => _explicitDateTimeFormat = value; }
+        set => _explicitDateTimeFormat = value;
+    }
 
     protected DiscoveredDatabase _dbInfo;
 
     public abstract ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
 
     public ILoadDirectory LoadDirectory { get; set; }
-        
+
     public bool RequestsExternalDatabaseCreation { get; private set; }
 
     public virtual void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
@@ -51,7 +58,7 @@ public abstract class Attacher : IAttacher
         LoadDirectory = directory;
         _dbInfo = dbInfo;
     }
-        
+
     protected Attacher(bool requestsExternalDatabaseCreation)
     {
         RequestsExternalDatabaseCreation = requestsExternalDatabaseCreation;
@@ -59,6 +66,6 @@ public abstract class Attacher : IAttacher
 
     public abstract void Check(ICheckNotifier notifier);
 
-        
-    public abstract void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener);
+
+    public abstract void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener);
 }

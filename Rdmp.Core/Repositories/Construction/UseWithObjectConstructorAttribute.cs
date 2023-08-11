@@ -15,5 +15,4 @@ namespace Rdmp.Core.Repositories.Construction;
 [AttributeUsage(AttributeTargets.Constructor)]
 public class UseWithObjectConstructorAttribute : Attribute
 {
-
 }

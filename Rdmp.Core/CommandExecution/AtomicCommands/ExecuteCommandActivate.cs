@@ -45,10 +45,7 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
         return iconProvider.GetImage(_o, OverlayKind.Edit);
     }
 
-    public override string GetCommandName()
-    {
-        return OverrideCommandName ?? GlobalStrings.Activate;
-    }
+    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.Activate;
 
     public override void Execute()
     {

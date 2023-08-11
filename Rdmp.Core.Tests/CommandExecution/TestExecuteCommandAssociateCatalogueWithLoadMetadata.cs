@@ -14,25 +14,24 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCliTests
 {
-
     [Test]
     public void TestExecuteCommandAssociateCatalogueWithLoadMetadata_Simple()
     {
-        var cata1 = new Catalogue(RepositoryLocator.CatalogueRepository,"fff");
-        var cata2 = new Catalogue(RepositoryLocator.CatalogueRepository,"bbb");
+        var cata1 = new Catalogue(RepositoryLocator.CatalogueRepository, "fff");
+        var cata2 = new Catalogue(RepositoryLocator.CatalogueRepository, "bbb");
 
         Assert.IsNull(cata1.LoadMetadata);
         Assert.IsNull(cata2.LoadMetadata);
 
-        var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository,"mylmd");
+        var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository, "mylmd");
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandAssociateCatalogueWithLoadMetadata),
-            new CommandLineObjectPicker(new[]{$"LoadMetadata:{lmd.ID}", "Catalogue:fff"}, GetActivator()));
+            new CommandLineObjectPicker(new[] { $"LoadMetadata:{lmd.ID}", "Catalogue:fff" }, GetActivator()));
 
         cata1.RevertToDatabaseState();
         cata2.RevertToDatabaseState();
 
-        Assert.AreEqual(lmd.ID,cata1.LoadMetadata_ID);
+        Assert.AreEqual(lmd.ID, cata1.LoadMetadata_ID);
         Assert.IsNull(cata2.LoadMetadata);
     }
 }

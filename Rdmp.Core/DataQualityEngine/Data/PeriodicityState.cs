@@ -29,9 +29,10 @@ public class PeriodicityState
         get => _countOfRecords;
         set
         {
-            if(IsCommitted )
-                throw new NotSupportedException("Can only edit these values while the PeriodicityState is being computed in memory, this PeriodicityState came from the database and was committed long ago");
-            _countOfRecords = value; 
+            if (IsCommitted)
+                throw new NotSupportedException(
+                    "Can only edit these values while the PeriodicityState is being computed in memory, this PeriodicityState came from the database and was committed long ago");
+            _countOfRecords = value;
         }
     }
 
@@ -39,17 +40,17 @@ public class PeriodicityState
 
     public bool IsCommitted { get; private set; }
 
-    public PeriodicityState(int year, int month, Consequence? consequence )
+    public PeriodicityState(int year, int month, Consequence? consequence)
     {
         IsCommitted = false;
         Year = year;
         Month = month;
 
         RowEvaluation = consequence == null ? "Correct" : consequence.ToString();
-
     }
 
-    public static Dictionary<DateTime, ArchivalPeriodicityCount> GetPeriodicityCountsForEvaluation(Evaluation evaluation,bool discardOutliers)
+    public static Dictionary<DateTime, ArchivalPeriodicityCount> GetPeriodicityCountsForEvaluation(
+        Evaluation evaluation, bool discardOutliers)
     {
         var toReturn = new Dictionary<DateTime, ArchivalPeriodicityCount>();
 
@@ -70,25 +71,19 @@ public class PeriodicityState
     where
   Evaluation_ID = ${evaluation.ID} and PivotCategory = 'ALL' ORDER BY {t.Wrap("Year")},{t.Wrap("Month")}";
 
-            using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
             {
                 using (var r = cmd.ExecuteReader())
                 {
                     while (r.Read())
                     {
-                        var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
+                        var date = new DateTime((int)r["Year"], (int)r["Month"], 1);
 
                         //discard outliers before start
-                        if(discardOutliers && result.Item1.HasValue && date < result.Item1.Value)
-                        {
-                            continue;
-                        }
+                        if (discardOutliers && result.Item1.HasValue && date < result.Item1.Value) continue;
 
                         //discard outliers after end
-                        if (discardOutliers && result.Item2.HasValue && date > result.Item2.Value)
-                        {
-                            continue;
-                        }
+                        if (discardOutliers && result.Item2.HasValue && date > result.Item2.Value) continue;
 
                         toReturn.TryAdd(date, new ArchivalPeriodicityCount());
 
@@ -105,17 +100,21 @@ public class PeriodicityState
                         switch ((string)r["RowEvaluation"])
                         {
                             case "Correct":
-                                toIncrement.CountGood += (int) r["CountOfRecords"];
+                                toIncrement.CountGood += (int)r["CountOfRecords"];
                                 toIncrement.Total += (int)r["CountOfRecords"];
                                 break;
-                            case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
+                            case "InvalidatesRow":
+                                toIncrement.Total += (int)r["CountOfRecords"];
                                 break;
-                            case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
+                            case "Missing":
+                                toIncrement.Total += (int)r["CountOfRecords"];
                                 break;
-                            case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
+                            case "Wrong":
+                                toIncrement.Total += (int)r["CountOfRecords"];
                                 break;
-                            default:throw new ArgumentOutOfRangeException(
-                                $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
+                            default:
+                                throw new ArgumentOutOfRangeException(
+                                    $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
                         }
                     }
                 }
@@ -134,29 +133,29 @@ public class PeriodicityState
     /// <param name="pivotCategoryValue"></param>
     /// <param name="pivot"></param>
     /// <returns></returns>
-    public static DataTable GetPeriodicityForDataTableForEvaluation(Evaluation evaluation, string pivotCategoryValue, bool pivot)
+    public static DataTable GetPeriodicityForDataTableForEvaluation(Evaluation evaluation, string pivotCategoryValue,
+        bool pivot)
     {
         using (var con = evaluation.DQERepository.GetConnection())
         {
-            var sql = pivot ? string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue) : $@"Select [Evaluation_ID]
+            var sql = pivot
+                ? string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue)
+                : $@"Select [Evaluation_ID]
       ,CAST([Year] as varchar(4)) + '-' + datename(month,dateadd(month, [Month] - 1, 0)) as YearMonth
       ,[CountOfRecords]
       ,[RowEvaluation] from PeriodicityState where Evaluation_ID={evaluation.ID} AND PivotCategory = '{pivotCategoryValue}'";
 
 
-            using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
             using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
             {
                 var dt = new DataTable();
                 da.Fill(dt);
 
                 // if there are no rows (table is empty) return null instead
-                if(dt.Columns.Count == 0 || dt.Rows.Count == 0)
-                {
-                    return null;
-                }
+                if (dt.Columns.Count == 0 || dt.Rows.Count == 0) return null;
 
-                if(pivot)
+                if (pivot)
                 {
                     dt.Columns["Correct"].SetOrdinal(3);
                     dt.Columns["Wrong"].SetOrdinal(4);

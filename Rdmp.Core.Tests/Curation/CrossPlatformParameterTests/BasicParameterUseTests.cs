@@ -21,7 +21,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.CrossPlatformParameterTests;
 
-public class BasicParameterUseTests:DatabaseTests
+public class BasicParameterUseTests : DatabaseTests
 {
     [Test]
     [TestCase(DatabaseType.MySql)]
@@ -48,9 +48,9 @@ public class BasicParameterUseTests:DatabaseTests
         {
             ///////////////////////UPLOAD THE DataTable TO THE DESTINATION////////////////////////////////////////////
             var uploader = new DataTableUploadDestination();
-            uploader.PreInitialize(db,new ThrowImmediatelyDataLoadJob());
+            uploader.PreInitialize(db, new ThrowImmediatelyDataLoadJob());
             uploader.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-            uploader.Dispose(new ThrowImmediatelyDataLoadJob(),null );
+            uploader.Dispose(new ThrowImmediatelyDataLoadJob(), null);
 
             var tbl = db.ExpectTable(tableName);
 
@@ -65,25 +65,26 @@ public class BasicParameterUseTests:DatabaseTests
             //create an extraction filter
             var extractionInformation = ei.Single();
             var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation)
-                {
-                    WhereSQL = $"{extractionInformation.SelectSQL} = @n"
-                };
+            {
+                WhereSQL = $"{extractionInformation.SelectSQL} = @n"
+            };
             filter.SaveToDatabase();
 
             //create the parameters for filter (no globals, masters or scope adjacent parameters)
-            new ParameterCreator(filter.GetFilterFactory(), null, null).CreateAll(filter,null);
+            new ParameterCreator(filter.GetFilterFactory(), null, null).CreateAll(filter, null);
 
             var p = filter.GetAllParameters().Single();
-            Assert.AreEqual("@n",p.ParameterName);
+            Assert.AreEqual("@n", p.ParameterName);
             p.ParameterSQL = p.ParameterSQL.Replace("varchar(50)", "int"); //make it int
             p.Value = "20";
             p.SaveToDatabase();
 
             var qb = new QueryBuilder(null, null);
             qb.AddColumn(extractionInformation);
-            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
-            
-            using(var con = db.Server.GetConnection())
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+                new[] { filter }, FilterContainerOperation.AND);
+
+            using (var con = db.Server.GetConnection())
             {
                 con.Open();
 

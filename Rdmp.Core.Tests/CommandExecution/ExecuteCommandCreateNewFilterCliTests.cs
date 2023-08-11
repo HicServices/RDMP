@@ -25,11 +25,12 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
 
         // has no container to start with (no filters)
         Assert.IsNull(ac.RootFilterContainer_ID);
-        Run("CreateNewFilter",$"{nameof(AggregateConfiguration)}:{ac.ID}");
+        Run("CreateNewFilter", $"{nameof(AggregateConfiguration)}:{ac.ID}");
 
-        Assert.IsNotNull(ac.RootFilterContainer_ID,"Should now have a container");
+        Assert.IsNotNull(ac.RootFilterContainer_ID, "Should now have a container");
         Assert.AreEqual(1, ac.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
     }
+
     [Test]
     public void TestNewFilterForExtractionConfiguration()
     {
@@ -42,6 +43,7 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Assert.IsNotNull(sds.RootFilterContainer_ID, "Should now have a container");
         Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
     }
+
     [Test]
     public void TestNewFilterForCatalogue()
     {

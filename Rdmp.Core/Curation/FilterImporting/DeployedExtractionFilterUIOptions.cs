@@ -18,7 +18,8 @@ public class DeployedExtractionFilterUIOptions : FilterUIOptions
     private ITableInfo[] _tables;
     private IColumn[] _columns;
 
-    public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(deployedExtractionFilter)
+    public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(
+        deployedExtractionFilter)
     {
         var selectedDataSet = deployedExtractionFilter.GetDataset();
 
@@ -37,18 +38,9 @@ public class DeployedExtractionFilterUIOptions : FilterUIOptions
         _columns = columns.ToArray();
     }
 
-    public override ITableInfo[] GetTableInfos()
-    {
-        return _tables;
-    }
+    public override ITableInfo[] GetTableInfos() => _tables;
 
-    public override ISqlParameter[] GetGlobalParametersInFilterScope()
-    {
-        return _globals;
-    }
+    public override ISqlParameter[] GetGlobalParametersInFilterScope() => _globals;
 
-    public override IColumn[] GetIColumnsInFilterScope()
-    {
-        return _columns;
-    }
+    public override IColumn[] GetIColumnsInFilterScope() => _columns;
 }

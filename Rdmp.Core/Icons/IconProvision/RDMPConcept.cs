@@ -10,7 +10,7 @@ namespace Rdmp.Core.Icons.IconProvision;
 /// <summary>
 /// Describes all the objects that exist in RDMP.  Serves as an index into <see cref="CatalogueIcons"/> 
 /// </summary>
-public enum RDMPConcept 
+public enum RDMPConcept
 {
     Database,
     SQL,
@@ -19,7 +19,7 @@ public enum RDMPConcept
     DQE,
     TimeCoverageField,
     Clipboard,
-        
+
     //catalogue database objects
     AllAutomationServerSlotsNode,
     AutomationServiceSlot,
@@ -51,7 +51,7 @@ public enum RDMPConcept
 
     AllDataAccessCredentialsNode,
     DataAccessCredentials,
-        
+
     AllANOTablesNode,
     ANOTable,
 
@@ -64,7 +64,7 @@ public enum RDMPConcept
 
     DashboardLayout,
     DashboardControl,
-        
+
     FilterContainer,
     Filter,
     ExtractionFilterParameterSet,
@@ -93,16 +93,16 @@ public enum RDMPConcept
     ExtractableDataSetPackage,
     ExternalCohortTable,
     ExtractableCohort,
-        
+
     StandardRegex,
-        
+
     AllCohortsNode,
     ProjectsNode,
     ProjectCohortIdentificationConfigurationAssociationsNode,
     ProjectSavedCohortsNode,
     ExtractableDataSetsNode,
     ExtractionDirectoryNode,
-        
+
     CohortIdentificationConfiguration,
 
     AggregateDimension,

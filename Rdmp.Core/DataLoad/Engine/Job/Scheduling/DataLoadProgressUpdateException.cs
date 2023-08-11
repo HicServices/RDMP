@@ -13,12 +13,11 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 /// </summary>
 public class DataLoadProgressUpdateException : Exception
 {
-    public DataLoadProgressUpdateException(string msg):base(msg)
+    public DataLoadProgressUpdateException(string msg) : base(msg)
     {
-            
     }
-    public DataLoadProgressUpdateException(string msg,Exception ex): base(msg,ex)
-    {
 
+    public DataLoadProgressUpdateException(string msg, Exception ex) : base(msg, ex)
+    {
     }
 }

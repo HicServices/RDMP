@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 /// 
 /// <para>A <see cref="CohortIdentificationConfiguration"/> can be associated with multiple Projects</para>
 /// </summary>
-public class ProjectCohortIdentificationConfigurationAssociationsNode:Node,IOrderable
+public class ProjectCohortIdentificationConfigurationAssociationsNode : Node, IOrderable
 {
     public Project Project { get; set; }
 
@@ -24,29 +24,24 @@ public class ProjectCohortIdentificationConfigurationAssociationsNode:Node,IOrde
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Cohort Builder Queries";
-    }
+    public override string ToString() => "Cohort Builder Queries";
 
-    protected bool Equals(ProjectCohortIdentificationConfigurationAssociationsNode other)
-    {
-        return Equals(Project, other.Project);
-    }
+    protected bool Equals(ProjectCohortIdentificationConfigurationAssociationsNode other) =>
+        Equals(Project, other.Project);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCohortIdentificationConfigurationAssociationsNode) obj);
+        return Equals((ProjectCohortIdentificationConfigurationAssociationsNode)obj);
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+
+    public int Order
     {
-        return Project != null ? Project.GetHashCode() : 0;
+        get => 1;
+        set { }
     }
-
-    public int Order { get => 1;
-        set{} }
 }

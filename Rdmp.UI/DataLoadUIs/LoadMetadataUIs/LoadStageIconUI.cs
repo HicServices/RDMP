@@ -21,7 +21,7 @@ public partial class LoadStageIconUI : UserControl
         InitializeComponent();
     }
 
-    public void Setup(ICoreIconProvider iconProvider,LoadStage stage)
+    public void Setup(ICoreIconProvider iconProvider, LoadStage stage)
     {
         pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
         lblLoadStage.Text = stage.ToString();

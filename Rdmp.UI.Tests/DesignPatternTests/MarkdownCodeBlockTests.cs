@@ -37,6 +37,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 internal class MarkdownCodeBlockTests
 {
     #region df7d2bb4cd6145719f933f6f15218b1a
+
     private class FrozenExtractionConfigurationsNode
     {
         public Project Project { get; set; }
@@ -46,16 +47,15 @@ internal class MarkdownCodeBlockTests
             Project = project;
         }
 
-        public override string ToString()
-        {
-            return "Frozen Extraction Configurations";
-        }
+        public override string ToString() => "Frozen Extraction Configurations";
     }
+
     #endregion
 
     private class _a93fd8b3d1fb4ad8975ef8cf9c384236
     {
         #region a93fd8b3d1fb4ad8975ef8cf9c384236
+
         private class FrozenExtractionConfigurationsNode
         {
             public Project Project { get; set; }
@@ -65,43 +65,39 @@ internal class MarkdownCodeBlockTests
                 Project = project;
             }
 
-            public override string ToString()
-            {
-                return "Frozen Extraction Configurations";
-            }
+            public override string ToString() => "Frozen Extraction Configurations";
 
-            protected bool Equals(FrozenExtractionConfigurationsNode other)
-            {
-                return Equals(Project, other.Project);
-            }
+            protected bool Equals(FrozenExtractionConfigurationsNode other) => Equals(Project, other.Project);
 
             public override bool Equals(object obj)
             {
                 if (obj is null) return false;
                 if (ReferenceEquals(this, obj)) return true;
                 if (obj.GetType() != GetType()) return false;
-                return Equals((FrozenExtractionConfigurationsNode) obj);
+                return Equals((FrozenExtractionConfigurationsNode)obj);
             }
 
-            public override int GetHashCode()
-            {
-                return Project != null ? Project.GetHashCode() : 0;
-            }
+            public override int GetHashCode() => Project?.GetHashCode() ?? 0;
         }
+
         #endregion
 
 
         private class _c9aeab3ddaf643e5967c3e2352c388f0 : DataExportChildProvider
         {
             #region c9aeab3ddaf643e5967c3e2352c388f0
-            private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
+
+            private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode,
+                DescendancyList descendancy)
             {
                 var children = new HashSet<object>();
 
-                var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
+                var frozenConfigurationsNode =
+                    new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
                 children.Add(frozenConfigurationsNode);
 
-                var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+                var configs = ExtractionConfigurations
+                    .Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
                 foreach (var config in configs)
                 {
                     AddChildren(config, descendancy.Add(config));
@@ -110,13 +106,17 @@ internal class MarkdownCodeBlockTests
 
                 AddToDictionaries(children, descendancy);
             }
+
             #endregion
 
             private void AddChildren(ExtractionConfiguration extractionConfigurationsNode, DescendancyList descendancy)
             {
                 throw new NotImplementedException();
             }
-            public _c9aeab3ddaf643e5967c3e2352c388f0(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator, pluginChildProviders, errorsCheckNotifier,null)
+
+            public _c9aeab3ddaf643e5967c3e2352c388f0(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+                IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator,
+                pluginChildProviders, errorsCheckNotifier, null)
             {
             }
         }
@@ -125,22 +125,26 @@ internal class MarkdownCodeBlockTests
         private class _0bac9aa7f8874a25bc1fe1361b91f6e5 : DataExportChildProvider
         {
             #region 0bac9aa7f8874a25bc1fe1361b91f6e5
-            private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
+
+            private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode,
+                DescendancyList descendancy)
             {
                 var children = new HashSet<object>();
 
                 //Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
-                var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
+                var frozenConfigurationsNode =
+                    new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
 
                 //Make the frozen folder appear under the extractionConfigurationsNode
                 children.Add(frozenConfigurationsNode);
 
                 //Add children to the frozen folder
-                AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
+                AddChildren(frozenConfigurationsNode, descendancy.Add(frozenConfigurationsNode));
 
                 //Add ExtractionConfigurations which are not released (frozen)
-                var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-                foreach (var config in configs.Where(c=>!c.IsReleased))
+                var configs = ExtractionConfigurations
+                    .Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+                foreach (var config in configs.Where(c => !c.IsReleased))
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);
@@ -149,28 +153,34 @@ internal class MarkdownCodeBlockTests
                 AddToDictionaries(children, descendancy);
             }
 
-            private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
+            private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode,
+                DescendancyList descendancy)
             {
                 var children = new HashSet<object>();
 
                 //Add ExtractionConfigurations which are not released (frozen)
-                var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
+                var configs = ExtractionConfigurations
+                    .Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
                 foreach (var config in configs.Where(c => c.IsReleased))
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);
                 }
 
-                AddToDictionaries(children,descendancy);
+                AddToDictionaries(children, descendancy);
             }
+
             #endregion
 
-            private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode, DescendancyList descendancy)
+            private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode,
+                DescendancyList descendancy)
             {
                 throw new NotImplementedException();
             }
 
-            public _0bac9aa7f8874a25bc1fe1361b91f6e5(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator, pluginChildProviders, errorsCheckNotifier,null)
+            public _0bac9aa7f8874a25bc1fe1361b91f6e5(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+                IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator,
+                pluginChildProviders, errorsCheckNotifier, null)
             {
             }
         }
@@ -178,6 +188,7 @@ internal class MarkdownCodeBlockTests
         private class _f243e95a6dc94b3486f44b8f0bb0ed7d
         {
             #region f243e95a6dc94b3486f44b8f0bb0ed7d
+
             private class AllServersNodeMenu : RDMPContextMenuStrip
             {
                 public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
@@ -185,75 +196,69 @@ internal class MarkdownCodeBlockTests
                     Add(new ExecuteCommandCreateNewEmptyCatalogue(args.ItemActivator));
                 }
             }
+
             #endregion
         }
 
         private class _cae13dde1de14f5cac984330a222c311
         {
             #region cae13dde1de14f5cac984330a222c311
-            private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+
+            private class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {
                 }
 
-                public override bool CanActivate(Pipeline target)
-                {
-                    return true;
-                }
+                public override bool CanActivate(Pipeline target) => true;
 
                 public override void Activate(Pipeline target)
                 {
                     MessageBox.Show("Double clicked");
                 }
 
-                public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
-                {
-                    return null;
-                }
+                public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
+                    InsertOption insertOption = InsertOption.Default) => null;
             }
+
             #endregion
         }
 
         private class _d5ff7bebc57942df8c6c57a316bf72c6 : RDMPCommandExecutionProposal<AggregateConfiguration>
         {
-            public override bool CanActivate(AggregateConfiguration target)
-            {
-                throw new NotImplementedException();
-            }
+            public override bool CanActivate(AggregateConfiguration target) => throw new NotImplementedException();
+
             public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AggregateConfiguration target,
-                InsertOption insertOption = InsertOption.Default)
-            {
+                InsertOption insertOption = InsertOption.Default) =>
                 throw new NotImplementedException();
-            }
+
             public _d5ff7bebc57942df8c6c57a316bf72c6(IActivateItems itemActivator) : base(itemActivator)
             {
             }
 
             #region d5ff7bebc57942df8c6c57a316bf72c6
+
             public override void Activate(AggregateConfiguration target)
             {
                 ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
             }
+
             #endregion
 
 
             #region 56df0867990f4b0397e51a6a49f7bdd0
+
             [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
             public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
             {
             }
+
             #endregion
-
-
         }
 
         private class _59f55fa3ef50404291c7ae3996772635 : RDMPCommandExecutionProposal<Pipeline>
         {
-            public override bool CanActivate(Pipeline target)
-            {
-                throw new NotImplementedException();
-            }
+            public override bool CanActivate(Pipeline target) => throw new NotImplementedException();
 
             public override void Activate(Pipeline target)
             {
@@ -261,13 +266,16 @@ internal class MarkdownCodeBlockTests
             }
 
             #region 59f55fa3ef50404291c7ae3996772635
-            public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+
+            public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target,
+                InsertOption insertOption = InsertOption.Default)
             {
-                if(cmd is CatalogueCombineable sourceCatalogueCombineable)
-                    return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
+                if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+                    return new ExecuteCommandDelete(ItemActivator, sourceCatalogueCombineable.Catalogue);
 
                 return null;
             }
+
             #endregion
 
             public _59f55fa3ef50404291c7ae3996772635(IActivateItems itemActivator) : base(itemActivator)
@@ -277,8 +285,8 @@ internal class MarkdownCodeBlockTests
 
         private class _bbee6cb18ebd4e35a19f5fa521063648
         {
-
             #region bbee6cb18ebd4e35a19f5fa521063648
+
             public class PipelineCombineable : ICombineToMakeCommand
             {
                 public Pipeline Pipeline { get; private set; }
@@ -290,13 +298,10 @@ internal class MarkdownCodeBlockTests
                     IsEmpty = Pipeline.PipelineComponents.Count == 0;
                 }
 
-                public string GetSqlString()
-                {
-                    return "";
-                }
+                public string GetSqlString() => "";
             }
+
             #endregion
         }
-
     }
 }

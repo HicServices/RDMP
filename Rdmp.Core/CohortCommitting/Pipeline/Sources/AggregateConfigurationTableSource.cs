@@ -21,14 +21,17 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 /// <summary>
 /// Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient index table)
 /// </summary>
-public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable>,IPipelineRequirement<AggregateConfiguration>
+public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable>,
+    IPipelineRequirement<AggregateConfiguration>
 {
     protected AggregateConfiguration AggregateConfiguration;
     protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
     private bool _haveSentData = false;
 
-    [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.", DemandType.Unspecified, 10000)]
+    [DemandsInitialization(
+        "The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.",
+        DemandType.Unspecified, 10000)]
     public int Timeout { get; set; }
 
     /// <summary>
@@ -38,14 +41,16 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
     protected virtual string GetSQL()
     {
-        if(!AggregateConfiguration.IsCohortIdentificationAggregate)
+        if (!AggregateConfiguration.IsCohortIdentificationAggregate)
         {
             var builder = AggregateConfiguration.GetQueryBuilder();
             return builder.SQL;
         }
 
-        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny() ?? throw new Exception($"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
-        var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),null);
+        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny() ??
+                  throw new Exception(
+                      $"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
+        var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(), null);
         return cohortBuilder.SQL;
     }
 
@@ -64,7 +69,8 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for AggregateConfiguration '{AggregateConfiguration}'"));
 
-        var server = AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+        var server =
+            AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
 
         using (var con = server.GetConnection())
@@ -82,8 +88,10 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             {
                 cmd.CommandTimeout = timeout;
 
-                using(var da = server.GetDataAdapter(cmd))
+                using (var da = server.GetDataAdapter(cmd))
+                {
                     da.Fill(dt);
+                }
             }
 
 
@@ -96,21 +104,16 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             return dt;
         }
     }
-    public DataTable TryGetPreview()
-    {
-        return GetDataTable(10, null);
-    }
 
+    public DataTable TryGetPreview() => GetDataTable(10, null);
 
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-
     }
 
     public virtual void Check(ICheckNotifier notifier)
@@ -118,12 +121,14 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         try
         {
             var _sql = GetSQL();
-            notifier.OnCheckPerformed(new CheckEventArgs($"successfully built extraction SQL:{_sql}", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"successfully built extraction SQL:{_sql}",
+                CheckResult.Success));
         }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not build extraction SQL for '{AggregateConfiguration}' (ID={AggregateConfiguration.ID})", CheckResult.Fail, e));
+                $"Could not build extraction SQL for '{AggregateConfiguration}' (ID={AggregateConfiguration.ID})",
+                CheckResult.Fail, e));
         }
     }
 
@@ -134,8 +139,5 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         CohortIdentificationConfigurationIfAny = value.GetCohortIdentificationConfigurationIfAny();
     }
 
-    public override string ToString()
-    {
-        return GetType().Name;
-    }
+    public override string ToString() => GetType().Name;
 }

@@ -14,9 +14,9 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _explicitPatternProvided;
-        
+
     [UseWithObjectConstructor]
-    public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator, string pattern):base(activator)
+    public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator, string pattern) : base(activator)
     {
         _pattern = pattern;
         //if pattern is null but this constructor is used then we shouldn't ask them again what they want
@@ -27,30 +27,29 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
     /// Constructor for when we should prompt user in Gui for what the pattern should be if/when command is executed
     /// </summary>
     /// <param name="activator"></param>
-    public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator):base(activator)
+    public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator) : base(activator)
     {
-             
     }
 
     public override void Execute()
     {
         base.Execute();
 
-        var existing = HICDatabaseConfiguration.GetGlobalIgnorePatternIfAny(BasicActivator.RepositoryLocator.CatalogueRepository);
+        var existing =
+            HICDatabaseConfiguration.GetGlobalIgnorePatternIfAny(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-        if(existing == null)
+        if (existing == null)
         {
             existing = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueRepository)
             {
                 ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
                 Description = "Regex that will be applied as an ignore when running the data load engine",
                 Regex = "^ignore_.*"
-
             };
             existing.SaveToDatabase();
         }
-                
-        if(_explicitPatternProvided)
+
+        if (_explicitPatternProvided)
         {
             existing.Regex = _pattern;
             existing.SaveToDatabase();

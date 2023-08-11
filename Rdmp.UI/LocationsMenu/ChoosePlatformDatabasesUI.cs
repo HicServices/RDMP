@@ -61,13 +61,14 @@ public partial class ChoosePlatformDatabasesUI : Form
         InitializeComponent();
 
         new RecentHistoryOfControls(tbCatalogueConnectionString, new Guid("75e6b0a3-03f2-49fc-9446-ebc1dae9f123"));
-        new RecentHistoryOfControls(tbDataExportManagerConnectionString, new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
+        new RecentHistoryOfControls(tbDataExportManagerConnectionString,
+            new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
 
         SetState(State.PickNewOrExisting);
 
         TableRepository cataDb = null;
         TableRepository dataExportDb = null;
-            
+
         try
         {
             //are we dealing with a database object repository?
@@ -162,21 +163,21 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to save connection settings",CheckResult.Fail,exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Failed to save connection settings", CheckResult.Fail,
+                exception));
             return false;
         }
-            
     }
 
     private void ChooseDatabase_KeyUp(object sender, KeyEventArgs e)
     {
-        if(e.KeyCode == Keys.Enter)
-            btnSaveAndClose_Click(null,null);
+        if (e.KeyCode == Keys.Enter)
+            btnSaveAndClose_Click(null, null);
 
-        if(e.KeyCode == Keys.Escape)
+        if (e.KeyCode == Keys.Escape)
             Close();
-
     }
+
     private void tbCatalogueConnectionString_KeyUp(object sender, KeyEventArgs e)
     {
         //if user is doing a paste
@@ -189,7 +190,8 @@ public partial class ChoosePlatformDatabasesUI : Form
             if (toPaste.Contains(Environment.NewLine))
             {
                 //see if he is trying to paste two lines at once, in whichcase surpress Windows and paste it across the two text boxes
-                var toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                var toPasteArray = toPaste.Split(Environment.NewLine.ToCharArray(),
+                    StringSplitOptions.RemoveEmptyEntries);
                 if (toPasteArray.Length == 2)
                 {
                     tbCatalogueConnectionString.Text = toPasteArray[0];
@@ -229,11 +231,13 @@ public partial class ChoosePlatformDatabasesUI : Form
             //save the settings
             SaveConnectionStrings();
 
-            var repo = catalogue?(TableRepository) _repositoryLocator.CatalogueRepository:(TableRepository)_repositoryLocator.DataExportRepository;
+            var repo = catalogue
+                ? (TableRepository)_repositoryLocator.CatalogueRepository
+                : (TableRepository)_repositoryLocator.DataExportRepository;
 
-            if(repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
+            if (repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set",CheckResult.Fail));
+                checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set", CheckResult.Fail));
                 return;
             }
 
@@ -242,13 +246,13 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of Database failed", CheckResult.Fail,exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of Database failed", CheckResult.Fail, exception));
         }
     }
 
     private void ShowNextStageOnChecksComplete(object sender, AllChecksCompleteHandlerArgs args)
     {
-        ((ChecksUI.ChecksUI) sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
+        ((ChecksUI.ChecksUI)sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
     }
 
     private void btnCreateSuite_Click(object sender, EventArgs e)
@@ -267,11 +271,12 @@ public partial class ChoosePlatformDatabasesUI : Form
                 Username = tbUsername.Text,
                 Password = tbPassword.Text,
                 ExampleDatasets = cbCreateExampleDatasets.Checked,
+                CreateLoggingServer = cbCreateLoggingServer.Checked,
                 Seed = _seed,
                 NumberOfPeople = _peopleCount,
                 NumberOfRowsPerDataset = _rowCount,
                 OtherKeywords = tbOtherKeywords.Text,
-                CreateDatabaseTimeout = int.TryParse(tbCreateDatabaseTimeout.Text, out var timeout) ? timeout:30
+                CreateDatabaseTimeout = int.TryParse(tbCreateDatabaseTimeout.Text, out var timeout) ? timeout : 30
             };
 
             var failed = false;
@@ -320,13 +325,13 @@ public partial class ChoosePlatformDatabasesUI : Form
             UserSettings.CatalogueConnectionString = cata.ConnectionString;
             UserSettings.DataExportConnectionString = export.ConnectionString;
 
-            if(!failed)
+            if (!failed)
                 RestartApplication();
-
         }
         catch (Exception exception)
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Database creation failed, check exception for details",CheckResult.Fail, exception));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Database creation failed, check exception for details",
+                CheckResult.Fail, exception));
         }
         finally
         {
@@ -342,7 +347,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             .FirstOrDefault(p => p.Name == "BULK INSERT: CSV Import File (manual column-type editing)");
         if (bulkInsertCsvPipe != null)
         {
-            var d = (PipelineComponentArgument) bulkInsertCsvPipe.Destination.GetAllArguments()
+            var d = (PipelineComponentArgument)bulkInsertCsvPipe.Destination.GetAllArguments()
                 .Single(a => a.Name.Equals("Adjuster"));
             d.SetValue(typeof(AdjustColumnDataTypesUI));
             d.SaveToDatabase();
@@ -372,12 +377,10 @@ public partial class ChoosePlatformDatabasesUI : Form
 
     private void btnBrowseForCatalogue_Click(object sender, EventArgs e)
     {
-        var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database",false,false,null);
+        var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database", false, false, null);
         dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
         if (dialog.ShowDialog() == DialogResult.OK && dialog.SelectedDatabase != null)
-        {
             tbCatalogueConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
-        }
     }
 
     private void btnBrowseForDataExport_Click(object sender, EventArgs e)
@@ -395,18 +398,18 @@ public partial class ChoosePlatformDatabasesUI : Form
 
         try
         {
-            var result =  int.Parse(tb.Text);
+            var result = int.Parse(tb.Text);
 
-            if(sender == tbSeed)
+            if (sender == tbSeed)
                 _seed = result;
-            else if(sender == tbPeopleCount)
+            else if (sender == tbPeopleCount)
                 _peopleCount = result;
-            else if(sender == tbRowCount)
+            else if (sender == tbRowCount)
                 _rowCount = result;
 
             tb.ForeColor = Color.Black;
         }
-        catch(Exception)
+        catch (Exception)
         {
             tb.ForeColor = Color.Red;
         }
@@ -432,10 +435,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
             };
 
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                File.WriteAllText(sfd.FileName, yaml);
-            }
+            if (sfd.ShowDialog() == DialogResult.OK) File.WriteAllText(sfd.FileName, yaml);
         }
         catch (Exception ex)
         {
@@ -447,5 +447,4 @@ public partial class ChoosePlatformDatabasesUI : Form
     {
         gbExampleDatasets.Enabled = cbCreateExampleDatasets.Checked;
     }
-
 }

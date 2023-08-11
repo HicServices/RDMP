@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class HangingConnectionTest:DatabaseTests
+public class HangingConnectionTest : DatabaseTests
 {
     private string testDbName = "HangingConnectionTest";
 
@@ -26,7 +26,7 @@ public class HangingConnectionTest:DatabaseTests
         //drop it if it existed
         if (DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).Exists())
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName).Drop();
-            
+
         DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testDbName);
         Thread.Sleep(500);
 
@@ -42,27 +42,31 @@ public class HangingConnectionTest:DatabaseTests
 
             //we are currently connected so this should throw
             Assert.Throws<Exception>(ThrowIfDatabaseLock);
-
         }
+
         Thread.Sleep(500);
 
         if (explicitClose)
         {
             SqlConnection.ClearAllPools();
             Thread.Sleep(500);
-            Assert.DoesNotThrow(ThrowIfDatabaseLock);//in this case we told .net to clear the pools which leaves the server free of locks/hanging connections
+            Assert.DoesNotThrow(
+                ThrowIfDatabaseLock); //in this case we told .net to clear the pools which leaves the server free of locks/hanging connections
         }
         else
         {
-            Assert.Throws<Exception>(ThrowIfDatabaseLock);//despite us closing the connection and using the 'using' block .net still keeps a connection in sleep state to the server ><
+            Assert.Throws<Exception>(
+                ThrowIfDatabaseLock); //despite us closing the connection and using the 'using' block .net still keeps a connection in sleep state to the server ><
         }
-            
+
         db.Drop();
     }
 
     private void ThrowIfDatabaseLock()
     {
-        var serverCopy = new DiscoveredServer(new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString));
+        var serverCopy =
+            new DiscoveredServer(new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn
+                .Builder.ConnectionString));
         serverCopy.ChangeDatabase("master");
         using (var con = serverCopy.GetConnection())
         {
@@ -75,9 +79,7 @@ public class HangingConnectionTest:DatabaseTests
                     r.GetValues(vals);
                     throw new Exception(
                         $"Someone is locking {testDbName}:{Environment.NewLine}{string.Join(",", vals)}");
-                        
                 }
         }
-
     }
 }

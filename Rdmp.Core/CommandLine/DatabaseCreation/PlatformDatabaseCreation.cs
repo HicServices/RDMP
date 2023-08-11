@@ -38,8 +38,11 @@ public class PlatformDatabaseCreation
         Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 
         var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
-        var logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
-
+        
+        SqlConnectionStringBuilder logging = null;
+        if(options.CreateLoggingServer){
+            logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
+        }
         CatalogueRepository.SuppressHelpLoading = true;
 
         var repo = new PlatformDatabaseCreationRepositoryFinder(options);
@@ -47,19 +50,21 @@ public class PlatformDatabaseCreation
         if (!options.SkipPipelines)
         {
             var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
-            creator.Create();
+            creator.Create(options);
         }
 
-        if(options.ExampleDatasets || options.Nightmare)
+        if (options.ExampleDatasets || options.Nightmare)
         {
-            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
+            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
-                
-            examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier {WriteToConsole = true },options);
+
+            examples.Create(server.GetCurrentDatabase(), new ThrowImmediatelyCheckNotifier { WriteToConsole = true },
+                options);
         }
     }
 
-    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher,
+        PlatformDatabaseCreationOptions options)
     {
         SqlConnection.ClearAllPools();
 
@@ -77,9 +82,9 @@ public class PlatformDatabaseCreation
         {
             BinaryCollation = options.BinaryCollation
         };
-        executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
-            
+
         return builder;
     }
 }

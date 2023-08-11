@@ -28,6 +28,5 @@ public partial class ArgumentValueLabelUI : UserControl, IArgumentValueUI
 
     public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
     {
-            
     }
 }

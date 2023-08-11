@@ -18,19 +18,20 @@ namespace Rdmp.Core.Curation.Data;
 /// whenever an RDMPCollectionUI is visible and that object is onscreen a star will appear beside it.  Favourites are stored on a 'per user' basis in the Catalogue database so 
 /// even if you switch computers/change sessions Favourites are preserved. 
 /// </summary>
-public class Favourite:ReferenceOtherObjectDatabaseEntity
+public class Favourite : ReferenceOtherObjectDatabaseEntity
 {
     #region Database Properties
+
     private string _username;
     private DateTime _favouritedDate;
-        
+
     /// <summary>
     /// The user that favourited the object
     /// </summary>
     public string Username
     {
         get => _username;
-        set => SetField(ref _username , value);
+        set => SetField(ref _username, value);
     }
 
     /// <summary>
@@ -41,14 +42,14 @@ public class Favourite:ReferenceOtherObjectDatabaseEntity
         get => _favouritedDate;
         set => SetField(ref _favouritedDate, value);
     }
+
     #endregion
 
     public Favourite()
     {
-
     }
 
-    internal Favourite(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    internal Favourite(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         Username = r["Username"].ToString();
         FavouritedDate = Convert.ToDateTime(r["FavouritedDate"]);
@@ -64,11 +65,11 @@ public class Favourite:ReferenceOtherObjectDatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"ReferencedObjectID",objectToFavourite.ID},
-            {"ReferencedObjectType",objectToFavourite.GetType().Name},
-            {"ReferencedObjectRepositoryType",objectToFavourite.Repository.GetType().Name},
-            {"Username", Environment.UserName},
-            {"FavouritedDate", DateTime.Now}
+            { "ReferencedObjectID", objectToFavourite.ID },
+            { "ReferencedObjectType", objectToFavourite.GetType().Name },
+            { "ReferencedObjectRepositoryType", objectToFavourite.Repository.GetType().Name },
+            { "Username", Environment.UserName },
+            { "FavouritedDate", DateTime.Now }
         });
     }
 }

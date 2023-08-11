@@ -33,10 +33,10 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 /// 
 /// <para>Setting a 'Permission Window' will create a restriction on the times of day in which caching can take place (e.g. between midnight and 4am only).</para>
 /// </summary>
-public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
+public partial class CacheProgressUI : CacheProgressUI_Design, ISaveableUI
 {
     private CacheProgress _cacheProgress;
-        
+
     public CacheProgressUI()
     {
         InitializeComponent();
@@ -47,7 +47,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         ddCacheLagDelayDurationType.DataSource = Enum.GetValues(typeof(CacheLagPeriod.PeriodType));
 
         AssociatedCollection = RDMPCollection.DataLoad;
-            
+
         _bLoading = false;
     }
 
@@ -66,7 +66,8 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
 
         _cacheProgress = databaseObject;
 
-        CommonFunctionality.AddToMenu(new ExecuteCommandExecuteCacheProgress(activator, databaseObject), "Go To Execute");
+        CommonFunctionality.AddToMenu(new ExecuteCommandExecuteCacheProgress(activator, databaseObject),
+            "Go To Execute");
 
         ragSmiley1.Reset();
 
@@ -84,10 +85,8 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID,"Text","ID",c=>c.ID);
-        Bind(tbName,"Text","Name",c=>c.Name);
-
-
+        Bind(tbID, "Text", "ID", c => c.ID);
+        Bind(tbName, "Text", "Name", c => c.Name);
     }
 
     private void PopulateCacheProgressPanel(ICacheProgress cacheProgress)
@@ -114,19 +113,23 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
 
     private void SetupPipelineUI()
     {
-        if(_pipelineSelectionUI == null)
+        if (_pipelineSelectionUI == null)
         {
             var user = new PipelineUser(_cacheProgress);
             var useCase = CachingPipelineUseCase.DesignTime();
 
-            var selectionFactory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
-            _pipelineSelectionUI = (Control)selectionFactory.Create(Activator,"Cache Pipeline",DockStyle.Fill,pPipeline);
+            var selectionFactory =
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
+            _pipelineSelectionUI =
+                (Control)selectionFactory.Create(Activator, "Cache Pipeline", DockStyle.Fill, pPipeline);
         }
     }
 
     private void SetCacheProgressTextBox()
     {
-        tbCacheProgress.Text = _cacheProgress.CacheFillProgress.HasValue ? _cacheProgress.CacheFillProgress.ToString() : "Caching not started";
+        tbCacheProgress.Text = _cacheProgress.CacheFillProgress.HasValue
+            ? _cacheProgress.CacheFillProgress.ToString()
+            : "Caching not started";
     }
 
     private void UpdateCacheLagPeriodControl()
@@ -147,15 +150,15 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         var cacheLoadDelayPeriod = _cacheProgress.GetCacheLagPeriodLoadDelay();
         udCacheLagDelayPeriodDuration.Value = cacheLoadDelayPeriod.Duration;
         ddCacheLagDelayDurationType.SelectedItem = cacheLoadDelayPeriod.Type;
-
     }
-        
+
     private void udCacheLagDuration_ValueChanged(object sender, EventArgs e)
     {
         if (_bLoading)
             return;
 
-        _cacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value, ddCacheLagDurationType.SelectedItem));
+        _cacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value,
+            ddCacheLagDurationType.SelectedItem));
     }
 
     private void ddCacheLagDurationType_SelectedIndexChanged(object sender, EventArgs e)
@@ -163,7 +166,8 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         if (_bLoading)
             return;
 
-        _cacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value, ddCacheLagDurationType.SelectedItem));
+        _cacheProgress.SetCacheLagPeriod(CreateNewCacheLagPeriod(udCacheLagDuration.Value,
+            ddCacheLagDurationType.SelectedItem));
     }
 
     private void ddCacheLagDelayDurationType_SelectedIndexChanged(object sender, EventArgs e)
@@ -171,14 +175,17 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         if (_bLoading)
             return;
 
-        _cacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value, ddCacheLagDelayDurationType.SelectedItem));    
+        _cacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value,
+            ddCacheLagDelayDurationType.SelectedItem));
     }
+
     private void udCacheLagDelayPeriodDuration_ValueChanged(object sender, EventArgs e)
     {
         if (_bLoading)
             return;
 
-        _cacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value, ddCacheLagDelayDurationType.SelectedItem));
+        _cacheProgress.SetCacheLagPeriodLoadDelay(CreateNewCacheLagPeriod(udCacheLagDelayPeriodDuration.Value,
+            ddCacheLagDelayDurationType.SelectedItem));
     }
 
     // Returns null if there is no duration, otherwise picks up the current state of both Duration and Type UI elements
@@ -203,28 +210,25 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         RDMPControlCommonFunctionality.DoActionAndRedIfThrows(tbCacheProgress, () =>
         {
             if (string.IsNullOrWhiteSpace(tbCacheProgress.Text))
+            {
                 _cacheProgress.CacheFillProgress = null;
+            }
             else
             {
                 var dt = DateTime.Parse(tbCacheProgress.Text);
                 _cacheProgress.CacheFillProgress = dt;
             }
-                
         });
-
     }
 
     private void tbChunkPeriod_TextChanged(object sender, EventArgs e)
     {
-        RDMPControlCommonFunctionality.DoActionAndRedIfThrows(tbChunkPeriod, () =>
-        {
-            _cacheProgress.ChunkPeriod = TimeSpan.Parse(tbChunkPeriod.Text);
-        });
-
+        RDMPControlCommonFunctionality.DoActionAndRedIfThrows(tbChunkPeriod,
+            () => { _cacheProgress.ChunkPeriod = TimeSpan.Parse(tbChunkPeriod.Text); });
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CacheProgressUI_Design, UserControl>))]
-public abstract class CacheProgressUI_Design:RDMPSingleDatabaseObjectControl<CacheProgress>
+public abstract class CacheProgressUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
 {
 }

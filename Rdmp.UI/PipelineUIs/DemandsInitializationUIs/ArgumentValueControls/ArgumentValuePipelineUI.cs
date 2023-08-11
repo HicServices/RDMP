@@ -15,7 +15,6 @@ using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.SimpleDialogs;
 
 
-
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
@@ -40,14 +39,14 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
 
         if (_typeOfUnderlyingClass == null)
             throw new Exception($"Could not identify a Type called {typeName} in any loaded assemblies");
-
     }
-        
+
     public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
     {
         var instanceOfParentType = Activator.CreateInstance(_typeOfUnderlyingClass);
 
-        var factory = new PipelineSelectionUIFactory(args.CatalogueRepository,args.Required,args, instanceOfParentType);
+        var factory =
+            new PipelineSelectionUIFactory(args.CatalogueRepository, args.Required, args, instanceOfParentType);
         _pipelineSelectionUIInstance = factory.Create(activator);
         _pipelineSelectionUIInstance.CollapseToSingleLineMode();
 

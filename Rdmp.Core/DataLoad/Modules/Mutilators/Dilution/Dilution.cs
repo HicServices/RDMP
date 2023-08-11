@@ -33,16 +33,20 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
 /// </summary>
 public class Dilution : IPluginMutilateDataTables
 {
-
-    [DemandsInitialization("Column which is to be diluted, must have Destination=Dilution - i.e. not Destination=Oblivion or StoreInIdentifierDump", Mandatory = true)]
+    [DemandsInitialization(
+        "Column which is to be diluted, must have Destination=Dilution - i.e. not Destination=Oblivion or StoreInIdentifierDump",
+        Mandatory = true)]
     public PreLoadDiscardedColumn ColumnToDilute { get; set; }
 
-    [DemandsInitialization("Dilution Operation to be performed on the column", DemandType.Unspecified, null, typeof(IDilutionOperation), Mandatory = true)]
+    [DemandsInitialization("Dilution Operation to be performed on the column", DemandType.Unspecified, null,
+        typeof(IDilutionOperation), Mandatory = true)]
     public Type Operation { get; set; }
 
-    [DemandsInitialization("The number of seconds to wait before Timming out when executing the Operation.  This will be running an UPDATE on every record in STAGING so should be quite high depending on how many records your load loads at once (e.g. 5000)", DemandType.Unspecified,5000)]
+    [DemandsInitialization(
+        "The number of seconds to wait before Timming out when executing the Operation.  This will be running an UPDATE on every record in STAGING so should be quite high depending on how many records your load loads at once (e.g. 5000)",
+        DemandType.Unspecified, 5000)]
     public int Timeout { get; set; }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (ColumnToDilute == null)
@@ -50,13 +54,14 @@ public class Dilution : IPluginMutilateDataTables
             notifier.OnCheckPerformed(new CheckEventArgs("ColumnToDilute is null", CheckResult.Fail, null));
             return;
         }
-            
+
         if (ColumnToDilute.Destination != DiscardedColumnDestination.Dilute)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"ColumnToDilute '{ColumnToDilute.GetRuntimeName()}' is not marked as DiscardedColumnDestination.Dilute", CheckResult.Fail, null));
+                $"ColumnToDilute '{ColumnToDilute.GetRuntimeName()}' is not marked as DiscardedColumnDestination.Dilute",
+                CheckResult.Fail, null));
 
         //Stamp out the type
-        IDilutionOperation instance = null; 
+        IDilutionOperation instance = null;
         try
         {
             var factory = new DilutionOperationFactory(ColumnToDilute);
@@ -66,22 +71,23 @@ public class Dilution : IPluginMutilateDataTables
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Could not create DilutionOperation of Type {Operation} using DilutionOperationFactory, see inner Exception for details", CheckResult.Fail, e));
+                    $"Could not create DilutionOperation of Type {Operation} using DilutionOperationFactory, see inner Exception for details",
+                    CheckResult.Fail, e));
         }
 
-        if(_loadStage  != LoadStage.AdjustStaging)
+        if (_loadStage != LoadStage.AdjustStaging)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Dilution can ONLY occur in load stage AdjustStaging, it is currently configured as load stage: {_loadStage}", CheckResult.Fail));
+                $"Dilution can ONLY occur in load stage AdjustStaging, it is currently configured as load stage: {_loadStage}",
+                CheckResult.Fail));
 
         instance?.Check(notifier);
     }
 
-        
+
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
     }
-        
+
     private DiscoveredDatabase _dbInfo;
     private LoadStage _loadStage;
 
@@ -112,5 +118,4 @@ public class Dilution : IPluginMutilateDataTables
         var factory = new DilutionOperationFactory(ColumnToDilute);
         return factory.Create(Operation).GetMutilationSql(namer);
     }
-
 }

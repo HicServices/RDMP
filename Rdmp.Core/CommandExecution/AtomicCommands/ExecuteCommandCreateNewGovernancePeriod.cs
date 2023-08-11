@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewGovernancePeriod:BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandCreateNewGovernancePeriod : BasicCommandExecution, IAtomicCommand
 {
     private readonly string _name;
 
@@ -21,10 +21,8 @@ public class ExecuteCommandCreateNewGovernancePeriod:BasicCommandExecution,IAtom
         _name = name;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.GovernancePeriod, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.GovernancePeriod, OverlayKind.Add);
 
     public override void Execute()
     {
@@ -33,18 +31,14 @@ public class ExecuteCommandCreateNewGovernancePeriod:BasicCommandExecution,IAtom
         var name = _name;
 
         if (name == null && BasicActivator.IsInteractive)
-        {
             if (!BasicActivator.TypeText(new DialogArgs
                 {
                     WindowTitle = "Governance Period Name",
                     TaskDescription = "Enter a name that describes the Governance required to hold the Catalogue(s).",
                     EntryLabel = "Name"
                 }, 255, null, out name, false))
-            {
                 // user cancelled typing a name
                 return;
-            }
-        }
 
         var period = new GovernancePeriod(BasicActivator.RepositoryLocator.CatalogueRepository, name);
         Publish(period);

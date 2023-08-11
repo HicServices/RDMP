@@ -18,18 +18,13 @@ internal class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandE
     {
     }
 
-    public override bool CanActivate(ExternalDatabaseServer target)
-    {
-        return true;
-    }
+    public override bool CanActivate(ExternalDatabaseServer target) => true;
 
     public override void Activate(ExternalDatabaseServer target)
     {
         ItemActivator.Activate<ExternalDatabaseServerUI, ExternalDatabaseServer>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalDatabaseServer target, InsertOption insertOption = InsertOption.Default)
-    {
-        return null;
-    }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalDatabaseServer target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

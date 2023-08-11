@@ -18,7 +18,7 @@ public class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListener
     /// By default this class will only throw Fail results but if you set this flag then it will also throw warning messages
     /// </summary>
     public bool ThrowOnWarning { get; set; }
-        
+
     public bool WriteToConsole { get; set; }
 
     public ThrowImmediatelyDataLoadEventListener()
@@ -31,13 +31,12 @@ public class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListener
         if (WriteToConsole)
             Console.WriteLine($"{sender}:{e.Message}");
 
-        if(e.ProgressEventType == ProgressEventType.Error || 
-           (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))
+        if (e.ProgressEventType == ProgressEventType.Error ||
+            (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))
             throw new Exception(e.Message, e.Exception);
     }
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-            
     }
 }

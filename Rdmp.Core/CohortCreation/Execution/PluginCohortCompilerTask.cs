@@ -13,7 +13,8 @@ internal class PluginCohortCompilerTask : AggregationTask
 {
     public IPluginCohortCompiler PluginCompiler { get; }
 
-    public PluginCohortCompilerTask(AggregateConfiguration ac,CohortCompiler mainCompiler, IPluginCohortCompiler pluginCompiler):base(ac,mainCompiler)
+    public PluginCohortCompilerTask(AggregateConfiguration ac, CohortCompiler mainCompiler,
+        IPluginCohortCompiler pluginCompiler) : base(ac, mainCompiler)
     {
         PluginCompiler = pluginCompiler;
     }
@@ -23,5 +24,4 @@ internal class PluginCohortCompilerTask : AggregationTask
         // for this task always go direct to the query cache
         return new[] { Aggregate.GetCohortIdentificationConfigurationIfAny().QueryCachingServer };
     }
-
 }

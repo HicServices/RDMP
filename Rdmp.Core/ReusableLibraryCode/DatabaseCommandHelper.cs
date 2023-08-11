@@ -32,10 +32,10 @@ public class DatabaseCommandHelper
 {
     private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new()
     {
-        {DatabaseType.MySql,new MySqlImplementation()},
-        {DatabaseType.Oracle,new OracleImplementation()},
-        {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
-        {DatabaseType.PostgreSql,new PostgreSqlImplementation()}
+        { DatabaseType.MySql, new MySqlImplementation() },
+        { DatabaseType.Oracle, new OracleImplementation() },
+        { DatabaseType.MicrosoftSQLServer, new MicrosoftSQLImplementation() },
+        { DatabaseType.PostgreSql, new PostgreSqlImplementation() }
     };
 
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
@@ -45,7 +45,6 @@ public class DatabaseCommandHelper
     /// </summary>
     public static int GlobalTimeout = 30;
 
-        
 
     public static IDiscoveredServerHelper For(DbConnection con)
     {
@@ -57,10 +56,7 @@ public class DatabaseCommandHelper
         return _dbConHelpersByType.Values.Single(i => i.IsFor(connectionStringBuilder)).GetServerHelper();
     }
 
-    public static IDiscoveredServerHelper For(DatabaseType dbType)
-    {
-        return _dbConHelpersByType[dbType].GetServerHelper();
-    }
+    public static IDiscoveredServerHelper For(DatabaseType dbType) => _dbConHelpersByType[dbType].GetServerHelper();
 
     public static IDiscoveredServerHelper For(DbCommand cmd)
     {
@@ -82,7 +78,7 @@ public class DatabaseCommandHelper
     {
         var cmd = For(con).GetCommand(s, con, transaction);
 
-        PerformanceCounter?.AddAudit(cmd,Environment.StackTrace.ToString());
+        PerformanceCounter?.AddAudit(cmd, Environment.StackTrace.ToString());
 
         cmd.CommandTimeout = GlobalTimeout;
         return cmd;
@@ -92,29 +88,21 @@ public class DatabaseCommandHelper
     {
         var toReturn = For(cmd).GetCommandBuilder(cmd).GetInsertCommand(true);
         toReturn.CommandTimeout = cmd.CommandTimeout = GlobalTimeout;
-            
+
         return toReturn;
     }
 
-    public static DbParameter GetParameter(string parameterName,DbCommand forCommand)
-    {
-        return For(forCommand).GetParameter(parameterName);
-    }
+    public static DbParameter GetParameter(string parameterName, DbCommand forCommand) =>
+        For(forCommand).GetParameter(parameterName);
 
-    public static DbParameter GetParameter(string parameterName, DatabaseType databaseType)
-    {
-        return For(databaseType).GetParameter(parameterName);
-    }
+    public static DbParameter GetParameter(string parameterName, DatabaseType databaseType) =>
+        For(databaseType).GetParameter(parameterName);
+
     // only used in missing fields checker, should be in UsefulStuff?
-    public static DbConnection GetConnection(DbConnectionStringBuilder connectionStringBuilder)
-    {
-        return For(connectionStringBuilder).GetConnection(connectionStringBuilder);
-    }
+    public static DbConnection GetConnection(DbConnectionStringBuilder connectionStringBuilder) =>
+        For(connectionStringBuilder).GetConnection(connectionStringBuilder);
 
-    public static DbDataAdapter GetDataAdapter(DbCommand cmd)
-    {
-        return For(cmd).GetDataAdapter(cmd);
-    }
+    public static DbDataAdapter GetDataAdapter(DbCommand cmd) => For(cmd).GetDataAdapter(cmd);
 
     public static void AddParameterWithValueToCommand(string parameterName, DbCommand command, object valueForParameter)
     {

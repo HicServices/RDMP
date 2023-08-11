@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-internal class ExampleDatasetsCreationTests:DatabaseTests
+internal class ExampleDatasetsCreationTests : DatabaseTests
 {
     /// <summary>
     /// Tests the creation of example datasets during first installation of RDMP or when running "rdmp.exe install [...] -e" from the CLI
@@ -24,24 +24,25 @@ internal class ExampleDatasetsCreationTests:DatabaseTests
     public void Test_ExampleDatasetsCreation()
     {
         //Should be empty RDMP metadata database
-        Assert.AreEqual(0,CatalogueRepository.GetAllObjects<Catalogue>().Length);
-        Assert.AreEqual(0,CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
+        Assert.AreEqual(0, CatalogueRepository.GetAllObjects<Catalogue>().Length);
+        Assert.AreEqual(0, CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
 
         //create the pipelines
         var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator,null,null);
-        pipes.CreatePipelines();
+        pipes.CreatePipelines(new PlatformDatabaseCreationOptions {});
 
         //create all the stuff
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator),RepositoryLocator);
-        creator.Create(db,new ThrowImmediatelyCheckNotifier(),new PlatformDatabaseCreationOptions {Seed = 500,DropDatabases = true });
+        var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
+        creator.Create(db, new ThrowImmediatelyCheckNotifier(),
+            new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
 
         //should be at least 2 views (marked as view)
         var views = CatalogueRepository.GetAllObjects<TableInfo>().Count(ti => ti.IsView);
-        Assert.GreaterOrEqual(views,2);
+        Assert.GreaterOrEqual(views, 2);
 
         //should have at least created some catalogues, graphs etc
-        Assert.GreaterOrEqual(CatalogueRepository.GetAllObjects<Catalogue>().Length,4);
-        Assert.GreaterOrEqual(CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length,4);
+        Assert.GreaterOrEqual(CatalogueRepository.GetAllObjects<Catalogue>().Length, 4);
+        Assert.GreaterOrEqual(CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length, 4);
     }
 }

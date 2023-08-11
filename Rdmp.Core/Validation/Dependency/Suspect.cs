@@ -16,7 +16,7 @@ namespace Rdmp.Core.Validation.Dependency;
 /// </summary>
 public class Suspect
 {
-    public string Pattern { get;private set; }
+    public string Pattern { get; private set; }
     public Type Type { get; private set; }
     public List<PropertyInfo> SuspectProperties = new();
     public List<FieldInfo> SuspectFields = new();

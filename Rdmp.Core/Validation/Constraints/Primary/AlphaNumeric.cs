@@ -14,7 +14,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary;
 public class AlphaNumeric : PrimaryConstraint
 {
     public const string RegExp = @"^[A-Za-z0-9]([A-Za-z0-9]*)$";
-        
+
     public override ValidationFailure Validate(object value)
     {
         if (value == null)
@@ -24,19 +24,15 @@ public class AlphaNumeric : PrimaryConstraint
         var match = Regex.Match(text, RegExp);
 
         if (!match.Success)
-            return new ValidationFailure($"Value [{value}] contains characters other than alphanumeric",this);
+            return new ValidationFailure($"Value [{value}] contains characters other than alphanumeric", this);
 
         return null;
     }
-        
+
     public override void RenameColumn(string originalName, string newName)
     {
-            
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return
-            "Checks that values have 1 or more characters/numbers in a sequence with no spaces or other punctuation";
-    }
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        "Checks that values have 1 or more characters/numbers in a sequence with no spaces or other punctuation";
 }

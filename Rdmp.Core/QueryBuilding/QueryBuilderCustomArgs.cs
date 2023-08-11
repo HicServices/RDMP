@@ -16,7 +16,7 @@ public class QueryBuilderCustomArgs
     public string OverrideLimitationSQL { get; set; }
     public int TopX { get; set; } = -1;
 
-    public QueryBuilderCustomArgs(string overrideSelectList,string overrideLimitationSQL,int topX)
+    public QueryBuilderCustomArgs(string overrideSelectList, string overrideLimitationSQL, int topX)
     {
         OverrideSelectList = overrideSelectList;
         OverrideLimitationSQL = overrideLimitationSQL;
@@ -25,7 +25,6 @@ public class QueryBuilderCustomArgs
 
     public QueryBuilderCustomArgs()
     {
-            
     }
 
     /// <summary>

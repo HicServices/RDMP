@@ -32,10 +32,8 @@ public class MasterDatabaseScriptExecutor
     /// </summary>
     public string RoundhouseSchemaName => GetRoundhouseSchemaName(Database);
 
-    public static string GetRoundhouseSchemaName(DiscoveredDatabase database)
-    {
-        return database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer ? "RoundhousE" : null;
-    }
+    public static string GetRoundhouseSchemaName(DiscoveredDatabase database) =>
+        database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer ? "RoundhousE" : null;
 
     public const string RoundhouseVersionTable = "Version";
     public const string RoundhouseScriptsRunTable = "ScriptsRun";
@@ -53,18 +51,19 @@ public class MasterDatabaseScriptExecutor
     {
         try
         {
-            if (Database.Exists())//make sure database does not already exist
+            if (Database.Exists()) //make sure database does not already exist
             {
                 if (Database.DiscoverTables(false).Any(t => t.GetRuntimeName().Equals(RoundhouseScriptsRunTable)))
-                {
-                    throw new Exception($"The database '{Database}' is already set up as a platform database for another schema (it has the '{RoundhouseScriptsRunTable}' table)");
-                }
+                    throw new Exception(
+                        $"The database '{Database}' is already set up as a platform database for another schema (it has the '{RoundhouseScriptsRunTable}' table)");
 
                 // it doesn't look like this database already contains RDMP curated schemas (hopefully it is blank but if not - meh).
                 // ask the user if they want to create it in this db even though it already exists and might not be empty
-                var createAnyway = notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database.GetRuntimeName()} already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
+                var createAnyway = notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Database {Database.GetRuntimeName()} already exists", CheckResult.Warning, null,
+                    "Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
 
-                if(!createAnyway)
+                if (!createAnyway)
                     throw new Exception("User chose not continue");
             }
             else
@@ -79,42 +78,46 @@ public class MasterDatabaseScriptExecutor
                     cmd.ExecuteNonQuery();
                 }
                 else
+                {
                     Database.Create();
+                }
 
                 if (!Database.Exists())
                     throw new Exception(
                         "Create database failed without Exception! (It did not Exist after creation)");
 
-                notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success,
+                    null));
             }
 
-            if(Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
+            if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
                 Database.CreateSchema(RoundhouseSchemaName);
 
-            Database.CreateTable("ScriptsRun",new []
+            Database.CreateTable("ScriptsRun", new[]
             {
-                new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
-                new DatabaseColumnRequest("version_id",new DatabaseTypeRequest(typeof(int))),
-                new DatabaseColumnRequest("script_name",new DatabaseTypeRequest(typeof(string),255)),
-                new DatabaseColumnRequest("text_of_script",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
-                new DatabaseColumnRequest("text_hash",new DatabaseTypeRequest(typeof(string),512){Unicode = true}),
-                new DatabaseColumnRequest("one_time_script",new DatabaseTypeRequest(typeof(bool))),
-                new DatabaseColumnRequest("entry_date",new DatabaseTypeRequest(typeof(DateTime))),
-                new DatabaseColumnRequest("modified_date",new DatabaseTypeRequest(typeof(DateTime))),
-                new DatabaseColumnRequest("entered_by",new DatabaseTypeRequest(typeof(string),50))
-
+                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                    { IsAutoIncrement = true, IsPrimaryKey = true },
+                new DatabaseColumnRequest("version_id", new DatabaseTypeRequest(typeof(int))),
+                new DatabaseColumnRequest("script_name", new DatabaseTypeRequest(typeof(string), 255)),
+                new DatabaseColumnRequest("text_of_script", new DatabaseTypeRequest(typeof(string), int.MaxValue)),
+                new DatabaseColumnRequest("text_hash", new DatabaseTypeRequest(typeof(string), 512) { Unicode = true }),
+                new DatabaseColumnRequest("one_time_script", new DatabaseTypeRequest(typeof(bool))),
+                new DatabaseColumnRequest("entry_date", new DatabaseTypeRequest(typeof(DateTime))),
+                new DatabaseColumnRequest("modified_date", new DatabaseTypeRequest(typeof(DateTime))),
+                new DatabaseColumnRequest("entered_by", new DatabaseTypeRequest(typeof(string), 50))
             }, RoundhouseSchemaName);
 
 
             Database.CreateTable("Version", new[]
             {
-                new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
-                new DatabaseColumnRequest("repository_path",new DatabaseTypeRequest(typeof(string),255){Unicode = true}),
-                new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(string),50){Unicode = true}),
-                new DatabaseColumnRequest("entry_date",new DatabaseTypeRequest(typeof(DateTime))),
-                new DatabaseColumnRequest("modified_date",new DatabaseTypeRequest(typeof(DateTime))),
-                new DatabaseColumnRequest("entered_by",new DatabaseTypeRequest(typeof(string),50))
-
+                new DatabaseColumnRequest("id", new DatabaseTypeRequest(typeof(int)))
+                    { IsAutoIncrement = true, IsPrimaryKey = true },
+                new DatabaseColumnRequest("repository_path",
+                    new DatabaseTypeRequest(typeof(string), 255) { Unicode = true }),
+                new DatabaseColumnRequest("version", new DatabaseTypeRequest(typeof(string), 50) { Unicode = true }),
+                new DatabaseColumnRequest("entry_date", new DatabaseTypeRequest(typeof(DateTime))),
+                new DatabaseColumnRequest("modified_date", new DatabaseTypeRequest(typeof(DateTime))),
+                new DatabaseColumnRequest("entered_by", new DatabaseTypeRequest(typeof(string), 50))
             }, RoundhouseSchemaName);
 
 
@@ -133,12 +136,13 @@ public class MasterDatabaseScriptExecutor
         }
     }
 
-    private void RunSQL(KeyValuePair<string,Patch> kvp)
+    private void RunSQL(KeyValuePair<string, Patch> kvp)
     {
         using (var con = Database.Server.GetConnection())
         {
             con.Open();
-            UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con,null, DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
+            UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con, null,
+                DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
         }
 
         var now = DateTime.Now;
@@ -146,18 +150,16 @@ public class MasterDatabaseScriptExecutor
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
             .Insert(new Dictionary<string, object>
             {
-                {"script_name", kvp.Key},
-                {"text_of_script", kvp.Value.EntireScript},
-                {"text_hash", CalculateHash(kvp.Value.EntireScript)},
+                { "script_name", kvp.Key },
+                { "text_of_script", kvp.Value.EntireScript },
+                { "text_hash", CalculateHash(kvp.Value.EntireScript) },
 
-                {"entry_date", now},
-                {"modified_date", now},
-                {"entered_by", Environment.UserName}
-
+                { "entry_date", now },
+                { "modified_date", now },
+                { "entered_by", Environment.UserName }
             });
 
-        SetVersion(kvp.Key,kvp.Value.DatabaseVersionNumber.ToString());
-            
+        SetVersion(kvp.Key, kvp.Value.DatabaseVersionNumber.ToString());
     }
 
     public static string CalculateHash(string input)
@@ -174,10 +176,9 @@ public class MasterDatabaseScriptExecutor
     }
 
 
-
     private void SetVersion(string name, string version)
     {
-        var versionTable = Database.ExpectTable(RoundhouseVersionTable,RoundhouseSchemaName);
+        var versionTable = Database.ExpectTable(RoundhouseVersionTable, RoundhouseSchemaName);
         versionTable.Truncate();
 
         //repository_path	version	entry_date	modified_date	entered_by
@@ -187,27 +188,28 @@ public class MasterDatabaseScriptExecutor
 
         versionTable.Insert(new Dictionary<string, object>
         {
-            {"repository_path", name},
-            {"version", version},
+            { "repository_path", name },
+            { "version", version },
 
-            {"entry_date", now},
-            {"modified_date", now},
-            {"entered_by", Environment.UserName}
+            { "entry_date", now },
+            { "modified_date", now },
+            { "entered_by", Environment.UserName }
         });
     }
 
-    public bool PatchDatabase(SortedDictionary<string, Patch> patches, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt, bool backupDatabase = true)
+    public bool PatchDatabase(SortedDictionary<string, Patch> patches, ICheckNotifier notifier,
+        Func<Patch, bool> patchPreviewShouldIRunIt, bool backupDatabase = true)
     {
-        if(!patches.Any())
+        if (!patches.Any())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("There are no patches to apply so skipping patching", CheckResult.Success,null));
+            notifier.OnCheckPerformed(new CheckEventArgs("There are no patches to apply so skipping patching",
+                CheckResult.Success, null));
             return true;
         }
 
         var maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
         if (backupDatabase && SupportsBackup(Database))
-        {
             try
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
@@ -215,7 +217,6 @@ public class MasterDatabaseScriptExecutor
                 Database.CreateBackup($"Full backup of {Database}");
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
-
             }
             catch (Exception e)
             {
@@ -224,8 +225,7 @@ public class MasterDatabaseScriptExecutor
                     CheckResult.Fail, e));
                 return false;
             }
-        }
-            
+
 
         try
         {
@@ -238,31 +238,34 @@ public class MasterDatabaseScriptExecutor
 
                 if (shouldRun)
                 {
-
                     try
                     {
                         RunSQL(patch);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        throw new Exception($"Failed to apply patch '{ patch.Key }'",e);
+                        throw new Exception($"Failed to apply patch '{patch.Key}'", e);
                     }
 
 
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success, null));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success,
+                        null));
                 }
                 else
+                {
                     throw new Exception($"User decided not to execute patch {patch.Key} - aborting ");
+                }
             }
 
-            SetVersion("Patching",maxPatchVersion.ToString());
-            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success, null));
+            SetVersion("Patching", maxPatchVersion.ToString());
+            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}",
+                CheckResult.Success, null));
 
             //all went fine
-            notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed",
+                CheckResult.Success, null));
 
             return true;
-
         }
         catch (Exception e)
         {
@@ -290,11 +293,13 @@ public class MasterDatabaseScriptExecutor
     /// <param name="patchPreviewShouldIRunIt"></param>
     /// <param name="backupDatabaseFunc"></param>
     /// <returns></returns>
-    public bool PatchDatabase(IPatcher patcher, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt, Func<bool> backupDatabaseFunc)
+    public bool PatchDatabase(IPatcher patcher, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt,
+        Func<bool> backupDatabaseFunc)
     {
-        var status = Patch.IsPatchingRequired(Database,patcher, out var databaseVersion, out var patchesInDatabase, out var allPatchesInAssembly);
+        var status = Patch.IsPatchingRequired(Database, patcher, out var databaseVersion, out var patchesInDatabase,
+            out var allPatchesInAssembly);
 
-        if(status != Patch.PatchingState.Required)
+        if (status != Patch.PatchingState.Required)
             return false;
 
         var stop = false;
@@ -314,13 +319,15 @@ public class MasterDatabaseScriptExecutor
                 if (!allPatchesInAssembly.Any(a => a.Value.Equals(patch)))
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"The database contains an unexplained patch called {patch.locationInAssembly} (it is not in {patcher.GetDbAssembly().FullName} ) so how did it get there?", CheckResult.Warning,
+                        $"The database contains an unexplained patch called {patch.locationInAssembly} (it is not in {patcher.GetDbAssembly().FullName} ) so how did it get there?",
+                        CheckResult.Warning,
                         null));
                 }
                 else if (!allPatchesInAssembly[patch.locationInAssembly].GetScriptBody().Equals(patch.GetScriptBody()))
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"The contents of patch {patch.locationInAssembly} are different between live database and the database patching assembly", CheckResult.Warning,
+                        $"The contents of patch {patch.locationInAssembly} are different between live database and the database patching assembly",
+                        CheckResult.Warning,
                         null));
 
                     //do not apply this patch
@@ -330,11 +337,11 @@ public class MasterDatabaseScriptExecutor
                 {
                     //we found it and it was intact
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",CheckResult.Success, null));
+                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",
+                        CheckResult.Success, null));
 
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
-
                 }
         }
         catch (Exception exception)
@@ -344,7 +351,8 @@ public class MasterDatabaseScriptExecutor
         }
 
         //if any of the patches we are trying to apply are earlier than the latest in the database
-        var missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
+        var missedOpportunities = toApply.Values.Where(p =>
+            p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
         foreach (var missedOpportunity in missedOpportunities)
         {
             stop = true;
@@ -357,14 +365,16 @@ public class MasterDatabaseScriptExecutor
         foreach (var futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > hostAssemblyVersion))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ", CheckResult.Fail, null));
+                $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ",
+                CheckResult.Fail, null));
             stop = true;
-
         }
 
         if (stop)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Abandoning patching process (no patches have been applied) because of one or more previous errors",CheckResult.Fail, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "Abandoning patching process (no patches have been applied) because of one or more previous errors",
+                CheckResult.Fail, null));
             return false;
         }
 
@@ -384,7 +394,7 @@ public class MasterDatabaseScriptExecutor
 
         var dt = scriptsRun.GetDataTable();
 
-        foreach(DataRow r in dt.Rows)
+        foreach (DataRow r in dt.Rows)
         {
             var text_of_script = r["text_of_script"] as string;
             var script_name = r["script_name"] as string;
@@ -416,6 +426,6 @@ public class MasterDatabaseScriptExecutor
 
         //get everything in the /up/ folder that is .sql
         var patches = patcher.GetAllPatchesInAssembly(Database);
-        PatchDatabase(patches,notifier,p=>true);//apply all patches without question
+        PatchDatabase(patches, notifier, p => true); //apply all patches without question
     }
 }

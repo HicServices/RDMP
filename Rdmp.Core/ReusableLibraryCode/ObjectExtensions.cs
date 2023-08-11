@@ -24,9 +24,7 @@ public static class ObjectExtensions
     public static string ToBeautifulString(this object o)
     {
         if (o is Array a)
-        {
             return string.Join(", ", a.Cast<object>().Select(v => v == null ? "" : v.ToString()).ToArray());
-        }
 
         return o.ToString();
     }

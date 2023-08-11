@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAtomicCommand
+internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution, IAtomicCommand
 {
     private readonly string _commandName;
     private readonly ExtractableCohort[] _onlyCohorts;
@@ -29,7 +29,8 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAto
         _commandName = "Show Cohort Summary";
     }
 
-    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator,CohortSourceUsedByProjectNode projectSource) : base(activator)
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, CohortSourceUsedByProjectNode projectSource) :
+        base(activator)
     {
         _commandName = "Show Cohort Summary";
 
@@ -40,21 +41,18 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAto
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+    public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator, ExternalCohortTable externalCohortTable) :
+        base(activator)
     {
         _commandName = "Show Detailed Summary of Cohorts";
-        _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>().ToArray();
+        _onlyCohorts = activator.CoreChildProvider.GetChildren(externalCohortTable).OfType<ExtractableCohort>()
+            .ToArray();
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Show information about the cohort lists stored in your cohort database (number of patients etc)";
-    }
+    public override string GetCommandHelp() =>
+        "Show information about the cohort lists stored in your cohort database (number of patients etc)";
 
-    public override string GetCommandName()
-    {
-        return _commandName;
-    }
+    public override string GetCommandName() => _commandName;
 
     public override void Execute()
     {
@@ -68,8 +66,6 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution,IAto
             extractableCohortCollection.SetupForAllCohorts(Activator);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.AllCohortsNode);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.AllCohortsNode);
 }

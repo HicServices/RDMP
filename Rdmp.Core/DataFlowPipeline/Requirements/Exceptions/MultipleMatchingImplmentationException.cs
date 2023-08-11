@@ -17,7 +17,7 @@ public class MultipleMatchingImplmentationException : Exception
     /// Creates a new Exception with the provided message
     /// </summary>
     /// <param name="s"></param>
-    public MultipleMatchingImplmentationException(string s) : base (s)
+    public MultipleMatchingImplmentationException(string s) : base(s)
     {
     }
 }

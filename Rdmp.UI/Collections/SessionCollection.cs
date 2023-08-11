@@ -12,7 +12,7 @@ namespace Rdmp.UI.Collections;
 /// <summary>
 /// Collection of objects grouped into a session.  This is the persistence data object for <see cref="SessionCollectionUI"/> which tracks which objects are included in the session e.g. between RDMP GUI restarts
 /// </summary>
-public class SessionCollection :PersistableObjectCollection
+public class SessionCollection : PersistableObjectCollection
 {
     public string SessionName { get; private set; }
 
@@ -23,15 +23,13 @@ public class SessionCollection :PersistableObjectCollection
     {
     }
 
-    public SessionCollection(string name): this()
+    public SessionCollection(string name) : this()
     {
         SessionName = name;
     }
 
-    public override string SaveExtraText()
-    {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> {{nameof(SessionName), SessionName}});
-    }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { nameof(SessionName), SessionName } });
 
     public override void LoadExtraText(string s)
     {

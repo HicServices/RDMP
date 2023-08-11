@@ -10,5 +10,4 @@ public enum RetryStrategy
 {
     NoRetry,
     IterativeBackoff1Hour
-            
 }

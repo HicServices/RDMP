@@ -39,16 +39,16 @@ internal class AggregateConfigurationTests : UnitTests
         dt.Columns.Add("col1");
         dt.Columns.Add("col2");
 
-        dt.Rows.Add("2001",0, 12);
-        dt.Rows.Add("2002",null, 333);
+        dt.Rows.Add("2001", 0, 12);
+        dt.Rows.Add("2002", null, 333);
 
         UserSettings.IncludeZeroSeriesInGraphs = includeZeroSeries;
 
         AggregateConfiguration.AdjustGraphDataTable(dt);
 
-        if(includeZeroSeries)
+        if (includeZeroSeries)
         {
-            Assert.AreEqual(3,dt.Columns.Count);
+            Assert.AreEqual(3, dt.Columns.Count);
         }
         else
         {

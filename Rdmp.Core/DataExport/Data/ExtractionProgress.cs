@@ -30,6 +30,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     private int _numberOfDaysPerBatch;
     private string _name;
     private RetryStrategy _retry;
+
     #endregion
 
     /// <inheritdoc/>
@@ -88,15 +89,18 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     }
 
     #region Relationships
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ISelectedDataSets SelectedDataSets => DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
+    public ISelectedDataSets SelectedDataSets =>
+        DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
 
-    public static void ValidateSelectedColumn(ICheckNotifier notifier,ExtractionInformation ei)
+    public static void ValidateSelectedColumn(ICheckNotifier notifier, ExtractionInformation ei)
     {
         if (ei == null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("A date column on which to split batches must be selected", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("A date column on which to split batches must be selected",
+                CheckResult.Fail));
             return;
         }
 
@@ -104,79 +108,78 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 
         if (col == null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"ExtractionInformation '{ei}' is an orphan with no associated ColumnInfo", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"ExtractionInformation '{ei}' is an orphan with no associated ColumnInfo", CheckResult.Fail));
             return;
         }
 
         try
         {
-
             if (col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) != typeof(DateTime))
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionProgressColumnProbablyNotADate, ei, col.Data_type));
-            }
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionProgressColumnProbablyNotADate, ei,
+                    col.Data_type));
         }
         catch (Exception ex)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not determine datatype of ColumnInfo {col} ('{col?.Data_type}')", CheckResult.Fail, ex));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Could not determine datatype of ColumnInfo {col} ('{col?.Data_type}')", CheckResult.Fail, ex));
         }
-            
     }
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ExtractionInformation ExtractionInformation => DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
+    public ExtractionInformation ExtractionInformation =>
+        DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
 
     #endregion
 
     public ExtractionProgress()
     {
-
     }
 
-    public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
+    public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate,
+        DateTime? endDate, int numberOfDaysPerBatch, string name, int extractionInformation_ID)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "SelectedDataSets_ID",sds.ID},
-            { "ExtractionInformation_ID",extractionInformation_ID},
-            { "NumberOfDaysPerBatch",numberOfDaysPerBatch},
-            { "StartDate", startDate},
-            { "EndDate", endDate},
-            { "Name",name },
-            { "Retry",RetryStrategy.NoRetry }
+            { "SelectedDataSets_ID", sds.ID },
+            { "ExtractionInformation_ID", extractionInformation_ID },
+            { "NumberOfDaysPerBatch", numberOfDaysPerBatch },
+            { "StartDate", startDate },
+            { "EndDate", endDate },
+            { "Name", name },
+            { "Retry", RetryStrategy.NoRetry }
         });
 
         if (ID == 0 || Repository != repository)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
+
     public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds)
     {
         var cata = sds.GetCatalogue();
         var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;
 
-        if(sds.ExtractionProgressIfAny != null)
-        {
+        if (sds.ExtractionProgressIfAny != null)
             throw new Exception($"There is already an ExtractionProgress associated with {sds}");
-        }
 
         if (!coverageColId.HasValue)
-        {
-            throw new ArgumentException($"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");
-        }
+            throw new ArgumentException(
+                $"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "SelectedDataSets_ID",sds.ID},
-            { "ExtractionInformation_ID",coverageColId},
-            { "NumberOfDaysPerBatch",365},
+            { "SelectedDataSets_ID", sds.ID },
+            { "ExtractionInformation_ID", coverageColId },
+            { "NumberOfDaysPerBatch", 365 },
             { "Name", $"ExtractionProgress{Guid.NewGuid()}" },
-            { "Retry",RetryStrategy.NoRetry }
+            { "Retry", RetryStrategy.NoRetry }
         });
 
         if (ID == 0 || Repository != repository)
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
+
     public ExtractionProgress(IDataExportRepository repository, DbDataReader r) : base(repository, r)
     {
         SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
@@ -186,20 +189,15 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
         NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
         Name = r["Name"].ToString();
-        Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy),r["Retry"].ToString());
+        Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy), r["Retry"].ToString());
     }
 
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 
-    public bool MoreToFetch()
-    {
-        return ProgressDate < EndDate;
-    }
+    public bool MoreToFetch() => ProgressDate < EndDate;
 
-    public bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount)
+    public bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener,
+        int totalFailureCount, int consecutiveFailureCount)
     {
         return Retry switch
         {
@@ -209,23 +207,22 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         };
     }
 
-    private bool IterativeBackoff1Hour(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount)
+    private bool IterativeBackoff1Hour(GracefulCancellationToken token, IDataLoadEventListener listener,
+        int totalFailureCount)
     {
         token.ThrowIfAbortRequested();
 
         int[] waitTimes = { 0, 1, 2, 3, 5, 8, 13, 21, 34 };
 
-        if (totalFailureCount > waitTimes.Length)
-        {
-            return false;
-        }
+        if (totalFailureCount > waitTimes.Length) return false;
 
         // sleep for however many minutes we are up to
-        var mins  = waitTimes[totalFailureCount];
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Waiting {mins} mins before retry"));
-                
+        var mins = waitTimes[totalFailureCount];
+        listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"Waiting {mins} mins before retry"));
+
         // wait for the minutes but cancel if abort is hit
-        Task.Delay((int)TimeSpan.FromMinutes(mins).TotalMilliseconds,token.AbortToken).Wait();
+        Task.Delay((int)TimeSpan.FromMinutes(mins).TotalMilliseconds, token.AbortToken).Wait();
 
         token.ThrowIfAbortRequested();
 

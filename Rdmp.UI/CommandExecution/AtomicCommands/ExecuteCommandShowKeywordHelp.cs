@@ -23,44 +23,37 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
 {
     private RDMPContextMenuStripArgs _args;
 
-    public ExecuteCommandShowKeywordHelp(IActivateItems activator,  RDMPContextMenuStripArgs args) : base(activator)
+    public ExecuteCommandShowKeywordHelp(IActivateItems activator, RDMPContextMenuStripArgs args) : base(activator)
     {
         _args = args;
 
         Weight = 100.6f;
     }
 
-    public override string GetCommandName()
-    {
-        return "What is this?";
-    }
+    public override string GetCommandName() => "What is this?";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Help);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Help);
 
-    public override string GetCommandHelp()
-    {
-        return "Displays the code documentation for the menu object or the Type name of the object if it has none";
-    }
+    public override string GetCommandHelp() =>
+        "Displays the code documentation for the menu object or the Type name of the object if it has none";
 
     public override void Execute()
     {
         base.Execute();
-            
+
         string title = null;
         string docs = null;
-            
+
         //get docs from masquerader if it has any
         if (_args.Masquerader != null)
         {
             title = GetTypeName(_args.Masquerader.GetType());
-            docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Masquerader.GetType());
+            docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(
+                _args.Masquerader.GetType());
         }
-            
+
         //if not get them from the actual class
-        if(docs == null)
+        if (docs == null)
         {
             title = GetTypeName(_args.Model.GetType());
 
@@ -68,9 +61,10 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
             if (_args.Model is IKnowWhatIAm knows)
                 docs = knows.WhatIsThis(); //yes
             else
-                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
+                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(
+                    _args.Model.GetType());
         }
-            
+
         //if we have docs show them otherwise just the Type name
         if (docs != null)
             WideMessageBox.ShowKeywordHelp(title, docs);

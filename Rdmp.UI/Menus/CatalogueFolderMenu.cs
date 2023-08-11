@@ -17,7 +17,6 @@ internal class CatalogueFolderMenu : RDMPContextMenuStrip
 {
     public CatalogueFolderMenu(RDMPContextMenuStripArgs args, string folder) : base(args, folder)
     {
-
         //Things that are always visible regardless
         Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
         {
@@ -29,6 +28,7 @@ internal class CatalogueFolderMenu : RDMPContextMenuStrip
 
         args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
-        Add(new ExecuteCommandGenerateMetadataReport(_activator, _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
+        Add(new ExecuteCommandGenerateMetadataReport(_activator,
+            _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
     }
 }

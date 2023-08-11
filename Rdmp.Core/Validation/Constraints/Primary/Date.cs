@@ -44,11 +44,11 @@ public partial class Date : PrimaryConstraint
             DateTime.Parse(s, _ukCulture.DateTimeFormat);
 
             if (NotAFullySpecifiedDate(s))
-                return new ValidationFailure("Partial dates not allowed.",this);
+                return new ValidationFailure("Partial dates not allowed.", this);
         }
         catch (FormatException ex)
         {
-            return new ValidationFailure(ex.Message,this);
+            return new ValidationFailure(ex.Message, this);
         }
 
         return null;
@@ -63,13 +63,10 @@ public partial class Date : PrimaryConstraint
 
     public override void RenameColumn(string originalName, string newName)
     {
-
     }
 
-    public override string GetHumanReadableDescriptionOfValidation()
-    {
-        return "Checks that the data type is DateTime or a string which can be parsed into a valid DateTime";
-    }
+    public override string GetHumanReadableDescriptionOfValidation() =>
+        "Checks that the data type is DateTime or a string which can be parsed into a valid DateTime";
 
     [GeneratedRegex("^(\\d{1,2})(\\.|/|-)(\\d{1,2})(\\.|/|-)(\\d{2}(\\d{2})?)$")]
     private static partial Regex DateRegex();

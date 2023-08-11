@@ -49,12 +49,11 @@ public partial class AggregateContinuousDateAxisUI : UserControl
             _axis = value.AggregateContinuousDateAxis;
 
             UpdateFormStateToMatchAxisState();
-            
         }
     }
 
     private bool updating = false;
-        
+
     private void UpdateFormStateToMatchAxisState()
     {
         updating = true;
@@ -87,7 +86,10 @@ public partial class AggregateContinuousDateAxisUI : UserControl
     public AggregateContinuousDateAxisUI()
     {
         InitializeComponent();
-        ddIncrement.DataSource = new object[]{AxisIncrement.Month,AxisIncrement.Quarter,AxisIncrement.Year}; //don't offer day, that was a terrible idea
+        ddIncrement.DataSource = new object[]
+        {
+            AxisIncrement.Month, AxisIncrement.Quarter, AxisIncrement.Year
+        }; //don't offer day, that was a terrible idea
     }
 
 
@@ -96,24 +98,26 @@ public partial class AggregateContinuousDateAxisUI : UserControl
         if (updating || _axis == null)
             return;
 
-        _axis.AxisIncrement = (AxisIncrement) ddIncrement.SelectedValue;
+        _axis.AxisIncrement = (AxisIncrement)ddIncrement.SelectedValue;
         _axis.SaveToDatabase();
     }
-        
+
     private void tbDates_TextChanged(object sender, EventArgs e)
     {
         if (updating || _axis == null)
             return;
 
-        var s = (TextBox) sender;
+        var s = (TextBox)sender;
 
         if (string.IsNullOrWhiteSpace(s.Text))
         {
             _errorProvider.SetError(s, "Field cannot be blank");
             _errorProvider.Tag = s;
         }
-        else if(_errorProvider.Tag == s)
+        else if (_errorProvider.Tag == s)
+        {
             _errorProvider.Clear();
+        }
 
         //if user enters a date then put 
         if (DateTime.TryParse(s.Text, out var dt))
@@ -123,18 +127,18 @@ public partial class AggregateContinuousDateAxisUI : UserControl
             updating = false;
         }
 
-        if(s == tbStartDate)
+        if (s == tbStartDate)
             _axis.StartDate = s.Text;
         else
             _axis.EndDate = s.Text;
 
         try
         {
-            SyntaxChecker.ParityCheckCharacterPairs(new[] {'(', '\''}, new[] {')', '\''}, s.Text);
+            SyntaxChecker.ParityCheckCharacterPairs(new[] { '(', '\'' }, new[] { ')', '\'' }, s.Text);
             s.ForeColor = Color.Black;
 
             _axis.SaveToDatabase();
-            ((TextBox) sender).Focus();
+            ((TextBox)sender).Focus();
         }
         catch (SyntaxErrorException)
         {

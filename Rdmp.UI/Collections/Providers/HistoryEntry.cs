@@ -23,7 +23,6 @@ public class HistoryEntry : IMasqueradeAs
 
     private HistoryEntry()
     {
-            
     }
 
     public HistoryEntry(IMapsDirectlyToDatabaseTable o, DateTime date)
@@ -50,9 +49,9 @@ public class HistoryEntry : IMasqueradeAs
             var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
 
 
-            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString,locator).Single();
+            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString, locator).Single();
         }
-        catch (PersistenceException )
+        catch (PersistenceException)
         {
             return null;
         }
@@ -61,26 +60,17 @@ public class HistoryEntry : IMasqueradeAs
     }
 
 
-    protected bool Equals(HistoryEntry other)
-    {
-        return Equals(Object, other.Object);
-    }
+    protected bool Equals(HistoryEntry other) => Equals(Object, other.Object);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((HistoryEntry) obj);
+        return Equals((HistoryEntry)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return Object != null ? Object.GetHashCode() : 0;
-    }
+    public override int GetHashCode() => Object != null ? Object.GetHashCode() : 0;
 
-    public object MasqueradingAs()
-    {
-        return Object;
-    }
+    public object MasqueradingAs() => Object;
 }

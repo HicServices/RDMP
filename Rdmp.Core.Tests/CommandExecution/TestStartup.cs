@@ -17,8 +17,7 @@ internal class TestStartup : UnitTests
     [Test]
     public void TestStartupWithMemoryRepository()
     {
-        var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
-        Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
+        var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(), RepositoryLocator);
+        Assert.DoesNotThrow(() => s.DoStartup(new ThrowImmediatelyCheckNotifier()));
     }
-
 }

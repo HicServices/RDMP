@@ -22,27 +22,27 @@ public class RuntimeTaskFactoryTests : DatabaseTests
     [TestCase("Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation.ExcelToCSVFilesConverter")]
     public void RuntimeTaskFactoryTest(string className)
     {
-
         var lmd = new LoadMetadata(CatalogueRepository);
-        var task = new ProcessTask(CatalogueRepository, lmd,LoadStage.GetFiles);
+        var task = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles);
 
         var f = new RuntimeTaskFactory(CatalogueRepository);
 
         task.Path = className;
         task.ProcessTaskType = ProcessTaskType.DataProvider;
         task.SaveToDatabase();
-            
+
         try
         {
-            var ex = Assert.Throws<Exception>(() => f.Create(task, new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), Mock.Of<ILoadDirectory>())));
-            Assert.IsTrue(ex.InnerException.Message.Contains("marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
+            var ex = Assert.Throws<Exception>(() => f.Create(task,
+                new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),
+                    Mock.Of<ILoadDirectory>())));
+            Assert.IsTrue(ex.InnerException.Message.Contains(
+                "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }
-        finally 
+        finally
         {
             task.DeleteInDatabase();
             lmd.DeleteInDatabase();
         }
-
-
     }
 }

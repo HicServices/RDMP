@@ -20,7 +20,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 internal class DataExportFilterManagerFromChildProvider : DataExportFilterManager
 {
     private readonly Dictionary<int, List<FilterContainer>> _subcontainers = new();
-        
+
     private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
 
     /// <summary>
@@ -29,43 +29,41 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="childProvider"></param>
-    public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
+    public DataExportFilterManagerFromChildProvider(DataExportRepository repository,
+        DataExportChildProvider childProvider) : base(repository)
     {
-        _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+        _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f => f.FilterContainer_ID.HasValue)
+            .GroupBy(f => f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
 
         var server = repository.DiscoveredServer;
         using (var con = repository.GetConnection())
         {
             var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
-            while(r.Read())
+            while (r.Read())
             {
-
                 var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
                 var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
 
-                if(!_subcontainers.ContainsKey(parentId))
-                    _subcontainers.Add(parentId,new List<FilterContainer>());
+                if (!_subcontainers.ContainsKey(parentId))
+                    _subcontainers.Add(parentId, new List<FilterContainer>());
 
                 _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
             }
+
             r.Close();
         }
     }
-        
+
     /// <summary>
     /// Returns all subcontainers found in the <paramref name="parent"/> (results are returned from the cache created during class construction)
     /// </summary>
-    public override IContainer[] GetSubContainers(IContainer parent)
-    {
-        return _subcontainers.TryGetValue(parent.ID, out var result)
+    public override IContainer[] GetSubContainers(IContainer parent) =>
+        _subcontainers.TryGetValue(parent.ID, out var result)
             ? result.ToArray()
             : Array.Empty<IContainer>();
-    }
 
-    public override IFilter[] GetFilters(IContainer container)
-    {
-        return _containersToFilters.TryGetValue(container.ID, out var filters)
+    public override IFilter[] GetFilters(IContainer container) =>
+        _containersToFilters.TryGetValue(container.ID, out var filters)
             ? filters.ToArray()
             : Array.Empty<IFilter>();
-    }
 }

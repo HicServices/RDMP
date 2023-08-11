@@ -42,12 +42,10 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}"/> instead
     /// of using this directly</param>
     /// <param name="token">Check this token for cancellation regularly if your API call takes a while to complete</param>
-    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token);
-        
-    public virtual bool ShouldRun(AggregateConfiguration ac)
-    {
-        return ShouldRun(ac.Catalogue);
-    }
+    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
+        CancellationToken token);
+
+    public virtual bool ShouldRun(AggregateConfiguration ac) => ShouldRun(ac.Catalogue);
     public abstract bool ShouldRun(ICatalogue catalogue);
 
 
@@ -60,13 +58,14 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="enumerable"></param>
     /// <param name="aggregate"></param>
     /// <param name="cache"></param>
-    protected void SubmitIdentifierList<T>(string identifierName, IEnumerable<T> enumerable, AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache)
+    protected void SubmitIdentifierList<T>(string identifierName, IEnumerable<T> enumerable,
+        AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache)
     {
         var g = new Guesser(new DatabaseTypeRequest(typeof(T)));
-            
+
         // generate random chi numbers
         using var dt = new DataTable();
-        dt.Columns.Add(identifierName,typeof(T));
+        dt.Columns.Add(identifierName, typeof(T));
         foreach (var p in enumerable)
         {
             dt.Rows.Add(p);
@@ -76,7 +75,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
         // this is how you commit the results to the cache
         var args = new CacheCommitIdentifierList(aggregate, GetDescription(aggregate), dt,
             new DatabaseColumnRequest(identifierName, g.Guess, false), 5000);
-            
+
         cache.CommitResults(args);
     }
 
@@ -90,12 +89,13 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="cache"></param>
     /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types) 
     /// then pass true.  If everything is a string and you want types to be assigned for these for querying later pass false.</param>
-    protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache, bool knownTypes)
+    protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate,
+        CachedAggregateConfigurationResultsManager cache, bool knownTypes)
     {
         // The data table has to go into the database so we need to know max length of strings, decimal precision etc
         var guessers = new Dictionary<string, Guesser>();
 
-        foreach(DataColumn col in results.Columns)
+        foreach (DataColumn col in results.Columns)
         {
             // if the user told us the datatypes were right then assume they are honest otherwise make it up as you go along
             var g = knownTypes ? new Guesser(new DatabaseTypeRequest(col.DataType)) : new Guesser();
@@ -107,8 +107,8 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
         }
 
         // this is how you commit the results to the cache
-        var args = new CacheCommitJoinableInceptionQuery(aggregate, GetDescription(aggregate), results, 
-            guessers.Select(k=>new DatabaseColumnRequest(k.Key,k.Value.Guess)).ToArray()
+        var args = new CacheCommitJoinableInceptionQuery(aggregate, GetDescription(aggregate), results,
+            guessers.Select(k => new DatabaseColumnRequest(k.Key, k.Value.Guess)).ToArray()
             , 5000);
         cache.CommitResults(args);
     }
@@ -120,15 +120,10 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// </summary>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    protected virtual string GetDescription(AggregateConfiguration aggregate)
-    {
-        return aggregate.Description ?? "none";
-    }
+    protected virtual string GetDescription(AggregateConfiguration aggregate) => aggregate.Description ?? "none";
 
-    public virtual bool IsStale(AggregateConfiguration aggregate, string oldDescription)
-    {
-        return !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
-    }
+    public virtual bool IsStale(AggregateConfiguration aggregate, string oldDescription) =>
+        !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
 
     public virtual IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)
     {

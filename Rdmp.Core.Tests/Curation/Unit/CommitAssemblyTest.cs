@@ -19,9 +19,10 @@ public class CommitAssemblyTest
         Console.Write(s.GetType().FullName);
 
         var t = Type.GetType(s.GetType().AssemblyQualifiedName);
-            
-        Assert.AreEqual(s.GetType(),t);
+
+        Assert.AreEqual(s.GetType(), t);
     }
+
     public enum ScheduleStrategy
     {
         NotSet,

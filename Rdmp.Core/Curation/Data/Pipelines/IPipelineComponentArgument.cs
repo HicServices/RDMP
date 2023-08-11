@@ -13,7 +13,8 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 /// <summary>
 /// See PipelineComponentArgument
 /// </summary>
-public interface IPipelineComponentArgument : IArgument, IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable,IHasDependencies
+public interface IPipelineComponentArgument : IArgument, IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable,
+    IHasDependencies
 {
     /// <summary>
     /// Component for whom this <see cref="IPipelineComponentArgument"/> provides a value for.  There will be one <see cref="IPipelineComponentArgument"/>

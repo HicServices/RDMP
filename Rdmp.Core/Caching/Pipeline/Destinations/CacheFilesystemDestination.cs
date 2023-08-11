@@ -30,12 +30,16 @@ public enum CacheFileGranularity
 /// this class you should implement an ICacheLayout (or use an existing one) and then use ProcessPipelineData to populate the CacheDirectory with data according to the
 /// ICacheLayout
 /// </summary>
-public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>
+public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, IPluginDataFlowComponent<ICacheChunk>,
+    IDataFlowDestination<ICacheChunk>
 {
-    [DemandsInitialization("Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",DemandType.Unspecified,null)]
+    [DemandsInitialization(
+        "Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",
+        DemandType.Unspecified, null)]
     public DirectoryInfo CacheDirectory { get; set; }
 
-    public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+    public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken);
 
     public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
     {
@@ -43,7 +47,8 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
         if (CacheDirectory == null)
         {
             if (value.Cache == null)
-                throw new Exception("For some reason the LoadDirectory does not have a Cache specified and the FilesystemDestination component does not have an override CacheDirectory specified");
+                throw new Exception(
+                    "For some reason the LoadDirectory does not have a Cache specified and the FilesystemDestination component does not have an override CacheDirectory specified");
 
             CacheDirectory = value.Cache;
         }
@@ -70,14 +75,15 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     }
 
     public bool SilentRunning { get; set; }
+
     public virtual void Check(ICheckNotifier notifier)
     {
         if (CacheDirectory == null)
-            throw new InvalidOperationException("CacheDirectory is null, ensure that pre-initialize has been called with a valid object before checking.");
+            throw new InvalidOperationException(
+                "CacheDirectory is null, ensure that pre-initialize has been called with a valid object before checking.");
 
         // If we have an overridden cache directory, ensure we can reach it and write to it
         if (CacheDirectory != null)
-        {
             try
             {
                 var tempFilename = Path.Combine(CacheDirectory.FullName, ".test.txt");
@@ -86,14 +92,15 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
                 sw.Dispose();
                 File.Delete(tempFilename);
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Confirmed could write to/delete from the overridden CacheDirectory: {CacheDirectory.FullName}", CheckResult.Success));
+                    $"Confirmed could write to/delete from the overridden CacheDirectory: {CacheDirectory.FullName}",
+                    CheckResult.Success));
             }
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Could not write to the overridden CacheDirectory: {CacheDirectory.FullName}", CheckResult.Fail, e));
+                    $"Could not write to the overridden CacheDirectory: {CacheDirectory.FullName}", CheckResult.Fail,
+                    e));
             }
-        }
 
         // Check CacheLayout creation
         var cacheLayout = CreateCacheLayout();

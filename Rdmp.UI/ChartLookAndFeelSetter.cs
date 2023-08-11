@@ -28,8 +28,9 @@ public class ChartLookAndFeelSetter
     /// <param name="yAxisTitle"></param>
     public static void PopulateYearMonthChart(Chart chart, DataTable dt, string yAxisTitle)
     {
-        if(dt.Columns[0].ColumnName != "YearMonth")
-            throw new ArgumentException("Expected a graph with a first column YearMonth containing values expressed as YYYY-MM");
+        if (dt.Columns[0].ColumnName != "YearMonth")
+            throw new ArgumentException(
+                "Expected a graph with a first column YearMonth containing values expressed as YYYY-MM");
 
         chart.DataSource = dt;
         chart.Annotations.Clear();
@@ -106,7 +107,6 @@ public class ChartLookAndFeelSetter
         chart.ChartAreas[0].BackColor = Color.White;
         chart.ChartAreas[0].BackSecondaryColor = Color.FromArgb(255, 230, 230, 230);
         chart.ChartAreas[0].BackGradientStyle = GradientStyle.DiagonalRight;
-
     }
 
     /// <summary>
@@ -118,7 +118,7 @@ public class ChartLookAndFeelSetter
     {
         var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 
-        if(matchMonthName.Success)
+        if (matchMonthName.Success)
         {
             var monthName = matchMonthName.Groups[1].Value;
             return DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;

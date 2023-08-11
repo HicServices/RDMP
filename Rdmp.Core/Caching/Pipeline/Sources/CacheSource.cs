@@ -21,7 +21,8 @@ namespace Rdmp.Core.Caching.Pipeline.Sources;
 /// and stored further down the caching pipeline.  Use the Request property to determine which dates/times you are supposed to handle within DoGetChunk.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IPipelineRequirement<ICatalogueRepository> where T : class,ICacheChunk
+public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
+    IPipelineRequirement<ICatalogueRepository> where T : class, ICacheChunk
 {
     public ICacheFetchRequestProvider RequestProvider { get; set; }
     public IPermissionWindow PermissionWindow { get; set; }
@@ -47,22 +48,27 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
         // If GetNext returns null, there are no further failures to process and we're done
         if (Request == null)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "The RequestProvider has no more requests to provide (RequestProvider.GetNext returned null)"));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "The RequestProvider has no more requests to provide (RequestProvider.GetNext returned null)"));
             return null;
         }
 
         if (Request.CacheProgress == null)
-            throw new InvalidOperationException("The request has no CacheProgress item (in this case to determine when the lag period begins)");
+            throw new InvalidOperationException(
+                "The request has no CacheProgress item (in this case to determine when the lag period begins)");
 
         // Check if we will stray into the lag period with this fetch and if so signal we are finished
         var cacheLagPeriod = Request.CacheProgress.GetCacheLagPeriod();
         if (cacheLagPeriod != null && cacheLagPeriod.TimeIsWithinPeriod(Request.End))
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "The Request is for a time within the Cache Lag Period. This means we are up-to-date and can stop now."));
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "The Request is for a time within the Cache Lag Period. This means we are up-to-date and can stop now."));
             return null;
         }
 
-        Chunk = DoGetChunk(Request,listener, cancellationToken);
+        Chunk = DoGetChunk(Request, listener, cancellationToken);
 
         if (Chunk != null && Chunk.Request == null && Request != null)
             listener.OnNotify(this,
@@ -78,7 +84,8 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
     /// <param name="request">The period of time we want to fetch</param>
     /// <param name="listener">For auditing progress during the fetch</param>
     /// <param name="cancellationToken">Indicates if user is trying to cancel the process</param>
-    public abstract T DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
+    public abstract T DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken);
 
     public void PreInitialize(ICacheFetchRequestProvider value, IDataLoadEventListener listener)
     {
@@ -94,11 +101,10 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
     public abstract void Abort(IDataLoadEventListener listener);
     public abstract T TryGetPreview();
     public abstract void Check(ICheckNotifier notifier);
+
     public void PreInitialize(ICatalogueRepository value, IDataLoadEventListener listener)
     {
         CatalogueRepository = value;
         MEF = value.MEF;
     }
-
-
 }

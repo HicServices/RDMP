@@ -19,7 +19,7 @@ public class ExtractableCohortCombineable : ICombineToMakeCommand
     public ExtractableCohort Cohort { get; set; }
 
     public Exception ErrorGettingCohortData { get; private set; }
-        
+
     public IExtractionConfiguration[] CompatibleExtractionConfigurations { get; set; }
     public Project[] CompatibleProjects { get; set; }
 
@@ -37,12 +37,10 @@ public class ExtractableCohortCombineable : ICombineToMakeCommand
             return;
         }
 
-        CompatibleProjects = extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber" , ExternalProjectNumber);
+        CompatibleProjects =
+            extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber", ExternalProjectNumber);
         CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
     }
-        
-    public string GetSqlString()
-    {
-        return Cohort.WhereSQL();
-    }
+
+    public string GetSqlString() => Cohort.WhereSQL();
 }

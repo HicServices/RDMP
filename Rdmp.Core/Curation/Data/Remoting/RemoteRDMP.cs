@@ -62,7 +62,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         get => _username;
         set => SetField(ref _username, value);
     }
-        
+
     /// <inheritdoc/>
     public string Password
     {
@@ -70,13 +70,14 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         set
         {
             // if we are being deserialized (using blank constructor)
-            if(_encryptedPasswordHost == null)
+            if (_encryptedPasswordHost == null)
             {
                 // store the encrypted value from the database in a temp variable
                 // until we get told how to decrypt (see SetRepository)
                 _tempPassword = value;
                 return;
             }
+
             _encryptedPasswordHost.Password = value;
             OnPropertyChanged(null, value);
         }
@@ -86,17 +87,18 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     public string GetDecryptedPassword()
     {
         if (_encryptedPasswordHost == null)
-            throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
+            throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
 
-        return _encryptedPasswordHost.GetDecryptedPassword()?? "";
+        return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
     }
+
     public RemoteRDMP()
     {
-
     }
 
     /// <inheritdoc/>
-    public RemoteRDMP(ICatalogueRepository repository):base()
+    public RemoteRDMP(ICatalogueRepository repository) : base()
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
@@ -115,7 +117,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     public RemoteRDMP(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-        _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository) repository);
+        _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository)repository);
 
         URL = r["URL"].ToString();
         Name = r["Name"].ToString();
@@ -124,11 +126,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <inheritdoc cref="Name"/>
-    public override string ToString()
-    {
-        return Name;
-    }
-
+    public override string ToString() => Name;
 
 
     /// <summary>
@@ -144,7 +142,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
             baseUri.Query = "isarray=true";
 
         baseUri.Path += $"/api/{typeof(T).Name}";
-            
+
         return baseUri.ToString();
     }
 

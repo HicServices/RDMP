@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.Validation;
 
-public class ReferentialIntegrityConstraintTests :DatabaseTests
+public class ReferentialIntegrityConstraintTests : DatabaseTests
 {
     private ITableInfo _tableInfo;
     private ColumnInfo[] _columnInfo;
@@ -25,23 +25,25 @@ public class ReferentialIntegrityConstraintTests :DatabaseTests
     {
         base.OneTimeSetUp();
 
-        var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
+        var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)
+            .ExpectTable("ReferentialIntegrityConstraintTests");
 
-        if(tbl.Exists())
+        if (tbl.Exists())
             tbl.Drop();
 
         var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
-            
+
         using (var con = server.GetConnection())
         {
             con.Open();
 
             server.GetCommand("CREATE TABLE ReferentialIntegrityConstraintTests(MyValue int)", con).ExecuteNonQuery();
-            server.GetCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con).ExecuteNonQuery();
+            server.GetCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con)
+                .ExecuteNonQuery();
         }
 
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
-        importer.DoImport(out _tableInfo,out _columnInfo);
+        importer.DoImport(out _tableInfo, out _columnInfo);
 
         _constraint = new ReferentialIntegrityConstraint(CatalogueRepository)
         {
@@ -61,11 +63,11 @@ public class ReferentialIntegrityConstraintTests :DatabaseTests
         var failure = _constraint.Validate(value, null, null);
 
         //if it did not fail validation and we expected failure
-        if(failure == null && expectFailure)
+        if (failure == null && expectFailure)
             Assert.Fail();
 
         //or it did fail validation and we did not expect failure
-        if(failure != null && !expectFailure)
+        if (failure != null && !expectFailure)
             Assert.Fail();
 
         Assert.Pass();

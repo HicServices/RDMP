@@ -23,12 +23,14 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
     public IEnumerable<object> AlwaysShow { get; }
     public CancellationToken CancellationToken { get; }
 
-    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow, IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text,int maxToTake, CancellationToken cancellationToken) 
+    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow,
+        IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text, int maxToTake,
+        CancellationToken cancellationToken)
     {
         AlwaysShow = alwaysShow;
         CancellationToken = cancellationToken;
 
-        if(string.IsNullOrEmpty(text))
+        if (string.IsNullOrEmpty(text))
         {
             _scoringObjects = allObjects.Take(maxToTake).ToList();
         }
@@ -38,9 +40,10 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 
             var scorer = new SearchablesMatchScorer
             {
-                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(),
+                    StringComparer.CurrentCultureIgnoreCase)
             };
-            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
+            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken, null);
 
             // we were cancelled
             if (matches == null)
@@ -51,12 +54,8 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
 
             _scoringObjects = SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
         }
-
     }
 
 
-    public IEnumerable Filter(IEnumerable modelObjects)
-    {
-        return _scoringObjects.Union(AlwaysShow);
-    }
+    public IEnumerable Filter(IEnumerable modelObjects) => _scoringObjects.Union(AlwaysShow);
 }

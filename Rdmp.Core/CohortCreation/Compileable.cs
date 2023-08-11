@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation;
 
-public abstract class Compileable:ICompileable
+public abstract class Compileable : ICompileable
 {
     protected readonly CohortCompiler _compiler;
     private CompilationState _state;
@@ -29,15 +29,9 @@ public abstract class Compileable:ICompileable
         _compiler = compiler;
     }
 
-    public override string ToString()
-    {
-        return Child.ToString();
-    }
+    public override string ToString() => Child.ToString();
 
-    public string GetStateDescription()
-    {
-        return State.ToString();
-    }
+    public string GetStateDescription() => State.ToString();
 
     public abstract string GetCatalogueName();
 
@@ -50,15 +44,15 @@ public abstract class Compileable:ICompileable
         {
             _state = value;
             var h = StateChanged;
-            h?.Invoke(this,EventArgs.Empty);
+            h?.Invoke(this, EventArgs.Empty);
         }
         get => _state;
     }
 
     public virtual int Order
     {
-        get => ((IOrderable) Child).Order;
-        set => ((IOrderable) Child).Order = value;
+        get => ((IOrderable)Child).Order;
+        set => ((IOrderable)Child).Order = value;
     }
 
     public event EventHandler StateChanged;
@@ -75,24 +69,14 @@ public abstract class Compileable:ICompileable
 
     public Stopwatch Stopwatch { get; set; }
 
-    public TimeSpan? ElapsedTime {
-        get
-        {
-            return Stopwatch?.Elapsed;
-        }
-    }
+    public TimeSpan? ElapsedTime => Stopwatch?.Elapsed;
 
     public abstract bool IsEnabled();
 
-    public string GetCachedQueryUseCount()
-    {
-        return _compiler.GetCachedQueryUseCount(this);
-    }
+    public string GetCachedQueryUseCount() => _compiler.GetCachedQueryUseCount(this);
 
-    public bool AreaAllQueriesCached()
-    {
-        return _compiler.AreaAllQueriesCached(this);
-    }
+    public bool AreaAllQueriesCached() => _compiler.AreaAllQueriesCached(this);
+
     public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
     {
         ParentContainerIfAny = parent;

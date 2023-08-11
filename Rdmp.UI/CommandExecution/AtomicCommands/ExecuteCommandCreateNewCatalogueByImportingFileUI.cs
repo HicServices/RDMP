@@ -16,16 +16,18 @@ public class ExecuteCommandCreateNewCatalogueByImportingFileUI : ExecuteCommandC
 {
     private readonly IActivateItems _activator;
 
-    public ExecuteCommandCreateNewCatalogueByImportingFileUI(IActivateItems activator,FileInfo file = null) :base(activator,file)
+    public ExecuteCommandCreateNewCatalogueByImportingFileUI(IActivateItems activator, FileInfo file = null) : base(
+        activator, file)
     {
         _activator = activator;
     }
+
     public override void Execute()
     {
-        if(IsImpossible)
+        if (IsImpossible)
             throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
-        var ui = new CreateNewCatalogueByImportingFileUI(_activator,this);
+        var ui = new CreateNewCatalogueByImportingFileUI(_activator, this);
         ui.SetProjectSpecific(ProjectSpecific);
         ui.ShowDialog();
     }

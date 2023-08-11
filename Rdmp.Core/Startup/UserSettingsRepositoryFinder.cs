@@ -27,11 +27,12 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
     {
         get
         {
-            if(_linkedRepositoryProvider == null)
+            if (_linkedRepositoryProvider == null)
                 RefreshRepositoriesFromUserSettings();
 
             if (_linkedRepositoryProvider == null)
-                throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
+                throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
 
             return _linkedRepositoryProvider.CatalogueRepository;
         }
@@ -45,33 +46,30 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                 RefreshRepositoriesFromUserSettings();
 
             if (_linkedRepositoryProvider == null)
-                throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
+                throw new Exception(
+                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
 
-            return _linkedRepositoryProvider.DataExportRepository; 
+            return _linkedRepositoryProvider.DataExportRepository;
         }
     }
 
-    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-    {
-        return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,objectID);
-    }
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
+        string databaseObjectTypeName, int objectID) =>
+        _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName, objectID);
 
-    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-    {
-        return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
-    }
+    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID) =>
+        _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
 
     public void RefreshRepositoriesFromUserSettings()
     {
         //we have mef?
         MEF mef = null;
         CommentStore commentStore = null;
-            
+
         //if we have a catalogue repository with loaded MEF then grab it
         if (_linkedRepositoryProvider != null && _linkedRepositoryProvider.CatalogueRepository != null)
         {
-
-            if(_linkedRepositoryProvider.CatalogueRepository.MEF != null)
+            if (_linkedRepositoryProvider.CatalogueRepository.MEF != null)
                 mef = _linkedRepositoryProvider.CatalogueRepository.MEF;
 
             if (_linkedRepositoryProvider.CatalogueRepository.CommentStore != null)
@@ -92,7 +90,8 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         }
         catch (Exception ex)
         {
-            throw new CorruptRepositoryConnectionDetailsException($"Unable to create {nameof(LinkedRepositoryProvider)}",ex);
+            throw new CorruptRepositoryConnectionDetailsException(
+                $"Unable to create {nameof(LinkedRepositoryProvider)}", ex);
         }
 
         //preserve the currently loaded MEF assemblies
@@ -101,30 +100,24 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         if (newrepo.CatalogueRepository != null)
         {
             //and the new repo doesn't have MEF loaded
-            if(newrepo.CatalogueRepository.MEF != null && !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies && mef != null && mef.HaveDownloadedAllAssemblies)
+            if (newrepo.CatalogueRepository.MEF != null &&
+                !newrepo.CatalogueRepository.MEF.HaveDownloadedAllAssemblies && mef != null &&
+                mef.HaveDownloadedAllAssemblies)
                 //use the old MEF    
                 newrepo.CatalogueRepository.MEF = mef;
 
             newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;
-
         }
-            
+
 
         _linkedRepositoryProvider = newrepo;
     }
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
-    {
-        return _linkedRepositoryProvider.GetObjectByID<T>(value);
-    }
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable =>
+        _linkedRepositoryProvider.GetObjectByID<T>(value);
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
-    {
-        return _linkedRepositoryProvider.GetObjectByID(t,value);
-    }
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value) =>
+        _linkedRepositoryProvider.GetObjectByID(t, value);
 
-    public IEnumerable<IRepository> GetAllRepositories()
-    {
-        return _linkedRepositoryProvider.GetAllRepositories();
-    }
+    public IEnumerable<IRepository> GetAllRepositories() => _linkedRepositoryProvider.GetAllRepositories();
 }

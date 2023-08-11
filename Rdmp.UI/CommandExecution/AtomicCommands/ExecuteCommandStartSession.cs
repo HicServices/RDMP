@@ -24,9 +24,11 @@ public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicComman
     /// True if the command was cancelled before finishing <see cref="Execute"/>
     /// </summary>
     public bool Cancelled { get; set; } = true;
+
     public string InitialSearch { get; set; }
 
-    public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
+    public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection,
+        string sessionName) : base(activator)
     {
         _initialSelection = initialSelection;
         _sessionName = sessionName;

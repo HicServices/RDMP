@@ -46,20 +46,17 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private CatalogueItem[] _allCatalogueItems;
 
     public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
-        
-    [JsonIgnore]
-    public List<IDilutionOperation>  DilutionOperations { get; private set; }
+
+    [JsonIgnore] public List<IDilutionOperation> DilutionOperations { get; private set; }
 
     public ITableInfo[] TableInfos { get; private set; }
 
-    [JsonIgnore]
-    public DiscoveredDatabase TargetDatabase { get; set; }
+    [JsonIgnore] public DiscoveredDatabase TargetDatabase { get; set; }
 
     public ColumnInfo DateColumn { get; set; }
     public DateTime? StartDate { get; set; }
 
-    [JsonIgnore]
-    public HashSet<ITableInfo> SkippedTables = new();
+    [JsonIgnore] public HashSet<ITableInfo> SkippedTables = new();
     private ICatalogue _catalogue;
 
     /// <summary>
@@ -69,7 +66,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         _shareManager = new ShareManager(repositoryLocator);
-            
+
         DilutionOperations = new List<IDilutionOperation>();
 
         var constructor = new ObjectConstructor();
@@ -78,7 +75,8 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             DilutionOperations.Add((IDilutionOperation)ObjectConstructor.Construct(operationType));
     }
 
-    public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICatalogue catalogue): this(repositoryLocator)
+    public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ICatalogue catalogue) : this(repositoryLocator)
     {
         Catalogue = catalogue;
 
@@ -88,30 +86,29 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
     {
-        if(!Plans.ContainsKey(col))
+        if (!Plans.ContainsKey(col))
             throw new Exception($"No plan found for column {col}");
 
         return Plans[col];
     }
 
-    public IExternalDatabaseServer GetIdentifierDumpServer()
-    {
-        return Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
-    }
+    public IExternalDatabaseServer GetIdentifierDumpServer() =>
+        Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (TargetDatabase == null)
             notifier.OnCheckPerformed(new CheckEventArgs("No TargetDatabase has been set", CheckResult.Fail));
-        else
-        if (!TargetDatabase.Exists())
-            notifier.OnCheckPerformed(new CheckEventArgs($"TargetDatabase '{TargetDatabase}' does not exist", CheckResult.Fail));
+        else if (!TargetDatabase.Exists())
+            notifier.OnCheckPerformed(new CheckEventArgs($"TargetDatabase '{TargetDatabase}' does not exist",
+                CheckResult.Fail));
 
         var toMigrateTables = TableInfos.Except(SkippedTables).ToArray();
 
         if (!toMigrateTables.Any())
-            notifier.OnCheckPerformed(new CheckEventArgs("There are no TableInfos selected for anonymisation",CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("There are no TableInfos selected for anonymisation",
+                CheckResult.Fail));
 
         try
         {
@@ -120,7 +117,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
             foreach (var joinInfo in joinInfos)
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Found required JoinInfo '{joinInfo}' that will have to be migrated",CheckResult.Success));
+                    $"Found required JoinInfo '{joinInfo}' that will have to be migrated", CheckResult.Success));
 
             foreach (var lookup in GetLookupsRequiredCatalogue())
             {
@@ -128,54 +125,58 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
                     $"Found required Lookup '{lookup}' that will have to be migrated", CheckResult.Success));
 
                 //for each key involved in the lookup
-                foreach (var c in new[] { lookup.ForeignKey ,lookup.PrimaryKey,lookup.Description})
+                foreach (var c in new[] { lookup.ForeignKey, lookup.PrimaryKey, lookup.Description })
                 {
                     //lookup / table has already been migrated 
-                    if(SkippedTables.Any(t=>t.ID == c.TableInfo_ID))
+                    if (SkippedTables.Any(t => t.ID == c.TableInfo_ID))
                         continue;
 
                     //make sure that the plan is sensible
                     if (GetPlanForColumnInfo(c).Plan != Plan.PassThroughUnchanged)
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"ColumnInfo '{c}' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
-                            
                 }
             }
         }
         catch (Exception ex)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to generate Catalogue SQL", CheckResult.Fail,ex));
+            notifier.OnCheckPerformed(new CheckEventArgs("Failed to generate Catalogue SQL", CheckResult.Fail, ex));
         }
-            
+
         if (DateColumn != null)
         {
             var dateColumnPlan = GetPlanForColumnInfo(DateColumn);
-            if(dateColumnPlan.Plan != Plan.PassThroughUnchanged)
-                if(notifier.OnCheckPerformed(new CheckEventArgs($"Plan for {DateColumn} must be PassThroughUnchanged",CheckResult.Fail,null,"Set plan to PassThroughUnchanged")))
+            if (dateColumnPlan.Plan != Plan.PassThroughUnchanged)
+                if (notifier.OnCheckPerformed(new CheckEventArgs($"Plan for {DateColumn} must be PassThroughUnchanged",
+                        CheckResult.Fail, null, "Set plan to PassThroughUnchanged")))
                     dateColumnPlan.Plan = Plan.PassThroughUnchanged;
 
             //get a count of the number of non lookup used tables
             var usedTables = TableInfos.Except(SkippedTables).Count(t => !t.IsLookupTable());
-                
+
             if (usedTables > 1)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"You cannot have a date based migration because you are trying to migrate {usedTables} TableInfos at once", CheckResult.Fail));
-
+                        $"You cannot have a date based migration because you are trying to migrate {usedTables} TableInfos at once",
+                        CheckResult.Fail));
         }
-            
-        if (Plans.Any(p=>p.Value.Plan == Plan.Dilute))
+
+        if (Plans.Any(p => p.Value.Plan == Plan.Dilute))
             if (GetIdentifierDumpServer() == null)
-                notifier.OnCheckPerformed(new CheckEventArgs("No default Identifier Dump server has been configured", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("No default Identifier Dump server has been configured",
+                    CheckResult.Fail));
 
         var refactorer = new SelectSQLRefactorer();
 
         foreach (var e in _allExtractionInformations)
             if (!SelectSQLRefactorer.IsRefactorable(e))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"ExtractionInformation '{e}' is a not refactorable due to reason:{SelectSQLRefactorer.GetReasonNotRefactorable(e)}", CheckResult.Fail));
-            
-        notifier.OnCheckPerformed(new CheckEventArgs($"Preparing to evaluate {toMigrateTables.Length}' tables ({string.Join(",",toMigrateTables.Select(t=>t.GetFullyQualifiedName()))})", CheckResult.Success));
+                    $"ExtractionInformation '{e}' is a not refactorable due to reason:{SelectSQLRefactorer.GetReasonNotRefactorable(e)}",
+                    CheckResult.Fail));
+
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Preparing to evaluate {toMigrateTables.Length}' tables ({string.Join(",", toMigrateTables.Select(t => t.GetFullyQualifiedName()))})",
+            CheckResult.Success));
 
         foreach (TableInfo tableInfo in toMigrateTables)
         {
@@ -189,8 +190,9 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
             if (!pks.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised", CheckResult.Fail));
-                
+                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised",
+                    CheckResult.Fail));
+
             if (tableInfo.IsTableValuedFunction)
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"TableInfo '{tableInfo}' is an IsTableValuedFunction so cannot be anonymised", CheckResult.Fail));
@@ -204,7 +206,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             p.Check(notifier);
     }
 
-    private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier,T m) where T:IMapsDirectlyToDatabaseTable
+    private void EnsureNotAlreadySharedLocally<T>(ICheckNotifier notifier, T m) where T : IMapsDirectlyToDatabaseTable
     {
         if (_shareManager.IsExportedObject(m))
         {
@@ -244,7 +246,6 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     private void InitializePlans()
     {
-                        
         _allExtractionInformations = Catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
         _allCatalogueItems = Catalogue.CatalogueItems.Where(ci => ci.ColumnInfo_ID != null).ToArray();
         var allColumnInfosSystemWide = Catalogue.Repository.GetAllObjects<ColumnInfo>();
@@ -252,7 +253,8 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         var lookups = GetLookupsRequiredCatalogue();
 
         foreach (var plan in Plans.Values)
-            plan.Initialize(_allExtractionInformations, _allCatalogueItems, joins, lookups, allColumnInfosSystemWide,this);
+            plan.Initialize(_allExtractionInformations, _allCatalogueItems, joins, lookups, allColumnInfosSystemWide,
+                this);
     }
 
     public List<JoinInfo> GetJoinInfosRequiredCatalogue()

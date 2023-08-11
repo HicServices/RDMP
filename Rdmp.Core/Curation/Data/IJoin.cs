@@ -36,7 +36,7 @@ public interface IJoin
     /// Which SQL join keyword to use when linking the <see cref="PrimaryKey"/> and <see cref="ForeignKey"/>.
     /// </summary>
     ExtractionJoinType ExtractionJoinType { get; }
-        
+
     /// <summary>
     /// If it is nessesary to join on more than one column, use this method to indicate the aditional fk / pk pairs (they must belong to the same TableInfos as the 
     /// main IJoin)

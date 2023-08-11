@@ -37,15 +37,20 @@ public class TransposerTests
     {
         var transposer = new Transposer();
         transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-        var ex = Assert.Throws<NotSupportedException>(()=>transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-        Assert.AreEqual("Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable",ex.Message);
+        var ex = Assert.Throws<NotSupportedException>(() =>
+            transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+        Assert.AreEqual(
+            "Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable",
+            ex.Message);
     }
 
     [Test]
     public void TransposerTest_ThrowOnEmptyDataTable()
     {
         var transposer = new Transposer();
-        var ex = Assert.Throws<NotSupportedException>(()=>transposer.ProcessPipelineData(new DataTable(), new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+        var ex = Assert.Throws<NotSupportedException>(() =>
+            transposer.ProcessPipelineData(new DataTable(), new ThrowImmediatelyDataLoadJob(),
+                new GracefulCancellationToken()));
         Assert.AreEqual("DataTable toProcess had 0 rows and 0 columns, thus it cannot be transposed", ex.Message);
     }
 
@@ -54,7 +59,8 @@ public class TransposerTests
     public void TransposerTest_TableTransposed()
     {
         var transposer = new Transposer();
-        var actual = transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+        var actual =
+            transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
         var expectedResult = new DataTable();
 
@@ -73,24 +79,22 @@ public class TransposerTests
         for (var i = 0; i < expectedResult.Rows.Count; i++)
         for (var j = 0; j < actual.Columns.Count; j++)
             Assert.AreEqual(expectedResult.Rows[i][j], actual.Rows[i][j]);
-
     }
 
     [Test]
     public void TestTransposerDodgyHeaders()
     {
-
         var dr = dt.Rows.Add("32 GramMax", "55", "0", "5");
 
         var transposer = new Transposer
         {
             MakeHeaderNamesSane = true
         };
-        var actual = transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-            
+        var actual =
+            transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+
         Assert.IsTrue(actual.Columns.Contains("_32GramMax"));
 
         dt.Rows.Remove(dr);
-            
     }
 }

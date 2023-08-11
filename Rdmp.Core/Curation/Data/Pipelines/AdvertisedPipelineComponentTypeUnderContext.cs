@@ -47,38 +47,22 @@ public class AdvertisedPipelineComponentTypeUnderContext
 
         foreach (var requiredInputType in context.GetIPipelineRequirementsForType(componentType))
             //if there are no initialization objects that are instances of an IPipelineRequirement<T> then we cannot satisfy the components pipeline requirements (e.g. a component  DelimitedFlatFileDataFlowSource requires a FlatFileToLoad but pipeline is trying to load from a database reference)
-            if (!initializationTypes.Any(available => requiredInputType == available || requiredInputType.IsAssignableFrom(available)))
+            if (!initializationTypes.Any(available =>
+                    requiredInputType == available || requiredInputType.IsAssignableFrom(available)))
                 unmetRequirements.Add(requiredInputType);
     }
 
-    public Type GetComponentType()
-    {
-        return _componentType;
-    }
+    public Type GetComponentType() => _componentType;
 
-    public string Namespace()
-    {
-        return _componentType.Namespace;
-    }
+    public string Namespace() => _componentType.Namespace;
 
-    public override string ToString()
-    {
-        return _componentType.Name;
-    }
+    public override string ToString() => _componentType.Name;
 
-    public PipelineComponentRole GetRole()
-    {
-        return _role;
-    }
-    public string UIDescribeCompatible()
-    {
-        return _allowableUnderContext && !unmetRequirements.Any() ? "Yes" : "No";
-    }
+    public PipelineComponentRole GetRole() => _role;
 
-    public bool IsCompatible()
-    {
-        return _allowableUnderContext && !unmetRequirements.Any();
-    }
+    public string UIDescribeCompatible() => _allowableUnderContext && !unmetRequirements.Any() ? "Yes" : "No";
+
+    public bool IsCompatible() => _allowableUnderContext && !unmetRequirements.Any();
 
     public string GetReasonIncompatible()
     {
@@ -93,7 +77,6 @@ public class AdvertisedPipelineComponentTypeUnderContext
 
             toReturn +=
                 $" following types are required by the component but not available as input objects to the pipeline {string.Join(",", unmetRequirements)}";
-
         }
 
         return toReturn;

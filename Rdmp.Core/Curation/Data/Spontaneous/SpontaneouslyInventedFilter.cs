@@ -18,11 +18,11 @@ namespace Rdmp.Core.Curation.Data.Spontaneous;
 /// 
 /// <para>The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.</para>
 /// </summary>
-public class SpontaneouslyInventedFilter:ConcreteFilter
+public class SpontaneouslyInventedFilter : ConcreteFilter
 {
     private readonly MemoryCatalogueRepository _repo;
     private readonly ISqlParameter[] _filterParametersIfAny;
-        
+
     /// <summary>
     /// Creates a new temporary (unsaveable) filter in the given memory <paramref name="repo"/>
     /// </summary>
@@ -32,19 +32,20 @@ public class SpontaneouslyInventedFilter:ConcreteFilter
     /// <param name="name"></param>
     /// <param name="description"></param>
     /// <param name="filterParametersIfAny"></param>
-    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IContainer notionalParent, string whereSql, string name, string description, ISqlParameter[] filterParametersIfAny)
+    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo, IContainer notionalParent, string whereSql,
+        string name, string description, ISqlParameter[] filterParametersIfAny)
     {
         _repo = repo;
         _filterParametersIfAny = filterParametersIfAny;
         WhereSQL = whereSql;
         Name = name;
         Description = description;
-            
-        repo.InsertAndHydrate(this,new Dictionary<string, object>());
 
-        if(notionalParent != null)
+        repo.InsertAndHydrate(this, new Dictionary<string, object>());
+
+        if (notionalParent != null)
         {
-            repo.AddChild(notionalParent,this);
+            repo.AddChild(notionalParent, this);
             FilterContainer_ID = notionalParent.ID;
         }
     }
@@ -54,17 +55,14 @@ public class SpontaneouslyInventedFilter:ConcreteFilter
     /// </summary>
     /// <param name="repo">The repository to store the temporary object in</param>
     /// <param name="copyFrom"></param>
-    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IFilter copyFrom):this(repo,null,copyFrom.WhereSQL,copyFrom.Name,copyFrom.Description,copyFrom.GetAllParameters())
+    public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo, IFilter copyFrom) : this(repo, null,
+        copyFrom.WhereSQL, copyFrom.Name, copyFrom.Description, copyFrom.GetAllParameters())
     {
-            
     }
 
     public override int? ClonedFromExtractionFilter_ID { get; set; }
     public override int? FilterContainer_ID { get; set; }
-    public override ISqlParameter[] GetAllParameters()
-    {
-        return _filterParametersIfAny??Array.Empty<ISqlParameter>();
-    }
+    public override ISqlParameter[] GetAllParameters() => _filterParametersIfAny ?? Array.Empty<ISqlParameter>();
 
     public override IContainer FilterContainer
     {
@@ -77,18 +75,9 @@ public class SpontaneouslyInventedFilter:ConcreteFilter
         }
     }
 
-    public override ColumnInfo GetColumnInfoIfExists()
-    {
-        return null;
-    }
+    public override ColumnInfo GetColumnInfoIfExists() => null;
 
-    public override IFilterFactory GetFilterFactory()
-    {
-        return null;
-    }
+    public override IFilterFactory GetFilterFactory() => null;
 
-    public override Catalogue GetCatalogue()
-    {
-        return null;
-    }
+    public override Catalogue GetCatalogue() => null;
 }

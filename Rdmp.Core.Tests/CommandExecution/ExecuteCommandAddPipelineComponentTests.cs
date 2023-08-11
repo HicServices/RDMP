@@ -27,8 +27,8 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
 
-        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(CleanStrings),"2");
-        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ColumnSwapper),"1");
+        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(CleanStrings), "2");
+        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ColumnSwapper), "1");
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql));
 
@@ -49,8 +49,6 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         Assert.IsNotNull(p.Destination);
         Assert.AreEqual(typeof(ExecuteFullExtractionToDatabaseMSSql), p.Destination.GetClassAsSystemType());
         Assert.IsNotEmpty(p.Destination.GetAllArguments());
-
-
     }
 
     [Test]
@@ -61,10 +59,12 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         Assert.IsNull(p.Source);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
-        var ex = Assert.Throws<Exception>(()=>Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource)));
+        var ex = Assert.Throws<Exception>(() =>
+            Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource)));
 
-        Assert.AreEqual("Pipeline 'My Pipeline' already has a source",ex.Message);
+        Assert.AreEqual("Pipeline 'My Pipeline' already has a source", ex.Message);
     }
+
     [Test]
     public void TestCreatePipeline_TooManyDestinations()
     {
@@ -73,7 +73,8 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         Assert.IsNull(p.Source);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql));
-        var ex = Assert.Throws<Exception>(() => Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql)));
+        var ex = Assert.Throws<Exception>(() =>
+            Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql)));
 
         Assert.AreEqual("Pipeline 'My Pipeline' already has a destination", ex.Message);
     }

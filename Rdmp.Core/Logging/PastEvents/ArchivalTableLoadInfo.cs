@@ -16,7 +16,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// <summary>
 /// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
 /// </summary>
-public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable,IHasSummary
+public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
 {
     public ArchivalDataLoadInfo Parent { get; private set; }
 
@@ -35,7 +35,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
     private readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
 
-    public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r,DiscoveredDatabase loggingDatabase)
+    public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r, DiscoveredDatabase loggingDatabase)
     {
         Parent = parent;
         _loggingDatabase = loggingDatabase;
@@ -58,6 +58,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
         _knownDataSource = new Lazy<List<ArchivalDataSource>>(GetDataSources);
     }
+
     private List<ArchivalDataSource> GetDataSources()
     {
         var toReturn = new List<ArchivalDataSource>();
@@ -66,27 +67,28 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
         {
             con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
+            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}",
+                       con))
+            using (var r = cmd.ExecuteReader())
+            {
                 while (r.Read())
                     toReturn.Add(new ArchivalDataSource(r));
+            }
         }
 
         return toReturn;
     }
+
     private static int? ToNullableInt(object i)
     {
         if (i == null || i == DBNull.Value)
             return null;
 
         return Convert.ToInt32(i);
+    }
 
-    }
-        
-    public override string ToString()
-    {
-        return $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
-    }
+    public override string ToString() =>
+        $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
 
     public int CompareTo(object obj)
     {
@@ -98,11 +100,12 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
+
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
         title = $"{TargetTable} ({Start})";
-        body =  $"Start:{Start}\r\nEnd:{End}\r\nINSERTS:{Inserts}\r\nUPDATES:{Updates}\r\nDELETES:{Deletes}";
+        body = $"Start:{Start}\r\nEnd:{End}\r\nINSERTS:{Inserts}\r\nUPDATES:{Updates}\r\nDELETES:{Deletes}";
         stackTrace = null;
-        level = CheckResult.Success;                
+        level = CheckResult.Success;
     }
 }

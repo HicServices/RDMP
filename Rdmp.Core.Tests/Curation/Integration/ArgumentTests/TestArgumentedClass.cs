@@ -10,6 +10,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
 public class TestArgumentedClass
 {
-    [DemandsInitialization("Fishes", DemandType.Unspecified,true)]
+    [DemandsInitialization("Fishes", DemandType.Unspecified, true)]
     public bool MyBool { get; set; }
 }

@@ -43,13 +43,15 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification
 /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
 /// </summary>
-public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper,
+public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed,
+    IHasDependencies, IHasQuerySyntaxHelper,
     IInjectKnown<JoinableCohortAggregateConfiguration>,
     IInjectKnown<AggregateDimension[]>,
     IInjectKnown<Catalogue>,
-    IDisableable,IKnowWhatIAm,IMightBeReadOnly, IRootFilterContainerHost
+    IDisableable, IKnowWhatIAm, IMightBeReadOnly, IRootFilterContainerHost
 {
     #region Database Properties
+
     private string _countSQL;
     private int _catalogueID;
     private string _name;
@@ -67,7 +69,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public string CountSQL
     {
         get => _countSQL;
-        set => SetField(ref  _countSQL, value);
+        set => SetField(ref _countSQL, value);
     }
 
     /// <summary>
@@ -77,7 +79,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public int Catalogue_ID
     {
         get => _catalogueID;
-        set => SetField(ref  _catalogueID, value);
+        set => SetField(ref _catalogueID, value);
     }
 
     /// <summary>
@@ -87,7 +89,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public string Name
     {
         get => _name;
-        set => SetField(ref  _name, value);
+        set => SetField(ref _name, value);
     }
 
     /// <summary>
@@ -96,7 +98,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public string Description
     {
         get => _description;
-        set => SetField(ref  _description, value);
+        set => SetField(ref _description, value);
     }
 
     /// <summary>
@@ -105,7 +107,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public DateTime dtCreated
     {
         get => _dtCreated;
-        set => SetField(ref  _dtCreated, value);
+        set => SetField(ref _dtCreated, value);
     }
 
     /// <summary>
@@ -117,7 +119,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public int? PivotOnDimensionID
     {
         get => _pivotOnDimensionID;
-        set => SetField(ref  _pivotOnDimensionID, value);
+        set => SetField(ref _pivotOnDimensionID, value);
     }
 
     /// <summary>
@@ -127,7 +129,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public bool IsExtractable
     {
         get => _isExtractable;
-        set => SetField(ref  _isExtractable, value);
+        set => SetField(ref _isExtractable, value);
     }
 
 
@@ -139,7 +141,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public string HavingSQL
     {
         get => _havingSQL;
-        set => SetField(ref  _havingSQL, value);
+        set => SetField(ref _havingSQL, value);
     }
 
     /// <summary>
@@ -155,7 +157,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
                 throw new NotSupportedException(
                     $"This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {OverrideFiltersByUsingParentAggregateConfigurationInstead_ID}) which means it cannot be assigned its own RootFilterContainerID");
 
-            SetField(ref _rootFilterContainerID ,value);
+            SetField(ref _rootFilterContainerID, value);
         }
     }
 
@@ -183,6 +185,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         get => _isDisabled;
         set => SetField(ref _isDisabled, value);
     }
+
     #endregion
 
     #region Relationships
@@ -203,13 +206,13 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             //if there is an override
             if (OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                 return Repository.GetObjectByID<AggregateConfiguration>(
-                    (int) OverrideFiltersByUsingParentAggregateConfigurationInstead_ID).RootFilterContainer;
+                    (int)OverrideFiltersByUsingParentAggregateConfigurationInstead_ID).RootFilterContainer;
             //return the overriding one
 
             //else return the actual root filter container or null if there isn't one
             return RootFilterContainer_ID == null
                 ? null
-                : Repository.GetObjectByID<AggregateFilterContainer>((int) RootFilterContainer_ID);
+                : Repository.GetObjectByID<AggregateFilterContainer>((int)RootFilterContainer_ID);
         }
     }
 
@@ -221,27 +224,17 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <param name="dt"></param>
     public static void AdjustGraphDataTable(DataTable dt)
     {
-        if(dt.Rows.Count ==0)
-        {
-            return;
-        }
+        if (dt.Rows.Count == 0) return;
 
         if (!UserSettings.IncludeZeroSeriesInGraphs)
-        {
             foreach (var col in dt.Columns.Cast<DataColumn>().ToArray())
-            {
                 if (dt.Rows.Cast<DataRow>().All(r => IsBasicallyZero(r[col.ColumnName])))
-                {
                     dt.Columns.Remove(col);
-                }
-            }
-        }
     }
 
-    private static bool IsBasicallyZero(object v)
-    {
-        return v == null || v == DBNull.Value || string.IsNullOrWhiteSpace(v.ToString()) || string.Equals(v.ToString(), "0");
-    }
+    private static bool IsBasicallyZero(object v) => v == null || v == DBNull.Value ||
+                                                     string.IsNullOrWhiteSpace(v.ToString()) ||
+                                                     string.Equals(v.ToString(), "0");
 
     /// <summary>
     /// Gets all parameters (e.g. @studyStartDate ) associated with this AggregateConfiguration (there might not be any).
@@ -250,10 +243,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public IEnumerable<AnyTableSqlParameter> Parameters => CatalogueRepository.GetAllParametersForParentTable(this);
 
     /// <inheritdoc cref="Parameters"/>
-    public ISqlParameter[] GetAllParameters()
-    {
-        return Parameters.ToArray();
-    }
+    public ISqlParameter[] GetAllParameters() => Parameters.ToArray();
 
     /// <summary>
     /// An AggregateConfiguration is a Group By statement.  This will involve using at least one Table in the FROM section of the query.  The descision on which tables
@@ -272,14 +262,16 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// for building its join.</para>
     /// </summary>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed => Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
+    public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed => Repository
+        .GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
 
     /// <summary>
     /// Only populated if the AggregateConfiguration is acting as a patient index table.  Returns the <see cref="JoinableCohortAggregateConfiguration"/> object
     /// which makes this a fact.
     /// </summary>
     [NoMappingToDatabase]
-    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration => _knownJoinableCohortAggregateConfiguration.Value;
+    public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration =>
+        _knownJoinableCohortAggregateConfiguration.Value;
 
     /// <summary>
     /// An AggregateConfiguration is a Group By statement.  This will return all the SELECT columns for the query (including any count(*) / sum(*) etc columns).
@@ -293,7 +285,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateDimension PivotDimension =>
         PivotOnDimensionID == null
             ? null
-            : Repository.GetObjectByID<AggregateDimension>((int) PivotOnDimensionID);
+            : Repository.GetObjectByID<AggregateDimension>((int)PivotOnDimensionID);
 
     public AggregateConfiguration()
     {
@@ -306,7 +298,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         _overrideFiltersByUsingParentAggregateConfigurationInsteadID == null
             ? null
             : Repository.GetObjectByID<AggregateConfiguration>(
-                (int) _overrideFiltersByUsingParentAggregateConfigurationInsteadID);
+                (int)_overrideFiltersByUsingParentAggregateConfigurationInsteadID);
 
     #endregion
 
@@ -337,7 +329,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         set
         {
-            CatalogueRepository.CohortContainerManager.SetOrder(this,value);
+            CatalogueRepository.CohortContainerManager.SetOrder(this, value);
             _orderWithinKnownContainer = value;
         }
     }
@@ -364,8 +356,8 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name},
-            {"Catalogue_ID", catalogue.ID}
+            { "Name", name },
+            { "Catalogue_ID", catalogue.ID }
         });
 
         ClearAllInjections();
@@ -428,9 +420,12 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <inheritdoc/>
     public void ClearAllInjections()
     {
-        _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
-        _knownAggregateDimensions = new Lazy<AggregateDimension[]>(()=>Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray());
-        _knownCatalogue = new Lazy<Catalogue>(()=>Repository.GetObjectByID<Catalogue>(Catalogue_ID));
+        _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(() =>
+            Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
+        _knownAggregateDimensions =
+            new Lazy<AggregateDimension[]>(() =>
+                Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray());
+        _knownCatalogue = new Lazy<Catalogue>(() => Repository.GetObjectByID<Catalogue>(Catalogue_ID));
     }
 
     public void InjectKnown(AggregateDimension[] instance)
@@ -448,11 +443,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// then the prefix is removed from the return value.
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
+    public override string ToString() =>
         //strip the cic section from the front
-        return Regex.Replace(Name, $@"{CohortIdentificationConfiguration.CICPrefix}\d+_?", "");
-    }
+        Regex.Replace(Name, $@"{CohortIdentificationConfiguration.CICPrefix}\d+_?", "");
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -470,10 +463,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// Gets an IQuerySyntaxHelper from the Catalogue powering this AggregateConfiguration (<see cref="IHasQuerySyntaxHelper.GetQuerySyntaxHelper"/>)
     /// </summary>
     /// <returns></returns>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper()
-    {
-        return Catalogue.GetQuerySyntaxHelper();
-    }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => Catalogue.GetQuerySyntaxHelper();
 
     /// <summary>
     /// Specifies that that given <see cref="ExtractionInformation"/> should become a new SELECT column in the GROUP BY of this AggregateConfiguration.  This
@@ -484,7 +474,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public AggregateDimension AddDimension(ExtractionInformation basedOnColumn)
     {
         ClearAllInjections();
-        return new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
+        return new AggregateDimension((ICatalogueRepository)basedOnColumn.Repository, basedOnColumn, this);
     }
 
     /// <summary>
@@ -496,7 +486,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <returns></returns>
     public AggregateBuilder GetQueryBuilder(int? topX = null)
     {
-        if(string.IsNullOrWhiteSpace(CountSQL))
+        if (string.IsNullOrWhiteSpace(CountSQL))
             throw new NotSupportedException(
                 $"Cannot generate an AggregateBuilder because the AggregateConfiguration '{this}' has no Count SQL, usually this is the case for 'Cohort Set' Aggregates or 'Patient Index Table' Aggregates.  In either case you should use CohortQueryBuilder instead of AggregateBuilder");
 
@@ -542,10 +532,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// on non cohort identification AggregateConfigurations
     /// </summary>
     /// <returns></returns>
-    public AggregateTopX GetTopXIfAny()
-    {
-        return Repository.GetAllObjectsWithParent<AggregateTopX>(this).SingleOrDefault();
-    }
+    public AggregateTopX GetTopXIfAny() => Repository.GetAllObjectsWithParent<AggregateTopX>(this).SingleOrDefault();
 
     /// <summary>
     /// Determines whether the AggregateConfiguration could be used in a <see cref="CohortIdentificationConfiguration"/> to identify a list of patients.  This will be true
@@ -578,17 +565,19 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public void Check(ICheckNotifier notifier)
     {
         if (HavingSQL != null && HavingSQL.StartsWith("HAVING", StringComparison.CurrentCultureIgnoreCase))
-            notifier.OnCheckPerformed(new CheckEventArgs("HavingSql does not need the word 'HAVING' at the start, it is implicit", CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                "HavingSql does not need the word 'HAVING' at the start, it is implicit", CheckResult.Fail));
 
         //these are not checkable since they are intended for use by CohortQueryBuilder instead
-        if(IsCohortIdentificationAggregate)
+        if (IsCohortIdentificationAggregate)
             return;
 
         //if it's a normal aggregate then don't let the user have more than 2 columns
         if (AggregateDimensions.Length > 2)
-            throw new QueryBuildingException("Too many columns, You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
+            throw new QueryBuildingException(
+                "Too many columns, You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
 
-        if(AggregateDimensions.Length == 2 && !PivotOnDimensionID.HasValue)
+        if (AggregateDimensions.Length == 2 && !PivotOnDimensionID.HasValue)
             throw new QueryBuildingException("In order to have 2 columns, one must be selected as a pivot");
 
         try
@@ -610,16 +599,13 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     private bool orderFetchAttempted;
 
 
-
     /// <summary>
     /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
     /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer GetCohortAggregateContainerIfAny()
-    {
-        return CatalogueRepository.CohortContainerManager.GetParent(this);
-    }
+    public CohortAggregateContainer GetCohortAggregateContainerIfAny() =>
+        CatalogueRepository.CohortContainerManager.GetParent(this);
 
     /// <summary>
     /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method returns
@@ -627,10 +613,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// </summary>
     /// <returns>true if the AggregateConfiguration is part of a cic fulfilling the role of 'Patient Index Table' as defined by the existence of a
     ///  JoinableCohortAggregateConfiguration object</returns>
-    public bool IsJoinablePatientIndexTable()
-    {
-        return JoinableCohortAggregateConfiguration != null;
-    }
+    public bool IsJoinablePatientIndexTable() => JoinableCohortAggregateConfiguration != null;
 
     /// <summary>
     /// If the AggregateConfiguration is set up as a cohort identification set or patient index table then this method will return the associated
@@ -663,20 +646,21 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         var cataRepo = CatalogueRepository;
         var clone = ShallowClone();
 
-        if(clone.PivotOnDimensionID != null)
+        if (clone.PivotOnDimensionID != null)
             throw new NotImplementedException("Cannot clone due to PIVOT");
 
         foreach (var aggregateDimension in AggregateDimensions)
         {
-            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone)
-                {
-                    Alias = aggregateDimension.Alias,
-                    SelectSQL = aggregateDimension.SelectSQL,
-                    Order = aggregateDimension.Order
-                };
+            var cloneDimension = new AggregateDimension((ICatalogueRepository)Repository,
+                aggregateDimension.ExtractionInformation, clone)
+            {
+                Alias = aggregateDimension.Alias,
+                SelectSQL = aggregateDimension.SelectSQL,
+                Order = aggregateDimension.Order
+            };
             cloneDimension.SaveToDatabase();
 
-            if(aggregateDimension.AggregateContinuousDateAxis != null)
+            if (aggregateDimension.AggregateContinuousDateAxis != null)
                 throw new NotImplementedException("Cannot clone due to AXIS");
         }
 
@@ -705,6 +689,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         return clone;
     }
+
     /// <summary>
     /// Using the set; on Order property changes the Order. if you want to informt his object of its Order because you already know what it is but this object doesn't know yet
     /// then you can use this method to force a specific known order onto the object in memory.
@@ -727,8 +712,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         container?.RemoveChild(this);
 
-        var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
-        if(isAJoinable != null)
+        var isAJoinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this)
+            .SingleOrDefault();
+        if (isAJoinable != null)
             if (isAJoinable.Users.Any())
                 throw new NotSupportedException(
                     $"Cannot Delete AggregateConfiguration '{this}' because it is a Joinable Patient Index Table AND it has join users.  You must first remove the join usages and then you can delete it.");
@@ -757,7 +743,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         var dependers = new List<IHasDependencies>();
 
         var cic = GetCohortIdentificationConfigurationIfAny();
-        if(cic != null)
+        if (cic != null)
             dependers.Add(cic);
 
         return dependers.ToArray();
@@ -779,7 +765,6 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         return
             @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  its role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
-
     }
 
     public AggregateConfiguration ShallowClone()
@@ -799,13 +784,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         }
     }
 
-    public ICatalogue GetCatalogue()
-    {
-        return Catalogue;
-    }
+    public ICatalogue GetCatalogue() => Catalogue;
 
-    public IFilterFactory GetFilterFactory()
-    {
-        return new AggregateFilterFactory(CatalogueRepository);
-    }
+    public IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueRepository);
 }

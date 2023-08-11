@@ -77,28 +77,32 @@ public partial class UserSettingsFileUI : Form
         tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
         tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
 
-        RegisterCheckbox(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
-        RegisterCheckbox(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
-        RegisterCheckbox(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
-        RegisterCheckbox(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
-        RegisterCheckbox(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
-        RegisterCheckbox(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
-        RegisterCheckbox(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
-        RegisterCheckbox(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
-        RegisterCheckbox(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
-        RegisterCheckbox(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
+        RegisterCheckbox(cbShowHomeOnStartup, nameof(UserSettings.ShowHomeOnStartup));
+        RegisterCheckbox(cbEmphasiseOnTabChanged, nameof(UserSettings.EmphasiseOnTabChanged));
+        RegisterCheckbox(cbConfirmExit, nameof(UserSettings.ConfirmApplicationExiting));
+        RegisterCheckbox(cbFindShouldPin, nameof(UserSettings.FindShouldPin));
+        RegisterCheckbox(cbThemeMenus, nameof(UserSettings.ApplyThemeToMenus));
+        RegisterCheckbox(cbWait5Seconds, nameof(UserSettings.Wait5SecondsAfterStartupUI));
+        RegisterCheckbox(cbShowCohortWizard, nameof(UserSettings.ShowCohortWizard));
+        RegisterCheckbox(cbStrictValidationForCohortBuilderContainers,
+            nameof(UserSettings.StrictValidationForCohortBuilderContainers));
+        RegisterCheckbox(cbDoubleClickToExpand, nameof(UserSettings.DoubleClickToExpand));
+        RegisterCheckbox(cbDebugPerformance, nameof(UserSettings.DebugPerformance));
         RegisterCheckbox(cbAutoResizeColumns, nameof(UserSettings.AutoResizeColumns));
-        RegisterCheckbox(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
-        RegisterCheckbox(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
-        RegisterCheckbox(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
-        RegisterCheckbox(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
-        RegisterCheckbox(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
-        RegisterCheckbox(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+        RegisterCheckbox(cbShowPipelineCompletedPopup, nameof(UserSettings.ShowPipelineCompletedPopup));
+        RegisterCheckbox(cbSkipCohortBuilderValidationOnCommit,
+            nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
+        RegisterCheckbox(cbHideEmptyTableLoadRunAudits, nameof(UserSettings.HideEmptyTableLoadRunAudits));
+        RegisterCheckbox(cbScoreZeroForCohortAggregateContainers,
+            nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+        RegisterCheckbox(cbAdvancedFindFilters, nameof(UserSettings.AdvancedFindFilters));
+        RegisterCheckbox(cbIncludeZeroSeriesInGraphs, nameof(UserSettings.IncludeZeroSeriesInGraphs));
         RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
-        RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
+        RegisterCheckbox(cbAlwaysJoinEverything, nameof(UserSettings.AlwaysJoinEverything));
         RegisterCheckbox(cbAutoRunSqlQueries, nameof(UserSettings.AutoRunSqlQueries));
         RegisterCheckbox(cbExpandAllInCohortBuilder, nameof(UserSettings.ExpandAllInCohortBuilder));
-        RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs, nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
+        RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs,
+            nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
 
         AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
@@ -106,7 +110,7 @@ public partial class UserSettingsFileUI : Form
         AddTooltip(tbArchiveTriggerTimeout, nameof(UserSettings.ArchiveTriggerTimeout));
         AddTooltip(tbTooltipAppearDelay, nameof(UserSettings.TooltipAppearDelay));
         AddTooltip(label4, nameof(UserSettings.WrapMode));
-        AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
+        AddTooltip(ddWordWrap, nameof(UserSettings.WrapMode));
         AddTooltip(ddTheme, nameof(UserSettings.Theme));
         AddTooltip(label2, nameof(UserSettings.Theme));
         AddTooltip(label5, nameof(UserSettings.HeatMapColours));
@@ -120,7 +124,7 @@ public partial class UserSettingsFileUI : Form
         olvMessage.MaximumWidth = olvMessage.Width;
         olvMessage.MinimumWidth = olvMessage.Width;
 
-        ddTheme.DataSource = new []
+        ddTheme.DataSource = new[]
         {
             "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme",
             "ResearchDataManagementPlatform.Theme.MyVS2015DarkTheme",
@@ -168,7 +172,7 @@ public partial class UserSettingsFileUI : Form
     private void RegisterCheckbox(CheckBox cb, string propertyName)
     {
         // remember about this checkbox for later
-        var prop = typeof(UserSettings).GetProperty(propertyName,BindingFlags.Static | BindingFlags.Public);
+        var prop = typeof(UserSettings).GetProperty(propertyName, BindingFlags.Static | BindingFlags.Public);
         checkboxDictionary.Add(cb, prop);
 
         // set initial value from UserSettings
@@ -183,11 +187,9 @@ public partial class UserSettingsFileUI : Form
 
     private void AddTooltip(Control c, string propertyName)
     {
-        var helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
-        if(string.IsNullOrWhiteSpace(helpText))
-        {
-            return;
-        }
+        var helpText =
+            _activator.CommentStore.GetDocumentationIfExists($"{nameof(UserSettings)}.{propertyName}", false);
+        if (string.IsNullOrWhiteSpace(helpText)) return;
 
         userSettingsToolTips.SetToolTip(c, UsefulStuff.SplitByLength(helpText, MaxTooltipWidth));
     }
@@ -197,10 +199,7 @@ public partial class UserSettingsFileUI : Form
         UserSettings.SetErrorReportingLevelFor((ErrorCode)rowObject, (CheckResult)newValue);
     }
 
-    private object Treatment_Getter(object rowObject)
-    {
-        return UserSettings.GetErrorReportingLevelFor((ErrorCode)rowObject);
-    }
+    private object Treatment_Getter(object rowObject) => UserSettings.GetErrorReportingLevelFor((ErrorCode)rowObject);
 
     private void CheckboxCheckedChanged(object sender, EventArgs e)
     {
@@ -213,10 +212,10 @@ public partial class UserSettingsFileUI : Form
 
     private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(!_bLoaded)
+        if (!_bLoaded)
             return;
 
-        if(ddTheme.SelectedItem is string t)
+        if (ddTheme.SelectedItem is string t)
             UserSettings.Theme = t;
     }
 
@@ -236,25 +235,17 @@ public partial class UserSettingsFileUI : Form
 
     private void tbCreateDatabaseTimeout_TextChanged(object sender, EventArgs e)
     {
-        if(int.TryParse(tbCreateDatabaseTimeout.Text,out var result))
-        {
-            UserSettings.CreateDatabaseTimeout = result;
-        }
+        if (int.TryParse(tbCreateDatabaseTimeout.Text, out var result)) UserSettings.CreateDatabaseTimeout = result;
     }
+
     private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)
     {
-
-        if (int.TryParse(tbArchiveTriggerTimeout.Text, out var result))
-        {
-            UserSettings.ArchiveTriggerTimeout = result;
-        }
+        if (int.TryParse(tbArchiveTriggerTimeout.Text, out var result)) UserSettings.ArchiveTriggerTimeout = result;
     }
+
     private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)
     {
-        if (int.TryParse(tbTooltipAppearDelay.Text, out var result))
-        {
-            UserSettings.TooltipAppearDelay = result;
-        }
+        if (int.TryParse(tbTooltipAppearDelay.Text, out var result)) UserSettings.TooltipAppearDelay = result;
     }
 
     private void tbFind_TextChanged(object sender, EventArgs e)
@@ -264,11 +255,9 @@ public partial class UserSettingsFileUI : Form
 
     private void Find(string text)
     {
-        foreach(var cb in checkboxDictionary)
-        {
+        foreach (var cb in checkboxDictionary)
             cb.Key.Visible = string.IsNullOrWhiteSpace(text) ||
-                             cb.Key.Text.Contains(text,StringComparison.CurrentCultureIgnoreCase) ||
+                             cb.Key.Text.Contains(text, StringComparison.CurrentCultureIgnoreCase) ||
                              cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
-        }
     }
 }

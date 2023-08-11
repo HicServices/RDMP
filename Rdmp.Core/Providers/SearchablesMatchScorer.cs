@@ -42,7 +42,7 @@ public class SearchablesMatchScorer
     /// <summary>
     /// List of objects which should be favoured slightly above others of equal match potential
     /// </summary>
-    public List<IMapsDirectlyToDatabaseTable> BumpMatches { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
+    public List<IMapsDirectlyToDatabaseTable> BumpMatches { get; set; } = new();
 
     /// <summary>
     /// Only show objects with the given ID
@@ -70,22 +70,21 @@ public class SearchablesMatchScorer
     /// When the user types one of these they get a filter on the full Type
     /// </summary>
     public static Dictionary<string, Type> ShortCodes =
-        new(StringComparer.CurrentCultureIgnoreCase){
-
-            {"c",typeof (Catalogue)},
-            {"ci",typeof (CatalogueItem)},
-            {"sd",typeof (SupportingDocument)},
-            {"p",typeof (Project)},
-            {"ec",typeof (ExtractionConfiguration)},
-            {"co",typeof (ExtractableCohort)},
-            {"cic",typeof (CohortIdentificationConfiguration)},
-            {"t",typeof (TableInfo)},
-            {"col",typeof (ColumnInfo)},
-            {"lmd",typeof (LoadMetadata)},
-            {"pipe",typeof(Pipeline)},
-            {"sds",typeof(SelectedDataSets)},
-            {"eds",typeof(ExternalDatabaseServer)}
-
+        new(StringComparer.CurrentCultureIgnoreCase)
+        {
+            { "c", typeof(Catalogue) },
+            { "ci", typeof(CatalogueItem) },
+            { "sd", typeof(SupportingDocument) },
+            { "p", typeof(Project) },
+            { "ec", typeof(ExtractionConfiguration) },
+            { "co", typeof(ExtractableCohort) },
+            { "cic", typeof(CohortIdentificationConfiguration) },
+            { "t", typeof(TableInfo) },
+            { "col", typeof(ColumnInfo) },
+            { "lmd", typeof(LoadMetadata) },
+            { "pipe", typeof(Pipeline) },
+            { "sds", typeof(SelectedDataSets) },
+            { "eds", typeof(ExternalDatabaseServer) }
         };
 
     /// <summary>
@@ -94,10 +93,9 @@ public class SearchablesMatchScorer
     /// Key Type.
     /// </summary>
     public static Dictionary<string, Type[]> AlsoIncludes =
-        new(StringComparer.CurrentCultureIgnoreCase){
-
-            {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
-
+        new(StringComparer.CurrentCultureIgnoreCase)
+        {
+            { "Pipeline", new Type[] { typeof(PipelineCompatibleWithUseCaseNode) } }
         };
 
     public SearchablesMatchScorer()
@@ -105,7 +103,6 @@ public class SearchablesMatchScorer
         TypeNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 
         _scoreZeroForCohortAggregateContainers = UserSettings.ScoreZeroForCohortAggregateContainers;
-                
     }
 
     /// <summary>
@@ -117,58 +114,62 @@ public class SearchablesMatchScorer
     /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
     /// <param name="showOnlyTypes">Optional (can be null) list of types to return results from.  Not respected if <paramref name="searchText"/> includes type names</param>
     /// <returns></returns>
-    public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken, List<Type> showOnlyTypes)
+    public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(
+        Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText,
+        CancellationToken cancellationToken, List<Type> showOnlyTypes)
     {
         SetupRespectUserSettings();
 
         //do short code substitutions e.g. ti for TableInfo
         if (!string.IsNullOrWhiteSpace(searchText))
-            foreach(var kvp in ShortCodes)
-                searchText = Regex.Replace(searchText,$@"\b{kvp.Key}\b",kvp.Value.Name);
-            
+            foreach (var kvp in ShortCodes)
+                searchText = Regex.Replace(searchText, $@"\b{kvp.Key}\b", kvp.Value.Name);
+
         //if user hasn't typed any explicit Type filters
-        if(showOnlyTypes != null && TypeNames != null)
+        if (showOnlyTypes != null && TypeNames != null)
             //add the explicit types only if the search text does not contain any explicit type names
-            if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
+            if (string.IsNullOrWhiteSpace(searchText) ||
+                !TypeNames.Intersect(searchText.Split(' '), StringComparer.CurrentCultureIgnoreCase).Any())
                 foreach (var showOnlyType in showOnlyTypes)
                     searchText = $"{searchText} {showOnlyType.Name}";
 
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
         if (!string.IsNullOrWhiteSpace(searchText))
-            foreach(var s in searchText.Split(' ').ToArray())
+            foreach (var s in searchText.Split(' ').ToArray())
                 if (AlsoIncludes.TryGetValue(s, out var include))
-                    foreach(var v in include)
+                    foreach (var v in include)
                         searchText += $" {v.Name}";
 
         //if we have nothing to search for return no results
         if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
             return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
 
-        var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        var tokens = (searchText ?? "").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         var regexes = new List<Regex>();
-            
+
         //any token that 100% matches a type name is an explicitly typed token
         string[] explicitTypesRequested;
 
         if (TypeNames != null)
         {
-            explicitTypesRequested = TypeNames.Intersect(tokens,StringComparer.CurrentCultureIgnoreCase).ToArray();
+            explicitTypesRequested = TypeNames.Intersect(tokens, StringComparer.CurrentCultureIgnoreCase).ToArray();
 
             //else it's a regex
-            foreach (var token in tokens.Except(TypeNames,StringComparer.CurrentCultureIgnoreCase))
+            foreach (var token in tokens.Except(TypeNames, StringComparer.CurrentCultureIgnoreCase))
                 regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
-
         }
         else
+        {
             explicitTypesRequested = Array.Empty<string>();
+        }
 
         if (cancellationToken.IsCancellationRequested)
             return null;
-            
+
         return searchables.ToDictionary(
             s => s,
-            score => ScoreMatches(score, regexes,explicitTypesRequested, cancellationToken)
+            score => ScoreMatches(score, regexes, explicitTypesRequested, cancellationToken)
         );
     }
 
@@ -181,7 +182,8 @@ public class SearchablesMatchScorer
         _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
-    private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
+    private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes,
+        string[] explicitTypeNames, CancellationToken cancellationToken)
     {
         var score = 0;
 
@@ -194,20 +196,14 @@ public class SearchablesMatchScorer
             var obj = kvp.Key;
 
             //If the object is masquerading as something else, better to check that
-            if (kvp.Key is IMasqueradeAs m)
-            {
-                obj = m.MasqueradingAs() as IMapsDirectlyToDatabaseTable ?? obj;
-            }
+            if (kvp.Key is IMasqueradeAs m) obj = m.MasqueradingAs() as IMapsDirectlyToDatabaseTable ?? obj;
 
             if (obj.ID != ID.Value)
                 return 0;
             score += 10;
         }
 
-        if(RespectUserSettings && ScoreZeroBecauseOfUserSettings(kvp))
-        {
-            return 0;
-        }
+        if (RespectUserSettings && ScoreZeroBecauseOfUserSettings(kvp)) return 0;
 
         // if user is searching for a specific Type of object and we ain't it
         if (explicitTypeNames.Any())
@@ -219,7 +215,8 @@ public class SearchablesMatchScorer
             return 0;
 
         //don't suggest AND/OR containers it's not helpful to navigate to these (unless user is searching by Type explicitly)
-        if ( _scoreZeroForCohortAggregateContainers && explicitTypeNames.Length == 0 && kvp.Key is CohortAggregateContainer)
+        if (_scoreZeroForCohortAggregateContainers && explicitTypeNames.Length == 0 &&
+            kvp.Key is CohortAggregateContainer)
             return 0;
 
         //if there are no tokens
@@ -227,11 +224,11 @@ public class SearchablesMatchScorer
             if (explicitTypeNames.Any()) //if they have so far just typed a TypeName
                 return 1;
             else
-                return 1;//no regexes AND no TypeName what did they type! whatever everyone scores the same
-            
+                return 1; //no regexes AND no TypeName what did they type! whatever everyone scores the same
+
         //make a new list so we can destructively read it
         regexes = new List<Regex>(regexes);
-            
+
         //match on the head vs the regex tokens
         score += Weights[0] * CountMatchToString(regexes, kvp.Key);
 
@@ -253,13 +250,11 @@ public class SearchablesMatchScorer
                 var parent = parents[^i];
 
                 if (parent != null)
-                {
                     if (parent is not IContainer)
                     {
                         score += Weights[i] * CountMatchToString(regexes, parent);
                         score += Weights[i] * CountMatchType(regexes, parent);
                     }
-                }
             }
         }
 
@@ -270,8 +265,8 @@ public class SearchablesMatchScorer
         var catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
 
         if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
-            return score /10;
-            
+            return score / 10;
+
         //if we are bumping up matches
         if (score > 0 && BumpMatches.Contains(kvp.Key))
             score += BumpWeight;
@@ -284,12 +279,12 @@ public class SearchablesMatchScorer
     /// </summary>
     /// <param name="kvp"></param>
     /// <returns></returns>
-    private bool ScoreZeroBecauseOfUserSettings(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
-    {
-        return !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues, _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
-    }
+    private bool ScoreZeroBecauseOfUserSettings(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp) =>
+        !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues,
+            _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
 
-    private static Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+    private static Catalogue GetCatalogueIfAnyInDescendancy(
+        KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
         if (kvp.Key is Catalogue key)
             return key;
@@ -297,28 +292,28 @@ public class SearchablesMatchScorer
         return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
-    private static int CountMatchType(List<Regex> regexes, object key)
-    {
-        return MatchCount(regexes, key.GetType().Name);
-    }
+    private static int CountMatchType(List<Regex> regexes, object key) => MatchCount(regexes, key.GetType().Name);
+
     private static int CountMatchToString(List<Regex> regexes, object key)
     {
         var matchOn = key is ICustomSearchString s ? s.GetSearchString() : key.ToString();
 
         return MatchCount(regexes, matchOn);
     }
+
     private static int MatchCount(List<Regex> regexes, string str)
     {
         var matches = 0;
 
         //exact matches
-        foreach (var match in regexes.Where(r => r.ToString().Equals(str,StringComparison.CurrentCultureIgnoreCase)).ToArray())
+        foreach (var match in regexes.Where(r => r.ToString().Equals(str, StringComparison.CurrentCultureIgnoreCase))
+                     .ToArray())
         {
             regexes.Remove(match);
             //score double for exact matches
-            matches+=2;
+            matches += 2;
         }
-            
+
         //contains matches
         foreach (var match in regexes.Where(r => r.IsMatch(str)).ToArray())
         {
@@ -341,7 +336,8 @@ public class SearchablesMatchScorer
     /// <param name="includeProjectSpecific"></param>
     /// <param name="includeNonExtractable"></param>
     /// <returns>True if the item should be shown to the user based on filters</returns>
-    public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal, bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
+    public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal,
+        bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
     {
         //doesn't relate to us...
         if (modelObject is not ICatalogue cata)
@@ -359,15 +355,16 @@ public class SearchablesMatchScorer
         }
 
         var isProjectSpecific = cata.IsProjectSpecific(null);
-        var isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
+        var isExtractable = cata.GetExtractabilityStatus(null) != null &&
+                            cata.GetExtractabilityStatus(null).IsExtractable;
 
-        return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
+        return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset &&
+                !isProjectSpecific) ||
                (includeColdStorage && cata.IsColdStorageDataset) ||
                (includeDeprecated && cata.IsDeprecated) ||
                (includeInternal && cata.IsInternalDataset) ||
                (includeProjectSpecific && isProjectSpecific) ||
                (includeNonExtractable && !isExtractable);
-
     }
 
     /// <summary>
@@ -378,13 +375,15 @@ public class SearchablesMatchScorer
     /// <param name="take"></param>
     /// <param name="activator"></param>
     /// <returns></returns>
-    public static List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
+    public static List<IMapsDirectlyToDatabaseTable> ShortList(
+        Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take,
+        IBasicActivateItems activator)
     {
         var favourites = activator.FavouritesProvider.CurrentFavourites;
 
         return scores.Where(score => score.Value > 0)
             .OrderByDescending(score => score.Value)
-            .ThenByDescending(kvp => favourites.Any(f=>f.IsReferenceTo(kvp.Key.Key))) // favour favourites
+            .ThenByDescending(kvp => favourites.Any(f => f.IsReferenceTo(kvp.Key.Key))) // favour favourites
             .ThenBy(kvp => kvp.Key.Key.ToString()) // sort ties alphabetically
             .Take(take)
             .Select(score => score.Key.Key)

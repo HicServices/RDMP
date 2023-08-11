@@ -29,7 +29,7 @@ public partial class HelpIcon : UserControl
     private HelpWorkflow _workFlow;
     private string _originalHoverText;
     private ToolTip tt;
-    public bool SuppressClick{get;set;}
+    public bool SuppressClick { get; set; }
 
     public HelpIcon()
     {
@@ -49,7 +49,7 @@ public partial class HelpIcon : UserControl
         //If TT is null create new tooltip
         tt ??= new ToolTip
         {
-            AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
+            AutoPopDelay = 15000, // Warning! MSDN states this is Int32, but anything over 32767 will fail.
             ShowAlways = true,
             ToolTipTitle = _title,
             InitialDelay = 200,
@@ -59,6 +59,7 @@ public partial class HelpIcon : UserControl
         tt.SetToolTip(this, _hoverText);
         Cursor = Cursors.Hand;
     }
+
     public void ClearHelpText()
     {
         SetHelpText(null, null);
@@ -66,7 +67,7 @@ public partial class HelpIcon : UserControl
 
     private string GetShortText(string hoverText)
     {
-        if(string.IsNullOrWhiteSpace(_hoverText))
+        if (string.IsNullOrWhiteSpace(_hoverText))
             return null;
 
         if (hoverText.Length <= MaxHoverTextLength)
@@ -78,11 +79,10 @@ public partial class HelpIcon : UserControl
 
     private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
     {
-        if(!SuppressClick)
+        if (!SuppressClick)
             if (_workFlow != null)
                 _workFlow.Start(true);
-            else
-            if(_title != null && _originalHoverText != null)
+            else if (_title != null && _originalHoverText != null)
                 WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
     }
 }

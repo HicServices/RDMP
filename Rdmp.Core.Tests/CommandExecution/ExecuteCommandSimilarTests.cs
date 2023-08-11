@@ -42,7 +42,6 @@ public class ExecuteCommandSimilarTests : CommandCliTests
 
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
-
     }
 
     [Test]
@@ -62,6 +61,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
     }
+
     [Test]
     public void FindDifferent_ColumnInfosDiffer_OnCollation()
     {

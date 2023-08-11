@@ -26,15 +26,9 @@ public class IDColumnProvider
     private object IDColumnAspectGetter(object rowObject)
     {
         // unwrap masqueraders to see if underlying object has an ID
-        if(rowObject is IMasqueradeAs m)
-        {
-            return IDColumnAspectGetter(m.MasqueradingAs());
-        }
+        if (rowObject is IMasqueradeAs m) return IDColumnAspectGetter(m.MasqueradingAs());
 
-        if (rowObject is IMapsDirectlyToDatabaseTable imaps)
-        {
-            return imaps.ID;
-        }
+        if (rowObject is IMapsDirectlyToDatabaseTable imaps) return imaps.ID;
 
         return null;
     }

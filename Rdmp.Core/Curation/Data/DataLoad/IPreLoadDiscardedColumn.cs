@@ -9,7 +9,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <inheritdoc cref="PreLoadDiscardedColumn"/>
-public interface IPreLoadDiscardedColumn : IResolveDuplication,IMapsDirectlyToDatabaseTable
+public interface IPreLoadDiscardedColumn : IResolveDuplication, IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// Where the RAW column values will end up during a load.  Either dropped completely, diluted into LIVE or routed to an identifier dump
@@ -34,5 +34,6 @@ public interface IPreLoadDiscardedColumn : IResolveDuplication,IMapsDirectlyToDa
     /// </summary>
     [NoMappingToDatabase]
     ITableInfo TableInfo { get; }
+
     #endregion
 }

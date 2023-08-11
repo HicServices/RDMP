@@ -36,9 +36,6 @@ public class ContainerCombineable : ICombineToMakeCommand
         AllContainersInEntireTreeFromRootDown = root.GetAllSubContainersRecursively();
         AllContainersInEntireTreeFromRootDown.Add(root);
     }
-        
-    public string GetSqlString()
-    {
-        return null;
-    }
+
+    public string GetSqlString() => null;
 }

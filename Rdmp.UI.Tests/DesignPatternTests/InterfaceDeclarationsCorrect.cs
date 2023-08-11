@@ -21,6 +21,7 @@ public class InterfaceDeclarationsCorrect
         "IDataAccessCredentials",
         "IProcessTask" //this is inherited by IRuntimeTask too which isn't an IMapsDirectlyToDatabaseTable
     };
+
     public static void FindProblems(MEF mef)
     {
         var problems =
@@ -33,7 +34,8 @@ public class InterfaceDeclarationsCorrect
                 .Where(matchingInterface =>
                     !typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(matchingInterface))
                 .Select(matchingInterface =>
-                    $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable").ToList();
+                    $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable")
+                .ToList();
         Assert.IsEmpty(problems);
     }
 }

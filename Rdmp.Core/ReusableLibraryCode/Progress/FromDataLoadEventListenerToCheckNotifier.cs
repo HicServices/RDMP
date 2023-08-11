@@ -24,8 +24,8 @@ public class FromDataLoadEventListenerToCheckNotifier : ICheckNotifier
 
     public bool OnCheckPerformed(CheckEventArgs args)
     {
-        _listener.OnNotify(this,args.ToNotifyEventArgs());
-            
+        _listener.OnNotify(this, args.ToNotifyEventArgs());
+
         //reject all proposed fixes
         return false;
     }

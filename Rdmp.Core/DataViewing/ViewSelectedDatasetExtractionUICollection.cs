@@ -42,16 +42,16 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
 
     private void BuildRequest()
     {
-        if(_request != null)
+        if (_request != null)
             return;
 
         var ec = SelectedDataset.ExtractionConfiguration;
 
-        if(ec.Cohort_ID == null)
+        if (ec.Cohort_ID == null)
             throw new Exception("No cohort has been defined for this ExtractionConfiguration");
 
         //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
-        _request = new ExtractDatasetCommand(ec,new ExtractableDatasetBundle(SelectedDataset.ExtractableDataSet));
+        _request = new ExtractDatasetCommand(ec, new ExtractableDatasetBundle(SelectedDataset.ExtractableDataSet));
         _request.GenerateQueryBuilder();
         _request.QueryBuilder.RegenerateSQL();
     }
@@ -68,14 +68,10 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         yield return (DatabaseEntity)SelectedDataset;
     }
 
-    public string GetTabName()
-    {
-        return $"Extract {SelectedDataset}";
-    }
+    public string GetTabName() => $"Extract {SelectedDataset}";
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
-            
     }
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()

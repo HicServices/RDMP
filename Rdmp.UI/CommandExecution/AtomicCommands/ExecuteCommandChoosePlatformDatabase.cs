@@ -17,11 +17,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomicCommand
+public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution, IAtomicCommand
 {
     private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        
-    public ExecuteCommandChoosePlatformDatabase(IActivateItems activator) 
+
+    public ExecuteCommandChoosePlatformDatabase(IActivateItems activator)
     {
         if (activator != null)
             Initialize(activator.RepositoryLocator);
@@ -39,11 +39,8 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomi
             SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Change which RDMP platform metadata databases you are connected to";
-    }
-        
+    public override string GetCommandHelp() => "Change which RDMP platform metadata databases you are connected to";
+
     public override void Execute()
     {
         base.Execute();
@@ -52,8 +49,5 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomi
         dialog.ShowDialog();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Database);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Database);
 }

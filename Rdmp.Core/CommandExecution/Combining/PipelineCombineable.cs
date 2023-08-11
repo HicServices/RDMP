@@ -23,8 +23,5 @@ public class PipelineCombineable : ICombineToMakeCommand
         IsEmpty = Pipeline.PipelineComponents.Count == 0;
     }
 
-    public string GetSqlString()
-    {
-        return "";
-    }
+    public string GetSqlString() => "";
 }

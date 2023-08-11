@@ -19,7 +19,8 @@ public class ExecuteCommandSetDefault : BasicCommandExecution
     private readonly PermissableDefaults _toSet;
     private readonly ExternalDatabaseServer _server;
 
-    public ExecuteCommandSetDefault(IBasicActivateItems basicActivator, PermissableDefaults toSet, ExternalDatabaseServer server):base(basicActivator)
+    public ExecuteCommandSetDefault(IBasicActivateItems basicActivator, PermissableDefaults toSet,
+        ExternalDatabaseServer server) : base(basicActivator)
     {
         _toSet = toSet;
         _server = server;

@@ -18,7 +18,7 @@ public interface IServerDefaults
     /// <param name="field"></param>
     /// <returns>the currently configured ExternalDatabaseServer the user wants to use as the default for the supplied role or null if no default has yet been picked</returns>
     IExternalDatabaseServer GetDefaultFor(PermissableDefaults field);
-        
+
     /// <summary>
     /// Sets the database <paramref name="toDelete"/> default to null (not configured)
     /// </summary>

@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
 
-public class ComponentCompatibilityTests :UnitTests
+public class ComponentCompatibilityTests : UnitTests
 {
     [OneTimeSetUp]
     protected override void OneTimeSetUp()

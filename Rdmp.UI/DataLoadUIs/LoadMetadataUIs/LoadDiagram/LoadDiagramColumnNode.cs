@@ -24,7 +24,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 /// Depicts a column in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
 /// node may or may not map to an existing column in the database.
 /// </summary>
-public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramState, IKnowWhatIAm
+public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramState, IKnowWhatIAm
 {
     private readonly LoadDiagramTableNode _tableNode;
     private readonly IHasStageSpecificRuntimeName _column;
@@ -35,7 +35,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
 
     public LoadDiagramState State { get; set; }
 
-    public LoadDiagramColumnNode(LoadDiagramTableNode tableNode,IHasStageSpecificRuntimeName column,LoadBubble bubble)
+    public LoadDiagramColumnNode(LoadDiagramTableNode tableNode, IHasStageSpecificRuntimeName column, LoadBubble bubble)
     {
         _tableNode = tableNode;
         _column = column;
@@ -44,8 +44,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
 
         if (_column is PreLoadDiscardedColumn preLoadDiscarded)
             _expectedDataType = preLoadDiscarded.SqlDataType;
-        else
-        if (_column is ColumnInfo colInfo)
+        else if (_column is ColumnInfo colInfo)
             _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
         else
             throw new Exception(
@@ -65,27 +64,20 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
         }
     }
 
-    public override string ToString()
-    {
-        return ColumnName;
-    }
+    public override string ToString() => ColumnName;
 
-    public string GetDataType()
-    {
-        return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
-    }
+    public string GetDataType() => State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
 
     public ICombineToMakeCommand GetCombineable()
     {
-
         var querySyntaxHelper = _tableNode.TableInfo.GetQuerySyntaxHelper();
 
-        return new SqlTextOnlyCombineable(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
+        return new SqlTextOnlyCombineable(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName, null,
+            _tableNode.TableName, ColumnName));
     }
 
     public Bitmap GetImage(ICoreIconProvider coreIconProvider)
     {
-
         //if its a ColumnInfo and RAW then use the basic ColumnInfo icon
         if (_column is ColumnInfo && _bubble <= LoadBubble.Raw)
             return coreIconProvider.GetImage(RDMPConcept.ColumnInfo).ImageToBitmap();
@@ -101,23 +93,20 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
     }
 
     #region equality
-    protected bool Equals(LoadDiagramColumnNode other)
-    {
-        return _bubble == other._bubble && Equals(_tableNode, other._tableNode) && string.Equals(ColumnName, other.ColumnName);
-    }
+
+    protected bool Equals(LoadDiagramColumnNode other) => _bubble == other._bubble &&
+                                                          Equals(_tableNode, other._tableNode) &&
+                                                          string.Equals(ColumnName, other.ColumnName);
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramColumnNode) obj);
+        return Equals((LoadDiagramColumnNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(_bubble, _tableNode, ColumnName);
-    }
+    public override int GetHashCode() => HashCode.Combine(_bubble, _tableNode, ColumnName);
 
     public string WhatIsThis()
     {
@@ -135,13 +124,14 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
                     _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
                 };
             case LoadDiagramState.NotFound:
-                return "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
+                return
+                    "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
             case LoadDiagramState.New:
-                return "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
+                return
+                    "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
     }
 
     #endregion

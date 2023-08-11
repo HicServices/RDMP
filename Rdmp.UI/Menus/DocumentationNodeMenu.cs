@@ -13,7 +13,8 @@ internal class DocumentationNodeMenu : RDMPContextMenuStrip
 {
     public DocumentationNode DocumentationNode { get; set; }
 
-    public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode): base(args, documentationNode)
+    public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode) : base(args,
+        documentationNode)
     {
         DocumentationNode = documentationNode;
 

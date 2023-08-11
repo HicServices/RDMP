@@ -25,14 +25,15 @@ namespace Rdmp.Core.Autocomplete;
 /// </summary>
 public class AutoCompleteProvider : IAutoCompleteProvider
 {
-    public HashSet<string> Items { get; set; }  = new HashSet<string>();
+    public HashSet<string> Items { get; set; } = new();
 
     /// <summary>
     /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
     /// this array to get the image out
     /// </summary>
     public Image<Rgba32>[] Images;
-    public Dictionary<string,int> ItemsWithImages { get; set; } = new Dictionary<string, int> ();
+
+    public Dictionary<string, int> ItemsWithImages { get; set; } = new();
 
     private const int TABLE_INFO_IDX = 0;
     private const int COLUMN_INFO_IDX = 1;
@@ -48,12 +49,10 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         Images[SQL_IDX] = Image.Load<Rgba32>(CatalogueIcons.SQL);
         Images[PARAMETER_IDX] = Image.Load<Rgba32>(CatalogueIcons.ParametersNode);
     }
-    public AutoCompleteProvider(IQuerySyntaxHelper helper) :this()
+
+    public AutoCompleteProvider(IQuerySyntaxHelper helper) : this()
     {
-        if(helper != null)
-        {
-            AddSQLKeywords(helper);
-        }
+        if (helper != null) AddSQLKeywords(helper);
     }
 
     /// <summary>
@@ -75,7 +74,8 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     }
 
 
-    public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage, IQuerySyntaxHelper syntaxHelper)
+    public void Add(ColumnInfo columnInfo, ITableInfo tableInfo, string databaseName, LoadStage stage,
+        IQuerySyntaxHelper syntaxHelper)
     {
         var col = columnInfo.GetRuntimeName(stage);
         var table = tableInfo.GetRuntimeName(stage);
@@ -96,7 +96,8 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
     {
         var colName = discardedColumn.GetRuntimeName();
-        var representation = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName);
+        var representation = tableInfo.GetQuerySyntaxHelper()
+            .EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName);
         AddUnlessDuplicate(representation);
         AddUnlessDuplicateImage(representation, COLUMN_INFO_IDX);
     }
@@ -126,6 +127,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     {
         ItemsWithImages.TryAdd(fullySpecified, idx);
     }
+
     public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
     {
         if (syntaxHelper == null)
@@ -141,7 +143,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     public void Add(ISqlParameter parameter)
     {
         AddUnlessDuplicate(parameter.ParameterName);
-        AddUnlessDuplicateImage(parameter.ParameterName,PARAMETER_IDX);
+        AddUnlessDuplicateImage(parameter.ParameterName, PARAMETER_IDX);
     }
 
     public void Add(ITableInfo tableInfo, LoadStage loadStage)
@@ -158,7 +160,6 @@ public class AutoCompleteProvider : IAutoCompleteProvider
 
 
         foreach (var o in tableInfo.GetColumnsAtStage(loadStage))
-        {
             switch (o)
             {
                 case PreLoadDiscardedColumn preDiscarded:
@@ -171,10 +172,9 @@ public class AutoCompleteProvider : IAutoCompleteProvider
                     throw new Exception(
                         $"Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '{o.GetType().Name}'");
             }
-        }
 
         AddUnlessDuplicate(fullSql);
-        AddUnlessDuplicateImage(fullSql,TABLE_INFO_IDX);
+        AddUnlessDuplicateImage(fullSql, TABLE_INFO_IDX);
     }
 
     public void Add(DiscoveredTable discoveredTable)

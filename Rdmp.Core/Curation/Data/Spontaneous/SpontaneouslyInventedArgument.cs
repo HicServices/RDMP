@@ -17,7 +17,7 @@ public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
 {
     private readonly object _value;
 
-    public SpontaneouslyInventedArgument(MemoryRepository repo,string name, object value):base(repo)
+    public SpontaneouslyInventedArgument(MemoryRepository repo, string name, object value) : base(repo)
     {
         Name = name;
         _value = value;
@@ -35,20 +35,11 @@ public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
         throw new NotSupportedException();
     }
 
-    public object GetValueAsSystemType()
-    {
-        return _value;
-    }
+    public object GetValueAsSystemType() => _value;
 
-    public Type GetSystemType()
-    {
-        return _value.GetType();
-    }
+    public Type GetSystemType() => _value.GetType();
 
-    public Type GetConcreteSystemType()
-    {
-        return _value.GetType();
-    }
+    public Type GetConcreteSystemType() => _value.GetType();
 
     public void SetType(Type t)
     {
