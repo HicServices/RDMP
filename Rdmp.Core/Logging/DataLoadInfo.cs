@@ -9,7 +9,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
-
+using System.Threading;
+using System.Threading.Tasks;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
@@ -265,31 +266,49 @@ SELECT @@IDENTITY;", con);
         OnWarning
     }
 
+    //wait at least 1s before writting, if a new one appears in list, wait another seccond
+
+
+    private List<LogEntry> logsToBeStorred = new List<LogEntry>();
+    private int logCount = 0;
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
         //here
-        Console.WriteLine("test test 123");
-        if (_conn == null)
+        logsToBeStorred.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
+        logCount++;
+        Task.Run(async delegate
         {
-            _conn = DatabaseSettings.GetConnection();
-        }
-        using (_conn)
-        using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
-                                                          "(dataLoadRunID,eventType,source,description,time) " +
-                                                          "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
-                   _conn))
-        {
-            _conn.Open();
-
-            _server.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);
-            _server.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
-            _server.AddParameterWithValueToCommand("@source", cmdRecordProgress, Source);
-            _server.AddParameterWithValueToCommand("@description", cmdRecordProgress, Description);
-            _server.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
-
-            cmdRecordProgress.ExecuteNonQuery();
-            _conn.Close();
-            _conn = null;
-        }
+            int _logCount = logCount;
+            await Task.Delay(10000);
+            if (logCount == _logCount)
+            {
+                Console.WriteLine(string.Format("will write batch"));
+                if (_conn == null)
+                {
+                    _conn = DatabaseSettings.GetConnection();
+                }
+                using (_conn)
+                {
+                    string values = "";
+                    foreach (LogEntry le in logsToBeStorred)
+                    {
+                        string value = string.Format("VALUES ({0},{1},{2},{3});", ID, le.EventType, Source, le.Description, le.Time);
+                        values = values + value;
+                    }
+                    Console.WriteLine(string.Format(values));
+                    logsToBeStorred = new List<LogEntry>();
+                    using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
+                                                                      "(dataLoadRunID,eventType,source,description,time) " +
+                                                                      values,
+                               _conn))
+                    {
+                        _conn.Open();
+                        cmdRecordProgress.ExecuteNonQuery();
+                        _conn.Close();
+                    }
+                }
+            }
+        });
+        Console.WriteLine(string.Format("Hit Entry {0}", logCount));
     }
 }
