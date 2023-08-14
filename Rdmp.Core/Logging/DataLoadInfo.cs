@@ -286,22 +286,28 @@ SELECT @@IDENTITY;", con);
                 }
                 using (_conn)
                 {
-                    string values = "";
-                    foreach (LogEntry logToBeStored in logstoBeStored)
+                    int recordCount = logstoBeStored.Count;
+                    string commandString = "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES";
+                    for (int i = 0; i < recordCount; i++)
                     {
-                        string value = string.Format("VALUES ({0},{1},{2},{3});", ID, logToBeStored.EventType, Source, logToBeStored.Description, logToBeStored.Time);
-                        values = values + value;
+                        commandString = commandString + (i > 0 ? "," : "") + string.Format("(@dataLoadRunID{0},@eventType{0},@source{0},@description{0},@time{0})", i);
                     }
-                    logstoBeStored = new List<LogEntry>();
-                    using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
-                                                                      "(dataLoadRunID,eventType,source,description,time) " +
-                                                                      values,
-                               _conn))
+                    using (var cmdRecordProgress = _server.GetCommand(commandString, _conn))
                     {
+                        for (int j = 0; j < recordCount; j++)
+                        {
+
+                            LogEntry logEntryToBeStored = logstoBeStored[j];
+                            int index = j;
+                            _server.AddParameterWithValueToCommand(string.Format("@dataLoadRunID{0}", index), cmdRecordProgress, ID);
+                            _server.AddParameterWithValueToCommand(string.Format("@eventType{0}", index), cmdRecordProgress, logEntryToBeStored.EventType);
+                            _server.AddParameterWithValueToCommand(string.Format("@source{0}", index), cmdRecordProgress, Source);
+                            _server.AddParameterWithValueToCommand(string.Format("@description{0}", index), cmdRecordProgress, logEntryToBeStored.Description);
+                            _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
+                        }
                         _conn.Open();
-                        Console.WriteLine(string.Format("write"));
+                        Console.WriteLine(commandString);
                         cmdRecordProgress.ExecuteNonQuery();
-                        _conn.Close();
                     }
                 }
             }
