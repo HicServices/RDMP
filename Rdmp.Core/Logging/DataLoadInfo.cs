@@ -268,7 +268,7 @@ SELECT @@IDENTITY;", con);
     private List<LogEntry> logstoBeStored = new List<LogEntry>();
 
 
-    private void Test(int logCount, string Source)
+    private void BatchLogProcess(int logCount)
     {
         if (logstoBeStored.Count == logCount)
         {
@@ -286,14 +286,13 @@ SELECT @@IDENTITY;", con);
                 }
                 using (var cmdRecordProgress = _server.GetCommand(commandString, _conn))
                 {
-                    for (int j = 0; j < recordCount; j++)
+                    for (int index = 0; index < recordCount; index++)
                     {
-                        LogEntry logEntryToBeStored = workingLogs[j];
+                        LogEntry logEntryToBeStored = workingLogs[index];
 
-                        int index = j;
                         _server.AddParameterWithValueToCommand(string.Format("@dataLoadRunID{0}", index), cmdRecordProgress, ID);
                         _server.AddParameterWithValueToCommand(string.Format("@eventType{0}", index), cmdRecordProgress, logEntryToBeStored.EventType);
-                        _server.AddParameterWithValueToCommand(string.Format("@source{0}", index), cmdRecordProgress, Source);
+                        _server.AddParameterWithValueToCommand(string.Format("@source{0}", index), cmdRecordProgress, logEntryToBeStored.Source);
                         _server.AddParameterWithValueToCommand(string.Format("@description{0}", index), cmdRecordProgress, logEntryToBeStored.Description);
                         _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
                     }
@@ -314,12 +313,12 @@ SELECT @@IDENTITY;", con);
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
+        logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
         Task.Run(async delegate
         {
             int _logCount = logstoBeStored.Count;
             await Task.Delay(2000);
-            Test(_logCount, Source);
+            BatchLogProcess(_logCount);
         });
     }
 }
