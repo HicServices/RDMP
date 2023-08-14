@@ -298,8 +298,15 @@ SELECT @@IDENTITY;", con);
                         _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
                     }
 
-                    _conn.Open();
-
+                    try
+                    {
+                        _conn.Open();
+                        cmdRecordProgress.ExecuteNonQuery();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
             }
         }
