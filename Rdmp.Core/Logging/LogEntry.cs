@@ -3,7 +3,6 @@
 namespace Rdmp.Core.Logging;
 using System;
 
-// add surce
 public class LogEntry
 {
     public LogEntry(string eventType, string description, string source, DateTime time)
