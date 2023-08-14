@@ -303,9 +303,9 @@ SELECT @@IDENTITY;", con);
         }
     }
 
-    public void LogProgress(ProgressEventType pevent, string Source, string Description)
+    public void LogProgress(ProgressEventType pevent, string Source, string LogDescription)
     {
-        logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
+        logstoBeStored.Add(new LogEntry(pevent.ToString(), LogDescription, Source, DateTime.Now));
         Task.Run(async delegate
         {
             int _logCount = logstoBeStored.Count;
