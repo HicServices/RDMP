@@ -266,15 +266,12 @@ SELECT @@IDENTITY;", con);
         OnWarning
     }
 
-    //wait at least 1s before writting, if a new one appears in list, wait another seccond
-
-
-    private List<LogEntry> logsToBeStorred = new List<LogEntry>();
+    private List<LogEntry> logstoBeStored = new List<LogEntry>();
     private int logCount = 0;
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
         //here
-        logsToBeStorred.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
+        logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
         logCount++;
         Task.Run(async delegate
         {
@@ -290,12 +287,12 @@ SELECT @@IDENTITY;", con);
                 using (_conn)
                 {
                     string values = "";
-                    foreach (LogEntry le in logsToBeStorred)
+                    foreach (LogEntry logToBeStored in logstoBeStored)
                     {
-                        string value = string.Format("VALUES ({0},{1},{2},{3});", ID, le.EventType, Source, le.Description, le.Time);
+                        string value = string.Format("VALUES ({0},{1},{2},{3});", ID, logToBeStored.EventType, Source, logToBeStored.Description, logToBeStored.Time);
                         values = values + value;
                     }
-                    logsToBeStorred = new List<LogEntry>();
+                    logstoBeStored = new List<LogEntry>();
                     using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
                                                                       "(dataLoadRunID,eventType,source,description,time) " +
                                                                       values,
