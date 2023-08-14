@@ -74,7 +74,6 @@ internal class RowPeeker
 
         DataRow r;
 
-
         chunk.BeginLoadData();
         //while we are still successfully reading rows and those rows have the same release id
         while ((r = source.ReadOneRow()) != null)
