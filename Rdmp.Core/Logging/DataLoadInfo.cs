@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
@@ -264,6 +265,7 @@ SELECT @@IDENTITY;", con);
 
     private List<LogEntry> logstoBeStored = new List<LogEntry>();
 
+
     private void BatchLogProcess(int logCount)
     {
         if (logstoBeStored.Count == logCount)
@@ -275,12 +277,13 @@ SELECT @@IDENTITY;", con);
             using (_conn)
             {
                 int recordCount = workingLogs.Count;
-                string commandString = "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES";
+                StringBuilder commandStringBuilder = new StringBuilder("INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES");
                 for (int i = 0; i < recordCount; i++)
                 {
-                    commandString = commandString + (i > 0 ? "," : "") + string.Format("(@dataLoadRunID{0},@eventType{0},@source{0},@description{0},@time{0})", i);
+                    commandStringBuilder.Append(i > 0 ? "," : "");
+                    commandStringBuilder.AppendFormat("(@dataLoadRunID{0},@eventType{0},@source{0},@description{0},@time{0})", i);
                 }
-                using (var cmdRecordProgress = _server.GetCommand(commandString, _conn))
+                using (var cmdRecordProgress = _server.GetCommand(commandStringBuilder.ToString(), _conn))
                 {
                     for (int index = 0; index < recordCount; index++)
                     {
@@ -293,15 +296,8 @@ SELECT @@IDENTITY;", con);
                         _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
                     }
 
-                    try
-                    {
-                        _conn.Open();
-                        cmdRecordProgress.ExecuteNonQuery();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                    _conn.Open();
+                    cmdRecordProgress.ExecuteNonQuery();
                 }
             }
         }
