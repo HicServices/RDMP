@@ -267,51 +267,65 @@ SELECT @@IDENTITY;", con);
     }
 
     private List<LogEntry> logstoBeStored = new List<LogEntry>();
-    private int logCount = 0;
-    public void LogProgress(ProgressEventType pevent, string Source, string Description)
-    {
-        //here
-        logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
-        logCount++;
-        Task.Run(async delegate
-        {
-            int _logCount = logCount;
-            await Task.Delay(1000);
-            if (logCount == _logCount)
-            {
-                Console.WriteLine(string.Format("will write batch"));
-                if (_conn == null)
-                {
-                    _conn = DatabaseSettings.GetConnection();
-                }
-                using (_conn)
-                {
-                    int recordCount = logstoBeStored.Count;
-                    string commandString = "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES";
-                    for (int i = 0; i < recordCount; i++)
-                    {
-                        commandString = commandString + (i > 0 ? "," : "") + string.Format("(@dataLoadRunID{0},@eventType{0},@source{0},@description{0},@time{0})", i);
-                    }
-                    using (var cmdRecordProgress = _server.GetCommand(commandString, _conn))
-                    {
-                        for (int j = 0; j < recordCount; j++)
-                        {
 
-                            LogEntry logEntryToBeStored = logstoBeStored[j];
-                            int index = j;
-                            _server.AddParameterWithValueToCommand(string.Format("@dataLoadRunID{0}", index), cmdRecordProgress, ID);
-                            _server.AddParameterWithValueToCommand(string.Format("@eventType{0}", index), cmdRecordProgress, logEntryToBeStored.EventType);
-                            _server.AddParameterWithValueToCommand(string.Format("@source{0}", index), cmdRecordProgress, Source);
-                            _server.AddParameterWithValueToCommand(string.Format("@description{0}", index), cmdRecordProgress, logEntryToBeStored.Description);
-                            _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
-                        }
-                        _conn.Open();
-                        Console.WriteLine(commandString);
-                        cmdRecordProgress.ExecuteNonQuery();
+
+    private void Test(int logCount, string Source)
+    {
+        if (logstoBeStored.Count == logCount)
+        {
+            List<LogEntry> workingLogs = new List<LogEntry>(logstoBeStored);
+            logstoBeStored = new List<LogEntry>();
+            // Console.WriteLine(string.Format("Hit: {0} {1} {2}", logCount, workingLogs.Count, ID));
+            if (_conn == null)
+            {
+                _conn = DatabaseSettings.GetConnection();
+            }
+            using (_conn)
+            {
+                int recordCount = workingLogs.Count;
+                string commandString = "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES";
+                for (int i = 0; i < recordCount; i++)
+                {
+                    commandString = commandString + (i > 0 ? "," : "") + string.Format("(@dataLoadRunID{0},@eventType{0},@source{0},@description{0},@time{0})", i);
+                }
+                using (var cmdRecordProgress = _server.GetCommand(commandString, _conn))
+                {
+
+                    // if (recordCount == 2)
+                    // {
+                    //     Console.WriteLine(string.Format("wl {0} ", workingLogs[0].Description));
+                    //     Console.WriteLine(string.Format("wl {0} ", workingLogs[1].Description));
+                    //     Console.WriteLine(string.Format("wl1 {0}", commandString));
+                    // }
+                    Console.WriteLine(string.Format("wl1 {0}", recordCount));
+                    for (int j = 0; j < recordCount; j++)
+                    {
+                        LogEntry logEntryToBeStored = workingLogs[j];
+
+                        int index = j;
+                        _server.AddParameterWithValueToCommand(string.Format("@dataLoadRunID{0}", index), cmdRecordProgress, ID);
+                        _server.AddParameterWithValueToCommand(string.Format("@eventType{0}", index), cmdRecordProgress, logEntryToBeStored.EventType);
+                        _server.AddParameterWithValueToCommand(string.Format("@source{0}", index), cmdRecordProgress, Source);
+                        _server.AddParameterWithValueToCommand(string.Format("@description{0}", index), cmdRecordProgress, logEntryToBeStored.Description);
+                        _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
                     }
+                    _conn.Open();
+                    Console.WriteLine(string.Format("Run: {0}", recordCount));
+                    cmdRecordProgress.ExecuteNonQuery();
+                    _conn.Close();
                 }
             }
+        }
+    }
+    public void LogProgress(ProgressEventType pevent, string Source, string Description)
+    {
+        logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
+        Task.Run(async delegate
+        {
+            int _logCount = logstoBeStored.Count;
+            await Task.Delay(2000);
+            Test(_logCount, Source);
+            await Task.Delay(2000);
         });
-        Console.WriteLine(string.Format("Hit Entry {0} {1}", logCount, Description));
     }
 }
