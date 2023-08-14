@@ -138,6 +138,18 @@
   <data name="CreateNewCatalogueByImportingExistingDataTableHelp" xml:space="preserve">
     <value>Creates a New Catalogue by associating it with an existing Table in your database</value>
   </data>
+  <data name="ConfirmClearUserSettings" xml:space="preserve">
+    <value>Are you sure you want to clear your settings?</value>
+  </data>
+  <data name="ClearUserSettings" xml:space="preserve">
+    <value>Clear User Settings</value>
+  </data>
+  <data name="ClearSettings" xml:space="preserve">
+    <value>Clear Settings</value>
+  </data>
+  <data name="ClearUserSettingsTooltip" xml:space="preserve">
+  <value>Reset settings back to the defaults</value>
+  </data>
   <data name="Activate" xml:space="preserve">
     <value>Edit</value>
   </data>

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -16,7 +17,6 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
 using static BrightIdeasSoftware.ObjectListView;
-
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
@@ -147,6 +147,23 @@ public partial class UserSettingsFileUI : Form
         {
             cmd.Execute();
             btnClearFavourites.Enabled = !cmd.IsImpossible;
+        };
+
+        var clearUserSettingsCmd = new ExecuteCommandClearUserSettings(activator);
+        btnClearUserSettings.Enabled = true;
+
+        btnClearUserSettings.Click += (s, e) =>
+        {
+            if (activator.YesNo(
+              Core.GlobalStrings.ConfirmClearUserSettings,
+                               Core.GlobalStrings.ClearUserSettings
+            ))
+            {
+                clearUserSettingsCmd.Execute();
+                Dispose(true);
+                var settings = new UserSettingsFileUI(activator);
+                settings.Show();
+            }
         };
     }
 
