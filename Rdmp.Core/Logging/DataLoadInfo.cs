@@ -279,7 +279,7 @@ SELECT @@IDENTITY;", con);
         Task.Run(async delegate
         {
             int _logCount = logCount;
-            await Task.Delay(10000);
+            await Task.Delay(1000);
             if (logCount == _logCount)
             {
                 Console.WriteLine(string.Format("will write batch"));
@@ -295,7 +295,6 @@ SELECT @@IDENTITY;", con);
                         string value = string.Format("VALUES ({0},{1},{2},{3});", ID, le.EventType, Source, le.Description, le.Time);
                         values = values + value;
                     }
-                    Console.WriteLine(string.Format(values));
                     logsToBeStorred = new List<LogEntry>();
                     using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
                                                                       "(dataLoadRunID,eventType,source,description,time) " +
@@ -303,6 +302,7 @@ SELECT @@IDENTITY;", con);
                                _conn))
                     {
                         _conn.Open();
+                        Console.WriteLine(string.Format("write"));
                         cmdRecordProgress.ExecuteNonQuery();
                         _conn.Close();
                     }
