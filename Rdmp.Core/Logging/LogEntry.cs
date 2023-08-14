@@ -11,7 +11,7 @@ public class LogEntry
         EventType = eventType;
         Description = description;
         Time = time;
-        source = source;
+        Source = source;
     }
 
     public string EventType { get; private set; }
