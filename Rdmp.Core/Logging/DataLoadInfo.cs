@@ -312,6 +312,6 @@ SELECT @@IDENTITY;", con);
                 }
             }
         });
-        Console.WriteLine(string.Format("Hit Entry {0}", logCount));
+        Console.WriteLine(string.Format("Hit Entry {0} {1}", logCount, Description));
     }
 }
