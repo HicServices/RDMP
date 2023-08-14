@@ -37,7 +37,6 @@ public class DataLoadInfo : IDataLoadInfo
     private DiscoveredServer _server;
 
 
-    private DbConnection _conn;
 
     public DiscoveredServer DatabaseSettings => _server;
 
@@ -275,11 +274,8 @@ SELECT @@IDENTITY;", con);
         {
             List<LogEntry> workingLogs = new List<LogEntry>(logstoBeStored);
             logstoBeStored = new List<LogEntry>();
-            // Console.WriteLine(string.Format("Hit: {0} {1} {2}", logCount, workingLogs.Count, ID));
-            if (_conn == null)
-            {
-                _conn = DatabaseSettings.GetConnection();
-            }
+            DbConnection _conn = DatabaseSettings.GetConnection();
+
             using (_conn)
             {
                 int recordCount = workingLogs.Count;
@@ -290,14 +286,6 @@ SELECT @@IDENTITY;", con);
                 }
                 using (var cmdRecordProgress = _server.GetCommand(commandString, _conn))
                 {
-
-                    // if (recordCount == 2)
-                    // {
-                    //     Console.WriteLine(string.Format("wl {0} ", workingLogs[0].Description));
-                    //     Console.WriteLine(string.Format("wl {0} ", workingLogs[1].Description));
-                    //     Console.WriteLine(string.Format("wl1 {0}", commandString));
-                    // }
-                    Console.WriteLine(string.Format("wl1 {0}", recordCount));
                     for (int j = 0; j < recordCount; j++)
                     {
                         LogEntry logEntryToBeStored = workingLogs[j];
@@ -309,14 +297,14 @@ SELECT @@IDENTITY;", con);
                         _server.AddParameterWithValueToCommand(string.Format("@description{0}", index), cmdRecordProgress, logEntryToBeStored.Description);
                         _server.AddParameterWithValueToCommand(string.Format("@time{0}", index), cmdRecordProgress, logEntryToBeStored.Time);
                     }
+
                     _conn.Open();
-                    Console.WriteLine(string.Format("Run: {0}", recordCount));
-                    cmdRecordProgress.ExecuteNonQuery();
-                    _conn.Close();
+
                 }
             }
         }
     }
+
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
         logstoBeStored.Add(new LogEntry(pevent.ToString(), Description, DateTime.Now));
@@ -325,7 +313,6 @@ SELECT @@IDENTITY;", con);
             int _logCount = logstoBeStored.Count;
             await Task.Delay(2000);
             Test(_logCount, Source);
-            await Task.Delay(2000);
         });
     }
 }
