@@ -36,12 +36,9 @@ public class DataLoadInfo : IDataLoadInfo
 
     private DiscoveredServer _server;
 
-
-
     public DiscoveredServer DatabaseSettings => _server;
 
     private object oLock = new();
-
 
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
 
@@ -266,7 +263,6 @@ SELECT @@IDENTITY;", con);
     }
 
     private List<LogEntry> logstoBeStored = new List<LogEntry>();
-
 
     private void BatchLogProcess(int logCount)
     {
