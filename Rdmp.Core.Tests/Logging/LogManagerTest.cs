@@ -104,7 +104,6 @@ public class LogManagerTest : DatabaseTests
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
         var loadHistoryForTask = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).ToArray();
-        Thread.Sleep(5000);
         Assert.Greater(loadHistoryForTask.Length, 0); //some records
 
         Assert.Greater(loadHistoryForTask.Count(load => load.Errors.Count > 0), 0); //some with some errors
@@ -151,7 +150,6 @@ public class LogManagerTest : DatabaseTests
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
         var loadHistoryForTask = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).First();
-        Thread.Sleep(5000);
         Assert.Greater(loadHistoryForTask.Progress.Count, 0); //some with some progress
 
         Console.WriteLine($"Errors fetched:{loadHistoryForTask.Errors.Count}");
@@ -171,7 +169,6 @@ public class LogManagerTest : DatabaseTests
 
         var mostRecent = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).First();
         var all = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).ToArray();
-        Thread.Sleep(5000);
         all = all.OrderByDescending(d => d.StartTime).ToArray();
 
         Assert.AreEqual(mostRecent.StartTime, all[0].StartTime);
@@ -239,10 +236,9 @@ public class LogManagerTest : DatabaseTests
 
         Assert.AreEqual("it went bad", archival.Errors.Single().Description);
         Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
-        Console.WriteLine(archival.Progress.Count);
         Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
 
-        var fatal = archival.Errors.Single();
+        var fatal = archival.Errors.SingleOrDefault();
         lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved,
             "problem resolved by building more towers");
     }
