@@ -296,7 +296,7 @@
     <PackageReference Include="NLog" Version="5.2.3" />
     <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
@@ -315,7 +315,7 @@
     <PackageReference Include="SSH.NET" Version="2020.0.2" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
-    <PackageReference Include="YamlDotNet" Version="13.1.1" />
+    <PackageReference Include="YamlDotNet" Version="13.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Curation\KeywordHelp.txt">
