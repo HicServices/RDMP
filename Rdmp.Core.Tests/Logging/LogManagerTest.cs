@@ -16,6 +16,7 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using System.Threading;
 
 namespace Rdmp.Core.Tests.Logging;
 
@@ -237,7 +238,8 @@ public class LogManagerTest : DatabaseTests
 
         Assert.AreEqual("it went bad", archival.Errors.Single().Description);
         Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
-
+        Thread.Sleep(5000);
+        Console.WriteLine(archival.Progress.Count);
         Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
 
         var fatal = archival.Errors.Single();
