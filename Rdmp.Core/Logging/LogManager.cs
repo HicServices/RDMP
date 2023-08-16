@@ -23,12 +23,12 @@ namespace Rdmp.Core.Logging;
 /// <summary>
 /// Entry point for the RDMP relational logging database.  This class requires to be pointed at an existing logging database with the correct schema (Defined
 /// in HIC.Logging.Database - See DatabaseCreation.exe for how to do this). See Logging.cd for the full hierarchy of concepts.
-/// 
+///
 /// <para>You can both create new logging records and fetch old ones.  New logging objects are generally maintained for future use e.g. when you want to record
 /// that a new table is being loaded during a given load (DataLoadInfo) you must pass the load log object (DataLoadInfo).  Live logging objects generally
 /// must be closed to indicate that they are completed (succesfully or otherwise), if you do not close a logging object then the EndTime will be left
 /// blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing accumulation of log events, errors etc).</para>
-/// 
+///
 /// <para>Fetching old records is done based on ID, Task Name etc and is also handled by this class. The objects returned will be ArchivalDataLoadInfo objects
 /// which are immutable and include the full hierarchy of sub concepts (errors, progress messages, which tables were loaded with how many records etc -
 /// See Logging.cd).</para>
@@ -109,7 +109,7 @@ public class LogManager : ILogManager
 
     private DataTable GetAsTable(string sql)
     {
-        var dt = new DataTable();
+        DataTable dt = new DataTable();
 
         using (var con = Server.GetConnection())
         {
@@ -118,7 +118,9 @@ public class LogManager : ILogManager
             using (var cmd = Server.GetCommand(sql, con))
             using (var da = Server.GetDataAdapter(cmd))
             {
+                dt.BeginDataLoad();
                 da.Fill(dt);
+                dt.EndDataLoad();
             }
 
             return dt;

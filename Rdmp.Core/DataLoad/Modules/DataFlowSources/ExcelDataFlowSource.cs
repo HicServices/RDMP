@@ -83,7 +83,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 wb = new XSSFWorkbook(fs);
 
             DataTable toReturn;
-
             try
             {
                 var worksheet =
@@ -113,7 +112,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             {
                 wb.Close();
             }
-
             return toReturn;
         }
     }
@@ -127,7 +125,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener)
     {
         var toReturn = new DataTable();
-
+        toReturn.BeginDataLoad();
         var rowEnumerator = worksheet.GetRowEnumerator();
         var nColumns = -1;
 
@@ -191,7 +189,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             if (!gotAtLeastOneGoodValue)
                 toReturn.Rows.Remove(r);
         }
-
+        toReturn.EndDataLoad();
         return toReturn;
     }
 

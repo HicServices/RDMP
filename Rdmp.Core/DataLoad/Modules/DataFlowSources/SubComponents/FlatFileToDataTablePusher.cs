@@ -278,7 +278,7 @@ public class FlatFileToDataTablePusher
             factory.Settings.ExplicitDateFormats = new[] { _explicitDateTimeFormat };
 
         var dtCloned = workingTable.Clone();
-
+        dtCloned.BeginDataLoad();
         var typeChangeNeeded = false;
 
         foreach (DataColumn col in workingTable.Columns)
@@ -311,7 +311,7 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v, idx) =>
                     deciders.TryGetValue(idx, out var decider) && v is string s ? decider.Parse(s) : v).ToArray());
-
+            dtCloned.EndDataLoad();
             return dtCloned;
         }
 
