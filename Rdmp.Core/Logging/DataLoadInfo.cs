@@ -39,6 +39,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
     private readonly object _oLock = new();
     private Thread _logThread = null;
     private BlockingCollection<LogEntry> _logQueue = null;
+    private readonly object _logWaiter = new();
 
 
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
@@ -124,7 +125,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
         {
             if (l.Count == 0)
             {
-                Thread.Sleep(1000);
+                lock (_logWaiter)
+                    Monitor.Wait(_logWaiter, 1000);
                 continue;
             }
             using var con = DatabaseSettings.BeginNewTransactedConnection();
@@ -328,5 +330,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
             _logQueue.Add(new LogEntry(pevent.ToString(),Description,Source,DateTime.Now));
         }
+        lock(_logWaiter)
+            Monitor.Pulse(_logWaiter);
     }
 }
