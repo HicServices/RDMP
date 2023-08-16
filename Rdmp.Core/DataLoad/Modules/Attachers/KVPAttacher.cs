@@ -23,9 +23,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// <summary>
 /// Data load component for loading very wide files into RAW tables by translating columns into key value pairs.  Relies on a user configured pipeline for
 /// reading from the file (so it can support csv, fixed width, excel etc).  Once the user configured pipeline has read a DataTable from the file (which is
-/// expected to have lots of columns which might be sparsely populated or otherwise suitable for key value pair representation rather than traditional 
+/// expected to have lots of columns which might be sparsely populated or otherwise suitable for key value pair representation rather than traditional
 /// relational/flat format.
-/// 
+///
 /// <para>Component converts each DataTable row into one or more rows in the format pk,key,value where pk are the column(s) which uniquely identify the source
 /// row (e.g. Labnumber).  See KVPAttacher.docx for a full explanation.</para>
 /// </summary>
@@ -113,7 +113,7 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
         var currentBatch = BatchesReadyForProcessing[0];
 
         var recordsGenerated = 0;
-
+        dt.BeginDataLoad();
         foreach (DataRow batchRow in currentBatch.Rows)
         {
             var pkValues = new Dictionary<string, object>();
@@ -138,7 +138,7 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
                 recordsGenerated++;
             }
         }
-
+        dt.EndDataLoad();
         BatchesReadyForProcessing.Remove(currentBatch);
 
         return recordsGenerated;

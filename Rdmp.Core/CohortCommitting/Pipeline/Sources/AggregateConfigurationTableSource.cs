@@ -83,7 +83,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
                 $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
 
             var dt = new DataTable();
-
+            dt.BeginLoadData();
             using (var cmd = server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = timeout;
@@ -96,6 +96,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
 
             dt.TableName = TableName;
+            dt.EndLoadData();
 
             listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"successfully read {dt.Rows.Count} rows from source"));
