@@ -60,7 +60,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     }
 
     private const string RDMP_LOGGING_STRING_LENGTH_LIMIT = "RDMP_LOGGING_STRING_LENGTH_LIMIT";
-    private string strStringLengthLimit = Environment.GetEnvironmentVariable(RDMP_LOGGING_STRING_LENGTH_LIMIT);
+    private readonly string strStringLengthLimit = Environment.GetEnvironmentVariable(RDMP_LOGGING_STRING_LENGTH_LIMIT);
 
     private uint GetMaxMessageLength()
     {
