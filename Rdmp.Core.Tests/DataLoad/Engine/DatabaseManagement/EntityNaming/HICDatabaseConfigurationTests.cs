@@ -40,9 +40,9 @@ internal class HICDatabaseConfigurationTests : UnitTests
         lookup.Database = "LookupsDb";
         lookup.SaveToDatabase();
 
-        var job = Substitute.For<IDataLoadJob>(m =>
-            m.RegularTablesToLoad == new List<ITableInfo>(new[] { ti }) &&
-            m.LookupTablesToLoad == new List<ITableInfo>(new[] { lookup }));
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo>(new[] { ti }));
+        job.LookupTablesToLoad.Returns(new List<ITableInfo>(new[] { lookup }));
 
         var result = conf.ExpectTables(job, LoadBubble.Raw, testLookup).ToArray();
 

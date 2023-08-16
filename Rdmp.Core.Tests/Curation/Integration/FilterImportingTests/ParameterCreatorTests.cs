@@ -20,7 +20,8 @@ public class ParameterCreatorTests
     [Test]
     public void NoParametersTest_CreateNotCalled()
     {
-        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>();
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
 
         var factory = Substitute.For<IFilterFactory>();
         factory.DidNotReceive().CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>());
@@ -28,18 +29,19 @@ public class ParameterCreatorTests
         var creator = new ParameterCreator(factory, Array.Empty<ISqlParameter>(), null);
         creator.CreateAll(f, null);
 
-        factory.Verify();
+        factory.Received(1);
     }
 
 
     [Test]
     public void SingleParameterTest_NullReturnFromConstruct_Throws()
     {
-        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>();
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
-        var factory = Substitute.For<IFilterFactory>(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);") == null);
-
+        var factory = Substitute.For<IFilterFactory>();
+        // factory.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
         var creator = new ParameterCreator(factory, null, null);
 
         var ex = Assert.Throws<NullReferenceException>(() => creator.CreateAll(f, null));
@@ -54,9 +56,9 @@ public class ParameterCreatorTests
         // p.Setup(m => m.SaveToDatabase());
         p.SaveToDatabase();
 
-        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>();
         f.WhereSQL = "@bob = 'bob'";
-
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
         var factory = Substitute.For<IFilterFactory>();
         factory.CreateNewParameter(f, "DECLARE @bob AS varchar(50);").Returns(p);
 
@@ -64,7 +66,7 @@ public class ParameterCreatorTests
         creator.CreateAll(f, null);
 
         p.Received(1).SaveToDatabase();
-        p.Verify();
+        p.Received(1);
         factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS varchar(50);");
     }
 
@@ -75,16 +77,14 @@ public class ParameterCreatorTests
         // p.Setup(m => m.SaveToDatabase());
         p.SaveToDatabase();
 
-        var existingParameter = Substitute.For<ISqlParameter>(x =>
-            x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
-            x.ParameterName == "@bob"
-        );
+        var existingParameter = Substitute.For<ISqlParameter>();
+        existingParameter.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        existingParameter.ParameterName.Returns("@bob");
 
-        var f = Substitute.For<IFilter>(x =>
-            x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
-            x.WhereSQL == "@bob = 'bob'" &&
-            x.GetAllParameters() == new[] { existingParameter });
-
+        var f = Substitute.For<IFilter>();
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        f.WhereSQL.Returns("@bob = 'bob'");
+        f.GetAllParameters().Returns(new[] { existingParameter });
         var factory = Substitute.For<IFilterFactory>();
 
         var creator = new ParameterCreator(factory, null, null);
@@ -100,14 +100,13 @@ public class ParameterCreatorTests
     [Test]
     public void SingleParameterTest_GlobalOverrides_CreateNotCalled()
     {
-        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>();
         f.WhereSQL = "@bob = 'bob'";
-
-        var global = Substitute.For<ISqlParameter>(x => x.ParameterName == "@bob");
-
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        var global = Substitute.For<ISqlParameter>();
+        global.ParameterName.Returns("@bob");
         var factory = Substitute.For<IFilterFactory>();
-        factory.CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>())
-            .Throws<InvalidOperationException>();
+        factory.CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>()).Returns(x => { throw new InvalidOperationException(); });
 
         var creator = new ParameterCreator(factory, new[] { global }, null);
         creator.CreateAll(f, null);
@@ -118,10 +117,11 @@ public class ParameterCreatorTests
     [Test]
     public void SingleParameterTest_GlobalButNotSameName_CreateCalled()
     {
-        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>();
         f.WhereSQL = "@bob = 'bob'";
-
-        var global = Substitute.For<ISqlParameter>(x => x.ParameterName == "@bob");
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        var global = Substitute.For<ISqlParameter>();
+        global.ParameterName.Returns("@bob");
 
         var factory = Substitute.For<IFilterFactory>();
         factory.CreateNewParameter(f, "DECLARE @bob AS varchar(50);")
@@ -141,11 +141,13 @@ public class ParameterCreatorTests
         var pstub = Substitute.For<ISqlParameter>();
 
         //The filter that requires that the parameters be created
-        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>();
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
         //The template which is an existing known about parameter from the master filter that is being duplicated.  This template will be spotted and used to make the new parameter match the cloned filter's one
-        var template = Substitute.For<ISqlParameter>(x => x.ParameterName == "@bob");
+        var template = Substitute.For<ISqlParameter>();
+        template.ParameterName.Returns("@bob");
 
         template.ParameterSQL = "DECLARE @bob AS int";
         template.Value = "5";

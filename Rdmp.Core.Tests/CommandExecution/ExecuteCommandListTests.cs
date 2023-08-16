@@ -48,7 +48,7 @@ internal class TestsExecuteCommandList : CommandCliTests
 
         var mock = GetMockActivator();
 
-        var cmd = new ExecuteCommandList(mock.Object, new[] { c });
+        var cmd = new ExecuteCommandList(mock, new[] { c });
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
@@ -56,7 +56,7 @@ internal class TestsExecuteCommandList : CommandCliTests
         var contents = Regex.Escape($"{c.ID}:fff");
 
         // Called once
-        mock.Received(1).Show(Arg.IsRegex(contents));
+        mock.Received(1).Show(Arg.Is(contents));
 
         c.DeleteInDatabase();
     }

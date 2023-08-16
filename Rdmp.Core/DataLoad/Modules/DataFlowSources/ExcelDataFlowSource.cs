@@ -196,7 +196,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     }
 
     /// <summary>
-    /// Retruns the C# value that best represents the contents of the cell.
+    /// Returns the C# value that best represents the contents of the cell.
     /// </summary>
     /// <param name="cell">The cell whose value you want to retrieve</param>
     /// <param name="treatAs">Leave blank, used in recursion for dealing with Formula cells</param>

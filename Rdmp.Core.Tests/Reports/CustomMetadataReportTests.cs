@@ -173,7 +173,7 @@ internal class CustomMetadataReportTests : UnitTests
         moqDqe.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore)
             .Returns(new Tuple<DateTime?, DateTime?>(new DateTime(2001, 02, 01), new DateTime(2002, 04, 03)));
 
-        reporter.TimespanCalculator = moqDqe.Object;
+        reporter.TimespanCalculator = moqDqe;
 
         reporter.GenerateReport(new[] { cata }, outDir, template, "$Name.md", false);
 

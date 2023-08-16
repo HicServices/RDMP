@@ -29,7 +29,8 @@ public class DilutionCheckTests
     [TestCase("binary(50)")]
     public void TestChecking_RoundDateToMiddleOfQuarter_WrongDataType(string incompatibleType)
     {
-        var col = Substitute.For<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.SqlDataType.Returns(incompatibleType);
 
         var dil = new RoundDateToMiddleOfQuarter
         {
@@ -43,7 +44,8 @@ public class DilutionCheckTests
     [TestCase("datetime")]
     public void TestChecking_RoundDateToMiddleOfQuarter_CompatibleDataType(string incompatibleType)
     {
-        var col = Substitute.For<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.SqlDataType.Returns(incompatibleType);
 
         var dil = new RoundDateToMiddleOfQuarter
         {

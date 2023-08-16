@@ -19,17 +19,17 @@ internal class TestExecuteCommandDescribe : UnitTests
     public void TestDescribeCatalogue()
     {
         var mock = Substitute.For<IBasicActivateItems>();
-        mock.Setup(m => m.Show(Arg.Any<string>()));
+        // mock.Setup(m => m.Show(Arg.Any<string>()));
 
         var c = WhenIHaveA<Catalogue>();
         c.Description = "fish";
 
-        var describe = new ExecuteCommandDescribe(mock.Object, new[] { c });
+        var describe = new ExecuteCommandDescribe(mock, new[] { c });
         Assert.IsFalse(describe.IsImpossible, describe.ReasonCommandImpossible);
 
         describe.Execute();
 
         // Called once
-        mock.Received(1).Show(Arg.IsRegex(".*Description:fish.*"));
+        mock.Received(1).Show(Arg.Is(".*Description:fish.*"));
     }
 }

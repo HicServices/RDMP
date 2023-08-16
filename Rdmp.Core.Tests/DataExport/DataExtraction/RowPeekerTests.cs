@@ -26,11 +26,11 @@ internal class RowPeekerTests
         dt.Rows.Add("splish");
 
         var mock = Substitute.For<IDbDataCommandDataFlowSource>();
-        mock.SetupSequence(m => m.ReadOneRow())
-            .Returns(dt.Rows[0])
-            .Returns(dt.Rows[1])
-            .Returns(dt.Rows[2])
-            .Returns(() => { return null; });
+        mock.ReadOneRow()
+            .Returns(dt.Rows[0],
+            dt.Rows[1],
+            dt.Rows[2],
+            null);
 
         var p = new RowPeeker();
         var dt2 = new DataTable();

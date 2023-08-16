@@ -51,9 +51,9 @@ public class TableVarcharMaxerTests : DatabaseTests
         maxer.Initialize(db, LoadStage.AdjustRaw);
         maxer.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
 
-        var job = Substitute.For<IDataLoadJob>(x =>
-            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
-            x.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
+        job.Configuration.Returns(new HICDatabaseConfiguration(db.Server, null, null, null));
 
         maxer.Mutilate(job);
 

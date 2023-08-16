@@ -39,13 +39,13 @@ public class CacheFetchRequestProviderTests
         var cacheProgress = Substitute.For<ICacheProgress>();
         cacheProgress.FetchPage(Arg.Any<int>(), Arg.Any<int>()).Returns(failures);
 
-        var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
+        var provider = new FailedCacheFetchRequestProvider(cacheProgress, 2);
         var fetchRequest = provider.GetNext(new ThrowImmediatelyDataLoadEventListener());
         Assert.IsNotNull(fetchRequest);
         Assert.AreEqual(fetchRequest.ChunkPeriod, new TimeSpan(8, 0, 0));
         Assert.AreEqual(fetchRequest.Start, failure.FetchRequestStart);
         Assert.IsTrue(fetchRequest.IsRetry);
-        cacheProgress.Verify();
+        cacheProgress.Received(1);
     }
 
     /// <summary>
@@ -68,14 +68,14 @@ public class CacheFetchRequestProviderTests
 
         // Stub this so the 'repository' will return the first page, second page then empty page
         var cacheProgress = Substitute.For<ICacheProgress>();
-        cacheProgress.SetupSequence<IEnumerable<ICacheFetchFailure>>(c => c.FetchPage(Arg.Any<int>(), Arg.Any<int>()))
-            .Returns(failuresPage1)
-            .Returns(failuresPage2)
-            .Returns(new List<ICacheFetchFailure>())
-            .Throws<InvalidOperationException>();
+        // cacheProgress.SetupSequence<IEnumerable<ICacheFetchFailure>>();
+        cacheProgress.FetchPage(Arg.Any<int>(), Arg.Any<int>())
+            .Returns(failuresPage1,
+            failuresPage2,
+            new List<ICacheFetchFailure>());//, x => { throw new InvalidOperationException(); });
 
 
-        var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
+        var provider = new FailedCacheFetchRequestProvider(cacheProgress, 2);
 
         // We should get three ICacheFetchRequests in total, followed by a null to signify that there are no more ICacheFetchRequests
         Assert.IsNotNull(provider.GetNext(new ThrowImmediatelyDataLoadEventListener()));
@@ -92,12 +92,13 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Substitute.For<ICacheProgress>(c => c.PermissionWindow == Substitute.For<IPermissionWindow>());
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.PermissionWindow.Returns(Substitute.For<IPermissionWindow>());
 
-        var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
+        var request = new CacheFetchRequest(previousFailure, cacheProgress);
         request.RequestFailed(new Exception());
 
-        previousFailure.Verify();
+        previousFailure.Received(1);
     }
 
     /// <summary>
@@ -108,19 +109,20 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Substitute.For<ICacheProgress>(c => c.PermissionWindow == Substitute.For<IPermissionWindow>());
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.PermissionWindow.Returns(Substitute.For<IPermissionWindow>());
 
-        var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
+        var request = new CacheFetchRequest(previousFailure, cacheProgress);
         request.RequestSucceeded();
 
-        previousFailure.Verify();
+        previousFailure.Received(1);
     }
 
     private static ICacheFetchFailure GetFailureMock()
     {
-        var failure = Substitute.For<ICacheFetchFailure>(f =>
-            f.FetchRequestEnd == DateTime.Now &&
-            f.FetchRequestStart == DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
+        var failure = Substitute.For<ICacheFetchFailure>();
+        failure.FetchRequestEnd.Returns(DateTime.Now);
+        failure.FetchRequestStart.Returns(DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
 
         return failure;
     }

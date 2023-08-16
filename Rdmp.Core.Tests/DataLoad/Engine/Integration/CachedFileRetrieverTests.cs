@@ -34,7 +34,8 @@ public class CachedFileRetrieverTests : DatabaseTests
     public CachedFileRetrieverTests()
     {
         _cpMock = Substitute.For<ICacheProgress>();
-        _lpMock = Substitute.For<ILoadProgress>(l => l.CacheProgress == _cpMock);
+        _lpMock = Substitute.For<ILoadProgress>();
+        _lpMock.CacheProgress.Returns(_cpMock);
     }
 
     [Test(Description =
@@ -173,14 +174,14 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
     {
-        var catalogue = Substitute.For<ICatalogue>(c =>
-            c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
-            c.GetLookupTableInfoList() == Array.Empty<TableInfo>() &&
-            c.LoggingDataTask == "TestLogging"
-        );
+        var catalogue = Substitute.For<ICatalogue>();
+        catalogue.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
+        catalogue.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
+        catalogue.LoggingDataTask.Returns("TestLogging");
 
         var logManager = Substitute.For<ILogManager>();
-        var loadMetadata = Substitute.For<ILoadMetadata>(lm => lm.GetAllCatalogues() == new[] { catalogue });
+        var loadMetadata = Substitute.For<ILoadMetadata>();
+        loadMetadata.GetAllCatalogues().Returns(new[] { catalogue });
 
         var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory,
             new ThrowImmediatelyDataLoadEventListener(), null)

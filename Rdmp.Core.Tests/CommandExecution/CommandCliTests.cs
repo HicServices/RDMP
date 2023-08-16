@@ -47,8 +47,8 @@ public abstract class CommandCliTests : UnitTests
     {
         var mock = Substitute.For<IBasicActivateItems>();
         mock.RepositoryLocator.Returns(RepositoryLocator);
-        mock.RepositoryLocator.Returns(new List<CommandInvokerDelegate>());
-        mock.Setup(m => m.Show(Arg.Any<string>()));
+        // mock.RepositoryLocator.Returns(new List<CommandInvokerDelegate>());
+        // mock.Setup.Show(Arg.Any<string>());
         return mock;
     }
 

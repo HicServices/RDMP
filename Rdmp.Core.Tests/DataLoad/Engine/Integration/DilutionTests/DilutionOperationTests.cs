@@ -31,10 +31,11 @@ public class DilutionOperationTests : DatabaseTests
     [TestCase(null, null)]
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
-        var tbl = Substitute.For<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DateRoundingTests");
-        var col = Substitute.For<IPreLoadDiscardedColumn>(c =>
-            c.TableInfo == tbl &&
-            c.GetRuntimeName() == "TestField");
+        var tbl = Substitute.For<ITableInfo>();
+        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("DateRoundingTests");
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.TableInfo.Returns(tbl);
+        col.GetRuntimeName().Returns("TestField");
 
         var o = new RoundDateToMiddleOfQuarter
         {
@@ -93,9 +94,11 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     [TestCase(null, null)]
     public void TestExcludeRight3OfUKPostcodes(string input, string expectedDilute)
     {
-        var tbl = Substitute.For<ITableInfo>(
-            t => t.GetRuntimeName(LoadStage.AdjustStaging, null) == "ExcludeRight3OfPostcodes");
-        var col = Substitute.For<IPreLoadDiscardedColumn>(c => c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
+        var tbl = Substitute.For<ITableInfo>();
+        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("ExcludeRight3OfPostcodes");
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.TableInfo.Returns(tbl);
+        col.GetRuntimeName().Returns("TestField");
 
         var o = new ExcludeRight3OfUKPostcodes
         {

@@ -35,8 +35,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
 
         var cfg = Substitute.For<IExtractionConfiguration>();
 
-        _commandStub = Substitute.For<IExtractCommand>(cmd => cmd.Configuration == cfg);
-
+        _commandStub = Substitute.For<IExtractCommand>();
+        _commandStub.Configuration.Returns(cfg);
         Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
     }
 

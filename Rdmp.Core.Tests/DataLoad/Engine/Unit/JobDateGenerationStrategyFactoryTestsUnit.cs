@@ -35,7 +35,8 @@ public class JobDateGenerationStrategyFactoryTestsUnit
     [Test]
     public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
     {
-        var lp = Substitute.For<ILoadProgress>(p => p.DataLoadProgress == new DateTime(2001, 01, 01));
+        var lp = Substitute.For<ILoadProgress>();
+        lp.DataLoadProgress.Returns(new DateTime(2001, 01, 01));
 
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 

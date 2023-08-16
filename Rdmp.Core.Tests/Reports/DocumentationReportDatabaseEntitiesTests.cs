@@ -34,7 +34,8 @@ internal class DocumentationReportDatabaseEntitiesTests : UnitTests
         Image img = new Image<Rgba32>(19, 19);
         img.Mutate(x => x.Fill(Color.DarkMagenta));
 
-        var iconProvider = Substitute.For<IIconProvider>(m => m.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()) == img);
+        var iconProvider = Substitute.For<IIconProvider>();
+        iconProvider.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()).Returns(img);
 
         reporter.GenerateReport(store, new ThrowImmediatelyCheckNotifier(), iconProvider, MEF, false);
     }

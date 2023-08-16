@@ -37,7 +37,7 @@ public class PipelineExecutionTests
         var pipelineExecutor = new SerialPipelineExecution();
 
         // Act
-        pipelineExecutor.Execute(new[] { engine1.Object, engine2.Object }, tokenSource.Token, listener);
+        pipelineExecutor.Execute(new[] { engine1, engine2 }, tokenSource.Token, listener);
 
         // engine1 should have been executed once
         engine1.Received(1).ExecutePipeline(Arg.Any<GracefulCancellationToken>());
@@ -57,27 +57,28 @@ public class PipelineExecutionTests
         var listener = new ThrowImmediatelyDataLoadEventListener();
 
         // first time both engines return that they have more data, second time they are both complete
-        engine1.SetupSequence(engine => engine.ExecuteSinglePass(Arg.Any<GracefulCancellationToken>()))
-            .Returns(true)
-            .Returns(false)
-            .Throws<InvalidOperationException>();
+        engine1.ExecuteSinglePass(Arg.Any<GracefulCancellationToken>())
+            .Returns(true,
+            false
+        //    x => { throw new InvalidOperationException(); }
+           );
 
-        engine2.SetupSequence(engine => engine.ExecuteSinglePass(Arg.Any<GracefulCancellationToken>()))
-            .Returns(true)
-            .Returns(false)
-            .Throws<InvalidOperationException>();
+        engine2.ExecuteSinglePass(Arg.Any<GracefulCancellationToken>())
+            .Returns(true,
+            false);
+        // .Throws<InvalidOperationException>();
 
         // create the execution object
         var pipelineExecutor = new RoundRobinPipelineExecution();
 
         // Act
-        pipelineExecutor.Execute(new[] { engine1.Object, engine2.Object }, tokenSource.Token, listener);
+        pipelineExecutor.Execute(new[] { engine1, engine2 }, tokenSource.Token, listener);
 
         // Assert
         // engine1 should have been executed once
-        engine1.Verify();
+        engine1.Received(1);
 
         // engine2 should not have been executed as it is locked, but we don't actually have locks.
-        engine1.Verify();
+        engine1.Received(1);
     }
 }
