@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
@@ -56,7 +56,7 @@ internal class TestsExecuteCommandList : CommandCliTests
         var contents = Regex.Escape($"{c.ID}:fff");
 
         // Called once
-        mock.Verify(m => m.Show(It.IsRegex(contents)), Times.Once());
+        mock.Received(1).Show(Arg.IsRegex(contents));
 
         c.DeleteInDatabase();
     }

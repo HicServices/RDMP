@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using FAnsi;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -176,7 +176,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             };
             attacher.Progress = lp;
             attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo
-                { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
+            { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
 
             var dbConfiguration = new HICDatabaseConfiguration(lmd,
                 RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));

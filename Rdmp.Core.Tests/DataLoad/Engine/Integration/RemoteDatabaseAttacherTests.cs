@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -65,7 +65,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-        var job = Mock.Of<IDataLoadJob>(p =>
+        var job = Substitute.For<IDataLoadJob>(p =>
             p.RegularTablesToLoad == new List<ITableInfo> { ti } &&
             p.LookupTablesToLoad == new List<ITableInfo>() && p.DataLoadInfo == dli);
 

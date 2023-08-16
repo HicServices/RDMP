@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -34,7 +34,7 @@ internal class DocumentationReportDatabaseEntitiesTests : UnitTests
         Image img = new Image<Rgba32>(19, 19);
         img.Mutate(x => x.Fill(Color.DarkMagenta));
 
-        var iconProvider = Mock.Of<IIconProvider>(m => m.GetImage(It.IsAny<object>(), It.IsAny<OverlayKind>()) == img);
+        var iconProvider = Substitute.For<IIconProvider>(m => m.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()) == img);
 
         reporter.GenerateReport(store, new ThrowImmediatelyCheckNotifier(), iconProvider, MEF, false);
     }

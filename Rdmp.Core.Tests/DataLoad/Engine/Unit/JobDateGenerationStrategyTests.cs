@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
@@ -19,7 +19,7 @@ public class JobDateGenerationStrategyTests
     public void TestSingleScheduleConsecutiveDateStrategy()
     {
         var schedule =
-            Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == new DateTime(2015, 1, 1));
+            Substitute.For<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == new DateTime(2015, 1, 1));
 
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
@@ -39,7 +39,7 @@ public class JobDateGenerationStrategyTests
     {
         //we have loaded SetUp to day before yesterday
         var schedule =
-            Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));
+            Substitute.For<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));
 
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
@@ -52,7 +52,7 @@ public class JobDateGenerationStrategyTests
     public void TestSingleScheduleConsecutiveDateStrategy_FutureDates_AreAllowed()
     {
         var schedule =
-            Mock.Of<ILoadProgress>(loadProgress =>
+            Substitute.For<ILoadProgress>(loadProgress =>
                 loadProgress.DataLoadProgress ==
                 DateTime.Now.Date.AddDays(-2)); //we have loaded SetUp to day before yesterday
 

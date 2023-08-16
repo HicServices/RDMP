@@ -7,7 +7,7 @@
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -119,7 +119,7 @@ public class ShareLoadMetadataTests : UnitTests
 
         var f = new RuntimeTaskFactory(Repository);
 
-        var stg = Mock.Of<IStageArgs>(x => x.LoadStage == LoadStage.Mounting);
+        var stg = Substitute.For<IStageArgs>(x => x.LoadStage == LoadStage.Mounting);
 
         f.Create(pt1, stg);
     }
@@ -138,7 +138,7 @@ public class ShareLoadMetadataTests : UnitTests
         //setup Reflection / MEF
         SetupMEF();
         var f = new RuntimeTaskFactory(Repository);
-        var stg = Mock.Of<IStageArgs>(x =>
+        var stg = Substitute.For<IStageArgs>(x =>
             x.LoadStage == LoadStage.Mounting &&
             x.DbInfo == new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
 

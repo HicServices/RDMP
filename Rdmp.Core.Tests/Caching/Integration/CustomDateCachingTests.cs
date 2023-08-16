@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
 using Rdmp.Core.Caching.Layouts;
@@ -39,17 +39,17 @@ public class CustomDateCachingTests : DatabaseTests
         mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
         // Create a pipeline that will record the cache chunks
-        var sourceComponent = Mock.Of<IPipelineComponent>(x =>
+        var sourceComponent = Substitute.For<IPipelineComponent>(x =>
             x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
             x.GetClassAsSystemType() == typeof(TestCacheSource) &&
             x.GetAllArguments() == Array.Empty<IArgument>());
 
-        var destinationComponent = Mock.Of<IPipelineComponent>(x =>
+        var destinationComponent = Substitute.For<IPipelineComponent>(x =>
             x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
             x.GetClassAsSystemType() == typeof(TestCacheDestination) &&
             x.GetAllArguments() == Array.Empty<IArgument>());
 
-        var pipeline = Mock.Of<IPipeline>(p =>
+        var pipeline = Substitute.For<IPipeline>(p =>
             p.Repository == CatalogueRepository &&
             p.Source == sourceComponent &&
             p.Destination == destinationComponent &&
@@ -60,14 +60,14 @@ public class CustomDateCachingTests : DatabaseTests
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
                 true);
 
-        var lmd = Mock.Of<ILoadMetadata>();
+        var lmd = Substitute.For<ILoadMetadata>();
         lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
 
-        var loadProgress = Mock.Of<ILoadProgress>(l =>
+        var loadProgress = Substitute.For<ILoadProgress>(l =>
             l.OriginDate == new DateTime(2001, 01, 01) &&
             l.LoadMetadata == lmd);
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c =>
+        var cacheProgress = Substitute.For<ICacheProgress>(c =>
             c.Pipeline_ID == -123 &&
             c.Pipeline == pipeline &&
             c.ChunkPeriod == new TimeSpan(1, 0, 0, 0) &&

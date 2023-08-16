@@ -10,7 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -68,7 +68,7 @@ public class DistincterTests : DatabaseTests
         };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
-        var job = Mock.Of<IDataLoadJob>(p =>
+        var job = Substitute.For<IDataLoadJob>(p =>
             p.RegularTablesToLoad == new List<ITableInfo>(new[] { tableInfo }) &&
             p.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
 
@@ -125,7 +125,7 @@ public class DistincterTests : DatabaseTests
         };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
-        var job = Mock.Of<IDataLoadJob>(p =>
+        var job = Substitute.For<IDataLoadJob>(p =>
             p.RegularTablesToLoad == new List<ITableInfo>(new[] { tableInfo }) &&
             p.Configuration == new HICDatabaseConfiguration(db.Server, null, null, null));
 

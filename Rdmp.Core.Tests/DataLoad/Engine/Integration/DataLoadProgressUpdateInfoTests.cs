@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -27,14 +27,14 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
 
     public DataLoadProgressUpdateInfoTests()
     {
-        var cata = Mock.Of<ICatalogue>(
+        var cata = Substitute.For<ICatalogue>(
             c => c.LoggingDataTask == "NothingTask" &&
                  c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
                  c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
 
-        var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
+        var lmd = Substitute.For<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 
-        _job = new ScheduledDataLoadJob(null, "fish", Mock.Of<ILogManager>(), lmd, null,
+        _job = new ScheduledDataLoadJob(null, "fish", Substitute.For<ILogManager>(), lmd, null,
             new ThrowImmediatelyDataLoadJob(), null);
     }
 

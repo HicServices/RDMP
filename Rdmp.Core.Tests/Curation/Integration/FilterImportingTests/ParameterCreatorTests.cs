@@ -6,7 +6,7 @@
 
 using System;
 using FAnsi.Implementations.MicrosoftSQL;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
@@ -20,12 +20,12 @@ public class ParameterCreatorTests
     [Test]
     public void NoParametersTest_CreateNotCalled()
     {
-        var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
 
-        var factory = new Mock<IFilterFactory>();
-        factory.Verify(m => m.CreateNewParameter(It.IsAny<IFilter>(), It.IsAny<string>()), Times.Never);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.DidNotReceive().CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>());
 
-        var creator = new ParameterCreator(factory.Object, Array.Empty<ISqlParameter>(), null);
+        var creator = new ParameterCreator(factory, Array.Empty<ISqlParameter>(), null);
         creator.CreateAll(f, null);
 
         factory.Verify();
@@ -35,10 +35,10 @@ public class ParameterCreatorTests
     [Test]
     public void SingleParameterTest_NullReturnFromConstruct_Throws()
     {
-        var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
-        var factory = Mock.Of<IFilterFactory>(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);") == null);
+        var factory = Substitute.For<IFilterFactory>(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);") == null);
 
         var creator = new ParameterCreator(factory, null, null);
 
@@ -50,87 +50,87 @@ public class ParameterCreatorTests
     [Test]
     public void SingleParameterTest_OneParameter_CreateCalled()
     {
-        var p = new Mock<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
-        p.Setup(m => m.SaveToDatabase());
+        var p = Substitute.For<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
+        // p.Setup(m => m.SaveToDatabase());
+        p.SaveToDatabase();
 
-        var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);")).Returns(p.Object);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(f, "DECLARE @bob AS varchar(50);").Returns(p);
 
-        var creator = new ParameterCreator(factory.Object, null, null);
+        var creator = new ParameterCreator(factory, null, null);
         creator.CreateAll(f, null);
 
-        p.Verify(m => m.SaveToDatabase(), Times.Once);
+        p.Received(1).SaveToDatabase();
         p.Verify();
-        factory.Verify(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);"), Times.Once);
+        factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS varchar(50);");
     }
 
     [Test]
     public void SingleParameterTest_ParameterAlreadyExists_CreateNotCalled()
     {
-        var p = new Mock<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
-        p.Setup(m => m.SaveToDatabase());
+        var p = Substitute.For<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
+        // p.Setup(m => m.SaveToDatabase());
+        p.SaveToDatabase();
 
-        var existingParameter = Mock.Of<ISqlParameter>(x =>
+        var existingParameter = Substitute.For<ISqlParameter>(x =>
             x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
             x.ParameterName == "@bob"
         );
 
-        var f = Mock.Of<IFilter>(x =>
+        var f = Substitute.For<IFilter>(x =>
             x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
             x.WhereSQL == "@bob = 'bob'" &&
             x.GetAllParameters() == new[] { existingParameter });
 
-        var factory = new Mock<IFilterFactory>();
+        var factory = Substitute.For<IFilterFactory>();
 
-        var creator = new ParameterCreator(factory.Object, null, null);
+        var creator = new ParameterCreator(factory, null, null);
         creator.CreateAll(f, null);
         creator.CreateAll(f, null);
         creator.CreateAll(f,
             null); //no matter how many times we call create it shouldn't make more because there is already one
 
-        p.Verify(m => m.SaveToDatabase(), Times.Never);
-        factory.Verify(m => m.CreateNewParameter(f, It.IsAny<string>()),
-            Times.Never); //should never be called because the filter already has 
+        p.DidNotReceive().SaveToDatabase();
+        factory.Received(0).CreateNewParameter(f, Arg.Any<string>()); //should never be called because the filter already has
     }
 
     [Test]
     public void SingleParameterTest_GlobalOverrides_CreateNotCalled()
     {
-        var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
-        var global = Mock.Of<ISqlParameter>(x => x.ParameterName == "@bob");
+        var global = Substitute.For<ISqlParameter>(x => x.ParameterName == "@bob");
 
-        var factory = new Mock<IFilterFactory>();
-        factory
-            .Setup(m => m.CreateNewParameter(It.IsAny<IFilter>(), It.IsAny<string>()))
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>())
             .Throws<InvalidOperationException>();
 
-        var creator = new ParameterCreator(factory.Object, new[] { global }, null);
+        var creator = new ParameterCreator(factory, new[] { global }, null);
         creator.CreateAll(f, null);
 
-        factory.Verify();
+        factory.Received(1);
     }
 
     [Test]
     public void SingleParameterTest_GlobalButNotSameName_CreateCalled()
     {
-        var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
-        var global = Mock.Of<ISqlParameter>(x => x.ParameterName == "@bob");
+        var global = Substitute.For<ISqlParameter>(x => x.ParameterName == "@bob");
 
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup<ISqlParameter>(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);"))
-            .Returns(Mock.Of<ISqlParameter>);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(f, "DECLARE @bob AS varchar(50);")
+            .Returns(Substitute.For<ISqlParameter>());
 
-        var creator = new ParameterCreator(factory.Object, null, null);
+        var creator = new ParameterCreator(factory, null, null);
         creator.CreateAll(f, null);
 
-        factory.Verify<ISqlParameter>(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);"), Times.Once);
+        factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS varchar(50);");
     }
 
 
@@ -138,29 +138,29 @@ public class ParameterCreatorTests
     public void SingleParameterTest_Template_TemplateValuesUsed()
     {
         //The constructor returns
-        var pstub = Mock.Of<ISqlParameter>();
+        var pstub = Substitute.For<ISqlParameter>();
 
         //The filter that requires that the parameters be created
-        var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
+        var f = Substitute.For<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
 
         //The template which is an existing known about parameter from the master filter that is being duplicated.  This template will be spotted and used to make the new parameter match the cloned filter's one
-        var template = Mock.Of<ISqlParameter>(x => x.ParameterName == "@bob");
+        var template = Substitute.For<ISqlParameter>(x => x.ParameterName == "@bob");
 
         template.ParameterSQL = "DECLARE @bob AS int";
         template.Value = "5";
         template.Comment = "fish";
 
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup(m => m.CreateNewParameter(f, "DECLARE @bob AS int")).Returns(pstub);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(f, "DECLARE @bob AS int").Returns(pstub);
 
-        var creator = new ParameterCreator(factory.Object, null, new[] { template });
+        var creator = new ParameterCreator(factory, null, new[] { template });
         creator.CreateAll(f, null);
 
         Assert.AreEqual("5", pstub.Value);
         Assert.AreEqual("fish", pstub.Comment);
 
-        factory.Verify(m => m.CreateNewParameter(f, "DECLARE @bob AS int"), Times.Once);
+        factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS int");
     }
 
     [TestCase("[MyTable].[MyCol] = @name", "@name", "@name2", "[MyTable].[MyCol] = @name2")]
@@ -170,7 +170,7 @@ public class ParameterCreatorTests
         "[MyTable].[MyCol] = @name2")] //No match since it is a substring
     [TestCase("[MyTable].[MyCol] = @name_2", "@name", "@cthulhu", "[MyTable].[MyCol] = @name_2")]
     [TestCase("[MyTable].[MyCol] = @name@@coconuts", "@name", "@cthulhu",
-        "[MyTable].[MyCol] = @name@@coconuts")] //No match since @ is a legit word to use in a parameter name making @name@coconuts legal name for a 
+        "[MyTable].[MyCol] = @name@@coconuts")] //No match since @ is a legit word to use in a parameter name making @name@coconuts legal name for a
     [TestCase("@a=a", "@a", "@b", "@b=a")]
     [TestCase(@"a=@a
     OR

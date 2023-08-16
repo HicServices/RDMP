@@ -7,7 +7,7 @@
 using System;
 using System.Globalization;
 using System.IO;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -169,8 +169,8 @@ internal class CustomMetadataReportTests : UnitTests
 
         DateTime? ignore;
 
-        var moqDqe = new Mock<IDetermineDatasetTimespan>();
-        moqDqe.Setup(f => f.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore))
+        var moqDqe = Substitute.For<IDetermineDatasetTimespan>();
+        moqDqe.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore)
             .Returns(new Tuple<DateTime?, DateTime?>(new DateTime(2001, 02, 01), new DateTime(2002, 04, 03)));
 
         reporter.TimespanCalculator = moqDqe.Object;
@@ -470,7 +470,7 @@ dataset with interesting stuff";
 
         var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
         {
-            Description = @"some info 
+            Description = @"some info
 about column 2"
         };
         cataItem2.SaveToDatabase();
@@ -810,17 +810,17 @@ $end");
 
         var reporter = new CustomMetadataReport(RepositoryLocator);
 
-        var eval1 = Mock.Of<Evaluation>();
+        var eval1 = Substitute.For<Evaluation>();
 
-        var eval1_col1 = Mock.Of<ColumnState>();
+        var eval1_col1 = Substitute.For<ColumnState>();
         eval1_col1.TargetProperty = "Cata1Col1";
         eval1_col1.CountCorrect = 9;
         eval1_col1.CountDBNull =
             3; // note that this is seperate from the other counts.  A value can be both null and correct.
         eval1.ColumnStates = new ColumnState[] { eval1_col1 };
 
-        var eval2 = Mock.Of<Evaluation>();
-        var eval2_col1 = Mock.Of<ColumnState>();
+        var eval2 = Substitute.For<Evaluation>();
+        var eval2_col1 = Substitute.For<ColumnState>();
         eval2_col1.TargetProperty = "Cata2Col1";
         eval2_col1.CountCorrect = 1;
         eval2_col1.CountMissing = 2;
@@ -1388,16 +1388,16 @@ $IsTableValuedFunction
 $IsView
 $Schema
 $Server
-$DQE_CountTotal        
-$DQE_DateOfEvaluation  
-$DQE_DateRange         
-$DQE_EndDate           
-$DQE_EndDay            
-$DQE_EndMonth          
-$DQE_EndYear           
-$DQE_StartDate         
-$DQE_StartDay          
-$DQE_StartMonth        
+$DQE_CountTotal
+$DQE_DateOfEvaluation
+$DQE_DateRange
+$DQE_EndDate
+$DQE_EndDay
+$DQE_EndMonth
+$DQE_EndYear
+$DQE_StartDate
+$DQE_StartDay
+$DQE_StartMonth
 $DQE_StartYear";
 
 

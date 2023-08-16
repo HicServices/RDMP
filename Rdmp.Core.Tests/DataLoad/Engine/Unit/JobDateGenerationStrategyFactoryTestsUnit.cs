@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
@@ -21,7 +21,7 @@ public class JobDateGenerationStrategyFactoryTestsUnit
     [Test]
     public void NoDates()
     {
-        var lp = Mock.Of<ILoadProgress>();
+        var lp = Substitute.For<ILoadProgress>();
 
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
@@ -35,7 +35,7 @@ public class JobDateGenerationStrategyFactoryTestsUnit
     [Test]
     public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
     {
-        var lp = Mock.Of<ILoadProgress>(p => p.DataLoadProgress == new DateTime(2001, 01, 01));
+        var lp = Substitute.For<ILoadProgress>(p => p.DataLoadProgress == new DateTime(2001, 01, 01));
 
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 

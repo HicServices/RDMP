@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Caching.Requests.FetchRequestProvider;
@@ -25,7 +25,7 @@ public class CacheFetchRequestProviderTests
     [Test]
     public void TestFailedFetchRequestProvider_CreationOfFetchRequest()
     {
-        var failure = Mock.Of<ICacheFetchFailure>();
+        var failure = Substitute.For<ICacheFetchFailure>();
         failure.FetchRequestStart = new DateTime(2009, 8, 5, 8, 0, 0);
         failure.FetchRequestEnd = new DateTime(2009, 8, 5, 16, 0, 0);
         failure.LastAttempt = new DateTime(2016, 1, 1, 12, 0, 0);
@@ -36,8 +36,8 @@ public class CacheFetchRequestProviderTests
             failure
         };
 
-        var cacheProgress = new Mock<ICacheProgress>();
-        cacheProgress.Setup(c => c.FetchPage(It.IsAny<int>(), It.IsAny<int>())).Returns(failures);
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.FetchPage(Arg.Any<int>(), Arg.Any<int>()).Returns(failures);
 
         var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
         var fetchRequest = provider.GetNext(new ThrowImmediatelyDataLoadEventListener());
@@ -57,18 +57,18 @@ public class CacheFetchRequestProviderTests
         // Our set of CacheFetchFailures
         var failuresPage1 = new List<ICacheFetchFailure>
         {
-            Mock.Of<ICacheFetchFailure>(),
-            Mock.Of<ICacheFetchFailure>()
+            Substitute.For<ICacheFetchFailure>(),
+            Substitute.For<ICacheFetchFailure>()
         };
 
         var failuresPage2 = new List<ICacheFetchFailure>
         {
-            Mock.Of<ICacheFetchFailure>()
+            Substitute.For<ICacheFetchFailure>()
         };
 
         // Stub this so the 'repository' will return the first page, second page then empty page
-        var cacheProgress = new Mock<ICacheProgress>();
-        cacheProgress.SetupSequence<IEnumerable<ICacheFetchFailure>>(c => c.FetchPage(It.IsAny<int>(), It.IsAny<int>()))
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.SetupSequence<IEnumerable<ICacheFetchFailure>>(c => c.FetchPage(Arg.Any<int>(), Arg.Any<int>()))
             .Returns(failuresPage1)
             .Returns(failuresPage2)
             .Returns(new List<ICacheFetchFailure>())
@@ -92,7 +92,7 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
+        var cacheProgress = Substitute.For<ICacheProgress>(c => c.PermissionWindow == Substitute.For<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
         request.RequestFailed(new Exception());
@@ -108,7 +108,7 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
+        var cacheProgress = Substitute.For<ICacheProgress>(c => c.PermissionWindow == Substitute.For<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
         request.RequestSucceeded();
@@ -116,12 +116,12 @@ public class CacheFetchRequestProviderTests
         previousFailure.Verify();
     }
 
-    private static Mock<ICacheFetchFailure> GetFailureMock()
+    private static ICacheFetchFailure GetFailureMock()
     {
-        var failure = Mock.Of<ICacheFetchFailure>(f =>
+        var failure = Substitute.For<ICacheFetchFailure>(f =>
             f.FetchRequestEnd == DateTime.Now &&
             f.FetchRequestStart == DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
 
-        return Mock.Get(failure);
+        return failure;
     }
 }

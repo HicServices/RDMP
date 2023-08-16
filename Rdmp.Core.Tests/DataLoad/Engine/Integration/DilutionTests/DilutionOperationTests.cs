@@ -7,7 +7,7 @@
 using System;
 using System.Data;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -31,8 +31,8 @@ public class DilutionOperationTests : DatabaseTests
     [TestCase(null, null)]
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
-        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DateRoundingTests");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c =>
+        var tbl = Substitute.For<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DateRoundingTests");
+        var col = Substitute.For<IPreLoadDiscardedColumn>(c =>
             c.TableInfo == tbl &&
             c.GetRuntimeName() == "TestField");
 
@@ -93,9 +93,9 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     [TestCase(null, null)]
     public void TestExcludeRight3OfUKPostcodes(string input, string expectedDilute)
     {
-        var tbl = Mock.Of<ITableInfo>(
+        var tbl = Substitute.For<ITableInfo>(
             t => t.GetRuntimeName(LoadStage.AdjustStaging, null) == "ExcludeRight3OfPostcodes");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c => c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
+        var col = Substitute.For<IPreLoadDiscardedColumn>(c => c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
 
         var o = new ExcludeRight3OfUKPostcodes
         {
@@ -138,10 +138,11 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     [TestCase("", "varchar(1)", true)] //This data exists regardless of if it is blank so it still gets the 1
     public void DiluteToBitFlag(string input, string inputDataType, bool expectedDilute)
     {
-        var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging, null) == "DiluteToBitFlagTests");
-        var col = Mock.Of<IPreLoadDiscardedColumn>(c =>
-            c.TableInfo == tbl &&
-            c.GetRuntimeName() == "TestField");
+        var tbl = Substitute.For<ITableInfo>();
+        tbl.GetRuntimeName(LoadStage.AdjustStaging, null).Returns("DiluteToBitFlagTests");
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.TableInfo.Returns(tbl);
+        col.GetRuntimeName().Returns("TestField");
 
         var o = new CrushToBitFlag
         {

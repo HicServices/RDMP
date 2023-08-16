@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
 using Rdmp.Core.Curation;
@@ -73,7 +73,7 @@ public class CachingHostTests : UnitTests
         cp.PermissionWindow_ID = permissionWindow.ID;
         cp.SaveToDatabase();
 
-        var dataFlowPipelineEngine = Mock.Of<IDataFlowPipelineEngine>();
+        var dataFlowPipelineEngine = Substitute.For<IDataFlowPipelineEngine>();
 
         // set SetUp a factory stub to return our engine mock
         var cacheHost = new CachingHost(Repository)

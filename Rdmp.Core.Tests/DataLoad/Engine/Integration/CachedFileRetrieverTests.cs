@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Curation;
@@ -33,8 +33,8 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     public CachedFileRetrieverTests()
     {
-        _cpMock = Mock.Of<ICacheProgress>();
-        _lpMock = Mock.Of<ILoadProgress>(l => l.CacheProgress == _cpMock);
+        _cpMock = Substitute.For<ICacheProgress>();
+        _lpMock = Substitute.For<ILoadProgress>(l => l.CacheProgress == _cpMock);
     }
 
     [Test(Description =
@@ -173,14 +173,14 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
     {
-        var catalogue = Mock.Of<ICatalogue>(c =>
+        var catalogue = Substitute.For<ICatalogue>(c =>
             c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
             c.GetLookupTableInfoList() == Array.Empty<TableInfo>() &&
             c.LoggingDataTask == "TestLogging"
         );
 
-        var logManager = Mock.Of<ILogManager>();
-        var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues() == new[] { catalogue });
+        var logManager = Substitute.For<ILogManager>();
+        var loadMetadata = Substitute.For<ILoadMetadata>(lm => lm.GetAllCatalogues() == new[] { catalogue });
 
         var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory,
             new ThrowImmediatelyDataLoadEventListener(), null)
