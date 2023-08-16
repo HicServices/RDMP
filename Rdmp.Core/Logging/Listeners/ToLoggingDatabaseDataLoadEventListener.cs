@@ -59,9 +59,24 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
     }
 
-    private readonly int _maxMessageLength = 64000/ sizeof(Char); //loggingDB text column has max 64kb size, or 65535 chars
-    private bool IsMessageAValidLength(string message){
-        return message.Length <= _maxMessageLength;
+    private const string RDMP_LOGGING_STRING_LENGTH_LIMIT = "RDMP_LOGGING_STRING_LENGTH_LIMIT";
+    private string strStringLengthLimit = Environment.GetEnvironmentVariable(RDMP_LOGGING_STRING_LENGTH_LIMIT);
+
+    private uint GetMaxMessageLength()
+    {
+        uint maxMessageLength = 4294967295; //max length of a LONGTEXT column
+        if (strStringLengthLimit != null && strStringLengthLimit.Length > 0)
+        {
+            //don't bother if its not set or is an empty string
+            UInt32.TryParse(strStringLengthLimit, out maxMessageLength);
+        }
+        return maxMessageLength;
+    }
+
+    // private uint _maxMessageLength = GetMaxMessageLength();
+    private bool IsMessageAValidLength(string message)
+    {
+        return message.Length <= GetMaxMessageLength();
     }
     public virtual void OnNotify(object sender, NotifyEventArgs e)
     {
@@ -74,7 +89,8 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
-                if(IsMessageAValidLength(e.Message)){
+                if (IsMessageAValidLength(e.Message))
+                {
                     DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
                         e.Message);
                 }
@@ -83,7 +99,8 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
                 var msg = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                if(IsMessageAValidLength(msg)){
+                if (IsMessageAValidLength(msg))
+                {
                     DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
                 }
                 break;
@@ -91,7 +108,8 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
                 var err = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                if(IsMessageAValidLength(err)){
+                if (IsMessageAValidLength(err))
+                {
                     DataLoadInfo.LogFatalError(sender.ToString(), err);
                 }
                 break;
