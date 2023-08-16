@@ -73,8 +73,6 @@ public class CachingHostTests : UnitTests
         cp.PermissionWindow_ID = permissionWindow.ID;
         cp.SaveToDatabase();
 
-        var dataFlowPipelineEngine = Substitute.For<IDataFlowPipelineEngine>();
-
         // set SetUp a factory stub to return our engine mock
         var cacheHost = new CachingHost(Repository)
         {

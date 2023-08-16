@@ -27,7 +27,6 @@ internal class MigrationStrategyTests : DatabaseTests
         var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
         var connection = Substitute.For<IManagedConnection>();
-        var job = Substitute.For<IDataLoadJob>();
         var strategy = new OverwriteMigrationStrategy(connection);
 
         var migrationFieldProcessor = Substitute.For<IMigrationFieldProcessor>();
