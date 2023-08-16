@@ -267,9 +267,9 @@ public class MetadataReport : DocXHelper
             using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
             {
                 var dt = new DataTable();
-                dt.BeginDataLoad();
+                dt.BeginLoadData();
                 da.Fill(dt);
-                dt.EndDataLoad();
+                dt.EndLoadData();
                 return dt;
             }
         }

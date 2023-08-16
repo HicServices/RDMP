@@ -66,7 +66,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
     private DataTable GenerateTransposedTable(DataTable inputTable)
     {
         DataTable outputTable = new DataTable();
-        outputTable.BeginDataLoad();
+        outputTable.BeginLoadData();
         // Add columns by looping rows
 
         // Header row's first column is same as in inputTable
@@ -98,7 +98,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
             outputTable.Rows.Add(newRow);
         }
-        outputTable.EndDataLoad();
+        outputTable.EndLoadData();
         return outputTable;
     }
 }

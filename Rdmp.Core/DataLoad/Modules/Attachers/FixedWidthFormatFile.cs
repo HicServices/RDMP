@@ -79,7 +79,7 @@ public class FixedWidthFormatFile
         //setup the table
         DataTable toReturn = new DataTable();
 
-        toReturn.BeginDataLoad();
+        toReturn.BeginLoadData();
         foreach (var fixedWidthColumn in FormatColumns)
         {
             var dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
@@ -132,7 +132,7 @@ public class FixedWidthFormatFile
             }
         }
 
-        toReturn.EndDataLoad();
+        toReturn.EndLoadData();
         return toReturn;
     }
 

@@ -55,7 +55,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
         var colName = _extractionInformation.GetRuntimeName();
 
         DataTable dt = new DataTable();
-        dt.BeginDataLoad();
+        dt.BeginLoadData();
         dt.Columns.Add(colName);
 
         using (var con = server.GetConnection())
@@ -73,7 +73,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
                 }
             }
         }
-        dt.EndDataLoad();
+        dt.EndLoadData();
         return dt;
     }
 

@@ -108,12 +108,12 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
                 $"Cohort only contains {chosen.Count} unique identifiers.  This is less than the requested sample size of {SampleSize} and {nameof(FailIfNotEnoughIdentifiers)} is true");
 
         DataTable dtToReturn = new DataTable();
-        dtToReturn.BeginDataLoad();
+        dtToReturn.BeginLoadData();
         dtToReturn.Columns.Add(expectedFieldName);
 
         foreach (var val in chosen) dtToReturn.Rows.Add(val);
 
-        dtToReturn.EndDataLoad();
+        dtToReturn.EndLoadData();
         return dtToReturn;
     }
 

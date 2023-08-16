@@ -125,7 +125,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener)
     {
         var toReturn = new DataTable();
-        toReturn.BeginDataLoad();
+        toReturn.BeginLoadData();
         var rowEnumerator = worksheet.GetRowEnumerator();
         var nColumns = -1;
 
@@ -189,7 +189,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             if (!gotAtLeastOneGoodValue)
                 toReturn.Rows.Remove(r);
         }
-        toReturn.EndDataLoad();
+        toReturn.EndLoadData();
         return toReturn;
     }
 

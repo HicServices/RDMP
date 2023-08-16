@@ -228,11 +228,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         if (!UserSettings.IncludeZeroSeriesInGraphs)
         {
-            dt.BeginDataLoad();
+            dt.BeginLoadData();
             foreach (var col in dt.Columns.Cast<DataColumn>().ToArray())
                 if (dt.Rows.Cast<DataRow>().All(r => IsBasicallyZero(r[col.ColumnName])))
                     dt.Columns.Remove(col);
-            dt.EndDataLoad();
+            dt.EndLoadData();
         }
     }
 

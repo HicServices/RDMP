@@ -289,11 +289,11 @@ where
 
             var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
             DataTable dtReturn = new DataTable();
-            dtReturn.BeginDataLoad();
+            dtReturn.BeginLoadData();
             da.Fill(dtReturn);
 
             dtReturn.TableName = cohortTable.GetRuntimeName();
-            dtReturn.EndDataLoad();
+            dtReturn.EndLoadData();
             return dtReturn;
         }
     }
@@ -416,9 +416,9 @@ where
                 projectNumberMemberName = "projectNumber";
 
                 DataTable toReturn = new DataTable();
-                toReturn.BeginDataLoad();
+                toReturn.BeginLoadData();
                 da.Fill(toReturn);
-                toReturn.EndDataLoad();
+                toReturn.EndLoadData();
                 return toReturn;
             }
         }
@@ -538,7 +538,7 @@ where
         sw2.Start();
 
         //fix values
-        toProcess.BeginDataLoad();
+        toProcess.BeginLoadData();
         foreach (DataRow row in toProcess.Rows)
             try
             {
@@ -585,7 +585,7 @@ where
 
         toProcess.Columns[releaseIdentifier].ColumnName = privateIdentifier;
 
-        toProcess.EndDataLoad();
+        toProcess.EndLoadData();
     }
 
     /// <summary>

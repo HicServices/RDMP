@@ -158,7 +158,7 @@ select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrap
         qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null,
             new[] { filter1, filter2 }, FilterContainerOperation.AND);
 
-        Inserts = newDataTable();
+        Inserts = new DataTable();
         FillTableWithQueryIfUserConsents(Inserts, qb.SQL, checkNotifier, server);
     }
 
@@ -319,9 +319,9 @@ Join
                     cmd.CommandTimeout = _timeout;
                     using (var da = server.GetDataAdapter(cmd))
                     {
-                        dt.BeginDataLoad();
+                        dt.BeginLoadData();
                         da.Fill(dt);
-                        dt.EndDataLoad();
+                        dt.EndLoadData();
                     }
                 }
             }

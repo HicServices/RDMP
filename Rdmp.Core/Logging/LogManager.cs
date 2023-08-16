@@ -118,9 +118,9 @@ public class LogManager : ILogManager
             using (var cmd = Server.GetCommand(sql, con))
             using (var da = Server.GetDataAdapter(cmd))
             {
-                dt.BeginDataLoad();
+                dt.BeginLoadData();
                 da.Fill(dt);
-                dt.EndDataLoad();
+                dt.EndLoadData();
             }
 
             return dt;

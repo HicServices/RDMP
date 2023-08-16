@@ -113,7 +113,7 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
         var currentBatch = BatchesReadyForProcessing[0];
 
         var recordsGenerated = 0;
-        dt.BeginDataLoad();
+        dt.BeginLoadData();
         foreach (DataRow batchRow in currentBatch.Rows)
         {
             var pkValues = new Dictionary<string, object>();
@@ -138,7 +138,7 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
                 recordsGenerated++;
             }
         }
-        dt.EndDataLoad();
+        dt.EndLoadData();
         BatchesReadyForProcessing.Remove(currentBatch);
 
         return recordsGenerated;

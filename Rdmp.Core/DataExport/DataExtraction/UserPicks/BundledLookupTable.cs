@@ -48,9 +48,9 @@ public class BundledLookupTable : IBundledLookupTable
             using (var da = server.GetDataAdapter(
                        server.GetCommand(GetDataTableFetchSql(), con)))
             {
-                dt.BeginDataLoad();
+                dt.BeginLoadData();
                 da.Fill(dt);
-                dt.EndDataLoad();
+                dt.EndLoadData();
             }
         }
 

@@ -555,9 +555,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             var da = server.GetDataAdapter(Request.QueryBuilder.SQL, con);
 
             //get up to 1000 records
-            toReturn.BeginDataLoad();
+            toReturn.BeginLoadData();
             da.Fill(0, 1000, toReturn);
-            toReturn.EndDataLoad();
+            toReturn.EndLoadData();
 
             con.Close();
         }
