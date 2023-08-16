@@ -129,7 +129,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
             }
             using var con = DatabaseSettings.BeginNewTransactedConnection();
             if (DatabaseSettings.DatabaseType==DatabaseType.MicrosoftSQLServer)
-                using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WHERE 1=0", con))
+                using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
                     lockQuery.ExecuteNonQuery();
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
                 "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
