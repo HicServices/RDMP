@@ -129,7 +129,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
         var _arg = Substitute.For<IArgument>();
-        _arg.Name.Returns("SQL");
+        _arg.Name.Returns("Sql");
         _arg.Value.Returns(sql);
         _arg.GetValueAsSystemType().Returns(sql);
         var sqlArg = new IArgument[]
