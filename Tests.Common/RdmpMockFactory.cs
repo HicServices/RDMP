@@ -57,7 +57,8 @@ public class RdmpMockFactory
     {
         var lmd = Substitute.For<ILoadMetadata>();
         var cata = Substitute.For<ICatalogue>();
-        lmd.GetDistinctLiveDatabaseServer().Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
+        var server = tableInfo.Discover(DataAccessContext.DataLoad).Database.Server;
+        lmd.GetDistinctLiveDatabaseServer().Returns(server);
         lmd.GetAllCatalogues().Returns(new[] { cata });
         lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
 

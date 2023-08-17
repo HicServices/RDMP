@@ -167,7 +167,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
             var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-            // lmd.CatalogueRepository = CatalogueRepository;//.Returns(new CatalogueRepository());
+            lmd.CatalogueRepository.Returns(CatalogueRepository);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
             var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))

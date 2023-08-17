@@ -3,7 +3,6 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
-
 using System;
 using NSubstitute;
 using NUnit.Framework;
@@ -12,21 +11,28 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-
+using NUnit.Framework;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+using System;
+using System.IO;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using Tests.Common;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 
 [Category("Unit")]
-public class JobDateGenerationStrategyFactoryTestsUnit
+public class JobDateGenerationStrategyFactoryTestsUnit : UnitTests
 {
     [Test]
     public void NoDates()
     {
-        var lp = Substitute.For<ILoadProgress>();
-
+        var lp = WhenIHaveA<LoadProgress>();
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
-
         var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() =>
-            factory.Create(lp, new ThrowImmediatelyDataLoadEventListener()));
+                   factory.Create(lp, new ThrowImmediatelyDataLoadEventListener()));
 
         Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null",
             ex.Message);
@@ -35,8 +41,8 @@ public class JobDateGenerationStrategyFactoryTestsUnit
     [Test]
     public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
     {
-        var lp = Substitute.For<ILoadProgress>();
-        lp.DataLoadProgress.Returns(new DateTime(2001, 01, 01));
+        var lp = WhenIHaveA<LoadProgress>();
+        lp.DataLoadProgress = new DateTime(2001, 01, 01);
 
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
