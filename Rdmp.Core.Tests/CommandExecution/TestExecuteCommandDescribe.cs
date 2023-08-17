@@ -19,7 +19,7 @@ internal class TestExecuteCommandDescribe : UnitTests
     public void TestDescribeCatalogue()
     {
         var mock = Substitute.For<IBasicActivateItems>();
-        // mock.Setup(m => m.Show(Arg.Any<string>()));
+        mock.When(x => x.Show(Arg.Any<string>())).Do(x => { });
 
         var c = WhenIHaveA<Catalogue>();
         c.Description = "fish";
@@ -30,6 +30,6 @@ internal class TestExecuteCommandDescribe : UnitTests
         describe.Execute();
 
         // Called once
-        mock.Received(1).Show(Arg.Is(".*Description:fish.*"));
+        mock.Received(1).Show(Arg.Is<string>(i => i.Contains("Description:fish")));
     }
 }
