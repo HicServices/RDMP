@@ -54,7 +54,6 @@ public class ParameterCreatorTests
     public void SingleParameterTest_OneParameter_CreateCalled()
     {
         var p = Substitute.For<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
-        // p.Setup(m => m.SaveToDatabase());
         p.SaveToDatabase();
 
         var f = Substitute.For<IFilter>();
@@ -75,8 +74,6 @@ public class ParameterCreatorTests
     public void SingleParameterTest_ParameterAlreadyExists_CreateNotCalled()
     {
         var p = Substitute.For<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
-        // p.Setup(m => m.SaveToDatabase());
-        // p.SaveToDatabase();
 
         var existingParameter = Substitute.For<ISqlParameter>();
         existingParameter.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);

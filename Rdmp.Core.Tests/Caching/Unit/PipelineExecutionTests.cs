@@ -60,13 +60,11 @@ public class PipelineExecutionTests
         engine1.ExecuteSinglePass(Arg.Any<GracefulCancellationToken>())
             .Returns(true,
             false
-        //    x => { throw new InvalidOperationException(); }
            );
 
         engine2.ExecuteSinglePass(Arg.Any<GracefulCancellationToken>())
             .Returns(true,
             false);
-        // .Throws<InvalidOperationException>();
 
         // create the execution object
         var pipelineExecutor = new RoundRobinPipelineExecution();
