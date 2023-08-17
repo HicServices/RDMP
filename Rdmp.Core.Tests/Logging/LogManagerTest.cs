@@ -238,7 +238,7 @@ public class LogManagerTest : DatabaseTests
         Assert.AreEqual("it went bad", archival.Errors.Single().Description);
         Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
 
-        Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
+        Assert.AreEqual("Wrote some records", archival.Progress.SingleOrDefault().Description);
 
         var fatal = archival.Errors.Single();
         lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved,
