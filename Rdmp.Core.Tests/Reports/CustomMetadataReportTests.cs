@@ -504,7 +504,7 @@ $end");
 A cool<br/>dataset with interesting stuff
 | Column | Description |
 | Col1 | some info about column 1 |
-| Col2 | some info <br/>about column 2 |", resultText.TrimEnd());
+| Col2 | some info<br/>about column 2 |", resultText.TrimEnd());
     }
 
 

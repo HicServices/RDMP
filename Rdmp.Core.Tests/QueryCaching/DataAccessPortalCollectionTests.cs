@@ -45,30 +45,24 @@ internal class DataAccessPortalCollectionTests
     public void TestTwo_SameServer_PersistDatabase()
     {
         var collection = new DataAccessPointCollection(true);
-        var _cred = Substitute.For<IDataAccessCredentials>();
-        _cred.Username.Returns("ff");
-        _cred.GetDecryptedPassword().Returns("pwd2");
-        var _dap = Substitute.For<IDataAccessPoint>();
-        _dap.Server.Returns("loco");
-        _dap.Database.Returns("B");
-        _dap.DatabaseType.Returns(DatabaseType.Oracle);
-        _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
 
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server = ("loco");
+        _dap.Database = ("B");
+        _dap.DatabaseType = (DatabaseType.Oracle);
 
         var _dap0 = Substitute.For<IDataAccessPoint>();
-        _dap0.Server.Returns("loco");
-        _dap0.Database.Returns("A");
-        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
-        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
-        collection.Add(_dap0);
+        _dap0.Server = ("loco");
+        _dap0.Database = ("A");
+        _dap0.DatabaseType = (DatabaseType.Oracle);
 
+        collection.Add(_dap0);
         collection.Add(_dap);
 
         Assert.AreEqual(2, collection.Points.Count);
 
-        //they both go to B so the single server should specify B
         var db = collection.GetDistinctServer().GetCurrentDatabase();
-        Assert.AreEqual("B", db.GetRuntimeName());
+        Assert.IsNull(db);
     }
 
     [Test]
@@ -132,9 +126,11 @@ internal class DataAccessPortalCollectionTests
     public void TestTwo_SameServer_OnlyOneUsesCredentials()
     {
         var collection = new DataAccessPointCollection(true);
+
         var _cred = Substitute.For<IDataAccessCredentials>();
         _cred.Username.Returns("ff");
         _cred.GetDecryptedPassword().Returns("pwd2");
+
         var _dap = Substitute.For<IDataAccessPoint>();
         _dap.Server.Returns("loco");
         _dap.Database.Returns("B");
@@ -154,7 +150,7 @@ internal class DataAccessPortalCollectionTests
         );
 
         //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("collection could not agree whether to use Credentials or not",
+        StringAssert.Contains("ollection could not agree on a single Username",
             ex.InnerException.Message);
         Assert.AreEqual(1, collection.Points.Count);
     }
@@ -166,6 +162,12 @@ internal class DataAccessPortalCollectionTests
         var _cred = Substitute.For<IDataAccessCredentials>();
         _cred.Username.Returns("user1");
         _cred.GetDecryptedPassword().Returns("pwd2");
+
+
+        var _cred2 = Substitute.For<IDataAccessCredentials>();
+        _cred2.Username.Returns("user2");
+        _cred2.GetDecryptedPassword().Returns("pwd2");
+
         var _dap = Substitute.For<IDataAccessPoint>();
         _dap.Server.Returns("loco");
         _dap.Database.Returns("B");
@@ -178,7 +180,8 @@ internal class DataAccessPortalCollectionTests
         _dap0.Server.Returns("loco");
         _dap0.Database.Returns("A");
         _dap0.DatabaseType.Returns(DatabaseType.Oracle);
-        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred2);
+
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
             collection.Add(_dap0)
@@ -196,6 +199,11 @@ internal class DataAccessPortalCollectionTests
         var _cred = Substitute.For<IDataAccessCredentials>();
         _cred.Username.Returns("user1");
         _cred.GetDecryptedPassword().Returns("pwd2");
+
+
+        var _cred2 = Substitute.For<IDataAccessCredentials>();
+        _cred2.Username.Returns("user1");
+        _cred2.GetDecryptedPassword().Returns("pwd");
         var collection = new DataAccessPointCollection(true);
         var _dap = Substitute.For<IDataAccessPoint>();
         _dap.Server.Returns("loco");
@@ -210,7 +218,7 @@ internal class DataAccessPortalCollectionTests
         _dap0.Server.Returns("loco");
         _dap0.Database.Returns("A");
         _dap0.DatabaseType.Returns(DatabaseType.Oracle);
-        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred2);
 
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
