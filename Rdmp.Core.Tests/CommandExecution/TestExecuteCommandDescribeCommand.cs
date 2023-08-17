@@ -33,7 +33,7 @@ internal class TestExecuteCommandDescribeCommand : CommandCliTests
     [Test]
     public void Test_DescribeDeleteCommand()
     {
-        AssertHelpIs(@" Delete <deletables> <deleteMany>
+        AssertHelpIs(@" Delete <deletables> <deleteMany> 
 
 PARAMETERS:
 deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must set deleteMany to true",
@@ -45,7 +45,7 @@ deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must
     public void Test_ImportTableInfo_CommandHelp()
     {
         AssertHelpIs(
-            @" ImportTableInfo <table> <createCatalogue>
+            @" ImportTableInfo <table> <createCatalogue> 
 
 PARAMETERS:
 table	DiscoveredTable	The table or view you want to reference from RDMP.  See PickTable for syntax

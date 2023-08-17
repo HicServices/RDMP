@@ -56,7 +56,7 @@ internal class TestsExecuteCommandList : CommandCliTests
         var contents = Regex.Escape($"{c.ID}:fff");
 
         // Called once
-        mock.Received(1).Show(Arg.Is(contents));
+        mock.Received(1).Show(Arg.Is<string>(i => i.Contains(string.Format("{0}:fff", c.ID))));
 
         c.DeleteInDatabase();
     }

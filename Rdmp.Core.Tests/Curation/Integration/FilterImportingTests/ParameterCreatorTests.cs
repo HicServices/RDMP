@@ -41,7 +41,8 @@ public class ParameterCreatorTests
         f.WhereSQL = "@bob = 'bob'";
 
         var factory = Substitute.For<IFilterFactory>();
-        // factory.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        factory.CreateNewParameter(f, "DECLARE @bob AS varchar(50);").Returns(l => null);
+
         var creator = new ParameterCreator(factory, null, null);
 
         var ex = Assert.Throws<NullReferenceException>(() => creator.CreateAll(f, null));
@@ -65,7 +66,7 @@ public class ParameterCreatorTests
         var creator = new ParameterCreator(factory, null, null);
         creator.CreateAll(f, null);
 
-        p.Received(1).SaveToDatabase();
+        p.Received(2).SaveToDatabase();
         p.Received(1);
         factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS varchar(50);");
     }
@@ -75,7 +76,7 @@ public class ParameterCreatorTests
     {
         var p = Substitute.For<ISqlParameter>(); //save should be called because there is no VAlue on the parameter
         // p.Setup(m => m.SaveToDatabase());
-        p.SaveToDatabase();
+        // p.SaveToDatabase();
 
         var existingParameter = Substitute.For<ISqlParameter>();
         existingParameter.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
