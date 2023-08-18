@@ -16,6 +16,7 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using System.Threading;
 
 namespace Rdmp.Core.Tests.Logging;
 
@@ -228,7 +229,7 @@ public class LogManagerTest : DatabaseTests
 
         var id = dli.ID;
         var archival = lm.GetArchivalDataLoadInfos("blarg", null, id).Single();
-
+        Thread.Sleep(1000);
         Assert.AreEqual(500, archival.TableLoadInfos.Single().Inserts);
         Assert.AreEqual(0, archival.TableLoadInfos.Single().Updates);
         Assert.AreEqual(0, archival.TableLoadInfos.Single().Deletes);
@@ -238,7 +239,7 @@ public class LogManagerTest : DatabaseTests
         Assert.AreEqual("it went bad", archival.Errors.Single().Description);
         Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
 
-        Assert.AreEqual("Wrote some records", archival.Progress.SingleOrDefault().Description);
+        Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
 
         var fatal = archival.Errors.Single();
         lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved,
