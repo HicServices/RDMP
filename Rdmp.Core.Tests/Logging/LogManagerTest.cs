@@ -224,12 +224,10 @@ public class LogManagerTest : DatabaseTests
 
         dli.LogFatalError("bad.cs", "it went bad");
         dli.LogProgress(DataLoadInfo.ProgressEventType.OnInformation, "good.cs", "Wrote some records");
-
         dli.CloseAndMarkComplete();
 
         var id = dli.ID;
         var archival = lm.GetArchivalDataLoadInfos("blarg", null, id).Single();
-        Thread.Sleep(1000);
         Assert.AreEqual(500, archival.TableLoadInfos.Single().Inserts);
         Assert.AreEqual(0, archival.TableLoadInfos.Single().Updates);
         Assert.AreEqual(0, archival.TableLoadInfos.Single().Deletes);
@@ -238,6 +236,7 @@ public class LogManagerTest : DatabaseTests
 
         Assert.AreEqual("it went bad", archival.Errors.Single().Description);
         Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
+
 
         Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
 

@@ -16,7 +16,7 @@ namespace Rdmp.Core.Logging;
 /// <summary>
 /// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible
 /// for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed (whether it has failed or succeeded).
-/// 
+///
 /// <para>You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load audits
 /// (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this audit record e.g. when loading a live table
 /// you can store the ID of the load batch it appeared in. </para>
@@ -120,7 +120,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     private void LogWorker()
     {
-        using var l=_logQueue;
+        using var l = _logQueue;
         while (!l.IsCompleted)
         {
             if (l.Count == 0)
@@ -130,7 +130,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
                 continue;
             }
             using var con = DatabaseSettings.BeginNewTransactedConnection();
-            if (DatabaseSettings.DatabaseType==DatabaseType.MicrosoftSQLServer)
+            if (DatabaseSettings.DatabaseType == DatabaseType.MicrosoftSQLServer)
                 using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
                     lockQuery.ExecuteNonQuery();
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
@@ -139,10 +139,10 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
             DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);
 
-            var type=DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, null);
-            var source=DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordProgress, null);
-            var desc=DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordProgress, null);
-            var time=DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordProgress, null);
+            var type = DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, null);
+            var source = DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordProgress, null);
+            var desc = DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordProgress, null);
+            var time = DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordProgress, null);
             while (l.TryTake(out var entry))
             {
                 type.Value = entry.EventType;
@@ -198,6 +198,14 @@ public sealed class DataLoadInfo : IDataLoadInfo
     /// </summary>
     public void CloseAndMarkComplete()
     {
+        if (_logQueue != null)
+        {
+            while (_logQueue.Count > 0)
+            {
+                // I think the issue is we mark _logQueue as complete without always empying the log queue
+                Thread.Sleep(100);
+            }
+        }
         lock (_oLock)
         {
             //prevent double closing
@@ -328,9 +336,9 @@ public sealed class DataLoadInfo : IDataLoadInfo
             if (_logQueue is null)
                 throw new InvalidOperationException("LogInit failed to create new worker");
 
-            _logQueue.Add(new LogEntry(pevent.ToString(),Description,Source,DateTime.Now));
+            _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
         }
-        lock(_logWaiter)
+        lock (_logWaiter)
             Monitor.Pulse(_logWaiter);
     }
 }
