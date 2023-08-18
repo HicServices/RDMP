@@ -198,22 +198,15 @@ public sealed class DataLoadInfo : IDataLoadInfo
     /// </summary>
     public void CloseAndMarkComplete()
     {
-        if (_logQueue != null)
-        {
-            while (_logQueue.Count > 0)
-            {
-                // I think the issue is we mark _logQueue as complete without always empying the log queue
-                Thread.Sleep(100);
-            }
-        }
         lock (_oLock)
         {
-            //prevent double closing
+            if (_logQueue?.IsAddingCompleted==false)
+                _logQueue.CompleteAdding();
+            _logThread?.Join();
+
+            //prevent double closing - but only after flushing log entries
             if (_isClosed)
                 return;
-
-            _logQueue.CompleteAdding();
-            _logThread.Join();
 
             _endTime = DateTime.Now;
 

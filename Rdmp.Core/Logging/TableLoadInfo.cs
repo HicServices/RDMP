@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Threading;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 
@@ -248,10 +249,7 @@ public class TableLoadInfo : ITableLoadInfo
     public void IncrementErrorRows()
     {
         //ensure thread safety
-        lock (this)
-        {
-            _errorRows++;
-        }
+        Interlocked.Increment(ref _errorRows);
     }
 
     #endregion

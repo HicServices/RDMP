@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Logging;
@@ -16,7 +16,6 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using System.Threading;
 
 namespace Rdmp.Core.Tests.Logging;
 
@@ -75,7 +74,6 @@ public class LogManagerTest : DatabaseTests
             tableLoadInfo.Updates = 100;
             tableLoadInfo.CloseAndArchive();
 
-            Task.Delay(1000).Wait();
 
             _anotherSuccessfulLoad =
                 _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
@@ -99,7 +97,7 @@ public class LogManagerTest : DatabaseTests
 
 
     [Test]
-    public void TestLastLoadStatusassemblage()
+    public void TestLastLoadStatusAssemblage()
     {
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -146,7 +144,7 @@ public class LogManagerTest : DatabaseTests
 
 
     [Test]
-    public void TestLastLoadStatusassemblage_Top1()
+    public void TestLastLoadStatusAssemblage_Top1()
     {
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -164,7 +162,7 @@ public class LogManagerTest : DatabaseTests
 
 
     [Test]
-    public void TestLastLoadStatusassemblage_MostRecent()
+    public void TestLastLoadStatusAssemblage_MostRecent()
     {
         var server = new DiscoveredServer(UnitTestLoggingConnectionString);
         var lm = new LogManager(server);
