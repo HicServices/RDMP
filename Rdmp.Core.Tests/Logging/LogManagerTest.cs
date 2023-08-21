@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Logging;
@@ -74,7 +74,6 @@ public class LogManagerTest : DatabaseTests
             tableLoadInfo.Updates = 100;
             tableLoadInfo.CloseAndArchive();
 
-            Task.Delay(1000).Wait();
 
             _anotherSuccessfulLoad =
                 _logManager.CreateDataLoadInfo(_dataLoadTaskName, _dataLoadTaskName, _dataLoadTaskName, "", true);
@@ -98,7 +97,7 @@ public class LogManagerTest : DatabaseTests
 
 
     [Test]
-    public void TestLastLoadStatusassemblage()
+    public void TestLastLoadStatusAssemblage()
     {
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -145,7 +144,7 @@ public class LogManagerTest : DatabaseTests
 
 
     [Test]
-    public void TestLastLoadStatusassemblage_Top1()
+    public void TestLastLoadStatusAssemblage_Top1()
     {
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -163,7 +162,7 @@ public class LogManagerTest : DatabaseTests
 
 
     [Test]
-    public void TestLastLoadStatusassemblage_MostRecent()
+    public void TestLastLoadStatusAssemblage_MostRecent()
     {
         var server = new DiscoveredServer(UnitTestLoggingConnectionString);
         var lm = new LogManager(server);
@@ -223,12 +222,10 @@ public class LogManagerTest : DatabaseTests
 
         dli.LogFatalError("bad.cs", "it went bad");
         dli.LogProgress(DataLoadInfo.ProgressEventType.OnInformation, "good.cs", "Wrote some records");
-
         dli.CloseAndMarkComplete();
 
         var id = dli.ID;
         var archival = lm.GetArchivalDataLoadInfos("blarg", null, id).Single();
-
         Assert.AreEqual(500, archival.TableLoadInfos.Single().Inserts);
         Assert.AreEqual(0, archival.TableLoadInfos.Single().Updates);
         Assert.AreEqual(0, archival.TableLoadInfos.Single().Deletes);
@@ -237,6 +234,7 @@ public class LogManagerTest : DatabaseTests
 
         Assert.AreEqual("it went bad", archival.Errors.Single().Description);
         Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
+
 
         Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
 
