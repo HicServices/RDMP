@@ -483,6 +483,6 @@ public class Validator
 
     public static Type[] GetPredictionExtraTypes()
     {
-        return GetExtraTypes().Where(t => typeof(PredictionRule).IsAssignableFrom(t)).ToArray();
+        return GetExtraTypes().Where(static t => typeof(PredictionRule).IsAssignableFrom(t)).ToArray();
     }
 }
