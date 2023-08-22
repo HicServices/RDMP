@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
@@ -17,4 +19,11 @@ public class ValuePredictsOtherValueNullity : PredictionRule
                 $"Nullity did not match, when one value is null, the other must be null.  When one value has a value the other must also have a value.  Nullity of ConstrainedColumn:{value == null}. Nullity of TargetColumn:{targetValue == null}",
                 parent)
             : null;
+}
+
+[Obsolete("This was a typo but retained as an alias for legacy support")]
+// ReSharper disable once IdentifierTypo
+internal class ValuePredictsOtherValueNullness : ValuePredictsOtherValueNullity
+{
+
 }
