@@ -214,10 +214,8 @@ internal class NightmareDatasets : DataGenerator
 
             // 25% of cics are associated with a specific project
             if (r.Next(4) == 0)
-            {
                 _ = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository,
                     Projects.GetRandom(r), cic);
-            }
         }
     }
 

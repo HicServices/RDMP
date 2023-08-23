@@ -258,7 +258,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     $"Set Type for {columnName} to {destinationType} (IsPrimaryKey={(addedType.IsPrimaryKey ? "true" : "false")}) to match the source table"));
         }
 
-        foreach (var sub in datasetCommand.QueryBuilder.SelectColumns.Select(static sc=>sc.IColumn).OfType<ReleaseIdentifierSubstitution>())
+        foreach (var sub in datasetCommand.QueryBuilder.SelectColumns.Select(static sc => sc.IColumn)
+                     .OfType<ReleaseIdentifierSubstitution>())
         {
             var columnName = sub.GetRuntimeName();
             var isPk = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);

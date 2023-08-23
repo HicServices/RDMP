@@ -129,7 +129,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     internal static IEnumerable<ValueTuple<string, MemoryStream>> GetContents(Stream pluginStream)
     {
         var isWin = AppDomain.CurrentDomain.GetAssemblies()
-            .Any(static a => a.FullName?.StartsWith("Rdmp.UI", StringComparison.Ordinal)==true);
+            .Any(static a => a.FullName?.StartsWith("Rdmp.UI", StringComparison.Ordinal) == true);
 
         if (!pluginStream.CanSeek)
             throw new ArgumentException("Seek needed", nameof(pluginStream));
