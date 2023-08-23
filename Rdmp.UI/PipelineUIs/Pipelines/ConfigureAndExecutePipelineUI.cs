@@ -269,7 +269,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         catch (Exception exception)
         {
             fork.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error, $"Could not {(pipeline == null ? "instantiate" : "initialise")} pipeline", exception));
+                new NotifyEventArgs(ProgressEventType.Error,
+                    $"Could not {(pipeline == null ? "instantiate" : "initialise")} pipeline", exception));
             return null;
         }
     }

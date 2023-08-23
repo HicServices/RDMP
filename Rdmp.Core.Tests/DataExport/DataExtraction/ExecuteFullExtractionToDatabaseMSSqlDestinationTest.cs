@@ -173,7 +173,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
         Import(lookupTbl, out _, out var columnInfos);
 
-        _=new Lookup(CatalogueRepository, columnInfos[0],
+        _ = new Lookup(CatalogueRepository, columnInfos[0],
             _columnToTransform,
             columnInfos[1],
             ExtractionJoinType.Left, null);

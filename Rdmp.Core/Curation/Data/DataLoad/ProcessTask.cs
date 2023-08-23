@@ -345,9 +345,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
     /// <inheritdoc/>
-    public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
-    {
-        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
+    public IArgument[] CreateArgumentsForClassIfNotExists(Type t) =>
+        ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
                 t,
 
                 //tell it how to create new instances of us related to parent
@@ -358,7 +357,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
             //convert the result back from generic to specific (us)
             .ToArray();
-    }
 
 
     /// <inheritdoc/>

@@ -99,9 +99,9 @@ public class PackPluginRunner : IRunner
     private static void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
     {
-      try
+        try
         {
-            toCommit.CopyTo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,toCommit.Name),true);
+            toCommit.CopyTo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, toCommit.Name), true);
         }
         catch (Exception e)
         {

@@ -64,7 +64,9 @@ public class RuntimeTaskPackager
     public CompositeDataLoadComponent CreateCompositeDataLoadComponentFor(LoadStage loadStage,
         string descriptionForComponent)
     {
-        var tasks = GetRuntimeTasksForStage(loadStage).Select(task => RuntimeTaskFactory.Create(task.ProcessTask, _loadArgsDictionary[loadStage])).Cast<IDataLoadComponent>().ToList();
+        var tasks = GetRuntimeTasksForStage(loadStage)
+            .Select(task => RuntimeTaskFactory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]))
+            .Cast<IDataLoadComponent>().ToList();
 
         return new CompositeDataLoadComponent(tasks) { Description = descriptionForComponent };
     }
