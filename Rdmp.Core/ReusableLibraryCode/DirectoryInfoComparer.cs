@@ -13,19 +13,13 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// <summary>
 /// Checks whether two DirectoryInfo objects are the same based on FullName
 /// </summary>
-public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
+internal sealed class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
 {
-    public bool Equals(DirectoryInfo x, DirectoryInfo y)
-    {
-        if (ReferenceEquals(x, y))
-            return true;
-        return x != null && y != null && x.FullName == y.FullName;
-    }
-
+    public bool Equals(DirectoryInfo x, DirectoryInfo y) => ReferenceEquals(x, y) || x?.FullName == y?.FullName;
     public int GetHashCode(DirectoryInfo obj) => obj.FullName.GetHashCode();
 }
 
-public static class DirectoryInfoExtensions
+internal static class DirectoryInfoExtensions
 {
     public static void CopyAll(this DirectoryInfo source, DirectoryInfo target)
     {
