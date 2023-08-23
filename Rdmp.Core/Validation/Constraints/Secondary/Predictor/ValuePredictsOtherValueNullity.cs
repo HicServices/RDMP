@@ -5,12 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Xml.Serialization;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
 /// Validation rule for use with a Prediction Constraint.  Indicates that the 'nullity' of the columns must match (i.e. if one is null the other must be too)
 /// </summary>
+// ReSharper disable once StringLiteralTypo
+[XmlType(TypeName = "ValuePredictsOtherValueNullness")]
 public class ValuePredictsOtherValueNullity : PredictionRule
 {
     public override ValidationFailure Predict(IConstraint parent, object value, object targetValue) =>
@@ -19,11 +22,4 @@ public class ValuePredictsOtherValueNullity : PredictionRule
                 $"Nullity did not match, when one value is null, the other must be null.  When one value has a value the other must also have a value.  Nullity of ConstrainedColumn:{value == null}. Nullity of TargetColumn:{targetValue == null}",
                 parent)
             : null;
-}
-
-[Obsolete("This was a typo but retained as an alias for legacy support")]
-// ReSharper disable once IdentifierTypo
-internal class ValuePredictsOtherValueNullness : ValuePredictsOtherValueNullity
-{
-
 }
