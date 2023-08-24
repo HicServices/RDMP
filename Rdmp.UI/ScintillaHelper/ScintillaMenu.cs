@@ -7,9 +7,9 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using WeCantSpell.Hunspell;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using ScintillaNET;
+using WeCantSpell.Hunspell;
 
 namespace Rdmp.UI.ScintillaHelper;
 

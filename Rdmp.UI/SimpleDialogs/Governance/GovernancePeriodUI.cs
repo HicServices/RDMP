@@ -134,9 +134,9 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
             allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
 
         if (Activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription = "Which Catalogue(s) should become part of this GovernancePeriod"
-            }, availableToSelect, out var selected))
+        {
+            TaskDescription = "Which Catalogue(s) should become part of this GovernancePeriod"
+        }, availableToSelect, out var selected))
             try
             {
                 AddCatalogues(selected.ToArray());
@@ -184,10 +184,10 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
         }
 
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "Select another GovernancePeriod.  All Catalogues currently associated with that period will be added to this period (they will still be covered by their previous period(s) too)"
-            }, toImportFrom, out var selected))
+        }, toImportFrom, out var selected))
         {
             var toAdd = selected.GovernedCatalogues.ToArray();
 

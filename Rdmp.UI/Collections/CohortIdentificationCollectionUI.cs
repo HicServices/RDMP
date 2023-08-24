@@ -77,7 +77,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)), "New...");
         CommonFunctionality.Add(
             factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator, null)
-                { OverrideCommandName = "By Merging Existing..." }), "New...");
+            { OverrideCommandName = "By Merging Existing..." }), "New...");
 
         if (_firstTime)
         {

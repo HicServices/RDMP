@@ -27,9 +27,9 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
         _columns = columns;
 
         foreach (var ui in _columns.Select(column => new DatabaseColumnRequestUI(column)
-                 {
-                     Dock = DockStyle.Top
-                 }))
+        {
+            Dock = DockStyle.Top
+        }))
             flowLayoutPanel1.Controls.Add(ui);
 
 

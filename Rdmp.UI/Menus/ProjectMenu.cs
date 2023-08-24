@@ -25,7 +25,8 @@ internal class ProjectMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
         {
             OverrideCommandName = "New Project Specific Catalogue From File...",
-            SuggestedCategory = AtomicCommandFactory.Add, Weight = -1.9f
+            SuggestedCategory = AtomicCommandFactory.Add,
+            Weight = -1.9f
         });
     }
 }

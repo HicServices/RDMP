@@ -64,7 +64,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
             return Activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata).ImageToBitmap();
         };
 
-        olvDataLoads.ButtonClick += delegate(object sender, CellClickEventArgs e)
+        olvDataLoads.ButtonClick += delegate (object sender, CellClickEventArgs e)
         {
             var loadSummary = (DataLoadsGraphResult)e.Model;
             var metadata =
@@ -75,7 +75,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 new ExecuteCommandViewLogs(Activator, metadata).Execute();
         };
 
-        olvDataLoads.DoubleClick += delegate(object sender, EventArgs args)
+        olvDataLoads.DoubleClick += delegate (object sender, EventArgs args)
         {
             var loadSummary = (DataLoadsGraphResult)olvDataLoads.GetItem(olvDataLoads.SelectedIndex).RowObject;
             if (loadSummary != null)

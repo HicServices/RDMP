@@ -693,10 +693,10 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
                 else
                 {
                     if (Activator.SelectObject(new DialogArgs
-                        {
-                            TaskDescription =
+                    {
+                        TaskDescription =
                                 "There are multiple columns involved in the join, which do you want to navigate to?"
-                        }, cols, out var selected))
+                    }, cols, out var selected))
                         toEmphasise = selected;
                 }
 
@@ -723,9 +723,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             else
             {
                 if (Activator.SelectObject(new DialogArgs
-                    {
-                        TaskDescription = "Which table do you want to join to?"
-                    }, otherTables, out var selected))
+                {
+                    TaskDescription = "Which table do you want to join to?"
+                }, otherTables, out var selected))
                     otherTable = selected;
             }
 

@@ -320,10 +320,10 @@ public partial class CohortCreationRequestUI : RDMPForm
     private void btnExisting_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
-            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
+        }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
             SetProject(proj);
     }
 

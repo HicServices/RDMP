@@ -86,9 +86,9 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     private void lPick_Click(object sender, EventArgs e)
     {
         if (_activator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Select New Value"
-            }, _available.ToArray(), out var selected))
+        {
+            WindowTitle = "Select New Value"
+        }, _available.ToArray(), out var selected))
             suggestComboBox1.SelectedItem = selected;
     }
 

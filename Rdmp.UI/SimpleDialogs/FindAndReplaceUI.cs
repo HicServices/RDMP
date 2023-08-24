@@ -65,12 +65,12 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
         //Create all the nodes up front
         foreach (var o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
-        foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
-            _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+            foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
+                _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
         foreach (var o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
-        foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
-            _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+            foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
+                _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
         olvAllObjects.BeginUpdate();
         olvAllObjects.AddObjects(_locationNodes);

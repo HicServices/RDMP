@@ -207,9 +207,9 @@ public partial class MetadataReportUI : RDMPForm
     private void btnPick_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
-            }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
+        {
+            TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
+        }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
             SetCatalogueSelection(selected);
     }
 
@@ -261,10 +261,10 @@ public partial class MetadataReportUI : RDMPForm
             .ToArray();
 
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
-            }, folders, out var selected))
+        }, folders, out var selected))
             SetCatalogueSelection(
                 Activator.CoreChildProvider
                     .AllCatalogues

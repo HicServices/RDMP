@@ -15,7 +15,7 @@ internal class ExtractionConfigurationsNodeMenu : RDMPContextMenuStrip
         ExtractionConfigurationsNode extractionConfigurationsNode) : base(args, extractionConfigurationsNode)
     {
         Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, extractionConfigurationsNode.Project)
-            { Weight = -10.2f });
+        { Weight = -10.2f });
         Add(new ExecuteCommandRelease(_activator) { Weight = -10.1f }.SetTarget(extractionConfigurationsNode.Project));
     }
 }

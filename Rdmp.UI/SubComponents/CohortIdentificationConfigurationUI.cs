@@ -14,10 +14,8 @@ using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -373,7 +371,8 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
             e.Menu.Items.Add(
                 new ToolStripMenuItem("View Crash Message", null,
-                    (s, ev) => ViewCrashMessage(c)) { Enabled = c.CrashMessage != null });
+                    (s, ev) => ViewCrashMessage(c))
+                { Enabled = c.CrashMessage != null });
 
             e.Menu.Items.Add(
                 BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,
