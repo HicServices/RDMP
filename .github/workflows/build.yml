@@ -73,10 +73,10 @@ jobs:
           EOF
       - name: Run integration test scripts
         run: |
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml &&
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml &&
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml && 
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml && 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
       - name: Test (DB)
         shell: bash
         run: |
