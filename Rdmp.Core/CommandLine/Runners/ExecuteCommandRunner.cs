@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using NLog;
@@ -71,11 +70,11 @@ internal class ExecuteCommandRunner : IRunner
 
         // add Aliases (commands that can be invoked with an alternate shorthand)
         foreach (var type in commandTypes)
-        foreach (var alias in type.GetCustomAttributes(false).OfType<AliasAttribute>())
-            if (!_commands.TryAdd(alias.Name, type))
-                _listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Warning,
-                        $"Bad command alias '{alias.Name}', it is already in use by '{_commands[alias.Name].FullName}' so cannot be used for '{type.FullName}'"));
+            foreach (var alias in type.GetCustomAttributes(false).OfType<AliasAttribute>())
+                if (!_commands.TryAdd(alias.Name, type))
+                    _listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Warning,
+                            $"Bad command alias '{alias.Name}', it is already in use by '{_commands[alias.Name].FullName}' so cannot be used for '{type.FullName}'"));
 
 
         _picker =

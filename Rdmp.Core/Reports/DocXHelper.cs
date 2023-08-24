@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.IO;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.ReusableLibraryCode;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.Reports;
 

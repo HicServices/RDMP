@@ -56,18 +56,18 @@ public static class MEF
             try
             {
                 foreach (var type in assembly.GetTypes())
-                foreach (var alias in new[]
-                         {
+                    foreach (var alias in new[]
+                             {
                              Tail(type.FullName), type.FullName, Tail(type.FullName).ToUpperInvariant(),
                              type.FullName?.ToUpperInvariant()
                          }.Where(static x => x is not null).Distinct())
-                    if (!typeByName.TryAdd(alias, type) &&
-                        type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
-                    {
-                        // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
-                        typeByName.Remove(alias);
-                        typeByName.Add(alias, type);
-                    }
+                        if (!typeByName.TryAdd(alias, type) &&
+                            type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
+                            typeByName.Remove(alias);
+                            typeByName.Add(alias, type);
+                        }
             }
             catch (Exception e)
             {

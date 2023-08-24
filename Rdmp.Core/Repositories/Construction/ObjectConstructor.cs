@@ -126,13 +126,13 @@ public class ObjectConstructor
                 case 1 when p[0].ParameterType == typeof(T): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 1:
-                {
-                    if (p[0].ParameterType
-                        .IsAssignableFrom(
-                            typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
-                        toReturn.Add(constructor);
-                    break;
-                }
+                    {
+                        if (p[0].ParameterType
+                            .IsAssignableFrom(
+                                typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
+                            toReturn.Add(constructor);
+                        break;
+                    }
             }
         }
 
@@ -160,12 +160,12 @@ public class ObjectConstructor
                 case 2 when p[0].ParameterType == typeof(T) && p[1].ParameterType == typeof(T2): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 2:
-                {
-                    if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
-                        p[1].ParameterType.IsAssignableFrom(typeof(T2)))
-                        toReturn.Add(constructor);
-                    break;
-                }
+                    {
+                        if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
+                            p[1].ParameterType.IsAssignableFrom(typeof(T2)))
+                            toReturn.Add(constructor);
+                        break;
+                    }
             }
         }
 

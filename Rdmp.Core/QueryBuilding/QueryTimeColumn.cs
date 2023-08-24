@@ -162,7 +162,7 @@ public class QueryTimeColumn : IComparable
                         lookupDescriptionIsIsolated = true;
                     }
                     else
-                        //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
+                    //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
                     {
                         throw new QueryBuildingException(
                             $"Found lookup description before encountering any lookup foreign keys (Description column was {ColumnsInOrder[i].UnderlyingColumn}) - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");

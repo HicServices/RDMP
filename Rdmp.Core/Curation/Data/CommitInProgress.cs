@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data;
@@ -159,10 +159,10 @@ public class CommitInProgress : IDisposable
                 changes.Count == 1 ? changes.Single().Key.ToString() : $"{changes.Count} object(s)";
 
             if (activator.TypeText(new DialogArgs
-                {
-                    WindowTitle = transaction.ToString(),
-                    TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
-                }, int.MaxValue, description, out var newDescription, false))
+            {
+                WindowTitle = transaction.ToString(),
+                TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
+            }, int.MaxValue, description, out var newDescription, false))
                 description = newDescription;
             else
                 // user cancelled creating Commit

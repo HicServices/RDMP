@@ -240,7 +240,7 @@ public class CommandInvoker
                 parameterValues.Add(argDelegate.Run(required));
             }
             else
-                //if the constructor argument is a picker, use the one passed in
+            //if the constructor argument is a picker, use the one passed in
             if (parameterInfo.ParameterType == typeof(CommandLineObjectPicker))
             {
                 if (picker == null)
@@ -254,7 +254,7 @@ public class CommandInvoker
                 continue;
             }
             else
-                //if we have argument values specified
+            //if we have argument values specified
             if (picker != null)
             {
                 //and the specified value matches the expected parameter type

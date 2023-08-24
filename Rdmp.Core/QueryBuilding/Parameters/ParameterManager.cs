@@ -146,8 +146,8 @@ public class ParameterManager
         var toReturn = new List<ParameterFoundAtLevel>();
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
-        foreach (var sqlParameter in kvp.Value)
-            AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter, kvp.Key), toReturn);
+            foreach (var sqlParameter in kvp.Value)
+                AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter, kvp.Key), toReturn);
 
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy

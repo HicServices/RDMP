@@ -59,17 +59,17 @@ public class PopulateRAW : CompositeDataLoadComponent
             case 0:
                 return true;
             case > 1:
-            {
-                // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
-                var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
-                var numAttachersRequiringDbCreation =
-                    attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
+                {
+                    // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
+                    var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
+                    var numAttachersRequiringDbCreation =
+                        attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
-                if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
-                    throw new Exception(
-                        $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
-                break;
-            }
+                    if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
+                        throw new Exception(
+                            $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
+                    break;
+                }
         }
 
         return attachingProcesses[0].Attacher.RequestsExternalDatabaseCreation;

@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -40,10 +40,10 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-                {
-                    WindowTitle = "Add Supporting SQL Table",
-                    TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
-                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            {
+                WindowTitle = "Add Supporting SQL Table",
+                TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
+            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -52,12 +52,12 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
 
         if (name == null && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "Supporting SQL Table Name",
-                    TaskDescription =
+            {
+                WindowTitle = "Supporting SQL Table Name",
+                TaskDescription =
                         "Enter a name that describes what data the query will show.  This is a human readable name not a table name.",
-                    EntryLabel = "Name"
-                }, 255, null, out name, false))
+                EntryLabel = "Name"
+            }, 255, null, out name, false))
                 // user cancelled typing a name
                 return;
 

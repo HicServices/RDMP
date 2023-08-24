@@ -115,7 +115,7 @@ public class FixedWidthFormatFile
                 if (string.IsNullOrWhiteSpace(value))
                     dataRow[fixedWidthColumn.Field] = DBNull.Value;
                 else
-                    //it is a date column
+                //it is a date column
                 if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
                     try
                     {

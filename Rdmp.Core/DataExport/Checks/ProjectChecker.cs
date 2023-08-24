@@ -96,7 +96,7 @@ public class ProjectChecker : ICheckable
             {
                 var extractionConfigurationChecker =
                     new ExtractionConfigurationChecker(_activator, extractionConfiguration)
-                        { CheckDatasets = CheckDatasets };
+                    { CheckDatasets = CheckDatasets };
                 extractionConfigurationChecker.Check(notifier);
             }
 

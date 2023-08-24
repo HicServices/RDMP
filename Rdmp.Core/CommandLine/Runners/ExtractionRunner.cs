@@ -113,7 +113,7 @@ public class ExtractionRunner : ManyRunner
         if (runnable is ExtractGlobalsCommand)
         {
             var useCase = new ExtractionPipelineUseCase(_activator, _project, _globalsCommand, _pipeline, dataLoadInfo)
-                { Token = Token };
+            { Token = Token };
             useCase.Execute(fork);
         }
 
@@ -121,7 +121,7 @@ public class ExtractionRunner : ManyRunner
         {
             var executeUseCase =
                 new ExtractionPipelineUseCase(_activator, _project, datasetCommand, _pipeline, dataLoadInfo)
-                    { Token = Token };
+                { Token = Token };
             executeUseCase.Execute(fork);
         }
 

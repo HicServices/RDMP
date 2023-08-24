@@ -34,13 +34,13 @@ public class BoundDate : Bound
             case null:
                 return null;
             case string stringValue:
-            {
-                value = SafeConvertToDate(stringValue);
+                {
+                    value = SafeConvertToDate(stringValue);
 
-                if (!((DateTime?)value).HasValue)
-                    return null;
-                break;
-            }
+                    if (!((DateTime?)value).HasValue)
+                        return null;
+                    break;
+                }
         }
 
         var d = (DateTime)value;

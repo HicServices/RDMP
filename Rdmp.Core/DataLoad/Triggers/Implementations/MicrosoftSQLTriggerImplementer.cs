@@ -7,11 +7,11 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Implementations.MicrosoftSQL;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;

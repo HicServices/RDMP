@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
@@ -12,6 +11,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -90,11 +90,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         if (_userMustPick)
         {
             if (!SelectMany(new DialogArgs
-                {
-                    WindowTitle = "Select Datasets",
-                    TaskDescription =
+            {
+                WindowTitle = "Select Datasets",
+                TaskDescription =
                         "Select the Datasets you would like to be exported as part of your Extraction Configuration."
-                }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
+            }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
                 return;
 
             foreach (var ds in selected)

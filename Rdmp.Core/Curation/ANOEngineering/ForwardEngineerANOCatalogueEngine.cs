@@ -66,8 +66,8 @@ public class ForwardEngineerANOCatalogueEngine
                 //for each skipped table
                 foreach (var skippedTable in _planManager.SkippedTables)
                     //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
-                foreach (var columnInfo in skippedTable.ColumnInfos)
-                    GetNewColumnInfoForOld(columnInfo, true);
+                    foreach (var columnInfo in skippedTable.ColumnInfos)
+                        GetNewColumnInfoForOld(columnInfo, true);
 
                 //for each table that isn't being skipped
                 foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
@@ -98,7 +98,8 @@ public class ForwardEngineerANOCatalogueEngine
 
                             columnsToCreate.Add(
                                 new DatabaseColumnRequest(colName, columnPlan.GetEndpointDataType(),
-                                    !columnInfo.IsPrimaryKey) { IsPrimaryKey = columnInfo.IsPrimaryKey });
+                                    !columnInfo.IsPrimaryKey)
+                                { IsPrimaryKey = columnInfo.IsPrimaryKey });
                         }
                     }
 

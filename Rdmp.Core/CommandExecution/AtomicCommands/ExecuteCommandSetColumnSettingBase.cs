@@ -135,13 +135,13 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         else
         {
             if (SelectMany(new DialogArgs
-                {
-                    InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
-                    AllowSelectingNull = true,
-                    WindowTitle = $"Set {_commandProperty}",
-                    TaskDescription =
+            {
+                InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
+                AllowSelectingNull = true,
+                WindowTitle = $"Set {_commandProperty}",
+                TaskDescription =
                         $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
-                }, allColumns, out selected))
+            }, allColumns, out selected))
             {
                 if (selected == null || selected.Length == 0)
                     if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
