@@ -59,10 +59,6 @@ jobs:
         shell: bash
         run: |
             find ./Tools/rdmp/Databases.yaml -type f -exec sed -i 's/RDMP_/TEST_/g' {} \;
-            # cat > ./Tools/rdmp/Databases.yaml << EOF
-            # CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
-            # DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
-            # EOF
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
       - name: Create MySql Logging, DQE and Cohort Building Cache Db
