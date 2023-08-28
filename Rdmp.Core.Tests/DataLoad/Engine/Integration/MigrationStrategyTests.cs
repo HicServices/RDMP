@@ -7,7 +7,7 @@
 using System;
 using FAnsi.Connections;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Migration;
@@ -26,11 +26,10 @@ internal class MigrationStrategyTests : DatabaseTests
         var from = db.CreateTable("Bob", new[] { new DatabaseColumnRequest("Field", "int") });
         var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
-        var connection = Mock.Of<IManagedConnection>();
-        var job = Mock.Of<IDataLoadJob>();
+        var connection = Substitute.For<IManagedConnection>();
         var strategy = new OverwriteMigrationStrategy(connection);
 
-        var migrationFieldProcessor = Mock.Of<IMigrationFieldProcessor>();
+        var migrationFieldProcessor = Substitute.For<IMigrationFieldProcessor>();
 
         var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
         Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);

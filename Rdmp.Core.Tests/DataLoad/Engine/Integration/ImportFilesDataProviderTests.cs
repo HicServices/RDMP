@@ -8,7 +8,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
@@ -37,7 +37,8 @@ public class ImportFilesDataProviderTests : DatabaseTests
         File.WriteAllText(originpath, "fish");
 
         var job = new ThrowImmediatelyDataLoadJob();
-        var mockProjectDirectory = Mock.Of<ILoadDirectory>(p => p.ForLoading == targetDir);
+        var mockProjectDirectory = Substitute.For<ILoadDirectory>();
+        mockProjectDirectory.ForLoading.Returns(targetDir);
         job.LoadDirectory = mockProjectDirectory;
 
 
@@ -62,7 +63,7 @@ public class ImportFilesDataProviderTests : DatabaseTests
         //execute the provider
         provider.Fetch(job, new GracefulCancellationToken());
 
-        //destination is empty because nothing matched 
+        //destination is empty because nothing matched
         Assert.IsEmpty(targetDir.GetFiles());
 
         //give it correct pattern

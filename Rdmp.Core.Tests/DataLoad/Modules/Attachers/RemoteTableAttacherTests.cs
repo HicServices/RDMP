@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using FAnsi;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -114,7 +114,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
             var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-            Mock.Get(lmd).Setup(p => p.CatalogueRepository).Returns(CatalogueRepository);
+            lmd.CatalogueRepository.Returns(CatalogueRepository);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
             var dbConfiguration = new HICDatabaseConfiguration(lmd,
@@ -167,7 +167,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
             var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-            Mock.Get(lmd).Setup(p => p.CatalogueRepository).Returns(CatalogueRepository);
+            lmd.CatalogueRepository.Returns(CatalogueRepository);
             logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
             var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
@@ -176,7 +176,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             };
             attacher.Progress = lp;
             attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo
-                { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
+            { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
 
             var dbConfiguration = new HICDatabaseConfiguration(lmd,
                 RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));

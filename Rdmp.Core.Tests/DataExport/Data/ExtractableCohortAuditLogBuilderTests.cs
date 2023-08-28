@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -24,7 +24,8 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var fi = new FileInfo("durdur.txt");
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(fi);
 
-        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var moqCohort = Substitute.For<IExtractableCohort>();
+        moqCohort.AuditLog.Returns(desc);
         var fi2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
         Assert.IsNotNull(fi2);
@@ -41,7 +42,8 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var cic = WhenIHaveA<CohortIdentificationConfiguration>();
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(cic);
 
-        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var moqCohort = Substitute.For<IExtractableCohort>();
+        moqCohort.AuditLog.Returns(desc);
         var cic2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
         Assert.IsNotNull(cic2);
@@ -57,7 +59,8 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var ei = WhenIHaveA<ExtractionInformation>();
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
-        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var moqCohort = Substitute.For<IExtractableCohort>();
+        moqCohort.AuditLog.Returns(desc);
         var ei2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
         Assert.IsNotNull(ei2);
@@ -69,7 +72,8 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
     public void AuditLogReFetch_WhenAuditLogIsNull()
     {
         var builder = new ExtractableCohortAuditLogBuilder();
-        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == null);
+        var moqCohort = Substitute.For<IExtractableCohort>();
+        moqCohort.AuditLog.Returns(x => null);
         Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }
 
@@ -77,7 +81,8 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
     public void AuditLogReFetch_WhenAuditLogIsRubbish()
     {
         var builder = new ExtractableCohortAuditLogBuilder();
-        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == "troll doll dur I invented this cohort myself");
+        var moqCohort = Substitute.For<IExtractableCohort>();
+        moqCohort.AuditLog.Returns("troll doll dur I invented this cohort myself");
         Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }
 
@@ -89,7 +94,8 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var ei = WhenIHaveA<ExtractionInformation>();
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
-        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
+        var moqCohort = Substitute.For<IExtractableCohort>();
+        moqCohort.AuditLog.Returns(desc);
 
         // delete the source
         ei.DeleteInDatabase();
