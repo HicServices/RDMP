@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -35,7 +35,7 @@ public class RuntimeTaskFactoryTests : DatabaseTests
         {
             var ex = Assert.Throws<Exception>(() => f.Create(task,
                 new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),
-                    Mock.Of<ILoadDirectory>())));
+                    Substitute.For<ILoadDirectory>())));
             Assert.IsTrue(ex.InnerException.Message.Contains(
                 "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }

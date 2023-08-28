@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
@@ -29,7 +29,8 @@ public class DilutionCheckTests
     [TestCase("binary(50)")]
     public void TestChecking_RoundDateToMiddleOfQuarter_WrongDataType(string incompatibleType)
     {
-        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.SqlDataType.Returns(incompatibleType);
 
         var dil = new RoundDateToMiddleOfQuarter
         {
@@ -43,7 +44,8 @@ public class DilutionCheckTests
     [TestCase("datetime")]
     public void TestChecking_RoundDateToMiddleOfQuarter_CompatibleDataType(string incompatibleType)
     {
-        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.SqlDataType.Returns(incompatibleType);
 
         var dil = new RoundDateToMiddleOfQuarter
         {

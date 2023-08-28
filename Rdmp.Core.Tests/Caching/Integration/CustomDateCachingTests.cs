@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
 using Rdmp.Core.Caching.Layouts;
@@ -39,42 +39,42 @@ public class CustomDateCachingTests : DatabaseTests
         mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
         // Create a pipeline that will record the cache chunks
-        var sourceComponent = Mock.Of<IPipelineComponent>(x =>
-            x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
-            x.GetClassAsSystemType() == typeof(TestCacheSource) &&
-            x.GetAllArguments() == Array.Empty<IArgument>());
+        var sourceComponent = Substitute.For<IPipelineComponent>();
+        sourceComponent.Class.Returns("CachingEngineTests.Integration.TestCacheSource");
+        sourceComponent.GetClassAsSystemType().Returns(typeof(TestCacheSource));
+        sourceComponent.GetAllArguments().Returns(Array.Empty<IArgument>());
 
-        var destinationComponent = Mock.Of<IPipelineComponent>(x =>
-            x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
-            x.GetClassAsSystemType() == typeof(TestCacheDestination) &&
-            x.GetAllArguments() == Array.Empty<IArgument>());
+        var destinationComponent = Substitute.For<IPipelineComponent>();
+        destinationComponent.Class.Returns("CachingEngineTests.Integration.TestCacheDestination");
+        destinationComponent.GetClassAsSystemType().Returns(typeof(TestCacheDestination));
+        destinationComponent.GetAllArguments().Returns(Array.Empty<IArgument>());
 
-        var pipeline = Mock.Of<IPipeline>(p =>
-            p.Repository == CatalogueRepository &&
-            p.Source == sourceComponent &&
-            p.Destination == destinationComponent &&
-            p.Repository == CatalogueRepository &&
-            p.PipelineComponents == Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
+        var pipeline = Substitute.For<IPipeline>();
+        pipeline.Repository.Returns(CatalogueRepository);
+        pipeline.Source.Returns(sourceComponent);
+        pipeline.Destination.Returns(destinationComponent);
+        pipeline.Repository.Returns(CatalogueRepository);
+        pipeline.PipelineComponents.Returns(Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
                 true);
 
-        var lmd = Mock.Of<ILoadMetadata>();
+        var lmd = Substitute.For<ILoadMetadata>();
         lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
 
-        var loadProgress = Mock.Of<ILoadProgress>(l =>
-            l.OriginDate == new DateTime(2001, 01, 01) &&
-            l.LoadMetadata == lmd);
+        var loadProgress = Substitute.For<ILoadProgress>();
+        loadProgress.OriginDate.Returns(new DateTime(2001, 01, 01));
+        loadProgress.LoadMetadata.Returns(lmd);
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c =>
-            c.Pipeline_ID == -123 &&
-            c.Pipeline == pipeline &&
-            c.ChunkPeriod == new TimeSpan(1, 0, 0, 0) &&
-            c.LoadProgress_ID == -1 &&
-            c.Repository == CatalogueRepository &&
-            c.LoadProgress == loadProgress &&
-            c.CacheFillProgress == new DateTime(2020, 1, 1));
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.Pipeline_ID.Returns(-123);
+        cacheProgress.Pipeline.Returns(pipeline);
+        cacheProgress.ChunkPeriod.Returns(new TimeSpan(1, 0, 0, 0));
+        cacheProgress.LoadProgress_ID.Returns(-1);
+        cacheProgress.Repository.Returns(CatalogueRepository);
+        cacheProgress.LoadProgress.Returns(loadProgress);
+        cacheProgress.CacheFillProgress.Returns(new DateTime(2020, 1, 1));
 
         var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
         var startDate = new DateTime(2016, 1, 1);

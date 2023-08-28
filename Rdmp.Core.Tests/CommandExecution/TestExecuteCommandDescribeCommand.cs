@@ -20,7 +20,7 @@ internal class TestExecuteCommandDescribeCommand : CommandCliTests
     /// <param name="forCommand"></param>
     private void AssertHelpIs(string expectedHelp, Type forCommand)
     {
-        var activator = GetMockActivator().Object;
+        var activator = GetMockActivator();
 
         var cmd = new ExecuteCommandDescribe(activator,
             new CommandLineObjectPicker(new[] { forCommand.Name }, activator));
