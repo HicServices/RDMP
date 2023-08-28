@@ -92,11 +92,10 @@ public class SingleJobExecution : IDataLoadExecution
                 foreach (var m in
                          job.CrashAtEndMessages)
                     job.OnNotify(job, m); // depending on the listener these may break flow of control (e.g.
-
                 // return failed (even if the messages are all warnings)
                 return ExitCodeType.Error;
             }
-
+            job.CloseLogging();
             return ExitCodeType.Success;
         }
         catch (OperationCanceledException)
