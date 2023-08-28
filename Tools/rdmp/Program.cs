@@ -175,11 +175,11 @@ internal class Program
             switch (e.Status)
             {
                 case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
-                {
-                    var mds = new MasterDatabaseScriptExecutor(db);
-                    mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
-                    break;
-                }
+                    {
+                        var mds = new MasterDatabaseScriptExecutor(db);
+                        mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
+                        break;
+                    }
                 case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:
                     checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",
                         CheckResult.Fail));

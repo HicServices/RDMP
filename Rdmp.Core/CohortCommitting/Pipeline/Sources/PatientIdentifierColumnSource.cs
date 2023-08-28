@@ -7,9 +7,9 @@
 using System;
 using System.Data;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;

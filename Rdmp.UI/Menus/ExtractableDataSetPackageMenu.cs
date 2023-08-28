@@ -38,10 +38,10 @@ internal class ExtractableDataSetPackageMenu : RDMPContextMenuStrip
                 _childProvider.ExtractableDataSets));
 
         if (_activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "Which datasets should become part of the package.  When adding a package to an ExtractionConfiguration all datasets will be added at once."
-            }, notInPackage.ToArray(), out var selected))
+        }, notInPackage.ToArray(), out var selected))
         {
             foreach (ExtractableDataSet ds in selected)
                 packageManager.AddDataSetToPackage(_package, ds);

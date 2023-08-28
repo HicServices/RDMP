@@ -44,7 +44,7 @@ public class ArgumentValueUIFactory
                 toReturn = new ArgumentValueArrayUI(activator);
             }
             else
-                //if it's a pipeline
+            //if it's a pipeline
             if (typeof(IPipeline).IsAssignableFrom(argumentType))
             {
                 toReturn = new ArgumentValuePipelineUI(catalogueRepository, args.Parent, argumentType);

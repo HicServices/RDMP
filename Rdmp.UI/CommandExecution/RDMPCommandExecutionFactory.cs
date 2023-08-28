@@ -140,9 +140,9 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
                 sourceManyCatalogues, targetFolder.FullName),
             FileCollectionCombineable file when file.Files.Length == 1 => new
                 ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator, file.Files[0])
-                {
-                    TargetFolder = targetFolder.FullName
-                },
+            {
+                TargetFolder = targetFolder.FullName
+            },
             _ => null
         };
     }

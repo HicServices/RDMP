@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -19,10 +18,11 @@ using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ScintillaNET;
-using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
-using Point = System.Drawing.Point;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Color = System.Drawing.Color;
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using Point = System.Drawing.Point;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 

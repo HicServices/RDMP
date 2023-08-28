@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
@@ -68,7 +68,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
                     "Executing within test context but no TableNamingScheme has been provided");
         }
         else
-            // If we are not operating inside a Test, hardwire the TableNamingScheme
+        // If we are not operating inside a Test, hardwire the TableNamingScheme
         {
             TableNamingScheme = new FixedStagingDatabaseNamer(liveDatabaseInfo.GetRuntimeName());
         }

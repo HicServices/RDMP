@@ -457,10 +457,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void btnPick_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObjects(new DialogArgs
-            {
-                InitialObjectSelection = _selectedDatasets,
-                TaskDescription = "Which datasets should be extracted in this Project?"
-            }, cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), out var selected))
+        {
+            InitialObjectSelection = _selectedDatasets,
+            TaskDescription = "Which datasets should be extracted in this Project?"
+        }, cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), out var selected))
         {
             _selectedDatasets = selected;
             UpdateDatasetControlVisibility();
@@ -471,10 +471,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void btnPackage_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObjects(new DialogArgs
-                {
-                    TaskDescription =
+        {
+            TaskDescription =
                         "Which Package(s) should be added to the Project.  Datasets in all packages chosen will be added to the Project"
-                }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(),
+        }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(),
                 out var selected))
         {
             _selectedDatasets = selected

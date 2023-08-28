@@ -322,7 +322,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         if (_countColumn != null)
         {
             _isCohortIdentificationAggregate = _aggregateConfigurationIfAny is
-                { IsCohortIdentificationAggregate: true };
+            { IsCohortIdentificationAggregate: true };
 
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
             _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper, !_isCohortIdentificationAggregate);
@@ -498,7 +498,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                 //if there's a top X (with an explicit order by)
                 if (AggregateTopX != null)
                     queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy)
-                        { Role = CustomLineRole.TopX });
+                    { Role = CustomLineRole.TopX });
                 else
                     foreach (var col in SelectColumns)
                     {

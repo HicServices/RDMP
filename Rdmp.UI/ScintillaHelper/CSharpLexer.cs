@@ -44,7 +44,7 @@ public partial class CSharpLexer
         {
             var c = (char)scintilla.GetCharAt(startPos);
 
-            REPROCESS:
+        REPROCESS:
             switch (state)
             {
                 case STATE_UNKNOWN:

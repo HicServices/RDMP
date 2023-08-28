@@ -4,19 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using BrightIdeasSoftware;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Icons.IconOverlays;
-using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers;
-using Rdmp.UI.Collections;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Theme;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,9 +13,22 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconOverlays;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Theme;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'

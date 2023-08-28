@@ -15,6 +15,7 @@ internal class JoinableCollectionNodeMenu : RDMPContextMenuStrip
         base(args, patientIndexTablesNode)
     {
         Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
-            patientIndexTablesNode.Configuration) { OverrideCommandName = "Add Catalogue" });
+            patientIndexTablesNode.Configuration)
+        { OverrideCommandName = "Add Catalogue" });
     }
 }

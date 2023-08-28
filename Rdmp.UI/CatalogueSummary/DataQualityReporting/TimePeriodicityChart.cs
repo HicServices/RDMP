@@ -192,12 +192,12 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         if (double.IsNaN(pointEndX) || double.IsNaN(pointEndY)) return;
 
         if (Activator.TypeText(new DialogArgs
-            {
-                WindowTitle = "Add Annotation",
-                TaskDescription =
+        {
+            WindowTitle = "Add Annotation",
+            TaskDescription =
                     "Type some annotation text(will be saved to the database for other data analysts to see)",
-                EntryLabel = "Annotation:"
-            }, 500, null, out var result, false))
+            EntryLabel = "Annotation:"
+        }, 500, null, out var result, false))
         {
             //create new annotation in the database
             new DQEGraphAnnotation(_currentEvaluation.DQERepository, pointStartX, pointStartY, pointEndX, pointEndY,

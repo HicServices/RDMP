@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
-using Rdmp.Core.Logging;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.Logging;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -127,7 +127,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         var request = new ExtractDatasetCommand(config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config))
-            { TopX = 1 };
+        { TopX = 1 };
 
         try
         {

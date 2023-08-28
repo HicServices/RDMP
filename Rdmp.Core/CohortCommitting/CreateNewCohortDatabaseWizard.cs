@@ -111,7 +111,7 @@ public class CreateNewCohortDatabaseWizard
             var idColumn = definitionTable.DiscoverColumn("id");
             var foreignKey =
                 new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-                    { IsPrimaryKey = true };
+                { IsPrimaryKey = true };
 
             // Look up the collations of all the private identifier columns
             var collations = privateIdentifierPrototype.MatchingExtractionInformations

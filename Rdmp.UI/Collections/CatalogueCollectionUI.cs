@@ -207,7 +207,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             tlvCatalogues,
             Activator,
             olvColumn1, //the icon column
-            //we have our own custom filter logic so no need to pass tbFilter
+                        //we have our own custom filter logic so no need to pass tbFilter
             olvColumn1 //also the renameable column
         );
 
@@ -278,14 +278,14 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
                 tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
                 break;
             case Catalogue cata:
-            {
-                //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-                if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
-                    RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
-                else
-                    RefreshUIFromDatabase(o);
-                return;
-            }
+                {
+                    //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
+                    if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
+                        RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+                    else
+                        RefreshUIFromDatabase(o);
+                    return;
+                }
             case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter
                 or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation
                 or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:

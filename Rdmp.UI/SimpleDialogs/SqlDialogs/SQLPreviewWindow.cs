@@ -8,7 +8,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ScintillaHelper;
-using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 

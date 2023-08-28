@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using System.Linq;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
@@ -46,9 +46,9 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
             else
             {
                 if (BasicActivator.SelectObject(new DialogArgs
-                    {
-                        TaskDescription = "Choose which session to add the objects to"
-                    }, sessions, out var selected))
+                {
+                    TaskDescription = "Choose which session to add the objects to"
+                }, sessions, out var selected))
                     ses = selected;
             }
         }

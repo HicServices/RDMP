@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -13,6 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -138,11 +138,11 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
         if (name == null)
             if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "New Cohort Builder Query",
-                    TaskDescription = "Enter a name for the Cohort Builder Query.",
-                    EntryLabel = "Name"
-                }, 255, null, out name, false))
+            {
+                WindowTitle = "New Cohort Builder Query",
+                TaskDescription = "Enter a name for the Cohort Builder Query.",
+                EntryLabel = "Name"
+            }, 255, null, out name, false))
                 return null;
 
         var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);

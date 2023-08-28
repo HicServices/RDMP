@@ -176,7 +176,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 
         var timeout = 5000;
 
-        TryAgain:
+    TryAgain:
         try
         {
             //if it has changed length or does not exist, write it out to the disk

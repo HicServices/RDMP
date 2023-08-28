@@ -4,18 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using BrightIdeasSoftware;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Collections;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs.SqlDialogs;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.SimpleDialogs;
 
@@ -124,7 +124,7 @@ public partial class CommitsUI : CommitsUI_Design
         else
         {
             treeListView1.ModelFilter = new TextMatchFilter(treeListView1, tbFilter.Text)
-                { StringComparison = StringComparison.CurrentCultureIgnoreCase };
+            { StringComparison = StringComparison.CurrentCultureIgnoreCase };
             treeListView1.UseFiltering = true;
         }
     }

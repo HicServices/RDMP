@@ -279,9 +279,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var toReturn = new List<TableInfo>();
 
         foreach (var catalogueMetadata in GetAllCatalogues())
-        foreach (TableInfo tableInfo in catalogueMetadata.GetTableInfoList(includeLookups))
-            if (!toReturn.Contains(tableInfo))
-                toReturn.Add(tableInfo);
+            foreach (TableInfo tableInfo in catalogueMetadata.GetTableInfoList(includeLookups))
+                if (!toReturn.Contains(tableInfo))
+                    toReturn.Add(tableInfo);
 
         return toReturn;
     }

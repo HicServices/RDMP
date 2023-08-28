@@ -275,7 +275,7 @@ internal class CatalogueLoadChecks : ICheckable
                 passedColumnOrderCheck = false;
             }
             else
-                //check they are in the same order
+            //check they are in the same order
             {
                 for (var i = 0; i < stagingCols.Length; i++)
                     if (!stagingCols[i].Equals(liveCols[i]))

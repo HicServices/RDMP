@@ -363,31 +363,31 @@ public class Validator
         switch (o)
         {
             case DbDataReader reader:
-            {
-                names = new string[reader.FieldCount];
-                values = new object[reader.FieldCount];
-
-                for (var i = 0; i < reader.FieldCount; i++)
                 {
-                    names[i] = reader.GetName(i);
-                    values[i] = reader[i] == DBNull.Value ? null : reader[i].ToString();
-                }
+                    names = new string[reader.FieldCount];
+                    values = new object[reader.FieldCount];
 
-                break;
-            }
+                    for (var i = 0; i < reader.FieldCount; i++)
+                    {
+                        names[i] = reader.GetName(i);
+                        values[i] = reader[i] == DBNull.Value ? null : reader[i].ToString();
+                    }
+
+                    break;
+                }
             case DataRow row:
-            {
-                names = new string[row.Table.Columns.Count];
-                values = new object[row.Table.Columns.Count];
-
-                for (var i = 0; i < row.Table.Columns.Count; i++)
                 {
-                    names[i] = row.Table.Columns[i].ColumnName;
-                    values[i] = row[i] == DBNull.Value ? null : row[i].ToString();
-                }
+                    names = new string[row.Table.Columns.Count];
+                    values = new object[row.Table.Columns.Count];
 
-                break;
-            }
+                    for (var i = 0; i < row.Table.Columns.Count; i++)
+                    {
+                        names[i] = row.Table.Columns[i].ColumnName;
+                        values[i] = row[i] == DBNull.Value ? null : row[i].ToString();
+                    }
+
+                    break;
+                }
         }
 
         #endregion
@@ -407,29 +407,29 @@ public class Validator
                 switch (o)
                 {
                     case DbDataReader reader:
-                    {
-                        value = reader[itemValidator.TargetProperty];
-                        if (value == DBNull.Value)
-                            value = null;
+                        {
+                            value = reader[itemValidator.TargetProperty];
+                            if (value == DBNull.Value)
+                                value = null;
 
-                        result = itemValidator.ValidateAll(value, values, names);
-                        break;
-                    }
+                            result = itemValidator.ValidateAll(value, values, names);
+                            break;
+                        }
                     case DataRow row:
                         result = itemValidator.ValidateAll(row[itemValidator.TargetProperty], values, names);
                         break;
                     default:
-                    {
-                        var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
+                        {
+                            var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
 
-                        if (!propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
-                            throw new MissingFieldException(
-                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                            if (!propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
+                                throw new MissingFieldException(
+                                    $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
 
-                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
-                            propertiesDictionary.Keys.ToArray());
-                        break;
-                    }
+                            result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
+                                propertiesDictionary.Keys.ToArray());
+                            break;
+                        }
                 }
 
                 if (result != null)
