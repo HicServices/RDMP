@@ -40,7 +40,7 @@ public class FixedWidthFormatFile
         //now add values
         for (var index = 0; index < readAllLines.Length - 1; index++)
         {
-            //skip header line 
+            //skip header line
             var cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
 
             FormatColumns[index].From = int.Parse(cellsOnRowAsSplitString[0]);
@@ -53,7 +53,7 @@ public class FixedWidthFormatFile
                 FormatColumns[index].DateFormat =
                     cellsOnRowAsSplitString[4]
                         .Replace("ccyy",
-                            "yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
+                            "yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong
 
             if (FormatColumns[index].From + FormatColumns[index].Size - 1 != FormatColumns[index].To)
                 throw new FlatFileLoadException(
@@ -77,9 +77,9 @@ public class FixedWidthFormatFile
     public DataTable GetDataTableFromFlatFile(FileInfo f)
     {
         //setup the table
-        var toReturn = new DataTable();
+        DataTable toReturn = new DataTable();
 
-
+        toReturn.BeginLoadData();
         foreach (var fixedWidthColumn in FormatColumns)
         {
             var dataColumn = toReturn.Columns.Add(fixedWidthColumn.Field);
@@ -115,7 +115,7 @@ public class FixedWidthFormatFile
                 if (string.IsNullOrWhiteSpace(value))
                     dataRow[fixedWidthColumn.Field] = DBNull.Value;
                 else
-                    //it is a date column
+                //it is a date column
                 if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
                     try
                     {
@@ -132,6 +132,7 @@ public class FixedWidthFormatFile
             }
         }
 
+        toReturn.EndLoadData();
         return toReturn;
     }
 

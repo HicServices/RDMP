@@ -192,12 +192,12 @@ select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrap
 SELECT top {{0}}
 {{6}},
 {{7}}
-FROM    {{1}} 
+FROM    {{1}}
 CROSS APPLY
         (
         SELECT  TOP 1 {{2}}.*
         FROM    {{2}}
-        WHERE  
+        WHERE
          {{3}}
          order by {syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)} desc
         ) {{8}}
@@ -215,7 +215,7 @@ where
 SELECT
 {{6}},
 {{7}}
-FROM    
+FROM
 {{1}}
 Join
 {{2}} {{8}} on {whereStatement.Replace(archiveTableName, archive)}
@@ -319,7 +319,9 @@ Join
                     cmd.CommandTimeout = _timeout;
                     using (var da = server.GetDataAdapter(cmd))
                     {
+                        dt.BeginLoadData();
                         da.Fill(dt);
+                        dt.EndLoadData();
                     }
                 }
             }

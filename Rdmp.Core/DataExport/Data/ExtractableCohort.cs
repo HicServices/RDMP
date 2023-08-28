@@ -191,13 +191,13 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var sql =
-            $@"Select 
+            $@"Select
 {syntax.EnsureWrapped("projectNumber")},
 {syntax.EnsureWrapped("description")},
 {syntax.EnsureWrapped("version")},
 {syntax.EnsureWrapped("dtCreated")}
-from {ExternalCohortTable.DefinitionTableName} 
-where 
+from {ExternalCohortTable.DefinitionTableName}
+where
     {syntax.EnsureWrapped("id")} = {OriginID}";
 
         if (timeoutInSeconds != -1) db.Server.TestConnection(timeoutInSeconds * 1000);
@@ -227,7 +227,7 @@ where
     private int _originID;
 
     /// <summary>
-    /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to 
+    /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to
     /// a row in the external cohort database (<paramref name="externalSource"/>).
     /// </summary>
     /// <param name="repository"></param>
@@ -288,11 +288,12 @@ where
             var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {WhereSQL()}";
 
             var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
-            var dtReturn = new DataTable();
+            DataTable dtReturn = new DataTable();
+            dtReturn.BeginLoadData();
             da.Fill(dtReturn);
 
             dtReturn.TableName = cohortTable.GetRuntimeName();
-
+            dtReturn.EndLoadData();
             return dtReturn;
         }
     }
@@ -398,13 +399,13 @@ where
         {
             con.Open();
             var sql =
-                $@"Select 
+                $@"Select
 {syntax.EnsureWrapped("description")},
 {syntax.EnsureWrapped("id")},
 {syntax.EnsureWrapped("version")},
 {syntax.EnsureWrapped("projectNumber")}
-from {externalSource.DefinitionTableName} 
-where 
+from {externalSource.DefinitionTableName}
+where
     exists (Select 1 from {externalSource.TableName} WHERE {externalSource.DefinitionTableForeignKeyField}=id)";
 
             using (var da = server.GetDataAdapter(sql, con))
@@ -414,8 +415,10 @@ where
                 versionMemberName = "version";
                 projectNumberMemberName = "projectNumber";
 
-                var toReturn = new DataTable();
+                DataTable toReturn = new DataTable();
+                toReturn.BeginLoadData();
                 da.Fill(toReturn);
+                toReturn.EndLoadData();
                 return toReturn;
             }
         }
@@ -535,6 +538,7 @@ where
         sw2.Start();
 
         //fix values
+        toProcess.BeginLoadData();
         foreach (DataRow row in toProcess.Rows)
             try
             {
@@ -580,6 +584,8 @@ where
             $"Substituted {substitutions} release identifiers for private identifiers in input data table (input data table contained {toProcess.Rows.Count} rows)"));
 
         toProcess.Columns[releaseIdentifier].ColumnName = privateIdentifier;
+
+        toProcess.EndLoadData();
     }
 
     /// <summary>

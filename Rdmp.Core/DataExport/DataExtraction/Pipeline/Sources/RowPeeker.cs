@@ -74,10 +74,12 @@ internal class RowPeeker
 
         DataRow r;
 
+        chunk.BeginLoadData();
         //while we are still successfully reading rows and those rows have the same release id
         while ((r = source.ReadOneRow()) != null)
+        {
             if (equalityFunc(r))
-                //add it to the current chunk
+            //add it to the current chunk
             {
                 chunk.ImportRow(r);
             }
@@ -87,5 +89,7 @@ internal class RowPeeker
                 _peekedRecord = r;
                 break;
             }
+        }
+        chunk.EndLoadData();
     }
 }

@@ -75,8 +75,8 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         timer.Start();
         try
         {
-            var chunk = GetChunkSchema(_reader);
-
+            DataTable chunk = GetChunkSchema(_reader);
+            chunk.BeginLoadData();
             while (_reader.HasRows && _reader.Read())
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -86,8 +86,12 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
 
                 //we reached batch limit
                 if (readThisBatch == BatchSize)
+                {
+                    chunk.EndLoadData();
                     return chunk;
+                }
             }
+            chunk.EndLoadData();
 
             //if data was read
             if (readThisBatch > 0)

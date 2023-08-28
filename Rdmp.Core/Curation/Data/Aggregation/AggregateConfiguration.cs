@@ -29,17 +29,17 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a
 /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of
 /// the configuration (e.g. AggregateDimension / AggregateFilter)
-/// 
+///
 /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
 /// query being built.</para>
-/// 
+///
 /// <para>There are Three types of AggregateConfiguration (these are configurations - not separate classes):</para>
 /// <para>1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard</para>
 /// <para>2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')</para>
 /// <para>3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)</para>
 /// <para>The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
 /// AggregateConfiguration is. </para>
-/// 
+///
 /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification
 /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
 /// </summary>
@@ -113,7 +113,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <summary>
     /// Indicates the AggregateDimension (if any) that will result in a pivot graph being generated.  E.g. if your AggregateConfiguration is a graph of records by year between
     /// 2001 and 2018 then specifying a pivot on healthboard would result in 1 line in the graph per healthboard instead of a single line for the count of all (the default).
-    /// 
+    ///
     /// <para>If an AggregateConfiguration is a Cohort or Patient index table then it cannot have a Pivot</para>
     /// </summary>
     public int? PivotOnDimensionID
@@ -227,9 +227,13 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         if (dt.Rows.Count == 0) return;
 
         if (!UserSettings.IncludeZeroSeriesInGraphs)
+        {
+            dt.BeginLoadData();
             foreach (var col in dt.Columns.Cast<DataColumn>().ToArray())
                 if (dt.Rows.Cast<DataRow>().All(r => IsBasicallyZero(r[col.ColumnName])))
                     dt.Columns.Remove(col);
+            dt.EndLoadData();
+        }
     }
 
     private static bool IsBasicallyZero(object v) => v == null || v == DBNull.Value ||
@@ -257,7 +261,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g.
     /// 'Give me all prescriptions for morphine' (Prescribing) 'within 6 months of patient being discharged from hospital' (SMR01).  In this case
     /// a join is done against the secondary dataset.
-    /// 
+    ///
     /// <para>This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
     /// for building its join.</para>
     /// </summary>
@@ -304,7 +308,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     /// <summary>
     /// Only relevant for AggregateConfigurations that are being used in a cohort identification capacity (See <see cref="IsCohortIdentificationAggregate"/>).
-    /// 
+    ///
     /// <para>The order location of an AggregateConfiguration within its parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
     /// INTERSECT operations (other than helping the user viewing the system) but is vital for EXCEPT containers where the first AggregateConfiguration in the container is
     /// run producing a dataset and all subsequent AggregateConfigurations are then removed from that patient set.</para>
