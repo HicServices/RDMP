@@ -95,7 +95,7 @@ public class SingleJobExecution : IDataLoadExecution
                 // return failed (even if the messages are all warnings)
                 return ExitCodeType.Error;
             }
-            job.CloseLogging();
+            // job.CloseLogging();
             return ExitCodeType.Success;
         }
         catch (OperationCanceledException)
