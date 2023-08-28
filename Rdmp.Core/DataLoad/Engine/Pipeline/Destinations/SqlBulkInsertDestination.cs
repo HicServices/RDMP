@@ -90,7 +90,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         foreach (var columnInDestination in listColumns)
             if (columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
                 columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-                //its fine if validFrom/DataLoadRunID columns are missing
+            //its fine if validFrom/DataLoadRunID columns are missing
             {
                 continue; //its fine
             }

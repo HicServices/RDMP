@@ -349,7 +349,8 @@ public class LoggingTabUI : LoggingTab_Design
             //set the initial filter
             _navigationTrack.Append(Filter);
             _back = new ToolStripButton("Back", FamFamFamIcons.Back.ImageToBitmap(),
-                (s, e) => _navigationTrack.Back(true)) { DisplayStyle = ToolStripItemDisplayStyle.Image };
+                (s, e) => _navigationTrack.Back(true))
+            { DisplayStyle = ToolStripItemDisplayStyle.Image };
         }
 
         CommonFunctionality.Add(_back);
@@ -364,22 +365,22 @@ public class LoggingTabUI : LoggingTab_Design
 
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadTask))
-                { OverrideCommandName = "All Tasks" });
+            { OverrideCommandName = "All Tasks" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadRun))
-                { OverrideCommandName = "All Runs" });
+            { OverrideCommandName = "All Runs" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.FatalError))
-                { OverrideCommandName = "All Errors" });
+            { OverrideCommandName = "All Errors" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.TableLoadRun))
-                { OverrideCommandName = "All Tables Loaded" });
+            { OverrideCommandName = "All Tables Loaded" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataSource))
-                { OverrideCommandName = "All Data Sources" });
+            { OverrideCommandName = "All Data Sources" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.ProgressLog))
-                { OverrideCommandName = "All Progress Logs" });
+            { OverrideCommandName = "All Progress Logs" });
 
 
         if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out var reason))

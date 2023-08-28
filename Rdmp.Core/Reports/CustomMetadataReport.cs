@@ -330,7 +330,7 @@ public partial class CustomMetadataReport
                 currentSection.Body.Add(str);
             }
             else
-                // is it a loop Catalogues
+            // is it a loop Catalogues
             if (str.Trim().Equals(LoopCatalogues))
             {
                 if (currentSection != null)
@@ -344,7 +344,7 @@ public partial class CustomMetadataReport
                 depth = 1;
             }
             else
-                // is it an end loop
+            // is it an end loop
             if (str.Trim().Equals(EndLoop))
             {
                 if (currentSection == null || currentSection.IsPlainText)

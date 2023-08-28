@@ -55,9 +55,9 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
         if (PromptToPickReplacement && rep == null)
             if (!BasicActivator.SelectObject(new DialogArgs
-                {
-                    AllowSelectingNull = true
-                }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
+            {
+                AllowSelectingNull = true
+            }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
                 // user cancelled
                 return;
 

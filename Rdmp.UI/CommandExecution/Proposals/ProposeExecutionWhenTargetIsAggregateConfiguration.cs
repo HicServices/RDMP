@@ -52,7 +52,8 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration : RDMPCommandE
             ExtractionFilterParameterSetCombineable efps => new ExecuteCommandCreateNewFilter(ItemActivator,
                 targetAggregateConfiguration)
             {
-                BasedOn = efps.ParameterSet.ExtractionFilter, ParameterSet = efps.ParameterSet
+                BasedOn = efps.ParameterSet.ExtractionFilter,
+                ParameterSet = efps.ParameterSet
             },
             _ => null
         };

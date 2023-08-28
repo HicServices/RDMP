@@ -206,7 +206,7 @@ public class FlatFileColumnCollection
                 unamedColumns.Add(dt.Columns.Add(h));
             }
             else
-                //override type
+            //override type
             if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h, out var t) == true)
             {
                 var c = dt.Columns.Add(h, t);

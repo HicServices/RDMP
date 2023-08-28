@@ -94,9 +94,9 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     private void btnChooseRightTableInfo_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObject(new DialogArgs
-                {
-                    TaskDescription = $"Which other table should be joined to '{_leftTableInfo.Name}'?"
-                }, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
+        {
+            TaskDescription = $"Which other table should be joined to '{_leftTableInfo.Name}'?"
+        }, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
                 out var selected))
             SetRightTableInfo(selected);
     }

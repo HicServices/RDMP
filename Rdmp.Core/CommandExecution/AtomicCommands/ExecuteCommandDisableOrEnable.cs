@@ -55,11 +55,11 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
                 SetImpossible("Only cohort identification aggregates can be disabled");
                 break;
             case AggregateConfiguration aggregateConfiguration:
-            {
-                if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                    SetImpossible("Joinable Patient Index Tables cannot be disabled");
-                break;
-            }
+                {
+                    if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                        SetImpossible("Joinable Patient Index Tables cannot be disabled");
+                    break;
+                }
         }
 
         if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))

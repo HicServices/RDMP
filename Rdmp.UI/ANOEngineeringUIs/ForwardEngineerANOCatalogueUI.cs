@@ -14,21 +14,21 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi;
+using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.ANOEngineering;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.SimpleDialogs;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.ANOEngineeringUIs;
 
@@ -206,10 +206,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
 
                 if (Activator.SelectObject(new DialogArgs
-                    {
-                        TaskDescription =
+                {
+                    TaskDescription =
                             "Choose an ANOTable into which to put the identifiable values stored in this column"
-                    }, Activator.CoreChildProvider.AllANOTables, out var selected))
+                }, Activator.CoreChildProvider.AllANOTables, out var selected))
                     try
                     {
                         plan.ANOTable = selected;
@@ -326,7 +326,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (!_setup)
         {
             var settings = new RDMPCollectionCommonFunctionalitySettings
-                { AddFavouriteColumn = false, AddCheckColumn = false };
+            { AddFavouriteColumn = false, AddCheckColumn = false };
 
             //Set up tree view to show ANO Tables that are usable
             tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
@@ -483,7 +483,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (loadProgressIfAny != null)
         {
             pt.SetArgumentValue("Progress", loadProgressIfAny);
-//              pt.SetArgumentValue("ProgressUpdateStrategy", DataLoadProgressUpdateStrategy.UseMaxRequestedDay);
+            //              pt.SetArgumentValue("ProgressUpdateStrategy", DataLoadProgressUpdateStrategy.UseMaxRequestedDay);
             pt.SetArgumentValue("LoadNotRequiredIfNoRowsRead", true);
         }
 

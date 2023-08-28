@@ -4,21 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
+using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using System;
-using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.Collections;
 
@@ -123,10 +123,10 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     private void AddObjectToSession(object sender, EventArgs e)
     {
         var toAdd = Activator.SelectMany(new DialogArgs
-                {
-                    WindowTitle = "Add to Session",
-                    TaskDescription = "Pick which objects you want added to the session window."
-                }, typeof(IMapsDirectlyToDatabaseTable),
+        {
+            WindowTitle = "Add to Session",
+            TaskDescription = "Pick which objects you want added to the session window."
+        }, typeof(IMapsDirectlyToDatabaseTable),
                 Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())
             ?.ToList();
 

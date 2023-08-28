@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,6 +15,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.Startup;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -260,8 +260,8 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
             sbSyntaxes.AppendLine("Examples:");
             foreach (var p in pickers)
-            foreach (var e in p.Examples)
-                sbSyntaxes.AppendLine(e);
+                foreach (var e in p.Examples)
+                    sbSyntaxes.AppendLine(e);
 
             return true;
         }

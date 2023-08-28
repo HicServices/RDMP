@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -21,6 +20,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution;

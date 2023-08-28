@@ -433,10 +433,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         }
 
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "You are about to add the newly imported table columns to an existing Catalogue.  This will mean that your Catalogue draws data from 2+ tables.  You will need to also create a join between the underlying columns for this to work properly."
-            }, Activator.CoreChildProvider.AllCatalogues, out var selected))
+        }, Activator.CoreChildProvider.AllCatalogues, out var selected))
             AddToExistingCatalogue(selected, eis);
     }
 
@@ -679,10 +679,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         else
         {
             if (Activator.SelectObject(new DialogArgs
-                    {
-                        TaskDescription =
+            {
+                TaskDescription =
                             "Which Project should this Catalogue be associated with? ProjectSpecific Catalogues can only be extracted in extractions of that Project and will not appear in the main Catalogues tree."
-                    }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray(),
+            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray(),
                     out var selected))
                 SelectProject(selected);
         }

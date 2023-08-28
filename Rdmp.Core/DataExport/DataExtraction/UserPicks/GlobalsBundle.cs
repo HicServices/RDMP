@@ -23,7 +23,7 @@ public class GlobalsBundle : Bundle
     public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
         base(
             Array.Empty<object>().Union(documents).Union(supportingSQL).ToArray()
-            //pass all the objects to the base class so it can allocate initial States
+        //pass all the objects to the base class so it can allocate initial States
         )
     {
         Documents = documents.ToList();

@@ -5,18 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Drawing;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
-using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Icons.IconProvision;
-using System.Drawing;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 

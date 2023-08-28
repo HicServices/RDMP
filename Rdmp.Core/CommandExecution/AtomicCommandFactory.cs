@@ -4,6 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using FAnsi;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
@@ -24,6 +28,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -31,12 +37,6 @@ using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using SixLabors.ImageSharp;
@@ -106,20 +106,26 @@ public class AtomicCommandFactory : CommandFactoryBase
                 };
 
                 yield return new ExecuteCommandAddNewCatalogueItem(_activator, c)
-                    { Weight = -99.9f, SuggestedCategory = Add, OverrideCommandName = "New Catalogue Item" };
+                { Weight = -99.9f, SuggestedCategory = Add, OverrideCommandName = "New Catalogue Item" };
                 yield return new ExecuteCommandAddNewAggregateGraph(_activator, c)
                 {
-                    Weight = -98.9f, SuggestedCategory = Add, OverrideCommandName = "New Aggregate Graph"
+                    Weight = -98.9f,
+                    SuggestedCategory = Add,
+                    OverrideCommandName = "New Aggregate Graph"
                 };
             }
 
             yield return new ExecuteCommandAddNewSupportingSqlTable(_activator, c)
             {
-                Weight = -87.9f, SuggestedCategory = Add, OverrideCommandName = "New Supporting SQL Table"
+                Weight = -87.9f,
+                SuggestedCategory = Add,
+                OverrideCommandName = "New Supporting SQL Table"
             };
             yield return new ExecuteCommandAddNewSupportingDocument(_activator, c)
             {
-                Weight = -87.8f, SuggestedCategory = Add, OverrideCommandName = "New Supporting Document"
+                Weight = -87.8f,
+                SuggestedCategory = Add,
+                OverrideCommandName = "New Supporting Document"
             };
 
             if (!isApiCall)
@@ -133,16 +139,19 @@ public class AtomicCommandFactory : CommandFactoryBase
                 yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
                     ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c)
                     {
-                        Weight = -99.0009f, SuggestedCategory = Extraction
+                        Weight = -99.0009f,
+                        SuggestedCategory = Extraction
                     }
                     : new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null)
                     {
-                        Weight = -99.0009f, SuggestedCategory = Extraction
+                        Weight = -99.0009f,
+                        SuggestedCategory = Extraction
                     };
 
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null)
                 {
-                    Weight = -99.0008f, SuggestedCategory = Extraction
+                    Weight = -99.0008f,
+                    SuggestedCategory = Extraction
                 };
 
                 yield return new ExecuteCommandSetExtractionPrimaryKeys(_activator, c, null, null)
@@ -172,25 +181,31 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
             {
-                OverrideCommandName = "New Catalogue From File...", TargetFolder = cf.FullName, SuggestedCategory = Add,
+                OverrideCommandName = "New Catalogue From File...",
+                TargetFolder = cf.FullName,
+                SuggestedCategory = Add,
                 Weight = -90.9f
             };
             yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
             {
                 OverrideCommandName = "New Catalogue From Database...",
-                TargetFolder = cf.FullName, SuggestedCategory = Add, Weight = -90.8f
+                TargetFolder = cf.FullName,
+                SuggestedCategory = Add,
+                Weight = -90.8f
             };
             yield return new ExecuteCommandCreateNewEmptyCatalogue(_activator)
             {
-                OverrideCommandName = "New Empty Catalogue (Advanced)", TargetFolder = cf.FullName,
-                SuggestedCategory = Add, Weight = -90.7f
+                OverrideCommandName = "New Empty Catalogue (Advanced)",
+                TargetFolder = cf.FullName,
+                SuggestedCategory = Add,
+                Weight = -90.7f
             };
         }
 
         if (Is(o, out ExtractionInformation ei))
         {
             yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei))
-                { OverrideCommandName = "Add New Filter" };
+            { OverrideCommandName = "Add New Filter" };
             yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
             yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ei });
 
@@ -221,17 +236,17 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
             yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
             yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci)
-                { SuggestedShortcut = "I", Ctrl = true };
+            { SuggestedShortcut = "I", Ctrl = true };
 
             var ciExtractionInfo = ci.ExtractionInformation;
             if (ciExtractionInfo != null)
             {
                 yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ciExtractionInfo)
-                    { SuggestedCategory = View };
+                { SuggestedCategory = View };
                 yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ciExtractionInfo)
-                    { SuggestedCategory = View };
+                { SuggestedCategory = View };
                 yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ciExtractionInfo)
-                    { SuggestedCategory = View };
+                { SuggestedCategory = View };
             }
         }
 
@@ -244,19 +259,21 @@ public class AtomicCommandFactory : CommandFactoryBase
                 typeof(AggregateConfiguration).GetProperty(nameof(AggregateConfiguration.Description)));
 
             yield return new ExecuteCommandCreateNewFilter(_activator, ac)
-                { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
+            { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
             yield return new ExecuteCommandCreateNewFilter(_activator, ac)
             {
-                OfferCatalogueFilters = true, SuggestedCategory = Add, OverrideCommandName = "Existing Filter"
+                OfferCatalogueFilters = true,
+                SuggestedCategory = Add,
+                OverrideCommandName = "Existing Filter"
             };
 
             yield return new ExecuteCommandAddNewFilterContainer(_activator, ac)
-                { SuggestedCategory = Add, OverrideCommandName = "New Filter Container" };
+            { SuggestedCategory = Add, OverrideCommandName = "New Filter Container" };
             yield return new ExecuteCommandImportFilterContainerTree(_activator, ac)
-                { SuggestedCategory = Add, OverrideCommandName = "Existing Filter Container (copy of)" };
+            { SuggestedCategory = Add, OverrideCommandName = "Existing Filter Container (copy of)" };
 
             yield return new ExecuteCommandAddParameter(_activator, ac, null, null, null)
-                { SuggestedCategory = Add, OverrideCommandName = "New Catalogue Filter Parameter" };
+            { SuggestedCategory = Add, OverrideCommandName = "New Catalogue Filter Parameter" };
 
             yield return new ExecuteCommandViewData(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
 
@@ -282,10 +299,10 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandAddDimension(_activator, ac) { SuggestedCategory = Dimensions };
             yield return new ExecuteCommandSetPivot(_activator, ac) { SuggestedCategory = Dimensions };
             yield return new ExecuteCommandSetPivot(_activator, ac, null)
-                { OverrideCommandName = "Clear Pivot", SuggestedCategory = Dimensions };
+            { OverrideCommandName = "Clear Pivot", SuggestedCategory = Dimensions };
             yield return new ExecuteCommandSetAxis(_activator, ac) { SuggestedCategory = Dimensions };
             yield return new ExecuteCommandSetAxis(_activator, ac, null)
-                { OverrideCommandName = "Clear Axis", SuggestedCategory = Dimensions };
+            { OverrideCommandName = "Clear Axis", SuggestedCategory = Dimensions };
 
 
             /*if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
@@ -308,16 +325,18 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             var targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
             yield return new ExecuteCommandSet(_activator, container, nameof(IContainer.Operation), targetOperation)
-                { OverrideCommandName = $"Set Operation to {targetOperation}" };
+            { OverrideCommandName = $"Set Operation to {targetOperation}" };
 
             yield return new ExecuteCommandCreateNewFilter(_activator, container.GetFilterFactory(), container)
-                { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
+            { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
             yield return new ExecuteCommandCreateNewFilter(_activator, container, null)
             {
-                OfferCatalogueFilters = true, SuggestedCategory = Add, OverrideCommandName = "Existing Filter"
+                OfferCatalogueFilters = true,
+                SuggestedCategory = Add,
+                OverrideCommandName = "Existing Filter"
             };
             yield return new ExecuteCommandAddNewFilterContainer(_activator, container)
-                { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
+            { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
 
             yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.TOP_100);
             yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.Aggregate);
@@ -332,7 +351,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
                     new ANOStorePatcher(), PermissableDefaults.ANOStore)
-                { OverrideCommandName = "Create ANOStore Database" };
+            { OverrideCommandName = "Create ANOStore Database" };
 
             yield return new ExecuteCommandExportObjectsToFile(_activator, _activator.CoreChildProvider.AllANOTables);
         }
@@ -452,33 +471,33 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false) { Weight = -99.6f };
 
             yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
-                { Weight = -50.5f };
+            { Weight = -50.5f };
 
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
-                { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
+            { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
             if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
             yield return clone;
             //associate with project
             yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-                { Weight = -50.3f, OverrideCommandName = "Associate with Project" }.SetTarget(cic);
+            { Weight = -50.3f, OverrideCommandName = "Associate with Project" }.SetTarget(cic);
 
             yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic)
-                { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
+            { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
         }
 
         if (Is(o, out AllGovernanceNode _))
         {
             yield return new ExecuteCommandCreateNewGovernancePeriod(_activator)
-                { OverrideCommandName = "Add New Governance Period" };
+            { OverrideCommandName = "Add New Governance Period" };
             yield return new ExecuteCommandAddNewGovernanceDocument(_activator, null)
-                { OverrideCommandName = "Add New Governance Document" };
+            { OverrideCommandName = "Add New Governance Document" };
         }
 
         if (Is(o, out FolderNode<LoadMetadata> lmdFolder))
         {
             yield return new ExecuteCommandCreateNewLoadMetadata(_activator) { Folder = lmdFolder.FullName };
             yield return new ExecuteCommandImportShareDefinitionList(_activator)
-                { OverrideCommandName = "Import Load" };
+            { OverrideCommandName = "Import Load" };
         }
 
         if (Is(o, out LoadMetadata lmd))
@@ -492,7 +511,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
             yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };
             yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd, null)
-                { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
+            { OverrideCommandName = "Clear Ignored Columns", SuggestedCategory = Advanced };
 
             yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { lmd },
                 ExtendedProperty.PersistentRaw, null)
@@ -565,7 +584,7 @@ public class AtomicCommandFactory : CommandFactoryBase
                             filter.GetAllParameters().OfType<IMapsDirectlyToDatabaseTable>().ToArray()),
                         typeof(ISqlParameter).GetProperty(nameof(ISqlParameter.Value))
                     )
-                    { OverrideCommandName = "Set Parameter Value(s)", Weight = -10 };
+                { OverrideCommandName = "Set Parameter Value(s)", Weight = -10 };
             yield return new ExecuteCommandViewFilterMatchData(_activator, filter, ViewType.TOP_100);
             yield return new ExecuteCommandViewFilterMatchData(_activator, filter, ViewType.Aggregate);
         }
@@ -607,22 +626,23 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandSyncTableInfo(_activator, ti, true, false);
             yield return new ExecuteCommandNewObject(_activator,
                 () => new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(),
-                    "fish", ti)) { OverrideCommandName = "Add New ColumnInfo" };
+                    "fish", ti))
+            { OverrideCommandName = "Add New ColumnInfo" };
         }
 
         if (Is(o, out ColumnInfo colInfo))
         {
             yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo) { SuggestedCategory = View };
             yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo)
-                { SuggestedCategory = View };
+            { SuggestedCategory = View };
             yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, colInfo)
-                { SuggestedCategory = View };
+            { SuggestedCategory = View };
 
             yield return new ExecuteCommandAlterColumnType(_activator, colInfo) { SuggestedCategory = Alter };
 
             yield return new ExecuteCommandSet(_activator, colInfo,
                     typeof(ColumnInfo).GetProperty(nameof(ColumnInfo.IgnoreInLoads)))
-                { OverrideCommandName = $"Ignore In Loads ({colInfo.IgnoreInLoads})" };
+            { OverrideCommandName = $"Ignore In Loads ({colInfo.IgnoreInLoads})" };
         }
 
         if (Is(o, out AllStandardRegexesNode _))
@@ -640,28 +660,30 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(),
                     sds.ExtractionConfiguration, null)
-                { Weight = -99.8f };
+            { Weight = -99.8f };
 
             ////////////// Add submenu ///////////////
 
             yield return new ExecuteCommandCreateNewFilter(_activator, sds)
-                { OverrideCommandName = "New Filter", SuggestedCategory = Add };
+            { OverrideCommandName = "New Filter", SuggestedCategory = Add };
             yield return new ExecuteCommandCreateNewFilter(_activator, sds)
             {
-                OfferCatalogueFilters = true, OverrideCommandName = "Existing Filter (copy of)", SuggestedCategory = Add
+                OfferCatalogueFilters = true,
+                OverrideCommandName = "Existing Filter (copy of)",
+                SuggestedCategory = Add
             };
 
             yield return new ExecuteCommandAddNewFilterContainer(_activator, sds)
-                { OverrideCommandName = "New Filter Container", SuggestedCategory = Add };
+            { OverrideCommandName = "New Filter Container", SuggestedCategory = Add };
             yield return new ExecuteCommandImportFilterContainerTree(_activator, sds)
-                { OverrideCommandName = "Existing Filter Container (copy of)", SuggestedCategory = Add };
+            { OverrideCommandName = "Existing Filter Container (copy of)", SuggestedCategory = Add };
 
 
             yield return new ExecuteCommandViewExtractionSql(_activator, sds);
             yield return new ExecuteCommandAddExtractionProgress(_activator, sds)
-                { SuggestedCategory = Batching, Weight = 1.1f };
+            { SuggestedCategory = Batching, Weight = 1.1f };
             yield return new ExecuteCommandResetExtractionProgress(_activator, sds)
-                { SuggestedCategory = Batching, Weight = 1.2f };
+            { SuggestedCategory = Batching, Weight = 1.2f };
         }
 
         if (Is(o, out ExtractionProgress progress))
@@ -672,14 +694,16 @@ public class AtomicCommandFactory : CommandFactoryBase
             ///////////////////Add//////////////
 
             yield return new ExecuteCommandChooseCohort(_activator, ec)
-                { Weight = -99.8f, SuggestedCategory = Add, OverrideCommandName = "Existing Cohort" };
+            { Weight = -99.8f, SuggestedCategory = Add, OverrideCommandName = "Existing Cohort" };
             yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec)
-                { Weight = -99.7f, SuggestedCategory = Add, OverrideCommandName = "Existing Datasets" };
+            { Weight = -99.7f, SuggestedCategory = Add, OverrideCommandName = "Existing Datasets" };
             yield return new ExecuteCommandAddPackageToConfiguration(_activator, ec)
-                { Weight = -99.6f, SuggestedCategory = Add, OverrideCommandName = "Existing Package" };
+            { Weight = -99.6f, SuggestedCategory = Add, OverrideCommandName = "Existing Package" };
             yield return new ExecuteCommandAddParameter(_activator, ec, null, null, null)
             {
-                Weight = -99.5f, SuggestedCategory = Add, OverrideCommandName = "New Extraction Filter Parameter"
+                Weight = -99.5f,
+                SuggestedCategory = Add,
+                OverrideCommandName = "New Extraction Filter Parameter"
             };
 
 
@@ -697,35 +721,40 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out Project proj))
         {
             yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-                    { OverrideCommandName = "New Cohort Builder Query", SuggestedCategory = Add, Weight = -5f }
+            { OverrideCommandName = "New Cohort Builder Query", SuggestedCategory = Add, Weight = -5f }
                 .SetTarget(proj);
             yield return
                 new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
                 {
-                    OverrideCommandName = "New Cohort From Cohort Builder Query", SuggestedCategory = Add,
+                    OverrideCommandName = "New Cohort From Cohort Builder Query",
+                    SuggestedCategory = Add,
                     Weight = -4.9f
                 }.SetTarget(proj);
             yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-                    { OverrideCommandName = "New Cohort From File", SuggestedCategory = Add, Weight = -4.8f }
+            { OverrideCommandName = "New Cohort From File", SuggestedCategory = Add, Weight = -4.8f }
                 .SetTarget(proj);
             yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-                    { OverrideCommandName = "New Cohort From Catalogue", SuggestedCategory = Add, Weight = -4.7f }
+            { OverrideCommandName = "New Cohort From Catalogue", SuggestedCategory = Add, Weight = -4.7f }
                 .SetTarget(proj);
             yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-                    { OverrideCommandName = "New Cohort From Table", SuggestedCategory = Add, Weight = -4.6f }
+            { OverrideCommandName = "New Cohort From Table", SuggestedCategory = Add, Weight = -4.6f }
                 .SetTarget(proj);
             yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, proj)
             {
-                OverrideCommandName = "New Extraction Configuration", SuggestedCategory = Add, Weight = -2f
+                OverrideCommandName = "New Extraction Configuration",
+                SuggestedCategory = Add,
+                Weight = -2f
             };
             yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
             {
-                OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = Add,
+                OverrideCommandName = "New Project Specific Catalogue From File...",
+                SuggestedCategory = Add,
                 Weight = -1.9f
             }.SetTarget(proj);
             yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
             {
-                OverrideCommandName = "New Project Specific Catalogue From Database...", SuggestedCategory = Add,
+                OverrideCommandName = "New Project Specific Catalogue From Database...",
+                SuggestedCategory = Add,
                 Weight = -1.8f
             }.SetTarget(proj);
         }
@@ -733,40 +762,40 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out ProjectCataloguesNode pcn))
         {
             yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator)
-                { OverrideCommandName = "Add Existing Catalogue", Weight = -10 }.SetTarget(pcn.Project);
+            { OverrideCommandName = "Add Existing Catalogue", Weight = -10 }.SetTarget(pcn.Project);
             yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
-                { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(pcn.Project);
+            { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(pcn.Project);
             yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
-                    { OverrideCommandName = "Add New Catalogue From Existing Data Table", Weight = -9.4f }
+            { OverrideCommandName = "Add New Catalogue From Existing Data Table", Weight = -9.4f }
                 .SetTarget(pcn.Project);
         }
 
         if (Is(o, out ProjectCohortsNode projCohorts))
         {
             yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-                { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(projCohorts.Project);
+            { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(projCohorts.Project);
             yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-                    { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
+            { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
                 .SetTarget(projCohorts.Project);
             yield return
                 new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-                        { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
+                { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
                     .SetTarget(projCohorts.Project);
             yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-                { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(projCohorts.Project);
+            { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(projCohorts.Project);
             yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-                    { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
+            { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
                 .SetTarget(projCohorts.Project);
             yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-                { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
+            { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
         }
 
         if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
         {
             yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-                { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
+            { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
             yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator)
-                    { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
+            { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }
                 .SetTarget(pccan.Project);
         }
 
@@ -774,23 +803,23 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return
                 new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
-                        { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
+                { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }
                     .SetTarget(savedCohortsNode.Project);
             yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-                    { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }
+            { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }
                 .SetTarget(savedCohortsNode.Project);
             yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-                    { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
+            { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }
                 .SetTarget(savedCohortsNode.Project);
             yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-                    { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }
+            { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }
                 .SetTarget(savedCohortsNode.Project);
             yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, null, savedCohortsNode.Project);
         }
 
         if (Is(o, out ExtractionConfigurationsNode ecn))
             yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, ecn.Project)
-                { OverrideCommandName = "Add New Extraction Configuration", Weight = -4.7f };
+            { OverrideCommandName = "Add New Extraction Configuration", Weight = -4.7f };
 
         if (Is(o, out ExternalCohortTable ect))
         {
@@ -798,28 +827,29 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,
                     null)
-                {
-                    OverrideCommandName = "New Cohort From Cohort Builder Query", Weight = -4.9f,
-                    SuggestedCategory = "Add"
-                }
+            {
+                OverrideCommandName = "New Cohort From Cohort Builder Query",
+                Weight = -4.9f,
+                SuggestedCategory = "Add"
+            }
                 .SetTarget(ect)
                 .SetTarget(ectProj);
             yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null)
-                    { OverrideCommandName = "New Cohort From File", Weight = -4.8f, SuggestedCategory = "Add" }
+            { OverrideCommandName = "New Cohort From File", Weight = -4.8f, SuggestedCategory = "Add" }
                 .SetTarget(ect)
                 .SetTarget(ectProj);
             yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null)
-                    { OverrideCommandName = "New Cohort From Catalogue", Weight = -4.7f, SuggestedCategory = "Add" }
+            { OverrideCommandName = "New Cohort From Catalogue", Weight = -4.7f, SuggestedCategory = "Add" }
                 .SetTarget(ect)
                 .SetTarget(ectProj);
 
             yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null)
-                    { OverrideCommandName = "New Cohort From Table", Weight = -4.6f, SuggestedCategory = Add }
+            { OverrideCommandName = "New Cohort From Table", Weight = -4.6f, SuggestedCategory = Add }
                 .SetTarget(ect)
                 .SetTarget(ectProj);
 
             yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null)
-                { OverrideCommandName = "Existing Cohort", Weight = -4.6f, SuggestedCategory = "Add" };
+            { OverrideCommandName = "Existing Cohort", Weight = -4.6f, SuggestedCategory = "Add" };
 
             yield return new ExecuteCommandRefreshBrokenCohorts(_activator, ect) { Weight = 1 };
         }
@@ -861,29 +891,34 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
         {
             yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,
-                cohortAggregateContainer, null, null) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                cohortAggregateContainer, null, null)
+            { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
             yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer)
-                { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
+            { SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
             yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
                     cohortAggregateContainer, true)
-                { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
+            { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
             yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator,
-                cohortAggregateContainer, false) { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
+                cohortAggregateContainer, false)
+            { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
             yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null,
                     cohortAggregateContainer)
-                { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
+            { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
 
             //Set Operation
             yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.UNION) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
+                SetOperation.UNION)
+            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
             yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
-                SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
+                SetOperation.EXCEPT)
+            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
             yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer,
                     SetOperation.INTERSECT)
-                { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
+            { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
 
             yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,
-                cohortAggregateContainer) { OverrideCommandName = "Separate Cohort Builder Query" };
+                cohortAggregateContainer)
+            { OverrideCommandName = "Separate Cohort Builder Query" };
         }
 
         if (Is(o, out IDisableable disable))
@@ -902,21 +937,21 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out PipelineCompatibleWithUseCaseNode pcu))
         {
             yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-                { OverrideCommandName = "New Pipeline" };
+            { OverrideCommandName = "New Pipeline" };
             yield return new ExecuteCommandClonePipeline(_activator, pcu.Pipeline);
             yield return new ExecuteCommandAddPipelineComponent(_activator, pcu.Pipeline, pcu.UseCase);
         }
         else if (Is(o, out Pipeline pipeline))
         {
             yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-                { OverrideCommandName = "New Pipeline" };
+            { OverrideCommandName = "New Pipeline" };
             yield return new ExecuteCommandClonePipeline(_activator, pipeline);
             yield return new ExecuteCommandAddPipelineComponent(_activator, pipeline, null);
         }
 
         if (Is(o, out StandardPipelineUseCaseNode psu))
             yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
-                { OverrideCommandName = "New Pipeline" };
+            { OverrideCommandName = "New Pipeline" };
     }
 
     public IEnumerable<IAtomicCommand> CreateManyObjectCommands(ICollection many)
@@ -936,7 +971,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (many.Cast<object>().All(d => d is IDeleteable))
             yield return new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray())
-                { SuggestedShortcut = "Delete" };
+            { SuggestedShortcut = "Delete" };
 
         if (many.Cast<object>().All(d => d is ExtractionFilterParameterSet))
             yield return new ExecuteCommandAddMissingParameters(_activator,

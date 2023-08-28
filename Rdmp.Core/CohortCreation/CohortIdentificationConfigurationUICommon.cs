@@ -4,6 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
@@ -11,12 +15,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.Core.QueryCaching.Aggregation;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.QueryCaching.Aggregation;
 
 namespace Rdmp.Core.CohortCreation;
 
@@ -337,15 +337,15 @@ public class CohortIdentificationConfigurationUICommon
             switch (o)
             {
                 case AggregateConfiguration aggregate:
-                {
-                    var joinable = aggregate.JoinableCohortAggregateConfiguration;
+                    {
+                        var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
-                    if (joinable != null)
-                        OrderActivity(GetNextOperation(GetState(joinable)), joinable);
-                    else
-                        OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
-                    break;
-                }
+                        if (joinable != null)
+                            OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                        else
+                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                        break;
+                    }
                 case CohortAggregateContainer container:
                     OrderActivity(GetNextOperation(GetState(container)), container);
                     break;

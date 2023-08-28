@@ -20,7 +20,8 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     public Catalogue Catalogue { get; set; }
 
     public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler
-        ResolveMultipleExtractionIdentifiers { get; set; }
+        ResolveMultipleExtractionIdentifiers
+    { get; set; }
 
     public IHasFolder Folderable => Catalogue;
 

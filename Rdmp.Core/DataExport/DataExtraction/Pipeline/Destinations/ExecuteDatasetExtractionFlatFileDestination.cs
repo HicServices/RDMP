@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -15,9 +16,8 @@ using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Repositories;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 

@@ -32,7 +32,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
     {
         timer.Start();
 
-        StartAgain:
+    StartAgain:
         foreach (DataRow row in toProcess.Rows)
         {
             for (var i = 0; i < columnsToClean.Count; i++)

@@ -9,10 +9,10 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.QueryBuilding;
-using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.FilterImporting;

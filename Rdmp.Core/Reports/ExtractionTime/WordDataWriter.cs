@@ -230,13 +230,13 @@ public class WordDataWriter : DocXHelper
         var currentLine = 1;
 
         foreach (var filter in filtersUsed)
-        foreach (var parameter in filter.GetAllParameters())
-        {
-            SetTableCell(t, currentLine, 0, parameter.ParameterName);
-            SetTableCell(t, currentLine, 1, parameter.Comment);
-            SetTableCell(t, currentLine, 2, parameter.Value);
-            currentLine++;
-        }
+            foreach (var parameter in filter.GetAllParameters())
+            {
+                SetTableCell(t, currentLine, 0, parameter.ParameterName);
+                SetTableCell(t, currentLine, 1, parameter.Comment);
+                SetTableCell(t, currentLine, 2, parameter.Value);
+                currentLine++;
+            }
 
         foreach (var globalParameter in globalParameters)
         {

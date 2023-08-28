@@ -9,7 +9,6 @@ using CommandLine;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
 using Parser = CommandLine.Parser;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;

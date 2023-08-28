@@ -41,7 +41,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     private ToolStripButton btnAddCatalogue = new("Add Catalogue") { Name = "btnAddCatalogue" };
 
     private ToolStripButton btnRemoveAll = new("Clear", FamFamFamIcons.delete_multi.ImageToBitmap())
-        { Name = "btnRemoveAll" };
+    { Name = "btnRemoveAll" };
 
     private ToolStripButton btnAddExtractableDatasetPackage =
         new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
@@ -226,9 +226,9 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
         if (_activator.SelectObjects(new DialogArgs
-                {
-                    TaskDescription = "Choose which new Catalogues should be represented in the diagram."
-                },
+        {
+            TaskDescription = "Choose which new Catalogues should be represented in the diagram."
+        },
                 _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                     .Except(_collection.GetCatalogues())
                     .ToArray(),
@@ -261,9 +261,9 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
             return;
 
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
-            }, dataExportChildProvider.AllPackages, out var packageToAdd))
+        {
+            TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
+        }, dataExportChildProvider.AllPackages, out var packageToAdd))
         {
             var contents =
                 _activator.RepositoryLocator.DataExportRepository.GetAllDataSets(packageToAdd,

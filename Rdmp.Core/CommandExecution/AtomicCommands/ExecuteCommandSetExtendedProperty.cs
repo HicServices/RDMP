@@ -72,10 +72,10 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
             var oldValue = props.FirstOrDefault()?.Value;
 
             if (PromptForValue && !BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = _propertyName,
-                    TaskDescription = PromptForValueTaskDescription
-                }, int.MaxValue, oldValue, out newValue, false))
+            {
+                WindowTitle = _propertyName,
+                TaskDescription = PromptForValueTaskDescription
+            }, int.MaxValue, oldValue, out newValue, false))
                 // user cancelled entering some text
                 return;
 

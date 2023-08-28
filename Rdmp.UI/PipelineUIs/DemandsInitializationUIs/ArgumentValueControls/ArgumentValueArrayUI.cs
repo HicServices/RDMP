@@ -79,11 +79,11 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
                 $"CatalogueRepository does not support element {elementType} for DemandsInitialization Type {type}");
 
         if (_activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription = $"Which objects should be selected for Argument '{_args.Required.Name}'",
-                InitialObjectSelection = _value is IEnumerable<IMapsDirectlyToDatabaseTable> v ? v.ToArray() : null,
-                AllowSelectingNull = true
-            }, _args.CatalogueRepository.GetAllObjects(elementType).ToArray(), out var selected))
+        {
+            TaskDescription = $"Which objects should be selected for Argument '{_args.Required.Name}'",
+            InitialObjectSelection = _value is IEnumerable<IMapsDirectlyToDatabaseTable> v ? v.ToArray() : null,
+            AllowSelectingNull = true
+        }, _args.CatalogueRepository.GetAllObjects(elementType).ToArray(), out var selected))
         {
             _args.Setter(selected);
             SetUp(selected);

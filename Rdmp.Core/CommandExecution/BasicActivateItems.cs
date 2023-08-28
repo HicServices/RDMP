@@ -379,61 +379,61 @@ public abstract class BasicActivateItems : IBasicActivateItems
         switch (databaseObject)
         {
             case Catalogue c:
-            {
-                if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
                 {
-                    if (YesNo(
-                            "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
-                            "Make Non Extractable"))
+                    if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
                     {
-                        var cmd = new ExecuteCommandChangeExtractability(this, c);
-                        cmd.Execute();
+                        if (YesNo(
+                                "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
+                                "Make Non Extractable"))
+                        {
+                            var cmd = new ExecuteCommandChangeExtractability(this, c);
+                            cmd.Execute();
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
-                    else
-                    {
-                        return false;
-                    }
-                }
 
-                break;
-            }
+                    break;
+                }
             case ExtractionFilter f:
-            {
-                var children = f.ExtractionFilterParameterSets;
-
-                if (children.Any())
                 {
-                    if (!YesNo(
-                            $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
-                            "Delete"))
-                        return false;
+                    var children = f.ExtractionFilterParameterSets;
 
-                    foreach (var child in children) child.DeleteInDatabase();
-
-                    f.ClearAllInjections();
-
-                    f.DeleteInDatabase();
-                    return true;
-                }
-
-                break;
-            }
-            case AggregateConfiguration ac when ac.IsJoinablePatientIndexTable():
-            {
-                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
-                if (users != null)
-                {
-                    users = users.ToArray();
-                    if (users.Any())
+                    if (children.Any())
                     {
-                        Show(
-                            $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
-                        return false;
-                    }
-                }
+                        if (!YesNo(
+                                $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
+                                "Delete"))
+                            return false;
 
-                break;
-            }
+                        foreach (var child in children) child.DeleteInDatabase();
+
+                        f.ClearAllInjections();
+
+                        f.DeleteInDatabase();
+                        return true;
+                    }
+
+                    break;
+                }
+            case AggregateConfiguration ac when ac.IsJoinablePatientIndexTable():
+                {
+                    var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
+                    if (users != null)
+                    {
+                        users = users.ToArray();
+                        if (users.Any())
+                        {
+                            Show(
+                                $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
+                            return false;
+                        }
+                    }
+
+                    break;
+                }
         }
 
         //it has already been deleted before
