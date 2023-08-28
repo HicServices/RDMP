@@ -238,6 +238,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             throw new Exception($"Failed to write rows (in transaction) to table {TargetTableName}", e);
         }
 
+
+        _dataLoadInfo?.CloseAndMarkComplete();
         return null;
     }
 

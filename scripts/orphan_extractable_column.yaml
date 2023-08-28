@@ -1,7 +1,7 @@
 Commands:
   
   # Make this column (in the Biochemistry example dataset) no longer extractable
-  - Delete ExtractionInformation:ArithmeticComparator
+  - Delete ExtractionInformation:ArithmeticComparator true
 
   # Clone the ExtractionConfiguration created in example datasets
   - CloneExtractionConfiguration "ExtractionConfiguration:Project 123*2018 Refresh"

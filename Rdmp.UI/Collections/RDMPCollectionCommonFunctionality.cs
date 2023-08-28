@@ -596,10 +596,15 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private Bitmap ImageGetter(object rowObject)
     {
+        if (rowObject == null)
+        {
+            return CoreIconProvider.ImageUnknown.ImageToBitmap();
+        }
         var hasProblems = _activator.HasProblem(rowObject);
 
         return CoreIconProvider.GetImage(rowObject, hasProblems ? OverlayKind.Problem : OverlayKind.None)
             .ImageToBitmap();
+
     }
 
     /// <summary>
