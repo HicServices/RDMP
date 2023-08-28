@@ -57,8 +57,8 @@ public class BoundDouble : Bound
         if (value != null && !IsWithinRange(v, otherColumns, otherColumnNames))
             return new ValidationFailure(CreateViolationReportUsingFieldNames(v), this);
 
-//            if (v < Lower || v > Upper)
-//                throw new ValidationException("Value [" + v + "] out of range. Expected a value between " + Lower + " and " + Upper + ".");
+        //            if (v < Lower || v > Upper)
+        //                throw new ValidationException("Value [" + v + "] out of range. Expected a value between " + Lower + " and " + Upper + ".");
 
         return null;
     }

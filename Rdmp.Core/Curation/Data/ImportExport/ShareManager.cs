@@ -488,7 +488,7 @@ public class ShareManager
                                     break;
                                 }
                                 else
-                                    //otherwise we are missing a required shared object being referenced. That's bad news.
+                                //otherwise we are missing a required shared object being referenced. That's bad news.
                                 {
                                     throw new Exception(
                                         $"Share Definition for object of Type {typeof(T)} is missing an expected RelationshipProperty called {property.Name}");

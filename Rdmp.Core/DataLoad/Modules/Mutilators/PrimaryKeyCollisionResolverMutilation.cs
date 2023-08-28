@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 

@@ -59,7 +59,7 @@ internal class ExtractCommandStateMonitor
                 yield return key; //new objects also are returned as changed
             }
             else
-                //State has changed since last save
+            //State has changed since last save
             if (GlobalsStates[key] != value)
             {
                 yield return key;

@@ -254,7 +254,7 @@ This will not help you avoid bad data as the full file structure must still be r
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
                 }
                 else
-                    //user does not want to strongly type or is strongly typing with regular batch size
+                //user does not want to strongly type or is strongly typing with regular batch size
                 {
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
                 }

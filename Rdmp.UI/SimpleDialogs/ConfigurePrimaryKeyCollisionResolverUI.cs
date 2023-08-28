@@ -8,15 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.UI.ScintillaHelper;
-using System.Runtime.InteropServices;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.SimpleDialogs;
 

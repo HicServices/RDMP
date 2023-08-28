@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -14,6 +13,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -96,10 +96,10 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
 
         if (p == null)
             if (!SelectOne(new DialogArgs
-                {
-                    WindowTitle = "Select Project",
-                    TaskDescription = GetTaskDescription()
-                }, GetProjects(CohortIfAny).ToList(), out p))
+            {
+                WindowTitle = "Select Project",
+                TaskDescription = GetTaskDescription()
+            }, GetProjects(CohortIfAny).ToList(), out p))
                 return;
         if (p == null)
             return;
@@ -109,11 +109,11 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         // if we don't have a name and we are running in interactive mode
         if (string.IsNullOrWhiteSpace(name) && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "New Extraction Configuration",
-                    TaskDescription = "Enter a name for the new Extraction Configuration",
-                    EntryLabel = "Name"
-                }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
+            {
+                WindowTitle = "New Extraction Configuration",
+                TaskDescription = "Enter a name for the new Extraction Configuration",
+                EntryLabel = "Name"
+            }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
                 return;
 
         // create the new config
@@ -134,7 +134,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         if (newConfig.Cohort_ID != null)
         {
             var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig)
-                { NoPublish = true };
+            { NoPublish = true };
 
             if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
                 chooseDatasetsCommand.Execute();

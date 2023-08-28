@@ -1614,61 +1614,61 @@ public class CatalogueChildProvider : ICoreChildProvider
             if (providers.Any())
                 foreach (var o in objectsToAskAbout ?? GetAllObjects())
                     //for every plugin loaded (that is not forbidlisted)
-                foreach (var plugin in providers)
-                    //ask about the children
-                    try
-                    {
-                        sw.Restart();
-                        //otherwise ask plugin what its children are
-                        var pluginChildren = plugin.GetChildren(o);
-
-                        //if the plugin takes too long to respond we need to stop
-                        if (sw.ElapsedMilliseconds > 1000)
+                    foreach (var plugin in providers)
+                        //ask about the children
+                        try
                         {
-                            _blockedPlugins.Add(plugin);
-                            throw new Exception(
-                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                        }
+                            sw.Restart();
+                            //otherwise ask plugin what its children are
+                            var pluginChildren = plugin.GetChildren(o);
 
-                        //it has children
-                        if (pluginChildren != null && pluginChildren.Any())
-                        {
-                            //get the descendancy of the parent
-                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
-                            var newDescendancy = parentDescendancy == null
-                                ? new DescendancyList(new[] { o })
-                                : //if the parent is a root level object start a new descendancy list from it
-                                parentDescendancy
-                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-                            newDescendancy =
-                                parentDescendancy
-                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                            //record that
-                            foreach (var pluginChild in pluginChildren)
+                            //if the plugin takes too long to respond we need to stop
+                            if (sw.ElapsedMilliseconds > 1000)
                             {
-                                //if the parent didn't have any children before
-                                if (!_childDictionary.ContainsKey(o))
-                                    _childDictionary.AddOrUpdate(o, new HashSet<object>(),
-                                        (o1, set) => set); //it does now
+                                _blockedPlugins.Add(plugin);
+                                throw new Exception(
+                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                            }
+
+                            //it has children
+                            if (pluginChildren != null && pluginChildren.Any())
+                            {
+                                //get the descendancy of the parent
+                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
+                                var newDescendancy = parentDescendancy == null
+                                    ? new DescendancyList(new[] { o })
+                                    : //if the parent is a root level object start a new descendancy list from it
+                                    parentDescendancy
+                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                                newDescendancy =
+                                    parentDescendancy
+                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                                //record that
+                                foreach (var pluginChild in pluginChildren)
+                                {
+                                    //if the parent didn't have any children before
+                                    if (!_childDictionary.ContainsKey(o))
+                                        _childDictionary.AddOrUpdate(o, new HashSet<object>(),
+                                            (o1, set) => set); //it does now
 
 
-                                //add us to the parent objects child collection
-                                _childDictionary[o].Add(pluginChild);
+                                    //add us to the parent objects child collection
+                                    _childDictionary[o].Add(pluginChild);
 
-                                //add to the child collection of the parent object kvp.Key
-                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
-                                    (s, e) => newDescendancy);
+                                    //add to the child collection of the parent object kvp.Key
+                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
+                                        (s, e) => newDescendancy);
 
-                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                newObjectsFound.Add(pluginChild);
+                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                    newObjectsFound.Add(pluginChild);
+                                }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
-                    }
+                        catch (Exception e)
+                        {
+                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                        }
 
             if (newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);

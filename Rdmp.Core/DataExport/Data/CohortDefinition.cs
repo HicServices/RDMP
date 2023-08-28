@@ -67,7 +67,7 @@ public class CohortDefinition : ICohortDefinition
         if (ID != null)
             if (ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort)
                 .Any(t => t.ID == ID))
-                //the same ID already exists
+            //the same ID already exists
             {
                 matchDescription = $"Found a cohort in {LocationOfCohort} with the ID {ID}";
                 return false;

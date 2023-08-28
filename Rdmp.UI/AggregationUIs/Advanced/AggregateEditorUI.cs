@@ -254,11 +254,11 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
                     $"{countColumn.SelectSQL}{(countColumn.Alias != null ? $" as {countColumn.Alias}" : "")}";
                 break;
             case IRevertable revertable:
-            {
-                if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                    revertable.SaveToDatabase();
-                break;
-            }
+                {
+                    if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                        revertable.SaveToDatabase();
+                    break;
+                }
             default:
                 throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
         }

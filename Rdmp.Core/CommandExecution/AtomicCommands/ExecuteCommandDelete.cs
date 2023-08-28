@@ -112,7 +112,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
                 return;
             case <= 0:
                 return;
-            // Fall through if deleting multiple:
+                // Fall through if deleting multiple:
         }
 
         // if the command did not ask to delete many and it is not interactive (e.g. CLI) then

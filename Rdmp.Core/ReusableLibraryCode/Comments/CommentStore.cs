@@ -113,11 +113,11 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
                                     Environment.NewLine); //open para tag (next tag is probably #text)
                         break;
                     default:
-                    {
-                        if (n.Value != null) //e.g. #text
-                            sb.Append($"{TrimSummary(n.Value)} ");
-                        break;
-                    }
+                        {
+                            if (n.Value != null) //e.g. #text
+                                sb.Append($"{TrimSummary(n.Value)} ");
+                            break;
+                        }
                 }
             });
 

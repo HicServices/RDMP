@@ -50,8 +50,8 @@ public class ExecuteCommandList : BasicCommandExecution
         var sb = new StringBuilder();
 
         foreach (var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
-        foreach (var o in repo.GetAllObjectsInDatabase())
-            sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
+            foreach (var o in repo.GetAllObjectsInDatabase())
+                sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
 
         BasicActivator.Show(sb.ToString());
     }

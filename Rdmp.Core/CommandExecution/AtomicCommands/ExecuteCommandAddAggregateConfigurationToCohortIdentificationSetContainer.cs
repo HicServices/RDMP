@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
@@ -14,6 +13,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -138,11 +138,11 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             {
                 // ask user if they want to use a template
                 if (BasicActivator.YesNo(new DialogArgs
-                    {
-                        WindowTitle = "Use Template?",
-                        TaskDescription =
+                {
+                    WindowTitle = "Use Template?",
+                    TaskDescription =
                             $"You have {templates.Length} AggregateConfiguration templates, do you want to use one of these?"
-                    }, out var useTemplate))
+                }, out var useTemplate))
                     available = useTemplate ? templates : available.Except(templates).ToArray();
                 else
                     // cancel clicked?
@@ -150,11 +150,11 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             }
 
             if (!BasicActivator.SelectObjects(new DialogArgs
-                {
-                    WindowTitle = "Add Aggregate Configuration(s) to Container",
-                    TaskDescription =
+            {
+                WindowTitle = "Add Aggregate Configuration(s) to Container",
+                TaskDescription =
                         $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'."
-                }, available, out var selected))
+            }, available, out var selected))
                 // user cancelled
                 return;
 

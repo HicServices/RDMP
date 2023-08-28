@@ -245,7 +245,7 @@ public class CatalogueProblemProvider : ProblemProvider
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
             if (parents?.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
-                // which is EXCEPT
+            // which is EXCEPT
             {
                 // then something called 'inclusion criteria' should be the first among them
                 var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);

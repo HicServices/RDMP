@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using CommandLine;
 using CommandLine.Text;
+using Microsoft.Data.SqlClient;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -90,21 +90,30 @@ public class PlatformDatabaseCreationOptions
                 new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_" });
             yield return new Example("Drop existing",
                 new PlatformDatabaseCreationOptions
-                    { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
+                { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
             yield return new Example("Create example datasets",
                 new PlatformDatabaseCreationOptions
                 {
-                    ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true, ExampleDatasets = true
+                    ServerName = @"localhost\sqlexpress",
+                    Prefix = "TEST_",
+                    DropDatabases = true,
+                    ExampleDatasets = true
                 });
             yield return new Example("Binary Collation",
                 new PlatformDatabaseCreationOptions
                 {
-                    ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true, BinaryCollation = true
+                    ServerName = @"localhost\sqlexpress",
+                    Prefix = "TEST_",
+                    DropDatabases = true,
+                    BinaryCollation = true
                 });
             yield return new Example("Drop existing",
                 new PlatformDatabaseCreationOptions
                 {
-                    ServerName = @"localhost\sqlexpress", Prefix = "TEST_", Username = "sa", Password = "lawl",
+                    ServerName = @"localhost\sqlexpress",
+                    Prefix = "TEST_",
+                    Username = "sa",
+                    Password = "lawl",
                     DropDatabases = true
                 });
         }

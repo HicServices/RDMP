@@ -173,7 +173,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
                         $"The pipeline requires a {descriptionOfThingBeingChecked} of type {GetFullName(mustHaveType)} but the currently configured {descriptionOfThingBeingChecked}{GetFullName(pipelineComponentType)} is not of the same type or a derived type";
             }
         else
-            //it cannot have destination
+        //it cannot have destination
         if (component != null)
             return $"Context does not allow for an explicit (custom) {descriptionOfThingBeingChecked}";
 

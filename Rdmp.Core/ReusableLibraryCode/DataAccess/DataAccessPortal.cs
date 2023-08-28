@@ -105,12 +105,12 @@ public static class DataAccessPortal
                     $"IDataAccessPoint collection could not agree whether to use Credentials or not {Environment.NewLine}Objects wanting to use Credentials{string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) != null).Select(s => s.ToString()))}{Environment.NewLine}Objects not wanting to use Credentials{string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) == null).Select(s => s.ToString()))}{Environment.NewLine}"
                 );
             else
-                //There can be only one - Username
+            //There can be only one - Username
             if (credentials.Select(c => c.Username).Distinct().Count() != 1)
                 throw new Exception(
                     $"IDataAccessPoint collection could not agree on a single Username to use to access the data under context {context} (Servers were {string.Join($",{Environment.NewLine}", collection.Select(c => $"{c} = {c.Database} - {c.DatabaseType}"))})");
             else
-                //There can be only one - Password
+            //There can be only one - Password
             if (credentials.Select(c => c.GetDecryptedPassword()).Distinct().Count() != 1)
                 throw new Exception(
                     $"IDataAccessPoint collection could not agree on a single Password to use to access the data under context {context} (Servers were {string.Join($",{Environment.NewLine}", collection.Select(c => $"{c} = {c.Database} - {c.DatabaseType}"))})");

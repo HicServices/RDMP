@@ -75,17 +75,17 @@ public abstract partial class Patcher : IPatcher
         switch (candidates.Length)
         {
             case 1:
-            {
-                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
+                {
+                    var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
 
-                var sql = sr.ReadToEnd();
+                    var sql = sr.ReadToEnd();
 
-                if (!sql.Contains(Patch.VersionKey))
-                    sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
+                    if (!sql.Contains(Patch.VersionKey))
+                        sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
 
 
-                return new Patch(InitialScriptName, sql);
-            }
+                    return new Patch(InitialScriptName, sql);
+                }
             case 0:
                 throw new FileNotFoundException(
                     $"Could not find an initial create database script in dll {assembly.FullName}.  Make sure it is marked as an Embedded Resource and that it is in a folder called 'runAfterCreateDatabase' (and matches regex {initialCreationRegex}). And make sure that it is marked as 'Embedded Resource' in the .csproj build action");

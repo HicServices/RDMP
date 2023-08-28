@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;

@@ -120,16 +120,16 @@ public partial class HeatmapUI : UserControl
             _minValueInDataTable = double.MaxValue;
 
             for (var x = 0; x < _dataTable.Rows.Count; x++)
-            for (var y = 1; y < _dataTable.Columns.Count; y++)
-            {
-                var cellValue = ToDouble(_dataTable.Rows[x][y]);
+                for (var y = 1; y < _dataTable.Columns.Count; y++)
+                {
+                    var cellValue = ToDouble(_dataTable.Rows[x][y]);
 
-                if (cellValue < _minValueInDataTable)
-                    _minValueInDataTable = cellValue;
+                    if (cellValue < _minValueInDataTable)
+                        _minValueInDataTable = cellValue;
 
-                if (cellValue > _maxValueInDataTable)
-                    _maxValueInDataTable = cellValue;
-            }
+                    if (cellValue > _maxValueInDataTable)
+                        _maxValueInDataTable = cellValue;
+                }
 
             Height = (int)Math.Max(Height, _dataTable.Columns.Count * MinPixelHeight);
         }
@@ -264,29 +264,29 @@ public partial class HeatmapUI : UserControl
                 for (var x = 0; x < _dataTable.Rows.Count; x++)
                     //draw the line this way -------------> with pixels of width heatPixelWidth/Height
                     //skip the first y value which is the x axis value
-                for (var y = 1; y < _dataTable.Columns.Count; y++)
-                {
-                    //the value we are drawing
-                    var cellValue = ToDouble(_dataTable.Rows[x][y]);
-
-                    //if the cell value is 0 render it as black
-                    if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 &&
-                        Math.Abs(_minValueInDataTable) < 0.0000000001)
+                    for (var y = 1; y < _dataTable.Columns.Count; y++)
                     {
-                        brush.Color = Color.Black;
-                    }
-                    else
-                    {
-                        var brightness = (cellValue - _minValueInDataTable) /
-                                         (_maxValueInDataTable - _minValueInDataTable);
-                        var brightnessIndex = (int)(brightness * (NumberOfColors - 1));
+                        //the value we are drawing
+                        var cellValue = ToDouble(_dataTable.Rows[x][y]);
 
-                        brush.Color = _rainbow.Colors[brightnessIndex];
-                    }
+                        //if the cell value is 0 render it as black
+                        if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 &&
+                            Math.Abs(_minValueInDataTable) < 0.0000000001)
+                        {
+                            brush.Color = Color.Black;
+                        }
+                        else
+                        {
+                            var brightness = (cellValue - _minValueInDataTable) /
+                                             (_maxValueInDataTable - _minValueInDataTable);
+                            var brightnessIndex = (int)(brightness * (NumberOfColors - 1));
 
-                    e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight),
-                        (float)heatPixelWidth, (float)heatPixelHeight);
-                }
+                            brush.Color = _rainbow.Colors[brightnessIndex];
+                        }
+
+                        e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight),
+                            (float)heatPixelWidth, (float)heatPixelHeight);
+                    }
 
                 var labelStartX = Width - _currentLabelsWidth;
 

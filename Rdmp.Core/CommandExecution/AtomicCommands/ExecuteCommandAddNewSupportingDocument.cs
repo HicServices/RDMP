@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
@@ -14,6 +13,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -63,10 +63,10 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-                {
-                    WindowTitle = "Add SupportingDocument",
-                    TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
-                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            {
+                WindowTitle = "Add SupportingDocument",
+                TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
+            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue

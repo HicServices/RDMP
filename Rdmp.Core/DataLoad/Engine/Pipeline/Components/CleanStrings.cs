@@ -31,7 +31,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         GracefulCancellationToken cancellationToken)
     {
         timer.Start();
-        toProcess.BeginLoadData();
+
     StartAgain:
         foreach (DataRow row in toProcess.Rows)
         {

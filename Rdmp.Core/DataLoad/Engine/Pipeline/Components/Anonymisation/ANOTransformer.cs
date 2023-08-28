@@ -6,9 +6,9 @@
 
 using System;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.ReusableLibraryCode.Checks;

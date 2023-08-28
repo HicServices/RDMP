@@ -4,6 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -12,9 +15,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
@@ -158,31 +158,31 @@ internal class ConsoleGuiContextMenuFactory
         if (CommandFactoryBase.Is(o, out LoadMetadata lmd))
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunDleWindow(activator, lmd))
-                { OverrideCommandName = "Execute Load..." };
+            { OverrideCommandName = "Execute Load..." };
 
         if (CommandFactoryBase.Is(o, out Project p))
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunReleaseWindow(activator, p))
-                { OverrideCommandName = "Release..." };
+            { OverrideCommandName = "Release..." };
         if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
         {
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunReleaseWindow(activator, ec))
-                { OverrideCommandName = "Release..." };
+            { OverrideCommandName = "Release..." };
 
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunExtractionWindow(activator, ec))
-                { OverrideCommandName = "Extract..." };
+            { OverrideCommandName = "Extract..." };
         }
 
         if (CommandFactoryBase.Is(o, out CacheProgress cp))
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunCacheWindow(activator, cp))
-                { OverrideCommandName = "Run Cache..." };
+            { OverrideCommandName = "Run Cache..." };
 
         if (CommandFactoryBase.Is(o, out Catalogue c) && !c.IsApiCall())
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunDataQualityEngineWindow(activator, c))
-                { OverrideCommandName = "Run DQE..." };
+            { OverrideCommandName = "Run DQE..." };
     }
 }

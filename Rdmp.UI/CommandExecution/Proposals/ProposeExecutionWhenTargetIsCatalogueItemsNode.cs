@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.ItemActivation;
-using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
@@ -31,9 +31,11 @@ internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecu
         return cmd switch
         {
             ColumnInfoCombineable colInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
-                colInfo) { Category = target.Category },
+                colInfo)
+            { Category = target.Category },
             TableInfoCombineable tableInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
-                tableInfo.TableInfo.ColumnInfos) { Category = target.Category },
+                tableInfo.TableInfo.ColumnInfos)
+            { Category = target.Category },
             // when dropping onto Core or Supplemental etc
             CatalogueItemCombineable ciCombine when target.Category != null => new
                 ExecuteCommandChangeExtractionCategory(ItemActivator,

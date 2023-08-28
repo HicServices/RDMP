@@ -269,8 +269,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         //add the keys
 
         foreach (var kvp in CredentialsDictionary)
-        foreach (var forNode in kvp.Value)
-            toreturn[forNode.Key].Add(kvp.Key);
+            foreach (var forNode in kvp.Value)
+                toreturn[forNode.Key].Add(kvp.Key);
 
         return toreturn;
     }
@@ -507,36 +507,36 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         switch (oTableWrapperObject)
         {
             case Catalogue catalogue:
-            {
-                foreach (var ci in catalogue.CatalogueItems) ci.DeleteInDatabase();
+                {
+                    foreach (var ci in catalogue.CatalogueItems) ci.DeleteInDatabase();
 
-                break;
-            }
+                    break;
+                }
             case ExtractionInformation extractionInformation:
                 extractionInformation.CatalogueItem.ClearAllInjections();
                 break;
             // when deleting a TableInfo
             case TableInfo t:
-            {
-                // forget about its credentials usages
-                CredentialsDictionary.Remove(t);
+                {
+                    // forget about its credentials usages
+                    CredentialsDictionary.Remove(t);
 
-                foreach (var c in t.ColumnInfos) c.DeleteInDatabase();
+                    foreach (var c in t.ColumnInfos) c.DeleteInDatabase();
 
-                break;
-            }
+                    break;
+                }
             // when deleting a ColumnInfo
             case ColumnInfo columnInfo:
-            {
-                foreach (var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci => ci.ColumnInfo_ID == columnInfo.ID))
                 {
-                    ci.ColumnInfo_ID = null;
-                    ci.ClearAllInjections();
-                    ci.SaveToDatabase();
-                }
+                    foreach (var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci => ci.ColumnInfo_ID == columnInfo.ID))
+                    {
+                        ci.ColumnInfo_ID = null;
+                        ci.ClearAllInjections();
+                        ci.SaveToDatabase();
+                    }
 
-                break;
-            }
+                    break;
+                }
             case CatalogueItem catalogueItem:
                 catalogueItem.ExtractionInformation?.DeleteInDatabase();
                 break;

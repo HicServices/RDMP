@@ -164,7 +164,7 @@ public partial class PipelineDiagramUI : UserControl
                 if (_useCase.ExplicitSource != null)
                     AddExplicit(_useCase.ExplicitSource); //if so add it
                 else
-                    //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
+                //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.SourcePipelineComponent_ID != null)
                     AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
                         pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
@@ -185,7 +185,7 @@ public partial class PipelineDiagramUI : UserControl
                     AddExplicit(_useCase.ExplicitDestination); //if so add it
                 }
                 else
-                    //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
+                //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.DestinationPipelineComponent_ID != null)
                 {
                     AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID,

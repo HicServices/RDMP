@@ -7,23 +7,23 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using TypeGuesser;
-using System.Globalization;
-using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataExport.DataExtraction.Commands;
-using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 

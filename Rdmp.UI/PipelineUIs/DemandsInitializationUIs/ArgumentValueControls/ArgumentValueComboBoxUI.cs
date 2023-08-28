@@ -127,10 +127,10 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
     private void btnPick_Click(object sender, EventArgs e)
     {
         if (_activator.SelectObject(new DialogArgs
-            {
-                TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
-                AllowSelectingNull = true
-            }, _objectsForComboBox, out var selected))
+        {
+            TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
+            AllowSelectingNull = true
+        }, _objectsForComboBox, out var selected))
         {
             if (selected == null)
             {

@@ -582,4 +582,9 @@ public static class UserSettings
             AppSettings.AddOrUpdateValue($"SplitterDistance_{controlGuid:N}", splitterDistance);
         }
     }
+
+    public static void ClearUserSettings()
+    {
+        AppSettings.Clear();
+    }
 }

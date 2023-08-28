@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Checks;
@@ -36,7 +35,7 @@ public class PipelineChecker : ICheckable
         foreach (var component in _pipeline.PipelineComponents)
         {
             var copy = component;
-            var mefChecker = new MEFChecker(component.Class, delegate(string s)
+            var mefChecker = new MEFChecker(component.Class, delegate (string s)
             {
                 copy.Class = s;
                 copy.SaveToDatabase();

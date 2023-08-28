@@ -65,12 +65,12 @@ public partial class DiffDataTables : UserControl
     public void HighlightDiffCells()
     {
         foreach (DataGridViewRow r in dataGridView1.Rows)
-        foreach (DataGridViewCell c in r.Cells)
-            if (c.Value != null)
-                if (c.Value.ToString().Contains(DifferenceSymbol))
-                    c.Style.BackColor = Color.PaleGreen;
-                else if (c.Value.ToString().Contains(WhitespaceDifference))
-                    c.Style.BackColor = Color.Red;
+            foreach (DataGridViewCell c in r.Cells)
+                if (c.Value != null)
+                    if (c.Value.ToString().Contains(DifferenceSymbol))
+                        c.Style.BackColor = Color.PaleGreen;
+                    else if (c.Value.ToString().Contains(WhitespaceDifference))
+                        c.Style.BackColor = Color.Red;
     }
 
     public void Clear()

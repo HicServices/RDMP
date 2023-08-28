@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
@@ -48,12 +48,12 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
             return;
 
         if (!BasicActivator.SelectObject(new DialogArgs
-            {
-                EntryLabel = "Patient Identifier Column",
-                TaskDescription =
+        {
+            EntryLabel = "Patient Identifier Column",
+            TaskDescription =
                     $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
-                AllowAutoSelect = true
-            }, tbl.DiscoverColumns(), out var col))
+            AllowAutoSelect = true
+        }, tbl.DiscoverColumns(), out var col))
             // user cancelled selecting a column
             return;
 

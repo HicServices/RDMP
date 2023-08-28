@@ -4,17 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Providers;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode;
 using Terminal.Gui;
 

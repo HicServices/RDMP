@@ -48,33 +48,33 @@ internal class
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
                     sourceAggregateCommand, targetCohortAggregateContainer);
             case AggregateConfigurationCombineable sourceAggregateCommand:
-            {
-                var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
+                {
+                    var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
 
-                if (cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
-                    //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
-                    return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
-                        sourceAggregateCommand, targetCohortAggregateContainer);
-                //we are dragging around inside our own tree
+                    if (cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
+                        //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
+                        return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,
+                            sourceAggregateCommand, targetCohortAggregateContainer);
+                    //we are dragging around inside our own tree
 
-                //it is involved in cohort identification already, presumably it's a reorder?
-                if (sourceAggregateCommand.ContainerIfAny != null)
-                    return insertOption == InsertOption.Default
-                        ? new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
-                            targetCohortAggregateContainer)
-                        : new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
-                            targetCohortAggregateContainer, insertOption);
+                    //it is involved in cohort identification already, presumably it's a reorder?
+                    if (sourceAggregateCommand.ContainerIfAny != null)
+                        return insertOption == InsertOption.Default
+                            ? new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
+                                targetCohortAggregateContainer)
+                            : new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand,
+                                targetCohortAggregateContainer, insertOption);
 
-                //it's a patient index table
-                if (sourceAggregateCommand.IsPatientIndexTable)
-                    return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator,
-                        sourceAggregateCommand, targetCohortAggregateContainer);
+                    //it's a patient index table
+                    if (sourceAggregateCommand.IsPatientIndexTable)
+                        return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator,
+                            sourceAggregateCommand, targetCohortAggregateContainer);
 
 
-                //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
-                return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
-                    targetCohortAggregateContainer);
-            }
+                    //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
+                    return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand,
+                        targetCohortAggregateContainer);
+                }
             //source is another container (UNION / INTERSECT / EXCEPT)
             //can never drag the root container elsewhere
             case CohortAggregateContainerCombineable { ParentContainerIfAny: null }:

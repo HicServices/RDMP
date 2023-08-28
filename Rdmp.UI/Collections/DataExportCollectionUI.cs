@@ -132,7 +132,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
-            { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
+        { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
 
         var uiFactory = new AtomicCommandUIFactory(Activator);
         var cohortSubmenu = new ToolStripMenuItem("Cohort");

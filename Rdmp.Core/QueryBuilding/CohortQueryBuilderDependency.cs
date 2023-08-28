@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,7 +18,6 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
-using System.Collections.Concurrent;
 
 namespace Rdmp.Core.QueryBuilding;
 

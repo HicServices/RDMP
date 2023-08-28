@@ -4,10 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CsvHelper;
-using Rdmp.Core.Autocomplete;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.DataViewing;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CsvHelper;
+using Rdmp.Core.Autocomplete;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Terminal.Gui;
 using static Terminal.Gui.TabView;

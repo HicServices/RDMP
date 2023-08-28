@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Naming;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Triggers;
