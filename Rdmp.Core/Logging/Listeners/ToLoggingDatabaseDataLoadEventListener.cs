@@ -59,10 +59,25 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
     }
 
+    private const string RDMPLoggingStringLengthLimit = "RDMP_LOGGING_STRING_LENGTH_LIMIT";
+    private static readonly int StrStringLengthLimit;
+
+    static ToLoggingDatabaseDataLoadEventListener()
+    {
+        StrStringLengthLimit = int.TryParse(Environment.GetEnvironmentVariable(RDMPLoggingStringLengthLimit),out var limit) ? limit : int.MaxValue;
+    }
+
+    private static string EnsureMessageAValidLength(string message)
+    {
+        return StrStringLengthLimit < 4 ? "" :
+            message.Length > StrStringLengthLimit ? message[..(StrStringLengthLimit - 3)] + "..." : message;
+    }
     public virtual void OnNotify(object sender, NotifyEventArgs e)
     {
         if (DataLoadInfo == null)
             StartLogging();
+        if (StrStringLengthLimit < 4)   // Logging suppressed
+            return;
 
         switch (e.ProgressEventType)
         {
@@ -70,23 +85,25 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             case ProgressEventType.Debug:
                 break;
             case ProgressEventType.Information:
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
-                    e.Message);
+                DataLoadInfo?.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),
+                    EnsureMessageAValidLength(e.Message));
                 break;
             case ProgressEventType.Warning:
                 var msg = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
+                msg = EnsureMessageAValidLength(msg);
+                DataLoadInfo?.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.ToString(), msg);
                 break;
             case ProgressEventType.Error:
                 var err = e.Message + (e.Exception == null
                     ? ""
                     : Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true));
-                DataLoadInfo.LogFatalError(sender.ToString(), err);
+                err = EnsureMessageAValidLength(err);
+                DataLoadInfo?.LogFatalError(sender.ToString(), err);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(e));
         }
     }
 
@@ -97,18 +114,16 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 
         Debug.Assert(DataLoadInfo != null, "DataLoadInfo != null");
 
-        if (e.Progress.UnitOfMeasurement == ProgressType.Records)
-        {
-            //if(!tableLoads.Any(tbl=>tbl.))
-            if (!TableLoads.ContainsKey(e.TaskDescription))
-            {
-                var t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription,
-                    new[] { new DataSource(sender.ToString()) }, e.Progress.KnownTargetValue);
-                TableLoads.Add(e.TaskDescription, t);
-            }
+        if (e.Progress.UnitOfMeasurement != ProgressType.Records) return;
 
-            TableLoads[e.TaskDescription].Inserts = e.Progress.Value;
+        if (!TableLoads.TryGetValue(e.TaskDescription,out var t))
+        {
+            t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription,
+                new[] { new DataSource(sender.ToString()) }, e.Progress.KnownTargetValue);
+            TableLoads.Add(e.TaskDescription, t);
         }
+
+        t.Inserts = e.Progress.Value;
     }
 
     public virtual void FinalizeTableLoadInfos()
