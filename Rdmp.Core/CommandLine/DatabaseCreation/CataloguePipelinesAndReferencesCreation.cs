@@ -110,7 +110,7 @@ public class CataloguePipelinesAndReferencesCreation
     }
 
 
-    public void CreatePipelines()
+    public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
         var bulkInsertCsvPipe =
             CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)",
@@ -125,9 +125,11 @@ public class CataloguePipelinesAndReferencesCreation
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-        SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
-        SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
-
+        if (options.CreateLoggingServer)
+        {
+            SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
+            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
+        }
         var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File", typeof(DelimitedFlatFileDataFlowSource),
             typeof(BasicCohortDestination));
         SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");
@@ -203,6 +205,6 @@ public class CataloguePipelinesAndReferencesCreation
     {
         DoStartup();
         CreateServers(options);
-        CreatePipelines();
+        CreatePipelines(options);
     }
 }

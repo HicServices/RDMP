@@ -28,7 +28,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class CachedFileRetrieverTests : DatabaseTests
 {
-    private readonly ILoadProgress _lpMock;
+    private ILoadProgress _lpMock;
+    private ICacheProgress _cpMock;
 
     public CachedFileRetrieverTests()
     {
@@ -183,7 +184,7 @@ public class CachedFileRetrieverTests : DatabaseTests
         loadMetadata.GetAllCatalogues().Returns(new[] { catalogue });
 
         var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory,
-            ThrowImmediatelyDataLoadEventListener.Quiet, null)
+            new ThrowImmediatelyDataLoadEventListener(), null)
         {
             LoadProgress = _lpMock
         };

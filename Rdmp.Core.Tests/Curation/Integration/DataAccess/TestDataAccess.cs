@@ -31,7 +31,7 @@ public class TestDataAccess : DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMismatch()
     {
-        var  testPoints = new List<TestAccessPoint>
+        var testPoints = new List<TestAccessPoint>
         {
             new("frank", "bob", "username", "mypas"),
             new("frank", "bob", "username", "mydifferentPass")
@@ -221,7 +221,7 @@ public class TestDataAccess : DatabaseTests
             t.SaveToDatabase();
 
             //t has no credentials
-            var server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);
+            var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
             Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
             Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);

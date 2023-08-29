@@ -98,11 +98,6 @@ public class FilterImporterTests : UnitTests
         factory.CreateNewParameter(constructed, "DECLARE @hall AS varchar(50);")
             .Returns(constructedParameter);
 
-        var factory = Substitute.For<IFilterFactory>();
-        factory.CreateNewFilter("Space Odyssey").Returns(constructed);
-        factory.CreateNewParameter(constructed, "DECLARE @hall AS varchar(50);")
-            .Returns(constructedParameter);
-
         var filterCreator = new FilterImporter(factory, null);
         //Returns constructed
         filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, null);
