@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Options;
@@ -38,10 +38,9 @@ public abstract class CommandCliTests : UnitTests
 
     protected Mock<IBasicActivateItems> GetMockActivator()
     {
-        var mock = new Mock<IBasicActivateItems>();
-        mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
-        mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
-        mock.Setup(m => m.Show(It.IsAny<string>()));
+        var mock = Substitute.For<IBasicActivateItems>();
+        mock.RepositoryLocator.Returns(RepositoryLocator);
+        mock.GetDelegates().Returns(new List<CommandInvokerDelegate>());
         return mock;
     }
 

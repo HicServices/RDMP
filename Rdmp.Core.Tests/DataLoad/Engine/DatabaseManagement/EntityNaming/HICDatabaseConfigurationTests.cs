@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.EntityNaming;

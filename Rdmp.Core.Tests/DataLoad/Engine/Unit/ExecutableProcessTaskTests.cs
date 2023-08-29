@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -28,7 +28,7 @@ internal class ExecutableProcessTaskTests
             new(new MemoryRepository(), "DatabaseName", db)
         };
 
-        var processTask = Mock.Of<IProcessTask>();
+        var processTask = Substitute.For<IProcessTask>();
         var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
 
         var argString = task.CreateArgString();

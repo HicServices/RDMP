@@ -393,7 +393,9 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         if (Common.Compiler.Tasks.TryGetValue(c, out var task) && task != null && enabledFunc(task))
             menuItem.Click += (s, e) => action(task);
         else
+        {
             menuItem.Enabled = false;
+        }
 
         return menuItem;
     }

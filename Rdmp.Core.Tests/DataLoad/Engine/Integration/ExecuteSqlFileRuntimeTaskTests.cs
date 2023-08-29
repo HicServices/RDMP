@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -55,7 +55,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         task.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
-        var job = Mock.Of<IDataLoadJob>();
+        var job = Substitute.For<IDataLoadJob>();
 
         task.Run(job, new GracefulCancellationToken());
 
@@ -137,10 +137,9 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
-        var pt = Mock.Of<IProcessTask>(x =>
-            x.Path == typeof(ExecuteSqlMutilation).FullName &&
-            x.GetAllArguments() == sqlArg
-        );
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(typeof(ExecuteSqlMutilation).FullName);
+        pt.GetAllArguments().Returns(sqlArg);
 
         IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args);
 

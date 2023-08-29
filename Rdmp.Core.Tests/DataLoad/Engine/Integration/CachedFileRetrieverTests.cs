@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Curation;

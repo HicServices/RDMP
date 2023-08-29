@@ -6,7 +6,7 @@
 
 using System;
 using FAnsi.Implementations.MicrosoftSQL;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
@@ -28,7 +28,7 @@ public class ParameterCreatorTests
         var creator = new ParameterCreator(factory.Object, Array.Empty<ISqlParameter>(), null);
         creator.CreateAll(f, null);
 
-        factory.Verify();
+        factory.Received(1);
     }
 
 
@@ -55,6 +55,9 @@ public class ParameterCreatorTests
 
         var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(f, "DECLARE @bob AS varchar(50);").Returns(p);
 
         var factory = new Mock<IFilterFactory>();
         factory.Setup(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);")).Returns(p.Object);
@@ -101,6 +104,11 @@ public class ParameterCreatorTests
     {
         var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        var global = Substitute.For<ISqlParameter>();
+        global.ParameterName.Returns("@bob");
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>()).Returns(x => { throw new InvalidOperationException(); });
 
         var global = Mock.Of<ISqlParameter>(x => x.ParameterName == "@bob");
 
@@ -120,6 +128,9 @@ public class ParameterCreatorTests
     {
         var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
+        f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+        var global = Substitute.For<ISqlParameter>();
+        global.ParameterName.Returns("@bob");
 
         var global = Mock.Of<ISqlParameter>(x => x.ParameterName == "@bob");
 
@@ -138,7 +149,7 @@ public class ParameterCreatorTests
     public void SingleParameterTest_Template_TemplateValuesUsed()
     {
         //The constructor returns
-        var pstub = Mock.Of<ISqlParameter>();
+        var pstub = Substitute.For<ISqlParameter>();
 
         //The filter that requires that the parameters be created
         var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
@@ -151,8 +162,8 @@ public class ParameterCreatorTests
         template.Value = "5";
         template.Comment = "fish";
 
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup(m => m.CreateNewParameter(f, "DECLARE @bob AS int")).Returns(pstub);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewParameter(f, "DECLARE @bob AS int").Returns(pstub);
 
         var creator = new ParameterCreator(factory.Object, null, new[] { template });
         creator.CreateAll(f, null);

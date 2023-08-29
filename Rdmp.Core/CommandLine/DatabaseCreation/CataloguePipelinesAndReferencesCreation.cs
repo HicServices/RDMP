@@ -52,6 +52,12 @@ public class CataloguePipelinesAndReferencesCreation
     private void CreateServers()
     {
         var defaults = _repositoryLocator.CatalogueRepository;
+        if(options.CreateLoggingServer){
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
+                {
+                    Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
+                    Database = _logging.InitialCatalog
+                };
 
         _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",
             new LoggingDatabasePatcher())
@@ -93,7 +99,8 @@ public class CataloguePipelinesAndReferencesCreation
         };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
-        if (_dqe.UserID != null)
+        bool hasLoggingDB = _logging != null && _logging.UserID != null;
+        if (_dqe.UserID != null && hasLoggingDB)
         {
             if (_logging.UserID != _dqe.UserID || _logging.Password != _dqe.Password)
                 throw new Exception(
@@ -108,7 +115,7 @@ public class CataloguePipelinesAndReferencesCreation
         Console.WriteLine("Successfully configured RAW server");
     }
 
-    public void CreatePipelines()
+    public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
         var bulkInsertCsvPipe =
             CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)",
@@ -197,10 +204,10 @@ public class CataloguePipelinesAndReferencesCreation
         return pipe;
     }
 
-    public void Create()
+    public void Create(PlatformDatabaseCreationOptions options)
     {
         DoStartup();
-        CreateServers();
-        CreatePipelines();
+        CreateServers(options);
+        CreatePipelines(options);
     }
 }

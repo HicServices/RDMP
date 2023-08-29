@@ -36,12 +36,12 @@ public class AxisAndPivotCLITests : CommandCliTests
         dim.AggregateConfiguration_ID = ac.ID;
         dim.Alias = "frogmarch";
 
-        var cmd = new ExecuteCommandSetPivot(GetMockActivator().Object, ac, "frogmarch");
+        var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
         cmd.Execute();
 
         Assert.AreEqual(dim.ID, ac.PivotOnDimensionID);
 
-        cmd = new ExecuteCommandSetPivot(GetMockActivator().Object, ac, null);
+        cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, null);
         cmd.Execute();
 
         Assert.IsNull(ac.PivotOnDimensionID);
@@ -70,7 +70,7 @@ public class AxisAndPivotCLITests : CommandCliTests
     {
         var ac = WhenIHaveA<AggregateConfiguration>();
 
-        var cmd = new ExecuteCommandSetAxis(GetMockActivator().Object, ac, "fff");
+        var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "fff");
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
         Assert.AreEqual(
@@ -91,12 +91,12 @@ public class AxisAndPivotCLITests : CommandCliTests
 
         Assert.IsNull(ac.GetAxisIfAny());
 
-        var cmd = new ExecuteCommandSetAxis(GetMockActivator().Object, ac, "frogmarch");
+        var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
         cmd.Execute();
 
         Assert.IsNotNull(ac.GetAxisIfAny());
 
-        cmd = new ExecuteCommandSetAxis(GetMockActivator().Object, ac, null);
+        cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, null);
         cmd.Execute();
 
         Assert.IsNull(ac.GetAxisIfAny());
@@ -112,7 +112,7 @@ public class AxisAndPivotCLITests : CommandCliTests
         dim.AggregateConfiguration_ID = ac.ID;
         dim.Alias = "frogmarch";
 
-        var cmd = new ExecuteCommandSetAxis(GetMockActivator().Object, ac, "frogmarch");
+        var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
         Assert.AreEqual("AggregateDimension frogmarch is not a Date so cannot set it as an axis for Aggregate My graph",

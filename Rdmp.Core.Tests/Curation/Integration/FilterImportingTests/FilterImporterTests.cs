@@ -6,7 +6,7 @@
 
 using System;
 using FAnsi.Implementations.MicrosoftSQL;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -31,8 +31,8 @@ public class FilterImporterTests : UnitTests
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
 
         //The factory Mock
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup(m => m.CreateNewFilter("Space Odyssey")).Returns(constructed);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewFilter("Space Odyssey").Returns(constructed);
 
         //The thing we are testing
         var filterCreator = new FilterImporter(factory.Object, null);
@@ -60,17 +60,17 @@ public class FilterImporterTests : UnitTests
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance);
 
         //The factory Mock
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup(m => m.CreateNewFilter("Copy of Space Odyssey")).Returns(constructed);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewFilter("Copy of Space Odyssey").Returns(constructed);
 
         //The thing we are testing
-        var filterCreator = new FilterImporter(factory.Object, null);
+        var filterCreator = new FilterImporter(factory, null);
 
         //The method we are testing
         filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, new[] { existing });
 
         //Did the factory mock get ordered to create a filter called "Copy of Space Odyssey" (because there was already one called "Space Odyssey" in the same scope)
-        factory.Verify();
+        factory.Received(1);
     }
 
     [Test]
@@ -88,7 +88,12 @@ public class FilterImporterTests : UnitTests
         factory.Setup(m => m.CreateNewParameter(constructed, "DECLARE @hall AS varchar(50);"))
             .Returns(constructedParameter);
 
-        var filterCreator = new FilterImporter(factory.Object, null);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewFilter("Space Odyssey").Returns(constructed);
+        factory.CreateNewParameter(constructed, "DECLARE @hall AS varchar(50);")
+            .Returns(constructedParameter);
+
+        var filterCreator = new FilterImporter(factory, null);
         //Returns constructed
         filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, null);
 
@@ -133,7 +138,7 @@ public class FilterImporterTests : UnitTests
         filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, null); //Import it brah
 
         //Master filter should have been asked what its parameters are
-        Mock.Get(master).Verify();
+        master.Received(1);
 
         //factory should have been asked to create a new filter called "Space Odyssey" and a parameter with a declaration that matches the master filter SQL (i.e. 'AS int')
         Mock.Get(factory).Verify(m => m.CreateNewFilter("Space Odyssey"), Times.Once);
@@ -181,7 +186,7 @@ public class FilterImporterTests : UnitTests
         Mock.Get(existing).Verify(x => x.GetAllParameters(), Times.Once);
 
         //The factory should have been asked to create a filter called "Copy of Space Odyssey" and a parameter "@hall2" (because @hall already exists in the import into scope)
-        factory.Verify();
+        factory.Received(1);
     }
 
     [Test]
@@ -200,7 +205,7 @@ public class FilterImporterTests : UnitTests
         masterParameter.ParameterSQL = "DECLARE @hall AS int";
 
         //We expect that the filter we are cloning will be asked what its parameters are once (and we tell them the param above)
-        Mock.Get(master).Setup(m => m.GetAllParameters()).Returns(new[] { masterParameter });
+        master.GetAllParameters().Returns(new[] { masterParameter });
 
         //An existing parameter that is in the scope that is being imported into
         var existingParameter = Mock.Of<ISqlParameter>(x => x.ParameterName == "@hall");
@@ -216,12 +221,12 @@ public class FilterImporterTests : UnitTests
         var constructedParameter = Mock.Of<ISqlParameter>();
 
         //The mocked factory
-        var factory = new Mock<IFilterFactory>();
-        factory.Setup(m => m.CreateNewFilter("Copy of Space Odyssey")).Returns(constructed);
-        factory.Setup(m => m.CreateNewParameter(constructed, "DECLARE @hall2 AS int")).Returns(constructedParameter);
+        var factory = Substitute.For<IFilterFactory>();
+        factory.CreateNewFilter("Copy of Space Odyssey").Returns(constructed);
+        factory.CreateNewParameter(constructed, "DECLARE @hall2 AS int").Returns(constructedParameter);
 
         //The thing we are testing
-        var filterCreator = new FilterImporter(factory.Object, null);
+        var filterCreator = new FilterImporter(factory, null);
         filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, new[] { existing });
 
         Assert.AreEqual("@hall2 = 'active'", constructed.WhereSQL);
@@ -230,9 +235,9 @@ public class FilterImporterTests : UnitTests
         Mock.Get(master).Verify(m => m.GetAllParameters(), Times.Once);
 
         //Existing filter in the scope should have been asked what its parameters are
-        Mock.Get(existing).Verify();
+        existing.Received(1);
 
         //The factory should have been asked to create a filter called "Copy of Space Odyssey" and a parameter "@hall2" (because @hall already exists in the import into scope) with type int because master parameter is type int
-        factory.Verify();
+        factory.Received(1);
     }
 }

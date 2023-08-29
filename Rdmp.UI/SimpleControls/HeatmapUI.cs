@@ -263,7 +263,14 @@ public partial class HeatmapUI : UserControl
                 for (var x = 0; x < _dataTable.Rows.Count; x++)
                     //draw the line this way -------------> with pixels of width heatPixelWidth/Height
                     //skip the first y value which is the x axis value
-                    for (var y = 1; y < _dataTable.Columns.Count; y++)
+                for (var y = 1; y < _dataTable.Columns.Count; y++)
+                {
+                    //the value we are drawing
+                    var cellValue = ToDouble(_dataTable.Rows[x][y]);
+
+                    //if the cell value is 0 render it as black
+                    if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 &&
+                        Math.Abs(_minValueInDataTable) < 0.0000000001)
                     {
                         //the value we are drawing
                         var cellValue = ToDouble(_dataTable.Rows[x][y]);

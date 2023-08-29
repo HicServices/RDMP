@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Moq;
+using NSubstitute;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
@@ -24,7 +24,7 @@ public class SingleJobPipelineTests : DatabaseTests
 
         var pipeline = new SingleJobExecution(new List<IDataLoadComponent> { component });
 
-        var job = Mock.Of<IDataLoadJob>();
+        var job = Substitute.For<IDataLoadJob>();
         var jobTokenSource = new GracefulCancellationTokenSource();
         pipeline.Run(job, jobTokenSource.Token);
     }

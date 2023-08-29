@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;

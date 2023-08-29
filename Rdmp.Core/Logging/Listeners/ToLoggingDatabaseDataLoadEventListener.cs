@@ -59,10 +59,25 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
             _logManager.CreateDataLoadInfo(_loggingTask, _hostingApplication.ToString(), _runDescription, "", false);
     }
 
+    private const string RDMPLoggingStringLengthLimit = "RDMP_LOGGING_STRING_LENGTH_LIMIT";
+    private static readonly int StrStringLengthLimit;
+
+    static ToLoggingDatabaseDataLoadEventListener()
+    {
+        StrStringLengthLimit = int.TryParse(Environment.GetEnvironmentVariable(RDMPLoggingStringLengthLimit),out var limit) ? limit : int.MaxValue;
+    }
+
+    private static string EnsureMessageAValidLength(string message)
+    {
+        return StrStringLengthLimit < 4 ? "" :
+            message.Length > StrStringLengthLimit ? message[..(StrStringLengthLimit - 3)] + "..." : message;
+    }
     public virtual void OnNotify(object sender, NotifyEventArgs e)
     {
         if (DataLoadInfo == null)
             StartLogging();
+        if (StrStringLengthLimit < 4)   // Logging suppressed
+            return;
 
         switch (e.ProgressEventType)
         {
@@ -86,7 +101,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
                 DataLoadInfo.LogFatalError(sender.ToString(), err);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(e));
         }
     }
 
@@ -107,8 +122,14 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
                 TableLoads.Add(e.TaskDescription, t);
             }
 
-            TableLoads[e.TaskDescription].Inserts = e.Progress.Value;
+        if (!TableLoads.TryGetValue(e.TaskDescription,out var t))
+        {
+            t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription,
+                new[] { new DataSource(sender.ToString()) }, e.Progress.KnownTargetValue);
+            TableLoads.Add(e.TaskDescription, t);
         }
+
+        t.Inserts = e.Progress.Value;
     }
 
     public virtual void FinalizeTableLoadInfos()

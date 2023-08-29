@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;

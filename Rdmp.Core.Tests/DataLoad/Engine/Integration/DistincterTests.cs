@@ -10,7 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

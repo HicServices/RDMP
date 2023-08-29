@@ -360,11 +360,18 @@ public partial class AutoCommentsEvaluator
                 suggestedNewFileContents.Add(f, sbSuggestedText.ToString());
         }
 
-        Assert.IsEmpty(suggestedNewFileContents);
 
         //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
+        if (suggestedNewFileContents.Count==0)
+            Assert.Pass();
+        else
+        {
+            Console.WriteLine($"Replacing file contents in {string.Join(";", suggestedNewFileContents.Keys)}");
+        }
         foreach (var suggestedNewFileContent in suggestedNewFileContents)
             File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
+
+        Assert.IsEmpty(suggestedNewFileContents);
     }
 
     private static string GetUniqueTypeName(string typename)

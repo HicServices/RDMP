@@ -123,7 +123,6 @@ public partial class ViewSourceCodeDialog : Form
             foreach (var zipFile in new[] { zipArchive }.Union(SupplementalSourceZipFiles))
                 //if the zip exists
                 if (zipFile.Exists)
-                {
                     //read the entry (if it is there)
                     using var z = ZipFile.OpenRead(zipFile.FullName);
                     var readToEnd = GetEntryFromZipFile(z, toFind);

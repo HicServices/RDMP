@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
@@ -53,8 +53,12 @@ public class RdmpMockFactory
     /// <returns></returns>
     public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
     {
-        var lmd = new Mock<ILoadMetadata>();
-        var cata = new Mock<ICatalogue>();
+        var lmd = Substitute.For<ILoadMetadata>();
+        var cata = Substitute.For<ICatalogue>();
+        var server = tableInfo.Discover(DataAccessContext.DataLoad).Database.Server;
+        lmd.GetDistinctLiveDatabaseServer().Returns(server);
+        lmd.GetAllCatalogues().Returns(new[] { cata });
+        lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
 
         lmd.Setup(m => m.GetDistinctLiveDatabaseServer())
             .Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);

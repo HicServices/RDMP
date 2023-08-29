@@ -7,7 +7,7 @@
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;

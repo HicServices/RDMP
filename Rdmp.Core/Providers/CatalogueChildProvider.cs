@@ -1668,9 +1668,38 @@ public class CatalogueChildProvider : ICoreChildProvider
                                 }
                             }
                         }
-                        catch (Exception e)
+
+                        //it has children
+                        if (pluginChildren != null && pluginChildren.Any())
                         {
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                            //get the descendancy of the parent
+                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
+
+                            var newDescendancy = parentDescendancy == null
+                                ? new DescendancyList(new[] { o })
+                                : //if the parent is a root level object start a new descendancy list from it
+                                parentDescendancy
+                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                            //record that
+                            foreach (var pluginChild in pluginChildren)
+                            {
+                                //if the parent didn't have any children before
+                                if (!_childDictionary.ContainsKey(o))
+                                    _childDictionary.AddOrUpdate(o, new HashSet<object>(),
+                                        (o1, set) => set); //it does now
+
+
+                                //add us to the parent objects child collection
+                                _childDictionary[o].Add(pluginChild);
+
+                                //add to the child collection of the parent object kvp.Key
+                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
+                                    (s, e) => newDescendancy);
+
+                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                newObjectsFound.Add(pluginChild);
+                            }
                         }
 
             if (newObjectsFound.Any())

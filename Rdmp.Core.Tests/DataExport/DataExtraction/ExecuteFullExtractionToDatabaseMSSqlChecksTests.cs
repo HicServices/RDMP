@@ -6,7 +6,7 @@
 
 using FAnsi;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -30,13 +30,15 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
     {
         base.SetUp();
 
-        _projectStub = Mock.Of<IProject>();
+        _projectStub = Substitute.For<IProject>();
         _projectStub.ProjectNumber = -123;
 
         var cfg = Mock.Of<IExtractionConfiguration>();
 
         _commandStub = Mock.Of<IExtractCommand>(cmd => cmd.Configuration == cfg);
 
+        _commandStub = Substitute.For<IExtractCommand>();
+        _commandStub.Configuration.Returns(cfg);
         Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
     }
 

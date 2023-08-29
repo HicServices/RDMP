@@ -127,9 +127,12 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
         var dt = execution.Identifiers;
 
+        DataTable dt = execution.Identifiers;
+        dt.BeginLoadData();
         foreach (DataColumn column in dt.Columns)
             column.ReadOnly = false;
 
+        dt.EndLoadData();
         return dt;
     }
 

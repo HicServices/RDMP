@@ -55,7 +55,7 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
 
         // now clear that status
 
-        cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1, ac2 },
+        cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { ac1, ac2 },
             ExtendedProperty.IsTemplate, null);
 
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);

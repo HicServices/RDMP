@@ -6,7 +6,7 @@
 
 using System;
 using System.Data;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;

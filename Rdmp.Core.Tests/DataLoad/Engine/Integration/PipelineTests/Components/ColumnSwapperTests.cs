@@ -11,7 +11,7 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Extensions;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -578,23 +578,21 @@ internal class ColumnSwapperTests : DatabaseTests
 
     private static IExtractDatasetCommand GetMockExtractDatasetCommand()
     {
-        var mockPj = Mock.Of<IProject>(p =>
-            p.Name == "My Project" &&
-            p.ProjectNumber == 1
-        );
+        var mockPj = Substitute.For<IProject>();
+        mockPj.Name.Returns("My Project");
+        mockPj.ProjectNumber.Returns(1);
 
-        var mockConfig = Mock.Of<IExtractionConfiguration>(c =>
-            c.Project == mockPj);
+        var mockConfig = Substitute.For<IExtractionConfiguration>();
+        mockConfig.Project.Returns(mockPj);
 
-        var mockSelectedDatasets = Mock.Of<ISelectedDataSets>(sds =>
-            sds.ExtractionConfiguration == mockConfig
-        );
+        var mockSelectedDatasets = Substitute.For<ISelectedDataSets>();
+        mockSelectedDatasets.ExtractionConfiguration.Returns(mockConfig);
 
-        var mockExtractDsCmd = Mock.Of<IExtractDatasetCommand>(d =>
-            d.Project == mockPj &&
-            d.Configuration == mockConfig &&
-            d.SelectedDataSets == mockSelectedDatasets
-        );
+
+        var mockExtractDsCmd = Substitute.For<IExtractDatasetCommand>();
+        mockExtractDsCmd.Project.Returns(mockPj);
+        mockExtractDsCmd.Configuration.Returns(mockConfig);
+        mockExtractDsCmd.SelectedDataSets.Returns(mockSelectedDatasets);
 
         return mockExtractDsCmd;
     }

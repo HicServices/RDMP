@@ -31,8 +31,8 @@ public class SuspiciousRelationshipPropertyUse
     public void FindPropertyMisuse(List<string> csFilesFound)
     {
         //Find all the types that come from the database
-        var types = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t));
-        types = types.Union(typeof(Project).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+        var types = typeof(Catalogue).Assembly.GetTypes().Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t));
+        types = types.Union(typeof(Project).Assembly.GetTypes().Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t)))
             .ToArray();
 
         foreach (var type in types)
@@ -43,7 +43,7 @@ public class SuspiciousRelationshipPropertyUse
                 continue;
 
             //Find the C sharp code for the class
-            var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
+            var relationshipProperties = type.GetProperties().Where(static p => p.CanRead && !p.CanWrite);
 
             var expectedFileName = $"{type.Name}.cs";
             var files = csFilesFound
@@ -155,8 +155,8 @@ public class SuspiciousRelationshipPropertyUse
 
                     suggestedMethodWrappers += $"public {typeName} {p.Name}{Environment.NewLine}";
                     suggestedMethodWrappers += $"{{{Environment.NewLine}";
-                    suggestedMethodWrappers += $"\tget {{ return {fieldName};}}{Environment.NewLine}";
-                    suggestedMethodWrappers += $"\tset {{ SetField(ref {fieldName},value);}}{Environment.NewLine}";
+                    suggestedMethodWrappers += $"\tget => {fieldName};{Environment.NewLine}";
+                    suggestedMethodWrappers += $"\tset => SetField(ref {fieldName},value);{Environment.NewLine}";
                     suggestedMethodWrappers += $"}}{Environment.NewLine}";
                 }
 
@@ -194,8 +194,6 @@ public class SuspiciousRelationshipPropertyUse
                 Console.WriteLine("#endregion");
             }
         }
-
-        AnalyseRelationshipPropertyUsages();
 
         foreach (var fail in _fails)
             Console.WriteLine(fail);

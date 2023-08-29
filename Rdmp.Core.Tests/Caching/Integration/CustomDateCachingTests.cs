@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
 using Rdmp.Core.Caching.Layouts;
@@ -60,7 +60,7 @@ public class CustomDateCachingTests : DatabaseTests
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
                 true);
 
-        var lmd = Mock.Of<ILoadMetadata>();
+        var lmd = Substitute.For<ILoadMetadata>();
         lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
 
         var loadProgress = Mock.Of<ILoadProgress>(l =>

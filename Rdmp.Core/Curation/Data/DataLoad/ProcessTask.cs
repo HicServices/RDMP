@@ -358,7 +358,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             //convert the result back from generic to specific (us)
             .ToArray();
 
-
     /// <inheritdoc/>
     public IArgument[] CreateArgumentsForClassIfNotExists<T>() => CreateArgumentsForClassIfNotExists(typeof(T));
 

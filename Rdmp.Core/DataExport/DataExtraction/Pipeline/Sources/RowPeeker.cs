@@ -85,5 +85,7 @@ internal class RowPeeker
                 _peekedRecord = r;
                 break;
             }
+        }
+        chunk.EndLoadData();
     }
 }
