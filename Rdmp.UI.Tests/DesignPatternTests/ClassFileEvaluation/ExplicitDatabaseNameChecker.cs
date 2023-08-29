@@ -41,7 +41,8 @@ public class ExplicitDatabaseNameChecker
                 "Settings.Designer.cs",
                 "PlatformDatabaseCreationOptions.cs",
                 "PackOptions.cs",
-                "PasswordEncryptionKeyLocation.cs"
+                "PasswordEncryptionKeyLocation.cs",
+                "ToLoggingDatabaseDataLoadEventListener.cs"
             }); //allowed because it's default arguments for CLI
 
         prohibitedStrings.Add("TEST_");
