@@ -16,27 +16,27 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 [Category("Unit")]
 public class JobDateGenerationStrategyFactoryTestsUnit : UnitTests
 {
-    [Test]
-    public void NoDates()
-    {
-        var lp = WhenIHaveA<LoadProgress>();
-        var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
-        var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() =>
-                   factory.Create(lp, new ThrowImmediatelyDataLoadEventListener()));
+        [Test]
+        public void NoDates()
+        {
+                var lp = WhenIHaveA<LoadProgress>();
+                var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
+                var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() =>
+                           factory.Create(lp, new ThrowImmediatelyDataLoadEventListener()));
 
-        Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null",
-            ex.Message);
-    }
+                Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null",
+                    ex.Message);
+        }
 
-    [Test]
-    public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
-    {
-        var lp = WhenIHaveA<LoadProgress>();
-        lp.DataLoadProgress = new DateTime(2001, 01, 01);
+        [Test]
+        public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
+        {
+                var lp = WhenIHaveA<LoadProgress>();
+                lp.DataLoadProgress = new DateTime(2001, 01, 01);
 
-        var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
+                var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
-        Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy),
-            factory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet).GetType());
-    }
+                Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy),
+                    factory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet).GetType());
+        }
 }

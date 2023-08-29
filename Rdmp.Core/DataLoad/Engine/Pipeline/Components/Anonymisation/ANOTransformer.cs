@@ -88,7 +88,7 @@ public class ANOTransformer
             if (valueToReplace == DBNull.Value)
                 continue;
 
-            //its not null so look up the mapped value
+            //it's not null so look up the mapped value
             var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
                 $"Substitution table returned by {SubstitutionStoredProcedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
             var substitutionValue = substitutionRow[1]; //substitution value

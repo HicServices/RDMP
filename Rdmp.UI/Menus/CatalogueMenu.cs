@@ -91,7 +91,6 @@ internal class CatalogueMenu : RDMPContextMenuStrip
             catch (Exception)
             {
                 // if the directory name is bad or corrupt
-                return;
             }
         }
     }

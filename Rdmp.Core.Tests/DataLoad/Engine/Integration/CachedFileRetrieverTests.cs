@@ -28,8 +28,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class CachedFileRetrieverTests : DatabaseTests
 {
-    private ILoadProgress _lpMock;
-    private ICacheProgress _cpMock;
+    private readonly ILoadProgress _lpMock;
+    private readonly ICacheProgress _cpMock;
 
     public CachedFileRetrieverTests()
     {

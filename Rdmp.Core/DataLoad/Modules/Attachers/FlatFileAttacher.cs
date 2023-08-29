@@ -237,7 +237,6 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         GracefulCancellationToken cancellationToken);
 
 
-
     private static void DropEmptyColumns(DataTable dt)
     {
         var emptyColumnsSyntheticNames = new Regex("^Column[0-9]+$");

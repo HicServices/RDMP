@@ -51,7 +51,7 @@ public class DleRunner : Runner
 
         if (loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
             throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
-            
+
         var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
         var flags = new HICLoadConfigurationFlags
         {

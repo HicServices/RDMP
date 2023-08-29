@@ -147,66 +147,60 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
         var server = DataAccessPortal.ExpectServer(ServerToExecuteQueryOn, DataAccessContext);
 
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+
+        using var cmd = server.GetCommand(AliasTableSQL, con);
+        cmd.CommandTimeout = timeoutInSeconds;
+
+        using var r = cmd.ExecuteReader();
+        var haveCheckedColumns = false;
+
+        while (r.Read())
         {
-            con.Open();
-
-            using (var cmd = server.GetCommand(AliasTableSQL, con))
+            if (!haveCheckedColumns)
             {
-                cmd.CommandTimeout = timeoutInSeconds;
+                int idx;
 
-                using (var r = cmd.ExecuteReader())
+                try
                 {
-                    var haveCheckedColumns = false;
-
-                    while (r.Read())
-                    {
-                        if (!haveCheckedColumns)
-                        {
-                            int idx;
-
-                            try
-                            {
-                                idx = r.GetOrdinal(AliasColumnInInputDataTables);
-                            }
-                            catch (IndexOutOfRangeException)
-                            {
-                                throw new AliasTableFetchException(
-                                    $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
-                            }
-
-                            if (idx == -1)
-                                throw new AliasTableFetchException(
-                                    $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
-
-                            if (idx != 0)
-                                throw new AliasTableFetchException(
-                                    $"Alias table DID contain column '{AliasColumnInInputDataTables}' but it was not the first column in the result set {expectation}");
-
-                            if (r.FieldCount != 2)
-                                throw new AliasTableFetchException(
-                                    $"Alias table SQL resulted in {r.FieldCount} fields being returned, we expect exactly 2 {expectation}");
-
-                            haveCheckedColumns = true;
-                        }
-
-                        var input = r[0];
-                        var alias = r[1];
-
-                        if (input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
-                            throw new AliasTableFetchException("Alias table contained nulls");
-
-                        if (input.Equals(alias))
-                            throw new AliasTableFetchException(
-                                "Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");
-
-                        if (!toReturn.ContainsKey(input))
-                            toReturn.Add(input, new List<object>());
-
-                        toReturn[input].Add(alias);
-                    }
+                    idx = r.GetOrdinal(AliasColumnInInputDataTables);
                 }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new AliasTableFetchException(
+                        $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
+                }
+
+                if (idx == -1)
+                    throw new AliasTableFetchException(
+                        $"Alias table did not contain a column called '{AliasColumnInInputDataTables}' {expectation}");
+
+                if (idx != 0)
+                    throw new AliasTableFetchException(
+                        $"Alias table DID contain column '{AliasColumnInInputDataTables}' but it was not the first column in the result set {expectation}");
+
+                if (r.FieldCount != 2)
+                    throw new AliasTableFetchException(
+                        $"Alias table SQL resulted in {r.FieldCount} fields being returned, we expect exactly 2 {expectation}");
+
+                haveCheckedColumns = true;
             }
+
+            var input = r[0];
+            var alias = r[1];
+
+            if (input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
+                throw new AliasTableFetchException("Alias table contained nulls");
+
+            if (input.Equals(alias))
+                throw new AliasTableFetchException(
+                    "Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");
+
+            if (!toReturn.ContainsKey(input))
+                toReturn.Add(input, new List<object>());
+
+            toReturn[input].Add(alias);
         }
 
         return toReturn;

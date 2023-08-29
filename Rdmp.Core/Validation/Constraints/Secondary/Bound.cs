@@ -31,7 +31,6 @@ public abstract class Bound : SecondaryConstraint
     public bool Inclusive { get; set; }
 
 
-
     protected static object LookupFieldNamed(string name, object[] otherColumns, object[] otherColumnNames)
     {
         for (var i = 0; i < otherColumnNames.Length; i++)

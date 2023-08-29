@@ -89,7 +89,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
         var currentDefault = defaults.GetDefaultFor(permissableDefault);
         var patcher = permissableDefault.ToTier2DatabaseType();
-            
+
         var toAdd = allServers;
 
         if (patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database

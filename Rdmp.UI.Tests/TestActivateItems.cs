@@ -150,7 +150,6 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
     public string GetDocumentation(Type type) =>
         RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
 
-
     public string CurrentDirectory => TestContext.CurrentContext.TestDirectory;
 
     public DialogResult ShowDialog(Form form)
