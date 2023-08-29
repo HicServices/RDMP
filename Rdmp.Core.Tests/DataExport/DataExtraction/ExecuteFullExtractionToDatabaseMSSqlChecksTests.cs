@@ -33,9 +33,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
         _projectStub = Substitute.For<IProject>();
         _projectStub.ProjectNumber = -123;
 
-        var cfg = Mock.Of<IExtractionConfiguration>();
-
-        _commandStub = Mock.Of<IExtractCommand>(cmd => cmd.Configuration == cfg);
+        var cfg = Substitute.For<IExtractionConfiguration>();
 
         _commandStub = Substitute.For<IExtractCommand>();
         _commandStub.Configuration.Returns(cfg);

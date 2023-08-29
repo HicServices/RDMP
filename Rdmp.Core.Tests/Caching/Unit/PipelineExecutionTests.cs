@@ -37,13 +37,13 @@ public class PipelineExecutionTests
         var pipelineExecutor = new SerialPipelineExecution();
 
         // Act
-        pipelineExecutor.Execute(new[] { engine1.Object, engine2.Object }, tokenSource.Token, listener);
+        pipelineExecutor.Execute(new[] { engine1, engine2 }, tokenSource.Token, listener);
 
         // engine1 should have been executed once
-        engine1.Verify(e => e.ExecutePipeline(It.IsAny<GracefulCancellationToken>()), Times.Once);
+        engine1.Received(1).ExecutePipeline(Arg.Any<GracefulCancellationToken>());
 
         // engine2 should also have been run (locking isn't a thing any more)
-        engine2.Verify(e => e.ExecutePipeline(It.IsAny<GracefulCancellationToken>()), Times.Once);
+        engine2.Received(1).ExecutePipeline(Arg.Any<GracefulCancellationToken>());
     }
 
     [Ignore("Tests locking we don't actually have")]

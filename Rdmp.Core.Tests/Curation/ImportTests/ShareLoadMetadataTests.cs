@@ -117,7 +117,8 @@ public class ShareLoadMetadataTests : UnitTests
 
         var f = new RuntimeTaskFactory(Repository);
 
-        var stg = Mock.Of<IStageArgs>(x => x.LoadStage == LoadStage.Mounting);
+        var stg = Substitute.For<IStageArgs>();
+        stg.LoadStage.Returns(LoadStage.Mounting);
 
         RuntimeTaskFactory.Create(pt1, stg);
     }
@@ -134,9 +135,9 @@ public class ShareLoadMetadataTests : UnitTests
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
         var f = new RuntimeTaskFactory(Repository);
-        var stg = Mock.Of<IStageArgs>(x =>
-            x.LoadStage == LoadStage.Mounting &&
-            x.DbInfo == new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
+        var stg = Substitute.For<IStageArgs>();
+        stg.LoadStage.Returns(LoadStage.Mounting);
+        stg.DbInfo.Returns(new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
 
         //create a single process task for the load
         var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)

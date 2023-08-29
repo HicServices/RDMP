@@ -169,8 +169,8 @@ internal class CustomMetadataReportTests : UnitTests
 
         DateTime? ignore;
 
-        var moqDqe = new Mock<IDetermineDatasetTimespan>();
-        moqDqe.Setup(f => f.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore))
+        var moqDqe = Substitute.For<IDetermineDatasetTimespan>();
+        moqDqe.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore)
             .Returns(new Tuple<DateTime?, DateTime?>(new DateTime(2001, 02, 01), new DateTime(2002, 04, 03)));
 
         reporter.TimespanCalculator = moqDqe;
@@ -470,7 +470,7 @@ dataset with interesting stuff";
 
         var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
         {
-            Description = @"some info 
+            Description = @"some info
 about column 2"
         };
         cataItem2.SaveToDatabase();

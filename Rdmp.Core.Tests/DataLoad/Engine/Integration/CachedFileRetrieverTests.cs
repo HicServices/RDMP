@@ -32,8 +32,9 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     public CachedFileRetrieverTests()
     {
-        var cpMock = Mock.Of<ICacheProgress>();
-        _lpMock = Mock.Of<ILoadProgress>(l => l.CacheProgress == cpMock);
+        _cpMock = Substitute.For<ICacheProgress>();
+        _lpMock = Substitute.For<ILoadProgress>();
+        _lpMock.CacheProgress.Returns(_cpMock);
     }
 
     [Test(Description =
@@ -172,14 +173,14 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
     {
-        var catalogue = Mock.Of<ICatalogue>(c =>
-            c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
-            c.GetLookupTableInfoList() == Array.Empty<TableInfo>() &&
-            c.LoggingDataTask == "TestLogging"
-        );
-            
-        var logManager = Mock.Of<ILogManager>();
-        var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues() == new[] { catalogue });
+        var catalogue = Substitute.For<ICatalogue>();
+        catalogue.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
+        catalogue.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
+        catalogue.LoggingDataTask.Returns("TestLogging");
+
+        var logManager = Substitute.For<ILogManager>();
+        var loadMetadata = Substitute.For<ILoadMetadata>();
+        loadMetadata.GetAllCatalogues().Returns(new[] { catalogue });
 
         var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory,
             ThrowImmediatelyDataLoadEventListener.Quiet, null)

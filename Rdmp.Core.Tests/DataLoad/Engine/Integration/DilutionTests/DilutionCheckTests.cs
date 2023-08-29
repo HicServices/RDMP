@@ -44,7 +44,8 @@ public class DilutionCheckTests
     [TestCase("datetime")]
     public void TestChecking_RoundDateToMiddleOfQuarter_CompatibleDataType(string incompatibleType)
     {
-        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.SqlDataType == incompatibleType);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.SqlDataType.Returns(incompatibleType);
 
         var dil = new RoundDateToMiddleOfQuarter
         {

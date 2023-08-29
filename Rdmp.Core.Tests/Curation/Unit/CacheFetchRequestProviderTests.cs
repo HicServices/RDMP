@@ -39,8 +39,8 @@ public class CacheFetchRequestProviderTests
         var cacheProgress = Substitute.For<ICacheProgress>();
         cacheProgress.FetchPage(Arg.Any<int>(), Arg.Any<int>()).Returns(failures);
 
-        var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
-        var fetchRequest = provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet);
+        var provider = new FailedCacheFetchRequestProvider(cacheProgress, 2);
+        var fetchRequest = provider.GetNext(new ThrowImmediatelyDataLoadEventListener());
         Assert.IsNotNull(fetchRequest);
         Assert.AreEqual(fetchRequest.ChunkPeriod, new TimeSpan(8, 0, 0));
         Assert.AreEqual(fetchRequest.Start, failure.FetchRequestStart);
@@ -92,7 +92,8 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.PermissionWindow.Returns(Substitute.For<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure, cacheProgress);
         request.RequestFailed(new Exception());
@@ -108,7 +109,8 @@ public class CacheFetchRequestProviderTests
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.PermissionWindow.Returns(Substitute.For<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure, cacheProgress);
         request.RequestSucceeded();
@@ -118,10 +120,10 @@ public class CacheFetchRequestProviderTests
 
     private static ICacheFetchFailure GetFailureMock()
     {
-        var failure = Mock.Of<ICacheFetchFailure>(f =>
-            f.FetchRequestEnd == DateTime.Now &&
-            f.FetchRequestStart == DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
+        var failure = Substitute.For<ICacheFetchFailure>();
+        failure.FetchRequestEnd.Returns(DateTime.Now);
+        failure.FetchRequestStart.Returns(DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
 
-        return Mock.Get(failure);
+        return failure;
     }
 }

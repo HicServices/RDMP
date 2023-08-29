@@ -27,7 +27,8 @@ public class DilutionOperationFactoryTests : DatabaseTests
     [Test]
     public void NullOperation_Throws()
     {
-        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.Repository == CatalogueRepository);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.Repository.Returns(CatalogueRepository);
 
         var factory = new DilutionOperationFactory(col);
         Assert.Throws<ArgumentNullException>(() => factory.Create(null));
@@ -36,7 +37,8 @@ public class DilutionOperationFactoryTests : DatabaseTests
     [Test]
     public void UnexpectedType_Throws()
     {
-        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.Repository == CatalogueRepository);
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.Repository.Returns(CatalogueRepository);
 
         var factory = new DilutionOperationFactory(col);
         Assert.Throws<ArgumentException>(() => factory.Create(typeof(Catalogue)));
@@ -45,8 +47,8 @@ public class DilutionOperationFactoryTests : DatabaseTests
     [Test]
     public void ExpectedType_Created()
     {
-        var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.Repository == CatalogueRepository);
-
+        var col = Substitute.For<IPreLoadDiscardedColumn>();
+        col.Repository.Returns(CatalogueRepository);
         var factory = new DilutionOperationFactory(col);
         var i = factory.Create(typeof(ExcludeRight3OfUKPostcodes));
         Assert.IsNotNull(i);

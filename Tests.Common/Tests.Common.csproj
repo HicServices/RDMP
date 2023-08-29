@@ -3,6 +3,7 @@
     <PackageId>HIC.RDMP.Plugin.Test</PackageId>
     <version>$(version)</version>
     <title>HIC.RDMP.Plugin.Test</title>
+    <TargetFramework>net7.0</TargetFramework>
     <authors>Health Informatics Centre, University of Dundee</authors>
     <owners>Health Informatics Centre, University of Dundee</owners>
     <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
@@ -13,7 +14,6 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <description>Package for writing plugin tests</description>
     <copyright>Copyright 2018-2019</copyright>
-    <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
@@ -41,7 +41,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NSubstitute" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
     <PackageReference Include="NUnit" Version="3.13.3" />
   </ItemGroup>
 </Project>

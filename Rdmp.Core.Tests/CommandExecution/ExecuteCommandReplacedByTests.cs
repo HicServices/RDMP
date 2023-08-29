@@ -19,7 +19,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
         var c1 = WhenIHaveA<Catalogue>();
         var c2 = WhenIHaveA<Catalogue>();
 
-        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, c2);
+        var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, c2);
 
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.Contains("is not marked IsDeprecated", cmd.ReasonCommandImpossible);
@@ -34,7 +34,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
         c1.IsDeprecated = true;
         c1.SaveToDatabase();
 
-        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, ci1);
+        var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, ci1);
 
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.Contains("because it is a different object Type", cmd.ReasonCommandImpossible);
@@ -49,7 +49,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
         c1.IsDeprecated = true;
         c1.SaveToDatabase();
 
-        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, c2);
+        var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, c2);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
@@ -71,7 +71,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
             .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
             .Count(r => r.IsReferenceTo(c1)));
 
-        cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, null);
+        cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, null);
         cmd.Execute();
 
         Assert.IsEmpty(RepositoryLocator.CatalogueRepository

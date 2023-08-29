@@ -36,7 +36,7 @@ public abstract class CommandCliTests : UnitTests
         return invoker;
     }
 
-    protected Mock<IBasicActivateItems> GetMockActivator()
+    protected IBasicActivateItems GetMockActivator()
     {
         var mock = Substitute.For<IBasicActivateItems>();
         mock.RepositoryLocator.Returns(RepositoryLocator);

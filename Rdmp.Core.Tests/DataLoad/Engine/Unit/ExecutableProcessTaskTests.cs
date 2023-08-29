@@ -40,7 +40,8 @@ internal class ExecutableProcessTaskTests
     [Test]
     public void TestConstructionFromProcessTask()
     {
-        var processTask = Mock.Of<IProcessTask>(pt => pt.Path == "path");
+        var processTask = Substitute.For<IProcessTask>();
+        processTask.Path.Returns("path");
 
         var runtimeTask = new ExecutableRuntimeTask(processTask, null);
         Assert.AreEqual("path", runtimeTask.ExeFilepath);

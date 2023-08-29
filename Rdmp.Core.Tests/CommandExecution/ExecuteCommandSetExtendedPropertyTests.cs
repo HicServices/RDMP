@@ -19,7 +19,7 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
     {
         var c1 = WhenIHaveA<Catalogue>();
 
-        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { c1 }, "blarg", "fff");
+        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { c1 }, "blarg", "fff");
 
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.StartsWith("blarg is not a known property.  Known properties are:", cmd.ReasonCommandImpossible);
@@ -37,7 +37,7 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
         Assert.IsEmpty(
             Repository.CatalogueRepository.GetExtendedProperties(ac2));
 
-        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator().Object, new[] { ac1, ac2 },
+        var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { ac1, ac2 },
             ExtendedProperty.IsTemplate, "true");
 
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);

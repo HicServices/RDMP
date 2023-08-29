@@ -113,7 +113,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-        Mock.Get(lmd).Setup(p => p.CatalogueRepository).Returns(CatalogueRepository);
+        lmd.CatalogueRepository.Returns(CatalogueRepository);
         logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
         var dbConfiguration =
@@ -173,22 +173,22 @@ internal class RemoteTableAttacherTests : DatabaseTests
         };
         attacher.Progress = lp;
         attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo
-            { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
+        { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
 
         var dbConfiguration =
             new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-        var job = new ScheduledDataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration)
-        {
-            LoadProgress = mismatchProgress
-                ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
-                : lp,
-            DatesToRetrieve = new List<DateTime> { new(2001, 01, 01) }
-        };
+        var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+        lmd.CatalogueRepository.Returns(CatalogueRepository);
+        logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
-        job.StartLogging();
-        attacher.Attach(job, new GracefulCancellationToken());
+        var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
+        {
+            OriginDate = new DateTime(2001, 1, 1)
+        };
+        attacher.Progress = lp;
+        attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo
+        { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
 
         Assert.AreEqual(3, tbl1.GetRowCount());
         Assert.AreEqual(mismatchProgress ? 0 : 1, tbl2.GetRowCount());

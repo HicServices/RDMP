@@ -45,7 +45,8 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         File.WriteAllText(f.FullName, @"UPDATE Fish Set Lawl = 1");
 
-        var pt = Mock.Of<IProcessTask>(x => x.Path == f.FullName);
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(f.FullName);
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
@@ -82,7 +83,8 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
 
-        var pt = Mock.Of<IProcessTask>(x => x.Path == f.FullName);
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(f.FullName);
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
@@ -94,10 +96,10 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         task.Check(ThrowImmediatelyCheckNotifier.Quiet);
         var configuration = new HICDatabaseConfiguration(db.Server);
 
-        var job = Mock.Of<IDataLoadJob>(x =>
-            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
-            x.LookupTablesToLoad == new List<ITableInfo>() &&
-            x.Configuration == configuration);
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
+        job.LookupTablesToLoad.Returns(new List<ITableInfo>());
+        job.Configuration.Returns(configuration);
 
         var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(() =>
             task.Run(job, new GracefulCancellationToken()));
@@ -126,21 +128,21 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
             "ExecuteSqlFileRuntimeTaskTests", true);
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
+        var _arg = Substitute.For<IArgument>();
+        _arg.Name.Returns("Sql");
+        _arg.Value.Returns(sql);
+        _arg.GetValueAsSystemType().Returns(sql);
         var sqlArg = new IArgument[]
         {
-            Mock.Of<IArgument>(x =>
-                x.Name == "Sql" &&
-                x.Value == sql &&
-                x.GetValueAsSystemType() == sql)
+          _arg
         };
 #pragma warning restore CS0252, CS0253
 
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
-        var pt = Mock.Of<IProcessTask>(x =>
-            x.Path == typeof(ExecuteSqlMutilation).FullName &&
-            x.GetAllArguments() == sqlArg
-        );
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(typeof(ExecuteSqlMutilation).FullName);
+        pt.GetAllArguments().Returns(sqlArg);
 
         IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args);
 
@@ -187,8 +189,8 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         //we renamed the table to simulate RAW, confirm TableInfo doesn't think it exists
         Assert.IsFalse(ti.Discover(DataAccessContext.InternalDataProcessing).Exists());
 
-        var pt = Mock.Of<IProcessTask>(x => x.Path == f.FullName);
-
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(f.FullName);
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
 
@@ -202,10 +204,10 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
         var configuration = new HICDatabaseConfiguration(db.Server, namer);
 
-        var job = Mock.Of<IDataLoadJob>(x =>
-            x.RegularTablesToLoad == new List<ITableInfo> { ti } &&
-            x.LookupTablesToLoad == new List<ITableInfo>() &&
-            x.Configuration == configuration);
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
+        job.LookupTablesToLoad.Returns(new List<ITableInfo>());
+        job.Configuration.Returns(configuration);
 
         task.Run(job, new GracefulCancellationToken());
 

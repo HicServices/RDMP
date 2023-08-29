@@ -312,7 +312,8 @@ public class ExcelTests
             PrefixWithWorkbookName = prefixWithWorkbookName
         };
 
-        var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading == loc.Directory);
+        var mockProjDir = Substitute.For<ILoadDirectory>();
+        mockProjDir.ForLoading.Returns(loc.Directory);
 
         var j = new ThrowImmediatelyDataLoadJob
         {
