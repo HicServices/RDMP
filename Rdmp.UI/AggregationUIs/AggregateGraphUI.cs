@@ -95,9 +95,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
 
-    private readonly ToolStripTimeout _timeoutControls = new();
-
-
     public AggregateGraphUI()
     {
         InitializeComponent();

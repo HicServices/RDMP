@@ -214,7 +214,6 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     public override string GetTabName() => $"{base.GetTabName()}(SQL)";
 
-    public override string GetTabName() => $"{base.GetTabName()}(SQL)";
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {

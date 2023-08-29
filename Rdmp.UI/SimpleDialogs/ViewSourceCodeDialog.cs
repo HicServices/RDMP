@@ -25,10 +25,10 @@ namespace Rdmp.UI.SimpleDialogs;
 [TechnicalUI]
 public partial class ViewSourceCodeDialog : Form
 {
-    private readonly Scintilla _queryEditor;
+    private Scintilla QueryEditor;
 
-    private static readonly HashSet<FileInfo> SupplementalSourceZipFiles = new();
-    private static readonly object oSupplementalSourceZipFilesLock = new();
+    private static HashSet<FileInfo> SupplementalSourceZipFiles = new();
+    private static object oSupplementalSourceZipFilesLock = new();
     private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
     public static void AddSupplementalSourceZipFile(FileInfo f)
@@ -47,15 +47,15 @@ public partial class ViewSourceCodeDialog : Form
 
         if (filename == null)
             return;
-            
+
         var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
-        _queryEditor = new ScintillaTextEditorFactory().Create(null, SyntaxLanguage.CSharp);
+        QueryEditor = new ScintillaTextEditorFactory().Create(null, SyntaxLanguage.CSharp);
 
-        panel1.Controls.Add(_queryEditor);
+        panel1.Controls.Add(QueryEditor);
 
         LoadSourceCode(toFind, lineNumber, highlightColor);
 
@@ -73,12 +73,12 @@ public partial class ViewSourceCodeDialog : Form
             //entry was found
             if (readToEnd != null)
             {
-                _queryEditor.Text = readToEnd;
+                QueryEditor.Text = readToEnd;
 
                 if (lineNumber != -1)
                 {
-                    _queryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
-                    ScintillaLineHighlightingHelper.HighlightLine(_queryEditor, lineNumber - 1, highlightColor);
+                    QueryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
+                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
                 }
             }
             else
@@ -124,12 +124,13 @@ public partial class ViewSourceCodeDialog : Form
                 //if the zip exists
                 if (zipFile.Exists)
                     //read the entry (if it is there)
-                    using var z = ZipFile.OpenRead(zipFile.FullName);
-                    var readToEnd = GetEntryFromZipFile(z, toFind);
+                    using (var z = ZipFile.OpenRead(zipFile.FullName))
+                    {
+                        var readToEnd = GetEntryFromZipFile(z, toFind);
 
-                    if (readToEnd != null) //the entry was found and read
-                        return readToEnd;
-                }
+                        if (readToEnd != null) //the entry was found and read
+                            return readToEnd;
+                    }
         }
         catch (Exception)
         {
@@ -156,7 +157,10 @@ public partial class ViewSourceCodeDialog : Form
     {
         var entry = z.Entries.FirstOrDefault(e => e.Name == toFind);
 
-        return entry == null ? null : new StreamReader(entry.Open()).ReadToEnd();
+        if (entry == null)
+            return null;
+
+        return new StreamReader(entry.Open()).ReadToEnd();
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)

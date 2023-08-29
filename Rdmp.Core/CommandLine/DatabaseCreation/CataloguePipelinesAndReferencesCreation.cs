@@ -49,39 +49,33 @@ public class CataloguePipelinesAndReferencesCreation
         startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
 
-    private void CreateServers()
+    private void CreateServers(PlatformDatabaseCreationOptions options)
     {
         var defaults = _repositoryLocator.CatalogueRepository;
-        if(options.CreateLoggingServer){
-            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
-                {
-                    Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
-                    Database = _logging.InitialCatalog
-                };
-
-        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",
-            new LoggingDatabasePatcher())
+        if (options.CreateLoggingServer)
         {
-            Server = _logging.DataSource,
-            Database = _logging.InitialCatalog
-        };
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging", new LoggingDatabasePatcher())
+            {
+                Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
+                Database = _logging.InitialCatalog
+            };
 
-        if (_logging.UserID != null)
-        {
-            _edsLogging.Username = _logging.UserID;
-            _edsLogging.Password = _logging.Password;
+            if (_logging.UserID != null)
+            {
+                _edsLogging.Username = _logging.UserID;
+                _edsLogging.Password = _logging.Password;
+            }
+
+            _edsLogging.SaveToDatabase();
+            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
+            Console.WriteLine("Successfully configured default logging server");
         }
 
-        _edsLogging.SaveToDatabase();
-        defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
-        Console.WriteLine("Successfully configured default logging server");
-
-        var edsDQE =
-            new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
-            {
-                Server = _dqe.DataSource,
-                Database = _dqe.InitialCatalog
-            };
+        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
+        {
+            Server = _dqe.DataSource,
+            Database = _dqe.InitialCatalog
+        };
 
         if (_dqe.UserID != null)
         {
@@ -115,7 +109,8 @@ public class CataloguePipelinesAndReferencesCreation
         Console.WriteLine("Successfully configured RAW server");
     }
 
-    public void CreatePipelines(PlatformDatabaseCreationOptions options)
+
+    public void CreatePipelines()
     {
         var bulkInsertCsvPipe =
             CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)",
@@ -208,6 +203,6 @@ public class CataloguePipelinesAndReferencesCreation
     {
         DoStartup();
         CreateServers(options);
-        CreatePipelines(options);
+        CreatePipelines();
     }
 }

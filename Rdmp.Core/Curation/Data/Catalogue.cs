@@ -519,17 +519,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-     public ExternalDatabaseServer LiveLoggingServer {
-        get{
-            if(LiveLoggingServer_ID != null){  
-                ExternalDatabaseServer[] dbs = Repository.GetAllObjectsWhere<ExternalDatabaseServer>("id",(int)LiveLoggingServer_ID);
-                if(dbs.Length > 0){
-                    return dbs.First();
-                }                         
-            }
-            return null;
-        }
-     }
+    public ExternalDatabaseServer LiveLoggingServer =>
+        LiveLoggingServer_ID == null
+            ? null
+            : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -910,7 +903,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             try
             {
-                var server = DataAccessPortal.GetInstance().ExpectDistinctServer(tables, accessContext, false);
+                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, false);
 
                 using var con = server.GetConnection();
                 con.Open();
@@ -1089,7 +1082,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
+        var server = DataAccessPortal.ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
     }
@@ -1145,7 +1138,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             FetchOptions.ExtractableGlobalsAndLocals => $"WHERE (Catalogue_ID={ID} OR IsGlobal=1) AND Extractable=1",
             FetchOptions.ExtractableGlobals => "WHERE IsGlobal=1 AND Extractable=1",
             FetchOptions.AllLocals =>
-                $"WHERE Catalogue_ID={ID}  AND IsGlobal=0" //globals still retain their Catalogue_ID incase the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
+                $"WHERE Catalogue_ID={ID}  AND IsGlobal=0" //globals still retain their Catalogue_ID in case the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
             ,
             FetchOptions.ExtractableLocals => $"WHERE Catalogue_ID={ID} AND Extractable=1 AND IsGlobal=0",
             FetchOptions.AllGlobalsAndAllLocals => $"WHERE Catalogue_ID={ID} OR IsGlobal=1",

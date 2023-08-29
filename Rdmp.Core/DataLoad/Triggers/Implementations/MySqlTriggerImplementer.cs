@@ -116,9 +116,6 @@ internal class MySqlTriggerImplementer : TriggerImplementer
     public override TriggerStatus GetTriggerStatus() =>
         string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
 
-    public override TriggerStatus GetTriggerStatus() =>
-        string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
-
     protected virtual string GetTriggerBody()
     {
         using var con = _server.GetConnection();

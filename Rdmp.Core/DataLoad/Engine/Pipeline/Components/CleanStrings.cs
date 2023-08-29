@@ -50,7 +50,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                         throw new ArgumentException(
                             $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 
-                    val = v;
+                    val = s;
                 }
                 catch (ArgumentException e)
                 {

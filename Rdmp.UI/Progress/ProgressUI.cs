@@ -116,18 +116,18 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private Bitmap ImageGetter(object rowObject)
     {
-        return rowObject is ProgressUIEntry o
-            ? o.ProgressEventType switch
-            {
-                // TODO: draw a couple of new icons if required
-                ProgressEventType.Debug => _information,
-                ProgressEventType.Trace => _information,
-                ProgressEventType.Information => _information,
-                ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
-                ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
-                _ => throw new ArgumentOutOfRangeException()
-            }
-            : null;
+        if (rowObject is not ProgressUIEntry o) return null;
+
+        return o.ProgressEventType switch
+        {
+            // TODO: draw a couple of new icons if required
+            ProgressEventType.Debug => _information,
+            ProgressEventType.Trace => _information,
+            ProgressEventType.Information => _information,
+            ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
+            ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
+            _ => throw new ArgumentOutOfRangeException(nameof(rowObject))
+        };
     }
 
     private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -150,14 +150,11 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         lblSuccess.Visible = false;
     }
 
-    private Dictionary<object, HashSet<string>> JobsreceivedFromSender = new();
-
-    private object oProgressQueLock = new();
-    private Dictionary<string, QueuedProgressMessage> ProgressQueue = new();
-
-
-    private object oNotifyQueLock = new();
-    private List<ProgressUIEntry> NotificationQueue = new();
+    private readonly Dictionary<object, HashSet<string>> _jobsReceivedFromSender = new();
+    private readonly object _oProgressQueueLock = new();
+    private readonly Dictionary<string, QueuedProgressMessage> _progressQueue = new();
+    private readonly object _oNotifyQueLock = new();
+    private readonly List<ProgressUIEntry> _notificationQueue = new();
 
     public void Progress(object sender, ProgressEventArgs args)
     {
@@ -166,9 +163,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             //we have received an update to this message
             if (_progressQueue.TryGetValue(args.TaskDescription, out var message))
             {
-                entry.DateTime = DateTime.Now;
-                entry.ProgressEventArgs = args;
-                entry.Sender = sender;
+                message.DateTime = DateTime.Now;
+                message.ProgressEventArgs = args;
+                message.Sender = sender;
             }
             else
             {
@@ -246,7 +243,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
                 _progressQueue.Remove(message.Key);
 
-                AutoResizeColumns();
+                AutoReizeColumns();
             }
         }
 
@@ -257,19 +254,21 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 olvProgressEvents.AddObjects(_notificationQueue);
                 _notificationQueue.Clear();
 
-                AutoResizeColumns();
+                AutoReizeColumns();
             }
         }
 
         olvProgressEvents.Sort();
     }
 
-    private void AutoResizeColumns()
+    private void AutoReizeColumns()
     {
-        if (!UserSettings.AutoResizeColumns) return;
-        olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-        olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-        olvMessage.Width += 15; //add room for icon
+        if (UserSettings.AutoResizeColumns)
+        {
+            olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            olvMessage.Width += 15; //add room for icon
+        }
     }
 
     private bool HandleFloodOfMessagesFromJob(object sender, string job, int progressAmount, string label)
@@ -311,9 +310,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             for (; i < 500; i++)
             {
-                var startsWith = JobsreceivedFromSender[sender].First()[..i];
+                var startsWith = _jobsReceivedFromSender[sender].First()[..i];
 
-                if (!JobsreceivedFromSender[sender].All(job => job[..i].StartsWith(startsWith)))
+                if (!_jobsReceivedFromSender[sender].All(job => job[..i].StartsWith(startsWith)))
                     break;
             }
         }

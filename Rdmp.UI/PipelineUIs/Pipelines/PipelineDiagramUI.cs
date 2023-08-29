@@ -233,7 +233,7 @@ public partial class PipelineDiagramUI : UserControl
     private void AddPipelineComponent(IPipelineComponent toRealize, PipelineComponentRole role)
     {
         //create the pipeline realization (might fail
-        var value = _pipelineFactory.TryCreateComponent(toRealize, out var exConstruction);
+        var value = DataFlowPipelineEngineFactory.TryCreateComponent(toRealize, out var exConstruction);
 
         if (role != PipelineComponentRole.Source)
             AddDividerIfReorderingAvailable();

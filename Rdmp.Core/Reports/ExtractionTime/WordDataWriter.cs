@@ -275,7 +275,8 @@ public class WordDataWriter : DocXHelper
 
         foreach (var value in Executer.Source.ExtractTimeTransformationsObserved.Values)
         {
-            var supplementalValuesForThisOne = new List<Tuple<string, string>> {
+            var supplementalValuesForThisOne = new List<Tuple<string, string>>
+            {
                 //Jim no longer wants these to appear in metadata
                 /*
                 if (value.FoundAtExtractTime)
@@ -289,18 +290,9 @@ public class WordDataWriter : DocXHelper
 
 
             if (value.FoundAtExtractTime)
-                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
-            else
-                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
-            */
-                new("Datatype (SQL):",value.DataTypeInCatalogue) };
-
-
-            if(value.FoundAtExtractTime)
-                if(value.DataTypeObservedInRuntimeBuffer == null)
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
-                else
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
+                supplementalValuesForThisOne.Add(value.DataTypeObservedInRuntimeBuffer == null
+                    ? new Tuple<string, string>("Datatype:", "Value was always NULL")
+                    : new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
 
 
             //add it with supplemental values
@@ -476,7 +468,7 @@ public class WordDataWriter : DocXHelper
 
         tableLine++;
 
-        foreach (var (colName, consequences) in results.DictionaryOfFailure)
+        foreach (var (colname, value) in results.DictionaryOfFailure)
         {
             SetTableCell(t, tableLine, 0, colname);
             SetTableCell(t, tableLine, 1, value[Consequence.Missing].ToString());

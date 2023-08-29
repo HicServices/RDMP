@@ -38,9 +38,10 @@ public class PlatformDatabaseCreation
         Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 
         var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
-        
+
         SqlConnectionStringBuilder logging = null;
-        if(options.CreateLoggingServer){
+        if (options.CreateLoggingServer)
+        {
             logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
         }
         CatalogueRepository.SuppressHelpLoading = true;

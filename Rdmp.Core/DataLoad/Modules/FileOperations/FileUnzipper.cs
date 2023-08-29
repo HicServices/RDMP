@@ -47,6 +47,7 @@ public class FileUnzipper : IPluginDataProvider
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         foreach (var fileInfo in job.LoadDirectory.ForLoading.GetFiles("*.zip"))
+        {
             //do it as regex rather than in GetFiles above because that method probably doesn't do regex
             if (ZipArchivePattern != null && !string.IsNullOrWhiteSpace(ZipArchivePattern.ToString()) &&
                 !ZipArchivePattern.IsMatch(fileInfo.Name)) continue;

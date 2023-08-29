@@ -141,7 +141,6 @@ FROM
     {
         var server = DataAccessPortal.ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
 
         using var con = server.GetConnection();
         con.Open();

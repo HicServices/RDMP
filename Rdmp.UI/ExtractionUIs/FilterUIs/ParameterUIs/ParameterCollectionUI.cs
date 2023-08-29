@@ -251,19 +251,20 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
         var deletables = olvParameters.SelectedObjects.OfType<IDeleteable>().ToArray();
 
-        if (!deletables.Any() || e.KeyCode != Keys.Delete || !Activator.YesNo(
-                deletables.Length == 1
-                    ? $"Confirm deleting {deletables[0]}"
-                    : $"Confirm deleting {deletables.Length} Parameters?", "Confirm delete")) return;
-        foreach (IDeleteable d in olvParameters.SelectedObjects)
+        if (!deletables.Any()) return;
+
+        var dr = Activator.YesNo(
+            deletables.Length == 1
+                ? $"Confirm deleting {deletables[0]}"
+                : $"Confirm deleting {deletables.Length} Parameters?", "Confirm delete");
+
+        if (!dr) return;
+
+        foreach (var d in deletables)
         {
             d.DeleteInDatabase();
             olvParameters.RemoveObject(d);
             Options.ParameterManager.RemoveParameter((ISqlParameter)d);
-
-            DisableRelevantObjects();
-            parameterEditorScintillaControl1.RegenerateSQL();
-            UpdateTabVisibility();
         }
 
         // Rebuild once after deleting all objects, instead of after each deletion
@@ -275,17 +276,18 @@ public partial class ParameterCollectionUI : RDMPUserControl
     private void olvParameters_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         var parameter = e.RowObject as ISqlParameter;
-        string oldParameterName;
-        string newParameterName;
+        string oldParameterName = null;
+        string newParameterName = null;
 
-        try
-        {
-            oldParameterName = parameter?.ParameterName;
-        }
-        catch (Exception)
-        {
-            oldParameterName = null;
-        }
+        if (parameter != null)
+            try
+            {
+                oldParameterName = parameter.ParameterName;
+            }
+            catch (Exception)
+            {
+                oldParameterName = null;
+            }
 
         if (e.Column.Index == olvParameterSQL.Index)
             if (!string.IsNullOrWhiteSpace((string)e.NewValue))
@@ -297,42 +299,15 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
         try
         {
-            newParameterName = parameter?.ParameterName;
+            if (parameter != null)
+                newParameterName = parameter.ParameterName;
         }
         catch (Exception)
         {
             return;
         }
 
-        if (e.RowObject is IRevertable revertible)
-        {
-            var changes = revertible.HasLocalChanges();
-
-            if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                revertible.SaveToDatabase();
-
-            //if the name has changed handle renaming
-            if(oldParameterName != null)
-                if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
-                {
-                    var owner = parameter.GetOwnerIfAny();
-
-                    if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
-                        Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
-                }
-
-
-            //anything that was a problem before
-            var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
-            DisableRelevantObjects();
-            parameterEditorScintillaControl1.RegenerateSQL();
-            UpdateTabVisibility();
-
-            //might not be a problem any more so refresh the icons on them (and everything else)
-            olvParameters.RefreshObjects(problemsBefore.ToList());
-
-        }
-        else
+        if (e.RowObject is not IRevertable revertable)
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
 
         var changes = revertable.HasLocalChanges();
@@ -381,11 +356,11 @@ public partial class ParameterCollectionUI : RDMPUserControl
         e.StandardIcon = ToolTipControl.StandardIcons.Info;
 
         //if it is a problem parameter
-        if (parameterEditorScintillaControl1.ProblemObjects.TryGetValue(sqlParameter, out var exception))
+        if (parameterEditorScintillaControl1.ProblemObjects.TryGetValue(sqlParameter, out var o))
         {
             e.StandardIcon = ToolTipControl.StandardIcons.Warning;
             e.Title = "Problem Detected With Parameter";
-            e.Text = exception.Message;
+            e.Text = o.Message;
             return;
         }
 
@@ -436,25 +411,36 @@ public partial class ParameterCollectionUI : RDMPUserControl
         var parameter = (ISqlParameter)rowobject;
         var owner = parameter.GetOwnerIfAny();
 
-        return owner == null ? null : $"{owner.GetType().Name}:{owner}";
+        if (owner == null)
+            return null;
+
+        return $"{owner.GetType().Name}:{owner}";
     }
 
     private void olvParameters_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var parameter = olvParameters.SelectedObject as ISqlParameter;
-        miOverrideParameter.Enabled = CanOverride(parameter);
+        var param = olvParameters.SelectedObject as ISqlParameter;
+
+        miOverrideParameter.Enabled = CanOverride(param);
     }
 
-    private bool CanOverride(ISqlParameter sqlParameter) =>
-        sqlParameter != null &&
-        //if it is not already overridden
-        !Options.IsOverridden(sqlParameter) &&
-        //and it exists at a lower level
-        Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
+    private bool CanOverride(ISqlParameter sqlParameter)
+    {
+        if (sqlParameter != null)
+            //if it is not already overridden
+            if (!Options.IsOverridden(sqlParameter) &&
+                //and it exists at a lower level
+                Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel)
+                return true;
+
+        return false;
+    }
 
     private void miOverride_Click(object sender, EventArgs e)
     {
-        if (olvParameters.SelectedObject is not ISqlParameter param || !CanOverride(param))
+        var param = olvParameters.SelectedObject as ISqlParameter;
+
+        if (!CanOverride(param) || param == null)
             return;
 
         var newParameter = Options.CreateNewParameter(param.ParameterName);
@@ -470,7 +456,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_CellEditStarting(object sender, CellEditEventArgs e)
     {
-        //cancel cell editing if it is read only
+        //cancel cell editting if it is readonly
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }

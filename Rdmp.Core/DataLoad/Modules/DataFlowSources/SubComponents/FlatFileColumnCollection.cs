@@ -209,7 +209,7 @@ public class FlatFileColumnCollection
             //override type
             if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h, out var t) == true)
             {
-                var c = dt.Columns.Add(h, forceType);
+                var c = dt.Columns.Add(h, t);
 
                 //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
                 if (c.DataType == typeof(string))

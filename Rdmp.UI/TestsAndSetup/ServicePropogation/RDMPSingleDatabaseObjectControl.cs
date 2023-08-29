@@ -76,7 +76,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if (_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
-            var colorProvider = new BackColorProvider();
             _colorIndicator = new Control
             {
                 Dock = DockStyle.Top,

@@ -91,14 +91,8 @@ internal class CatalogueMenu : RDMPContextMenuStrip
             catch (Exception)
             {
                 // if the directory name is bad or corrupt
-            }
-            catch (Exception)
-            {
-                // if the directory name is bad or corrupt
                 return;
             }
-
-            Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory" });
         }
     }
 }

@@ -37,7 +37,6 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 {
     private DateTime[] _buckets;
     private Pen _verticalLinesPen = new(Color.FromArgb(150, Color.White));
-
     private Timer _mouseHeldDownTimer = new();
     private ScrollActionUnderway _currentScrollAction = ScrollActionUnderway.None;
 
@@ -75,7 +74,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 
     private bool _allowScrollDown;
     private RectangleF _rectScrollDown;
-    private int _scrollDownIndexOffset;
+    private int _scrollDownIndexOffset = 0;
 
     private bool _allowScrollUp;
     private RectangleF _rectScrollUp;
@@ -341,8 +340,8 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
 
                         if (dictionary.TryGetValue(_buckets[i], out var apcCount))
                         {
-                            good = counter.CountGood;
-                            total = counter.Total;
+                            good = apcCount.CountGood;
+                            total = apcCount.Total;
 
                             var ratioGood = (float)good / total;
 

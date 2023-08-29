@@ -38,8 +38,6 @@ public partial class GenerateTestDataUI : RDMPForm
     public HelpWorkflow HelpWorkflow { get; private set; }
     private int? _seed;
 
-    private int? _seed;
-
     public GenerateTestDataUI(IActivateItems activator, ICommandExecution command) : base(activator)
     {
         InitializeComponent();

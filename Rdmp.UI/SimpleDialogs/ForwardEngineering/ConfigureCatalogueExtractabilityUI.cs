@@ -61,8 +61,8 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private bool _choicesFinalised;
     private HelpWorkflow _workflow;
     private CatalogueItem[] _catalogueItems;
-    private bool _ddChangeAllChanged;
-    private bool _importedNewTable;
+    private bool _ddChangeAllChanged = false;
+    private bool _importedNewTable = false;
 
     /// <summary>
     /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
@@ -75,7 +75,6 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public string TargetFolder { get; set; }
 
     private BinderWithErrorProviderFactory _binder;
-
     private ObjectSaverButton objectSaverButton1 = new();
 
     /// <summary>
@@ -95,7 +94,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer,
         string initialDescription, IProject projectSpecificIfAny) : this(activator)
     {
-        importer.DoImport(out _tableInfo, out _);
+        importer.DoImport(out _tableInfo, out var cols);
 
         _importedNewTable = true;
 
@@ -256,7 +255,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowObject;
 
-        return n.ExtractionInformation == null ? false : (object)n.ExtractionInformation.IsExtractionIdentifier;
+        if (n.ExtractionInformation == null)
+            return false;
+
+        return n.ExtractionInformation.IsExtractionIdentifier;
     }
 
 
@@ -280,7 +282,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowObject;
 
-        return n.ExtractionInformation == null ? false : (object)n.ExtractionInformation.HashOnDataRelease;
+        if (n.ExtractionInformation == null)
+            return false;
+
+        return n.ExtractionInformation.HashOnDataRelease;
     }
 
     private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
@@ -336,7 +341,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowobject;
 
-        return n.ExtractionInformation == null ? "Not Extractable" : n.ExtractionInformation.ExtractionCategory;
+        if (n.ExtractionInformation == null)
+            return "Not Extractable";
+
+        return n.ExtractionInformation.ExtractionCategory;
     }
 
 
@@ -409,11 +417,9 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private void FinaliseExtractability()
     {
-        _ = new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
+        new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
-        if(_projectSpecific != null)
-        {
-            IAtomicCommandWithTarget cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
+        if (_projectSpecific == null) return;
 
         IAtomicCommandWithTarget cmd =
             new ExecuteCommandMakeCatalogueProjectSpecific(Activator, _catalogue, _projectSpecific);
@@ -698,13 +704,13 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
-            if (node.ExtractionInformation is { IsExtractionIdentifier: true })
+            if (node.ExtractionInformation != null && node.ExtractionInformation.IsExtractionIdentifier)
             {
                 node.ExtractionInformation.IsExtractionIdentifier = false;
                 node.ExtractionInformation.SaveToDatabase();
             }
 
-        //we cleared them all, now did they want one selected (i.e. they selected anything except <<None>>)
+        //we cleared them all, now did they want one selected (i.e. they selected anythign except <<None>>)
         if (ddIsExtractionIdentifier.SelectedItem is ColPair n)
         {
             if (n.ExtractionInformation == null)

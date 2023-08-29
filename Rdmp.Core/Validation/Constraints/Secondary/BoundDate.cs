@@ -55,7 +55,24 @@ public class BoundDate : Bound
 
     private bool IsWithinRange(DateTime d)
     {
-        return Inclusive ? !(d<Lower) && !(d>Upper) : !(d<=Lower) && !(d>=Upper);
+        if (Inclusive)
+        {
+            if (d < Lower)
+                return false;
+
+            if (d > Upper)
+                return false;
+        }
+        else
+        {
+            if (d <= Lower)
+                return false;
+
+            if (d >= Upper)
+                return false;
+        }
+
+        return true;
     }
 
     private bool IsWithinRange(DateTime d, object[] otherColumns, string[] otherColumnNames)
@@ -88,9 +105,13 @@ public class BoundDate : Bound
         if (lookupFieldNamed == null)
             return null;
 
-        return lookupFieldNamed == DBNull.Value
-            ? null
-            : lookupFieldNamed switch
+        if (lookupFieldNamed == DBNull.Value)
+            return null;
+
+        if (lookupFieldNamed is DateTime time)
+            return time;
+
+        if (lookupFieldNamed is string named)
         {
             if (string.IsNullOrWhiteSpace(named))
                 return null;

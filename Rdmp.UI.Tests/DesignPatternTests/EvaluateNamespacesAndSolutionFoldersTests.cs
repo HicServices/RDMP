@@ -90,8 +90,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         var propertyChecker = new SuspiciousRelationshipPropertyUse();
         propertyChecker.FindPropertyMisuse(_csFilesFound);
 
-        var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
-        explicitDatabaseNamesChecker.FindProblems(_csFilesFound);
+        ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
 
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
         AutoCommentsEvaluator.FindProblems(_csFilesFound);
@@ -362,7 +361,7 @@ public partial class AutoCommentsEvaluator
 
 
         //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
-        if (suggestedNewFileContents.Count==0)
+        if (suggestedNewFileContents.Count == 0)
             Assert.Pass();
         else
         {

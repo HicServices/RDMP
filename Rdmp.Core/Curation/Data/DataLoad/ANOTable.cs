@@ -396,7 +396,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         //cache answers
         if (_identifiableDataType == null)
         {
-            var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
+            var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
             var columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
 

@@ -371,7 +371,6 @@
     <PackageReference Include="Microsoft.XmlSerializer.Generator" Version="7.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.2.0" />
     <PackageReference Include="NPOI" Version="2.6.0" />
     <PackageReference Include="NLog" Version="5.2.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />

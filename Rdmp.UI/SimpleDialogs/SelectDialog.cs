@@ -290,7 +290,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         var type = mapsDirectlyToDatabaseTables.First().GetType();
 
-        // types differ (use All to jump out ASAP if theres a billion objects)
+        // types differ (use Any to jump out ASAP if there are a billion objects)
         if (mapsDirectlyToDatabaseTables.Any(m => m.GetType() != type))
             return;
 
@@ -366,8 +366,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (focusedCollection != RDMPCollection.None &&
             StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
             startingFilters = filter;
-
-        var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
         if (_types.Length > 1)

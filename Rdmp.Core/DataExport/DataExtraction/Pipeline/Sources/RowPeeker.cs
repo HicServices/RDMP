@@ -74,6 +74,7 @@ internal class RowPeeker
 
         //while we are still successfully reading rows and those rows have the same release id
         while (source.ReadOneRow() is { } r)
+        {
             if (equalityFunc(r))
             //add it to the current chunk
             {

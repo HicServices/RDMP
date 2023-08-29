@@ -20,7 +20,7 @@ public static class PermissableDefaultsExtensions
     /// <returns></returns>
     public static IPatcher ToTier2DatabaseType(this PermissableDefaults permissibleDefault)
     {
-        return permissableDefault switch
+        return permissibleDefault switch
         {
             PermissableDefaults.LiveLoggingServer_ID => new LoggingDatabasePatcher(),
             PermissableDefaults.IdentifierDumpServer_ID => new IdentifierDumpDatabasePatcher(),
@@ -29,7 +29,7 @@ public static class PermissableDefaultsExtensions
             PermissableDefaults.CohortIdentificationQueryCachingServer_ID => new QueryCachingPatcher(),
             PermissableDefaults.RAWDataLoadServer => null,
             PermissableDefaults.ANOStore => new ANOStorePatcher(),
-            _ => throw new ArgumentOutOfRangeException(nameof(permissableDefault))
+            _ => throw new ArgumentOutOfRangeException(nameof(permissibleDefault))
         };
     }
 }
