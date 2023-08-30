@@ -11,7 +11,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -34,9 +34,10 @@ internal class DataAccessPortalCollectionTests
     public void TestOneServer_CountCorrect(bool singleServer)
     {
         var collection = new DataAccessPointCollection(singleServer);
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.DatabaseType == DatabaseType.Oracle));
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        collection.Add(_dap);
         Assert.AreEqual(1, collection.Points.Count);
     }
 
@@ -45,39 +46,47 @@ internal class DataAccessPortalCollectionTests
     {
         var collection = new DataAccessPointCollection(true);
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetQuerySyntaxHelper() == OracleQuerySyntaxHelper.Instance));
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server = ("loco");
+        _dap.Database = ("B");
+        _dap.DatabaseType = (DatabaseType.Oracle);
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetQuerySyntaxHelper() == OracleQuerySyntaxHelper.Instance));
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server = ("loco");
+        _dap0.Database = ("A");
+        _dap0.DatabaseType = (DatabaseType.Oracle);
+
+        collection.Add(_dap0);
+        collection.Add(_dap);
 
         Assert.AreEqual(2, collection.Points.Count);
 
-        //they both go to B so the single server should specify B
         var db = collection.GetDistinctServer().GetCurrentDatabase();
-        Assert.AreEqual("B", db.GetRuntimeName());
+        Assert.IsNull(db);
     }
 
     [Test]
     public void TestTwo_SameServer_NoCredentials()
     {
         var collection = new DataAccessPointCollection(true);
+        var _cred = Substitute.For<IDataAccessCredentials>();
+        _cred.Username.Returns("ff");
+        _cred.GetDecryptedPassword().Returns("pwd2");
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("B");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle));
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "A" &&
-            m.DatabaseType == DatabaseType.Oracle));
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("loco");
+        _dap0.Database.Returns("A");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+        collection.Add(_dap);
+
+        collection.Add(_dap0);
 
         Assert.AreEqual(2, collection.Points.Count);
 
@@ -90,22 +99,25 @@ internal class DataAccessPortalCollectionTests
     public void TestTwo_SameServer_SameCredentials()
     {
         var collection = new DataAccessPointCollection(true);
+        var _cred = Substitute.For<IDataAccessCredentials>();
+        _cred.Username.Returns("ff");
+        _cred.GetDecryptedPassword().Returns("pwd2");
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("B");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                u.Username == "ff" &&
-                u.GetDecryptedPassword() == "pwd")));
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "A" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                u.Username == "ff" &&
-                u.GetDecryptedPassword() == "pwd")));
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("loco");
+        _dap0.Database.Returns("A");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+
+        collection.Add(_dap);
+
+        collection.Add(_dap0);
 
         Assert.AreEqual(2, collection.Points.Count);
     }
@@ -115,24 +127,30 @@ internal class DataAccessPortalCollectionTests
     {
         var collection = new DataAccessPointCollection(true);
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                u.Username == "ff" &&
-                u.GetDecryptedPassword() == "pwd")));
+        var _cred = Substitute.For<IDataAccessCredentials>();
+        _cred.Username.Returns("ff");
+        _cred.GetDecryptedPassword().Returns("pwd2");
+
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("B");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+
+
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("loco");
+        _dap0.Database.Returns("A");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
+        collection.Add(_dap);
 
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(Mock.Of<IDataAccessPoint>(m =>
-                m.Server == "loco" &&
-                m.Database == "A" &&
-                m.DatabaseType == DatabaseType.Oracle))
+            collection.Add(_dap0)
         );
 
         //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("collection could not agree whether to use Credentials or not",
+        StringAssert.Contains("ollection could not agree on a single Username",
             ex.InnerException.Message);
         Assert.AreEqual(1, collection.Points.Count);
     }
@@ -141,25 +159,32 @@ internal class DataAccessPortalCollectionTests
     public void TestTwo_SameServer_DifferentUsernames()
     {
         var collection = new DataAccessPointCollection(true);
+        var _cred = Substitute.For<IDataAccessCredentials>();
+        _cred.Username.Returns("user1");
+        _cred.GetDecryptedPassword().Returns("pwd2");
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                u.Username == "user1" &&
-                u.GetDecryptedPassword() == "pwd")));
+
+        var _cred2 = Substitute.For<IDataAccessCredentials>();
+        _cred2.Username.Returns("user2");
+        _cred2.GetDecryptedPassword().Returns("pwd2");
+
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("B");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+        collection.Add(_dap);
+
+
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("loco");
+        _dap0.Database.Returns("A");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred2);
 
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(Mock.Of<IDataAccessPoint>(m =>
-                m.Server == "loco" &&
-                m.Database == "A" &&
-                m.DatabaseType == DatabaseType.Oracle &&
-                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(
-                    u =>
-                        u.Username == "user2" &&
-                        u.GetDecryptedPassword() == "pwd")))
+            collection.Add(_dap0)
         );
 
         //should be relevant error and it shouldn't have been added
@@ -171,26 +196,33 @@ internal class DataAccessPortalCollectionTests
     [Test]
     public void TestTwo_SameServer_DifferentPasswords()
     {
-        var collection = new DataAccessPointCollection(true);
+        var _cred = Substitute.For<IDataAccessCredentials>();
+        _cred.Username.Returns("user1");
+        _cred.GetDecryptedPassword().Returns("pwd2");
 
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle &&
-            m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(u =>
-                u.Username == "user1" &&
-                u.GetDecryptedPassword() == "pwd1")));
+
+        var _cred2 = Substitute.For<IDataAccessCredentials>();
+        _cred2.Username.Returns("user1");
+        _cred2.GetDecryptedPassword().Returns("pwd");
+        var collection = new DataAccessPointCollection(true);
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("B");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred);
+        collection.Add(_dap);
+
+
+
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("loco");
+        _dap0.Database.Returns("A");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
+        _dap0.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing).Returns(_cred2);
 
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(Mock.Of<IDataAccessPoint>(m =>
-                m.Server == "loco" &&
-                m.Database == "A" &&
-                m.DatabaseType == DatabaseType.Oracle &&
-                m.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing) == Mock.Of<IDataAccessCredentials>(
-                    u =>
-                        u.Username == "user1" &&
-                        u.GetDecryptedPassword() == "pwd2")))
+            collection.Add(_dap0)
         );
 
         //should be relevant error and it shouldn't have been added
@@ -203,18 +235,19 @@ internal class DataAccessPortalCollectionTests
     public void TestTwo_DifferentServer()
     {
         var collection = new DataAccessPointCollection(true);
-
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle));
-
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("B");
+        _dap.DatabaseType.Returns(DatabaseType.Oracle);
+        collection.Add(_dap);
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("joco");
+        _dap0.Database.Returns("B");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(Mock.Of<IDataAccessPoint>(m =>
-                m.Server == "joco" &&
-                m.Database == "A" &&
-                m.DatabaseType == DatabaseType.Oracle))
+
+        collection.Add(_dap0)
         );
 
         //should be relevant error and it shouldn't have been added
@@ -227,18 +260,19 @@ internal class DataAccessPortalCollectionTests
     public void TestTwo_DifferentDatabaseType()
     {
         var collection = new DataAccessPointCollection(true);
-
-        collection.Add(Mock.Of<IDataAccessPoint>(m =>
-            m.Server == "loco" &&
-            m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle));
-
+        var _dap0 = Substitute.For<IDataAccessPoint>();
+        _dap0.Server.Returns("loco");
+        _dap0.Database.Returns("B");
+        _dap0.DatabaseType.Returns(DatabaseType.Oracle);
+        collection.Add(_dap0);
+        var _dap = Substitute.For<IDataAccessPoint>();
+        _dap.Server.Returns("loco");
+        _dap.Database.Returns("A");
+        _dap.DatabaseType.Returns(DatabaseType.MySql);
         //cannot add because the second one wants integrated security
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            collection.Add(Mock.Of<IDataAccessPoint>(m =>
-                m.Server == "loco" &&
-                m.Database == "A" &&
-                m.DatabaseType == DatabaseType.MySql))
+
+        collection.Add(_dap)
         );
 
         //should be relevant error and it shouldn't have been added

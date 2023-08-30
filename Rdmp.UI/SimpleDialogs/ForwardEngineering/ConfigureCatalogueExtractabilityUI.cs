@@ -94,7 +94,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer,
         string initialDescription, IProject projectSpecificIfAny) : this(activator)
     {
-        importer.DoImport(out _tableInfo, out _);
+        importer.DoImport(out _tableInfo, out var cols);
 
         _importedNewTable = true;
 
@@ -695,7 +695,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
-            if (node.ExtractionInformation is { IsExtractionIdentifier: true })
+            if (node.ExtractionInformation != null && node.ExtractionInformation.IsExtractionIdentifier)
             {
                 node.ExtractionInformation.IsExtractionIdentifier = false;
                 node.ExtractionInformation.SaveToDatabase();

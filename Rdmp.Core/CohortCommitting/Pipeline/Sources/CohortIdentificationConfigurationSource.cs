@@ -125,11 +125,12 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             throw new Exception(
                 "CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
 
-        var dt = execution.Identifiers;
-
+        DataTable dt = execution.Identifiers;
+        dt.BeginLoadData();
         foreach (DataColumn column in dt.Columns)
             column.ReadOnly = false;
 
+        dt.EndLoadData();
         return dt;
     }
 

@@ -28,7 +28,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class PayloadTest : DatabaseTests
 {
     public static object payload = new();
-    public static bool Success = false;
+    public static bool Success;
 
     [Test]
     public void TestPayloadInjection()

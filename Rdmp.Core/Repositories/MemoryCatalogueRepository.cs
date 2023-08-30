@@ -390,9 +390,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         var parent = GetParent(child);
 
-        if (parent != null && CohortContainerContents.TryGetValue(parent, out var content))
+        if (parent != null && CohortContainerContents.TryGetValue(parent, out var cohortContainerContent))
         {
-            var record = content.SingleOrDefault(o => o.Orderable.Equals(child));
+            var record = cohortContainerContent.SingleOrDefault(o => o.Orderable.Equals(child));
             if (record != null)
                 record.Order = newOrder;
         }

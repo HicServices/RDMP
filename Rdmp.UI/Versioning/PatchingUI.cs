@@ -30,7 +30,7 @@ public partial class PatchingUI : Form
     private readonly DiscoveredDatabase _database;
     private readonly ITableRepository _repository;
 
-    private bool _yesToAll = false;
+    private bool _yesToAll;
     private IPatcher _patcher;
 
     private PatchingUI(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)

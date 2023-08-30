@@ -265,22 +265,28 @@ public partial class ParameterCollectionUI : RDMPUserControl
             parameterEditorScintillaControl1.RegenerateSQL();
             UpdateTabVisibility();
         }
+
+        // Rebuild once after deleting all objects, instead of after each deletion
+        DisableRelevantObjects();
+        parameterEditorScintillaControl1.RegenerateSQL();
+        UpdateTabVisibility();
     }
 
     private void olvParameters_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         var parameter = e.RowObject as ISqlParameter;
-        string oldParameterName;
+        string oldParameterName = null;
         string newParameterName;
 
-        try
-        {
-            oldParameterName = parameter?.ParameterName;
-        }
-        catch (Exception)
-        {
-            oldParameterName = null;
-        }
+        if (parameter != null)
+            try
+            {
+                oldParameterName = parameter.ParameterName;
+            }
+            catch (Exception)
+            {
+                oldParameterName = null;
+            }
 
         if (e.Column.Index == olvParameterSQL.Index)
             if (!string.IsNullOrWhiteSpace((string)e.NewValue))
@@ -412,12 +418,17 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miOverrideParameter.Enabled = CanOverride(parameter);
     }
 
-    private bool CanOverride(ISqlParameter sqlParameter) =>
-        sqlParameter != null &&
-        //if it is not already overridden
-        !Options.IsOverridden(sqlParameter) &&
-        //and it exists at a lower level
-        Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
+    private bool CanOverride(ISqlParameter sqlParameter)
+    {
+        if (sqlParameter != null)
+            //if it is not already overridden
+            if (!Options.IsOverridden(sqlParameter) &&
+                //and it exists at a lower level
+                Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel)
+                return true;
+
+        return false;
+    }
 
     private void miOverride_Click(object sender, EventArgs e)
     {

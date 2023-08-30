@@ -28,7 +28,6 @@ public class PackPluginRunner : IRunner
     private readonly PackOptions _packOpts;
     public const string PluginPackageSuffix = ".nupkg";
     public const string PluginPackageManifest = ".nuspec";
-    private Regex versionSuffix = new("-.*$");
 
     private static readonly Regex VersionSuffix = new("-.*$");
 

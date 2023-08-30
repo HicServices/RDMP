@@ -27,6 +27,7 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
     private bool _bInitialized;
 
     private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
+
     private IdentifierDumper _dumper;
 
     public TableInfo TableToLoad { get; set; }
@@ -58,7 +59,8 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
         }
     }
 
-    private int recordsProcessedSoFar = 0;
+    private int recordsProcessedSoFar;
+
     private Stopwatch stopwatch_TimeSpentTransforming = new();
     private Stopwatch stopwatch_TimeSpentDumping = new();
 

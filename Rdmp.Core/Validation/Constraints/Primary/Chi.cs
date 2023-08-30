@@ -131,11 +131,8 @@ public partial class Chi : PrimaryConstraint
         if (strChi is not { Length: 10 })
             return false;
 
-        var r = TenDigits();
-        if (!r.IsMatch(strChi))
-            return false;
-
-        return true;
+        var r = new Regex("^[0-9]{10}$");
+        return r.IsMatch(strChi);
     }
 
     private static int ComputeChecksum(string chi)

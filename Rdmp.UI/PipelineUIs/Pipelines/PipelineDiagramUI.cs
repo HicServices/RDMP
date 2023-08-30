@@ -286,6 +286,7 @@ public partial class PipelineDiagramUI : UserControl
         flpPipelineDiagram.Controls.Add(divider);
     }
 
+
     private void component_Selected(object sender, IPipelineComponent selected)
     {
         if (!AllowSelection)

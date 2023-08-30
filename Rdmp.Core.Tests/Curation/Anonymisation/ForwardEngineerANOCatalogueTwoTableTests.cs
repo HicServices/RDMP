@@ -23,6 +23,7 @@ public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
 {
     private ITableInfo t1;
     private ColumnInfo[] c1;
+
     private ITableInfo t2;
     private ColumnInfo[] c2;
 

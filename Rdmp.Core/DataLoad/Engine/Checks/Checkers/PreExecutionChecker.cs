@@ -262,7 +262,7 @@ public class PreExecutionChecker : ICheckable
                     CheckResult.Fail));
     }
 
-    public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
+    public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo))
             throw new Exception(

@@ -65,12 +65,15 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 {
     private ToolStripMenuItem cbIncludeCumulative = new("Calculate Cumulative Totals") { CheckOnClick = true };
     private ToolTip tt = new();
+
     private readonly ToolStripTimeout _timeoutControls = new() { Timeout = 3000 };
     private RDMPCollectionCommonFunctionality _commonFunctionality;
+
     private Timer timer = new();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
-    private CohortIdentificationConfigurationUICommon Common = new();
+
+    private CohortIdentificationConfigurationUICommon Common = new ();
 
     public CohortIdentificationConfigurationUI()
     {
@@ -280,6 +283,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         e.Cancel = Common.ConsultAboutClosing();
     }
 
+
     private void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
     {
         Common.ExecuteOrCancel(e.Model);
@@ -393,7 +397,9 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         if (Common.Compiler.Tasks.TryGetValue(c, out var task) && task != null && enabledFunc(task))
             menuItem.Click += (s, e) => action(task);
         else
+        {
             menuItem.Enabled = false;
+        }
 
         return menuItem;
     }

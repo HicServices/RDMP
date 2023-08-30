@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using FAnsi;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -99,33 +99,35 @@ internal class RemoteTableAttacherTests : DatabaseTests
 
         attacher.Initialize(null, db);
 
-        using var dt = new DataTable();
-        dt.Columns.Add("Col1");
-        dt.Rows.Add("fff");
+        using (var dt = new DataTable())
+        {
+            dt.Columns.Add("Col1");
+            dt.Rows.Add("fff");
 
-        var tbl1 = db.CreateTable("table1", dt);
-        var tbl2 = db.CreateTable("table2",
-            new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)) });
+            var tbl1 = db.CreateTable("table1", dt);
+            var tbl2 = db.CreateTable("table2",
+                new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)) });
 
-        Assert.AreEqual(1, tbl1.GetRowCount());
-        Assert.AreEqual(0, tbl2.GetRowCount());
+            Assert.AreEqual(1, tbl1.GetRowCount());
+            Assert.AreEqual(0, tbl2.GetRowCount());
 
-        var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+            var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
-        var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-        Mock.Get(lmd).Setup(p => p.CatalogueRepository).Returns(CatalogueRepository);
-        logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
+            var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+            lmd.CatalogueRepository.Returns(CatalogueRepository);
+            logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
-        var dbConfiguration =
-            new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
+            var dbConfiguration = new HICDatabaseConfiguration(lmd,
+                RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-        var job = new DataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration);
-        job.StartLogging();
-        attacher.Attach(job, new GracefulCancellationToken());
+            var job = new DataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
+                new ThrowImmediatelyDataLoadEventListener(), dbConfiguration);
+            job.StartLogging();
+            attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.AreEqual(1, tbl1.GetRowCount());
-        Assert.AreEqual(1, tbl2.GetRowCount());
+            Assert.AreEqual(1, tbl1.GetRowCount());
+            Assert.AreEqual(1, tbl2.GetRowCount());
+        }
     }
 
     private void RunAttachStageWithLoadProgressJob(RemoteTableAttacher attacher, DiscoveredDatabase db,
@@ -163,8 +165,9 @@ internal class RemoteTableAttacherTests : DatabaseTests
 
         var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
+
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-        Mock.Get(lmd).Setup(p => p.CatalogueRepository).Returns(CatalogueRepository);
+        lmd.CatalogueRepository.Returns(CatalogueRepository);
         logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
         var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
@@ -173,13 +176,13 @@ internal class RemoteTableAttacherTests : DatabaseTests
         };
         attacher.Progress = lp;
         attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo
-            { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
+        { Strategy = DataLoadProgressUpdateStrategy.DoNothing };
 
-        var dbConfiguration =
-            new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
+        var dbConfiguration = new HICDatabaseConfiguration(lmd,
+            RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
         var job = new ScheduledDataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration)
+            new ThrowImmediatelyDataLoadEventListener(), dbConfiguration)
         {
             LoadProgress = mismatchProgress
                 ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))

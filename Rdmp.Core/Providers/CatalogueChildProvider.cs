@@ -1303,9 +1303,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
     {
-        //all our children (containers and aggregates)
-
-
         //get subcontainers
         var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 

@@ -83,7 +83,14 @@ public class MemoryRepository : IRepository
         var type = underlying ?? prop.PropertyType;
 
         if (type.IsEnum)
-            prop.SetValue(toCreate, strVal != null ? Enum.Parse(type, strVal) : Enum.ToObject(type, val));
+        {
+            if ( strVal != null)
+                prop.SetValue(toCreate, Enum.Parse(type, strVal));
+            else
+            {
+                prop.SetValue(toCreate, Enum.ToObject(type, val));
+            }
+        }
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }

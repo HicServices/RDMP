@@ -111,6 +111,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
             new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
     }
 
+
     private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         if (olvCatalogues.SelectedObject is not CatalogueItem ci)

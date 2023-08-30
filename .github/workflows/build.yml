@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: touch package-lock.json
       - name: Install Node for coverage reporting
-        uses: actions/setup-node@v3.7.0
+        uses: actions/setup-node@v3.8.1
         with:
           node-version: '16.x'
           cache: 'npm'
@@ -77,7 +77,7 @@ jobs:
       - name: Test (DB)
         shell: bash
         run: |
-          rm -rf coverage          
+          rm -rf coverage
           dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
@@ -98,7 +98,7 @@ jobs:
           github-token: ${{ secrets.github_token }}
           path-to-lcov: all.lcov
           flag-name: unit tests
-      
+
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
@@ -130,7 +130,7 @@ jobs:
           (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.23.0
+        uses: shogo82148/actions-setup-perl@v1.23.1
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
@@ -192,7 +192,7 @@ jobs:
           path: |
             dist
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@2.6.1
+        uses: svenstaro/upload-release-action@2.7.0
         if: contains(github.ref, 'refs/tags/v')
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

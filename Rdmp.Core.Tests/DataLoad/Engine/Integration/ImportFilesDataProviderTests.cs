@@ -8,7 +8,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
@@ -37,7 +37,8 @@ public class ImportFilesDataProviderTests : DatabaseTests
         File.WriteAllText(originpath, "fish");
 
         var job = new ThrowImmediatelyDataLoadJob();
-        var mockProjectDirectory = Mock.Of<ILoadDirectory>(p => p.ForLoading == targetDir);
+        var mockProjectDirectory = Substitute.For<ILoadDirectory>();
+        mockProjectDirectory.ForLoading.Returns(targetDir);
         job.LoadDirectory = mockProjectDirectory;
 
 

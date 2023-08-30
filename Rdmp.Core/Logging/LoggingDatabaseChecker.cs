@@ -166,7 +166,6 @@ public class LoggingDatabaseChecker : ICheckable
             actual.Add(Convert.ToInt32(reader["ID"]), reader[valueColumnName].ToString().Trim());
 
         //now reconcile what is in the database with what we expect
-
         ExpectedLookupsValuesArePresent(expected, actual, out var missing, out var collisions, out var misnomers);
 
         if (!missing.Any() && !collisions.Any() && !misnomers.Any())

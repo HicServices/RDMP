@@ -95,6 +95,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
                 chunk.EndLoadData();
                 return chunk;
             }
+            chunk.EndLoadData();
 
             //if data was read
             if (readThisBatch > 0)

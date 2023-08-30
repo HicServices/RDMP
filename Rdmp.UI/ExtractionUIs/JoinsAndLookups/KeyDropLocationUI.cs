@@ -31,7 +31,7 @@ public partial class KeyDropLocationUI : UserControl
             {
                 JoinKeyType.PrimaryKey => "(Primary Key)",
                 JoinKeyType.ForeignKey => "(Foreign Key)",
-                _ => throw new ArgumentOutOfRangeException(nameof(value))
+                _ => throw new ArgumentOutOfRangeException()
             };
         }
     }

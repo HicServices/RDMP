@@ -209,6 +209,7 @@ public class DragDropProvider : SimpleDragSource
     }
 
 
+
     private static InsertOption GetDropLocation(ModelDropEventArgs e)
     {
         if (e.DropTargetLocation == DropTargetLocation.AboveItem)

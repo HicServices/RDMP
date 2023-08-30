@@ -108,6 +108,7 @@ public class AggregateDataBasedTests : DatabaseTests
     }
 
 
+
     private static void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
     {
         var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);

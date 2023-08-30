@@ -515,7 +515,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
     private void CreateMigrationRules(ForwardEngineerANOCataloguePlanManager planManager, BulkTestsData bulk)
     {
         var chi = bulk.GetColumnInfo("chi");
-
+            
         var anoChi = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCHI", "C")
         {
             NumberOfIntegersToUseInAnonymousRepresentation = 9,

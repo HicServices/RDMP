@@ -616,8 +616,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         ExtractableColumn addMe;
 
-        if (column is ExtractionInformation information)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, information, -1, query);
+        if (column is ExtractionInformation extractionInformation)
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation, -1, query);
         else
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1,
                 query); // its custom column of some kind, not tied to a catalogue entry

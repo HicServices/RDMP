@@ -77,9 +77,7 @@ internal class ConsoleGuiBigListBox<T>
     public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,
         Func<T, string> displayMember, bool addNull) : this(prompt, okText, addSearch, displayMember)
     {
-        ArgumentNullException.ThrowIfNull(collection);
-
-        _publicCollection = collection;
+        _publicCollection = collection ?? throw new ArgumentNullException(nameof(collection));
         _addNull = addNull;
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using Rdmp.Core;
 using Rdmp.UI.SimpleControls;
 
 
@@ -70,6 +71,7 @@ namespace Rdmp.UI.LocationsMenu
             this.label11 = new System.Windows.Forms.Label();
             this.tbRowCount = new System.Windows.Forms.TextBox();
             this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
+            this.cbCreateLoggingServer = new System.Windows.Forms.CheckBox();
             this.tbSeed = new System.Windows.Forms.TextBox();
             this.tbOtherKeywords = new System.Windows.Forms.TextBox();
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
@@ -375,6 +377,7 @@ namespace Rdmp.UI.LocationsMenu
             // gbCreateNew
             // 
             this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
+            this.gbCreateNew.Controls.Add(this.cbCreateLoggingServer);
             this.gbCreateNew.Controls.Add(this.gbSqlAuthentication);
             this.gbCreateNew.Controls.Add(this.gbExampleDatasets);
             this.gbCreateNew.Controls.Add(this.tbOtherKeywords);
@@ -522,7 +525,18 @@ namespace Rdmp.UI.LocationsMenu
             this.cbCreateExampleDatasets.Text = "Example Datasets";
             this.cbCreateExampleDatasets.UseVisualStyleBackColor = true;
             this.cbCreateExampleDatasets.CheckedChanged += new System.EventHandler(this.cbCreateExampleDatasets_CheckedChanged);
+            //
+            // cbCreateLoggingServer
             // 
+            this.cbCreateLoggingServer.AutoSize = true;
+            this.cbCreateLoggingServer.Location = new System.Drawing.Point(543, 156);
+            this.cbCreateLoggingServer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbCreateLoggingServer.Name = "cbCreateLoggingServer";
+            this.cbCreateLoggingServer.Size = new System.Drawing.Size(118, 19);
+            this.cbCreateLoggingServer.TabIndex = 9;
+            this.cbCreateLoggingServer.Checked = true;
+            this.cbCreateLoggingServer.Text = Core.GlobalStrings.CreateALoggingServer;
+            this.cbCreateLoggingServer.UseVisualStyleBackColor = true;
             // tbSeed
             // 
             this.tbSeed.Location = new System.Drawing.Point(94, 22);
@@ -672,6 +686,7 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox cbCreateExampleDatasets;
+        private System.Windows.Forms.CheckBox cbCreateLoggingServer;
         private System.Windows.Forms.TextBox tbSeed;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox tbRowCount;

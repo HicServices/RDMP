@@ -90,6 +90,7 @@ public class ObjectConstructorTests : UnitTests
     {
     }
 
+
     private class TestClass1
     {
         public TestClass1(object o)
@@ -131,6 +132,7 @@ public class ObjectConstructorTests : UnitTests
             A = a;
         }
     }
+
 
     private class TestClass5
     {

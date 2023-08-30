@@ -90,7 +90,9 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
     {
         if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
+        {
             PermissionWindowPeriods = new List<PermissionWindowPeriod>();
+        }
         else
             PermissionWindowPeriods =
                 Serializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;

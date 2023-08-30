@@ -86,6 +86,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
         _tableInfo.SaveToDatabase();
     }
 
+
     private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
     {
         //do not mess with the table name if it is a table valued function

@@ -203,10 +203,7 @@ public class ValidatorTest
 
         v.ItemValidators[0].SecondaryConstraints.Add(boundDate);
 
-        var dictionary = new Dictionary<string, string>
-        {
-            { "OldCol2", "NewCol2" }
-        };
+        var dictionary  = new Dictionary<string, string> { { "OldCol2", "NewCol2" } };
 
         //before and after rename of col2
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "OldCol2");

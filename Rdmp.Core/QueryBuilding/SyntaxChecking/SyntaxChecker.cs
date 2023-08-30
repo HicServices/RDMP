@@ -20,8 +20,7 @@ public abstract class SyntaxChecker : ICheckable
     private static readonly Regex BracketedNumber =
         new(@"\([0-9]*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-    private static readonly Regex QuotedString =
-        new("'[^']*'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    private static readonly Regex QuotedString = new("'[^']*'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Checks to see if there is a closing bracket for every opening bracket (or any other characters that come in open/close pairs.  Throws SyntaxErrorException if there

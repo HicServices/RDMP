@@ -153,6 +153,7 @@ public partial class HeatmapUI : UserControl
         Invalidate();
     }
 
+
     private ToolTip tt = new();
 
     private int toolTipDelayInTicks = 500;

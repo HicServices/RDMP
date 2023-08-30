@@ -271,6 +271,15 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     public override void DeleteInDatabase()
     {
+        
+         if (WasCreatedBy(new LoggingDatabasePatcher())){
+            //If you're trying to delete a logging server, remove all references to it first
+            Catalogue[] catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",base.ID);
+            foreach(Catalogue catalogue in catalogues){
+                catalogue.LiveLoggingServer_ID = null;
+                catalogue.SaveToDatabase();
+            }
+         }
         base.DeleteInDatabase();
 
         // normally in database schema deleting an ExternalDatabaseServer will cascade to clear defaults

@@ -26,8 +26,7 @@ public abstract class SingletonNode : Node
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj is SingletonNode other && Equals(other);
+        return ReferenceEquals(this, obj) || obj is SingletonNode other && Equals(other);
     }
 
     public override int GetHashCode() => Caption.GetHashCode();

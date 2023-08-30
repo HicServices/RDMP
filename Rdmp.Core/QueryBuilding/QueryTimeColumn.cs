@@ -112,7 +112,7 @@ public class QueryTimeColumn : IComparable
 
         if (firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
-
+                
         for (var i = 0; i < ColumnsInOrder.Length; i++)
         {
             //it is a custom column

@@ -43,7 +43,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     public Validator Validator { get; private set; }
 
-    private bool bSuppressChangeEvents = false;
+    private bool bSuppressChangeEvents;
     private Catalogue _catalogue;
 
     private string ClearSelection = "<<Clear Selection>>";

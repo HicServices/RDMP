@@ -16,9 +16,10 @@ namespace Rdmp.UI.SimpleDialogs;
 [TechnicalUI]
 public class YesNoYesToAllDialog : WideMessageBox
 {
-    private bool YesToAllClicked = false;
-    private bool NoToAllClicked = false;
+    private bool YesToAllClicked;
+    private bool NoToAllClicked;
     private object lockShowDialog = new();
+
     private FlowLayoutPanel p = new();
     private Button btnYes = new() { Text = "Yes" };
     private Button btnYesToAll = new() { Text = "Yes To All" };

@@ -27,9 +27,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event Action PipelineDeleted = delegate { };
 
     public event EventHandler PipelineChanged;
+    private IPipeline _previousSelection;
 
-    private IPipeline _previousSelection = null;
     private ToolTip tt = new();
+
     private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
 
@@ -57,8 +58,6 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private void RefreshPipelineList()
     {
         ddPipelines.Items.Clear();
-
-        var context = _useCase.GetContext();
 
         //add pipelines sorted alphabetically
         var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p => p.Name).ToArray();

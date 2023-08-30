@@ -112,8 +112,6 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         if (target is CohortIdentificationConfiguration cohortIdentificationConfiguration)
             _cic = cohortIdentificationConfiguration;
-        if (target is CohortIdentificationConfiguration configuration)
-            _cic = configuration;
 
         return this;
     }

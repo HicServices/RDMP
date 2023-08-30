@@ -45,9 +45,10 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             if (primaryKeys.Any())
             {
                 string newSql;
-                newSql = primaryKeys.Length > 1
-                    ? $"CONCAT({string.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})"
-                    : primaryKeys.Single().Name; // no need to do anything if there is only one.
+                if (primaryKeys.Length > 1) // no need to do anything if there is only one.
+                    newSql = $"CONCAT({string.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})";
+                else
+                    newSql = primaryKeys.Single().Name;
 
                 var syntaxHelper = Request.Catalogue.GetQuerySyntaxHelper();
 

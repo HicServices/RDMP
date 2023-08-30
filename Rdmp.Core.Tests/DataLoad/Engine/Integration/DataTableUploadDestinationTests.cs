@@ -86,7 +86,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 "age varchar(50),"
             };
 
-            if (createIdentity)
+            if(createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;

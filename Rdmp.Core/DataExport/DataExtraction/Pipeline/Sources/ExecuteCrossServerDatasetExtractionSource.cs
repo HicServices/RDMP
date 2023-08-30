@@ -69,7 +69,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     /// </summary>
     private bool _doNotMigrate;
 
-    private string _tablename = null;
+    private string _tablename;
     private object _tableName = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)

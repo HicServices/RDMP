@@ -448,10 +448,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                         $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                         "Create Extractable Column?");
 
-                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>
-                {
-                    Tuple.Create(f1, p1)
-                };
+                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
 
                 if (p2 != null)
                     keyPairs.Add(Tuple.Create(f2, p2));

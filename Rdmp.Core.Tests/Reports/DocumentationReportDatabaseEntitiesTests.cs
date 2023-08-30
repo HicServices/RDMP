@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -21,19 +21,20 @@ namespace Rdmp.Core.Tests.Reports;
 
 internal class DocumentationReportDatabaseEntitiesTests : UnitTests
 {
-    [Test]
-    public void Test_DocumentationReportDatabaseEntities_Normal()
-    {
-        var store = new CommentStore();
-        store.ReadComments(TestContext.CurrentContext.TestDirectory);
+        [Test]
+        public void Test_DocumentationReportDatabaseEntities_Normal()
+        {
+                var store = new CommentStore();
+                store.ReadComments(TestContext.CurrentContext.TestDirectory);
 
-        var reporter = new DocumentationReportDatabaseEntities();
+                var reporter = new DocumentationReportDatabaseEntities();
 
-        Image img = new Image<Rgba32>(19, 19);
-        img.Mutate(x => x.Fill(Color.DarkMagenta));
+                Image img = new Image<Rgba32>(19, 19);
+                img.Mutate(x => x.Fill(Color.DarkMagenta));
 
-        var iconProvider = Mock.Of<IIconProvider>(m => m.GetImage(It.IsAny<object>(), It.IsAny<OverlayKind>()) == img);
+                var iconProvider = Substitute.For<IIconProvider>();
+                iconProvider.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()).Returns(img);
 
-        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
-    }
+                reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
+        }
 }

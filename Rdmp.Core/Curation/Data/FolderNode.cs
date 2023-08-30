@@ -53,7 +53,14 @@ public class
 
         while (p != null)
         {
-            sb.Insert(0, p.Name.Equals(FolderHelper.Root) ? p.Name : $"{p.Name}\\");
+            if(p.Name.Equals(FolderHelper.Root))
+            {
+                sb.Insert(0, p.Name);
+            }
+            else
+            {
+                sb.Insert(0, $"{p.Name}\\");
+            }
 
             p = p.Parent;
         }

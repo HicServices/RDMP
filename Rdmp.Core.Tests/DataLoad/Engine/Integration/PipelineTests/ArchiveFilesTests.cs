@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
@@ -40,12 +40,16 @@ public class ArchiveFilesTests : DatabaseTests
 
         var archiveComponent = new ArchiveFiles(new HICLoadConfigurationFlags());
 
-        var dataLoadInfo = Mock.Of<IDataLoadInfo>(info => info.ID == 1);
+        var dataLoadInfo = Substitute.For<IDataLoadInfo>();
+        dataLoadInfo.ID.Returns(1);
 
-        var LoadDirectory = Mock.Of<ILoadDirectory>(d => d.ForArchiving == forArchiving && d.ForLoading == forLoading);
+        var LoadDirectory = Substitute.For<ILoadDirectory>();
+        LoadDirectory.ForArchiving.Returns(forArchiving);
+        LoadDirectory.ForLoading.Returns(forLoading);
 
-        var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo == dataLoadInfo);
-        job.LoadDirectory = LoadDirectory;
+        var job = Substitute.For<IDataLoadJob>();
+        job.DataLoadInfo.Returns(dataLoadInfo);
+        job.LoadDirectory.Returns(LoadDirectory);
 
         try
         {
@@ -79,8 +83,9 @@ public class ArchiveFilesTests : DatabaseTests
         var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
 
-        var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo == Mock.Of<IDataLoadInfo>());
-        job.LoadDirectory = loadDirectory;
+        var job = Substitute.For<IDataLoadJob>();
+        job.DataLoadInfo.Returns(Substitute.For<IDataLoadInfo>());
+        job.LoadDirectory.Returns(loadDirectory);
 
         try
         {

@@ -88,6 +88,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         GetAllObjects<CumulativeExtractionResults>(
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
 
+    private readonly ObjectConstructor _constructor = new();
 
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
         Constructors.TryGetValue(t, out var constructor)

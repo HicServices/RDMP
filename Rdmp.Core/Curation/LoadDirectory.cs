@@ -46,7 +46,7 @@ public class LoadDirectory : ILoadDirectory
 ";
 
     /// <summary>
-    /// Declares that a new directory contains the folder structure required by the DLE.  Thows Exceptions if this folder doesn't exist or isn't set up yet.
+    /// Declares that a new directory contains the folder structure required by the DLE.  Throws Exceptions if this folder doesn't exist or isn't set up yet.
     /// 
     /// <para>Use static method <see cref="CreateDirectoryStructure"/> if you want to create a new folder hierarchy on disk</para>
     /// </summary>
@@ -76,7 +76,7 @@ public class LoadDirectory : ILoadDirectory
     private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName) =>
         path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-    private static DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
+    private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
         var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault() ??
                 throw new DirectoryNotFoundException(

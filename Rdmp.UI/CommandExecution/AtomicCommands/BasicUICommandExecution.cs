@@ -23,7 +23,7 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
         Activator = activator;
     }
 
-    protected static FileInfo SelectSaveFile(string filter)
+    protected FileInfo SelectSaveFile(string filter)
     {
         var sfd = new SaveFileDialog
         {
@@ -38,10 +38,7 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
         {
             Filter = filter
         };
-        if (ofd.ShowDialog() == DialogResult.OK)
-            return new FileInfo(ofd.FileName);
-
-        return null;
+        return ofd.ShowDialog() == DialogResult.OK ? new FileInfo(ofd.FileName) : null;
     }
 
     internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault,

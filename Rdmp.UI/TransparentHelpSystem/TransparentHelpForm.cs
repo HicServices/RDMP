@@ -29,6 +29,7 @@ public partial class TransparentHelpForm : Form
     private const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
+
     private Timer timer = new();
     private SolidBrush _highlightBrush;
 

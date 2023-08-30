@@ -273,7 +273,7 @@ public class FlatFileToDataTablePusher
             factory.Settings.ExplicitDateFormats = new[] { _explicitDateTimeFormat };
 
         var dtCloned = workingTable.Clone();
-
+        dtCloned.BeginLoadData();
         var typeChangeNeeded = false;
 
         foreach (DataColumn col in workingTable.Columns)

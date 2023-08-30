@@ -36,6 +36,7 @@ public class ExtractionRunner : ManyRunner
     private IBasicActivateItems _activator;
     private ExtractionConfiguration _configuration;
     private IProject _project;
+
     private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;

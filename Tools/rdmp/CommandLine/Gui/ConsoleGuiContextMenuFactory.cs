@@ -43,7 +43,7 @@ internal class ConsoleGuiContextMenuFactory
 
         var miCategories = categories.ToDictionary(category => category, _ => new List<MenuItem>());
 
-        List<MenuItem> items = new();
+        var items = new List<MenuItem>();
 
         // Build commands into menu items
         foreach (var cmd in commands.OrderBy(c => c.Weight))

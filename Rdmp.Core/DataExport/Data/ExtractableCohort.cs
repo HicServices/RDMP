@@ -191,13 +191,13 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var sql =
-            $@"Select 
+            $@"Select
 {syntax.EnsureWrapped("projectNumber")},
 {syntax.EnsureWrapped("description")},
 {syntax.EnsureWrapped("version")},
 {syntax.EnsureWrapped("dtCreated")}
-from {ExternalCohortTable.DefinitionTableName} 
-where 
+from {ExternalCohortTable.DefinitionTableName}
+where
     {syntax.EnsureWrapped("id")} = {OriginID}";
 
         if (timeoutInSeconds != -1) db.Server.TestConnection(timeoutInSeconds * 1000);
@@ -383,8 +383,8 @@ where
 {syntax.EnsureWrapped("id")},
 {syntax.EnsureWrapped("version")},
 {syntax.EnsureWrapped("projectNumber")}
-from {externalSource.DefinitionTableName} 
-where 
+from {externalSource.DefinitionTableName}
+where
     exists (Select 1 from {externalSource.TableName} WHERE {externalSource.DefinitionTableForeignKeyField}=id)";
 
         using var da = server.GetDataAdapter(sql, con);
@@ -514,6 +514,7 @@ where
         sw2.Start();
 
         //fix values
+        toProcess.BeginLoadData();
         foreach (DataRow row in toProcess.Rows)
             try
             {

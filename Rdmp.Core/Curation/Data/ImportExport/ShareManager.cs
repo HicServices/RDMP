@@ -446,8 +446,10 @@ public class ShareManager
             //copy all the values out of the share definition / database copy
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
                 //don't update any ID columns or any with relationships on UPDATE
-                if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
+                if (propertiesDictionary.TryGetValue(prop.Name,out var value) && finder.GetAttribute(prop) == null)
+                {
                     SetValue(prop, value, toCreate);
+                }
                 else
                     prop.SetValue(toCreate,
                         prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)

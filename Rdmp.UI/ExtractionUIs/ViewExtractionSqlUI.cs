@@ -40,6 +40,7 @@ namespace Rdmp.UI.ExtractionUIs;
 public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
     private Catalogue _catalogue;
+
     private ToolStripButton rbCore = new("Core");
     private ToolStripButton rbSupplemental = new("Supplemental") { Checked = true };
     private ToolStripButton rbSpecialApproval = new("Special Approval");

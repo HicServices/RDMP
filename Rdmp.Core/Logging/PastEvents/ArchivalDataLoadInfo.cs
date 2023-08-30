@@ -57,7 +57,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public List<ArchivalTableLoadInfo> TableLoadInfos => _knownTableInfos.Value;
 
     /// <summary>
-    /// All errors that occured during the run
+    /// All errors that occurred during the run
     /// </summary>
     public List<ArchivalFatalError> Errors => _knownErrors.Value;
 

@@ -58,6 +58,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),
                 StringComparer.CurrentCultureIgnoreCase)
         };
+
     }
 
     protected override void AddMoreButtonsAfter(Window win, Button btnCancel)
@@ -68,7 +69,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             Y = Pos.Top(btnCancel)
         };
         win.Add(lbl);
-
+            
         txtId = new TextField
         {
             X = Pos.Right(lbl),

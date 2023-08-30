@@ -161,7 +161,7 @@ public class MasterDatabaseScriptExecutor
         SetVersion(kvp.Key, kvp.Value.DatabaseVersionNumber.ToString());
     }
 
-    public static string CalculateHash(string input)
+    private string CalculateHash(string input)
     {
         // step 1, calculate SHA512 hash from input
 
@@ -170,10 +170,15 @@ public class MasterDatabaseScriptExecutor
 
         var hash = SHA512.HashData(inputBytes);
 
-        // step 2, convert byte array to hex string
-        return string.Join("", hash.Select(static octet => octet.ToString("X2")));
-    }
 
+        // step 2, convert byte array to hex string
+
+        var sb = new StringBuilder();
+        sb.Append(hash.Select(x => x.ToString("X2")));
+
+        return sb.ToString();
+
+    }
 
     private void SetVersion(string name, string version)
     {

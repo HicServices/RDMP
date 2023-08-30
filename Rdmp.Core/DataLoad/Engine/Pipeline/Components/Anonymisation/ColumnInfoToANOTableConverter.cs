@@ -171,9 +171,7 @@ public class ColumnInfoToANOTableConverter
             cmd.ExecuteNonQuery();
         }
         else
-        {
             throw new Exception($"User chose not to drop the old column {_colToNuke}");
-        }
     }
 
 

@@ -84,10 +84,12 @@ public class HICDatabaseConfiguration
                            throw new Exception("Cannot load live without having a unique live named database");
 
         // Default namer
-        //create the DLE tables on the live database because postgres can't handle cross database references
-        namer ??= liveServer.DatabaseType == DatabaseType.PostgreSql
-            ? new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(), liveDatabase.GetRuntimeName())
-            : new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
+        if (namer == null)
+            if(liveServer.DatabaseType == DatabaseType.PostgreSql)
+                //create the DLE tables on the live database because postgres can't handle cross database references
+                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(),liveDatabase.GetRuntimeName());
+            else
+                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
 
         //if there are defaults
         if (overrideRAWServer == null && defaults != null)

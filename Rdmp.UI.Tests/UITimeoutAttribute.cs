@@ -43,7 +43,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             _timeout = timeout;
         }
 
-        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+        [LibraryImport("user32.dll")]
         private static partial IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

@@ -75,7 +75,6 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         TruncateDataTable();
         AllowEmptyExtractions = true;
 
-
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
 
         Execute(out _, out var result);

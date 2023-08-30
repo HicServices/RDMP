@@ -85,10 +85,7 @@ public class DescendancyList
         if (Parents.Contains(anotherKnownParent))
             throw new ArgumentException($"DecendancyList already contains '{anotherKnownParent}'");
 
-        var list = new List<object>(Parents)
-        {
-            anotherKnownParent
-        };
+        var list = new List<object>(Parents) { anotherKnownParent };
         var toReturn = new DescendancyList(list.ToArray())
         {
             BetterRouteExists = BetterRouteExists,
@@ -107,7 +104,7 @@ public class DescendancyList
         NewBestRoute = false;
         BetterRouteExists = true;
 
-        var toReturn = new DescendancyList(Parents)
+        var toReturn= new DescendancyList(Parents)
         {
             NewBestRoute = false,
             BetterRouteExists = true
@@ -125,7 +122,7 @@ public class DescendancyList
         NewBestRoute = true;
         BetterRouteExists = false;
 
-        var toReturn = new DescendancyList(Parents)
+        var toReturn= new DescendancyList(Parents)
         {
             NewBestRoute = true,
             BetterRouteExists = false

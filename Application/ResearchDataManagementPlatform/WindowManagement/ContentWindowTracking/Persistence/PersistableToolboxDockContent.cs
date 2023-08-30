@@ -45,6 +45,7 @@ public class PersistableToolboxDockContent : DockContent
 
     public RDMPCollectionUI GetCollection() => Controls.OfType<RDMPCollectionUI>().SingleOrDefault();
 
+
     public static RDMPCollection? GetToolboxFromPersistString(string persistString)
     {
         var s = persistString[(Prefix.Length + 1)..];

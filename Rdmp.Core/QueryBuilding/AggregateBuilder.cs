@@ -67,9 +67,10 @@ public class AggregateBuilder : ISqlQueryBuilder
 
 
     private AggregateCountColumn _countColumn;
-    private QueryTimeColumn _pivotDimension = null;
-    private AggregateContinuousDateAxis _axis = null;
-    private AggregateDimension _axisAppliesToDimension = null;
+
+    private QueryTimeColumn _pivotDimension;
+    private AggregateContinuousDateAxis _axis;
+    private AggregateDimension _axisAppliesToDimension;
     private bool _isCohortIdentificationAggregate;
 
     /// <summary>
@@ -335,9 +336,9 @@ public class AggregateBuilder : ISqlQueryBuilder
             try
             {
                 _pivotDimension = SelectColumns.Single(
-                    qtc => qtc.IColumn is AggregateDimension dimension
+                    qtc => qtc.IColumn is AggregateDimension aggregateDimension
                            &&
-                           dimension.ID == _pivotID);
+                           aggregateDimension.ID == _pivotID);
             }
             catch (Exception e)
             {

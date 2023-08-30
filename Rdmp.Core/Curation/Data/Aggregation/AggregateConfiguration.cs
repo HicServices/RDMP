@@ -29,10 +29,10 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a
 /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of
 /// the configuration (e.g. AggregateDimension / AggregateFilter)
-/// 
+///
 /// <para>AggregateConfigurations can be used with an AggregateBuilder to produce runnable SQL which will return a DataTable containing results appropriate to the
 /// query being built.</para>
-/// 
+///
 /// <para>There are Three types of AggregateConfiguration (these are configurations - not separate classes):</para>
 /// <para>1. 'Aggregate Graph' - Produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard</para>
 /// <para>2. 'Cohort Aggregate' - Produce a list of unique patient identifiers from a dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')</para>
@@ -113,7 +113,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// <summary>
     /// Indicates the AggregateDimension (if any) that will result in a pivot graph being generated.  E.g. if your AggregateConfiguration is a graph of records by year between
     /// 2001 and 2018 then specifying a pivot on healthboard would result in 1 line in the graph per healthboard instead of a single line for the count of all (the default).
-    /// 
+    ///
     /// <para>If an AggregateConfiguration is a Cohort or Patient index table then it cannot have a Pivot</para>
     /// </summary>
     public int? PivotOnDimensionID
@@ -304,7 +304,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     /// <summary>
     /// Only relevant for AggregateConfigurations that are being used in a cohort identification capacity (See <see cref="IsCohortIdentificationAggregate"/>).
-    /// 
+    ///
     /// <para>The order location of an AggregateConfiguration within its parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
     /// INTERSECT operations (other than helping the user viewing the system) but is vital for EXCEPT containers where the first AggregateConfiguration in the container is
     /// run producing a dataset and all subsequent AggregateConfigurations are then removed from that patient set.</para>

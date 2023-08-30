@@ -23,6 +23,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 {
     private ITableInfo tableInfoCreated;
     private ColumnInfo[] columnInfosCreated;
+
     private BulkTestsData _bulkData;
 
     [OneTimeSetUp]

@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
@@ -28,9 +28,11 @@ public class RdmpMockFactory
     public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(
         string databaseNameToReturn, string tableNameToReturn)
     {
-        return Mock.Of<INameDatabasesAndTablesDuringLoads>(x =>
-            x.GetDatabaseName(It.IsAny<string>(), It.IsAny<LoadBubble>()) == databaseNameToReturn &&
-            x.GetName(It.IsAny<string>(), It.IsAny<LoadBubble>()) == tableNameToReturn);
+        var mock = Substitute.For<INameDatabasesAndTablesDuringLoads>();
+
+        mock.GetDatabaseName(Arg.Any<string>(), Arg.Any<LoadBubble>()).Returns(databaseNameToReturn);
+        mock.GetName(Arg.Any<string>(), Arg.Any<LoadBubble>()).Returns(tableNameToReturn);
+        return mock;
     }
 
     /// <inheritdoc cref="Mock_INameDatabasesAndTablesDuringLoads(string, string)"/>
@@ -53,17 +55,16 @@ public class RdmpMockFactory
     /// <returns></returns>
     public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
     {
-        var lmd = new Mock<ILoadMetadata>();
-        var cata = new Mock<ICatalogue>();
+        var lmd = Substitute.For<ILoadMetadata>();
+        var cata = Substitute.For<ICatalogue>();
+        var server = tableInfo.Discover(DataAccessContext.DataLoad).Database.Server;
+        lmd.GetDistinctLiveDatabaseServer().Returns(server);
+        lmd.GetAllCatalogues().Returns(new[] { cata });
+        lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
 
-        lmd.Setup(m => m.GetDistinctLiveDatabaseServer())
-            .Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
-        lmd.Setup(m => m.GetAllCatalogues()).Returns(new[] { cata.Object });
-        lmd.Setup(p => p.GetDistinctLoggingTask()).Returns(TestLoggingTask);
-
-        cata.Setup(m => m.GetTableInfoList(It.IsAny<bool>())).Returns(new[] { tableInfo });
-        cata.Setup(m => m.LoggingDataTask).Returns(TestLoggingTask);
-        return lmd.Object;
+        cata.GetTableInfoList(Arg.Any<bool>()).Returns(new[] { tableInfo });
+        cata.LoggingDataTask.Returns(TestLoggingTask);
+        return lmd;
     }
 
     /// <summary>
@@ -73,11 +74,13 @@ public class RdmpMockFactory
     /// <returns></returns>
     public static ITableInfo Mock_TableInfo(DiscoveredTable table)
     {
-        return Mock.Of<ITableInfo>(p =>
-            p.Name == table.GetFullyQualifiedName() &&
-            p.Database == table.Database.GetRuntimeName() &&
-            p.DatabaseType == table.Database.Server.DatabaseType &&
-            p.IsTableValuedFunction == (table.TableType == TableType.TableValuedFunction) &&
-            p.Discover(It.IsAny<DataAccessContext>()) == table);
+        var mock = Substitute.For<ITableInfo>();
+        mock.Name.Returns(table.GetFullyQualifiedName());
+        mock.Database.Returns(table.Database.GetRuntimeName());
+        mock.DatabaseType.Returns(table.Database.Server.DatabaseType);
+        mock.IsTableValuedFunction.Returns(table.TableType == TableType.TableValuedFunction);
+        mock.Discover(Arg.Any<DataAccessContext>()).Returns(table);
+        return mock;
+
     }
 }

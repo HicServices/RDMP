@@ -42,7 +42,8 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     private readonly List<string> _extractionIdentifiersidx = new();
 
-    private bool _cancel = false;
+    private bool _cancel;
+
     private ICatalogue _catalogue;
 
     protected const string ValidationColumnName = "RowValidationResult";

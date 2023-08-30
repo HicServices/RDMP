@@ -58,7 +58,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     /// </summary>
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
-    private ForkDataLoadEventListener fork = null;
+    private ForkDataLoadEventListener fork;
+
     private readonly List<object> _initializationObjects = new();
 
     public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)

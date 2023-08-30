@@ -67,6 +67,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
     private AggregateConfiguration _aggregate;
 
     private List<ITableInfo> _forcedJoins;
+
     private IQuerySyntaxHelper _querySyntaxHelper;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

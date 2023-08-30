@@ -55,6 +55,7 @@ public class LoggingTabUI : LoggingTab_Design
     private string _freeTextFilter;
     private Panel pFilter;
     private LogManager LogManager;
+
     private NavigationTrack<LogViewerFilter> _navigationTrack;
     private Panel panel1;
     private ToolStripButton _back;

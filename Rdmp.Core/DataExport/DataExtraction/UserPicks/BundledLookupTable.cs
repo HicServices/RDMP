@@ -40,7 +40,7 @@ public class BundledLookupTable : IBundledLookupTable
         var tbl = TableInfo.Discover(DataAccessContext.DataExport);
         var server = tbl.Database.Server;
 
-        var dt = new DataTable();
+        DataTable dt = new DataTable();
 
         using var con = server.GetConnection();
         con.Open();

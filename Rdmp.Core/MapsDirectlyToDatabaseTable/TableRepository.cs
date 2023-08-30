@@ -51,6 +51,7 @@ public abstract class TableRepository : ITableRepository
     protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
     private Lazy<DiscoveredTable[]> _tables;
 
     //If you are calling this constructor then make sure to set the connection strings in your derived class constructor

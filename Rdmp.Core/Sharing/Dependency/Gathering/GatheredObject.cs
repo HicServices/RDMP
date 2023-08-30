@@ -125,10 +125,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         var me = ToShareDefinition(shareManager, branchParents);
 
         var toReturn = new List<ShareDefinition>();
-        var parents = new List<ShareDefinition>(branchParents)
-        {
-            me
-        };
+        var parents = new List<ShareDefinition>(branchParents) { me };
         toReturn.Add(me);
 
         foreach (var child in Children)
