@@ -121,7 +121,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
                 RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
             var job = new DataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-                new ThrowImmediatelyDataLoadEventListener(), dbConfiguration);
+                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration);
             job.StartLogging();
             attacher.Attach(job, new GracefulCancellationToken());
 
@@ -182,7 +182,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
         var job = new ScheduledDataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-            new ThrowImmediatelyDataLoadEventListener(), dbConfiguration)
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration)
         {
             LoadProgress = mismatchProgress
                 ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))

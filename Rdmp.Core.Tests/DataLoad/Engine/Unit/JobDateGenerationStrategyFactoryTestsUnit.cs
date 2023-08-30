@@ -22,10 +22,10 @@ public class JobDateGenerationStrategyFactoryTestsUnit : UnitTests
                 var lp = WhenIHaveA<LoadProgress>();
                 var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
                 var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() =>
-                           factory.Create(lp, new ThrowImmediatelyDataLoadEventListener()));
+                           factory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet));
 
                 Assert.AreEqual("Don't know when to start the data load, both DataLoadProgress and OriginDate are null",
-                    ex.Message);
+                    ex?.Message);
         }
 
         [Test]

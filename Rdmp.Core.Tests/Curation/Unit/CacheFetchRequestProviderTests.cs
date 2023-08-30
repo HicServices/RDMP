@@ -40,7 +40,7 @@ public class CacheFetchRequestProviderTests
         cacheProgress.FetchPage(Arg.Any<int>(), Arg.Any<int>()).Returns(failures);
 
         var provider = new FailedCacheFetchRequestProvider(cacheProgress, 2);
-        var fetchRequest = provider.GetNext(new ThrowImmediatelyDataLoadEventListener());
+        var fetchRequest = provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet);
         Assert.IsNotNull(fetchRequest);
         Assert.AreEqual(fetchRequest.ChunkPeriod, new TimeSpan(8, 0, 0));
         Assert.AreEqual(fetchRequest.Start, failure.FetchRequestStart);
