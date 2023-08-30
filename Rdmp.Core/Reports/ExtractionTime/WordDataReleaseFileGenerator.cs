@@ -50,9 +50,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
     public void GenerateWordFile(string saveAsFilename)
     {
-        FileInfo f;
-
-        f = string.IsNullOrWhiteSpace(saveAsFilename)
+        var f = string.IsNullOrWhiteSpace(saveAsFilename)
             ? GetUniqueFilenameInWorkArea("ReleaseDocument")
             : new FileInfo(saveAsFilename);
 

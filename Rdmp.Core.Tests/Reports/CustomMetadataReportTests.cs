@@ -167,10 +167,8 @@ internal class CustomMetadataReportTests : UnitTests
             NewlineSubstitution = null
         };
 
-        DateTime? ignore;
-
         var moqDqe = Substitute.For<IDetermineDatasetTimespan>();
-        moqDqe.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore)
+        moqDqe.GetMachineReadableTimespanIfKnownOf(cata, true, out _)
             .Returns(new Tuple<DateTime?, DateTime?>(new DateTime(2001, 02, 01), new DateTime(2002, 04, 03)));
 
         reporter.TimespanCalculator = moqDqe;

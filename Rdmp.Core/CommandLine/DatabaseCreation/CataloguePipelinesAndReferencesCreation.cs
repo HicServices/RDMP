@@ -93,7 +93,7 @@ public class CataloguePipelinesAndReferencesCreation
         };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
-        bool hasLoggingDB = _logging != null && _logging.UserID != null;
+        var hasLoggingDB = _logging != null && _logging.UserID != null;
         if (_dqe.UserID != null && hasLoggingDB)
         {
             if (_logging.UserID != _dqe.UserID || _logging.Password != _dqe.Password)

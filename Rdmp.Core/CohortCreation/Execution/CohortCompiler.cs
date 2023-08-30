@@ -268,11 +268,10 @@ public class CohortCompiler
                 };
         }
 
-        ExternalDatabaseServer cacheServer = null;
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
-            cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
+            var cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
             queryBuilder.CacheServer = cacheServer;
 
             if (cumulativeQueryBuilder != null)

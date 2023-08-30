@@ -88,7 +88,7 @@ public class RDMPControlCommonFunctionality
         };
         ToolStrip.Items.Add(_menuDropDown);
 
-        _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
+        _ragSmileyToolStrip = new RAGSmileyToolStrip();
         ToolStrip.Items.Add(_ragSmileyToolStrip);
 
         _runChecksToolStripButton.Click += (s, e) => StartChecking();
@@ -292,7 +292,7 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    /// Adds a <see cref="HelpIcon"/> on the right of the control with the pvorided help text
+    /// Adds a <see cref="HelpIcon"/> on the right of the control with the provided help text
     /// </summary>
     /// <param name="c">The control you want the help to appear beside</param>
     /// <param name="title">The textual header you want shown</param>
@@ -324,7 +324,7 @@ public class RDMPControlCommonFunctionality
             help.Anchor = anchor;
         }
 
-        c.Parent.Controls.Add(help);
+        c.Parent?.Controls.Add(help);
     }
 
     public void ClearToolStrip()

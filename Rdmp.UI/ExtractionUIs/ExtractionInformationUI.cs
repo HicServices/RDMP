@@ -85,7 +85,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
         AssociatedCollection = RDMPCollection.Catalogue;
 
-        ragSmiley1 = new RAGSmileyToolStrip(this);
+        ragSmiley1 = new RAGSmileyToolStrip();
 
         UseCommitSystem = true;
     }
@@ -93,7 +93,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
     private bool BeforeSave(DatabaseEntity arg)
     {
         //alias prefix is ' as ' so make sure user doesn't start a new line with "bobbob\r\nas fish" since this won't be recognised, solve the problem by inserting the original alias
-        if (_querySyntaxHelper.AliasPrefix.StartsWith(" "))
+        if (_querySyntaxHelper.AliasPrefix.StartsWith(" ", StringComparison.Ordinal))
         {
             var before = QueryEditor.Text;
             var after = Regex.Replace(before, $"^{_querySyntaxHelper.AliasPrefix.TrimStart()}",

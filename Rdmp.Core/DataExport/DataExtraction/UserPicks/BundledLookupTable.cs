@@ -40,13 +40,15 @@ public class BundledLookupTable : IBundledLookupTable
         var tbl = TableInfo.Discover(DataAccessContext.DataExport);
         var server = tbl.Database.Server;
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
+        dt.BeginLoadData();
 
         using var con = server.GetConnection();
         con.Open();
         using var da = server.GetDataAdapter(
             server.GetCommand(GetDataTableFetchSql(), con));
         da.Fill(dt);
+        dt.EndLoadData();
 
         return dt;
     }
@@ -60,9 +62,9 @@ public class BundledLookupTable : IBundledLookupTable
             // if there is a Catalogue associated with this TableInfo use its extraction instead
             var cata = catas[0];
 
-            // Extract core columns only (and definetly not extraction identifiers)
+            // Extract core columns only (and definitely not extraction identifiers)
             var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core)
-                .Where(e => !e.IsExtractionIdentifier)
+                .Where(static e => !e.IsExtractionIdentifier)
                 .ToArray();
 
             if (eis.Length > 0)

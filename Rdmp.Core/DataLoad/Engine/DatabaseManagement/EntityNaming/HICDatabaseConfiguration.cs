@@ -96,9 +96,9 @@ public class HICDatabaseConfiguration
             overrideRAWServer =
                 defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer); //get the raw default if there is one
 
-        DiscoveredServer rawServer;
-        //if there was defaults and a raw default server
-        rawServer = overrideRAWServer != null
+        var rawServer =
+            //if there was defaults and a raw default server
+            overrideRAWServer != null
             ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false)
             : //get the raw server connection
             liveServer; //there is no raw override so we will have to use the live server for RAW too.

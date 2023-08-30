@@ -60,14 +60,12 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        //if it didn't crash
-        if (pipelineFailureExceptionIfAny == null)
-            if (FreezeAfterSuccessfulImport)
-            {
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
-                _cohortIdentificationConfiguration.Freeze();
-            }
+        // Freeze if requested, if it didn't crash
+        if (pipelineFailureExceptionIfAny != null || !FreezeAfterSuccessfulImport) return;
+
+        listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
+        _cohortIdentificationConfiguration.Freeze();
     }
 
 
@@ -91,12 +89,11 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
         var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
 
-        ICompileable rootContainerTask;
-        //no caching set up so no point in running CohortCompilerRunner
-        if (_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
-            rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
-        else
-            rootContainerTask = RunAllTasksWithRunner(cohortCompiler, listener);
+        var rootContainerTask =
+            //no caching set up so no point in running CohortCompilerRunner
+            _cohortIdentificationConfiguration.QueryCachingServer_ID == null
+                ? RunRootContainerOnlyNoCaching(cohortCompiler)
+                : RunAllTasksWithRunner(cohortCompiler, listener);
 
         if (rootContainerTask.State == CompilationState.Executing)
         {
@@ -125,12 +122,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             throw new Exception(
                 "CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
 
-        DataTable dt = execution.Identifiers;
-        dt.BeginLoadData();
+        var dt = execution.Identifiers;
         foreach (DataColumn column in dt.Columns)
             column.ReadOnly = false;
 
-        dt.EndLoadData();
         return dt;
     }
 
@@ -149,13 +144,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         while (
             //hasn't timed out
             countDown > 0 &&
-            (
-                //state isn't a final state
-                task.State == CompilationState.Executing || task.State == CompilationState.NotScheduled ||
-                task.State == CompilationState.Scheduled)
+            task.State is CompilationState.Executing or CompilationState.NotScheduled or CompilationState.Scheduled
         )
         {
-            Task.Delay(100).Wait();
+            Thread.Sleep(100);
             countDown -= 100;
         }
 

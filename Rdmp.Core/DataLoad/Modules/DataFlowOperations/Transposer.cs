@@ -65,7 +65,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
     private DataTable GenerateTransposedTable(DataTable inputTable)
     {
-        DataTable outputTable = new DataTable();
+        var outputTable = new DataTable();
         outputTable.BeginLoadData();
         // Add columns by looping rows
 

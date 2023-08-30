@@ -45,14 +45,14 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
     private ArgumentCollectionUI _argumentCollection;
     private Type _underlyingType;
     private ProcessTask _processTask;
-    private RAGSmileyToolStrip _ragSmiley;
+    private readonly RAGSmileyToolStrip _ragSmiley;
 
     public PluginProcessTaskUI()
     {
         InitializeComponent();
         AssociatedCollection = RDMPCollection.DataLoad;
 
-        _ragSmiley = new RAGSmileyToolStrip(this);
+        _ragSmiley = new RAGSmileyToolStrip();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)

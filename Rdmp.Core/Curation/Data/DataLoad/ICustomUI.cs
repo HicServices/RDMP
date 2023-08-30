@@ -11,7 +11,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// <summary>
 /// Powers the creation of instances of T in an ICustomUI
 /// </summary>
-public interface ICustomUI<T> : ICustomUI where T : ICustomUIDrivenClass
+public interface ICustomUI<in T> : ICustomUI where T : ICustomUIDrivenClass
 {
     /// <summary>
     /// Loads the current value into the user interface
@@ -22,7 +22,7 @@ public interface ICustomUI<T> : ICustomUI where T : ICustomUIDrivenClass
 
 /// <summary>
 /// Interface that lets you create UIs for populating <see cref="IArgument"/> values for Properties which are too complicated to do with basic Types.  See <see cref="ICustomUIDrivenClass"/>.  If
-/// If at all possible you should avoid the overhead of this system and instead use [DemandsNestedInitialization] and subclasses if you have a particluarly complex concept
+/// If at all possible you should avoid the overhead of this system and instead use [DemandsNestedInitialization] and subclasses if you have a particularly complex concept
 /// defined in your plugin component.
 /// </summary>
 public interface ICustomUI
