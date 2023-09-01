@@ -124,7 +124,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     {
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
-
         var rowEnumerator = worksheet.GetRowEnumerator();
         var nColumns = -1;
 
@@ -188,7 +187,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             if (!gotAtLeastOneGoodValue)
                 toReturn.Rows.Remove(r);
         }
-
         return toReturn;
     }
 

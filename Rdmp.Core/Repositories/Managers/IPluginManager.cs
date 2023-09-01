@@ -13,5 +13,5 @@ namespace Rdmp.Core.Repositories.Managers;
 /// </summary>
 public interface IPluginManager
 {
-    Plugin[] GetCompatiblePlugins();
+    Curation.Data.Plugin[] GetCompatiblePlugins();
 }

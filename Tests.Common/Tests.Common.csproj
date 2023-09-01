@@ -1,47 +1,47 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <PackageId>HIC.RDMP.Plugin.Test</PackageId>
-    <version>$(version)</version>
-    <title>HIC.RDMP.Plugin.Test</title>
-    <TargetFramework>net7.0</TargetFramework>
-    <authors>Health Informatics Centre, University of Dundee</authors>
-    <owners>Health Informatics Centre, University of Dundee</owners>
-    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
-    <iconUrl>
-      https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <description>Package for writing plugin tests</description>
-    <copyright>Copyright 2018-2019</copyright>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <IsPackable>true</IsPackable>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="TestDatabases.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TestDatabases.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="NSubstitute" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
-    <PackageReference Include="NUnit" Version="3.13.3" />
-  </ItemGroup>
+    <PropertyGroup>
+        <PackageId>HIC.RDMP.Plugin.Test</PackageId>
+        <version>$(version)</version>
+        <title>HIC.RDMP.Plugin.Test</title>
+        <TargetFramework>net7.0</TargetFramework>
+        <authors>Health Informatics Centre, University of Dundee</authors>
+        <owners>Health Informatics Centre, University of Dundee</owners>
+        <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+        <iconUrl>
+            https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+        <description>Package for writing plugin tests</description>
+        <copyright>Copyright 2018-2019</copyright>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>1701;1702;CS1591</NoWarn>
+        <DebugType>embedded</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="TestDatabases.txt" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="TestDatabases.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="NSubstitute" Version="5.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+        <PackageReference Include="NUnit" Version="3.13.3" />
+    </ItemGroup>
 </Project>

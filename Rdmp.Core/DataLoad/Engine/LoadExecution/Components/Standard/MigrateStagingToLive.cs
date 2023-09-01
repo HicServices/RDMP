@@ -26,9 +26,6 @@ public class MigrateStagingToLive : DataLoadComponent
         HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
-
-        Description = "Migrate Staging to Live";
-        SkipComponent = !loadConfigurationFlags.DoMigrateFromStagingToLive;
     }
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)

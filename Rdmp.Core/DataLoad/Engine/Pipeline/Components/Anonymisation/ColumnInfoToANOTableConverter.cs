@@ -152,7 +152,7 @@ public class ColumnInfoToANOTableConverter
                 throw new Exception("User decided not to perform update on table");
             cmdUpdateMainTable.ExecuteNonQuery();
         }
-        finally
+          finally
         {
             //always drop the temp anomap
             using var dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con);

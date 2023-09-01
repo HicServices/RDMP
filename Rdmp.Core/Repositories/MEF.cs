@@ -146,7 +146,6 @@ public static class MEF
         if (t.GenericTypeArguments.Length != 1)
             throw new NotSupportedException(
                 "Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
-
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 
         Debug.Assert(genericTypeName.EndsWith("`1", StringComparison.Ordinal));

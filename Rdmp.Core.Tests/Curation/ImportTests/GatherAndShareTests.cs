@@ -138,7 +138,7 @@ public class GatherAndShareTests : DatabaseTests
             $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(f1.FullName, new byte[] { 0x1, 0x2 });
 
-        var plugin = new Plugin(CatalogueRepository, new FileInfo(
+        var plugin = new Rdmp.Core.Curation.Data.Plugin(CatalogueRepository, new FileInfo(
             $"Imaginary{PackPluginRunner.PluginPackageSuffix}"), new Version(1, 1, 1), new Version(1, 1, 1));
         var lma1 = new LoadModuleAssembly(CatalogueRepository, f1, plugin);
 

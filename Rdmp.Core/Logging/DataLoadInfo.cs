@@ -348,5 +348,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         {
             Monitor.Pulse(_logWaiter);
         }
+        lock (_logWaiter)
+            Monitor.Pulse(_logWaiter);
     }
 }

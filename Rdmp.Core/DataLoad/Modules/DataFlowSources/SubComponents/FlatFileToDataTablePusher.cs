@@ -306,7 +306,6 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v, idx) =>
                     deciders.TryGetValue(idx, out var decider) && v is string s ? decider.Parse(s) : v).ToArray());
-
             return dtCloned;
         }
 

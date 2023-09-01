@@ -361,7 +361,6 @@ public class ForwardEngineerANOCatalogueEngine
 
         var toReturn = FindNewColumnNamed(syntaxHelper, col, col.GetRuntimeName(), isOptional) ??
                        FindNewColumnNamed(syntaxHelper, col, $"ANO{col.GetRuntimeName()}", isOptional);
-
         if (toReturn == null)
             return isOptional
                 ? null

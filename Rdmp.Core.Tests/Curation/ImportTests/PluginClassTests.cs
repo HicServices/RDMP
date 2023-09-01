@@ -72,7 +72,7 @@ public class PluginClassTests : UnitTests
             $"Blah3.{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-        var p = new Plugin(Repository, fi, new Version(1, 1, 1), new Version(1, 1, 1, 1));
+        var p = new Rdmp.Core.Curation.Data.Plugin(Repository, fi, new Version(1, 1, 1), new Version(1, 1, 1, 1));
         var lma = new LoadModuleAssembly(Repository, fi2, p);
         var lma2 = new LoadModuleAssembly(Repository, fi3, p);
 
@@ -116,7 +116,7 @@ public class PluginClassTests : UnitTests
     [TestCase("Rdmp.Dicom", "Rdmp.Dicom")]
     public void Test_Plugin_ShortName(string fullname, string expected)
     {
-        var p = WhenIHaveA<Plugin>();
+        var p = WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>();
         p.Name = fullname;
         Assert.AreEqual(expected, p.GetShortName());
     }

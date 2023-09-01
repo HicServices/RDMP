@@ -134,7 +134,7 @@ public class YamlRepository : MemoryDataExportRepository
     private int ObjectDependencyOrder(Type arg)
     {
         // Load Plugin objects before dependent children
-        if (arg == typeof(Plugin))
+        if (arg == typeof(Curation.Data.Plugin))
             return 1;
 
         return arg == typeof(LoadModuleAssembly) ? 2 : 3;
@@ -196,7 +196,7 @@ public class YamlRepository : MemoryDataExportRepository
         var path = Path.GetDirectoryName(GetPath(lma));
 
         //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
-        return Path.Combine(path, GetObjectByID<Plugin>(lma.Plugin_ID).Name);
+        return Path.Combine(path, GetObjectByID<Curation.Data.Plugin>(lma.Plugin_ID).Name);
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)

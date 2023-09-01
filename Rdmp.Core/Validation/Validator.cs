@@ -431,7 +431,6 @@ public class Validator
                             break;
                         }
                 }
-
                 if (result != null)
                 {
                     result.SourceItemValidator ??= itemValidator;

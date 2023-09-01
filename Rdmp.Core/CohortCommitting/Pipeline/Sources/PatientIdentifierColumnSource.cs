@@ -54,7 +54,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
 
         var colName = _extractionInformation.GetRuntimeName();
 
-        var dt = new DataTable();
+        DataTable dt = new DataTable();
         dt.BeginLoadData();
         dt.Columns.Add(colName);
 

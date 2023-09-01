@@ -201,10 +201,6 @@ public partial class PipelineDiagramUI : UserControl
 
                 return;
             }
-
-
-            //Fallback
-            //user has not picked a pipeline yet, show him the shell (factory)
             //factory has no source, add empty source
             if (_useCase.ExplicitSource == null)
                 AddBlankComponent(PipelineComponentRole.Source);

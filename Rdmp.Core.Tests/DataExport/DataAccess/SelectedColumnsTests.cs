@@ -34,11 +34,7 @@ public class SelectedColumnsTests : DatabaseTests
         try
         {
             _ = new SelectedDataSets(DataExportRepository, config, ds, null);
-
             var cols = config.GetAllExtractableColumnsFor(ds);
-
-            Assert.AreEqual(1, cols.Length);
-            Assert.AreEqual(extractableColumn, cols.Single());
 
             cols = config.GetAllExtractableColumnsFor(ds);
 

@@ -29,7 +29,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Comments;
-
+ 
 namespace Rdmp.Core.Repositories;
 
 /// <inheritdoc cref="ICatalogueRepository"/>
@@ -96,7 +96,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(StandardRegex), (rep, r) => new StandardRegex((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AnyTableSqlParameter),
             (rep, r) => new AnyTableSqlParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Plugin), (rep, r) => new Plugin((ICatalogueRepository)rep, r));
+        Constructors.Add(typeof(Curation.Data.Plugin), (rep, r) => new Curation.Data.Plugin((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(ANOTable), (rep, r) => new ANOTable((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AggregateConfiguration),
             (rep, r) => new AggregateConfiguration((ICatalogueRepository)rep, r));
