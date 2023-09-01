@@ -108,5 +108,6 @@ public class RemoveDuplicatesTests
         Assert.AreEqual(5,
             remover.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()).Rows.Count);
+        dt.Dispose();
     }
 }

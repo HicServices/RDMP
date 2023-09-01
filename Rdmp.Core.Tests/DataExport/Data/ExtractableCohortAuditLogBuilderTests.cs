@@ -82,7 +82,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         [Test]
         public void AuditLogReFetch_WhenSourceIsDeleted()
         {
-                var builder = new ExtractableCohortAuditLogBuilder();
+                _ = new ExtractableCohortAuditLogBuilder();
 
                 var ei = WhenIHaveA<ExtractionInformation>();
                 var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);

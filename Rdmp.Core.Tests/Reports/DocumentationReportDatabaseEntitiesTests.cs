@@ -36,5 +36,6 @@ internal class DocumentationReportDatabaseEntitiesTests : UnitTests
                 iconProvider.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()).Returns(img);
 
                 reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, false);
+                img.Dispose();
         }
 }

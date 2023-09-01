@@ -87,7 +87,7 @@ returned by this operation they must be in all the sets under this (including th
 APPEAR in any of the sets that come after the FIRST.  This means that you get everyone in the first set
 EXCEPT anyone appearing in any of the other sets that follow the FIRST.",
             _ => throw new ArgumentOutOfRangeException(
-                $"Did not know what tool tip to return for set operation {ToString()}")
+                $"Did not know what tool tip to return for set operation {((CohortAggregateContainer)Child).Operation.ToString()}")
         };
     }
 }
