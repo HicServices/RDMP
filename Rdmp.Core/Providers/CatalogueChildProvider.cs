@@ -187,8 +187,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
     public AllPluginsNode AllPluginsNode { get; private set; }
-    public Plugin[] AllPlugins { get; private set; }
-    public Plugin[] AllCompatiblePlugins { get; private set; }
+    public Rdmp.Core.Curation.Data.Plugin[] AllPlugins { get; private set; }
+    public Rdmp.Core.Curation.Data.Plugin[] AllCompatiblePlugins { get; private set; }
 
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
 
@@ -432,7 +432,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After Governance");
 
         AllPluginsNode = new AllPluginsNode();
-        AllPlugins = GetAllObjects<Plugin>(repository);
+        AllPlugins = GetAllObjects<Rdmp.Core.Curation.Data.Plugin>(repository);
         AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
 
         AddChildren(AllPluginsNode);

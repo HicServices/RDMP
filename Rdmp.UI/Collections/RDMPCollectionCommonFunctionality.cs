@@ -604,7 +604,6 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         return CoreIconProvider.GetImage(rowObject, hasProblems ? OverlayKind.Problem : OverlayKind.None)
             .ImageToBitmap();
-
     }
 
     /// <summary>

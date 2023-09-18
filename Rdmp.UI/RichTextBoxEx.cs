@@ -47,8 +47,8 @@ public partial class RichTextBoxEx : RichTextBox
         public byte bReserved1;
     }
 
-    [LibraryImport("user32.dll")]
-    private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     private const int WM_USER = 0x0400;
     private const int EM_GETCHARFORMAT = WM_USER + 58;

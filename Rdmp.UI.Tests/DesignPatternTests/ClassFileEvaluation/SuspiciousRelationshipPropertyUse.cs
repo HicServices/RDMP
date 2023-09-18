@@ -43,7 +43,7 @@ public class SuspiciousRelationshipPropertyUse
                 continue;
 
             //Find the C sharp code for the class
-            var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
+            var relationshipProperties = type.GetProperties().Where(static p => p.CanRead && !p.CanWrite);
 
             var expectedFileName = $"{type.Name}.cs";
             var files = csFilesFound

@@ -394,7 +394,7 @@ public partial class DatabaseTests
         DeleteAll<PipelineComponent>(y);
 
         DeleteAll<LoadModuleAssembly>(y);
-        DeleteAll<Plugin>(y);
+        DeleteAll<Rdmp.Core.Curation.Data.Plugin>(y);
 
         DeleteAll<ReleaseLog>(y);
         DeleteAll<SupplementalExtractionResults>(y);

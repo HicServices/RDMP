@@ -79,9 +79,8 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         timer.Start();
         try
         {
-            var chunk = schema.Clone();
+            DataTable chunk = GetChunkSchema(_reader);
             chunk.BeginLoadData();
-
             while (_reader.HasRows && _reader.Read())
             {
                 cancellationToken.ThrowIfCancellationRequested();

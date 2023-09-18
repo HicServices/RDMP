@@ -27,6 +27,7 @@ public static class UserSettings
                                                               "Isolated Storage does not work in this environment...");
 
 
+
     /// <summary>
     /// Show a Yes/No confirmation dialog box when closing RDMP
     /// </summary>

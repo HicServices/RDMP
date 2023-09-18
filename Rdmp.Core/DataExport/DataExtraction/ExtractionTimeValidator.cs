@@ -50,7 +50,7 @@ public class ExtractionTimeValidator
     {
         if (!_initialized)
             Initialize(dt);
-
+        dt.BeginLoadData();
         foreach (DataRow r in dt.Rows)
         {
             //additive validation results, Results is a class that wraps DictionaryOfFailure which is an array of columns and each element is another array of consequences (with a row count for each consequence)

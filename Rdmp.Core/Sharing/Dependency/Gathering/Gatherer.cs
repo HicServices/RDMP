@@ -33,7 +33,7 @@ public class Gatherer
         _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
         _functions.Add(typeof(ColumnInfo), o => GatherDependencies((ColumnInfo)o));
         _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-        _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
+        _functions.Add(typeof(Rdmp.Core.Curation.Data.Plugin), o => GatherDependencies((Rdmp.Core.Curation.Data.Plugin)o));
 
         _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
@@ -68,7 +68,7 @@ public class Gatherer
         return root;
     }
 
-    public static GatheredObject GatherDependencies(Plugin plugin)
+    public static GatheredObject GatherDependencies(Rdmp.Core.Curation.Data.Plugin plugin)
     {
         var root = new GatheredObject(plugin);
 

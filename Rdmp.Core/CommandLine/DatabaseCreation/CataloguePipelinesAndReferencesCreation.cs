@@ -109,7 +109,6 @@ public class CataloguePipelinesAndReferencesCreation
         Console.WriteLine("Successfully configured RAW server");
     }
 
-
     public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
         var bulkInsertCsvPipe =

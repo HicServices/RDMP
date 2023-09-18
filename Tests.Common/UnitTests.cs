@@ -270,8 +270,8 @@ public class UnitTests
             return (T)(object)joinable.AddUser(config);
         }
 
-        if (typeof(T) == typeof(Plugin))
-            return (T)(object)new Plugin(repository, new FileInfo("bob.nupkg"), new Version(1, 1, 1),
+        if (typeof(T) == typeof(Rdmp.Core.Curation.Data.Plugin))
+            return (T)(object)new Rdmp.Core.Curation.Data.Plugin(repository, new FileInfo("bob.nupkg"), new Version(1, 1, 1),
                 new Version(1, 1, 1));
 
         if (typeof(T) == typeof(LoadModuleAssembly))
@@ -279,7 +279,7 @@ public class UnitTests
             var dll = Path.Combine(TestContext.CurrentContext.TestDirectory, "a.nupkg");
             File.WriteAllBytes(dll, new byte[] { 0x11 });
 
-            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll), WhenIHaveA<Plugin>(repository));
+            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll), WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
         }
 
         if (typeof(T) == typeof(AggregateContinuousDateAxis))
