@@ -61,6 +61,7 @@ public class ExtractionTimeValidator
             if (validationColumnToPopulateIfAny != null)
                 r[validationColumnToPopulateIfAny] = consequenceOnLastRowProcessed;
         }
+        dt.EndLoadData();
     }
 
     private void Initialize(DataTable dt)

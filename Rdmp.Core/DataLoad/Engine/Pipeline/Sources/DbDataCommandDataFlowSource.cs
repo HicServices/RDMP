@@ -79,7 +79,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         timer.Start();
         try
         {
-            DataTable chunk = GetChunkSchema(_reader);
+            DataTable chunk = schema.Clone();
             chunk.BeginLoadData();
             while (_reader.HasRows && _reader.Read())
             {
