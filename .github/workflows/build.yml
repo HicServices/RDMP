@@ -29,7 +29,7 @@ jobs:
       - name: LCov merger tool
         run: npm install -g lcov-result-merger
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Determine RDMP build version
         id: version
         shell: bash
@@ -41,7 +41,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Install MS SQL 2019 Express LocalDB
-        uses: crazy-max/ghaction-chocolatey@v2
+        uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install -r sqllocaldb --no-progress
       - name: Initialise LocalDB
