@@ -177,7 +177,6 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         {
             udDaysPerJob.Value = loadProgress.DefaultNumberOfDaysToLoadEachTime;
         }
-        }
     }
 
     public override string GetTabName() => $"Execution:{base.GetTabName()}";

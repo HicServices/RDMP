@@ -91,6 +91,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
             config.SetKnownOrder(currentOrder);
 
                 _contents[currentParentId].Add(config);
+        }
 
         r.Close();
     }

@@ -49,10 +49,9 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
             if (!_subcontainers.ContainsKey(parentId))
                 _subcontainers.Add(parentId, new List<AggregateFilterContainer>());
 
-                _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
-            }
-            r.Close();
+            _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
         }
+        r.Close();
     }
         
     public override IContainer[] GetSubContainers(IContainer container)

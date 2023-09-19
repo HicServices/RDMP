@@ -89,6 +89,7 @@ internal class
                 return new ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(ItemActivator,
                     sourceCohortAggregateContainerCommand, targetCohortAggregateContainer);
             //it's being dragged above/below a container (reorder)
+            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand:
             return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
                 targetCohortAggregateContainer, insertOption);
         }

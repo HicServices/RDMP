@@ -233,10 +233,6 @@ public partial class DatabaseTests
             Assert.Inconclusive(
                 "Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
 
-        if (HaveTriedCreatingTestDatabases || !exists)
-            Assert.Inconclusive(
-                "Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
-
         // if user is trying to connect to a test database
         // and that server exists (but TEST_ databases don't)
         if (opts.Prefix.Contains("TEST", StringComparison.InvariantCultureIgnoreCase))

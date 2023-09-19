@@ -120,7 +120,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
         if (e.Column == olvState && e.CellValue is LoadDiagramState state)
             e.SubItem.ForeColor = state switch
-            e.SubItem.ForeColor = state switch
             {
                 LoadDiagramState.Anticipated => Color.LightGray,
                 LoadDiagramState.Found => Color.Green,
@@ -156,7 +155,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         modelObject is LoadDiagramServerNode loadDiagramServerNode
             ? loadDiagramServerNode.ErrorDescription
             : null;
-    }
 
     private Bitmap ImageGetter(object rowObject)
     {

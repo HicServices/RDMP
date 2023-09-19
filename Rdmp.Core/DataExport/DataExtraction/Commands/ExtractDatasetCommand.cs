@@ -158,8 +158,6 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     public override string DescribeExtractionImplementation() => QueryBuilder.SQL;
 
-    public override string DescribeExtractionImplementation() => QueryBuilder.SQL;
-
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {

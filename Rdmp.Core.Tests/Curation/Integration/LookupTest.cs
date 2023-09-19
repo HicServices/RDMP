@@ -107,15 +107,13 @@ public class LookupTest : DatabaseTests
             {
             }
         }
-    }
 
-            try
-            {
-                parent.DeleteInDatabase();
-            }
-            catch (Exception)
-            {
-            }
+        try
+        {
+            parent.DeleteInDatabase();
+        }
+        catch (Exception)
+        {
         }
     }
 

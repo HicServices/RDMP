@@ -47,7 +47,6 @@ public sealed class ReleaseUseCase : PipelineUseCase
         {
             ExplicitSource = new NullReleaseSource();
         }
-        }
         else
         {
             var destinationType = MEF.GetType(
