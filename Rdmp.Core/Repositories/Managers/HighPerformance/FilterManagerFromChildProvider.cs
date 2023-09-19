@@ -49,14 +49,17 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
             if (!_subcontainers.ContainsKey(parentId))
                 _subcontainers.Add(parentId, new List<AggregateFilterContainer>());
 
-            _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
+                _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
+            }
+            r.Close();
         }
-
-        r.Close();
     }
-
-    public override IContainer[] GetSubContainers(IContainer container) =>
-        _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() : Array.Empty<IContainer>();
+        
+    public override IContainer[] GetSubContainers(IContainer container)
+    {
+        return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :
+            Array.Empty<AggregateFilterContainer>();
+    }
 
     public override IFilter[] GetFilters(IContainer container) =>
         _containersToFilters.TryGetValue(container.ID, out var result) ? result.ToArray() : Array.Empty<IFilter>();

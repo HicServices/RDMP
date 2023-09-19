@@ -29,7 +29,7 @@ internal sealed class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
     internal ExternalCohortTable Created;
 
 
-    internal ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator,
+    public ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator,
         [DemandsInitialization("The database to create")]
         DiscoveredDatabase databaseToCreate,
         [DemandsInitialization(

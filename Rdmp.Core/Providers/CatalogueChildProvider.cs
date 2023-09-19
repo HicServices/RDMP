@@ -1622,13 +1622,13 @@ public class CatalogueChildProvider : ICoreChildProvider
                             //otherwise ask plugin what its children are
                             var pluginChildren = plugin.GetChildren(o);
 
-                            //if the plugin takes too long to respond we need to stop
-                            if (sw.ElapsedMilliseconds > 1000)
-                            {
-                                _blockedPlugins.Add(plugin);
-                                throw new Exception(
-                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                            }
+                        //if the plugin takes too long to respond we need to stop
+                        if (sw.ElapsedMilliseconds > 1000)
+                        {
+                            _blockedPlugins.Add(plugin);
+                            throw new Exception(
+                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                        }
 
                             //it has children
                             if (pluginChildren != null && pluginChildren.Any())
@@ -1653,8 +1653,8 @@ public class CatalogueChildProvider : ICoreChildProvider
                                             (o1, set) => set); //it does now
 
 
-                                    //add us to the parent objects child collection
-                                    _childDictionary[o].Add(pluginChild);
+                                //add us to the parent objects child collection
+                                _childDictionary[o].Add(pluginChild);
 
                                     //add to the child collection of the parent object kvp.Key
                                     _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,

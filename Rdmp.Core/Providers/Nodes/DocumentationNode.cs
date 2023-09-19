@@ -33,7 +33,8 @@ public class DocumentationNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == typeof(DocumentationNode) && Equals((DocumentationNode)obj);
+        if (obj.GetType() != typeof(DocumentationNode)) return false;
+        return Equals((DocumentationNode)obj);
     }
 
     public override int GetHashCode() => System.HashCode.Combine(Catalogue);

@@ -556,6 +556,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         //get up to 1000 records
         da.Fill(0, 1000, toReturn);
+            toReturn.EndLoadData();
 
         con.Close();
         toReturn.EndLoadData();

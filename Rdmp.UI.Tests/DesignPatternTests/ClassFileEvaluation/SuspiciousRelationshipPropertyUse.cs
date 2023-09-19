@@ -43,7 +43,7 @@ public class SuspiciousRelationshipPropertyUse
                 continue;
 
             //Find the C sharp code for the class
-            var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
+            var relationshipProperties = type.GetProperties().Where(static p => p.CanRead && !p.CanWrite);
 
             var expectedFileName = $"{type.Name}.cs";
             var files = csFilesFound
@@ -114,7 +114,7 @@ public class SuspiciousRelationshipPropertyUse
 
             foreach (var p in databaseProperties)
             {
-                //its a NoMapping
+                //it's a NoMapping
                 if (p.CustomAttributes.Any(c => c.AttributeType == typeof(NoMappingToDatabase)))
                     continue;
 

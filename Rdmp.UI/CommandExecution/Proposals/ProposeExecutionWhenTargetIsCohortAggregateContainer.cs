@@ -83,17 +83,16 @@ internal class
             case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand
                 when sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer):
                 return null;
-            //its being dragged into a container (move into new container)
+            //it's being dragged into a container (move into new container)
             case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand
                 when insertOption == InsertOption.Default:
                 return new ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(ItemActivator,
                     sourceCohortAggregateContainerCommand, targetCohortAggregateContainer);
-            //its being dragged above/below a container (reorder)
-            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand:
-                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
-                    targetCohortAggregateContainer, insertOption);
-            default:
-                return null;
+            //it's being dragged above/below a container (reorder)
+            return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand,
+                targetCohortAggregateContainer, insertOption);
         }
+
+        return null;
     }
 }

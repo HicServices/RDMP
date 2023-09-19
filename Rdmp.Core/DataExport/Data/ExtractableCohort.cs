@@ -560,6 +560,8 @@ where
             $"Substituted {substitutions} release identifiers for private identifiers in input data table (input data table contained {toProcess.Rows.Count} rows)"));
 
         toProcess.Columns[releaseIdentifier].ColumnName = privateIdentifier;
+
+        toProcess.EndLoadData();
     }
 
     /// <summary>

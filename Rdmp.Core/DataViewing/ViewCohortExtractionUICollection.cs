@@ -22,7 +22,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 {
     public int Top
     {
-        get => _arguments.TryGetValue(TopKey, out var t) ? int.Parse(t) : 100;
+        get => _arguments.TryGetValue(TopKey, out var value) ? int.Parse(value) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
 
@@ -36,7 +36,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// </summary>
     public bool IncludeCohortID
     {
-        get => !_arguments.ContainsKey(IncludeCohortIDKey) || bool.Parse(_arguments[IncludeCohortIDKey]);
+        get => !_arguments.TryGetValue(IncludeCohortIDKey, out var value) || bool.Parse(value);
         set => _arguments[IncludeCohortIDKey] = value.ToString();
     }
 

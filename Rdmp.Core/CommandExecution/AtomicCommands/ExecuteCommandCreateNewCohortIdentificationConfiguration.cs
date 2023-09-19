@@ -29,7 +29,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     /// True to prompt the user to pick a Project if no explicit Project is configured
     /// yet on this command.
     /// </summary>
-    public bool PromptToPickAProject { get; init; } = false;
+    public bool PromptToPickAProject { get; set; } = false;
 
     /// <summary>
     /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>

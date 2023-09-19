@@ -118,8 +118,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (e.Column == olvDataType && e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different })
             e.SubItem.ForeColor = Color.Red;
 
-        if (e.Column == olvState && e.CellValue is LoadDiagramState loadDiagramState)
-            e.SubItem.ForeColor = loadDiagramState switch
+        if (e.Column == olvState && e.CellValue is LoadDiagramState state)
+            e.SubItem.ForeColor = state switch
+            e.SubItem.ForeColor = state switch
             {
                 LoadDiagramState.Anticipated => Color.LightGray,
                 LoadDiagramState.Found => Color.Green,
@@ -151,11 +152,11 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             _ => null
         };
     }
-
     private string CellToolTipGetter(OLVColumn column, object modelObject) =>
         modelObject is LoadDiagramServerNode loadDiagramServerNode
             ? loadDiagramServerNode.ErrorDescription
             : null;
+    }
 
     private Bitmap ImageGetter(object rowObject)
     {
@@ -293,8 +294,8 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void btnFetch_Click(object sender, EventArgs e)
     {
-        //execution is already underway
         if (taskDiscoverState is { IsCompleted: false })
+        if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
             return;
 
         CommonFunctionality.ResetChecks();

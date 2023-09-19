@@ -35,7 +35,7 @@ public class CachingHost
 
     private readonly ICatalogueRepository _repository;
 
-    // this is more because we can't retrieve CacheWindows from LoadProgresss (yet)
+    // this is more because we can't retrieve CacheWindows from LoadProgress (yet)
     private List<PermissionWindowCacheDownloader> _downloaders;
 
     /// <summary>

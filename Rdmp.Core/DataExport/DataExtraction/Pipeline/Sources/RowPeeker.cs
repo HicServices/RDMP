@@ -71,7 +71,7 @@ internal class RowPeeker
         if (_peekedRecord != null)
             throw new Exception(
                 "Cannot AddWhile when there is an existing peeked record, call AddPeekedRowsIfAny to drain the Peek");
-
+        chunk.BeginLoadData();s
         //while we are still successfully reading rows and those rows have the same release id
         while (source.ReadOneRow() is { } r)
         {

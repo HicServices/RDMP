@@ -27,7 +27,7 @@ public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
     /// <summary>
     /// The new value chosen by the user during command execution
     /// </summary>
-    private object NewValue { get; }
+    public object NewValue { get; private set; }
 
     /// <summary>
     /// True if the command was successfully completed

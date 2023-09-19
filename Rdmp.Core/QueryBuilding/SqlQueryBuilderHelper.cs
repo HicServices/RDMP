@@ -102,10 +102,10 @@ public class SqlQueryBuilderHelper
                         table1.ColumnInfos.ToArray(),
                         table2.ColumnInfos.ToArray());
 
-                    if (availableJoins.Length == 0)
-                        continue; //try another table
+                if (availableJoins.Length == 0)
+                    continue; //try another table
 
-                    var comboJoinResolved = false;
+                var comboJoinResolved = false;
 
                     //if there are more than 1 join info between the two tables then we need to either do a combo join or complain to user
                     if (availableJoins.Length > 1)

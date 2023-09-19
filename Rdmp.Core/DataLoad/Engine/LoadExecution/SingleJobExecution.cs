@@ -95,6 +95,12 @@ public class SingleJobExecution : IDataLoadExecution
                                           // return failed (even if the messages are all warnings)
                 TryDispose(ExitCodeType.Error, job);
                 return ExitCodeType.Error;
+                foreach (var m in
+                         job.CrashAtEndMessages)
+                    job.OnNotify(job, m); // depending on the listener these may break flow of control (e.g. 
+
+                // return failed (even if the messages are all warnings)
+                return ExitCodeType.Error;
             }
             //here
             TryDispose(ExitCodeType.Success, job);

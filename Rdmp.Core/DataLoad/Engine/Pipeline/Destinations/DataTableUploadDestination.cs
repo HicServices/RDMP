@@ -308,8 +308,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (toProcess.Columns.Contains(col))
                 sharedColumns.Add(col); //it is a shared column
 
-
-        //adjust the computer to
         //for each shared column adjust the corresponding computer for all rows
         Parallel.ForEach(sharedColumns, col =>
         {

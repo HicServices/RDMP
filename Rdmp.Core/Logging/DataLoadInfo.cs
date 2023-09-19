@@ -126,22 +126,13 @@ public sealed class DataLoadInfo : IDataLoadInfo
             if (l.Count == 0)
             {
                 lock (_logWaiter)
-                {
                     Monitor.Wait(_logWaiter, 1000);
-                }
-
                 continue;
             }
-
             using var con = DatabaseSettings.BeginNewTransactedConnection();
             if (DatabaseSettings.DatabaseType == DatabaseType.MicrosoftSQLServer)
-                using (var lockQuery =
-                       DatabaseSettings.GetCommand(
-                           "SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
-                {
+                using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
                     lockQuery.ExecuteNonQuery();
-                }
-
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
                 "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
                 con);
@@ -160,10 +151,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
                 time.Value = entry.Time;
                 cmdRecordProgress.ExecuteNonQuery();
             }
-
             con.ManagedTransaction.CommitAndCloseConnection();
         }
-
         _logQueue = null;
     }
 
@@ -211,7 +200,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
     {
         lock (_oLock)
         {
-            if (_logQueue?.IsAddingCompleted == false)
+            if (_logQueue?.IsAddingCompleted==false)
                 _logQueue.CompleteAdding();
             _logThread?.Join();
 
@@ -301,8 +290,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
 
-        var cmdLookupStatusID =
-            DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
+        var cmdLookupStatusID = DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
         DatabaseSettings.AddParameterWithValueToCommand("@status", cmdLookupStatusID, initialErrorStatus);
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
@@ -343,10 +331,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
             _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
         }
-
         lock (_logWaiter)
-        {
             Monitor.Pulse(_logWaiter);
-        }
     }
 }

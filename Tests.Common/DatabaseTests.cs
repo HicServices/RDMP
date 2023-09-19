@@ -159,22 +159,30 @@ public partial class DatabaseTests
             ? new RepositoryProvider(GetFreshYamlRepository())
             : new PlatformDatabaseCreationRepositoryFinder(opts);
 
-        // TODO: JS 2023-06-21 Temporary workaround for FAnsi not catching OperationCanceledException
-        var missing = true;
-        try
+        if (CatalogueRepository is TableRepository cataRepo)
         {
-            missing = CatalogueRepository is TableRepository cataRepo && !cataRepo.DiscoveredServer.Exists();
-        }
-        catch (OperationCanceledException e)
-        {
-            Console.WriteLine(e);
+            Console.WriteLine(
+                $"Expecting Unit Test Catalogue To Be At Server={cataRepo.DiscoveredServer.Name} Database={cataRepo.DiscoveredServer.GetCurrentDatabase()}");
+
+            if (!cataRepo.DiscoveredServer.Exists()) DealWithMissingTestDatabases(opts, cataRepo);
         }
 
-        if (missing) DealWithMissingTestDatabases(opts, CatalogueRepository as TableRepository);
+
+        Console.WriteLine("Found Catalogue");
+
 
         if (DataExportRepository is TableRepository tblRepo)
+        {
+            Console.WriteLine(
+                $"Expecting Unit Test Data Export To Be At Server={tblRepo.DiscoveredServer.Name} Database= {tblRepo.DiscoveredServer.GetCurrentDatabase()}");
             Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
-                "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that server name and prefix in TestDatabases.txt match those you provide e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+                "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+        }
+
+
+        Console.WriteLine("Found DataExport");
+
+        Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
 
         RunBlitzDatabases(RepositoryLocator);
 
@@ -221,16 +229,9 @@ public partial class DatabaseTests
     {
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
-        var exists = false;
-        try
-        {
-            exists = mainDb.Server.Exists();
-        }
-        catch (OperationCanceledException e)
-        {
-            // TODO: JS 2023-06-21 Temporary workaround for FAnsi not catching OperationCanceledException in TestConnection
-            Console.WriteLine(e);
-        }
+        if (HaveTriedCreatingTestDatabases || !mainDb.Server.Exists())
+            Assert.Inconclusive(
+                "Test database server does not exist.  You must install SQL Server LocalDb or Sql Server Express to run DatabaseTests. Or update TestDatabases.txt to point to your existing server.");
 
         if (HaveTriedCreatingTestDatabases || !exists)
             Assert.Inconclusive(

@@ -114,7 +114,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
                 //get it by its id
                 toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
-                //if the first record is liscenced for Any
+                //if the first record is licenced for Any
                 if (Convert.ToInt32(r["Context"]) == (int)DataAccessContext.Any)
                     //see if there is a more specific second record (e.g. DataLoad)
                     if (r.Read())

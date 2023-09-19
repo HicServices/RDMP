@@ -33,6 +33,15 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     private readonly string _explicitCohortName;
 
     /// <summary>
+    /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
+    /// </summary>
+    /// <param name="activator"></param>
+    protected CohortCreationCommandExecution(IBasicActivateItems activator)
+        : this(activator, null, null, null, null)
+    {
+    }
+
+    /// <summary>
     /// Initialises common targetting parameters (where to store resulting identifiers etc)
     /// </summary>
     /// <param name="activator"></param>
@@ -40,9 +49,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="cohortName"></param>
     /// <param name="project"></param>
     /// <param name="pipeline"></param>
-    protected CohortCreationCommandExecution(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable = null, string cohortName = null, Project project = null,
-        IPipeline pipeline = null) : base(activator)
+    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable,
+        string cohortName, Project project, IPipeline pipeline) : base(activator)
     {
         //May be null
         _explicitCohortName = cohortName;
@@ -155,10 +163,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-        //create a db listener
-        var toDbListener =
-            new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask,
-                description);
+            //create a db listener
+            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
+                ExtractableCohort.CohortLoggingTask, description);
 
         //make all messages go to both the db and the UI
         pipelineRunner.SetAdditionalProgressListener(toDbListener);

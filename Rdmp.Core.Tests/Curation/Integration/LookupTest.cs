@@ -109,6 +109,16 @@ public class LookupTest : DatabaseTests
         }
     }
 
+            try
+            {
+                parent.DeleteInDatabase();
+            }
+            catch (Exception)
+            {
+            }
+        }
+    }
+
     [TestCase(true)]
     [TestCase(false)]
     public void CreateLookup_linkWithOtherTable(bool memoryRepo)

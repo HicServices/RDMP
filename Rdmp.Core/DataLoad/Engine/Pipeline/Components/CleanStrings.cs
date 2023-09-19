@@ -31,7 +31,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         GracefulCancellationToken cancellationToken)
     {
         timer.Start();
-
+        toProcess.BeginLoadData();
     StartAgain:
         foreach (DataRow row in toProcess.Rows)
         {
@@ -85,7 +85,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         job.OnProgress(this,
             new ProgressEventArgs(_taskDescription, new ProgressMeasurement(_rowsProcessed, ProgressType.Records),
                 timer.Elapsed));
-
+        toProcess.EndLoadData();
         return toProcess;
     }
 

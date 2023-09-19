@@ -65,10 +65,10 @@ public class PayloadTest : DatabaseTests
         var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
         var execution = factory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var proceedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm,
+        var procedure = new DataLoadProcess(RepositoryLocator, lmd, null, lm,
             ThrowImmediatelyDataLoadEventListener.Quiet, execution, config);
 
-        proceedure.Run(new GracefulCancellationToken(), payload);
+        procedure.Run(new GracefulCancellationToken(), payload);
 
         Assert.IsTrue(Success, "Expected IAttacher to detect Payload and set this property to true");
     }

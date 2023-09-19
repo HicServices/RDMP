@@ -30,6 +30,7 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
 
     private IReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
 
+
     /// <summary>
     /// The objects matched by the command (similar or different objects)
     /// </summary>

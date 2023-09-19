@@ -32,7 +32,8 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((PersistableObjectCollection)obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PersistableObjectCollection)obj);
     }
 
     public override int GetHashCode() => System.HashCode.Combine(DatabaseObjects, SaveExtraText());

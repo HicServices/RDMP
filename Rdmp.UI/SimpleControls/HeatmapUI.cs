@@ -281,8 +281,8 @@ public partial class HeatmapUI : UserControl
                                              (_maxValueInDataTable - _minValueInDataTable);
                             var brightnessIndex = (int)(brightness * (NumberOfColors - 1));
 
-                            brush.Color = _rainbow.Colors[brightnessIndex];
-                        }
+                        brush.Color = _rainbow.Colors[brightnessIndex];
+                    }
 
                         e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight),
                             (float)heatPixelWidth, (float)heatPixelHeight);

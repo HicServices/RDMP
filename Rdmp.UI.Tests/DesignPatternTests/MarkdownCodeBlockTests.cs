@@ -73,7 +73,8 @@ internal class MarkdownCodeBlockTests
             {
                 if (obj is null) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
+                if (obj.GetType() != GetType()) return false;
+                return Equals((FrozenExtractionConfigurationsNode)obj);
             }
 
             public override int GetHashCode() => Project?.GetHashCode() ?? 0;

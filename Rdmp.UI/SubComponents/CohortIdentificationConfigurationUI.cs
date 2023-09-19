@@ -400,6 +400,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         {
             menuItem.Enabled = false;
         }
+        }
 
         return menuItem;
     }
