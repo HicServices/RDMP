@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor build process
 - Update Scintilla
 - Add LibArchive.Net 0.1.3 for archive reading support
-- Batching ofprogress log writting to improve performance
+- Batching of progress log writing to improve performance
 - Add Begin/End flags for DataTable loads to improve performance of large writes
 - Removable default logging server
 - Increase Progress Log timeout to account for long db lock queue
