@@ -8,13 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
-## [8.1.0] - in development
+## [8.1.0] - 2023-09-19
 
 ### Changed
 
 - Refactor build process
 - Update Scintilla
 - Add LibArchive.Net 0.1.3 for archive reading support
+- Batching ofprogress log writting to improve performance
+- Add Begin/End flags for DataTable loads to improve performance of large writes
+- Removable default logging server
+- Increase Progress Log timeout to account for long db lock queue
+- Allow users to clear all settings
+- Plugin updates are now installed in the correct place
+- Move Terminal.Gui to Core rather than duplicating in both CLI and GUI
+- Remove Moq Library in favour of NSubstitute
+- Add max message length check when logging notifications to prevent erroneous DB write attempts
 
 ## [8.0.7] - 2022-11-22
 
