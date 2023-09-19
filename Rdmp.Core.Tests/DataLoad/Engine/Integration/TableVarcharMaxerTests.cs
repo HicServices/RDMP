@@ -64,8 +64,8 @@ public class TableVarcharMaxerTests : DatabaseTests
                 Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                 break;
             case DatabaseType.MySql:
-                Assert.AreEqual("text", tbl.DiscoverColumn("Dave").DataType.SQLType);
-                Assert.AreEqual(allDataTypes ? "text" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
+                Assert.AreEqual("longtext", tbl.DiscoverColumn("Dave").DataType.SQLType);
+                Assert.AreEqual(allDataTypes ? "longtext" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                 break;
             case DatabaseType.Oracle:
                 Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Dave").DataType.SQLType);
@@ -114,7 +114,7 @@ public class TableVarcharMaxerTests : DatabaseTests
                 Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
                 break;
             case DatabaseType.MySql:
-                Assert.AreEqual("text", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.AreEqual("longtext", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
                 break;
             case DatabaseType.Oracle:
                 Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
