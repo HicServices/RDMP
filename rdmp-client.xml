@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <item>
-  <version>8.0.5.0</version>
-  <url>https://github.com/HicServices/RDMP/releases/download/v8.0.5/rdmp-8.0.5-client.zip</url>
-  <changelog>https://github.com/HicServices/RDMP/blob/main/CHANGELOG.md#805</changelog>
-  <mandatory>true</mandatory>
+    <version>8.1.0.0</version>
+    <url>https://github.com/HicServices/RDMP/releases/download/v8.1.0/rdmp-8.1.0-client.zip</url>
+    <changelog>https://github.com/HicServices/RDMP/blob/main/CHANGELOG.md#810</changelog>
+    <mandatory>true</mandatory>
 </item>
