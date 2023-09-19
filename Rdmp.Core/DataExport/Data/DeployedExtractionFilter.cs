@@ -22,10 +22,10 @@ namespace Rdmp.Core.DataExport.Data;
 /// Sometimes it is necessary to restrict which records are extracted for a given ExtractionConfiguration beyond the linkage against a cohort.  For example you might want to extract
 /// 'only paracetamol prescriptions' for your cohort rather than the entire Prescribing dataset.  This is achieved by using a DeployedExtractionFilter.  DeployedExtractionFilters are
 /// curated pieces of WHERE SQL with a name and description.  These can either be written bespoke for your extract or copied from a master ExtractionFilter in the Catalogue database.
-/// In general if a filter concept is reusable and useful across multiple projects / over time then you should create it in the Catalogue database as an ExtractionFilter and then 
+/// In general if a filter concept is reusable and useful across multiple projects / over time then you should create it in the Catalogue database as an ExtractionFilter and then
 /// import a copy into your ExtractionConfiguration each time you need it (or mark it as IsMandatory if it should always be used in data extraction of that Catalogue).
 /// 
-/// <para>When you import a master filter into your ExtractionConfiguration a copy of the WHERE SQL, any 
+/// <para>When you import a master filter into your ExtractionConfiguration a copy of the WHERE SQL, any
 /// parameters and the name and description will be made as a DeployedExtractionFilter which will also contain a reference back to the original (ClonedFromExtractionFilter_ID).  This
 /// allows you to ensure consistency over time and gives you a central location (the ExtractionFilter) to fix errors in the Filter implementation etc.  </para>
 /// 
@@ -101,7 +101,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     }
 
     /// <summary>
-    /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when 
+    /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when
     /// extracting the dataset.
     /// 
     /// <para>This object is created into the data export metadata database</para>

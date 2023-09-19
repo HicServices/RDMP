@@ -29,7 +29,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
 
     public const int Timeout = 5000;
 
-    private IBulkCopy _copy = null;
+    private IBulkCopy _copy;
     private Stopwatch _timer = new();
 
     protected ITableLoadInfo TableLoadInfo;
@@ -52,7 +52,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     }
 
 
-    private int _recordsWritten = 0;
+    private int _recordsWritten;
 
     public virtual void SubmitChunk(DataTable chunk, IDataLoadEventListener job)
     {
@@ -90,13 +90,10 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         foreach (var columnInDestination in listColumns)
             if (columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
                 columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-                //its fine if validFrom/DataLoadRunID columns are missing
-            {
-                continue; //its fine
-            }
-            else if
-                (!chunk.Columns.Contains(columnInDestination
-                    .GetRuntimeName())) //its not fine if there are other columns missing (at the very least we should warn the user.
+                //it's fine if validFrom/DataLoadRunID columns are missing
+                continue;//it's fine
+            else
+            if (!chunk.Columns.Contains(columnInDestination.GetRuntimeName()))//it's not fine if there are other columns missing (at the very least we should warn the user).
             {
                 var isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
 
@@ -155,7 +152,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     }
 
     private bool _isDisposed = false;
-
+        
 
     private void CloseConnection(IDataLoadEventListener listener)
     {

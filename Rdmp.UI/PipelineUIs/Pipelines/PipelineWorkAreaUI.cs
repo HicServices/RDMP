@@ -31,7 +31,6 @@ public partial class PipelineWorkAreaUI : UserControl
     private PipelineDiagramUI _pipelineDiagram;
     private ArgumentCollectionUI _arumentsCollection1;
     private readonly IActivateItems _activator;
-    private IPipeline _pipeline;
     private List<AdvertisedPipelineComponentTypeUnderContext> _allComponents;
     private readonly IPipelineUseCase _useCase;
     private readonly ICatalogueRepository _catalogueRepository;
@@ -41,7 +40,6 @@ public partial class PipelineWorkAreaUI : UserControl
         ICatalogueRepository catalogueRepository)
     {
         _activator = activator;
-        _pipeline = pipeline;
         _useCase = useCase;
         _catalogueRepository = catalogueRepository;
 
@@ -72,12 +70,10 @@ public partial class PipelineWorkAreaUI : UserControl
         try
         {
             //middle and destination components
-            var allComponentTypes =
-                _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowComponent<>), context.GetFlowType());
+            var allComponentTypes = MEF.GetGenericTypes(typeof(IDataFlowComponent<>), context.GetFlowType());
 
             //source components (list of all types with MEF exports of )
-            var allSourceTypes =
-                _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
+            var allSourceTypes = MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
             _allComponents = new List<AdvertisedPipelineComponentTypeUnderContext>();
 

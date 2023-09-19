@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Rdmp.Core.ReusableLibraryCode;
 
@@ -19,18 +20,19 @@ public static class ExceptionHelper
     [Pure]
     public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace = false)
     {
-        var message = e.Message;
+        var message = new StringBuilder(e.Message);
         if (includeStackTrace)
-            message += Environment.NewLine + e.StackTrace;
+            message.Append(Environment.NewLine + e.StackTrace);
 
         if (e is ReflectionTypeLoadException exception)
             foreach (var loaderException in exception.LoaderExceptions)
-                message += Environment.NewLine + ExceptionToListOfInnerMessages(loaderException, includeStackTrace);
+                message.Append(Environment.NewLine +
+                               ExceptionToListOfInnerMessages(loaderException, includeStackTrace));
 
         if (e.InnerException != null)
-            message += Environment.NewLine + ExceptionToListOfInnerMessages(e.InnerException, includeStackTrace);
+            message.Append(Environment.NewLine + ExceptionToListOfInnerMessages(e.InnerException, includeStackTrace));
 
-        return message;
+        return message.ToString();
     }
 
     /// <summary>
@@ -54,12 +56,11 @@ public static class ExceptionHelper
     [Pure]
     public static T GetExceptionIfExists<T>(this Exception e) where T : Exception
     {
-        if (e is T exception)
-            return exception;
-
-        if (e.InnerException != null)
-            return GetExceptionIfExists<T>(e.InnerException);
-
-        return null;
+        while (true)
+        {
+            if (e is T t) return t;
+            if (e.InnerException == null) return null;
+            e = e.InnerException;
+        }
     }
 }

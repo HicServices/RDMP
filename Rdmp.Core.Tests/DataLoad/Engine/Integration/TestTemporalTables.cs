@@ -90,8 +90,8 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd),
-            new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
+        var checker =
+            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         if (ignoreWithGlobalPattern)
@@ -125,11 +125,11 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             logManager
         );
 
-        var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+        var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var exitCode = exe.Run(
             new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                new ThrowImmediatelyDataLoadEventListener(), dbConfig),
+                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig),
             new GracefulCancellationToken());
 
         Assert.AreEqual(ExitCodeType.Success, exitCode);

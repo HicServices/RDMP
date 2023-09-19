@@ -49,8 +49,7 @@ public class KVPAttacherTest : DatabaseTests
         var filepk2 = "kvpTestFilePK2.csv";
         var fileNoPk = "kvpTestFile_NoPK.csv";
 
-        if (testCase == KVPAttacherTestCase.OneFileWithPrimaryKey ||
-            testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
+        if (testCase is KVPAttacherTestCase.OneFileWithPrimaryKey or KVPAttacherTestCase.TwoFilesWithPrimaryKey)
             CopyToBin(projectDir, filepk);
 
         if (testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
@@ -150,7 +149,7 @@ public class KVPAttacherTest : DatabaseTests
     [Test]
     public void KVPAttacherCheckTest_TableNameMissing()
     {
-        var ex = Assert.Throws<Exception>(() => new KVPAttacher().Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => new KVPAttacher().Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.AreEqual(
             "Either argument TableName or TableToLoad must be set Rdmp.Core.DataLoad.Modules.Attachers.KVPAttacher, you should specify this value.",
             ex.Message);
@@ -164,7 +163,7 @@ public class KVPAttacherTest : DatabaseTests
             TableName = "MyTable"
         };
 
-        var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => kvp.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.IsTrue(ex.Message.StartsWith("Argument FilePattern has not been set"));
     }
 
@@ -190,7 +189,7 @@ public class KVPAttacherTest : DatabaseTests
         if (missingField != "TargetDataTableValueColumnName")
             kvp.TargetDataTableValueColumnName = "smith";
 
-        var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => kvp.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.IsTrue(ex.Message.StartsWith($"Argument {missingField} has not been set"));
     }
 
@@ -208,7 +207,7 @@ public class KVPAttacherTest : DatabaseTests
             TargetDataTableValueColumnName = isKeyColumnDuplicate ? "tron" : "dave"
         };
 
-        var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => kvp.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.AreEqual(
             "Field 'dave' is both a PrimaryKeyColumn and a TargetDataTable column, this is not allowed.  Your fields Pk1,Pk2,Pketc,Key,Value must all be mutually exclusive",
             ex.Message);
@@ -226,7 +225,7 @@ public class KVPAttacherTest : DatabaseTests
             TargetDataTableValueColumnName = "Key"
         };
 
-        var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(() => kvp.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.AreEqual("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName",
             ex.Message);
     }

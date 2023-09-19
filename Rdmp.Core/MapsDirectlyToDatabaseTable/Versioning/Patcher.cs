@@ -16,7 +16,7 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <inheritdoc/>
-public abstract class Patcher : IPatcher
+public abstract partial class Patcher : IPatcher
 {
     public const string InitialScriptName = "Initial Create";
 
@@ -67,7 +67,7 @@ public abstract class Patcher : IPatcher
         var subdirectory = ResourceSubdirectory;
 
         var initialCreationRegex = string.IsNullOrWhiteSpace(subdirectory)
-            ? new Regex(@".*\.runAfterCreateDatabase\..*\.sql")
+            ? AfterCreateRegex()
             : new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
 
         var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
@@ -75,17 +75,17 @@ public abstract class Patcher : IPatcher
         switch (candidates.Length)
         {
             case 1:
-            {
-                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
+                {
+                    var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
 
                 var sql = sr.ReadToEnd();
 
-                if (!sql.Contains(Patch.VersionKey))
-                    sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
+                    if (!sql.Contains(Patch.VersionKey))
+                        sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
 
 
-                return new Patch(InitialScriptName, sql);
-            }
+                    return new Patch(InitialScriptName, sql);
+                }
             case 0:
                 throw new FileNotFoundException(
                     $"Could not find an initial create database script in dll {assembly.FullName}.  Make sure it is marked as an Embedded Resource and that it is in a folder called 'runAfterCreateDatabase' (and matches regex {initialCreationRegex}). And make sure that it is marked as 'Embedded Resource' in the .csproj build action");
@@ -100,12 +100,10 @@ public abstract class Patcher : IPatcher
     {
         var assembly = GetDbAssembly();
         var subdirectory = ResourceSubdirectory;
-        Regex upgradePatchesRegexPattern;
 
-        if (string.IsNullOrWhiteSpace(subdirectory))
-            upgradePatchesRegexPattern = new Regex(@".*\.up\.(.*\.sql)");
-        else
-            upgradePatchesRegexPattern = new Regex($@".*\.{Regex.Escape(subdirectory)}\.up\.(.*\.sql)");
+        var upgradePatchesRegexPattern = string.IsNullOrWhiteSpace(subdirectory)
+            ? UpRegex()
+            : new Regex($@".*\.{Regex.Escape(subdirectory)}\.up\.(.*\.sql)");
 
         var files = new SortedDictionary<string, Patch>();
 
@@ -120,4 +118,10 @@ public abstract class Patcher : IPatcher
 
         return files;
     }
+
+    [GeneratedRegex(".*\\.up\\.(.*\\.sql)")]
+    private static partial Regex UpRegex();
+
+    [GeneratedRegex(".*\\.runAfterCreateDatabase\\..*\\.sql")]
+    private static partial Regex AfterCreateRegex();
 }

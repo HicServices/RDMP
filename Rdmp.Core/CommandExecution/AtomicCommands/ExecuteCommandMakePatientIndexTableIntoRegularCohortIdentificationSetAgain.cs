@@ -47,7 +47,7 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
     {
         base.Execute();
 
-        //remove it from its old container (really shouldn't be in any!) 
+        //remove it from its old container (really shouldn't be in any!)
         _sourceAggregateCommand.ContainerIfAny?.RemoveChild(_sourceAggregateCommand.Aggregate);
 
         //remove any non IsExtractionIdentifier columns

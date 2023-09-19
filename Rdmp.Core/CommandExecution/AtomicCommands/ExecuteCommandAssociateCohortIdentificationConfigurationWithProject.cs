@@ -4,23 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject : BasicCommandExecution,
+public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject : BasicCommandExecution,
     IAtomicCommandWithTarget
 {
     private Project _project;
     private CohortIdentificationConfiguration _cic;
-    private ProjectCohortIdentificationConfigurationAssociation[] _existingAssociations;
+    private readonly ProjectCohortIdentificationConfigurationAssociation[] _existingAssociations;
 
     public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IBasicActivateItems activator) :
         base(activator)
@@ -39,7 +39,7 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
     {
         if (_project == null)
         {
-            //project is not known so get all projects 
+            //project is not known so get all projects
             var valid = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
             //except if the cic is the launch point
@@ -81,23 +81,21 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
         base.Execute();
 
         //create new relationship in database between the cic and project
-        new ProjectCohortIdentificationConfigurationAssociation(BasicActivator.RepositoryLocator.DataExportRepository,
-            _project, _cic);
+        _ = new ProjectCohortIdentificationConfigurationAssociation(
+            BasicActivator.RepositoryLocator.DataExportRepository, _project, _cic);
 
         Publish(_project);
         Publish(_cic);
         Emphasise(_cic);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         //if we know the cic the context is 'pick a project'
-        if (_cic != null)
-            return iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
-
-        //if we know the _project the context is 'pick a cic'  (or if we don't know either then just use this icon too)
-        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
-    }
+        _cic != null
+            ? iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add)
+            :
+            //if we know the _project the context is 'pick a cic'  (or if we don't know either then just use this icon too)
+            iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -112,9 +110,9 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
                 break;
         }
 
-        if (_project != null && _cic != null)
-            if (_project.GetAssociatedCohortIdentificationConfigurations().Contains(_cic))
-                SetImpossible("Cohort Identification Configuration is already associated with this Project");
+        if (_project != null && _cic != null &&
+            _project.GetAssociatedCohortIdentificationConfigurations().Contains(_cic))
+            SetImpossible("Cohort Identification Configuration is already associated with this Project");
 
         return this;
     }

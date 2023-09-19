@@ -49,7 +49,8 @@ public partial class ChoosePlatformDatabasesUI : Form
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
-    public bool ChangesMade = false;
+    public bool ChangesMade;
+
     private int _seed = 500;
     private int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
     private int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
@@ -89,8 +90,8 @@ public partial class ChoosePlatformDatabasesUI : Form
                             _repositoryLocator is UserSettingsRepositoryFinder;
 
         //yes
-        tbCatalogueConnectionString.Text = cataDb == null ? null : cataDb.ConnectionString;
-        tbDataExportManagerConnectionString.Text = dataExportDb == null ? null : dataExportDb.ConnectionString;
+        tbCatalogueConnectionString.Text = cataDb?.ConnectionString;
+        tbDataExportManagerConnectionString.Text = dataExportDb?.ConnectionString;
 
         tbRowCount.Text = ExampleDatasetsCreation.NumberOfRowsPerDataset.ToString();
         tbPeopleCount.Text = ExampleDatasetsCreation.NumberOfPeople.ToString();

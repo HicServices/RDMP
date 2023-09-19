@@ -45,7 +45,7 @@ public interface IDataAccessPoint : IHasQuerySyntaxHelper
 
 
     /// <summary>
-    /// Attempts to connect to the server using the provided <paramref name="context"/>.  If the object is not properly setup for a valid reference e.g. 
+    /// Attempts to connect to the server using the provided <paramref name="context"/>.  If the object is not properly setup for a valid reference e.g.
     /// <see cref="Server"/> is missing or the referenced database/server could not be connected to then the method returns false
     /// </summary>
     /// <param name="context"></param>

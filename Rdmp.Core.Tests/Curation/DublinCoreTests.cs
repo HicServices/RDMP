@@ -154,7 +154,7 @@ internal class DublinCoreTests
     }
 
     /// <summary>
-    /// This test also appears in the Rdmp.UI.Tests project since it behaves differently in different runtime. 
+    /// This test also appears in the Rdmp.UI.Tests project since it behaves differently in different runtime.
     /// </summary>
     [Test]
     public void Test_DublinCore_WriteReadFile_NetCore()
@@ -179,11 +179,9 @@ internal class DublinCoreTests
             def1.WriteXml(outStream);
         }
 
-        using (var inStream = fi.OpenRead())
-        {
-            var def2 = new DublinCoreDefinition();
-            var doc = XDocument.Load(inStream);
-            def2.LoadFrom(doc.Root);
-        }
+        using var inStream = fi.OpenRead();
+        var def2 = new DublinCoreDefinition();
+        var doc = XDocument.Load(inStream);
+        def2.LoadFrom(doc.Root);
     }
 }

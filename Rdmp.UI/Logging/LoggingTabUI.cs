@@ -55,6 +55,7 @@ public class LoggingTabUI : LoggingTab_Design
     private string _freeTextFilter;
     private Panel pFilter;
     private LogManager LogManager;
+
     private NavigationTrack<LogViewerFilter> _navigationTrack;
     private Panel panel1;
     private ToolStripButton _back;
@@ -71,9 +72,9 @@ public class LoggingTabUI : LoggingTab_Design
         //start with no filter
         panel1.Controls.Remove(pFilter);
 
-        tbTop.TextChanged += new EventHandler(tbTop_TextChanged);
-        tbContentFilter.TextChanged += new EventHandler(tbContentFilter_TextChanged);
-        cbPreferNewer.CheckedChanged += new EventHandler(cbPreferNewer_CheckedChanged);
+        tbTop.TextChanged += tbTop_TextChanged;
+        tbContentFilter.TextChanged += tbContentFilter_TextChanged;
+        cbPreferNewer.CheckedChanged += cbPreferNewer_CheckedChanged;
     }
 
     private int UpdateTopX()
@@ -225,7 +226,7 @@ public class LoggingTabUI : LoggingTab_Design
         pbRemoveFilter.SizeMode = PictureBoxSizeMode.CenterImage;
         pbRemoveFilter.TabIndex = 10;
         pbRemoveFilter.TabStop = false;
-        pbRemoveFilter.Click += new EventHandler(pbRemoveFilter_Click);
+        pbRemoveFilter.Click += pbRemoveFilter_Click;
         // 
         // lblCurrentFilter
         // 
@@ -293,8 +294,8 @@ public class LoggingTabUI : LoggingTab_Design
     public void SetFilter(LogViewerFilter filter)
     {
         if (
-            _navigationTrack != null && _navigationTrack.Current != null //there is a back navigation stack setup
-                                     && filter != _navigationTrack.Current //we are not doing a Back operation
+            _navigationTrack is { Current: not null } //there is a back navigation stack setup
+            && filter != _navigationTrack.Current //we are not doing a Back operation
         )
             _navigationTrack.Current.Tag =
                 tbContentFilter
@@ -349,7 +350,8 @@ public class LoggingTabUI : LoggingTab_Design
             //set the initial filter
             _navigationTrack.Append(Filter);
             _back = new ToolStripButton("Back", FamFamFamIcons.Back.ImageToBitmap(),
-                (s, e) => _navigationTrack.Back(true)) { DisplayStyle = ToolStripItemDisplayStyle.Image };
+                (s, e) => _navigationTrack.Back(true))
+            { DisplayStyle = ToolStripItemDisplayStyle.Image };
         }
 
         CommonFunctionality.Add(_back);
@@ -364,22 +366,22 @@ public class LoggingTabUI : LoggingTab_Design
 
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadTask))
-                { OverrideCommandName = "All Tasks" });
+            { OverrideCommandName = "All Tasks" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadRun))
-                { OverrideCommandName = "All Runs" });
+            { OverrideCommandName = "All Runs" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.FatalError))
-                { OverrideCommandName = "All Errors" });
+            { OverrideCommandName = "All Errors" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.TableLoadRun))
-                { OverrideCommandName = "All Tables Loaded" });
+            { OverrideCommandName = "All Tables Loaded" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataSource))
-                { OverrideCommandName = "All Data Sources" });
+            { OverrideCommandName = "All Data Sources" });
         CommonFunctionality.AddToMenu(
             new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.ProgressLog))
-                { OverrideCommandName = "All Progress Logs" });
+            { OverrideCommandName = "All Progress Logs" });
 
 
         if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out var reason))

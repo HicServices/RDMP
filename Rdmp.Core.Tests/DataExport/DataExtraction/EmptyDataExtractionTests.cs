@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
@@ -25,15 +24,13 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
     private void TruncateDataTable()
     {
         var server = Database.Server;
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
 
-            var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable", con);
-            cmdTruncate.ExecuteNonQuery();
+        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable", con);
+        cmdTruncate.ExecuteNonQuery();
 
-            con.Close();
-        }
+        con.Close();
     }
 
     [Test]
@@ -48,15 +45,15 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),
             _request.Configuration.Project, _request, p, DataLoadInfo.Empty);
 
-        var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
+        var engine = host.GetEngine(p, ThrowImmediatelyDataLoadEventListener.Quiet);
         host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
 
         var token = new GracefulCancellationToken();
 
         if (allowEmptyDatasetExtractions)
         {
-            var dt = host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token);
-            Assert.IsNull(host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
+            var dt = host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token);
+            Assert.IsNull(host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
             Assert.AreEqual(0, dt.Rows.Count);
             Assert.AreEqual(3, dt.Columns.Count);
@@ -64,7 +61,7 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         else
         {
             var exception = Assert.Throws<Exception>(() =>
-                host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
+                host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
             Assert.IsTrue(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
         }
@@ -78,10 +75,9 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         TruncateDataTable();
         AllowEmptyExtractions = true;
 
-
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
 
-        Execute(out var execute, out var result);
+        Execute(out _, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

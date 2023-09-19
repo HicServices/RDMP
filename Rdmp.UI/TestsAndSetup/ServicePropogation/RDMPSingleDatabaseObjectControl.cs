@@ -44,7 +44,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     /// before <see cref="SetDatabaseObject(IActivateItems, DatabaseEntity)"/> has been called
     /// or if <see cref="UseCommitSystem"/> is false.
     /// </summary>
-    protected CommitInProgress CurrentCommit = null;
+    protected CommitInProgress CurrentCommit;
 
     private Control _colorIndicator;
     private Label _readonlyIndicator;
@@ -197,7 +197,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         bool formattingEnabled = true, DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
         //workaround for only comitting lists on loose focus
-        if (c is ComboBox box && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
+        if (c is ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } box && propertyName.Equals("SelectedItem"))
             box.SelectionChangeCommitted += (s, e) => box.DataBindings["SelectedItem"].WriteValue();
 
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
@@ -264,17 +264,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     public Type GetTypeOfT() => typeof(T);
 
-    public virtual string GetTabName()
-    {
-        if (DatabaseObject is INamed named)
-            return named.Name;
-
-
-        if (DatabaseObject != null)
-            return DatabaseObject.ToString();
-
-        return "Unamed Tab";
-    }
+    public virtual string GetTabName() =>
+        DatabaseObject is INamed named ? named.Name : DatabaseObject?.ToString() ?? "Unnamed Tab";
 
     public virtual string GetTabToolTip() => null;
 

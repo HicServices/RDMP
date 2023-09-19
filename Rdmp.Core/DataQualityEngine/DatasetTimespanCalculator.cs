@@ -16,9 +16,9 @@ namespace Rdmp.Core.DataQualityEngine;
 /// <summary>
 /// Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this includes any dates in which there are
 /// 1000 times less records than the non zero average month.  For example if you have 3 records in 01/01/2090 then they would be discarded if you had
-///  an average of 3000+ records per month (after ignoring months where there are no records).  
+///  an average of 3000+ records per month (after ignoring months where there are no records).
 /// 
-/// <para>IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on the last DQE run on the dataset not 
+/// <para>IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on the last DQE run on the dataset not
 /// the live table</para>
 /// </summary>
 public class DatasetTimespanCalculator : IDetermineDatasetTimespan
@@ -29,10 +29,9 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
         var result = GetMachineReadableTimespanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
 
-        if (result.Item1 == null || result.Item2 == null)
-            return "Unknown";
-
-        return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
+        return result.Item1 == null || result.Item2 == null
+            ? "Unknown"
+            : $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
     }
 
     public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation,
@@ -61,10 +60,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
                 break;
             }
 
-        if (maxMonth == null || minMonth == null)
-            return Unknown();
-
-        return Tuple.Create(minMonth, maxMonth);
+        return maxMonth == null || minMonth == null ? Unknown() : Tuple.Create(minMonth, maxMonth);
     }
 
     public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,

@@ -68,7 +68,7 @@ public class DQERepository : TableRepository, IDQERepository
     /// <inheritdoc/>
     public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
     {
-        return GetAllEvaluationsFor(c).OrderByDescending(e => e.DateOfEvaluation).FirstOrDefault();
+        return GetAllEvaluationsFor(c).MaxBy(e => e.DateOfEvaluation);
     }
 
     /// <inheritdoc/>
@@ -79,8 +79,6 @@ public class DQERepository : TableRepository, IDQERepository
 
     /// <inheritdoc/>
     public bool HasEvaluations(ICatalogue catalogue) => GetAllEvaluationsFor(catalogue).Any();
-
-    private readonly ObjectConstructor _constructor = new();
 
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
         ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t, this, reader);

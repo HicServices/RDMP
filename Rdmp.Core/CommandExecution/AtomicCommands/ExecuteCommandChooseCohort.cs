@@ -5,23 +5,22 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
-using SixLabors.ImageSharp.PixelFormats;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private DataExportChildProvider _childProvider;
-    private List<ExtractableCohort> _compatibleCohorts = new();
-    private ExtractableCohort _pick;
+    private readonly List<ExtractableCohort> _compatibleCohorts = new();
+    private readonly ExtractableCohort _pick;
 
     public ExecuteCommandChooseCohort(IBasicActivateItems activator,
         [DemandsInitialization("The configuration to change the cohort on")]
@@ -45,16 +44,14 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
             return;
         }
 
-        _childProvider = BasicActivator.CoreChildProvider as DataExportChildProvider;
-
-        if (_childProvider == null)
+        if (BasicActivator.CoreChildProvider is not DataExportChildProvider childProvider)
         {
             SetImpossible("Activator.CoreChildProvider is not an DataExportChildProvider");
             return;
         }
 
         //find cohorts that match the project number
-        if (_childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
+        if (childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
             _compatibleCohorts = value.Where(c => !c.IsDeprecated).ToList();
 
         //if there's only one compatible cohort and that one is already selected
@@ -83,11 +80,11 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 
         if (pick == null)
             if (SelectOne(new DialogArgs
-                    {
-                        WindowTitle = "Select Saved Cohort",
-                        TaskDescription =
+            {
+                WindowTitle = "Select Saved Cohort",
+                TaskDescription =
                             "Select the existing Cohort you would like to be used for your Extraction Configuration."
-                    },
+            },
                     _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated)
                         .ToList(),
                     out var selected))

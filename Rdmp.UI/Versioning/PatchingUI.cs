@@ -30,7 +30,7 @@ public partial class PatchingUI : Form
     private readonly DiscoveredDatabase _database;
     private readonly ITableRepository _repository;
 
-    private bool _yesToAll = false;
+    private bool _yesToAll;
     private IPatcher _patcher;
 
     private PatchingUI(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
@@ -90,7 +90,7 @@ public partial class PatchingUI : Form
                     null));
             }
 
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Successful", CheckResult.Success, null));
 
             if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 ApplicationRestarter.Restart();

@@ -17,26 +17,20 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
 public class DilutionOperationFactory
 {
     private readonly IPreLoadDiscardedColumn _targetColumn;
-    private MEF _mef;
 
     public DilutionOperationFactory(IPreLoadDiscardedColumn targetColumn)
     {
-        if (targetColumn == null)
-            throw new ArgumentNullException(nameof(targetColumn));
-
-        _targetColumn = targetColumn;
-        _mef = ((ICatalogueRepository)_targetColumn.Repository).MEF;
+        _targetColumn = targetColumn ?? throw new ArgumentNullException(nameof(targetColumn));
     }
 
     public IDilutionOperation Create(Type operation)
     {
-        if (operation == null)
-            throw new ArgumentNullException(nameof(operation));
+        ArgumentNullException.ThrowIfNull(operation);
 
         if (!typeof(IDilutionOperation).IsAssignableFrom(operation))
             throw new ArgumentException($"Requested operation Type {operation} did was not an IDilutionOperation");
 
-        var instance = _mef.CreateA<IDilutionOperation>(operation.FullName);
+        var instance = MEF.CreateA<IDilutionOperation>(operation.FullName);
         instance.ColumnToDilute = _targetColumn;
 
         return instance;

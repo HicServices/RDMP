@@ -23,7 +23,7 @@ public class GlobalsBundle : Bundle
     public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
         base(
             Array.Empty<object>().Union(documents).Union(supportingSQL).ToArray()
-            //pass all the objects to the base class so it can allocate initial States
+        //pass all the objects to the base class so it can allocate initial States
         )
     {
         Documents = documents.ToList();
@@ -35,19 +35,16 @@ public class GlobalsBundle : Bundle
 
     protected override void OnDropContent(object toDrop)
     {
-        if (toDrop is SupportingDocument item)
+        switch (toDrop)
         {
-            Documents.Remove(item);
-            return;
+            case SupportingDocument item:
+                Documents.Remove(item);
+                return;
+            case SupportingSQLTable drop:
+                SupportingSQL.Remove(drop);
+                return;
+            default:
+                throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
         }
-
-        if (toDrop is SupportingSQLTable drop)
-        {
-            SupportingSQL.Remove(drop);
-            return;
-        }
-
-
-        throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
     }
 }

@@ -83,7 +83,7 @@ public abstract class ReleasePotential : ICheckable
             Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
     }
 
-    private Releaseability MakeAssesment(ICumulativeExtractionResults extractionResults)
+    private Releaseability MakeAssessment(ICumulativeExtractionResults extractionResults)
     {
         //always try to figure out what the current SQL is
         SqlCurrentConfiguration = GetCurrentConfigurationSQL();
@@ -104,12 +104,11 @@ public abstract class ReleasePotential : ICheckable
 
         var finalAssessment = GetSpecificAssessment(extractionResults);
 
-        if (finalAssessment == Releaseability.Undefined)
-            return SqlDifferencesVsLiveCatalogue()
+        return finalAssessment == Releaseability.Undefined
+            ? SqlDifferencesVsLiveCatalogue()
                 ? Releaseability.ColumnDifferencesVsCatalogue
-                : Releaseability.Releaseable;
-
-        return finalAssessment;
+                : Releaseability.Releaseable
+            : finalAssessment;
     }
 
     private bool ExtractionProgressIsIncomplete(ICheckNotifier notifier)
@@ -144,18 +143,16 @@ public abstract class ReleasePotential : ICheckable
                 supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
             return Releaseability.Undefined;
 
-        if (extractedObject is SupportingSQLTable table)
-            if (table.SQL != supplementalExtractionResults.SQLExecuted)
-                return Releaseability.ExtractionSQLDesynchronisation;
+        if (extractedObject is SupportingSQLTable table && table.SQL != supplementalExtractionResults.SQLExecuted)
+            return Releaseability.ExtractionSQLDesynchronisation;
 
         var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
 
-        if (finalAssessment == Releaseability.Undefined)
-            return extractedObject.Name != supplementalExtractionResults.ExtractedName
+        return finalAssessment == Releaseability.Undefined
+            ? extractedObject.Name != supplementalExtractionResults.ExtractedName
                 ? Releaseability.ExtractionSQLDesynchronisation
-                : Releaseability.Releaseable;
-
-        return finalAssessment;
+                : Releaseability.Releaseable
+            : finalAssessment;
     }
 
     protected abstract Releaseability GetSupplementalSpecificAssessment(
@@ -167,8 +164,9 @@ public abstract class ReleasePotential : ICheckable
     {
         ColumnsThatAreDifferentFromCatalogue = new Dictionary<ExtractableColumn, ExtractionInformation>();
 
-        foreach (ExtractableColumn extractableColumn in _columnsToExtract)
+        foreach (var column in _columnsToExtract)
         {
+            var extractableColumn = (ExtractableColumn)column;
             if (extractableColumn.HasOriginalExtractionInformationVanished())
             {
                 ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn, null);
@@ -226,25 +224,19 @@ public abstract class ReleasePotential : ICheckable
 
     public override string ToString()
     {
-        if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
-            return "Never extracted...";
-
-        switch (Assessments[DatasetExtractionResult])
-        {
-            case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
-                return Exception.ToString();
-            default:
-                var toReturn = $"Dataset: {DataSet}";
-                toReturn += $" DateOfExtraction: {DateOfExtraction}";
-                toReturn += $" Status: {Assessments[DatasetExtractionResult]}";
-
-                return toReturn;
-        }
+        return DatasetExtractionResult?.DestinationDescription == null
+            ? "Never extracted..."
+            : Assessments[DatasetExtractionResult] switch
+            {
+                Releaseability.ExceptionOccurredWhileEvaluatingReleaseability => Exception.ToString(),
+                _ =>
+                    $"Dataset: {DataSet} DateOfExtraction: {DateOfExtraction} Status: {Assessments[DatasetExtractionResult]}"
+            };
     }
 
     public virtual void Check(ICheckNotifier notifier)
     {
-        if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
+        if (DatasetExtractionResult?.DestinationDescription == null)
             return;
 
         // check if we have a halfway completed extraction
@@ -257,9 +249,8 @@ public abstract class ReleasePotential : ICheckable
 
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
-            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format(
-                        "Dataset {0} has probably already been released as per {1}!",
-                        DataSet, existingReleaseLog),
+             if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
                     CheckResult.Warning,
                     null,
                     "Do you want to delete the old release Log? You should check the values first.")))
@@ -280,7 +271,7 @@ public abstract class ReleasePotential : ICheckable
         if (!Assessments.ContainsKey(DatasetExtractionResult))
             try
             {
-                Assessments.Add(DatasetExtractionResult, MakeAssesment(DatasetExtractionResult));
+                Assessments.Add(DatasetExtractionResult, MakeAssessment(DatasetExtractionResult));
             }
             catch (Exception e)
             {

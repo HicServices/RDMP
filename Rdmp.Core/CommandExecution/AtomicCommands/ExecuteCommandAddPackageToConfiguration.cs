@@ -4,21 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution
 {
-    private ExtractionConfiguration _extractionConfiguration;
-    private ExtractableDataSetPackage[] _packages;
+    private readonly ExtractionConfiguration _extractionConfiguration;
+    private readonly ExtractableDataSetPackage[] _packages;
 
     public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator,
         ExtractionConfiguration extractionConfiguration) : base(activator)

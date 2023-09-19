@@ -30,7 +30,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// a list, the middle section of a SELECT statement or pretty much anything else.
 /// 
 /// <para>Once a desired order is entered the class will attempt to find the first item in the desired order.  Assuming
-/// this item is found then the location of this field becomes the 'insertion' point for reordering and all fields 
+/// this item is found then the location of this field becomes the 'insertion' point for reordering and all fields
 /// that the user pasted in are reordered into this point.</para>
 /// 
 /// <para>At any time you can look at the 'New Order' section to see the new order that columns will be in if you accept the
@@ -122,7 +122,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     }
 
     /// <summary>
-    /// Figures out what strings in the users desired order are actually in the extraction and computes 
+    /// Figures out what strings in the users desired order are actually in the extraction and computes
     /// currentOrderStartReorderAtIndex and itemsToReOrderAndOfsetRelativeToFirst which are used for
     /// highlighting and to WorkOutNewOrderAndAddToNewOrderListbox
     /// </summary>

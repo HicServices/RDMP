@@ -140,7 +140,7 @@ public class ExtractableCohortDescription
         Description = "Loading...";
 
         //if it's already finished
-        if (fetch.Task != null && fetch.Task.IsCompleted)
+        if (fetch.Task is { IsCompleted: true })
             FetchOnFinished();
         else
             fetch.Finished += FetchOnFinished;
@@ -191,11 +191,5 @@ public class ExtractableCohortDescription
 
     public override string ToString() => Cohort.ToString();
 
-    private static DateTime? ObjectToNullableDateTime(object o)
-    {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return (DateTime)o;
-    }
+    private static DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
 }

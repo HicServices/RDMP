@@ -4,10 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CsvHelper;
-using Rdmp.Core.Autocomplete;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.DataViewing;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using CsvHelper;
+using Rdmp.Core.Autocomplete;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Terminal.Gui;
 using static Terminal.Gui.TabView;
@@ -25,7 +25,7 @@ using Rune = System.Rune;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-internal class ConsoleGuiSqlEditor : Window
+internal partial class ConsoleGuiSqlEditor : Window
 {
     protected readonly IBasicActivateItems Activator;
     private readonly IViewSQLAndResultsCollection _collection;
@@ -267,7 +267,7 @@ internal class ConsoleGuiSqlEditor : Window
     private void RunOrCancel()
     {
         // if task is still running we should cancel
-        if (_runSqlTask != null && !_runSqlTask.IsCompleted)
+        if (_runSqlTask is { IsCompleted: false })
         {
             // Cancel the sql command and let that naturally end the task
             _runSqlCmd?.Cancel();
@@ -316,33 +316,29 @@ internal class ConsoleGuiSqlEditor : Window
             var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),
                 DataAccessContext.InternalDataProcessing);
 
-            using (var con = db.Server.GetConnection())
+            using var con = db.Server.GetConnection();
+            con.Open();
+            _runSqlCmd = db.Server.GetCommand(sql, con);
+            _runSqlCmd.CommandTimeout = _timeout;
+
+            using var da = db.Server.GetDataAdapter(_runSqlCmd);
+            var dt = new DataTable();
+            da.Fill(dt);
+
+            Application.MainLoop.Invoke(() =>
             {
-                con.Open();
-                _runSqlCmd = db.Server.GetCommand(sql, con);
-                _runSqlCmd.CommandTimeout = _timeout;
+                tableView.Table = dt;
 
-                using (var da = db.Server.GetDataAdapter(_runSqlCmd))
+                // if query resulted in some data show it
+                if (dt.Columns.Count > 0)
                 {
-                    var dt = new DataTable();
-                    da.Fill(dt);
-
-                    Application.MainLoop.Invoke(() =>
-                    {
-                        tableView.Table = dt;
-
-                        // if query resulted in some data show it
-                        if (dt.Columns.Count > 0)
-                        {
-                            TabView.SelectedTab = resultTab;
-                            TabView.SetNeedsDisplay();
-                        }
-                    });
-
-
-                    OnQueryCompleted(dt);
+                    TabView.SelectedTab = resultTab;
+                    TabView.SetNeedsDisplay();
                 }
-            }
+            });
+
+
+            OnQueryCompleted(dt);
         }
         finally
         {
@@ -359,7 +355,7 @@ internal class ConsoleGuiSqlEditor : Window
         public override bool IsWordChar(Rune rune) => (char)rune == '_' || base.IsWordChar(rune);
     }
 
-    private class SqlTextView : TextView
+    private partial class SqlTextView : TextView
     {
         private readonly HashSet<string> _keywords = new(
             new[]
@@ -411,16 +407,12 @@ internal class ConsoleGuiSqlEditor : Window
         {
             var word = IdxToWord(line, idx);
 
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            return _keywords.Contains(word);
+            return !string.IsNullOrWhiteSpace(word) && _keywords.Contains(word);
         }
 
         private static string IdxToWord(IEnumerable<Rune> line, int idx)
         {
-            var words = Regex.Split(
-                string.Join("", line),
-                "\\b");
+            var words = WordBoundaries().Split(string.Join("", line));
 
             var count = 0;
             string current = null;
@@ -434,5 +426,8 @@ internal class ConsoleGuiSqlEditor : Window
 
             return current?.Trim();
         }
+
+        [GeneratedRegex("\\b")]
+        private static partial Regex WordBoundaries();
     }
 }

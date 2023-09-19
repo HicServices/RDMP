@@ -65,7 +65,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         if (rowObject is ExtractableCohortDescription ecd)
         {
-            var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
+            var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
             return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
         }
 
@@ -86,22 +86,15 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
             WideMessageBox.Show("Cohort audit log", ecd.Cohort.AuditLog, WideMessageBoxTheme.Help);
     }
 
-    private object ViewLogAspectGetter(object rowObject)
-    {
-        if (rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog))
-            return "View Log";
+    private object ViewLogAspectGetter(object rowObject) =>
+        rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog)
+            ? "View Log"
+            : (object)null;
 
-        return null;
-    }
+    private object IDAspectGetter(object rowObject) =>
+        rowObject is ExtractableCohortDescription ecd ? ecd.Cohort.ID : (object)null;
 
-    private object IDAspectGetter(object rowObject)
-    {
-        var ecd = rowObject as ExtractableCohortDescription;
-
-        return ecd?.Cohort.ID;
-    }
-
-    private bool haveSubscribed = false;
+    private bool haveSubscribed;
 
     public void SetupForAllCohorts(IActivateItems activator)
     {
@@ -151,7 +144,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());
 
         //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table)
-        //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the inovcation list)
+        //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the invocation list)
         foreach (var (fetch, nodes) in fetchDescriptionsDictionary)
             //Could be we are disposed when this happens
             fetch.Finished += () =>
@@ -200,17 +193,19 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_FormatRow(object sender, FormatRowEventArgs e)
     {
-        var model = e.Model as ExtractableCohortDescription;
+        if (e.Model is not ExtractableCohortDescription model)
+            return;
 
-        if (model?.Exception != null)
+        if (model.Exception != null)
             e.Item.BackColor = Color.Red;
     }
 
     private void lbCohortDatabaseTable_ItemActivate(object sender, EventArgs e)
     {
-        var model = lbCohortDatabaseTable.SelectedObject as ExtractableCohortDescription;
+        if (lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription model)
+            return;
 
-        if (model?.Exception != null)
+        if (model.Exception != null)
             ExceptionViewer.Show(model.Exception);
     }
 

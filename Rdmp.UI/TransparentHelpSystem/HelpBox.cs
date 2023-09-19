@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI.TransparentHelpSystem;
 
 /// <summary>
-/// Describes why a given region is highlighted in TransparentHelpForm.  Describes what the user should do next and optionally can give the user alternate options to change the 
+/// Describes why a given region is highlighted in TransparentHelpForm.  Describes what the user should do next and optionally can give the user alternate options to change the
 /// help path being taken.
 /// </summary>
 public partial class HelpBox : UserControl

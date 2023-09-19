@@ -257,13 +257,9 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     }
 
     /// <inheritdoc/>
-    public bool WasCreatedBy(IPatcher patcher)
-    {
-        if (string.IsNullOrWhiteSpace(CreatedByAssembly))
-            return false;
-
-        return patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly;
-    }
+    public bool WasCreatedBy(IPatcher patcher) => !string.IsNullOrWhiteSpace(CreatedByAssembly) &&
+                                                  (patcher.Name == CreatedByAssembly ||
+                                                   patcher.LegacyName == CreatedByAssembly);
 
     /// <inheritdoc/>
     public DiscoveredDatabase Discover(DataAccessContext context) => _selfCertifyingDataAccessPoint.Discover(context);
@@ -278,21 +274,21 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         
          if (WasCreatedBy(new LoggingDatabasePatcher())){
             //If you're trying to delete a logging server, remove all references to it first
-            Catalogue[] catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",base.ID);
-            foreach(Catalogue catalogue in catalogues){
+            var catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",base.ID);
+            foreach(var catalogue in catalogues){
                 catalogue.LiveLoggingServer_ID = null;
                 catalogue.SaveToDatabase();
             }
          }
-        base.DeleteInDatabase();
+         base.DeleteInDatabase();
 
-        // normally in database schema deleting an ExternalDatabaseServer will cascade to clear defaults
-        // but some repositories do not support this implicit removal so lets double check theres no references
-        foreach (PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
-        {
-            var existingDefault = CatalogueRepository.GetDefaultFor(d);
-            if (Equals(existingDefault)) CatalogueRepository.ClearDefault(d);
-        }
+         // normally in database schema deleting an ExternalDatabaseServer will cascade to clear defaults
+         // but some repositories do not support this implicit removal so lets double check there are no references
+         foreach (PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
+         {
+             var existingDefault = CatalogueRepository.GetDefaultFor(d);
+             if (Equals(existingDefault)) CatalogueRepository.ClearDefault(d);
+         }
     }
 
     public void SetRepository(ICatalogueRepository repository)

@@ -13,13 +13,13 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data.Cache;
 
-/// <inheritdoc/>
+/// <inheritdoc cref="ILoggedActivityRootObject" />
 public interface ICacheProgress : INamed, ILoggedActivityRootObject
 {
     /// <summary>
     /// <para>The amount of time that has to have passed beyond the <see cref="CacheLagPeriod"/> before a fetch will be initiated.</para>
     /// 
-    /// <para>Stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod</para> 
+    /// <para>Stored as string in DB, use GetCacheLagPeriod() to get as CacheLagPeriod</para>
     /// </summary>
     string CacheLagPeriodLoadDelay { get; }
 
@@ -42,7 +42,7 @@ public interface ICacheProgress : INamed, ILoggedActivityRootObject
     /// <summary>
     /// The period of time e.g. 1m that is never fetched expressed as an offset from DateTime.Now.  This handles the case where the cache source
     /// is not real time i.e. we expect it to take at least 1 month for data to appear on the cache endpoint so don't make requests for data that would
-    /// originate very recently.  
+    /// originate very recently.
     /// </summary>
     string CacheLagPeriod { get; set; }
 
@@ -64,7 +64,7 @@ public interface ICacheProgress : INamed, ILoggedActivityRootObject
 
     /// <summary>
     /// Returns all failed cache requests documented.  This is an array of dates that were requested of the caching endpoint but were no data was available due
-    /// to the endpoint reporting an Exception at the time it was requested. 
+    /// to the endpoint reporting an Exception at the time it was requested.
     /// </summary>
     IEnumerable<ICacheFetchFailure> CacheFetchFailures { get; }
 
@@ -84,7 +84,7 @@ public interface ICacheProgress : INamed, ILoggedActivityRootObject
     void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagPeriod);
 
     /// <summary>
-    /// Returns a subset of CacheFetchFailures between the start and batch size.  Should return only unresolved 
+    /// Returns a subset of CacheFetchFailures between the start and batch size.  Should return only unresolved
     /// failures.
     /// <para>This differs from CacheFetchFailures since it ignores resolved failures and only returns 're-runnable' ICacheFetchFailures</para>
     /// </summary>

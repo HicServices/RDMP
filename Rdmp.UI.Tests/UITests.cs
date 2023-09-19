@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using MongoDB.Driver;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -32,7 +32,7 @@ public class UITests : UnitTests
     private TestActivateItems _itemActivator;
     private ToMemoryCheckNotifier _checkResults;
 
-    public Control LastUserInterfaceLaunched { get; set; }
+    protected Control LastUserInterfaceLaunched { get; set; }
 
     protected TestActivateItems ItemActivator => _itemActivator ?? InitializeItemActivator();
 
@@ -42,20 +42,8 @@ public class UITests : UnitTests
     /// </summary>
     private TestActivateItems InitializeItemActivator()
     {
-        _itemActivator = new TestActivateItems(this, Repository)
-        {
-            RepositoryLocator =
-            {
-                CatalogueRepository =
-                {
-                    MEF = MEF
-                }
-            }
-        };
-
-        //if mef was loaded for this test then this is supported otherwise not
-        if (MEF != null)
-            _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
+        _itemActivator = new TestActivateItems(this, Repository);
+        _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
         return _itemActivator;
     }
 
@@ -179,7 +167,7 @@ public class UITests : UnitTests
     /// at the given <paramref name="expectedErrorLevel"/>
     /// </summary>
     /// <param name="expectedErrorLevel"></param>
-    protected void AssertNoErrors(ExpectedErrorType expectedErrorLevel)
+    protected void AssertNoErrors(ExpectedErrorType expectedErrorLevel = ExpectedErrorType.Any)
     {
         switch (expectedErrorLevel)
         {
@@ -215,15 +203,6 @@ public class UITests : UnitTests
             default:
                 throw new ArgumentOutOfRangeException(nameof(expectedErrorLevel));
         }
-    }
-
-    /// <summary>
-    /// Checks the recorded errors up to this point in the test and fails the test if there are errors.  This is the same
-    /// as passing <see cref="ExpectedErrorType.Any"/> to the overload
-    /// </summary>
-    protected void AssertNoErrors()
-    {
-        AssertNoErrors(ExpectedErrorType.Any);
     }
 
     /// <summary>
@@ -353,8 +332,6 @@ public class UITests : UnitTests
     /// <param name="action"></param>
     protected void ForEachUI(Action<IRDMPSingleDatabaseObjectControl> action)
     {
-        SetupMEF();
-
         var types = typeof(Catalogue).Assembly.GetTypes()
             .Where(t => t != null && typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
             .ToArray();
@@ -362,8 +339,7 @@ public class UITests : UnitTests
         var uiTypes = typeof(CatalogueUI).Assembly.GetTypes()
             .Where(t => t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
                                   && !t.IsAbstract && !t.IsInterface
-                                  && t.BaseType != null
-                                  && t.BaseType.BaseType != null
+                                  && t.BaseType?.BaseType != null
                                   && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
 
         var methods = typeof(UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

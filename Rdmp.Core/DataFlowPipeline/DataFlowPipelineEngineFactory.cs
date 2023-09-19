@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -31,11 +30,9 @@ namespace Rdmp.Core.DataFlowPipeline;
 /// </summary>
 public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 {
-    private readonly MEF _mefPlugins;
     private readonly IDataFlowPipelineContext _context;
     private IPipelineUseCase _useCase;
     private Type _flowType;
-    private ObjectConstructor _constructor;
 
     private Type _engineType;
 
@@ -43,22 +40,16 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// Creates a new factory which can translate <see cref="IPipeline"/> blueprints into runnable <see cref="IDataFlowPipelineEngine"/> instances.
     /// </summary>
     /// <param name="useCase">The use case which describes which <see cref="IPipeline"/> are compatible, which objects are available for hydration/preinitialization etc</param>
-    /// <param name="mefPlugins">Class for generating Types by name, use <see cref="ICatalogueRepository.MEF"/> to get this </param>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, MEF mefPlugins)
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase)
     {
-        _mefPlugins = mefPlugins;
         _context = useCase.GetContext();
         _useCase = useCase;
         _flowType = _context.GetFlowType();
-
-        _constructor = new ObjectConstructor();
-
         _engineType = typeof(DataFlowPipelineEngine<>).MakeGenericType(_flowType);
     }
 
     /// <inheritdoc/>
-    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline) : this(useCase,
-        ((ICatalogueRepository)pipeline.Repository).MEF)
+    public DataFlowPipelineEngineFactory(IPipelineUseCase useCase, IPipeline pipeline) : this(useCase)
     {
     }
 
@@ -71,31 +62,18 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline), "destination");
         var source = GetBest(_useCase.ExplicitSource, CreateSourceIfExists(pipeline), "source");
 
-
-        //new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
-
         //engine (this is the source, target is the destination)
         var dataFlowEngine =
             (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination,
                 listener, pipeline);
 
-        //now go fetch everything that the user has configured for this particular pipeline
-        foreach (PipelineComponent toBuild in pipeline.PipelineComponents)
-        {
-            //if it is the destination do not add it
-            if (toBuild.ID == pipeline.DestinationPipelineComponent_ID)
-                continue;
-
-            //if it is the source do not add it
-            if (toBuild.ID == pipeline.SourcePipelineComponent_ID)
-                continue;
-
-            //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
-            var component = CreateComponent(toBuild);
-
-            //Add the components to the pipeline
+        //now go fetch everything that the user has configured for this particular pipeline except the source and destination
+        //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
+        foreach (var component in pipeline.PipelineComponents.Where(pc =>
+                         pc.ID != pipeline.DestinationPipelineComponent_ID &&
+                         pc.ID != pipeline.SourcePipelineComponent_ID)
+                     .Select(CreateComponent))
             dataFlowEngine.ComponentObjects.Add(component);
-        }
 
         return dataFlowEngine;
     }
@@ -111,7 +89,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     private static T2 GetBest<T2>(T2 explicitThing, T2 pipelineConfigurationThing, string descriptionOfWhatThingIs)
     {
         // if explicitThing and pipelineConfigurationThing are both null
-        //Means: xplicitThing == null && pipelineConfigurationThing == null
+        //Means: explicitThing == null && pipelineConfigurationThing == null
         if (EqualityComparer<T2>.Default.Equals(explicitThing, default) &&
             EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
@@ -220,11 +198,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 if (argument == null)
                     if (initialization.DefaultValue == null && initialization.Mandatory)
                     {
-                        var msg = string.Format(
-                            "Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}",
-                            toReturn.GetType().Name,
-                            propertyInfo.Name,
-                            toBuild.Name);
+                        var msg =
+                            $"Class {toReturn.GetType().Name} has a property {propertyInfo.Name} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {toBuild.Name}";
 
                         throw new PropertyDemandNotMetException(msg, toBuild, propertyInfo);
                     }
@@ -256,10 +231,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         var source = pipeline.Source;
 
         //there is no configured destination
-        if (source == null)
-            return null;
-
-        return CreateComponent(source);
+        return source == null ? null : CreateComponent(source);
     }
 
     /// <summary>
@@ -306,7 +278,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         if (initizationObjects == null)
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs(
-                "initizationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
+                "initializationObjects parameter has not been set (this is a programmer error most likely ask your developer to fix it - this parameter should be empty not null)",
                 CheckResult.Fail));
             return;
         }
@@ -319,7 +291,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 dataFlowPipelineEngine.Initialize(initizationObjects);
                 checkNotifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Pipeline sucesfully initialized with {initizationObjects.Length} initialization objects",
+                        $"Pipeline successfully initialized with {initizationObjects.Length} initialization objects",
                         CheckResult.Success));
             }
             catch (Exception exception)

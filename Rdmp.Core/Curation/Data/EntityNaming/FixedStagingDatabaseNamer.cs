@@ -30,22 +30,14 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
     }
 
     /// <inheritdoc/>
-    public override string GetName(string tableName, LoadBubble convention)
-    {
-        if (convention == LoadBubble.Staging)
-            return $"{_databaseName}_{tableName}{Suffixes[convention]}";
-
-        return base.GetName(tableName, convention);
-    }
+    public override string GetName(string tableName, LoadBubble convention) => convention == LoadBubble.Staging
+        ? $"{_databaseName}_{tableName}{Suffixes[convention]}"
+        : base.GetName(tableName, convention);
 
     /// <inheritdoc/>
-    public override string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
-    {
-        if (stage == LoadBubble.Staging)
-            return _stagingDatabaseName;
-
-        return base.GetDatabaseName(rootDatabaseName, stage);
-    }
+    public override string GetDatabaseName(string rootDatabaseName, LoadBubble stage) => stage == LoadBubble.Staging
+        ? _stagingDatabaseName
+        : base.GetDatabaseName(rootDatabaseName, stage);
 
     /// <summary>
     /// Returns the unwrapped value of <paramref name="s"/> by trimming brackets and quotes
@@ -59,13 +51,11 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
 
         var toReturn = s.Trim(new char[] { '[', ']', '`', '"' });
 
-        if (
-            toReturn.Contains('[') ||
-            toReturn.Contains(']') ||
-            toReturn.Contains('\''))
-            throw new Exception(
-                $"Attempted to strip wrapping from {s} but result was {toReturn} which contains invalid characters like [ and ], possibly original string was a multipart identifier? e.g. [MyTable].dbo.[Bob]?");
-
-        return toReturn;
+        return toReturn.Contains('[') ||
+               toReturn.Contains(']') ||
+               toReturn.Contains('\'')
+            ? throw new Exception(
+                $"Attempted to strip wrapping from {s} but result was {toReturn} which contains invalid characters like [ and ], possibly original string was a multipart identifier? e.g. [MyTable].dbo.[Bob]?")
+            : toReturn;
     }
 }

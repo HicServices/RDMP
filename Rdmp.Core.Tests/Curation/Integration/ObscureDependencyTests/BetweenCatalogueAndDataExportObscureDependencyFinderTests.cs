@@ -48,7 +48,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
         //and the delete works too
         cata.DeleteInDatabase();
 
-        //both objects still exist in memory of course but we should be able to see they have disapeared 
+        //both objects still exist in memory of course but we should be able to see they have disapeared
         Assert.IsTrue(dataset.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
         Assert.IsTrue(cata.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
     }

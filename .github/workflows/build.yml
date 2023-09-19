@@ -55,6 +55,10 @@ jobs:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
+      - name: Populate Databases.yaml 
+        shell: bash
+        run: |
+            find ./Tools/rdmp/Databases.yaml -type f -exec sed -i 's/RDMP_/TEST_/g' {} \;
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
       - name: Create MySql Logging, DQE and Cohort Building Cache Db
@@ -73,10 +77,10 @@ jobs:
           EOF
       - name: Run integration test scripts
         run: |
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml &&
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml &&
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml &&
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml &&
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
       - name: Test (DB)
         shell: bash
         run: |

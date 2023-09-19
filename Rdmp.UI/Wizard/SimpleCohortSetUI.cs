@@ -63,7 +63,7 @@ public partial class SimpleCohortSetUI : UserControl
         cbxCatalogues.SetItemActivator(activator);
     }
 
-    private Catalogue _lastCatalogue = null;
+    private Catalogue _lastCatalogue;
 
     public ICatalogue Catalogue => cbxCatalogues.SelectedItem as Catalogue;
 

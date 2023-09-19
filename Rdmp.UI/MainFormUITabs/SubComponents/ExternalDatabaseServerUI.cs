@@ -85,8 +85,8 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         var manager = new PatcherManager();
 
         ddSetKnownType.Items.AddRange(manager
-            .GetAllPatchers(Activator.RepositoryLocator.CatalogueRepository.MEF)
-            .Select(p => p.Name)
+            .GetAllPatchers()
+            .Select(static p => p.Name)
             .ToArray());
     }
 

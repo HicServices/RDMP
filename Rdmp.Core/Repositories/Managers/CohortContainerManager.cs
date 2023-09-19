@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -64,18 +63,14 @@ internal class CohortContainerManager : ICohortContainerManager
                 throw new NotSupportedException(
                     "AggregateConfiguration is from a different repository than this with a different connection string");
 
-        using (var con = CatalogueRepository.GetConnection())
-        {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
-                       con.Connection, con.Transaction))
-            {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
-                cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
+        using var con = CatalogueRepository.GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            "SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
+            con.Connection, con.Transaction);
+        cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
+        cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
 
-                return CatalogueRepository.ObjectToNullableInt(cmd.ExecuteScalar());
-            }
-        }
+        return CatalogueRepository.ObjectToNullableInt(cmd.ExecuteScalar());
     }
 
     public virtual IOrderable[] GetChildren(CohortAggregateContainer parent)

@@ -59,18 +59,17 @@ public partial class RunUI : RDMPForm
         if (key == null)
             return;
 
-        if (e.KeyCode == Keys.Enter)
-            if (_commandsDictionary.TryGetValue(key, out var type))
-                try
-                {
-                    _commandCaller.ExecuteCommand(type, null);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    ExceptionViewer.Show(ex);
-                }
+        if (e.KeyCode != Keys.Enter || !_commandsDictionary.TryGetValue(key, out var type)) return;
+        try
+        {
+            _commandCaller.ExecuteCommand(type, null);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            ExceptionViewer.Show(ex);
+        }
     }
 }

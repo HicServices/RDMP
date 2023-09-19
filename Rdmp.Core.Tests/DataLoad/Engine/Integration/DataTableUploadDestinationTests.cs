@@ -28,7 +28,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -52,7 +52,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
         Assert.IsNotNull(ex.InnerException);
         StringAssert.Contains(expectedText, ex.InnerException.Message);
 
-        destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
     }
 
     //RDMPDEV-653
@@ -72,7 +72,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             if (tbl.Exists())
                 tbl.Drop();
 
-            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
             var errorIsInColumnOrder = random.Next(3);
             var errorColumn = "";
@@ -86,7 +86,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 "age varchar(50),"
             };
 
-            if (createIdentity)
+            if(createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;
@@ -102,7 +102,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 if (errorIsInColumnOrder == j)
                 {
                     sql += colSql.Replace("(50)", "(1)");
-                    errorColumn = colSql[..colSql.IndexOf(" ")];
+                    errorColumn = colSql[..colSql.IndexOf(" ", StringComparison.Ordinal)];
 
                     if (errorColumn == "id")
                         invalid = true;
@@ -134,7 +134,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
             destination.PreInitialize(db, toConsole);
 
             //order is inverted where name comes out at the end column (index 2)
-            var dt1 = new DataTable();
+            using var dt1 = new DataTable();
             dt1.Columns.Add("age", typeof(string));
             dt1.Columns.Add("color", typeof(string));
             dt1.Columns.Add("name", typeof(string));
@@ -145,13 +145,14 @@ public class DataTableUploadDestinationTests : DatabaseTests
             var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
             var exceptionMessage = ex.InnerException.Message;
-            var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
+            var interestingBit =
+                exceptionMessage[(exceptionMessage.IndexOf(": <<", StringComparison.Ordinal) + ": ".Length)..];
 
             var expectedErrorMessage =
                 $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
             StringAssert.Contains(expectedErrorMessage, interestingBit);
 
-            destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             tbl.Drop();
         }
     }
@@ -189,10 +190,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         //the bulk insert is
         var destination = new DataTableUploadDestination();
-        destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+        destination.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         //order is inverted where name comes out at the end column (index 2)
-        var dt1 = new DataTable();
+        using var dt1 = new DataTable();
         dt1.Columns.Add("age", typeof(string));
         dt1.Columns.Add("color", typeof(string));
         dt1.Columns.Add("name", typeof(string));
@@ -201,15 +202,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.TableName = "DroppedColumnsTable";
 
         var ex = Assert.Throws<Exception>(() =>
-            destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(), token));
+            destination.ProcessPipelineData(dt1, ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
         var exceptionMessage = ex.InnerException.Message;
-        var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
+        var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<", StringComparison.Ordinal) + 2)..];
 
-        var expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
+        const string expectedErrorMessage =
+            "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
         StringAssert.Contains(expectedErrorMessage, interestingBit);
 
-        destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
 
         if (tbl.Exists())
             tbl.Drop();
@@ -220,7 +222,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -231,7 +233,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         };
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
-        destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
 
         Assert.AreEqual("DataTable 'MyEmptyTable' had no Columns!", ex.Message);
     }
@@ -241,7 +243,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -251,7 +253,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.TableName = "MyEmptyTable";
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
-        destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
 
         Assert.AreEqual("DataTable 'MyEmptyTable' had no Rows!", ex.Message);
     }
@@ -261,7 +263,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
@@ -293,7 +295,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -325,7 +327,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -363,7 +365,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -401,7 +403,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -436,7 +438,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
@@ -502,7 +504,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -522,18 +524,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(expectedDatatypeInDatabase,
             db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myCol").DataType.SQLType);
 
-        using (var con = db.Server.GetConnection())
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using var cmd = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con);
+        using var r = cmd.ExecuteReader();
+        foreach (var e in expectedValuesReadFromDatabase)
         {
-            con.Open();
-            using (var cmd = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con))
-            using (var r = cmd.ExecuteReader())
-            {
-                foreach (var e in expectedValuesReadFromDatabase)
-                {
-                    Assert.IsTrue(r.Read());
-                    Assert.AreEqual(e, r["myCol"]);
-                }
-            }
+            Assert.IsTrue(r.Read());
+            Assert.AreEqual(e, r["myCol"]);
         }
     }
 
@@ -545,7 +543,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -592,45 +590,43 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 new("StringPk", new DatabaseTypeRequest(typeof(string), 50), true) { IsPrimaryKey = true }
             });
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
 
-            //should not allow nulls before
-            Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
-            //do resize
-            table.DiscoverColumn("StringNotNull").DataType.Resize(500);
+        //should not allow nulls before
+        Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
+        //do resize
+        table.DiscoverColumn("StringNotNull").DataType.Resize(500);
 
-            //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
-            AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
+        //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
+        AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
 
 
-            Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
+        Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
-            //do the same with the one that allows nulls
-            Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
-            table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
-            table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
-            table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
+        //do the same with the one that allows nulls
+        Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
+        table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
+        table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
+        table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
 
-            AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
-            Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
+        AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
+        Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
-            //we should have correct understanding prior to resize
-            AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 50);
-            Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
-            Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
+        //we should have correct understanding prior to resize
+        AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 50);
+        Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
+        Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
 
-            //now we execute the resize
-            table.DiscoverColumn("StringPk").DataType.Resize(500);
+        //now we execute the resize
+        table.DiscoverColumn("StringPk").DataType.Resize(500);
 
-            AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 500);
+        AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 500);
 
-            Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
-            Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
+        Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
+        Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
 
-            con.Close();
-        }
+        con.Close();
     }
 
     private static void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
@@ -701,11 +697,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             AllowResizingColumnsAtUploadTime = true
         };
-        dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        dest.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        dest.ProcessPipelineData(dt2, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         //it should have resized us.
         Assert.AreEqual(14, table.DiscoverColumn("StringNotNull").DataType.GetLengthIfString());
@@ -729,9 +725,9 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             AllowResizingColumnsAtUploadTime = true
         };
-        dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
-        dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         var tbl = db.ExpectTable("TestFreeText");
         Assert.IsTrue(tbl.Exists());
@@ -743,7 +739,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -790,7 +786,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
@@ -827,7 +823,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var db = GetCleanedServer(DatabaseType.MySql);
 
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
@@ -879,7 +875,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var db = GetCleanedServer(DatabaseType.MySql);
 
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
@@ -905,22 +901,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(2, tbl.GetRowCount());
         Assert.AreEqual("int", tbl.DiscoverColumn("mynum").DataType.SQLType);
 
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
 
-            //technically these can come out in a random order
-            var numbersRead = new List<int>();
-            Assert.IsTrue(r.Read());
-            numbersRead.Add((int)r["mynum"]);
-            Assert.IsTrue(r.Read());
-            numbersRead.Add((int)r["mynum"]);
+        //technically these can come out in a random order
+        var numbersRead = new List<int>();
+        Assert.IsTrue(r.Read());
+        numbersRead.Add((int)r["mynum"]);
+        Assert.IsTrue(r.Read());
+        numbersRead.Add((int)r["mynum"]);
 
-            Assert.IsFalse(r.Read());
-            Assert.IsTrue(numbersRead.Contains(1));
-            Assert.IsTrue(numbersRead.Contains(999));
-        }
+        Assert.IsFalse(r.Read());
+        Assert.IsTrue(numbersRead.Contains(1));
+        Assert.IsTrue(numbersRead.Contains(999));
     }
 
     [TestCase(false)]
@@ -940,10 +934,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 dtAlreadyThereData.Columns.Add("Name");
                 dtAlreadyThereData.Rows.Add(new[] { "Bob" });
 
-                using (var bulk = tbl.BeginBulkInsert())
-                {
-                    bulk.Upload(dtAlreadyThereData);
-                }
+                using var bulk = tbl.BeginBulkInsert();
+                bulk.Upload(dtAlreadyThereData);
             }
 
             //create the destination component (what we want to test)
@@ -960,7 +952,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt.Rows.Add(new[] { "Frank" });
             dt.Rows.Add(new[] { "I've got a lovely bunch of coconuts" });
 
-            var listener = new ThrowImmediatelyDataLoadEventListener();
+            var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
             //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
             destinationComponent.PreInitialize(db, listener);
@@ -988,7 +980,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AllowResizingColumnsAtUploadTime = true
         };
 
-        destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+        destination.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         var dt1 = new DataTable
         {
@@ -999,7 +991,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         dt1.PrimaryKey = dt1.Columns.Cast<DataColumn>().ToArray();
 
-        destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(),
+        destination.ProcessPipelineData(dt1, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
         var dt2 = new DataTable
@@ -1011,11 +1003,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         dt2.PrimaryKey = dt2.Columns.Cast<DataColumn>().ToArray();
 
-        destination.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(),
+        destination.ProcessPipelineData(dt2, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
 
-        destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         var tbl = db.ExpectTable("MyTable");
 
@@ -1062,7 +1054,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt.Rows.Add(new[] { "Frank" });
             dt.Rows.Add(new[] { "I've got a lovely bunch of coconuts" });
 
-            var listener = new ThrowImmediatelyDataLoadEventListener();
+            var listener = ThrowImmediatelyDataLoadEventListener.Quiet;
 
             //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
             destinationComponent.PreInitialize(db, listener);
@@ -1089,16 +1081,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt.Rows.Add("-4.10235746055587E-05"); //this string is untyped
 
         var dest = new DataTableUploadDestination();
-        dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         try
         {
-            dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+            dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
         catch (Exception ex)
         {
-            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+            dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
 
@@ -1130,7 +1122,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var db = GetCleanedServer(dbType);
 
-        var dt = new DataTable("ForceStringTable");
+        using var dt = new DataTable("ForceStringTable");
         dt.Columns.Add("hb_extract");
         dt.Columns.Add("Name");
 
@@ -1138,7 +1130,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt.Rows.Add("F", "Def");
 
         var dest = new DataTableUploadDestination();
-        dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+        dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
         dest.Adjuster = typeof(AdjustColumnDelegater);
 
         AdjustColumnDelegater.AdjusterDelegate = s =>
@@ -1154,12 +1146,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         try
         {
-            dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+            dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
         catch (Exception ex)
         {
-            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+            dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
 
@@ -1195,7 +1187,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(dbType);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
@@ -1266,7 +1258,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(dbType);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();
@@ -1322,7 +1314,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var toConsole = new ThrowImmediatelyDataLoadEventListener();
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
         var toMemory = new ToMemoryDataLoadEventListener(true);
 
         var destination = new DataTableUploadDestination();

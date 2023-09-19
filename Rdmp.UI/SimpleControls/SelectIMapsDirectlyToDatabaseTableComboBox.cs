@@ -60,10 +60,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     private void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (_settingUp)
-            return;
-
-        SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+        if (!_settingUp) SelectedItemChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetUp(IEnumerable<IMapsDirectlyToDatabaseTable> available)
@@ -89,9 +86,9 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     private void lPick_Click(object sender, EventArgs e)
     {
         if (_activator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Select New Value"
-            }, _available.ToArray(), out var selected))
+        {
+            WindowTitle = "Select New Value"
+        }, _available.ToArray(), out var selected))
             suggestComboBox1.SelectedItem = selected;
     }
 

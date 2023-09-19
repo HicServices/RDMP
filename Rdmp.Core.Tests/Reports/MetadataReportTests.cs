@@ -35,7 +35,7 @@ internal class MetadataReportTests : UnitTests
             return new BitmapWithDescription[] { new(bmp, "MyPicture", "Something interesting about it") };
         };
 
-        var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+        var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
 
         Assert.IsNotNull(file);
         Assert.IsTrue(File.Exists(file.FullName));
@@ -59,7 +59,7 @@ internal class MetadataReportTests : UnitTests
         var reporter = new MetadataReport(Repository,
             new MetadataReportArgs(new[] { ei.CatalogueItem.Catalogue })
         );
-        var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+        var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
 
         Assert.IsNotNull(file);
         Assert.IsTrue(File.Exists(file.FullName));

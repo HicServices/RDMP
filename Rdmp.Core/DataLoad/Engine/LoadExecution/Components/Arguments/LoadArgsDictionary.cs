@@ -14,7 +14,7 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
 /// <summary>
-/// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the 
+/// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the
 /// RAW => STAGING => LIVE model rdmp uses for data loading.
 /// </summary>
 public class LoadArgsDictionary

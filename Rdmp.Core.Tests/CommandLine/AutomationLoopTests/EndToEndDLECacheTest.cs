@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.Repositories;
 using Tests.Common.Helpers;
 using Tests.Common.Scenarios;
 
@@ -22,10 +23,10 @@ public class EndToEndDLECacheTest : TestsRequiringADle
     [Test]
     public void RunEndToEndDLECacheTest()
     {
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-        var timeoutInMilliseconds = 120000;
+        const int timeoutInMilliseconds = 120000;
 
         var lmd = TestLoadMetadata;
 

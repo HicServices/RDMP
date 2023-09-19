@@ -58,7 +58,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     /// </summary>
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
-    private ForkDataLoadEventListener fork = null;
+    private ForkDataLoadEventListener fork;
+
     private readonly List<object> _initializationObjects = new();
 
     public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)
@@ -99,7 +100,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         SetPipelineOptions(activator.RepositoryLocator.CatalogueRepository);
     }
 
-    private bool _pipelineOptionsSet = false;
+    private bool _pipelineOptionsSet;
 
 
     public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
@@ -125,7 +126,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         pPipelineSelection.Controls.Add(_pipelineSelectionUI);
 
         //setup factory
-        PipelineFactory = new DataFlowPipelineEngineFactory(_useCase, repository.MEF);
+        PipelineFactory = new DataFlowPipelineEngineFactory(_useCase);
 
         _pipelineOptionsSet = true;
 
@@ -262,27 +263,16 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         try
         {
             pipeline = PipelineFactory.Create(_pipelineSelectionUI.Pipeline, fork);
-        }
-        catch (Exception exception)
-        {
-            fork.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error, "Could not instantiate pipeline", exception));
-            return null;
-        }
-
-
-        try
-        {
             pipeline.Initialize(_initializationObjects.ToArray());
+            return pipeline;
         }
         catch (Exception exception)
         {
             fork.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error, "Failed to Initialize pipeline", exception));
+                new NotifyEventArgs(ProgressEventType.Error,
+                    $"Could not {(pipeline == null ? "instantiate" : "initialise")} pipeline", exception));
             return null;
         }
-
-        return pipeline;
     }
 
     private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
@@ -295,7 +285,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
     public void CancelIfRunning()
     {
-        if (_cancel != null && !_cancel.IsCancellationRequested)
+        if (_cancel is { IsCancellationRequested: false })
             _cancel.Cancel();
     }
 

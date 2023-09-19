@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
@@ -16,6 +15,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -23,8 +23,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
 {
     public ILoggedActivityRootObject RootObject { get; }
-    protected readonly LogViewerFilter _filter;
-    protected ExternalDatabaseServer[] _loggingServers;
+    private readonly LogViewerFilter _filter;
+    private readonly ExternalDatabaseServer[] _loggingServers;
 
     [UseWithCommandLine(
         ParameterHelpList = "<root> <table?> <id?>",
@@ -43,24 +43,28 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         {
             var obj = picker[0].GetValueForParameterOfType(typeof(DatabaseEntity));
 
-            if (obj is ILoggedActivityRootObject root)
-                RootObject = root;
-            else if (obj is ExternalDatabaseServer eds)
-                _loggingServers = new ExternalDatabaseServer[] { eds };
-            else
-                throw new Exception(
-                    $"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
+            switch (obj)
+            {
+                case ILoggedActivityRootObject root:
+                    RootObject = root;
+                    break;
+                case ExternalDatabaseServer eds:
+                    _loggingServers = new ExternalDatabaseServer[] { eds };
+                    break;
+                default:
+                    throw new Exception(
+                        $"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
+            }
         }
 
         var table = LoggingTables.None;
 
-        if (picker.Length >= 1)
-            if (Enum.TryParse(picker[0].RawValue, out table))
-                _filter = new LogViewerFilter(table);
+        // Optional second argument: table to filter for
+        if (picker.Length >= 1 && Enum.TryParse(picker[1].RawValue, out table)) _filter = new LogViewerFilter(table);
 
-        if (picker.Length >= 2)
-            if (int.TryParse(picker[0].RawValue, out var id))
-                _filter = new LogViewerFilter(table, id);
+        // Optional third argument: foreign key ID to filter on
+        if (picker.Length >= 2 && int.TryParse(picker[2].RawValue, out var id))
+            _filter = new LogViewerFilter(table, id);
     }
 
     [UseWithObjectConstructor]
@@ -110,15 +114,12 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         }
     }
 
-    public override string GetCommandName()
-    {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName)) return OverrideCommandName;
-
-        return
-            _filter != null
+    public override string GetCommandName() =>
+        !string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? OverrideCommandName
+            : _filter != null
                 ? UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
                 : base.GetCommandName();
-    }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Logging);
 }

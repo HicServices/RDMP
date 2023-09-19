@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 
 /// <summary>
 /// Each AggregateConfiguration graph can have a single AggregateDimension defined as a date axis, this specifies the start/end and increment of the aggregate e.g.
-/// PrescribedDate dimension may have an axis defining it as running from 2001-2009 in increments of 1 month.  
+/// PrescribedDate dimension may have an axis defining it as running from 2001-2009 in increments of 1 month.
 /// 
 /// <para>For this to work the AggregateDimension output data should be of type a date also.</para>
 /// </summary>
@@ -29,9 +29,9 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
     private AxisIncrement _axisIncrement;
 
     /// <summary>
-    /// The column (<see cref="AggregateDimension"/> in the AggregateConfiguration which this axis is defined on.  The AggregateContinuousDateAxis defines 
+    /// The column (<see cref="AggregateDimension"/> in the AggregateConfiguration which this axis is defined on.  The AggregateContinuousDateAxis defines
     /// the axis (e.g.  2001-01-01 to GetDate() by Month ) while the AggregateDimension_ID is the pointer to the column on which the axis applies within the
-    /// query. 
+    /// query.
     /// </summary>
     public int AggregateDimension_ID
     {
@@ -81,7 +81,7 @@ public class AggregateContinuousDateAxis : DatabaseEntity, IQueryAxis
     }
 
     /// <summary>
-    /// Defines that the specified column (<see cref="AggregateDimension"/>) should function as the continuous axis of an <see cref="AggregateConfiguration"/> graph. 
+    /// Defines that the specified column (<see cref="AggregateDimension"/>) should function as the continuous axis of an <see cref="AggregateConfiguration"/> graph.
     /// For example if you are graphing the number of prescriptions given out each month then the axis would be applied to the 'PrescribedDate' <see cref="AggregateDimension"/>
     ///  </summary>
     /// <remarks>To use this you will first have to create an AggregateConfiguration and setup the count(*)/sum(*) etc stuff and then add a new AggregateDimension <see cref="AggregateConfiguration.AddDimension"/> </remarks>

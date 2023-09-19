@@ -6,12 +6,10 @@
 
 using System;
 using Rdmp.Core.Caching.Layouts;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks;
@@ -23,15 +21,13 @@ public class CheckEntireDataLoadProcess : ICheckable
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-    private readonly MEF _mef;
     public ILoadMetadata LoadMetadata { get; set; }
 
     public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
-        HICLoadConfigurationFlags loadConfigurationFlags, MEF mef)
+        HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
-        _mef = mef;
         LoadMetadata = loadMetadata;
     }
 
@@ -42,8 +38,6 @@ public class CheckEntireDataLoadProcess : ICheckable
         var metadataLoggingConfigurationChecks = new MetadataLoggingConfigurationChecks(LoadMetadata);
         var processTaskChecks = new ProcessTaskChecks(LoadMetadata);
         var preExecutionChecks = new PreExecutionChecker(LoadMetadata, _databaseConfiguration);
-
-        _mef.CheckForVersionMismatches(notifier);
 
         //If the load is a progressable (loaded over time) then make sure any associated caches are compatible with the load ProcessTasks
         foreach (var loadProgress in LoadMetadata.LoadProgresses)

@@ -6,7 +6,6 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -33,18 +32,16 @@ public partial class DataTableViewerUI : UserControl
 
         try
         {
-            using (var con = DataAccessPortal.ExpectServer(source, DataAccessContext.DataExport).GetConnection())
-            {
-                con.Open();
+            using var con = DataAccessPortal.ExpectServer(source, DataAccessContext.DataExport).GetConnection();
+            con.Open();
 
-                using (var cmd = DatabaseCommandHelper.GetCommand(sql, con))
-                using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-                {
-                    var dt = new DataTable();
-                    da.Fill(dt);
-                    dataGridView1.DataSource = dt;
-                }
-            }
+            using var cmd = DatabaseCommandHelper.GetCommand(sql, con);
+            using var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+            var dt = new DataTable();
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+            dataGridView1.DataSource = dt;
         }
         catch (Exception e)
         {

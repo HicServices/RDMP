@@ -80,6 +80,7 @@ public class CohortCompilerRunnerTests : DatabaseTests
     private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)
     {
         dt = new DataTable();
+        dt.BeginLoadData();
         dt.Columns.Add("PK");
 
         //add lots of rows
@@ -100,7 +101,7 @@ public class CohortCompilerRunnerTests : DatabaseTests
             CountSQL = null
         };
         agg.SaveToDatabase();
-        var dimension = new AggregateDimension(CatalogueRepository, ei, agg);
+        _ = new AggregateDimension(CatalogueRepository, ei, agg);
 
         cic = new CohortIdentificationConfiguration(CatalogueRepository, "MyCic");
         cic.CreateRootContainerIfNotExists();

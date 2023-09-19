@@ -220,49 +220,28 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     /// <inheritdoc cref="DefaultPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline DefaultPipeline
-    {
-        get
-        {
-            if (DefaultPipeline_ID == null)
-                return null;
-
-            return
-                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
-                    DefaultPipeline_ID.Value);
-        }
-    }
+    public IPipeline DefaultPipeline =>
+        DefaultPipeline_ID == null
+            ? null
+            : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
+                DefaultPipeline_ID.Value);
 
 
     /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
     [NoMappingToDatabase]
-    public CohortIdentificationConfiguration CohortIdentificationConfiguration
-    {
-        get
-        {
-            if (CohortIdentificationConfiguration_ID == null)
-                return null;
-
-            return
-                ((IDataExportRepository)Repository).CatalogueRepository
-                .GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
-        }
-    }
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
+        CohortIdentificationConfiguration_ID == null
+            ? null
+            : ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(
+                CohortIdentificationConfiguration_ID.Value);
 
     /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
     [NoMappingToDatabase]
-    public IPipeline CohortRefreshPipeline
-    {
-        get
-        {
-            if (CohortRefreshPipeline_ID == null)
-                return null;
-
-            return
-                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID
-                    .Value);
-        }
-    }
+    public IPipeline CohortRefreshPipeline =>
+        CohortRefreshPipeline_ID == null
+            ? null
+            : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
+                CohortRefreshPipeline_ID.Value);
 
     /// <summary>
     /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)
@@ -532,13 +511,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <inheritdoc/>
-    public IExtractableCohort GetExtractableCohort()
-    {
-        if (Cohort_ID == null)
-            return null;
-
-        return Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
-    }
+    public IExtractableCohort GetExtractableCohort() => Cohort_ID == null
+        ? null
+        : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
 
     /// <inheritdoc/>
     public IExtractableDataSet[] GetAllExtractableDataSets()
@@ -635,15 +610,14 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         if (string.IsNullOrWhiteSpace(column.SelectSQL))
             throw new ArgumentException(
                 $"IColumn ({column.GetType().Name}) {column} has a blank value for SelectSQL, fix this in the CatalogueManager",
-                "item");
+                nameof(column));
 
-        var query = "";
-        query = column.SelectSQL;
+        var query = column.SelectSQL;
 
         ExtractableColumn addMe;
 
-        if (column is ExtractionInformation information)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, information, -1, query);
+        if (column is ExtractionInformation extractionInformation)
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation, -1, query);
         else
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1,
                 query); // its custom column of some kind, not tied to a catalogue entry
@@ -659,7 +633,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <returns></returns>
     public LogManager GetExplicitLoggingDatabaseServerOrDefault()
     {
-        ExternalDatabaseServer loggingServer = null;
+        ExternalDatabaseServer loggingServer;
         try
         {
             loggingServer = GetDistinctLoggingServer(false);

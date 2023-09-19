@@ -39,13 +39,8 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
         _toMove = toMove;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        if (OverrideIcon != null)
-            return OverrideIcon;
-
-        return Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        OverrideIcon ?? Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
 
     public override void Execute()
     {
@@ -56,20 +51,20 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
         {
             if (BasicActivator.IsInteractive)
             {
-                // if theres a single current value for the folder
+                // if there's a single current value for the folder
                 // of these objects (i.e. they are only operating on one item
-                // or on several items in the same folder).  Then make the 
+                // or on several items in the same folder).  Then make the
                 // popup text box show the old value.  Otherwise show the root \
                 var current = _toMove.Select(m => m.Folder).Distinct().ToArray();
                 var oldValue = current.Length == 1 ? current[0] : "\\";
 
                 if (!BasicActivator.TypeText(new DialogArgs
-                    {
-                        WindowTitle = "Folder",
-                        TaskDescription =
+                {
+                    WindowTitle = "Folder",
+                    TaskDescription =
                             "Enter a new virtual folder for the object.  Folder names should be lower case and start with a backslash ('\\')",
-                        EntryLabel = "New Folder"
-                    }, 500, oldValue, out f, false))
+                    EntryLabel = "New Folder"
+                }, 500, oldValue, out f, false))
                     return;
             }
             else
@@ -88,7 +83,7 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
             c.SaveToDatabase();
         }
 
-        //Folder has changed so publish the change (but only change the last Catalogue so we don't end up subing a million global refreshes changes)
+        //Folder has changed so publish the change (but only change the last Catalogue so we don't end up subbing a million global refresh changes)
         Publish(_toMove.Last());
     }
 }

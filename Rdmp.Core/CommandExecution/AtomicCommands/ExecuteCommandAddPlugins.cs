@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
@@ -13,6 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -30,7 +30,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
     {
         if (fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
         {
-            SetImpossible($"Plugins must {PackPluginRunner.PluginPackageSuffix}");
+            SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}");
             return;
         }
 
@@ -60,12 +60,12 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
         foreach (var f in _files)
         {
             var runner = new PackPluginRunner(new CommandLine.Options.PackOptions { File = f.FullName });
-            runner.Run(BasicActivator.RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-                new ThrowImmediatelyCheckNotifier(), new DataFlowPipeline.GracefulCancellationToken());
+            runner.Run(BasicActivator.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new DataFlowPipeline.GracefulCancellationToken());
         }
 
         Show("Changes will take effect on restart");
-        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Plugin>()
+        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>()
             .FirstOrDefault();
 
         if (p != null)

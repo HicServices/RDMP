@@ -16,91 +16,84 @@ namespace Rdmp.Core.Tests.DataExport.Data;
 
 internal class ExtractableCohortAuditLogBuilderTests : UnitTests
 {
-    [Test]
-    public void AuditLogReFetch_FileInfo()
-    {
-        var builder = new ExtractableCohortAuditLogBuilder();
+        [Test]
+        public void AuditLogReFetch_FileInfo()
+        {
 
-        var fi = new FileInfo("durdur.txt");
-        var desc = ExtractableCohortAuditLogBuilder.GetDescription(fi);
+                var fi = new FileInfo("durdur.txt");
+                var desc = ExtractableCohortAuditLogBuilder.GetDescription(fi);
 
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns(desc);
-        var fi2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
+                var moqCohort = Substitute.For<IExtractableCohort>();
+                moqCohort.AuditLog.Returns(desc);
+                var fi2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
-        Assert.IsNotNull(fi2);
-        Assert.IsInstanceOf<FileInfo>(fi2);
-        Assert.AreEqual(fi.FullName, ((FileInfo)fi2).FullName);
-    }
+                Assert.IsNotNull(fi2);
+                Assert.IsInstanceOf<FileInfo>(fi2);
+                Assert.AreEqual(fi.FullName, ((FileInfo)fi2).FullName);
+        }
 
 
-    [Test]
-    public void AuditLogReFetch_CohortIdentificationConfiguration()
-    {
-        var builder = new ExtractableCohortAuditLogBuilder();
+        [Test]
+        public void AuditLogReFetch_CohortIdentificationConfiguration()
+        {
 
-        var cic = WhenIHaveA<CohortIdentificationConfiguration>();
-        var desc = ExtractableCohortAuditLogBuilder.GetDescription(cic);
+                var cic = WhenIHaveA<CohortIdentificationConfiguration>();
+                var desc = ExtractableCohortAuditLogBuilder.GetDescription(cic);
 
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns(desc);
-        var cic2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
+                var moqCohort = Substitute.For<IExtractableCohort>();
+                moqCohort.AuditLog.Returns(desc);
+                var cic2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
+                Assert.IsNotNull(cic2);
+                Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
+                Assert.AreEqual(cic, cic2);
+        }
 
-        Assert.IsNotNull(cic2);
-        Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
-        Assert.AreEqual(cic, cic2);
-    }
+        [Test]
+        public void AuditLogReFetch_ExtractionInformation()
+        {
 
-    [Test]
-    public void AuditLogReFetch_ExtractionInformation()
-    {
-        var builder = new ExtractableCohortAuditLogBuilder();
+                var ei = WhenIHaveA<ExtractionInformation>();
+                var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
-        var ei = WhenIHaveA<ExtractionInformation>();
-        var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
+                var moqCohort = Substitute.For<IExtractableCohort>();
+                moqCohort.AuditLog.Returns(desc);
+                var ei2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
+                Assert.IsNotNull(ei2);
+                Assert.IsInstanceOf<ExtractionInformation>(ei2);
+                Assert.AreEqual(ei, ei2);
+        }
 
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns(desc);
-        var ei2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
+        [Test]
+        public void AuditLogReFetch_WhenAuditLogIsNull()
+        {
+                var moqCohort = Substitute.For<IExtractableCohort>();
+                moqCohort.AuditLog.Returns(x => null);
+                Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
+        }
 
-        Assert.IsNotNull(ei2);
-        Assert.IsInstanceOf<ExtractionInformation>(ei2);
-        Assert.AreEqual(ei, ei2);
-    }
+        [Test]
+        public void AuditLogReFetch_WhenAuditLogIsRubbish()
+        {
+                var moqCohort = Substitute.For<IExtractableCohort>();
+                moqCohort.AuditLog.Returns("troll doll dur I invented this cohort myself");
+                Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
+        }
 
-    [Test]
-    public void AuditLogReFetch_WhenAuditLogIsNull()
-    {
-        var builder = new ExtractableCohortAuditLogBuilder();
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns(x => null);
-        Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
-    }
+        [Test]
+        public void AuditLogReFetch_WhenSourceIsDeleted()
+        {
+                var builder = new ExtractableCohortAuditLogBuilder();
 
-    [Test]
-    public void AuditLogReFetch_WhenAuditLogIsRubbish()
-    {
-        var builder = new ExtractableCohortAuditLogBuilder();
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns("troll doll dur I invented this cohort myself");
-        Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
-    }
+                var ei = WhenIHaveA<ExtractionInformation>();
+                var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
-    [Test]
-    public void AuditLogReFetch_WhenSourceIsDeleted()
-    {
-        var builder = new ExtractableCohortAuditLogBuilder();
+                var moqCohort = Substitute.For<IExtractableCohort>();
+                moqCohort.AuditLog.Returns(desc);
 
-        var ei = WhenIHaveA<ExtractionInformation>();
-        var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
+                // delete the source
+                ei.DeleteInDatabase();
 
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns(desc);
-
-        // delete the source
-        ei.DeleteInDatabase();
-
-        // should now return null
-        Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
-    }
+                // should now return null
+                Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
+        }
 }

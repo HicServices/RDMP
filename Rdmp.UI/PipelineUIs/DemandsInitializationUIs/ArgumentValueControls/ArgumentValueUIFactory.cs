@@ -44,7 +44,7 @@ public class ArgumentValueUIFactory
                 toReturn = new ArgumentValueArrayUI(activator);
             }
             else
-                //if it's a pipeline
+            //if it's a pipeline
             if (typeof(IPipeline).IsAssignableFrom(argumentType))
             {
                 toReturn = new ArgumentValuePipelineUI(catalogueRepository, args.Parent, argumentType);
@@ -76,7 +76,7 @@ public class ArgumentValueUIFactory
 
                 toReturn =
                     new ArgumentValueComboBoxUI(activator,
-                        catalogueRepository.MEF.GetAllTypes()
+                        MEF.GetAllTypes()
                             .Where(t => args.Required.Demand.TypeOf.IsAssignableFrom(t))
                             .ToArray());
             }
@@ -103,7 +103,7 @@ public class ArgumentValueUIFactory
         catch (Exception e)
         {
             throw new Exception(
-                $"A problem occured trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'",
+                $"A problem occurred trying to create an ArgumentUI for Property '{args.Required.Name}' of Type '{argumentType}' on parent class of Type '{args.Parent.GetClassNameWhoArgumentsAreFor()}'",
                 e);
         }
 
@@ -123,9 +123,9 @@ public class ArgumentValueUIFactory
         //if it is an interface e.g. IExternalDatabaseServer look for ExternalDatabaseServer
         if (argumentType.IsInterface)
         {
-            var implmenetationType = args.CatalogueRepository.MEF.GetType(args.Type.Name[1..]);
-            if (implmenetationType != null)
-                argumentType = implmenetationType;
+            var implementationType = MEF.GetType(args.Type.Name[1..]);
+            if (implementationType != null)
+                argumentType = implementationType;
         }
 
         //Populate dropdown with the appropriate types
@@ -150,28 +150,25 @@ public class ArgumentValueUIFactory
         if (parent is ProcessTask pt)
             return pt.GetTableInfos();
 
-        if (parent is LoadMetadata lmd)
-            return lmd.GetDistinctTableInfoList(true);
-
-        return repository.GetAllObjects<TableInfo>();
+        return parent is LoadMetadata lmd
+            ? lmd.GetDistinctTableInfoList(true)
+            : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
     }
 
 
     private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
-        if (parent is ProcessTask || parent is LoadMetadata)
-            return GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos);
-
-        return repository.GetAllObjects<ColumnInfo>();
+        return parent is ProcessTask || parent is LoadMetadata
+            ? GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos)
+            : repository.GetAllObjects<ColumnInfo>();
     }
 
     private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(
         ICatalogueRepository repository, IArgumentHost parent)
     {
-        if (parent is ProcessTask || parent is LoadMetadata)
-            return GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
-
-        return repository.GetAllObjects<PreLoadDiscardedColumn>();
+        return parent is ProcessTask || parent is LoadMetadata
+            ? GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns)
+            : repository.GetAllObjects<PreLoadDiscardedColumn>();
     }
 
     /// <summary>

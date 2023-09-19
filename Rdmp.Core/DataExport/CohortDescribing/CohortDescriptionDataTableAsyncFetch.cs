@@ -28,6 +28,7 @@ public class CohortDescriptionDataTableAsyncFetch
     {
         Source = source;
         DataTable = new DataTable();
+        DataTable.BeginLoadData();
     }
 
 
@@ -36,15 +37,12 @@ public class CohortDescriptionDataTableAsyncFetch
         Task = new Task(() =>
         {
             var server = DataAccessPortal.ExpectDatabase(Source, DataAccessContext.DataExport).Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                using (var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
-                {
-                    cmd.CommandTimeout = 120; //give it up to 2 minutes
-                    server.GetDataAdapter(cmd).Fill(DataTable);
-                }
-            }
+            using var con = server.GetConnection();
+            con.Open();
+            using var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con);
+            cmd.CommandTimeout = 120; //give it up to 2 minutes
+            server.GetDataAdapter(cmd).Fill(DataTable);
+            DataTable.EndLoadData();
         });
 
         Task.ContinueWith(s => { Finished?.Invoke(); });

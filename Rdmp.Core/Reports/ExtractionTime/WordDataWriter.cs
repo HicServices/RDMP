@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,6 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
@@ -50,8 +50,8 @@ public class WordDataWriter : DocXHelper
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
 
-    private static object oLockOnWordUsage = new();
-    private IExecuteDatasetExtractionDestination _destination;
+    private static readonly object OLockOnWordUsage = new();
+    private readonly IExecuteDatasetExtractionDestination _destination;
 
     /// <summary>
     /// Generates a new meta data word file in the extraction directory and populates it with information about the extraction.
@@ -60,116 +60,114 @@ public class WordDataWriter : DocXHelper
     /// <returns></returns>
     public void GenerateWordFile()
     {
-        lock (oLockOnWordUsage)
+        lock (OLockOnWordUsage)
         {
-            using (var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName,
-                       $"{_destination.GetFilename()}.docx"))))
+            using var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName,
+                $"{_destination.GetFilename()}.docx")));
+            InsertHeader(document, $"{Executer.Source.Request.DatasetBundle.DataSet} Meta Data");
+
+            InsertTableOfContents(document);
+
+            InsertHeader(document, "File Data");
+
+            var rowCount = _destination.GeneratesFiles ? 10 : 5;
+
+            var t = InsertTable(document, rowCount, 2);
+
+            var rownum = 0;
+            if (_destination.GeneratesFiles)
             {
-                InsertHeader(document, $"{Executer.Source.Request.DatasetBundle.DataSet} Meta Data");
-
-                InsertTableOfContents(document);
-
-                InsertHeader(document, "File Data");
-
-                var rowCount = _destination.GeneratesFiles ? 10 : 5;
-
-                var t = InsertTable(document, rowCount, 2);
-
-                var rownum = 0;
-                if (_destination.GeneratesFiles)
-                {
-                    SetTableCell(t, rownum, 0, "File Name");
-                    SetTableCell(t, rownum, 1, new FileInfo(_destination.OutputFile).Name);
-                    rownum++;
-                }
-
-                var request = Executer.Source.Request;
-
-                SetTableCell(t, rownum, 0, "Cohort Size (Distinct)");
-                SetTableCell(t, rownum, 1, request.ExtractableCohort.CountDistinct.ToString());
+                SetTableCell(t, rownum, 0, "File Name");
+                SetTableCell(t, rownum, 1, new FileInfo(_destination.OutputFile).Name);
                 rownum++;
-
-                SetTableCell(t, rownum, 0, "Cohorts Found In Dataset");
-                SetTableCell(t, rownum, 1,
-                    request.IsBatchResume
-                        ? "unknown (batching was used)"
-                        : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
-                rownum++;
-
-                SetTableCell(t, rownum, 0, "Dataset Line Count");
-                SetTableCell(t, rownum, 1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
-                rownum++;
-
-                if (_destination.GeneratesFiles)
-                {
-                    SetTableCell(t, rownum, 0, "MD5");
-                    SetTableCell(t, rownum, 1, FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
-                    rownum++;
-
-                    var f = new FileInfo(_destination.OutputFile);
-                    SetTableCell(t, rownum, 0, "File Size");
-                    SetTableCell(t, rownum, 1, $"{f.Length}bytes ({f.Length / 1024}KB)");
-                    rownum++;
-                }
-
-                SetTableCell(t, rownum, 0, "Extraction Date");
-                SetTableCell(t, rownum, 1, Executer.Destination.TableLoadInfo.EndTime.ToString());
-                rownum++;
-
-                SetTableCell(t, rownum, 0, "Table Load ID (for HIC)");
-                SetTableCell(t, rownum, 1, Executer.Destination.TableLoadInfo.ID.ToString());
-                rownum++;
-
-                if (_destination.GeneratesFiles)
-                {
-                    SetTableCell(t, rownum, 0, "Separator");
-                    SetTableCell(t, rownum, 1,
-                        $"{Executer.Source.Request.Configuration.Separator}\t({_destination.SeparatorsStrippedOut} values stripped from data)");
-                    rownum++;
-
-                    SetTableCell(t, rownum, 0, "Date Format");
-                    SetTableCell(t, rownum, 1, _destination.DateFormat);
-                    rownum++;
-                }
-
-                if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
-                {
-                    InsertSectionPageBreak(document);
-
-                    InsertHeader(document, "Validation Information");
-
-                    CreateValidationRulesTable(document);
-
-                    InsertSectionPageBreak(document);
-
-                    CreateValidationResultsTable(document);
-                }
-
-                //if a count of date times seen exists for this extraction create a graph of the counts seen
-                if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null &&
-                    Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
-                    if (!request.IsBatchResume)
-                        try
-                        {
-                            InsertSectionPageBreak(document);
-                            InsertHeader(document, "Dataset Timespan");
-
-                            CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionsGeneratingWordFile.Add(e);
-                        }
-
-                InsertSectionPageBreak(document);
-
-                AddAllCatalogueItemMetaData(document);
-
-                //technical data
-                InsertSectionPageBreak(document);
-
-                AddFiltersAndParameters(document);
             }
+
+            var request = Executer.Source.Request;
+
+            SetTableCell(t, rownum, 0, "Cohort Size (Distinct)");
+            SetTableCell(t, rownum, 1, request.ExtractableCohort.CountDistinct.ToString());
+            rownum++;
+
+            SetTableCell(t, rownum, 0, "Cohorts Found In Dataset");
+            SetTableCell(t, rownum, 1,
+                request.IsBatchResume
+                    ? "unknown (batching was used)"
+                    : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+            rownum++;
+
+            SetTableCell(t, rownum, 0, "Dataset Line Count");
+            SetTableCell(t, rownum, 1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
+            rownum++;
+
+            if (_destination.GeneratesFiles)
+            {
+                SetTableCell(t, rownum, 0, "MD5");
+                SetTableCell(t, rownum, 1, FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
+                rownum++;
+
+                var f = new FileInfo(_destination.OutputFile);
+                SetTableCell(t, rownum, 0, "File Size");
+                SetTableCell(t, rownum, 1, $"{f.Length}bytes ({f.Length / 1024}KB)");
+                rownum++;
+            }
+
+            SetTableCell(t, rownum, 0, "Extraction Date");
+            SetTableCell(t, rownum, 1, Executer.Destination.TableLoadInfo.EndTime.ToString(CultureInfo.CurrentCulture));
+            rownum++;
+
+            SetTableCell(t, rownum, 0, "Table Load ID (for HIC)");
+            SetTableCell(t, rownum, 1, Executer.Destination.TableLoadInfo.ID.ToString());
+            rownum++;
+
+            if (_destination.GeneratesFiles)
+            {
+                SetTableCell(t, rownum, 0, "Separator");
+                SetTableCell(t, rownum, 1,
+                    $"{Executer.Source.Request.Configuration.Separator}\t({_destination.SeparatorsStrippedOut} values stripped from data)");
+                rownum++;
+
+                SetTableCell(t, rownum, 0, "Date Format");
+                SetTableCell(t, rownum, 1, _destination.DateFormat);
+                rownum++;
+            }
+
+            if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
+            {
+                InsertSectionPageBreak(document);
+
+                InsertHeader(document, "Validation Information");
+
+                CreateValidationRulesTable(document);
+
+                InsertSectionPageBreak(document);
+
+                CreateValidationResultsTable(document);
+            }
+
+            //if a count of date times seen exists for this extraction create a graph of the counts seen
+            if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null &&
+                Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
+                if (!request.IsBatchResume)
+                    try
+                    {
+                        InsertSectionPageBreak(document);
+                        InsertHeader(document, "Dataset Timespan");
+
+                        CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionsGeneratingWordFile.Add(e);
+                    }
+
+            InsertSectionPageBreak(document);
+
+            AddAllCatalogueItemMetaData(document);
+
+            //technical data
+            InsertSectionPageBreak(document);
+
+            AddFiltersAndParameters(document);
         }
     }
 
@@ -232,13 +230,13 @@ public class WordDataWriter : DocXHelper
         var currentLine = 1;
 
         foreach (var filter in filtersUsed)
-        foreach (var parameter in filter.GetAllParameters())
-        {
-            SetTableCell(t, currentLine, 0, parameter.ParameterName);
-            SetTableCell(t, currentLine, 1, parameter.Comment);
-            SetTableCell(t, currentLine, 2, parameter.Value);
-            currentLine++;
-        }
+            foreach (var parameter in filter.GetAllParameters())
+            {
+                SetTableCell(t, currentLine, 0, parameter.ParameterName);
+                SetTableCell(t, currentLine, 1, parameter.Comment);
+                SetTableCell(t, currentLine, 2, parameter.Value);
+                currentLine++;
+            }
 
         foreach (var globalParameter in globalParameters)
         {
@@ -446,11 +444,11 @@ public class WordDataWriter : DocXHelper
             tableLine++;
         }
 
-        //ouput list of validations we skipped
+        //output list of validations we skipped
         foreach (var iv in Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed)
         {
             SetTableCell(t, tableLine, 0, iv.TargetProperty);
-            SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Annonymised");
+            SetTableCell(t, tableLine, 1, "No validations carried out because column is Hashed/Anonymised");
             tableLine++;
         }
     }

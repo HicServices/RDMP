@@ -5,21 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Rdmp.Core.Curation.FilterImporting;
-using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents;
 
@@ -68,18 +68,20 @@ public partial class ImportSQLTableUI : RDMPForm
         {
             var tbl = serverDatabaseTableSelector1.GetDiscoveredTable();
 
-            if (tbl == null)
+            switch (tbl)
             {
-                btnImport.Enabled = false;
-                return;
+                case null:
+                    btnImport.Enabled = false;
+                    return;
+                //if it isn't a table valued function
+                case DiscoveredTableValuedFunction discoveredTableValuedFunction:
+                    Importer = new TableValuedFunctionImporter(cataRepo, discoveredTableValuedFunction,
+                        (DataAccessContext)ddContext.SelectedValue);
+                    break;
+                default:
+                    Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext)ddContext.SelectedValue);
+                    break;
             }
-
-            //if it isn't a table valued function
-            if (tbl is DiscoveredTableValuedFunction function)
-                Importer = new TableValuedFunctionImporter(cataRepo, function,
-                    (DataAccessContext)ddContext.SelectedValue);
-            else
-                Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext)ddContext.SelectedValue);
 
             btnImport.Enabled = true;
         }
@@ -104,7 +106,7 @@ public partial class ImportSQLTableUI : RDMPForm
         {
             // logic to add credentials
             // parent.SetCredentials();
-            Importer.DoImport(out var ti, out var cols);
+            Importer.DoImport(out var ti, out _);
 
             if (ti is DatabaseEntity de)
                 Activator.Publish(de);

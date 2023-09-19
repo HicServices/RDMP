@@ -131,7 +131,7 @@ public class GovernanceDocument : DatabaseEntity, INamed
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Failed to check for existance of the file described by GovernanceDocument '{this}' (ID={ID})",
+                    $"Failed to check for existence of the file described by GovernanceDocument '{this}' (ID={ID})",
                     CheckResult.Fail, ex));
         }
     }

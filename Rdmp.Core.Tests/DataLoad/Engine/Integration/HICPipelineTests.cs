@@ -264,9 +264,9 @@ public class HICPipelineTests : DatabaseTests
 
             //run checks (with ignore errors if we are sending dodgy credentials)
             RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options).Run(RepositoryLocator,
-                new ThrowImmediatelyDataLoadEventListener(),
+                ThrowImmediatelyDataLoadEventListener.Quiet,
                 sendDodgyCredentials
-                    ? (ICheckNotifier)new IgnoreAllErrorsCheckNotifier()
+                    ? (ICheckNotifier)IgnoreAllErrorsCheckNotifier.Instance
                     : new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
             //run load
@@ -277,7 +277,7 @@ public class HICPipelineTests : DatabaseTests
             if (sendDodgyCredentials)
             {
                 var ex = Assert.Throws<Exception>(() => runner.Run(RepositoryLocator,
-                    new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(),
+                    ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
                     new GracefulCancellationToken()));
                 Assert.IsTrue(ex.InnerException.Message.Contains("Login failed for user 'IveGotaLovely'"),
                     "Error message did not contain expected text");
@@ -285,7 +285,7 @@ public class HICPipelineTests : DatabaseTests
             }
             else
             {
-                runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(),
+                runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
                     new GracefulCancellationToken());
             }
 

@@ -32,10 +32,10 @@ public class SelectSQLRefactorer
     public static void RefactorTableName(IColumn column, IHasFullyQualifiedNameToo tableName,
         string newFullySpecifiedTableName)
     {
-        var ci = column.ColumnInfo ??
-                 throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
-        var fullyQualifiedName = tableName.GetFullyQualifiedName();
+        if (column.ColumnInfo == null)
+            throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
 
+        var fullyQualifiedName = tableName.GetFullyQualifiedName();
         if (!column.SelectSQL.Contains(fullyQualifiedName))
             throw new RefactoringException(
                 $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");
@@ -74,8 +74,8 @@ public class SelectSQLRefactorer
 
     protected static void Save(object o)
     {
-        var s = o as ISaveable;
-        s?.SaveToDatabase();
+        if (o is ISaveable s)
+            s.SaveToDatabase();
     }
 
     /// <summary>
@@ -134,11 +134,9 @@ public class SelectSQLRefactorer
 
         var fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
 
-        if (!column.SelectSQL.Contains(fullyQualifiedName))
-            return
-                $"IColumn '{column}' did not contain the fully specified table name ('{fullyQualifiedName}') during refactoring";
-
-        return null;
+        return !column.SelectSQL.Contains(fullyQualifiedName)
+            ? $"IColumn '{column}' did not contain the fully specified table name ('{fullyQualifiedName}') during refactoring"
+            : null;
     }
 
     /// <summary>
@@ -168,13 +166,11 @@ public class SelectSQLRefactorer
         var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
 
         if (!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
-            return $"Table with Name '{table.Name}' has incorrect database propery '{table.Database}'";
+            return $"Table with Name '{table.Name}' has incorrect database property '{table.Database}'";
 
-        if (table.Name != table.GetFullyQualifiedName())
-            return
-                $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'";
-
-        return null;
+        return table.Name != table.GetFullyQualifiedName()
+            ? $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'"
+            : null;
     }
 
     /// <summary>

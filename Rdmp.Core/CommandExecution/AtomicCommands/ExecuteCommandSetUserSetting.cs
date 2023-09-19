@@ -4,25 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandLine.Interactive.Picking;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.ImportExport;
-using Rdmp.Core.Repositories.Construction;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Rdmp.Core.CommandLine.Interactive.Picking;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetUserSetting : BasicCommandExecution
+public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
 {
     private readonly PropertyInfo _property;
-    private ErrorCode _errorCode;
-    private CheckResult _errorCodeValue;
+    private readonly ErrorCode _errorCode;
+    private readonly CheckResult _errorCodeValue;
 
     /// <summary>
     /// The new value chosen by the user during command execution
@@ -30,7 +30,7 @@ public class ExecuteCommandSetUserSetting : BasicCommandExecution
     public object NewValue { get; private set; }
 
     /// <summary>
-    /// True if the command was successfully completed 
+    /// True if the command was successfully completed
     /// </summary>
     public bool Success { get; private set; }
 

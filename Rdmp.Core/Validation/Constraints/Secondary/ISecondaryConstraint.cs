@@ -15,7 +15,7 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 public interface ISecondaryConstraint : IConstraint
 {
     /// <summary>
-    /// Inherit this method to perform validation operations unique to your Class.  Column value could be DateTime, string or numerical.  Part of validation is 
+    /// Inherit this method to perform validation operations unique to your Class.  Column value could be DateTime, string or numerical.  Part of validation is
     /// ensuring it is of the appropriate type.  otherColumns can be used for example in the case that you intend to predict something such as Gender from Title.
     /// If your validation fails you should return a ValidationFailure.
     /// </summary>

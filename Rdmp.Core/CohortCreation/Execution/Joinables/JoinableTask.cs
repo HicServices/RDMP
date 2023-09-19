@@ -20,17 +20,17 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution.Joinables;
 
 /// <summary>
-/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The 
+/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The
 /// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
 /// result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
 /// </summary>
 public class JoinableTask : CacheableTask
 {
-    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private AggregateConfiguration _aggregate;
-    private string _catalogueName;
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly string _catalogueName;
 
-    public JoinableCohortAggregateConfiguration Joinable { get; private set; }
+    public JoinableCohortAggregateConfiguration Joinable { get; }
 
 
     public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
@@ -55,13 +55,8 @@ public class JoinableTask : CacheableTask
     public override string ToString()
     {
         var name = _aggregate.Name;
-
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
-
-        if (name.StartsWith(expectedTrimStart))
-            return name[expectedTrimStart.Length..];
-
-        return name;
+        return name.StartsWith(expectedTrimStart, StringComparison.Ordinal) ? name[expectedTrimStart.Length..] : name;
     }
 
     public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;

@@ -40,21 +40,18 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         }
     }
 
-    private ExternalDatabaseServer GetCacheServer()
-    {
-        if (CohortIdentificationConfiguration != null &&
-            CohortIdentificationConfiguration.QueryCachingServer_ID != null)
-            return CohortIdentificationConfiguration.QueryCachingServer;
-
-        return null;
-    }
+    private ExternalDatabaseServer GetCacheServer() =>
+        CohortIdentificationConfiguration is { QueryCachingServer_ID: not null }
+            ? CohortIdentificationConfiguration.QueryCachingServer
+            : null;
 
 
     public IDataAccessPoint GetDataAccessPoint()
     {
         var cache = GetCacheServer();
 
-        if (UseQueryCache && cache != null) return cache;
+        if (UseQueryCache && cache != null)
+            return cache;
 
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
         builder.RegenerateSQL();

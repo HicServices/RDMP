@@ -51,8 +51,8 @@ public class Plugin : DatabaseEntity, INamed
 
     /// <summary>
     /// Returns <see cref="Name"/> without the verison e.g. "Rdmp.Dicom" from an ambigious name:
-    ///  Rdmp.Dicom.0.0.1.nupkg 
-    ///  Rdmp.Dicom.nupkg 
+    ///  Rdmp.Dicom.0.0.1.nupkg
+    ///  Rdmp.Dicom.nupkg
     ///  Rdmp.Dicom
     /// </summary>
     /// <returns></returns>
@@ -154,7 +154,7 @@ public class Plugin : DatabaseEntity, INamed
     #endregion
 
     /// <summary>
-    /// Returns a folder name suitable for storing the dlls for the plugin in as a subdirectory of 
+    /// Returns a folder name suitable for storing the dlls for the plugin in as a subdirectory of
     /// <paramref name="downloadDirectoryRoot"/>
     /// </summary>
     /// <param name="downloadDirectoryRoot"></param>
@@ -163,9 +163,8 @@ public class Plugin : DatabaseEntity, INamed
     {
         var pluginName = Path.GetFileNameWithoutExtension(Name);
 
-        if (string.IsNullOrWhiteSpace(pluginName))
-            throw new Exception("Plugin doens't have a valid name");
-
-        return Path.Combine(downloadDirectoryRoot.FullName, pluginName);
+        return string.IsNullOrWhiteSpace(pluginName)
+            ? throw new Exception("Plugin doesn't have a valid name")
+            : Path.Combine(downloadDirectoryRoot.FullName, pluginName);
     }
 }

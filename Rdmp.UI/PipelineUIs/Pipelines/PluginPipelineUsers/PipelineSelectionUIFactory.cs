@@ -15,7 +15,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 
 /// <summary>
 /// Factory for <see cref="IPipelineSelectionUI"/> instances based on <see cref="PipelineUseCase"/> (what activity the pipelines
-/// are intended for use in). 
+/// are intended for use in).
 /// </summary>
 public class PipelineSelectionUIFactory
 {

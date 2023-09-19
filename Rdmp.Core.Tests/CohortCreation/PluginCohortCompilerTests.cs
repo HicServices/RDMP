@@ -28,7 +28,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_PopulatesCacheCorrectly()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
         // create a cohort config
@@ -53,8 +53,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // run the cic
         var source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // 5 random chi numbers
         Assert.AreEqual(5, dt.Rows.Count);
@@ -65,8 +65,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // run the cic again
         source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-        dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // because the rules changed to generate 2 chis only there should be a new result
         Assert.AreEqual(2, dt.Rows.Count);
@@ -76,8 +76,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // run the cic again with no changes, the results should be unchanged since there is no config changed
         // I.e. no new chis should be generated and the cached values returned
         source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-        dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(2, dt.Rows.Count);
         var results2 = new[] { (string)dt.Rows[0][0], (string)dt.Rows[1][0] };
@@ -89,7 +89,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_TestCloneCic()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
         // create a cohort config
@@ -125,7 +125,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_APIsCantHavePatientIndexTables()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
         // create a cohort config
@@ -169,7 +169,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_AsPatientIndexTable()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier())
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
         // Create a regular normal boring old table that will join into the results of the API call
@@ -198,7 +198,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // add it to the cohort config
         cic.CreateRootContainerIfNotExists();
 
-        // Add the regular table 
+        // Add the regular table
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
             new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
@@ -221,8 +221,8 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
 
         // run the cic again
         var source = new CohortIdentificationConfigurationSource();
-        source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-        var result = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var result = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         Assert.AreEqual(1, result.Rows.Count);
     }
 }

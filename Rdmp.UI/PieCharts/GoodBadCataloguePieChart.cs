@@ -33,18 +33,18 @@ namespace Rdmp.UI.PieCharts;
 public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
 {
     private ToolStripButton btnSingleCatalogue = new("Single", CatalogueIcons.Catalogue.ImageToBitmap())
-        { Name = "btnSingleCatalogue" };
+    { Name = "btnSingleCatalogue" };
 
     private ToolStripButton btnAllCatalogues =
         new("All", CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()) { Name = "btnAllCatalogues" };
 
     private ToolStripButton btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
-        { Name = "btnRefresh" };
+    { Name = "btnRefresh" };
 
     private ToolStripLabel toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
 
     private ToolStripButton btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
-        { Name = "btnShowLabels", CheckOnClick = true };
+    { Name = "btnShowLabels", CheckOnClick = true };
 
     private List<ToolStripMenuItem> _flagOptions = new();
 
@@ -54,10 +54,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
-        btnAllCatalogues.Click += new EventHandler(btnAllCatalogues_Click);
-        btnSingleCatalogue.Click += new EventHandler(btnSingleCatalogue_Click);
-        btnShowLabels.CheckStateChanged += new EventHandler(btnShowLabels_CheckStateChanged);
-        btnRefresh.Click += new EventHandler(btnRefresh_Click);
+        btnAllCatalogues.Click += btnAllCatalogues_Click;
+        btnSingleCatalogue.Click += btnSingleCatalogue_Click;
+        btnShowLabels.CheckStateChanged += btnShowLabels_CheckStateChanged;
+        btnRefresh.Click += btnRefresh_Click;
 
         //put edit mode on for the designer
         NotifyEditModeChange(false);
@@ -255,19 +255,17 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     private void btnSingleCatalogue_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription = "Which Catalogue should the graph depict?"
-            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+        if (!Activator.SelectObject(new DialogArgs
         {
-            _collection.SetSingleCatalogueMode(selected);
+            TaskDescription = "Which Catalogue should the graph depict?"
+        }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected)) return;
+        _collection.SetSingleCatalogueMode(selected);
 
-            btnAllCatalogues.Checked = false;
-            btnSingleCatalogue.Checked = true;
+        btnAllCatalogues.Checked = false;
+        btnSingleCatalogue.Checked = true;
 
-            SaveCollectionChanges();
-            GenerateChart();
-        }
+        SaveCollectionChanges();
+        GenerateChart();
     }
 
     private void btnRefresh_Click(object sender, EventArgs e)
@@ -294,10 +292,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     private void btnViewDataTable_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "The following CatalogueItem(s) do not currently have descriptions. Select one to navigate to it"
-            }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(), out var selected))
+        }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(), out var selected))
         {
             var cmd = new ExecuteCommandShow(Activator, selected, 1);
             cmd.Execute();

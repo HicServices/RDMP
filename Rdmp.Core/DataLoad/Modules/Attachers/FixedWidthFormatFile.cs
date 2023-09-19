@@ -20,7 +20,7 @@ public class FixedWidthFormatFile
 {
     private readonly FileInfo _pathToFormatFile;
 
-    public FixedWidthColumn[] FormatColumns { get; private set; }
+    public FixedWidthColumn[] FormatColumns { get; }
 
     public FixedWidthFormatFile(FileInfo pathToFormatFile)
     {
@@ -48,7 +48,7 @@ public class FixedWidthFormatFile
             FormatColumns[index].Field = cellsOnRowAsSplitString[2];
             FormatColumns[index].Size = int.Parse(cellsOnRowAsSplitString[3]);
 
-            //It's ok to ommmit this column for specific rows (that aren't dates)
+            //It's ok to omit this column for specific rows (that aren't dates)
             if (cellsOnRowAsSplitString.Length > 4)
                 FormatColumns[index].DateFormat =
                     cellsOnRowAsSplitString[4]
@@ -94,7 +94,7 @@ public class FixedWidthFormatFile
 
         //populate the table
         //foreach line in file
-        foreach (var readAllLine in File.ReadAllLines(f.FullName))
+        foreach (var readAllLine in File.ReadLines(f.FullName))
         {
             lineNumber++;
 
@@ -111,7 +111,7 @@ public class FixedWidthFormatFile
                 //substring in order to get cell data
                 var value = readAllLine.Substring(fixedWidthColumn.From - 1, fixedWidthColumn.Size);
 
-                //if its a null
+                //if it's a null
                 if (string.IsNullOrWhiteSpace(value))
                     dataRow[fixedWidthColumn.Field] = DBNull.Value;
                 else
@@ -127,7 +127,7 @@ public class FixedWidthFormatFile
                             $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",
                             e);
                     }
-                else //its not a date
+                else //it's not a date
                     dataRow[fixedWidthColumn.Field] = value.Trim();
             }
         }

@@ -30,7 +30,7 @@ using ResearchDataManagementPlatform;
 
 namespace Rdmp.UI.Tests.DesignPatternTests;
 
-public class UserInterfaceStandardisationChecker
+public partial class UserInterfaceStandardisationChecker
 {
     private List<string> _csFilesList;
     private List<string> problems = new();
@@ -68,12 +68,12 @@ public class UserInterfaceStandardisationChecker
         typeof(RDMPMainForm)
     };
 
-    public void FindProblems(List<string> csFilesList, MEF mef)
+    public void FindProblems(List<string> csFilesList)
     {
         _csFilesList = csFilesList;
 
         //All node classes should have equality compare members so that tree expansion works properly
-        foreach (var nodeClass in mef.GetAllTypes()
+        foreach (var nodeClass in MEF.GetAllTypes()
                      .Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if (nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
@@ -107,7 +107,7 @@ public class UserInterfaceStandardisationChecker
         }
 
         //All Menus should correspond to a data class
-        foreach (var menuClass in mef.GetAllTypes().Where(t =>
+        foreach (var menuClass in MEF.GetAllTypes().Where(t =>
                      typeof(RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             //the basic class from which all are inherited or a menu for FolderNode<X>
@@ -157,7 +157,7 @@ public class UserInterfaceStandardisationChecker
         }
 
         //Drag and drop / Activation - Execution Proposal system
-        foreach (var proposalClass in mef.GetAllTypes().Where(t =>
+        foreach (var proposalClass in MEF.GetAllTypes().Where(t =>
                      typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if (proposalClass.Namespace.Contains("Rdmp.UI.Tests.DesignPatternTests"))
@@ -180,20 +180,15 @@ public class UserInterfaceStandardisationChecker
         }
 
         //Make sure all user interface classes have the suffix UI
-        foreach (var uiType in mef.GetAllTypes().Where(t =>
-                     typeof(RDMPUserControl).IsAssignableFrom(t) || (typeof(RDMPForm).IsAssignableFrom(t)
-                                                                     && !t.IsAbstract && !t.IsInterface)))
-            if (!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
-            {
-                if (excusedUIClasses.Contains(uiType))
-                    continue;
-
-                //also allow Screen1, Screen2 etc
-                if (Regex.IsMatch(uiType.Name, @"Screen\d") && uiType.IsNotPublic)
-                    continue;
-
-                problems.Add($"Class {uiType.Name} does not end with UI");
-            }
+        foreach (var uiType in MEF.GetAllTypes()
+                     .Where(static t => typeof(RDMPUserControl).IsAssignableFrom(t) ||
+                                        (typeof(RDMPForm).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+                     .Where(static uiType =>
+                         !uiType.Name.EndsWith("UI", StringComparison.Ordinal) &&
+                         !uiType.Name.EndsWith("_Design", StringComparison.Ordinal))
+                     .Where(uiType => !excusedUIClasses.Contains(uiType))
+                     .Where(static uiType => !ScreenN().IsMatch(uiType.Name) || !uiType.IsNotPublic))
+            problems.Add($"Class {uiType.Name} does not end with UI");
 
 
         foreach (var problem in problems)
@@ -210,11 +205,10 @@ public class UserInterfaceStandardisationChecker
             return expectedClassName;
 
         //expected Filter but found IFilter - acceptable
-        if (_csFilesList.Any(f =>
-                Path.GetFileName(f).Equals($"I{expectedClassName}.cs", StringComparison.InvariantCultureIgnoreCase)))
-            return $"I{expectedClassName}";
-
-        return null;
+        return _csFilesList.Any(f =>
+            Path.GetFileName(f).Equals($"I{expectedClassName}.cs", StringComparison.InvariantCultureIgnoreCase))
+            ? $"I{expectedClassName}"
+            : null;
     }
 
     private void ConfirmFileHasText(Type type, string expectedString, bool mustHaveText = true)
@@ -224,11 +218,9 @@ public class UserInterfaceStandardisationChecker
         //probably not our class
         if (file == null)
             return;
-        var hasText = File.ReadAllText(file)
-            .Replace(" ", "")
-            .Replace("\n", "")
-            .Replace("\r", "")
-            .Contains(expectedString.Replace(" ", ""),StringComparison.OrdinalIgnoreCase);
+
+        var hasText = Regex.Replace(File.ReadAllText(file), "[ \r\n\t]+", "")
+            .Contains(expectedString.Replace(" ", ""), StringComparison.OrdinalIgnoreCase);
 
         if (mustHaveText)
         {
@@ -241,4 +233,7 @@ public class UserInterfaceStandardisationChecker
                 problems.Add($"File '{file}' contains unexpected text '{expectedString}'");
         }
     }
+
+    [GeneratedRegex("Screen\\d", RegexOptions.CultureInvariant)]
+    private static partial Regex ScreenN();
 }

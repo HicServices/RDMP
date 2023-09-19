@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
@@ -20,6 +19,7 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -29,12 +29,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
 {
-    private DiscoveredDatabase _targetDatabase;
+    private readonly DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
 
     public FileInfo File { get; private set; }
-
-    private string _extractionIdentifier;
 
 
     private void CheckFile()
@@ -67,7 +65,6 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         Project projectSpecific) : base(activator, projectSpecific, null)
     {
         File = file;
-        _extractionIdentifier = extractionIdentifier;
         _targetDatabase = targetDatabase;
         _pipeline = pipeline;
         UseTripleDotSuffix = true;
@@ -130,7 +127,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         {
             WindowTitle = "Create Catalogue from File",
             TaskDescription =
-                "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
+                "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
         };
 
     private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)

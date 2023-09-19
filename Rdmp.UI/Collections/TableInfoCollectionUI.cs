@@ -45,23 +45,18 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
         tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
         olvDataType.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
-        olvValue.AspectGetter = s => (s as IArgument)?.Value;
+        olvValue.AspectGetter = static s => (s as IArgument)?.Value;
     }
 
 
-    private object tlvTableInfos_DataTypeAspectGetter(object rowobject)
-    {
-        if (rowobject is ColumnInfo c)
-            return c.Data_type;
-
-        if (rowobject is PreLoadDiscardedColumn p)
-            return p.Data_type;
-
-        if (rowobject is PipelineComponentArgument a)
-            return a.Type;
-
-        return null;
-    }
+    private object tlvTableInfos_DataTypeAspectGetter(object rowobject) =>
+        rowobject switch
+        {
+            ColumnInfo c => c.Data_type,
+            PreLoadDiscardedColumn p => p.Data_type,
+            PipelineComponentArgument a => a.Type,
+            _ => null
+        };
 
     private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
     {
@@ -83,11 +78,11 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
     private void olvTableInfos_KeyUp(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.C && e.Control && tlvTableInfos.SelectedObject != null)
-        {
-            Clipboard.SetText(tlvTableInfos.SelectedObject.ToString());
-            e.Handled = true;
-        }
+        // Handle ctrl-C when an object is selected
+        if (e.KeyCode != Keys.C || !e.Control || tlvTableInfos.SelectedObject == null) return;
+
+        Clipboard.SetText(tlvTableInfos.SelectedObject?.ToString());
+        e.Handled = true;
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -111,7 +106,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         }
 
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = static a => new IAtomicCommand[]
         {
             new ExecuteCommandImportTableInfo(a, null, false),
             new ExecuteCommandBulkImportTableInfos(a)
@@ -135,25 +130,21 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if (e.Object is DataAccessCredentials)
-            tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
-
-        if (e.Object is Catalogue || e.Object is TableInfo)
-            tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
+        switch (e.Object)
+        {
+            case DataAccessCredentials:
+                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
+                break;
+            case Catalogue or TableInfo:
+                tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
+                break;
+        }
 
         if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
             tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
     }
 
-    public static bool IsRootObject(object root) =>
-        root is AllRDMPRemotesNode ||
-        root is AllObjectSharingNode ||
-        root is AllPipelinesNode ||
-        root is AllExternalServersNode ||
-        root is AllDataAccessCredentialsNode ||
-        root is AllANOTablesNode ||
-        root is AllServersNode ||
-        root is AllConnectionStringKeywordsNode ||
-        root is AllStandardRegexesNode ||
-        root is AllDashboardsNode;
+    public static bool IsRootObject(object root) => root is AllRDMPRemotesNode or AllObjectSharingNode
+        or AllPipelinesNode or AllExternalServersNode or AllDataAccessCredentialsNode or AllANOTablesNode
+        or AllServersNode or AllConnectionStringKeywordsNode or AllStandardRegexesNode or AllDashboardsNode;
 }

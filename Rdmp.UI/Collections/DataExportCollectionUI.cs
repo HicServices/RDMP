@@ -62,22 +62,18 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private object ProjectNumberAspectGetter(object rowObject)
     {
-        var masquerade = rowObject as IMasqueradeAs;
-
-        if (rowObject is Project p)
-            return p.ProjectNumber;
-
-        var c = masquerade?.MasqueradingAs() as ExtractableCohort;
-        return c?.ExternalProjectNumber;
+        return rowObject switch
+        {
+            Project p => p.ProjectNumber,
+            IMasqueradeAs masquerade when masquerade.MasqueradingAs() is ExtractableCohort c => c.ExternalProjectNumber,
+            _ => null
+        };
     }
 
-    private object CohortVersionAspectGetter(object rowObject)
-    {
-        var masquerade = rowObject as IMasqueradeAs;
-
-        var c = masquerade?.MasqueradingAs() as ExtractableCohort;
-        return c?.ExternalVersion;
-    }
+    private object CohortVersionAspectGetter(object rowObject) =>
+        rowObject is IMasqueradeAs masquerade && masquerade.MasqueradingAs() is ExtractableCohort c
+            ? c.ExternalVersion
+            : (object)null;
 
     public override void SetItemActivator(IActivateItems activator)
     {
@@ -136,7 +132,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
-            { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
+        { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
 
         var uiFactory = new AtomicCommandUIFactory(Activator);
         var cohortSubmenu = new ToolStripMenuItem("Cohort");

@@ -95,7 +95,7 @@ public class DragDropProvider : SimpleDragSource
             //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop
             var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject, e.DropTargetItem.RowObject);
 
-            if (execution != null && !execution.IsImpossible)
+            if (execution is { IsImpossible: false })
                 execution.Execute();
         }
         catch (Exception exception)
@@ -209,14 +209,12 @@ public class DragDropProvider : SimpleDragSource
     }
 
 
+
     private static InsertOption GetDropLocation(ModelDropEventArgs e)
     {
         if (e.DropTargetLocation == DropTargetLocation.AboveItem)
             return InsertOption.InsertAbove;
 
-        if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-            return InsertOption.InsertBelow;
-
-        return InsertOption.Default;
+        return e.DropTargetLocation == DropTargetLocation.BelowItem ? InsertOption.InsertBelow : InsertOption.Default;
     }
 }

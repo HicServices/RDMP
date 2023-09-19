@@ -67,8 +67,8 @@ public class RDMPContextMenuStripArgs
 
         while (p != null)
         {
-            if (p is T control)
-                return control;
+            if (p is T t)
+                return t;
 
             p = p.Parent;
         }

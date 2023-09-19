@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -26,7 +25,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 {
     /// <summary>
     /// This is a list of regex patterns for identifying xml serialized classes that implement IMapsDirectlyToDatabaseTable in Xml strings
-    /// It is used to detect when you are trying to delete an object which has hidden references to it in important serialized bits of 
+    /// It is used to detect when you are trying to delete an object which has hidden references to it in important serialized bits of
     /// text (e.g. Catalogue.ValidationXML).
     /// </summary>
     public List<Suspect> TheUsualSuspects = new();
@@ -36,23 +35,20 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
     /// </summary>
     public List<Catalogue> CataloguesWithBrokenValidationXml = new();
 
-    private readonly MEF _mef;
 
     public ValidationXMLObscureDependencyFinder(ICatalogueRepositoryServiceLocator catalogueRepositoryServiceLocator)
     {
         Validator.LocatorForXMLDeserialization ??= catalogueRepositoryServiceLocator;
-
-        _mef = catalogueRepositoryServiceLocator.CatalogueRepository.MEF;
     }
 
-    private bool initialized = false;
+    private bool initialized;
 
     private void Initialize()
     {
         initialized = true;
 
         //get all the SecondaryConstraints
-        foreach (var constraintType in _mef.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
+        foreach (var constraintType in MEF.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
         {
             //get all properties and fields which map to a database object
             var props = constraintType.GetProperties()
@@ -85,12 +81,8 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        //dependency can only be initialized if mef is setup
         if (!initialized)
-            if (_mef == null)
-                return;
-            else
-                Initialize();
+            Initialize();
 
         ThrowIfDeleteDisallowed(oTableWrapperObject, 0);
     }
@@ -106,8 +98,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 
         var repository = oTableWrapperObject.Repository;
 
-
-        if (depth >= 5) //its fine
+        if (depth >= 5) //it's fine
             return;
 
         if (oTableWrapperObject is IHasDependencies treeObject)
@@ -130,7 +121,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
                     ThrowIfDeleteDisallowed(child, depth + 1);
         }
 
-        //these regular expressions will let us identifiy suspicious Catalogues based on the validation
+        //these regular expressions will let us identify suspicious Catalogues based on the validation
         var checkers = new List<Regex>();
 
         foreach (var suspect in TheUsualSuspects)

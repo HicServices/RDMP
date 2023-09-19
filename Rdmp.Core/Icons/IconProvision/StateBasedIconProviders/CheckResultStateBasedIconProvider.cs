@@ -26,15 +26,14 @@ public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is not CheckResult result)
-            return null;
-
-        return result switch
-        {
-            CheckResult.Success => _tick,
-            CheckResult.Warning => _warning,
-            CheckResult.Fail => _exception,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return o is not CheckResult result
+            ? null
+            : result switch
+            {
+                CheckResult.Success => _tick,
+                CheckResult.Warning => _warning,
+                CheckResult.Fail => _exception,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

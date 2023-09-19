@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FAnsi.Discovery;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using FAnsi.Discovery;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using TypeGuesser;
 
@@ -65,7 +65,6 @@ public sealed class LoggingDatabasePatcher : Patcher
 
         sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "ProgressLog", new[] { progressLog_dataLoadRunID = new DatabaseColumnRequest("dataLoadRunID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("eventType", new DatabaseTypeRequest(typeof(string), 50) { Unicode = true }) { AllowNulls = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("source", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) { AllowNulls = true }, new DatabaseColumnRequest("time", new DatabaseTypeRequest(typeof(DateTime))) { Default = FAnsi.Discovery.QuerySyntax.MandatoryScalarFunctions.GetTodaysDate }, new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true } }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { progressLog_dataLoadRunID, dataLoadRun_ID } }, true, null).TrimEnd()};");
-
 
         sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "RowError", new[] { new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true }, rowError_tableLoadRunID = new DatabaseColumnRequest("tableLoadRunID", new DatabaseTypeRequest(typeof(int))), new DatabaseColumnRequest("rowErrorTypeID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = true }, new DatabaseColumnRequest("description", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("locationOfRow", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }), new DatabaseColumnRequest("requiresReloading", new DatabaseTypeRequest(typeof(bool))) { AllowNulls = true }, new DatabaseColumnRequest("columnName", new DatabaseTypeRequest(typeof(string), int.MaxValue) { Unicode = true }) }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { rowError_tableLoadRunID, tableLoadRun_ID } }, true, null).TrimEnd()};");

@@ -26,7 +26,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// <summary>
 /// Provides Cross Database Platform Type translation e.g. GetCommand returns SqlCommand when passed an SqlConnection and a MySqlCommand when passed a
 /// MySqlConnection (etc).  Also provides central debugging/performance evaluation of the queries RDMP is using to access Catalogue databases etc via
-/// installing a ComprehensiveQueryPerformanceCounter.  
+/// installing a ComprehensiveQueryPerformanceCounter.
 /// </summary>
 public class DatabaseCommandHelper
 {
@@ -41,7 +41,7 @@ public class DatabaseCommandHelper
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
 
     /// <summary>
-    /// Sets the default Global timeout in seconds for new DbCommand objects being created 
+    /// Sets the default Global timeout in seconds for new DbCommand objects being created
     /// </summary>
     public static int GlobalTimeout = 30;
 
@@ -60,16 +60,14 @@ public class DatabaseCommandHelper
 
     public static IDiscoveredServerHelper For(DbCommand cmd)
     {
-        if (cmd is SqlCommand)
-            return _dbConHelpersByType[DatabaseType.MicrosoftSQLServer].GetServerHelper();
-        if (cmd is OracleCommand)
-            return _dbConHelpersByType[DatabaseType.Oracle].GetServerHelper();
-        if (cmd is MySqlCommand)
-            return _dbConHelpersByType[DatabaseType.MySql].GetServerHelper();
-        if (cmd is NpgsqlCommand)
-            return _dbConHelpersByType[DatabaseType.PostgreSql].GetServerHelper();
-
-        throw new NotSupportedException($"Didn't know what helper to use for DbCommand Type {cmd.GetType()}");
+        return cmd switch
+        {
+            SqlCommand => _dbConHelpersByType[DatabaseType.MicrosoftSQLServer].GetServerHelper(),
+            OracleCommand => _dbConHelpersByType[DatabaseType.Oracle].GetServerHelper(),
+            MySqlCommand => _dbConHelpersByType[DatabaseType.MySql].GetServerHelper(),
+            NpgsqlCommand => _dbConHelpersByType[DatabaseType.PostgreSql].GetServerHelper(),
+            _ => throw new NotSupportedException($"Didn't know what helper to use for DbCommand Type {cmd.GetType()}")
+        };
         //todo: add this method to implementation in FAnsi
         //return _dbConHelpersByType.Values.Single(i => i.IsFor(cmd)).GetServerHelper();
     }

@@ -18,8 +18,6 @@ internal class NewObjectPoolTests : UnitTests
     [Test]
     public void TwoCataloguesWithSameName_NoSession()
     {
-        SetupMEF();
-
         var cata1 = new Catalogue(Repository, "Hey");
 
         // When there is only one object we can pick it by name
@@ -36,8 +34,6 @@ internal class NewObjectPoolTests : UnitTests
     [Test]
     public void TwoCataloguesWithSameName_WithSession()
     {
-        SetupMEF();
-
         using (NewObjectPool.StartSession())
         {
             var cata1 = new Catalogue(Repository, "Hey");

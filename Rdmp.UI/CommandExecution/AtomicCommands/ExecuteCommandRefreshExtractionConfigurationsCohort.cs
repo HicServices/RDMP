@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Threading.Tasks;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -13,6 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Progress;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 
@@ -21,13 +21,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private Project _project;
 
     public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator,
         ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
-        _project = (Project)_extractionConfiguration.Project;
+        var project = (Project)_extractionConfiguration.Project;
 
         if (extractionConfiguration.Cohort_ID == null)
             SetImpossible("No Cohort Set");
@@ -35,8 +34,8 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         if (extractionConfiguration.CohortRefreshPipeline_ID == null)
             SetImpossible("No Refresh Pipeline Set");
 
-        if (!_project.ProjectNumber.HasValue)
-            SetImpossible($"Project '{_project}' does not have a Project Number");
+        if (!project.ProjectNumber.HasValue)
+            SetImpossible($"Project '{project}' does not have a Project Number");
     }
 
     public override string GetCommandHelp() =>
@@ -66,7 +65,7 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         {
             progressUi.ShowRunning(false);
 
-            //then on the UI thread 
+            //then on the UI thread
             if (s.IsFaulted)
                 return;
 

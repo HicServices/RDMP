@@ -67,9 +67,10 @@ public class AggregateBuilder : ISqlQueryBuilder
 
 
     private AggregateCountColumn _countColumn;
-    private QueryTimeColumn _pivotDimension = null;
-    private AggregateContinuousDateAxis _axis = null;
-    private AggregateDimension _axisAppliesToDimension = null;
+
+    private QueryTimeColumn _pivotDimension;
+    private AggregateContinuousDateAxis _axis;
+    private AggregateDimension _axisAppliesToDimension;
     private bool _isCohortIdentificationAggregate;
 
     /// <summary>
@@ -195,7 +196,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
     {
         if (limitationSQL != null && limitationSQL.Trim().StartsWith("top", StringComparison.CurrentCultureIgnoreCase))
-            throw new Exception("Use AggregateTopX property instead of limitation SQL to acheive this");
+            throw new Exception("Use AggregateTopX property instead of limitation SQL to achieve this");
 
         _aggregateConfigurationIfAny = aggregateConfigurationIfAny;
         LimitationSQL = limitationSQL;
@@ -321,8 +322,8 @@ public class AggregateBuilder : ISqlQueryBuilder
         //tell the count column what language it is
         if (_countColumn != null)
         {
-            _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null &&
-                                               _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
+            _isCohortIdentificationAggregate = _aggregateConfigurationIfAny is
+            { IsCohortIdentificationAggregate: true };
 
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
             _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper, !_isCohortIdentificationAggregate);
@@ -335,9 +336,9 @@ public class AggregateBuilder : ISqlQueryBuilder
             try
             {
                 _pivotDimension = SelectColumns.Single(
-                    qtc => qtc.IColumn is AggregateDimension dimension
+                    qtc => qtc.IColumn is AggregateDimension aggregateDimension
                            &&
-                           dimension.ID == _pivotID);
+                           aggregateDimension.ID == _pivotID);
             }
             catch (Exception e)
             {
@@ -498,7 +499,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                 //if there's a top X (with an explicit order by)
                 if (AggregateTopX != null)
                     queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy)
-                        { Role = CustomLineRole.TopX });
+                    { Role = CustomLineRole.TopX });
                 else
                     foreach (var col in SelectColumns)
                     {
@@ -644,16 +645,15 @@ public class AggregateBuilder : ISqlQueryBuilder
     private string GetOrderBySQL(IAggregateTopX aggregateTopX)
     {
         var dimension = aggregateTopX.OrderByColumn;
-        if (dimension == null)
-            return GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL, _countColumn.Alias)
-                   + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
-                       ? " asc"
-                       : " desc");
-
-        return GetGroupOrOrderByCustomLineBasedOn(dimension.SelectSQL, dimension.Alias)
-               + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
-                   ? " asc"
-                   : " desc");
+        return dimension == null
+            ? GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL, _countColumn.Alias)
+              + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
+                  ? " asc"
+                  : " desc")
+            : GetGroupOrOrderByCustomLineBasedOn(dimension.SelectSQL, dimension.Alias)
+              + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
+                  ? " asc"
+                  : " desc");
     }
 
 

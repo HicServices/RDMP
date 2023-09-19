@@ -11,7 +11,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// Destination component interface for Cohort Creation Pipelines.  Must fulfill the ICohortCreationRequest and populate the Cohort Source with the 
+/// Destination component interface for Cohort Creation Pipelines.  Must fulfill the ICohortCreationRequest and populate the Cohort Source with the
 /// identifiers supplied in the DataTable.
 /// </summary>
 public interface ICohortPipelineDestination : IDataFlowDestination<DataTable>,

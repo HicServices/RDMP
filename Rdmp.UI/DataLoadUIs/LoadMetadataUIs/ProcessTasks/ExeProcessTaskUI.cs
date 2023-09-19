@@ -72,14 +72,13 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
     private ExecutableRuntimeTask GetRuntimeTask()
     {
-        var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueRepository);
-
         var lmd = _processTask.LoadMetadata;
         var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
 
         //populate the UI with the args
         _runtimeTask =
-            (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
+            (ExecutableRuntimeTask)RuntimeTaskFactory.Create(_processTask,
+                argsDictionary.LoadArgs[_processTask.LoadStage]);
         tbExeCommand.Text = $"{_runtimeTask.ExeFilepath} {_runtimeTask.CreateArgString()}";
 
         return _runtimeTask;
@@ -87,7 +86,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
     private void btnRunExe_Click(object sender, EventArgs e)
     {
-        if (_runTask != null && !_runTask.IsCompleted)
+        if (_runTask is { IsCompleted: false })
         {
             MessageBox.Show("Exe is still running");
             return;

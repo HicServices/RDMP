@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 
@@ -103,7 +103,7 @@ public class DQEStateOverDataLoadRunId
         RowsPassingValidationByDataLoadRunID.TryAdd(dataLoadRunID, 0);
     }
 
-    private bool _correctValuesCalculated = false;
+    private bool _correctValuesCalculated;
 
     /// <summary>
     /// Calculates the final counts for each Column based on the validation failures documented to date.  You can only call this method once and it
@@ -121,20 +121,20 @@ public class DQEStateOverDataLoadRunId
         //per run id
         foreach (var dataLoadRunID in AllColumnStates.Keys)
             //per column
-        foreach (var column in AllColumnStates[dataLoadRunID])
-            //if it is a constrained column
-            if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var kvp))
-            {
-                //adjust our correct value downwards according to the results of the dictionary of failure
-                column.CountMissing = kvp[Consequence.Missing];
-                column.CountWrong = kvp[Consequence.Wrong];
-                column.CountInvalidatesRow = kvp[Consequence.InvalidatesRow];
+            foreach (var column in AllColumnStates[dataLoadRunID])
+                //if it is a constrained column
+                if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
+                    .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var consequence))
+                {
+                    //adjust our correct value downwards according to the results of the dictionary of failure
+                    column.CountMissing = consequence[Consequence.Missing];
+                    column.CountWrong = consequence[Consequence.Wrong];
+                    column.CountInvalidatesRow = consequence[Consequence.InvalidatesRow];
 
-                column.CountCorrect -= kvp[Consequence.Missing];
-                column.CountCorrect -= kvp[Consequence.Wrong];
-                column.CountCorrect -= kvp[Consequence.InvalidatesRow];
-            }
+                    column.CountCorrect -= consequence[Consequence.Missing];
+                    column.CountCorrect -= consequence[Consequence.Wrong];
+                    column.CountCorrect -= consequence[Consequence.InvalidatesRow];
+                }
     }
 
     public void CommitToDatabase(Evaluation evaluation, ICatalogue catalogue, DbConnection con,

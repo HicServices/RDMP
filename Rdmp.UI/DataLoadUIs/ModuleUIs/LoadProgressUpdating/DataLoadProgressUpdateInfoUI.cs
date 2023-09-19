@@ -16,13 +16,13 @@ using ScintillaNET;
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating;
 
 /// <summary>
-/// A LoadProgress object can be used as part of a LoadMetadata to record how far through a longitudinal loading task a load is (See LoadProgressUI).  This dialog lets you specify 
-/// how to update that LoadProgress after a succesful data load.  By default the data load engine will identify a window of days it wants to load (always in the past) e.g. 2001-01-01 to 
+/// A LoadProgress object can be used as part of a LoadMetadata to record how far through a longitudinal loading task a load is (See LoadProgressUI).  This dialog lets you specify
+/// how to update that LoadProgress after a succesful data load.  By default the data load engine will identify a window of days it wants to load (always in the past) e.g. 2001-01-01 to
 /// 2001-01-29 and the load will execute with that window available to load components.  However sometimes a load component will only find part of that date range is available e.g. the
-/// dataset fetched only contains data up until 2001-01-15.  In this case the component needs to update the progress (on success of data load) to the 2001-01-15 date instead.  This 
+/// dataset fetched only contains data up until 2001-01-15.  In this case the component needs to update the progress (on success of data load) to the 2001-01-15 date instead.  This
 /// dialog lets you do that by specifying one of 4 update strategies:
 /// 
-/// <para> UseMaxRequestedDay - uses the upper limit of the load window i.e. 2001-01-29 
+/// <para> UseMaxRequestedDay - uses the upper limit of the load window i.e. 2001-01-29
 ///  ExecuteScalarSQLInRAW - allows you to execute an SQL query in RAW bubble to determine the max date e.g. 'Select MAX(dtCreated) from MyTable'.  In the above example this would be 2001-01-15
 ///  ExecuteScalarSQLInLIVE - same as above except the SQL query is executed against the LIVE dataset post load (this is the super set of all existing dataset records + the records loaded in the data load)
 ///  DoNothing - The load progress is not updated, use this only if you have multiple components that share the same LoadProgress and you only want the last one to register for the progress update</para>
@@ -118,7 +118,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
     private void DataLoadProgressUpdateInfoUI_FormClosing(object sender, FormClosingEventArgs e)
     {
-        //use pressed Ok or Cancel 
+        //use pressed Ok or Cancel
         if (_programaticClose || CatalogueRepository == null)
             return;
 

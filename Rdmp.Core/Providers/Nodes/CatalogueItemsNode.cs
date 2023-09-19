@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.Providers.Nodes;
 
@@ -36,18 +36,17 @@ public class CatalogueItemsNode : Node, IOrderable
 
     public override string ToString()
     {
-        if (Category == null)
-            return "Non Extractable";
-
-        return Category switch
-        {
-            ExtractionCategory.Core => "Core Items",
-            ExtractionCategory.Supplemental => "Supplemental Items",
-            ExtractionCategory.SpecialApprovalRequired => "Special Approval Items",
-            ExtractionCategory.Internal => "Internal Items",
-            ExtractionCategory.Deprecated => "Deprecated Items",
-            _ => "Catalogue Items"
-        };
+        return Category == null
+            ? "Non Extractable"
+            : Category switch
+            {
+                ExtractionCategory.Core => "Core Items",
+                ExtractionCategory.Supplemental => "Supplemental Items",
+                ExtractionCategory.SpecialApprovalRequired => "Special Approval Items",
+                ExtractionCategory.Internal => "Internal Items",
+                ExtractionCategory.Deprecated => "Deprecated Items",
+                _ => "Catalogue Items"
+            };
     }
 
     protected bool Equals(CatalogueItemsNode other) =>
@@ -57,15 +56,8 @@ public class CatalogueItemsNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof(CatalogueItemsNode)) return false;
-        return Equals((CatalogueItemsNode)obj);
+        return obj.GetType() == typeof(CatalogueItemsNode) && Equals((CatalogueItemsNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return Catalogue.GetHashCode() * (Category?.GetHashCode() ?? -12342);
-        }
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue, Category);
 }

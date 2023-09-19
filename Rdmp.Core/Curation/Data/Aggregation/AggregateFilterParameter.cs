@@ -86,7 +86,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     }
 
     /// <summary>
-    /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this 
+    /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this
     /// constructor.
     /// </summary>
     /// <param name="repository"></param>

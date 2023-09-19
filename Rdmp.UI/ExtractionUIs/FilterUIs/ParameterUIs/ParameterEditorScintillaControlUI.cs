@@ -31,7 +31,7 @@ public delegate void ParameterEventHandler(object sender, ISqlParameter paramete
 /// </summary>
 public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 {
-    private Scintilla QueryEditor;
+    private readonly Scintilla QueryEditor;
 
     public event ParameterEventHandler ParameterSelected = delegate { };
     public event ParameterEventHandler ParameterChanged = delegate { };
@@ -53,9 +53,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
         gbCompiledView.Controls.Add(QueryEditor);
 
-        QueryEditor.KeyDown += new KeyEventHandler(QueryEditor_KeyDown);
-        QueryEditor.KeyUp += new KeyEventHandler(QueryEditor_KeyUp);
-        QueryEditor.MouseUp += new MouseEventHandler(QueryEditor_MouseUp);
+        QueryEditor.KeyDown += QueryEditor_KeyDown;
+        QueryEditor.KeyUp += QueryEditor_KeyUp;
+        QueryEditor.MouseUp += QueryEditor_MouseUp;
 
         QueryEditor.Leave += (s, e) => RegenerateSQL();
         ProblemObjects = new Dictionary<ISqlParameter, Exception>();
@@ -128,7 +128,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     private List<ParameterEditorScintillaSection> Sections = new();
 
     /// <summary>
-    /// Updates the Sql code for the current state of the <see cref="Options"/> 
+    /// Updates the Sql code for the current state of the <see cref="Options"/>
     /// </summary>
     public void RegenerateSQL()
     {
@@ -155,7 +155,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
                 try
                 {
-                    parameter.Check(new ThrowImmediatelyCheckNotifier());
+                    parameter.Check(ThrowImmediatelyCheckNotifier.Quiet);
                 }
                 catch (SyntaxErrorException errorException)
                 {
@@ -194,18 +194,16 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
         QueryEditor.ReadOnly = true;
 
-        var highlighter = new ScintillaLineHighlightingHelper();
         ScintillaLineHighlightingHelper.ClearAll(QueryEditor);
 
-        foreach (var section in Sections)
-            if (!section.Editable)
-                for (var i = section.LineStart; i <= section.LineEnd; i++)
-                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, i, Color.LightGray);
+        foreach (var section in Sections.Where(static section => !section.Editable))
+            for (var i = section.LineStart; i <= section.LineEnd; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
 
     private static int GetLineCount(string s)
     {
-        return s.Count(c => c.Equals('\n'));
+        return s.Count(static c => c.Equals('\n'));
     }
 }

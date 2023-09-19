@@ -35,7 +35,7 @@ public class TableInfoCloneOperation
     public bool AllowNulls { get; set; }
 
 
-    private bool _operationSucceeded = false;
+    private bool _operationSucceeded;
 
     public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo,
         LoadBubble copyToBubble, IDataLoadEventListener listener)
@@ -114,10 +114,8 @@ public class TableInfoCloneOperation
         using (var con = destDatabaseInfo.Server.GetConnection())
         {
             con.Open();
-            using (var cmd = destDatabaseInfo.Server.GetCommand(sql, con))
-            {
-                cmd.ExecuteNonQuery();
-            }
+            using var cmd = destDatabaseInfo.Server.GetCommand(sql, con);
+            cmd.ExecuteNonQuery();
         }
 
         if (!newTable.Exists())
@@ -153,7 +151,7 @@ public class TableInfoCloneOperation
             {
                 _listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Information,
-                        $"{colName} will be dropped because it is matches the gloabl ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
+                        $"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                 drop = true;
             }
 

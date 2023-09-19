@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -24,25 +23,22 @@ public class MEFChecker : ICheckable
 {
     private readonly string _classToFind;
     private readonly Action<string> _userAcceptedSubstitution;
-    private readonly MEF _mefPlugins;
 
     /// <summary>
     /// Setup the checker to look for a specific class within the defined Types in all assemblies loaded in MEF.  The Action will be called if the class name is found
     /// in a different namespace/assembly and the check handler accepts the proposed fix.  It is up to you to decide what to do with this information.
     /// </summary>
-    /// <param name="mefPlugins"></param>
     /// <param name="classToFind"></param>
     /// <param name="userAcceptedSubstitution"></param>
-    public MEFChecker(MEF mefPlugins, string classToFind, Action<string> userAcceptedSubstitution)
+    public MEFChecker(string classToFind, Action<string> userAcceptedSubstitution)
     {
-        _mefPlugins = mefPlugins;
         _classToFind = classToFind;
         _userAcceptedSubstitution = userAcceptedSubstitution;
     }
 
     /// <summary>
     /// Looks for the class name within the defined Types in all assemblies loaded in MEF.  If you pass an ICheckNotifier which responds to ProposedFixes and the class
-    /// is found under a different namespace (e.g. due to the coder of the plugin refactoring the class to a new location in his assembly) then the callback 
+    /// is found under a different namespace (e.g. due to the coder of the plugin refactoring the class to a new location in his assembly) then the callback
     /// userAcceptedSubstitution will be invoked.  Use AcceptAllCheckNotifier if you want the callback to always be called.
     /// </summary>
     /// <param name="notifier"></param>
@@ -58,7 +54,7 @@ public class MEFChecker : ICheckable
 
         var typeNameOnly = _classToFind[(_classToFind.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
 
-        var allTypes = _mefPlugins.GetAllTypes().ToArray();
+        var allTypes = MEF.GetAllTypes().ToArray();
 
         if (allTypes.Any(t => t.FullName.Equals(_classToFind)))
         {
@@ -73,33 +69,33 @@ public class MEFChecker : ICheckable
             switch (substitute.Length)
             {
                 case 0:
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Could not find MEF class called {_classToFind} in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
-                        CheckResult.Fail, null));
-
-                    var badAssemblies = _mefPlugins.ListBadAssemblies();
-
-                    if (badAssemblies.Any())
+                    {
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            "It is possible that the class you are looking for is in the BadAssemblies list",
+                            $"Could not find MEF class called {_classToFind} in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
                             CheckResult.Fail, null));
-                    foreach (var (assembly, exception) in badAssemblies)
-                        notifier.OnCheckPerformed(new CheckEventArgs($"Bad Assembly {assembly}", CheckResult.Warning,
-                            exception));
-                    break;
-                }
-                case 1:
-                {
-                    var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
-                        CheckResult.Fail, null,
-                        $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));
 
-                    if (acceptSubstitution)
-                        _userAcceptedSubstitution(substitute[0].FullName);
-                    break;
-                }
+                        var badAssemblies = MEF.ListBadAssemblies();
+
+                        if (badAssemblies.Any())
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                                "It is possible that the class you are looking for is in the BadAssemblies list",
+                                CheckResult.Fail, null));
+                        foreach (var (assembly, exception) in badAssemblies)
+                            notifier.OnCheckPerformed(new CheckEventArgs($"Bad Assembly {assembly}", CheckResult.Warning,
+                                exception));
+                        break;
+                    }
+                case 1:
+                    {
+                        var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
+                            CheckResult.Fail, null,
+                            $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));
+
+                        if (acceptSubstitution)
+                            _userAcceptedSubstitution(substitute[0].FullName);
+                        break;
+                    }
                 default:
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Could not find MEF class called {_classToFind}, we were looking for a suitable replacement (a Type with the same basic name) but we found {substitute.Length} substitutions! ({substitute.Aggregate("", (s, n) => $"{s}{n.FullName},")}",

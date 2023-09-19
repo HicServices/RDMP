@@ -36,7 +36,6 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 public partial class GenerateTestDataUI : RDMPForm
 {
     public HelpWorkflow HelpWorkflow { get; private set; }
-
     private int? _seed;
 
     public GenerateTestDataUI(IActivateItems activator, ICommandExecution command) : base(activator)
@@ -137,7 +136,7 @@ public partial class GenerateTestDataUI : RDMPForm
             btnGenerate.Enabled = true;
     }
 
-    private bool started = false;
+    private bool started;
 
     private List<DataGeneratorUI> Executing = new();
     private DirectoryInfo _extractDirectory;

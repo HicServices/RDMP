@@ -38,10 +38,9 @@ public abstract class PickObjectBase
     {
         var match = Regex.Match(arg);
 
-        if (!match.Success)
-            throw new InvalidOperationException("Regex did not match, no value could be parsed");
-
-        return match;
+        return !match.Success
+            ? throw new InvalidOperationException("Regex did not match, no value could be parsed")
+            : match;
     }
 
     public PickObjectBase(IBasicActivateItems activator, Regex regex)
@@ -50,15 +49,13 @@ public abstract class PickObjectBase
         Activator = activator;
     }
 
-    protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
+    protected static Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
-        var t = (GetTypeFromShortCodeIfAny(objectType) ??
-                 Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType)) ??
+        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Repositories.MEF.GetType(objectType)) ??
                 throw new CommandLineObjectPickerParseException("Could not recognize Type name", idx, arg);
-        if (!typeof(DatabaseEntity).IsAssignableFrom(t))
-            throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity", idx, arg);
-
-        return t;
+        return !typeof(DatabaseEntity).IsAssignableFrom(t)
+            ? throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity", idx, arg)
+            : t;
     }
 
     /// <summary>
@@ -68,13 +65,11 @@ public abstract class PickObjectBase
     /// <param name="possibleTypeName"></param>
     /// <param name="t"></param>
     /// <returns></returns>
-    protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
+    protected static bool IsDatabaseObjectType(string possibleTypeName, out Type t)
     {
-        var mef = Activator.RepositoryLocator.CatalogueRepository.MEF ??
-                  throw new Exception("MEF not loaded yet, program may not have loaded startup");
         try
         {
-            t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? mef.GetType(possibleTypeName);
+            t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? Repositories.MEF.GetType(possibleTypeName);
         }
         catch (Exception)
         {
@@ -86,7 +81,7 @@ public abstract class PickObjectBase
                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
     }
 
-    protected static Type GetTypeFromShortCodeIfAny(string possibleShortCode) =>
+    private static Type GetTypeFromShortCodeIfAny(string possibleShortCode) =>
         SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ? code : null;
 
     protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
@@ -102,7 +97,7 @@ public abstract class PickObjectBase
         return repo.GetAllObjects(type);
     }
 
-    private Dictionary<string, Regex> patternDictionary = new();
+    private readonly Dictionary<string, Regex> patternDictionary = new();
 
     /// <summary>
     /// Returns true if the <paramref name="pattern"/> (which is a simple non regex e.g. "Bio*") matches the ToString of <paramref name="o"/>
@@ -131,10 +126,9 @@ public abstract class PickObjectBase
         if (string.IsNullOrWhiteSpace(keyValueString))
             return null;
 
-        if (!keyValueString.StartsWith(key, StringComparison.CurrentCultureIgnoreCase))
-            throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'");
-
-        return keyValueString[key.Length..].Trim(':');
+        return !keyValueString.StartsWith(key, StringComparison.CurrentCultureIgnoreCase)
+            ? throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'")
+            : keyValueString[key.Length..].Trim(':');
     }
 
     public virtual IEnumerable<string> GetAutoCompleteIfAny() => null;

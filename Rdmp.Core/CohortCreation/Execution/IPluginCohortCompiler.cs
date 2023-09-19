@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Threading;
 using FAnsi.Naming;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation;
-using System.Threading;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 
@@ -36,7 +36,7 @@ public interface IPluginCohortCompiler
 
 
     /// <summary>
-    /// Must be implemented such that by the time the method completes the <paramref name="cache"/> 
+    /// Must be implemented such that by the time the method completes the <paramref name="cache"/>
     /// is populated with an identifier list that matches the expectations of <paramref name="ac"/>
     /// </summary>
     /// <param name="ac"></param>
@@ -46,7 +46,7 @@ public interface IPluginCohortCompiler
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently 
+    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently
     /// stored in <paramref name="aggregate"/>
     /// </summary>
     /// <param name="aggregate"></param>

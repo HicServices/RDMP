@@ -28,7 +28,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
     /// that will be released into the pipeline.  The source is fixed the destination and middle components are open.
     /// </summary>
     /// <param name="aggregateConfiguration">The aggregate query that will be run to generate the rows</param>
-    /// <param name="constrainByCohort">Only applies if <see cref="AggregateConfiguration"/> is a patient index table, specifying a cohort will only commit rows 
+    /// <param name="constrainByCohort">Only applies if <see cref="AggregateConfiguration"/> is a patient index table, specifying a cohort will only commit rows
     /// in which the patient id appears in the cohort</param>
     /// <param name="table">The destination table in which to put the matched records.
     /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existant table)</para></param>
@@ -38,7 +38,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
         if (constrainByCohort == null)
         {
             var src = new AggregateConfigurationTableSource();
-            src.PreInitialize(aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
+            src.PreInitialize(aggregateConfiguration, ThrowImmediatelyDataLoadEventListener.Quiet);
             src.TableName = table.GetRuntimeName();
             ExplicitSource = src;
         }
@@ -47,8 +47,8 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
             AddInitializationObject(constrainByCohort);
 
             var src = new PatientIndexTableSource();
-            src.PreInitialize(aggregateConfiguration, new ThrowImmediatelyDataLoadEventListener());
-            src.PreInitialize(constrainByCohort, new ThrowImmediatelyDataLoadEventListener());
+            src.PreInitialize(aggregateConfiguration, ThrowImmediatelyDataLoadEventListener.Quiet);
+            src.PreInitialize(constrainByCohort, ThrowImmediatelyDataLoadEventListener.Quiet);
             src.TableName = table.GetRuntimeName();
             ExplicitSource = src;
         }

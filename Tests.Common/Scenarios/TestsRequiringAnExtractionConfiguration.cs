@@ -139,7 +139,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         var tbl = Database.CreateTable("TestTable", dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
-        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out var cataItems, out _extractionInformations);
+        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out _, out _extractionInformations);
 
         var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;
@@ -158,8 +158,8 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
 
         var returnCode = runner.Run(
             RepositoryLocator,
-            new ThrowImmediatelyDataLoadEventListener(),
-            new ThrowImmediatelyCheckNotifier(),
+            ThrowImmediatelyDataLoadEventListener.Quiet,
+            ThrowImmediatelyCheckNotifier.Quiet,
             new GracefulCancellationToken());
 
         Assert.AreEqual(0, returnCode, "Return code from runner was non zero");
@@ -168,7 +168,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     protected void Execute(out ExtractionPipelineUseCase pipelineUseCase,
         out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
     {
-        listener ??= new ThrowImmediatelyDataLoadEventListener();
+        listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
 
         var d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true,
             new DiscoveredServer(UnitTestLoggingConnectionString));

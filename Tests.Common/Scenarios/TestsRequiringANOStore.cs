@@ -42,7 +42,7 @@ public class TestsRequiringANOStore : TestsRequiringA
 
         var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
 
-        scriptCreate.CreateAndPatchDatabase(new ANOStorePatcher(), new ThrowImmediatelyCheckNotifier());
+        scriptCreate.CreateAndPatchDatabase(new ANOStorePatcher(), ThrowImmediatelyCheckNotifier.Quiet);
     }
 
     private void CreateReferenceInCatalogueToANODatabase()
@@ -92,17 +92,15 @@ public class TestsRequiringANOStore : TestsRequiringA
         Console.WriteLine($"Truncating table {anoTable.TableName} on server {ANOStore_ExternalDatabaseServer}");
 
         var server = ANOStore_Database.Server;
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+        using (var cmdDelete = server.GetCommand(
+                   $"if exists (select top 1 * from sys.tables where name ='{anoTable.TableName}') TRUNCATE TABLE {anoTable.TableName}",
+                   con))
         {
-            con.Open();
-            using (var cmdDelete = server.GetCommand(
-                       $"if exists (select top 1 * from sys.tables where name ='{anoTable.TableName}') TRUNCATE TABLE {anoTable.TableName}",
-                       con))
-            {
-                cmdDelete.ExecuteNonQuery();
-            }
-
-            con.Close();
+            cmdDelete.ExecuteNonQuery();
         }
+
+        con.Close();
     }
 }

@@ -31,9 +31,7 @@ public abstract class CacheableTask : Compileable, ICacheableTask
             return false;
 
         var execution = _compiler.Tasks[this];
-        if (execution == null) return false;
-
-        return execution.SubQueries > execution.SubqueriesCached;
+        return execution != null && execution.SubQueries > execution.SubqueriesCached;
     }
 
     public bool CanDeleteCache() => _compiler.Tasks[this].SubqueriesCached > 0;

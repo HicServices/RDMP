@@ -5,30 +5,26 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
     private readonly Image<Rgba32> _default;
 
-    private readonly Dictionary<string, Image<Rgba32>> _assemblyToIconDictionary =
-        new();
+    private readonly Dictionary<string, Image<Rgba32>> _assemblyToIconDictionary = new();
+    private readonly DatabaseTypeIconProvider _typeSpecificIconsProvider;
 
-    private DatabaseTypeIconProvider _typeSpecificIconsProvider;
-
-    public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
+    public ExternalDatabaseServerStateBasedIconProvider()
     {
-        _overlayProvider = overlayProvider;
         _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
 
         _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,
@@ -48,10 +44,7 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
     public Image<Rgba32> GetIconForAssembly(Assembly assembly)
     {
         var assemblyName = assembly.GetName().Name;
-        if (_assemblyToIconDictionary.TryGetValue(assemblyName, out var forAssembly))
-            return forAssembly;
-
-        return _default;
+        return _assemblyToIconDictionary.TryGetValue(assemblyName, out var icon) ? icon : _default;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -75,10 +68,10 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
             toReturn = value;
 
         //add the database type overlay
-        toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
+        toReturn = IconOverlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
 
         if (dumpServerUsage != null)
-            toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Link);
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Link);
 
         return toReturn;
     }

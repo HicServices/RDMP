@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -33,20 +34,15 @@ public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
 
         base.LoadCompletedSoDispose(exitCode, postLoadEventListener);
 
-        foreach (var keyValuePair in _cacheFileMappings)
-        {
-            if (keyValuePair.Value == null)
-                continue;
-
+        foreach (var value in _cacheFileMappings.Values.Where(value => value != null))
             try
             {
-                keyValuePair.Value.Delete();
+                value.Delete();
             }
             catch (IOException e)
             {
                 Job.LogWarning(GetType().FullName,
-                    $"Could not delete cached file {keyValuePair.Value} ({e.Message})make sure to delete it manually otherwise Schedule and file system will be desynched");
+                    $"Could not delete cached file {value} ({e.Message}) - make sure to delete it manually otherwise Schedule and file system will be out of sync");
             }
-        }
     }
 }

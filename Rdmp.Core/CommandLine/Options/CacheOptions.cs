@@ -39,8 +39,11 @@ public class CacheOptions : RDMPCommandLineOptions
             yield return new Example("Run cache progress overriding RDMP platform databases (specified in .config)",
                 new CacheOptions
                 {
-                    Command = CommandLineActivity.run, CacheProgress = "2", ServerName = @"localhost\sqlexpress",
-                    CatalogueDatabaseName = "RDMP_Catalogue", DataExportDatabaseName = "RDMP_DataExport"
+                    Command = CommandLineActivity.run,
+                    CacheProgress = "2",
+                    ServerName = @"localhost\sqlexpress",
+                    CatalogueDatabaseName = "RDMP_Catalogue",
+                    DataExportDatabaseName = "RDMP_DataExport"
                 });
         }
     }

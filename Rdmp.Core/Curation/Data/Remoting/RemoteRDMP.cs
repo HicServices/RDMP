@@ -84,14 +84,11 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        if (_encryptedPasswordHost == null)
-            throw new Exception(
-                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-        return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
-    }
+    public string GetDecryptedPassword() =>
+        _encryptedPasswordHost == null
+            ? throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+            : _encryptedPasswordHost.GetDecryptedPassword() ?? "";
 
     public RemoteRDMP()
     {

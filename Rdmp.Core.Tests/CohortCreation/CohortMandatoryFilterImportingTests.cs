@@ -212,7 +212,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         try
         {
-            //import the Catalogue               
+            //import the Catalogue
             importedAggregate =
                 cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
             var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;

@@ -11,7 +11,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
@@ -26,13 +25,13 @@ namespace Rdmp.Core.DataLoad.Modules.FileOperations;
 
 /// <summary>
 /// load component which Unzips files in ForLoading
-/// <para>Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then 
+/// <para>Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then
 /// it is overwritten (unless the file size is also the same in which case the entry is skipped)</para>
 /// </summary>
 public class FileUnzipper : IPluginDataProvider
 {
     [DemandsInitialization(
-        "Leave blank to extract all zip archives or populate with a REGULAR EXPRESSION to extract only specific zip filenames e.g. \"nhs_readv2*\\.zip\" - notice the escaped dot to match absoltely the dot bit")]
+        "Leave blank to extract all zip archives or populate with a REGULAR EXPRESSION to extract only specific zip filenames e.g. \"nhs_readv2*\\.zip\" - notice the escaped dot to match the dot exactly")]
     public Regex ZipArchivePattern { get; set; }
 
     [DemandsInitialization(
@@ -48,65 +47,58 @@ public class FileUnzipper : IPluginDataProvider
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         foreach (var fileInfo in job.LoadDirectory.ForLoading.GetFiles("*.zip"))
+        {
             //do it as regex rather than in GetFiles above because that method probably doesn't do regex
-            if (ZipArchivePattern == null || string.IsNullOrWhiteSpace(ZipArchivePattern.ToString()) ||
-                ZipArchivePattern.IsMatch(fileInfo.Name))
-                using (var zipFile = ZipFile.Open(fileInfo.FullName, ZipArchiveMode.Read))
-                {
-                    //fire event telling user we found some files in the zip file 
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, zipFile.Entries.Aggregate(
-                        "Identified the following zip entries:", (s, n) =>
-                            $"{n.Name},").TrimEnd(',')));
+            if (ZipArchivePattern != null && !string.IsNullOrWhiteSpace(ZipArchivePattern.ToString()) &&
+                !ZipArchivePattern.IsMatch(fileInfo.Name)) continue;
+            using var zipFile = ZipFile.Open(fileInfo.FullName, ZipArchiveMode.Read);
+            //fire event telling user we found some files in the zip file
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, zipFile.Entries.Aggregate(
+                "Identified the following zip entries:", (s, n) =>
+                    $"{n.Name},").TrimEnd(',')));
 
 
-                    foreach (var entry in zipFile.Entries)
-                    {
-                        if (entry.Length == 0)
-                            continue;
+            foreach (var entry in zipFile.Entries)
+            {
+                if (entry.Length == 0)
+                    continue;
 
-                        //if we are matching everything or we are matching on a regex that matches the entry name
-                        if (ZipEntryPattern == null || string.IsNullOrWhiteSpace(ZipEntryPattern.ToString()) ||
-                            ZipEntryPattern.IsMatch(entry.Name))
-                        {
-                            //extract it
-                            var existingFile = job.LoadDirectory.ForLoading.GetFiles(entry.Name).FirstOrDefault();
+                //if we are matching everything or we are matching on a regex that matches the entry name
+                if (ZipEntryPattern != null && !string.IsNullOrWhiteSpace(ZipEntryPattern.ToString()) &&
+                    !ZipEntryPattern.IsMatch(entry.Name)) continue;
+                //extract it
+                var existingFile = job.LoadDirectory.ForLoading.GetFiles(entry.Name).FirstOrDefault();
 
-                            if (existingFile != null && existingFile.Length == entry.Length)
-                                continue;
+                if (existingFile != null && existingFile.Length == entry.Length)
+                    continue;
 
-                            UnzipWithEvents(entry, job.LoadDirectory, job);
-                        }
-                    }
-                }
+                UnzipWithEvents(entry, job.LoadDirectory, job);
+            }
+        }
 
         return ExitCodeType.Success;
     }
 
     private void UnzipWithEvents(ZipArchiveEntry entry, ILoadDirectory destination, IDataLoadJob job)
     {
-        //create a task 
+        //create a task
         var entryDestination = Path.Combine(destination.ForLoading.FullName, entry.Name);
-        var unzipJob = Task.Factory.StartNew(() => entry.ExtractToFile(entryDestination, true));
+        using var unzipJob = Task.Factory.StartNew(() => entry.ExtractToFile(entryDestination, true));
 
         //create a stopwatch to time how long bits take
-        var s = new Stopwatch();
-        s.Start();
-
-
+        var s = Stopwatch.StartNew();
         var f = new FileInfo(entryDestination);
         _entriesUnzipped.Add(f);
 
         //monitor it
         while (!unzipJob.IsCompleted)
         {
-            Thread.Sleep(200);
+            unzipJob.Wait(1000);
             if (f.Exists)
                 job.OnProgress(this,
                     new ProgressEventArgs(entryDestination,
                         new ProgressMeasurement((int)(f.Length / 1000), ProgressType.Kilobytes), s.Elapsed));
         }
-
-        s.Stop();
     }
 
     public string GetDescription() => throw new NotImplementedException();
@@ -116,13 +108,13 @@ public class FileUnzipper : IPluginDataProvider
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (exitCode == ExitCodeType.Success || exitCode == ExitCodeType.OperationNotRequired)
+        if (exitCode is ExitCodeType.Success or ExitCodeType.OperationNotRequired)
         {
-            var countOfEntriesThatDisapeared = _entriesUnzipped.Count(e => !e.Exists);
+            var countOfEntriesThatDisappeared = _entriesUnzipped.Count(e => !e.Exists);
 
-            if (countOfEntriesThatDisapeared != 0)
+            if (countOfEntriesThatDisappeared != 0)
                 postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                    $"{countOfEntriesThatDisapeared} of {_entriesUnzipped.Count} entries were created by {GetType().Name} during unzip phase but had disapeared at cleanup time - following successful data load"));
+                    $"{countOfEntriesThatDisappeared} of {_entriesUnzipped.Count} entries were created by {GetType().Name} during unzip phase but had disappeared at cleanup time - following successful data load"));
 
             //cleanup required
             foreach (var f in _entriesUnzipped.Where(e => e.Exists))

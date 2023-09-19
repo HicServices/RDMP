@@ -54,10 +54,7 @@ public class ItemValidator
 
         var result = ValidatePrimaryConstraint(columnValue);
 
-        if (result != null)
-            return result;
-
-        return ValidateSecondayConstraints(columnValue, otherColumns, otherColumnNames);
+        return result ?? ValidateSecondaryConstraints(columnValue, otherColumns, otherColumnNames);
     }
 
     private ValidationFailure ValidatePrimaryConstraint(object columnValue)
@@ -76,7 +73,7 @@ public class ItemValidator
         }
     }
 
-    private ValidationFailure ValidateSecondayConstraints(object columnValue, object[] otherColumns,
+    private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns,
         string[] otherColumnNames)
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
@@ -178,7 +175,7 @@ public class ItemValidator
     /// <returns>a String</returns>
     public string SaveToXml(bool indent = true)
     {
-        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes().ToArray());
 
         var sb = new StringBuilder();
 

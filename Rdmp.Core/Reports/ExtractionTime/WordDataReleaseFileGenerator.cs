@@ -5,12 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using NPOI.XWPF.UserModel;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
-using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports.ExtractionTime;
 
@@ -49,41 +50,36 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
     public void GenerateWordFile(string saveAsFilename)
     {
-        FileInfo f;
-
-        f = string.IsNullOrWhiteSpace(saveAsFilename)
+        var f = string.IsNullOrWhiteSpace(saveAsFilename)
             ? GetUniqueFilenameInWorkArea("ReleaseDocument")
             : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
-        using (var document = GetNewDocFile(f))
-        {
-            //actually changes it to landscape :)
-            SetLandscape(document);
+        using var document = GetNewDocFile(f);
+        //actually changes it to landscape :)
+        SetLandscape(document);
 
-            InsertHeader(document, $"Project:{Project.Name}", 1);
-            InsertHeader(document, Configuration.Name, 2);
+        InsertHeader(document, $"Project:{Project.Name}", 1);
+        InsertHeader(document, Configuration.Name, 2);
 
-            var disclaimer =
-                _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+        var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-            if (disclaimer != null)
-                InsertParagraph(document, disclaimer);
+        if (disclaimer != null)
+            InsertParagraph(document, disclaimer);
 
-            CreateTopTable1(document);
+        CreateTopTable1(document);
 
-            InsertParagraph(document, Environment.NewLine);
+        InsertParagraph(document, Environment.NewLine);
 
-            CreateCohortDetailsTable(document);
+        CreateCohortDetailsTable(document);
 
-            InsertParagraph(document, Environment.NewLine);
+        InsertParagraph(document, Environment.NewLine);
 
-            CreateFileSummary(document);
+        CreateFileSummary(document);
 
-            //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
-            if (string.IsNullOrWhiteSpace(saveAsFilename))
-                ShowFile(f);
-        }
+        //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
+        if (string.IsNullOrWhiteSpace(saveAsFilename))
+            ShowFile(f);
     }
 
     private void CreateTopTable1(XWPFDocument document)
@@ -128,19 +124,15 @@ public class WordDataReleaseFileGenerator : DocXHelper
         var ect = Cohort.ExternalCohortTable;
 
         var db = ect.Discover();
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
+        using var con = db.Server.GetConnection();
+        con.Open();
 
-            var sql =
-                $"SELECT  TOP 1 LEFT({Cohort.GetReleaseIdentifier()},3) FROM {ect.TableName} WHERE {Cohort.WhereSQL()}";
+        var sql =
+            $"SELECT  TOP 1 LEFT({Cohort.GetReleaseIdentifier()},3) FROM {ect.TableName} WHERE {Cohort.WhereSQL()}";
 
-            using (var cmd = db.Server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = CohortCountTimeoutInSeconds;
-                return (string)cmd.ExecuteScalar();
-            }
-        }
+        using var cmd = db.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = CohortCountTimeoutInSeconds;
+        return (string)cmd.ExecuteScalar();
     }
 
     private void CreateCohortDetailsTable(XWPFDocument document)
@@ -161,7 +153,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})"); //description fetched from remote table
 
         var lastExtracted = ExtractionResults.Any()
-            ? ExtractionResults.Max(r => r.DateOfExtraction).ToString()
+            ? ExtractionResults.Max(r => r.DateOfExtraction).ToString(CultureInfo.CurrentCulture)
             : "Never";
         SetTableCell(table, tableLine, 2, lastExtracted);
         SetTableCell(table, tableLine, 3,

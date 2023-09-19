@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -66,12 +65,12 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
         //Create all the nodes up front
         foreach (var o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
-        foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
-            _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+            foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
+                _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
         foreach (var o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
-        foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
-            _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+            foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
+                _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
         olvAllObjects.BeginUpdate();
         olvAllObjects.AddObjects(_locationNodes);
@@ -101,7 +100,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
     {
-        if (e == null || e.RowObject == null)
+        if (e?.RowObject == null)
             return;
 
         var node = (FindAndReplaceNode)e.RowObject;
@@ -118,13 +117,9 @@ public partial class FindAndReplaceUI : RDMPUserControl
         return node.PropertyName;
     }
 
-    private Bitmap ImageGetter(object rowObject)
-    {
-        if (rowObject == null)
-            return null;
-
-        return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
-    }
+    private Bitmap ImageGetter(object rowObject) => rowObject == null
+        ? null
+        : Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
 
 
     private void CheckedChanged(object sender, EventArgs e)
@@ -156,12 +151,10 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void tlvAllObjects_ItemActivate(object sender, EventArgs e)
     {
-        if (olvAllObjects.SelectedObject is FindAndReplaceNode node)
-        {
-            var cmd = new ExecuteCommandActivate(Activator, node.Instance);
-            if (!cmd.IsImpossible)
-                cmd.Execute();
-        }
+        if (olvAllObjects.SelectedObject is not FindAndReplaceNode node) return;
+        var cmd = new ExecuteCommandActivate(Activator, node.Instance);
+        if (!cmd.IsImpossible)
+            cmd.Execute();
     }
 
     private TextMatchFilter _textMatchFilter;

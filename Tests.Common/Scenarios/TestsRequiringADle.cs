@@ -79,7 +79,7 @@ public class TestsRequiringADle : TestsRequiringA
         //Get DleRunner to run pre load checks (includes trigger creation etc)
         var runner = new DleRunner(new DleOptions
             { LoadMetadata = TestLoadMetadata.ID.ToString(), Command = CommandLineActivity.check });
-        runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(),
+        runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
             new GracefulCancellationToken());
     }
 
@@ -173,13 +173,13 @@ public class TestsRequiringADle : TestsRequiringA
             //Get DleRunner to run pre load checks (includes trigger creation etc)
             var checker = new DleRunner(new DleOptions
                 { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check });
-            checker.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(),
+            checker.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
                 new GracefulCancellationToken(timeout, timeout));
         }
 
         var runner = new DleRunner(new DleOptions
             { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run });
-        runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(),
+        runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet,
             new GracefulCancellationToken(timeout, timeout));
     }
 }

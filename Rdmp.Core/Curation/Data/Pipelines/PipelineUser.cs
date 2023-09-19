@@ -12,7 +12,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Helper for standardising access to properties on a class which reference a Pipeline.  Because many classes reference Pipelines and some reference multiple Pipelines 
+/// Helper for standardising access to properties on a class which reference a Pipeline.  Because many classes reference Pipelines and some reference multiple Pipelines
 /// we use this class to abstract that away.  For example the CacheProgress constructor says to use "Pipeline_ID" int property.
 /// 
 /// <para>Currently used primarily by PipelineSelectionUIFactory </para>
@@ -36,7 +36,7 @@ public class PipelineUser : IPipelineUser
 
     /// <summary>
     /// Declares that the given <paramref name="property"/> (which must be nullable int) stores the ID (or null) of a <see cref="Pipeline"/> declared
-    /// in the RDMP platform databases.  The property must belong to <paramref name="user"/> 
+    /// in the RDMP platform databases.  The property must belong to <paramref name="user"/>
     /// </summary>
     /// <param name="property"></param>
     /// <param name="user"></param>
@@ -55,10 +55,9 @@ public class PipelineUser : IPipelineUser
         //otherwise get it from the user
         if (_catalogueRepository == null)
         {
-            if (User.Repository == null)
-                throw new Exception("User does not have a Repository! how can it be a DatabaseEntity!");
-
-            _catalogueRepository = User.Repository as ICatalogueRepository;
+            _catalogueRepository = User.Repository as ICatalogueRepository ??
+                                   throw new Exception(
+                                       "User does not have a Repository! how can it be a DatabaseEntity!");
 
             if (User.Repository is IDataExportRepository dataExportRepo)
                 _catalogueRepository = dataExportRepo.CatalogueRepository;
@@ -85,10 +84,7 @@ public class PipelineUser : IPipelineUser
     {
         var id = (int?)_property.GetValue(User);
 
-        if (id == null)
-            return null;
-
-        return _catalogueRepository.GetObjectByID<Pipeline>(id.Value);
+        return id == null ? null : _catalogueRepository.GetObjectByID<Pipeline>(id.Value);
     }
 
     private void Set(Pipeline newPipelineOrNull)

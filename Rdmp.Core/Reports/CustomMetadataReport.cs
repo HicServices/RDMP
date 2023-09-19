@@ -20,7 +20,7 @@ namespace Rdmp.Core.Reports;
 /// <summary>
 /// Create a custom report e.g. markdown, xml etc by taking a template file and replicating it with replacements for each <see cref="Catalogue"/> property
 /// </summary>
-public class CustomMetadataReport
+public partial class CustomMetadataReport
 {
     /// <summary>
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
@@ -203,9 +203,7 @@ public class CustomMetadataReport
         var total = columnStats.CountCorrect + columnStats.CountInvalidatesRow + columnStats.CountMissing +
                     columnStats.CountWrong;
 
-        if (total == 0) return null;
-
-        return $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
+        return total == 0 ? null : $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
     private Evaluation GetEvaluation(CatalogueItem ci) => GetEvaluation(ci.Catalogue);
@@ -290,12 +288,10 @@ public class CustomMetadataReport
                         var filename = DoReplacements(new[] { fileNaming }, catalogue, null,
                             ElementIteration.NotIterating).Trim();
 
-                        using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName, filename)))
-                        {
-                            sw.Write(newContents);
-                            sw.Flush();
-                            sw.Close();
-                        }
+                        using var sw = new StreamWriter(Path.Combine(outputDirectory.FullName, filename));
+                        sw.Write(newContents);
+                        sw.Flush();
+                        sw.Close();
                     }
                 }
             }
@@ -334,14 +330,13 @@ public class CustomMetadataReport
                 currentSection.Body.Add(str);
             }
             else
-                // is it a loop Catalogues
+            // is it a loop Catalogues
             if (str.Trim().Equals(LoopCatalogues))
             {
                 if (currentSection != null)
-                    if (currentSection.IsPlainText)
-                        yield return currentSection;
-                    else
-                        throw new CustomMetadataReportException(
+                    yield return currentSection.IsPlainText
+                        ? currentSection
+                        : throw new CustomMetadataReportException(
                             $"Unexpected '{str}' before the end of the last one on line {i + 1}", i + 1);
 
                 // start new section looping Catalogues
@@ -349,7 +344,7 @@ public class CustomMetadataReport
                 depth = 1;
             }
             else
-                // is it an end loop
+            // is it an end loop
             if (str.Trim().Equals(EndLoop))
             {
                 if (currentSection == null || currentSection.IsPlainText)
@@ -386,10 +381,9 @@ public class CustomMetadataReport
         }
 
         if (currentSection != null)
-            if (currentSection.IsPlainText)
-                yield return currentSection;
-            else
-                throw new CustomMetadataReportException(
+            yield return currentSection.IsPlainText
+                ? currentSection
+                : throw new CustomMetadataReportException(
                     $"Reached end of template without finding an expected {EndLoop}", templateBody.Length);
     }
 
@@ -510,20 +504,12 @@ public class CustomMetadataReport
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
-    private string ValueToString(object v)
-    {
-        if (v is ExtractionInformation ei) return ei.GetRuntimeName();
+    private string ValueToString(object v) =>
+        v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
 
-        return ReplaceNewlines(v?.ToString() ?? "");
-    }
-
-    public string ReplaceNewlines(string input)
-    {
-        if (input != null && NewlineSubstitution != null)
-            return Regex.Replace(input, "[\r]?\n", NewlineSubstitution);
-
-        return input;
-    }
+    public string ReplaceNewlines(string input) => input != null && NewlineSubstitution != null
+        ? Newline().Replace(input, NewlineSubstitution)
+        : input;
 
     /// <summary>
     /// Replace all templated strings (e.g. $Name) in the <paramref name="template"/> with the corresponding values in the <paramref name="catalogueItem"/>
@@ -553,4 +539,7 @@ public class CustomMetadataReport
             throw new CustomMetadataReportException(
                 $"Unexpected use of {Comma} outside of an iteration ($foreach) block", -1);
     }
+
+    [GeneratedRegex("[\r]?\n")]
+    private static partial Regex Newline();
 }

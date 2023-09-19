@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Terminal.Gui;
 
 
@@ -73,9 +73,9 @@ public partial class ConsoleGuiUserSettings
             return;
 
         if (_activator.SelectEnum(new DialogArgs
-            {
-                WindowTitle = "New Treatment"
-            }, typeof(CheckResult), out var newValue))
+        {
+            WindowTitle = "New Treatment"
+        }, typeof(CheckResult), out var newValue))
         {
             UserSettings.SetErrorReportingLevelFor(code, (CheckResult)newValue);
             row[1] = newValue.ToString();

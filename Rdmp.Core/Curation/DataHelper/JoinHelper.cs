@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
@@ -174,13 +173,8 @@ public class JoinHelper
     /// <param name="aliasNumber">the lookup number e.g. 1 gives lookup_1</param>
     /// <param name="requirePrefix">pass in true if you require the prefix " AS " (may vary depending on database context in future e.g. perhaps MySql refers to tables by different alias syntax)</param>
     /// <returns></returns>
-    public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false)
-    {
-        if (requirePrefix)
-            return $" AS lookup_{aliasNumber}";
-
-        return $"lookup_{aliasNumber}";
-    }
+    public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false) =>
+        requirePrefix ? $" AS lookup_{aliasNumber}" : $"lookup_{aliasNumber}";
 
 
     [Pure]
@@ -216,11 +210,6 @@ public class JoinHelper
     private static string AppendCollation(string sql, IJoin join) => AppendCollation(sql, join.Collation);
 
     [Pure]
-    private static string AppendCollation(string sql, string collation)
-    {
-        if (!string.IsNullOrWhiteSpace(collation))
-            return $"{sql} collate {collation}";
-
-        return sql;
-    }
+    private static string AppendCollation(string sql, string collation) =>
+        !string.IsNullOrWhiteSpace(collation) ? $"{sql} collate {collation}" : sql;
 }

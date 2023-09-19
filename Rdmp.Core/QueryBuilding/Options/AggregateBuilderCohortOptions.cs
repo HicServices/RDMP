@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding.Parameters;
 
@@ -32,13 +31,9 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
     }
 
     /// <inheritdoc/>
-    public string GetTitleTextPrefix(AggregateConfiguration aggregate)
-    {
-        if (aggregate.IsJoinablePatientIndexTable())
-            return "Patient Index Table:";
-
-        return "Cohort Identification Set:";
-    }
+    public string GetTitleTextPrefix(AggregateConfiguration aggregate) => aggregate.IsJoinablePatientIndexTable()
+        ? "Patient Index Table:"
+        : "Cohort Identification Set:";
 
     /// <inheritdoc/>
     public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
@@ -85,19 +80,14 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
     /// <inheritdoc/>
     public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
     {
-        switch (section)
+        return section switch
         {
-            case AggregateEditorSection.Extractable:
-                return false;
-            case AggregateEditorSection.TOPX:
-                return false;
-            case AggregateEditorSection.PIVOT:
-                return false;
-            case AggregateEditorSection.AXIS:
-                return false;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(section));
-        }
+            AggregateEditorSection.Extractable => false,
+            AggregateEditorSection.TOPX => false,
+            AggregateEditorSection.PIVOT => false,
+            AggregateEditorSection.AXIS => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(section))
+        };
     }
 
     /// <inheritdoc/>

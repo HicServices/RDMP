@@ -48,23 +48,21 @@ public class ColumnInfoToANOTableConverter
             throw new NotSupportedException(
                 $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
 
-            if (!IsOldColumnDroppable(con, notifier))
-                return false;
+        if (!IsOldColumnDroppable(con, notifier))
+            return false;
 
-            EnsureNoTriggerOnTable(tbl);
+        EnsureNoTriggerOnTable(tbl);
 
-            AddNewANOColumnInfo(shouldApplySql, con, notifier);
+        AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-            DropOldColumn(shouldApplySql, con, null);
+        DropOldColumn(shouldApplySql, con, null);
 
 
-            //synchronize again
-            new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
-        }
+        //synchronize again
+        new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
 
         return true;
     }
@@ -73,24 +71,22 @@ public class ColumnInfoToANOTableConverter
     {
         var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
 
-            if (!IsOldColumnDroppable(con, notifier))
-                return false;
+        if (!IsOldColumnDroppable(con, notifier))
+            return false;
 
-            EnsureNoTriggerOnTable(tbl);
+        EnsureNoTriggerOnTable(tbl);
 
-            AddNewANOColumnInfo(shouldApplySql, con, notifier);
+        AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-            MigrateExistingData(shouldApplySql, con, notifier, tbl);
+        MigrateExistingData(shouldApplySql, con, notifier, tbl);
 
-            DropOldColumn(shouldApplySql, con, null);
+        DropOldColumn(shouldApplySql, con, null);
 
-            //synchronize again
-            new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
-        }
+        //synchronize again
+        new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
 
         return true;
     }
@@ -129,48 +125,38 @@ public class ColumnInfoToANOTableConverter
             using (var dt = new DataTable())
             {
                 //get the existing data
-                using (var cmdGetExistingData =
-                       DatabaseCommandHelper.GetCommand(
-                           $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con))
-                {
-                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
-                    {
-                        da.Fill(dt); //into memory
+                using var cmdGetExistingData =
+                    DatabaseCommandHelper.GetCommand(
+                        $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con);
+                using var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData);
+                da.Fill(dt); //into memory
 
-                        //transform it in memory
-                        var transformer = new ANOTransformer(_toConformTo,
-                            new FromCheckNotifierToDataLoadEventListener(notifier));
-                        transformer.Transform(dt, dt.Columns[0], dt.Columns[1]);
+                //transform it in memory
+                var transformer =
+                    new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                transformer.Transform(dt, dt.Columns[0], dt.Columns[1]);
 
-                        var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
+                var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
 
-                        using (var insert = tempAnoMapTbl.BeginBulkInsert())
-                        {
-                            insert.Upload(dt);
-                        }
-                    }
-                }
+                using var insert = tempAnoMapTbl.BeginBulkInsert();
+                insert.Upload(dt);
             }
 
 
             //create an empty table for the anonymised data
-            using (var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
-                       string.Format(
-                           "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
-                           from, to, tbl.GetFullyQualifiedName()), con))
-            {
-                if (!shouldApplySql(cmdUpdateMainTable.CommandText))
-                    throw new Exception("User decided not to perform update on table");
-                cmdUpdateMainTable.ExecuteNonQuery();
-            }
+            using var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
+                string.Format(
+                    "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
+                    from, to, tbl.GetFullyQualifiedName()), con);
+            if (!shouldApplySql(cmdUpdateMainTable.CommandText))
+                throw new Exception("User decided not to perform update on table");
+            cmdUpdateMainTable.ExecuteNonQuery();
         }
         finally
         {
             //always drop the temp anomap
-            using (var dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
-            {
-                dropMappingTable.ExecuteNonQuery();
-            }
+            using var dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con);
+            dropMappingTable.ExecuteNonQuery();
         }
     }
 
@@ -180,10 +166,10 @@ public class ColumnInfoToANOTableConverter
         var alterSql = $"ALTER TABLE {_tableInfo.Name} Drop column {_colToNuke.GetRuntimeName(LoadStage.PostLoad)}";
 
         if (shouldApplySql(alterSql))
-            using (var cmd = DatabaseCommandHelper.GetCommand(alterSql, con, transaction))
-            {
-                cmd.ExecuteNonQuery();
-            }
+        {
+            using var cmd = DatabaseCommandHelper.GetCommand(alterSql, con, transaction);
+            cmd.ExecuteNonQuery();
+        }
         else
             throw new Exception($"User chose not to drop the old column {_colToNuke}");
     }

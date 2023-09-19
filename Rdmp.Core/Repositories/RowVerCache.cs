@@ -77,17 +77,15 @@ FROM
         CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
         WHERE SYS_CHANGE_OPERATION = 'D'";
 
-                using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
-                using (var r = cmd.ExecuteReader())
+                using var cmd = _repository.DiscoveredServer.GetCommand(sql, con);
+                using var r = cmd.ExecuteReader();
+                while (r.Read())
                 {
-                    while (r.Read())
-                    {
-                        //it might have been added and deleted by someone else and we never saw it
-                        var d = _cachedObjects.SingleOrDefault(o => o.ID == (int)r["ID"]);
+                    //it might have been added and deleted by someone else and we never saw it
+                    var d = _cachedObjects.SingleOrDefault(o => o.ID == (int)r["ID"]);
 
-                        if (d != null)
-                            _cachedObjects.Remove(d);
-                    }
+                    if (d != null)
+                        _cachedObjects.Remove(d);
                 }
             }
 
@@ -126,11 +124,11 @@ FROM
         var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
         if (table.Exists() && table.DiscoverColumns()
                 .Any(c => c.GetRuntimeName().Equals("RowVer", StringComparison.InvariantCultureIgnoreCase)))
-            using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
-            {
-                var result = cmd.ExecuteScalar();
-                _maxRowVer = result == DBNull.Value ? null : (byte[])result;
-            }
+        {
+            using var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con);
+            var result = cmd.ExecuteScalar();
+            _maxRowVer = result == DBNull.Value ? null : (byte[])result;
+        }
 
 
         using (var cmd =

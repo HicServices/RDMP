@@ -45,8 +45,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             SetupExtractDatasetCommand("ExtractionInformationPrimaryKey_IsRespected", new[] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
@@ -62,8 +62,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "PrivateID", "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length));
@@ -78,8 +78,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
@@ -98,8 +98,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "DateOfBirth" }, true, true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
@@ -121,8 +121,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
             new[] { "DateOfBirth" }, true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
-        source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
-        var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
         Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
@@ -207,7 +207,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
         dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
-
+            
         var tbl = Database.CreateTable(testTableName,
             dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });

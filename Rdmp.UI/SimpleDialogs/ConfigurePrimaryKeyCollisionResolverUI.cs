@@ -8,14 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.UI.ScintillaHelper;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.SimpleDialogs;
 
@@ -159,8 +160,8 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         top += lbConflictResolutionColumns.AutoScrollOffset.Y;
 
-        //this seems to count up the number of items that have been skipped rather than the pixels... wierdo crazy
-        var barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
+        //this seems to count up the number of items that have been skipped rather than the pixels... weird
+        var barpos = GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
         barpos *= lbConflictResolutionColumns.Font.Height;
         top -= barpos;
 
@@ -169,7 +170,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         var left = new Point(0, top);
         var right = new Point(lbConflictResolutionColumns.Width, top);
 
-        //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
+        //draw over the old one in the background colour (in case it has moved) - we don't want to leave trails
         g.DrawLine(new Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
             draggingOldRightPoint);
         g.DrawLine(new Pen(Color.Black, 2), left, right);
@@ -197,7 +198,10 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         lbConflictResolutionColumns.Items.Remove(data);
 
-        lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
+        if (originalIndex < index)
+            lbConflictResolutionColumns.Items.Insert(Math.Max(0, index - 1), data);
+        else
+            lbConflictResolutionColumns.Items.Insert(index, data);
 
         SaveOrderIntoDatabase();
     }
@@ -357,4 +361,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 .Distinct()
                 .Count() == 1; //if count of distinct directions is 1 then they are all in the same direction
     }
+
+    [LibraryImport("user32.dll")]
+    private static partial int GetScrollPos(IntPtr hWnd, Orientation nBar);
 }

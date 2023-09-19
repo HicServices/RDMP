@@ -4,23 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using SixLabors.ImageSharp;
-using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new set of paramter values that model a concept (e.g. dementia 
+/// Creates a new set of paramter values that model a concept (e.g. dementia
 /// ICD codes).  The filter must have parameters defined in it and the value
 /// set must provide accurate values for those parameters to model the concept
 /// </summary>
 public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExecution
 {
-    private ExtractionFilter _filter;
+    private readonly ExtractionFilter _filter;
 
     public ExecuteCommandAddNewExtractionFilterParameterSet(IBasicActivateItems activator, ExtractionFilter filter) :
         base(activator)

@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandLine.Options;
 /// </summary>
 [Verb("release",
     HelpText =
-        "Releases one or more ExtractionConfigurations (e.g. Cases & Controls) for an extraction Project that has been succesfully extracted via the Extraction Engine (see extract command)")]
+        "Releases one or more ExtractionConfigurations (e.g. Cases & Controls) for an extraction Project that has been successfully extracted via the Extraction Engine (see extract command)")]
 public class ReleaseOptions : ConcurrentRDMPCommandLineOptions
 {
     [Option('c', "Configurations",

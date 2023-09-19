@@ -19,9 +19,9 @@ namespace Rdmp.Core.Curation.Data.Governance;
 
 /// <summary>
 /// A GovernancePeriod is used to track the fact that a given set of datasets requires external approval for your agency to hold.  This is not the same as releasing data
-/// to researchers or researcher approval to get specific extracts from you.  Governance Periods are concerned only with your agency and its ability to hold datasets.  A 
+/// to researchers or researcher approval to get specific extracts from you.  Governance Periods are concerned only with your agency and its ability to hold datasets.  A
 /// GovernancePeriod starts at a specific date and can optionally expire.  A GovernancePeriod relates to one or more Catalogues but Catalogues can have multiple GovernancePeriods
-/// e.g. if you require to get approval from 2 different external agencies to hold a specific dataset.  
+/// e.g. if you require to get approval from 2 different external agencies to hold a specific dataset.
 /// 
 /// <para>GovernancePeriods are entirely optional, you can happily get by without configuring any for any of your Catalogues.  However once you have configured a GovernancePeriod for a
 /// specific Catalogue once then it will always require governance and be reported as Governance Expired in the Dashboard once its GovernancePeriod has expired.</para>
@@ -191,11 +191,5 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// True if the current date is after the <see cref="EndDate"/> (if there is one)
     /// </summary>
     /// <returns></returns>
-    public bool IsExpired()
-    {
-        if (EndDate == null)
-            return false;
-
-        return DateTime.Now.Date > EndDate.Value.Date;
-    }
+    public bool IsExpired() => EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
 }

@@ -72,7 +72,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
     private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new();
     private IActivateItems _activator;
 
-    private bool _allowScrollDown = false;
+    private bool _allowScrollDown;
     private RectangleF _rectScrollDown;
     private int _scrollDownIndexOffset = 0;
 
@@ -95,7 +95,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
         }
     }
 
-    private long frameLimiter = 0;
+    private long frameLimiter;
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
@@ -374,7 +374,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                         {
                             hoverLabel = _buckets[i].ToString("Y");
                             hoverValue =
-                                $"{$"{good:n0}"}/{$"{total:n0}"}";
+                                $"{good:n0}/{total:n0}";
                         }
                     }
 

@@ -23,48 +23,48 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// Also, a direct transfer from a C source to C# is not easy because there is a lot of pointer
 /// arithmetic in the typical C solutions and i need a managed solution.
 /// These are the reasons why I implemented the original published algorithm from the scratch and
-/// make it avaliable without the GNU license limitations.
+/// make it available without the GNU license limitations.
 /// I do not need a high performance diff tool because it is used only sometimes.
-/// I will do some performace tweaking when needed.</para>
+/// I will do some performance tweaking when needed.</para>
 /// 
 /// <para>The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
 /// each line is converted into a (hash) number. See DiffText(). </para>
 /// 
-/// <para>Some chages to the original algorithm:
+/// <para>Some changes to the original algorithm:
 /// The original algorithm was described using a recursive approach and comparing zero indexed arrays.
 /// Extracting sub-arrays and rejoining them is very performance and memory intensive so the same
-/// (readonly) data arrays are passed arround together with their lower and upper bounds.
+/// (readonly) data arrays are passed around together with their lower and upper bounds.
 /// This circumstance makes the LCS and SMS functions more complicate.
 /// I added some code to the LCS function to get a fast response on sub-arrays that are identical,
 /// completely deleted or inserted.</para>
 /// 
-/// <para>The result from a comparisation is stored in 2 arrays that flag for modified (deleted or inserted)
+/// <para>The result from a comparison is stored in 2 arrays that flag for modified (deleted or inserted)
 /// lines in the 2 data arrays. These bits are then analysed to produce a array of Item objects.</para>
 /// 
 /// <para>Further possible optimizations:
 /// (first rule: don't do it; second: don't do it yet)
 /// The arrays DataA and DataB are passed as parameters, but are never changed after the creation
-/// so they can be members of the class to avoid the paramter overhead.
+/// so they can be members of the class to avoid the parameter overhead.
 /// In SMS is a lot of boundary arithmetic in the for-D and for-k loops that can be done by increment
 /// and decrement of local variables.
-/// The DownVector and UpVector arrays are alywas created and destroyed each time the SMS gets called.
-/// It is possible to reuse tehm when transfering them to members of the class.</para>
+/// The DownVector and UpVector arrays are always created and destroyed each time the SMS gets called.
+/// It is possible to reuse them when transferring them to members of the class.</para>
 /// 
-/// <para>diff.cs: A port of the algorythm to C#
+/// <para>diff.cs: A port of the algorithm to C#
 /// Created by Matthias Hertel, see http://www.mathertel.de
 /// This work is licensed under a Creative Commons Attribution 2.0 Germany License.
 /// see http://creativecommons.org/licenses/by/2.0/de/</para>
 /// 
 /// <para>Changes:
 /// 2002.09.20 There was a "hang" in some situations.
-/// Now I undestand a little bit more of the SMS algorithm.
+/// Now I understand a little bit more of the SMS algorithm.
 /// There have been overlapping boxes; that where analyzed partial differently.
 /// One return-point is enough.
 /// A assertion was added in CreateDiffs when in debug-mode, that counts the number of equal (no modified) lines in both arrays.
 /// They must be identical.</para>
 /// 
 /// <para>2003.02.07 Out of bounds error in the Up/Down vector arrays in some situations.
-/// The two vetors are now accessed using different offsets that are adjusted using the start k-Line.
+/// The two vectors are now accessed using different offsets that are adjusted using the start k-Line.
 /// A test case is added. </para>
 /// 
 /// <para>2006.03.05 Some documentation and a direct Diff entry point.</para>
@@ -196,8 +196,8 @@ public class Diff
     /// <summary>
     /// Find the difference in 2 texts, comparing by textlines.
     /// </summary>
-    /// <param name="TextA">A-version of the text (usualy the old one)</param>
-    /// <param name="TextB">B-version of the text (usualy the new one)</param>
+    /// <param name="TextA">A-version of the text (usually the old one)</param>
+    /// <param name="TextB">B-version of the text (usually the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffText(string TextA, string TextB) =>
         DiffText(TextA, TextB, false, false, false); // DiffText
@@ -207,14 +207,14 @@ public class Diff
     /// Find the difference in 2 text documents, comparing by textlines.
     /// The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
     /// each line is converted into a (hash) number. This hash-value is computed by storing all
-    /// textlines into a common hashtable so i can find dublicates in there, and generating a
+    /// textlines into a common hashtable so i can find duplicates in there, and generating a
     /// new number each time a new textline is inserted.
     /// </summary>
-    /// <param name="TextA">A-version of the text (usualy the old one)</param>
-    /// <param name="TextB">B-version of the text (usualy the new one)</param>
-    /// <param name="trimSpace">When set to true, all leading and trailing whitespace characters are stripped out before the comparation is done.</param>
-    /// <param name="ignoreSpace">When set to true, all whitespace characters are converted to a single space character before the comparation is done.</param>
-    /// <param name="ignoreCase">When set to true, all characters are converted to their lowercase equivivalence before the comparation is done.</param>
+    /// <param name="TextA">A-version of the text (usually the old one)</param>
+    /// <param name="TextB">B-version of the text (usually the new one)</param>
+    /// <param name="trimSpace">When set to true, all leading and trailing whitespace characters are stripped out before the comparison is done.</param>
+    /// <param name="ignoreSpace">When set to true, all whitespace characters are converted to a single space character before the comparison is done.</param>
+    /// <param name="ignoreCase">When set to true, all characters are converted to their lowercase equivalents before the comparison is done.</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffText(string TextA, string TextB, bool trimSpace, bool ignoreSpace, bool ignoreCase)
     {
@@ -227,8 +227,6 @@ public class Diff
         // The B-Version of the data (modified data) to be compared.
         var DataB = new DiffData(DiffCodes(TextB, h, trimSpace, ignoreSpace, ignoreCase));
 
-        h = null; // free up hashtable memory (maybe)
-
         LCS(DataA, 0, DataA.Length, DataB, 0, DataB.Length);
         return CreateDiffs(DataA, DataB);
     } // DiffText
@@ -237,8 +235,8 @@ public class Diff
     /// <summary>
     /// Find the difference in 2 arrays of integers.
     /// </summary>
-    /// <param name="ArrayA">A-version of the numbers (usualy the old one)</param>
-    /// <param name="ArrayB">B-version of the numbers (usualy the new one)</param>
+    /// <param name="ArrayA">A-version of the numbers (usually the old one)</param>
+    /// <param name="ArrayB">B-version of the numbers (usually the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffInt(int[] ArrayA, int[] ArrayB)
     {
@@ -260,7 +258,7 @@ public class Diff
     /// <param name="aText">the input text</param>
     /// <param name="h">This extern initialized hashtable is used for storing all ever used textlines.</param>
     /// <param name="trimSpace">ignore leading and trailing space characters</param>
-    /// <param name="ignoreSpace">ignore whitespace differents e.g. double spaces vs single spaces</param>
+    /// <param name="ignoreSpace">ignore whitespace differences e.g. double spaces vs single spaces</param>
     /// <param name="ignoreCase">ignore capitalisation in comparison</param>
     /// <returns>a array of integers.</returns>
     private static int[] DiffCodes(string aText, Hashtable h, bool trimSpace, bool ignoreSpace, bool ignoreCase)
@@ -268,7 +266,7 @@ public class Diff
         // get all codes of the text
         var lastUsedCode = h.Count;
 
-        // strip off all cr, only use lf as textline separator.
+        // strip off all cr, only use lf as line separator.
         aText = aText.Replace("\r", "");
         var Lines = aText.Split('\n');
 

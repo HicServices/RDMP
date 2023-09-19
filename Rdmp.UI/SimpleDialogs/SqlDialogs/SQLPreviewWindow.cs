@@ -17,8 +17,6 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 /// </summary>
 public partial class SQLPreviewWindow : Form
 {
-    private ScintillaNET.Scintilla QueryEditor;
-
     public SQLPreviewWindow(string title, string msg, string sql)
     {
         InitializeComponent();
@@ -31,12 +29,12 @@ public partial class SQLPreviewWindow : Form
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
-        QueryEditor = new ScintillaTextEditorFactory().Create();
-        QueryEditor.Text = sql;
+        var queryEditor = new ScintillaTextEditorFactory().Create();
+        queryEditor.Text = sql;
 
-        QueryEditor.ReadOnly = true;
+        queryEditor.ReadOnly = true;
 
-        panel1.Controls.Add(QueryEditor);
+        panel1.Controls.Add(queryEditor);
         btnOk.Select();
     }
 

@@ -113,9 +113,8 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
 
         var pkConstraint = $"CONSTRAINT PK_{tableName} PRIMARY KEY ({pkColumn})";
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + string.Format(", " + SpecialFieldNames.ValidFrom + " DATETIME, " +
-                                                                    SpecialFieldNames.DataLoadRunID + " int, " +
-                                                                    pkConstraint);
+        var liveTableDefinition =
+            $"{columnDefinitions}, {SpecialFieldNames.ValidFrom} DATETIME, {SpecialFieldNames.DataLoadRunID} int, {pkConstraint}";
 
         if (fkConstraintString != null)
         {
@@ -143,8 +142,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
 
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out var cataItems,
-                out var extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _, out _);
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
 
@@ -154,11 +152,9 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
     public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
         string columnDefinitions)
     {
-        using (var conn = db.Server.GetConnection())
-        {
-            conn.Open();
-            CreateTableWithColumnDefinitions(db, tableName, columnDefinitions, conn);
-        }
+        using var conn = db.Server.GetConnection();
+        conn.Open();
+        CreateTableWithColumnDefinitions(db, tableName, columnDefinitions, conn);
     }
 
     public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,

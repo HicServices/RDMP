@@ -7,7 +7,7 @@
 
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
-//important to keep these in order of severity from least severe to most severe so > operations can be applied to Enum
+//important to keep these in order of severity from least sever to most severe so > operations can be applied to Enum
 public enum CheckResult
 {
     Success,

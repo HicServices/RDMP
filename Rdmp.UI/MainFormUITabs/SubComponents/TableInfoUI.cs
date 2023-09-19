@@ -24,9 +24,9 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents;
 
 /// <summary>
 /// Allows you to change a table reference (TableInfo) to point at a new location.  This should only be used when you have moved a dataset to a new database or server and you should select
-/// 'Synchronize' after you make this change. 
+/// 'Synchronize' after you make this change.
 /// 
-/// <para>The 'Synchronize' button will connect to the referenced server/database and check that it exists and that the columns in the database match the ColumnInfo collection in the Catalogue 
+/// <para>The 'Synchronize' button will connect to the referenced server/database and check that it exists and that the columns in the database match the ColumnInfo collection in the Catalogue
 /// database.  Synchronization happens automatically within the RDMP at some points (e.g. data load) but it is useful to manually do it sometimes if you know you have made a change to your
 /// database schema and want to update the Catalogue.</para>
 /// 
@@ -85,6 +85,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
         _tableInfo.IsView = cbIsView.Checked;
         _tableInfo.SaveToDatabase();
     }
+
 
     private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
     {

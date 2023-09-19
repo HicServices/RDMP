@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
@@ -14,11 +15,10 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.TestsAndSetup;
 
-public class RDMPBootStrapper<T> where T : RDMPForm, new()
+public class RDMPBootStrapper
 {
-    private readonly EnvironmentInfo _environmentInfo;
-    private string catalogueConnection;
-    private string dataExportConnection;
+    private string _catalogueConnection;
+    private string _dataExportConnection;
 
     /// <summary>
     /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
@@ -26,24 +26,22 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
     /// </summary>
     public static ResearchDataManagementPlatformOptions ApplicationArguments;
 
-    private readonly ResearchDataManagementPlatformOptions _args;
-    private T _mainForm;
+    private readonly Func<IRDMPPlatformRepositoryServiceLocator, RDMPForm> _formConstructor;
 
-
-    public RDMPBootStrapper(EnvironmentInfo environmentInfo, ResearchDataManagementPlatformOptions args)
+    public RDMPBootStrapper(ResearchDataManagementPlatformOptions args,
+        Func<IRDMPPlatformRepositoryServiceLocator, RDMPForm> constructor)
     {
         ApplicationArguments = args;
-        _args = args;
-        _environmentInfo = environmentInfo;
+        _formConstructor = constructor;
     }
 
-    private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase)
+    private static readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase)
     {
         // This error seems to come from ObjectTreeView but seems harmless
         "Value cannot be null. (Parameter 'owningItem')"
     };
 
-    public void Show(bool requiresDataExportDatabaseToo)
+    public void Show()
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -51,26 +49,23 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
         Application.ThreadException += (s, e) =>
         {
-            var msg = e.Exception?.Message;
-            if (msg != null && IgnoreExceptions.Contains(msg)) return;
-
-            GlobalExceptionHandler.Instance.Handle(s, e);
+            if (!IgnoreExceptions.Contains(e.Exception?.Message)) GlobalExceptionHandler.Instance.Handle(s, e);
         };
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
 
         try
         {
-            _args.GetConnectionStrings(out var c, out var d);
-            catalogueConnection = c?.ConnectionString;
-            dataExportConnection = d?.ConnectionString;
+            ApplicationArguments.GetConnectionStrings(out var c, out var d);
+            _catalogueConnection = c?.ConnectionString;
+            _dataExportConnection = d?.ConnectionString;
         }
         catch (Exception ex)
         {
-            if (!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.ConnectionStringsFile))
             {
                 var viewer = new ExceptionViewer("Failed to get connection strings",
-                    $"ConnectionStringsFile was '{_args.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}",
+                    $"ConnectionStringsFile was '{ApplicationArguments.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}",
                     ex);
                 viewer.ShowDialog();
             }
@@ -85,16 +80,16 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         try
         {
             //show the startup dialog
-            var startup = new Startup(_environmentInfo) { SkipPatching = _args.SkipPatching };
+            var startup = new Startup { SkipPatching = ApplicationArguments.SkipPatching };
 
-            if (!string.IsNullOrWhiteSpace(_args.Dir))
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.Dir))
             {
-                startup.RepositoryLocator = _args.GetRepositoryLocator();
+                startup.RepositoryLocator = ApplicationArguments.GetRepositoryLocator();
             }
-            else if (!string.IsNullOrWhiteSpace(catalogueConnection) &&
-                     !string.IsNullOrWhiteSpace(dataExportConnection))
+            else if (!string.IsNullOrWhiteSpace(_catalogueConnection) &&
+                     !string.IsNullOrWhiteSpace(_dataExportConnection))
             {
-                startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
+                startup.RepositoryLocator = new LinkedRepositoryProvider(_catalogueConnection, _dataExportConnection);
                 startup.RepositoryLocator.CatalogueRepository.TestConnection();
                 startup.RepositoryLocator.DataExportRepository.TestConnection();
             }
@@ -109,22 +104,19 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
             }
 
             //launch the main application form T
-            _mainForm = new T();
-
-            typeof(T).GetMethod("SetRepositoryLocator").Invoke(_mainForm, new object[] { startup.RepositoryLocator });
+            var mainForm = _formConstructor(startup.RepositoryLocator);
 
             if (startupUI.DoNotContinue)
                 return;
 
-            Application.Run(_mainForm);
+            Application.Run(mainForm);
         }
         catch (Exception e)
         {
-            if (!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
-                ExceptionViewer.Show($"Startup failed for '{_args.ConnectionStringsFile}'", e);
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.ConnectionStringsFile))
+                ExceptionViewer.Show($"Startup failed for '{ApplicationArguments.ConnectionStringsFile}'", e);
             else
                 ExceptionViewer.Show(e);
-            return;
         }
     }
 }

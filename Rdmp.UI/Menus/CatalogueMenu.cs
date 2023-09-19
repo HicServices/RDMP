@@ -47,7 +47,8 @@ internal class CatalogueMenu : RDMPContextMenuStrip
 
         Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue, null)
         {
-            OverrideCommandName = "New Lookup Table Relationship", Weight = -86.9f
+            OverrideCommandName = "New Lookup Table Relationship",
+            Weight = -86.9f
         }, Keys.None, AtomicCommandFactory.Add);
 
         if (!isApiCall)
@@ -65,36 +66,32 @@ internal class CatalogueMenu : RDMPContextMenuStrip
 
         ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
         Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue)
-            { SuggestedCategory = CatalogueItems, Weight = -99.049f });
+        { SuggestedCategory = CatalogueItems, Weight = -99.049f });
         Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, () => Clipboard.GetText())
-            { SuggestedCategory = CatalogueItems, Weight = -99.047f });
+        { SuggestedCategory = CatalogueItems, Weight = -99.047f });
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
-            { SuggestedCategory = CatalogueItems, Weight = -99.046f });
+        { SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)
-            { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true });
+        { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true });
         Add(new ExecuteCommandChangeExtractionCategory(_activator,
                 catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
-            { SuggestedCategory = CatalogueItems, Weight = -99.044f });
+        { SuggestedCategory = CatalogueItems, Weight = -99.044f });
         Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, catalogue, null /*pick at runtime*/)
-            { SuggestedCategory = CatalogueItems, Weight = -99.043f });
+        { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
         if (catalogue.LoadMetadata_ID != null)
         {
-            var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
-            if (dir == null) return;
-
-            DirectoryInfo dirReal;
+            if (catalogue.LoadMetadata.LocationOfFlatFiles == null) return;
             try
             {
-                dirReal = new DirectoryInfo(dir);
+                var dirReal = new DirectoryInfo(catalogue.LoadMetadata.LocationOfFlatFiles);
+                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
+                { OverrideCommandName = "Open Load Directory" });
             }
             catch (Exception)
             {
                 // if the directory name is bad or corrupt
-                return;
             }
-
-            Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory" });
         }
     }
 }

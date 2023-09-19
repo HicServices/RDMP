@@ -15,8 +15,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class IdentifierDumpServerUsageNode : Node, IDeleteable
 {
-    public TableInfo TableInfo { get; private set; }
-    public ExternalDatabaseServer IdentifierDumpServer { get; private set; }
+    public TableInfo TableInfo { get; }
+    public ExternalDatabaseServer IdentifierDumpServer { get; }
 
     public IdentifierDumpServerUsageNode(TableInfo tableInfo, ExternalDatabaseServer identifierDumpServer)
     {
@@ -36,7 +36,7 @@ public class IdentifierDumpServerUsageNode : Node, IDeleteable
         return Equals((IdentifierDumpServerUsageNode)obj);
     }
 
-    public override int GetHashCode() => TableInfo != null ? TableInfo.GetHashCode() : 0;
+    public override int GetHashCode() => System.HashCode.Combine(TableInfo);
 
     public void DeleteInDatabase()
     {

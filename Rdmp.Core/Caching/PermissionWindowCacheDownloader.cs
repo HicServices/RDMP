@@ -60,7 +60,7 @@ public class PermissionWindowCacheDownloader
 
     /// <summary>
     /// Single-shot, will either exit immediately if not in the permission window or run until either:
-    /// - the permission window expires, or 
+    /// - the permission window expires, or
     /// - all engines successfully complete execution.
     /// </summary>
     /// <param name="listener"></param>
@@ -229,12 +229,7 @@ public class PermissionWindowCacheDownloader
             }
     }
 
-    public override string ToString()
-    {
-        if (_permissionWindow == null)
-            return "Downloader (Any Time)";
-
-
-        return $"Downloader for {_permissionWindow.Name}";
-    }
+    public override string ToString() => _permissionWindow == null
+        ? "Downloader (Any Time)"
+        : $"Downloader for {_permissionWindow.Name}";
 }

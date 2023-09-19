@@ -69,12 +69,12 @@ internal class DatabaseOperationTests : DatabaseTests
             Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
                 $"{testLiveDatabaseName}_RAW").Exists());
 
-            //now create a catalogue and wire it SetUp to the table TEST on the test database server 
+            //now create a catalogue and wire it SetUp to the table TEST on the test database server
             var cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1");
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(new ThrowImmediatelyDataLoadEventListener(), tableInfo,
+                cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
                     LoadBubble.Raw);
 
             Assert.IsTrue(raw.Exists());
@@ -82,7 +82,7 @@ internal class DatabaseOperationTests : DatabaseTests
         }
         finally
         {
-            cloner.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+            cloner.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
             while (toCleanUp.Count > 0)
                 try
@@ -91,7 +91,7 @@ internal class DatabaseOperationTests : DatabaseTests
                 }
                 catch (Exception e)
                 {
-                    //always clean SetUp everything 
+                    //always clean SetUp everything
                     Console.WriteLine(e);
                 }
         }
@@ -115,12 +115,12 @@ internal class DatabaseOperationTests : DatabaseTests
         //and the TableInfo
         toCleanUp.Push(tableInfo);
 
-        //for each column we will add a new one to the 
+        //for each column we will add a new one to the
         foreach (var col in columnInfos)
         {
             //create it with the same name
             var cataItem = new CatalogueItem(CatalogueRepository, cat,
-                col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`'));
+                col.Name[(col.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)..].Trim('[', ']', '`'));
             toCleanUp.Push(cataItem);
 
             cataItem.SetColumnInfo(col);

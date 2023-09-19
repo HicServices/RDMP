@@ -14,10 +14,8 @@ using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -67,12 +65,15 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 {
     private ToolStripMenuItem cbIncludeCumulative = new("Calculate Cumulative Totals") { CheckOnClick = true };
     private ToolTip tt = new();
+
     private readonly ToolStripTimeout _timeoutControls = new() { Timeout = 3000 };
     private RDMPCollectionCommonFunctionality _commonFunctionality;
+
     private Timer timer = new();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
-    private CohortIdentificationConfigurationUICommon Common = new();
+
+    private CohortIdentificationConfigurationUICommon Common = new ();
 
     public CohortIdentificationConfigurationUI()
     {
@@ -132,7 +133,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"));
 
         tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
-        tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
+        tt.SetToolTip(btnAbortLoad, "Cancels execution of any running cohort sets");
     }
 
 
@@ -282,6 +283,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         e.Cancel = Common.ConsultAboutClosing();
     }
 
+
     private void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
     {
         Common.ExecuteOrCancel(e.Model);
@@ -373,7 +375,8 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
             e.Menu.Items.Add(
                 new ToolStripMenuItem("View Crash Message", null,
-                    (s, ev) => ViewCrashMessage(c)) { Enabled = c.CrashMessage != null });
+                    (s, ev) => ViewCrashMessage(c))
+                { Enabled = c.CrashMessage != null });
 
             e.Menu.Items.Add(
                 BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,
@@ -391,17 +394,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         var menuItem = new ToolStripMenuItem(title);
 
-        if (Common.Compiler.Tasks.TryGetValue(c, out var exe))
-        {
-            if (exe != null && enabledFunc(exe))
-                menuItem.Click += (s, e) => action(exe);
-            else
-                menuItem.Enabled = false;
-        }
+        if (Common.Compiler.Tasks.TryGetValue(c, out var task) && task != null && enabledFunc(task))
+            menuItem.Click += (s, e) => action(task);
         else
-        {
             menuItem.Enabled = false;
-        }
 
         return menuItem;
     }

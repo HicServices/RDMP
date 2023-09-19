@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.Curation.Data;
@@ -20,7 +20,6 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -46,20 +45,22 @@ public class CataloguePipelinesAndReferencesCreation
 
     private void DoStartup()
     {
-        var startup = new Startup.Startup(new EnvironmentInfo(), _repositoryLocator);
-        startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+        var startup = new Startup.Startup(_repositoryLocator);
+        startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
+
     private void CreateServers(PlatformDatabaseCreationOptions options)
     {
         var defaults = _repositoryLocator.CatalogueRepository;
-        if(options.CreateLoggingServer){
-            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
-                {
-                    Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
-                    Database = _logging.InitialCatalog
-                };
+        if (options.CreateLoggingServer)
+        {
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging", new LoggingDatabasePatcher())
+            {
+                Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
+                Database = _logging.InitialCatalog
+            };
 
-            if(_logging.UserID != null)
+            if (_logging.UserID != null)
             {
                 _edsLogging.Username = _logging.UserID;
                 _edsLogging.Password = _logging.Password;
@@ -71,10 +72,10 @@ public class CataloguePipelinesAndReferencesCreation
         }
 
         var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
-            {
-                Server = _dqe.DataSource,
-                Database = _dqe.InitialCatalog
-            };
+        {
+            Server = _dqe.DataSource,
+            Database = _dqe.InitialCatalog
+        };
 
         if (_dqe.UserID != null)
         {
@@ -92,7 +93,7 @@ public class CataloguePipelinesAndReferencesCreation
         };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
-        bool hasLoggingDB = _logging != null && _logging.UserID != null;
+        var hasLoggingDB = _logging != null && _logging.UserID != null;
         if (_dqe.UserID != null && hasLoggingDB)
         {
             if (_logging.UserID != _dqe.UserID || _logging.Password != _dqe.Password)
@@ -107,6 +108,7 @@ public class CataloguePipelinesAndReferencesCreation
         defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, edsRAW);
         Console.WriteLine("Successfully configured RAW server");
     }
+
 
     public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
@@ -123,11 +125,13 @@ public class CataloguePipelinesAndReferencesCreation
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
         SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-        if(options.CreateLoggingServer){
+        if (options.CreateLoggingServer)
+        {
             SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
             SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
         }
-        var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File",typeof (DelimitedFlatFileDataFlowSource), typeof (BasicCohortDestination));
+        var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File", typeof(DelimitedFlatFileDataFlowSource),
+            typeof(BasicCohortDestination));
         SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");
 
         CreatePipeline("CREATE COHORT:By Executing Cohort Identification Configuration",

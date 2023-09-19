@@ -12,13 +12,11 @@ namespace Rdmp.Core.Curation.Data.Dashboarding;
 
 public abstract class PersistableObjectCollection : IPersistableObjectCollection
 {
-    public PersistStringHelper Helper { get; private set; }
     public List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
 
     public PersistableObjectCollection()
     {
         DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
-        Helper = new PersistStringHelper();
     }
 
     public virtual string SaveExtraText() => "";
@@ -38,17 +36,5 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         return Equals((PersistableObjectCollection)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return
-                (397 * (DatabaseObjects != null
-                        ? DatabaseObjects.Aggregate(0, (old, curr) =>
-                            (old * 397) ^ (curr != null ? curr.GetHashCode() : 0))
-                        : 0)
-                ) ^
-                (SaveExtraText() != null ? SaveExtraText().GetHashCode() : 0);
-        }
-    }
+    public override int GetHashCode() => System.HashCode.Combine(DatabaseObjects, SaveExtraText());
 }

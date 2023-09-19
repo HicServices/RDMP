@@ -22,13 +22,13 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 
 /// <summary>
-/// Caching is method by which long term transfer tasks take place in the RDMP.  These are usually of files and are expected to run all the time (up to 24/7).  Cached data must always be 
+/// Caching is method by which long term transfer tasks take place in the RDMP.  These are usually of files and are expected to run all the time (up to 24/7).  Cached data must always be
 /// temporal (i.e. a given set of files must correspond to a specific time) such that cache requests for a specific date/time do not vary in real time.  The exact implementation of any
 /// caching task is done through a Pipeline.  Since caching is super bespoke, it is anticipated that you will have written your own caching data classes for use in your pipeline.
 /// 
 /// <para>Clicking 'Configure Caching Pipeline' will let you setup what happens during the caching activity.</para>
 /// 
-/// <para>Changing the 'Lag Period' to a positive number will indicate a period of time in which to NOT cache data (e.g. if you set it to 30 days then caching will always be suspended when it 
+/// <para>Changing the 'Lag Period' to a positive number will indicate a period of time in which to NOT cache data (e.g. if you set it to 30 days then caching will always be suspended when it
 /// has cached up to 1 month ago).</para>
 /// 
 /// <para>Setting a 'Permission Window' will create a restriction on the times of day in which caching can take place (e.g. between midnight and 4am only).</para>
@@ -51,7 +51,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design, ISaveableUI
         _bLoading = false;
     }
 
-    private bool _bLoading = false;
+    private bool _bLoading;
     private Control _pipelineSelectionUI;
 
     public override void SetDatabaseObject(IActivateItems activator, CacheProgress databaseObject)

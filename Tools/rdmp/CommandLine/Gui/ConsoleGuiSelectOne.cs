@@ -58,6 +58,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),
                 StringComparer.CurrentCultureIgnoreCase)
         };
+
     }
 
     protected override void AddMoreButtonsAfter(Window win, Button btnCancel)
@@ -68,7 +69,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             Y = Pos.Top(btnCancel)
         };
         win.Add(lbl);
-
+            
         txtId = new TextField
         {
             X = Pos.Right(lbl),
@@ -93,12 +94,11 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
         else
             _scorer.ID = null;
 
-        var dict = _scorer.ScoreMatches(_masterCollection, searchText, token, null);
+        var dict = _scorer.ScoreMatches(_masterCollection, searchText, null, token);
 
         //can occur if user punches many keys at once
-        if (dict == null)
-            return new List<IMapsDirectlyToDatabaseTable>();
-
-        return SearchablesMatchScorer.ShortList(dict, MaxMatches, _activator);
+        return dict == null
+            ? new List<IMapsDirectlyToDatabaseTable>()
+            : (IList<IMapsDirectlyToDatabaseTable>)SearchablesMatchScorer.ShortList(dict, MaxMatches, _activator);
     }
 }

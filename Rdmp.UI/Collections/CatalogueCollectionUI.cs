@@ -25,11 +25,11 @@ namespace Rdmp.UI.Collections;
 /// <summary>
 /// Main window for Data Management, this Control lets you view all your datasets, curate descriptive metadata, configure extractable columns, generate reports etc
 /// 
-/// <para>The tree shows you all the datasets you have configured for use with the RDMP.  Double clicking on a dataset (called a Catalogue) will show you the descriptive data you 
+/// <para>The tree shows you all the datasets you have configured for use with the RDMP.  Double clicking on a dataset (called a Catalogue) will show you the descriptive data you
 /// have recorded. Right clicking a Catalogue will give you access to operations relevant to Catalogues (e.g. viewing dataset extraction logic if any).  Right clicking a
 /// CatalogueItem will give you access to operations relevant to CatalogueItems (e.g. adding an Issue).  And so on.</para>
 /// 
-/// <para>Each Catalogue has 1 or more CatalogueItems (visible through the CatalogueItems tab), these are the columns in the dataset that are maintained by RDMP. If you have very 
+/// <para>Each Catalogue has 1 or more CatalogueItems (visible through the CatalogueItems tab), these are the columns in the dataset that are maintained by RDMP. If you have very
 /// wide data tables with hundreds of columns you might only configure a subset of those columns (the ones most useful  to researchers) for extraction.</para>
 /// 
 /// <para>You can also drag Catalogues between folders or into other Controls (e.g. dragging a Catalogue into a CohortIdentificationCollectionUI container to add the dataset to the identification
@@ -67,10 +67,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         if (rowobject is CatalogueItem ci)
             return ci.ExtractionInformation?.Order;
 
-        if (rowobject is ConcreteColumn o)
-            return o.Order;
-
-        return null;
+        return rowobject is ConcreteColumn o ? o.Order : (object)null;
     }
 
     protected override void OnEnter(EventArgs e)
@@ -83,7 +80,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     //The color to highlight each Catalogue based on its extractability status
 
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -210,7 +207,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             tlvCatalogues,
             Activator,
             olvColumn1, //the icon column
-            //we have our own custom filter logic so no need to pass tbFilter
+                        //we have our own custom filter logic so no need to pass tbFilter
             olvColumn1 //also the renameable column
         );
 
@@ -275,25 +272,27 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         var o = e.Object;
 
-        if (o is GovernancePeriod || o is GovernanceDocument)
-            tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
-
-        if (o is Catalogue cata)
+        switch (o)
         {
-            //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-            if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
-                RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
-            else
+            case GovernancePeriod or GovernanceDocument:
+                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
+                break;
+            case Catalogue cata:
+                {
+                    //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
+                    if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
+                        RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+                    else
+                        RefreshUIFromDatabase(o);
+                    return;
+                }
+            case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter
+                or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation
+                or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
+                //then refresh us
                 RefreshUIFromDatabase(o);
-            return;
+                break;
         }
-
-        if (o is CatalogueItem || o is AggregateConfiguration ||
-            o is ColumnInfo || o is TableInfo || o is ExtractionFilter || o is ExtractionFilterParameter ||
-            o is ExtractionFilterParameterSet || o is ExtractionInformation ||
-            o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter)
-            //then refresh us
-            RefreshUIFromDatabase(o);
 
         ApplyFilters();
     }

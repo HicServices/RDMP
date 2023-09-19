@@ -249,11 +249,15 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
-        Periodicity =
-            periodicity == null || periodicity == DBNull.Value || !Enum.TryParse(periodicity.ToString(), true,
-                out Catalogue.CataloguePeriodicity periodicityAsEnum)
-                ? Catalogue.CataloguePeriodicity.Unknown
-                : periodicityAsEnum;
+        if (periodicity == null || periodicity == DBNull.Value)
+            Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        else
+        {
+            if(Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
+                Periodicity = periodicityAsEnum;
+            else
+                Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        }
 
         ClearAllInjections();
     }
@@ -282,13 +286,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     private ExtractionInformation FetchExtractionInformationIfAny() =>
         Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
 
-    private ColumnInfo FetchColumnInfoIfAny()
-    {
-        if (!ColumnInfo_ID.HasValue)
-            return null;
-
-        return Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
-    }
+    private ColumnInfo FetchColumnInfoIfAny() =>
+        !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
 
     /// <inheritdoc/>
     public void InjectKnown(ExtractionInformation instance)
@@ -312,7 +311,9 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is CatalogueItem) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
+        if (obj is CatalogueItem)
+            return -string.Compare(obj.ToString(), ToString(),
+                StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }

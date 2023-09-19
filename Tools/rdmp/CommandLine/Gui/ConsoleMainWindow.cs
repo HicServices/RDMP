@@ -4,6 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -11,12 +14,9 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Terminal.Gui;
 using Terminal.Gui.Trees;
@@ -263,8 +263,9 @@ internal class ConsoleMainWindow
 
         if (model is IDisableable d) return d.IsDisabled ? $"{d} (Disabled)" : d.ToString();
 
-        if (model is IArgument arg) return $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})";
-        return model?.ToString() ?? "Null Object";
+        return model is IArgument arg
+            ? $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})"
+            : model?.ToString() ?? "Null Object";
     }
 
     private void Publish()
@@ -393,13 +394,10 @@ internal class ConsoleMainWindow
         }
     }
 
-    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
-    {
-        if (o is IMasqueradeAs masquerade)
-            return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
-
-        return o as IMapsDirectlyToDatabaseTable;
-    }
+    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o) =>
+        o is IMasqueradeAs masquerade
+            ? masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable
+            : o as IMapsDirectlyToDatabaseTable;
 
 
     private IEnumerable<object> ChildGetter(object model)
@@ -487,10 +485,7 @@ internal class ConsoleMainWindow
 
         if (type == typeof(ExtractableCohort))
             return BuiltCohorts;
-        if (GetOtherCategoryChildren().Any(a => a.Equals(o)))
-            return Other;
-
-        return null;
+        return GetOtherCategoryChildren().Any(a => a.Equals(o)) ? Other : null;
     }
 
     private void Run()

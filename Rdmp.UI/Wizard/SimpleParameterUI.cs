@@ -15,21 +15,19 @@ namespace Rdmp.UI.Wizard;
 
 /// <summary>
 /// Part of SimpleFilterUI.  Allows you to specify the value of a given parameter of the filter.  There can be multiple parameters on a given filter (or none).  For example a filter
-/// 'Drug Prescribed' might have a parameter @drugName and another @amountPrescribed.  
+/// 'Drug Prescribed' might have a parameter @drugName and another @amountPrescribed.
 /// </summary>
 public partial class SimpleParameterUI : UserControl
 {
-    private readonly IActivateItems _activator;
     private readonly ISqlParameter _parameter;
 
     public SimpleParameterUI(IActivateItems activator, ISqlParameter parameter)
     {
-        _activator = activator;
         _parameter = parameter;
         InitializeComponent();
 
         lblParameterName.Text = parameter.ParameterName.TrimStart('@');
-        pbParameter.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap();
+        pbParameter.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap();
 
         tbValue.Text = parameter.Value;
 

@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// A reusable regular expression which is available system wide.  Use these to record important standardised concepts which you need to use in RDMP.  For example if you have a
-/// forbidlist for forbidden column names instead of copying and pasting the definition everywhere and into plugins etc you can define it once in the catalogue database as a 
+/// forbidlist for forbidden column names instead of copying and pasting the definition everywhere and into plugins etc you can define it once in the catalogue database as a
 /// StandardRegex with a description and then everyone can link against it and have access to a centralised description.  This prevents you having multiple arguments getting out
 /// of sync in Pipeline components for example.
 /// </summary>
@@ -92,15 +92,15 @@ public class StandardRegex : DatabaseEntity, ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        if (!string.IsNullOrWhiteSpace(Regex))
-            try
-            {
-                new Regex(Regex);
-                notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
-            }
-            catch (ArgumentException ex)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Regex is invalid", CheckResult.Fail, ex));
-            }
+        if (string.IsNullOrWhiteSpace(Regex)) return;
+        try
+        {
+            _ = new Regex(Regex);
+            notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
+        }
+        catch (ArgumentException ex)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Regex is invalid", CheckResult.Fail, ex));
+        }
     }
 }

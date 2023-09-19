@@ -40,7 +40,7 @@ public class RefreshBus
     {
         if (PublishInProgress)
             throw new SubscriptionException(
-                $"Refresh Publish Cascade error.  Subscriber {sender} just attempted a publish during an existing publish execution, cylic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
+                $"Refresh Publish Cascade error.  Subscriber {sender} just attempted a publish during an existing publish execution, cyclic inception publishing is not allowed, you cannot respond to a refresh callback by issuing more refresh publishes");
 
         lock (oPublishLock)
         {
@@ -108,7 +108,7 @@ public class RefreshBus
             return;
 
         if (c is not ContainerControl containerControl)
-            throw new ArgumentOutOfRangeException();
+            throw new ArgumentOutOfRangeException(nameof(c));
 
         var parentForm = containerControl.ParentForm ?? throw new ArgumentException(
             "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",

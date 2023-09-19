@@ -11,9 +11,11 @@ using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
-internal class PickType : PickObjectBase
+internal partial class PickType : PickObjectBase
 {
-    public PickType(IBasicActivateItems activator) : base(activator, new Regex(".*"))
+    private static readonly Regex NonEmptyRegex = MyRegex();
+
+    public PickType(IBasicActivateItems activator) : base(activator, NonEmptyRegex)
     {
     }
 
@@ -25,7 +27,7 @@ internal class PickType : PickObjectBase
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx) => new(arg, idx, GetType(arg));
 
-    private Type GetType(string arg)
+    private static Type GetType(string arg)
     {
         if (string.IsNullOrWhiteSpace(arg))
             return null;
@@ -33,14 +35,16 @@ internal class PickType : PickObjectBase
         try
         {
             return
-                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix +
-                                                                            arg)
+                Repositories.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
                 ??
-                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
+                Repositories.MEF.GetType(arg);
         }
         catch (Exception)
         {
             return null;
         }
     }
+
+    [GeneratedRegex(".*")]
+    private static partial Regex MyRegex();
 }

@@ -56,7 +56,7 @@ namespace Tests.Common;
 [TestFixture]
 [NonParallelizable]
 [Category("Database")]
-public class DatabaseTests
+public partial class DatabaseTests
 {
     protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     protected static TestDatabasesSettings TestDatabaseSettings;
@@ -212,7 +212,7 @@ public class DatabaseTests
                 if (k is "server" or "database" or "user id" or "password")
                     continue;
 
-                new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
+                _ = new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
             }
 
             _discoveredMySqlServer = new DiscoveredServer(builder);
@@ -391,7 +391,7 @@ public class DatabaseTests
         DeleteAll<PipelineComponent>(y);
 
         DeleteAll<LoadModuleAssembly>(y);
-        DeleteAll<Rdmp.Core.Curation.Data.Plugin>(y);
+        DeleteAll<Plugin>(y);
 
         DeleteAll<ReleaseLog>(y);
         DeleteAll<SupplementalExtractionResults>(y);
@@ -435,18 +435,13 @@ public class DatabaseTests
     [OneTimeSetUp]
     protected virtual void OneTimeSetUp()
     {
-        //if it is the first time
-        if (_startup == null)
-        {
-            _startup = new Startup(new EnvironmentInfo(), RepositoryLocator);
+        // Only run the first time
+        if (_startup != null) return;
 
-            _startup.DatabaseFound += StartupOnDatabaseFound;
-            _startup.MEFFileDownloaded += StartupOnMEFFileDownloaded;
-            _startup.PluginPatcherFound += StartupOnPluginPatcherFound;
-            _startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
-        }
-
-        RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
+        _startup = new Startup(RepositoryLocator);
+        _startup.DatabaseFound += StartupOnDatabaseFound;
+        _startup.PluginPatcherFound += StartupOnPluginPatcherFound;
+        _startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
 
     /// <summary>
@@ -501,15 +496,6 @@ public class DatabaseTests
     {
         Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}",
             args.Status, args.Type.Name, Environment.NewLine,
-            args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
-    }
-
-    private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
-    {
-        Assert.IsTrue(
-            args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock,
-            "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed,
-            Environment.NewLine,
             args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
 
@@ -693,7 +679,7 @@ delete from {1}..Project
     /// <returns></returns>
     protected static string CollapseWhitespace(string sql) =>
         //replace all whitespace with single spaces
-        Regex.Replace(sql, @"\s+", " ").Trim();
+        Spaces().Replace(sql, " ").Trim();
 
     private HashSet<DiscoveredDatabase> forCleanup = new();
 
@@ -779,23 +765,23 @@ delete from {1}..Project
         var syntax = database.Server.GetQuerySyntaxHelper();
 
         if (database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
-            using (var con = database.Server.GetConnection())
-            {
-                con.Open();
-                foreach (var t in database.DiscoverTables(false))
-                    //disable system versioning on any temporal tables otherwise drop fails
-                    try
-                    {
-                        t.Database.Server.GetCommand(
-                            $@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
+        {
+            using var con = database.Server.GetConnection();
+            con.Open();
+            foreach (var t in database.DiscoverTables(false))
+                //disable system versioning on any temporal tables otherwise drop fails
+                try
+                {
+                    t.Database.Server.GetCommand(
+                        $@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
         ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)", con).ExecuteNonQuery();
-                    }
-                    catch (Exception)
-                    {
-                        TestContext.Out.WriteLine(
-                            $"Failed to generate disable System Versioning check for table {t} (nevermind)");
-                    }
-            }
+                }
+                catch (Exception)
+                {
+                    TestContext.Out.WriteLine(
+                        $"Failed to generate disable System Versioning check for table {t} (never mind)");
+                }
+        }
 
         var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
 
@@ -836,10 +822,9 @@ delete from {1}..Project
     protected ICatalogue Import(DiscoveredTable tbl) => Import(tbl, out _, out _, out _, out _);
 
     protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,
-        out ColumnInfo[] columnInfosCreated) => Import(tbl, out tableInfoCreated, out columnInfosCreated,
-        out var catalogueItems, out var extractionInformations);
+        out ColumnInfo[] columnInfosCreated) => Import(tbl, out tableInfoCreated, out columnInfosCreated, out _, out _);
 
-    protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
+    protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
         if (resultTable.Columns.Count != rowObjects.Length)
             Assert.Fail(
@@ -875,11 +860,10 @@ delete from {1}..Project
             return oIsNull == o2IsNull;
 
         //they are not null so tostring them deals with int vs long etc that DbDataAdapters can be a bit flaky on
-        if (handleSlashRSlashN)
-            return string.Equals(o.ToString().Replace("\r", "").Replace("\n", ""),
-                o2.ToString().Replace("\r", "").Replace("\n", ""));
-
-        return string.Equals(o.ToString(), o2.ToString());
+        return handleSlashRSlashN
+            ? string.Equals(o.ToString().Replace("\r", "").Replace("\n", ""),
+                o2.ToString().Replace("\r", "").Replace("\n", ""))
+            : string.Equals(o.ToString(), o2.ToString());
     }
 
 
@@ -983,6 +967,9 @@ GO
         foreach (var d in dir.GetDirectories())
             d.Delete(true);
     }
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex Spaces();
 }
 
 public static class TestDatabaseNames

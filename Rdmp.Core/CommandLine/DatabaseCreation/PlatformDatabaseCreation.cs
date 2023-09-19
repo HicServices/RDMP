@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -38,9 +38,10 @@ public class PlatformDatabaseCreation
         Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 
         var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
-        
+
         SqlConnectionStringBuilder logging = null;
-        if(options.CreateLoggingServer){
+        if (options.CreateLoggingServer)
+        {
             logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
         }
         CatalogueRepository.SuppressHelpLoading = true;
@@ -58,8 +59,7 @@ public class PlatformDatabaseCreation
             var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
 
-            examples.Create(server.GetCurrentDatabase(), new ThrowImmediatelyCheckNotifier { WriteToConsole = true },
-                options);
+            examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
     }
 

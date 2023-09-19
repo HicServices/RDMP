@@ -113,70 +113,68 @@ internal class TableInfoTests : DatabaseTests
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
+        using var con = db.Server.GetConnection();
+        con.Open();
 
-            db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
+        db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
 
-            var tbl = db.CreateTable("Fish",
-                new[] { new DatabaseColumnRequest("MyCol", "int") { IsPrimaryKey = true } }, "Omg");
+        var tbl = db.CreateTable("Fish", new[] { new DatabaseColumnRequest("MyCol", "int") { IsPrimaryKey = true } },
+            "Omg");
 
-            Assert.AreEqual("Fish", tbl.GetRuntimeName());
-            Assert.AreEqual("Omg", tbl.Schema);
-            Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
+        Assert.AreEqual("Fish", tbl.GetRuntimeName());
+        Assert.AreEqual("Omg", tbl.Schema);
+        Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
 
-            Assert.IsTrue(tbl.Exists());
+        Assert.IsTrue(tbl.Exists());
 
-            Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out var cols);
 
-            Assert.AreEqual("Omg", ti.Schema);
-            var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
-            Assert.AreEqual("Omg", tbl2.Schema);
-            Assert.IsTrue(tbl2.Exists());
+        Assert.AreEqual("Omg", ti.Schema);
+        var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
+        Assert.AreEqual("Omg", tbl2.Schema);
+        Assert.IsTrue(tbl2.Exists());
 
-            Assert.IsTrue(ti.Name.EndsWith("[Omg].[Fish]"));
+        Assert.IsTrue(ti.Name.EndsWith("[Omg].[Fish]"));
 
-            Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
+        Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
 
-            var c = cols.Single();
+        var c = cols.Single();
 
-            Assert.AreEqual("MyCol", c.GetRuntimeName());
-            StringAssert.Contains("[Omg].[Fish]", c.GetFullyQualifiedName());
+        Assert.AreEqual("MyCol", c.GetRuntimeName());
+        StringAssert.Contains("[Omg].[Fish]", c.GetFullyQualifiedName());
 
-            //should be primary key
-            Assert.IsTrue(c.IsPrimaryKey);
+        //should be primary key
+        Assert.IsTrue(c.IsPrimaryKey);
 
-            var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
-            var impl = triggerFactory.Create(tbl);
+        var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
+        var impl = triggerFactory.Create(tbl);
 
-            Assert.AreEqual(TriggerStatus.Missing, impl.GetTriggerStatus());
+        Assert.AreEqual(TriggerStatus.Missing, impl.GetTriggerStatus());
 
-            impl.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+        impl.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-            Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
+        Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
 
-            Assert.IsTrue(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        Assert.IsTrue(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
 
-            //should be synced
-            var sync = new TableInfoSynchronizer(ti);
-            sync.Synchronize(new AcceptAllCheckNotifier());
+        //should be synced
+        var sync = new TableInfoSynchronizer(ti);
+        sync.Synchronize(new AcceptAllCheckNotifier());
 
-            //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
-            var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database
-                .ExpectTableValuedFunction("Fish_Legacy", "Omg");
-            Assert.IsTrue(tvf.Exists());
+        //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
+        var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database
+            .ExpectTableValuedFunction("Fish_Legacy", "Omg");
+        Assert.IsTrue(tvf.Exists());
 
-            var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
-            importerTvf.DoImport(out var tvfTi, out var tvfCols);
+        var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
+        importerTvf.DoImport(out var tvfTi, out var tvfCols);
 
-            Assert.AreEqual("Omg", tvfTi.Schema);
+        Assert.AreEqual("Omg", tvfTi.Schema);
 
-            var syncTvf = new TableInfoSynchronizer(tvfTi);
-            syncTvf.Synchronize(new ThrowImmediatelyCheckNotifier());
+        var syncTvf = new TableInfoSynchronizer(tvfTi);
+        syncTvf.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
 
-            StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy", tvfTi.Name);
-        }
+        StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy", tvfTi.Name);
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -223,7 +221,7 @@ FROM {1}",
         Import(view, out var viewInfo, out _);
 
         var sync = new TableInfoSynchronizer(viewInfo);
-        sync.Synchronize(new ThrowImmediatelyCheckNotifier());
+        sync.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.IsTrue(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
         Assert.AreEqual(TableType.View, viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);

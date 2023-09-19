@@ -73,7 +73,7 @@ public class FlatFileColumnCollection
     /// <summary>
     /// The Headers found in the file / overridden by ForceHeaders
     /// </summary>
-    private string[] _headers = null;
+    private string[] _headers;
 
     /// <summary>
     /// Column headers that appear in the middle of the file (i.e. not trailing) but that don't have a header name.  These get thrown away
@@ -82,7 +82,7 @@ public class FlatFileColumnCollection
     /// </summary>
     public ReadOnlyCollection<DataColumn> UnamedColumns = new(Array.Empty<DataColumn>()); //start off with none
 
-    public bool FileIsEmpty = false;
+    public bool FileIsEmpty;
 
     /// <summary>
     /// used to advise user if he has selected the wrong separator
@@ -206,7 +206,7 @@ public class FlatFileColumnCollection
                 unamedColumns.Add(dt.Columns.Add(h));
             }
             else
-                //override type
+            //override type
             if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h, out var t) == true)
             {
                 var c = dt.Columns.Add(h, t);
@@ -223,11 +223,10 @@ public class FlatFileColumnCollection
 
         UnamedColumns = new ReadOnlyCollection<DataColumn>(unamedColumns);
 
-        if (duplicateHeaders.Any())
-            throw new FlatFileLoadException(
-                $"Found the following duplicate headers in file '{_toLoad.File}':{string.Join(",", duplicateHeaders)}");
-
-        return dt;
+        return duplicateHeaders.Any()
+            ? throw new FlatFileLoadException(
+                $"Found the following duplicate headers in file '{_toLoad.File}':{string.Join(",", duplicateHeaders)}")
+            : dt;
     }
 
     /// <summary>

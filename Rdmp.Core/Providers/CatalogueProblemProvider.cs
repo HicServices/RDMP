@@ -69,49 +69,27 @@ public class CatalogueProblemProvider : ProblemProvider
     /// <inheritdoc/>
     protected override string DescribeProblemImpl(object o)
     {
-        if (o is AllGovernanceNode node)
-            return DescribeProblem(node);
-
-        if (o is Catalogue catalogue)
-            return DescribeProblem(catalogue);
-
-        if (o is CatalogueItem item)
-            return DescribeProblem(item);
-
-        if (o is LoadDirectoryNode directoryNode)
-            return DescribeProblem(directoryNode);
-
-        if (o is ExtractionInformation information)
-            return DescribeProblem(information);
-
-        if (o is IFilter filter)
-            return DescribeProblem(filter);
-
-        if (o is AggregateConfiguration configuration)
-            return DescribeProblem(configuration);
-
-        if (o is DecryptionPrivateKeyNode keyNode)
-            return DescribeProblem(keyNode);
-
-        if (o is AllCataloguesUsedByLoadMetadataNode metadataNode)
-            return DescribeProblem(metadataNode);
-
-        if (o is ISqlParameter p)
-            return DescribeProblem(p);
-
-        if (o is CohortAggregateContainer container)
-            return DescribeProblem(container);
-
-        return null;
+        return o switch
+        {
+            AllGovernanceNode node => DescribeProblem(node),
+            Catalogue catalogue => DescribeProblem(catalogue),
+            CatalogueItem item => DescribeProblem(item),
+            LoadDirectoryNode directoryNode => DescribeProblem(directoryNode),
+            ExtractionInformation information => DescribeProblem(information),
+            IFilter filter => DescribeProblem(filter),
+            AggregateConfiguration configuration => DescribeProblem(configuration),
+            DecryptionPrivateKeyNode keyNode => DescribeProblem(keyNode),
+            AllCataloguesUsedByLoadMetadataNode metadataNode => DescribeProblem(metadataNode),
+            ISqlParameter p => DescribeProblem(p),
+            CohortAggregateContainer container => DescribeProblem(container),
+            _ => null
+        };
     }
 
-    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
-    {
-        if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
-            return "Load has no Catalogues therefore loads no tables";
-
-        return null;
-    }
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode) =>
+        !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any()
+            ? "Load has no Catalogues therefore loads no tables"
+            : null;
 
     public string DescribeProblem(ISqlParameter parameter)
     {
@@ -150,13 +128,8 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
-    {
-        if (decryptionPrivateKeyNode.KeyNotSpecified)
-            return "No RSA encryption key has been created yet";
-
-        return null;
-    }
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode) =>
+        decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
 
     public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
     {
@@ -164,28 +137,16 @@ public class CatalogueProblemProvider : ProblemProvider
             if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
                 return "Patient Index Table is not joined to any cohort sets";
 
-        if (!aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any())
-            return
-                "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query.";
-
-        return null;
+        return !aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any()
+            ? "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query."
+            : null;
     }
 
-    public static string DescribeProblem(IFilter filter)
-    {
-        if (string.IsNullOrWhiteSpace(filter.WhereSQL))
-            return "Filter is blank";
+    public static string DescribeProblem(IFilter filter) =>
+        string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
 
-        return null;
-    }
-
-    public static string DescribeProblem(Catalogue catalogue)
-    {
-        if (!Catalogue.IsAcceptableName(catalogue.Name, out var reason))
-            return $"Invalid Name:{reason}";
-
-        return null;
-    }
+    public static string DescribeProblem(Catalogue catalogue) =>
+        !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
 
     /// <summary>
     /// Identifies problems with dataset governance (e.g. <see cref="Catalogue"/> which have expired <see cref="GovernancePeriod"/>)
@@ -255,13 +216,9 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
-    {
-        if (LoadDirectoryNode.IsEmpty)
-            return "No Project Directory has been specified for the load";
-
-        return null;
-    }
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode) => LoadDirectoryNode.IsEmpty
+        ? "No Project Directory has been specified for the load"
+        : null;
 
     public string DescribeProblem(CatalogueItem catalogueItem)
     {
@@ -272,10 +229,9 @@ public class CatalogueProblemProvider : ProblemProvider
             j.PrimaryKey_ID == catalogueItem.ColumnInfo_ID ||
             j.ForeignKey_ID == catalogueItem.ColumnInfo_ID);
 
-        if (badJoin != null)
-            return $"Columns in joins declared on this column have mismatched collations ({badJoin})";
-
-        return null;
+        return badJoin != null
+            ? $"Columns in joins declared on this column have mismatched collations ({badJoin})"
+            : null;
     }
 
     public string DescribeProblem(CohortAggregateContainer container)
@@ -288,22 +244,20 @@ public class CatalogueProblemProvider : ProblemProvider
         {
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
-            if (parents != null && parents.Last() is CohortAggregateContainer parentContainer)
-                // which is EXCEPT
-                if (parentContainer.Operation == SetOperation.EXCEPT)
-                {
-                    // then something called 'inclusion criteria' should be the first among them
-                    var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().OrderBy(o => o.Order)
-                        .FirstOrDefault();
-                    if (first != null && !first.Equals(container))
-                        return
-                            $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
-                }
+            if (parents?.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
+            // which is EXCEPT
+            {
+                // then something called 'inclusion criteria' should be the first among them
+                var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);
+                if (first != null && !first.Equals(container))
+                    return
+                        $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
+            }
         }
 
         //count children that are not disabled
         var children = _childProvider.GetChildren(container);
-        var enabledChildren = children.Where(o => o is not IDisableable d || !d.IsDisabled).ToArray();
+        var enabledChildren = children.Where(o => o is not IDisableable { IsDisabled: true }).ToArray();
 
         //are there any children with the same order in this container?
         if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))

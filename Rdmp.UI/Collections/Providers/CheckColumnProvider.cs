@@ -48,7 +48,7 @@ public class CheckColumnProvider
 
     public void CheckCheckables()
     {
-        if (checkingTask != null && !checkingTask.IsCompleted)
+        if (checkingTask is { IsCompleted: false })
         {
             MessageBox.Show("Checking is already happening");
             return;
@@ -93,7 +93,7 @@ public class CheckColumnProvider
 
         var checksCol = _tree.AllColumns.FirstOrDefault(c => string.Equals(c.Text, ChecksColumnName));
 
-        if (checksCol != null && !checksCol.IsVisible)
+        if (checksCol is { IsVisible: false })
         {
             checksCol.IsVisible = true;
             _tree.RebuildColumns();
@@ -107,9 +107,7 @@ public class CheckColumnProvider
     {
         lock (checkResultsDictionary)
         {
-            checkResultsDictionary.Remove(o);
-
-            checkResultsDictionary.Add(o, result);
+            checkResultsDictionary[o] = result;
 
             if (_tree.IndexOf(o) != -1)
                 _tree.RefreshObject(o);

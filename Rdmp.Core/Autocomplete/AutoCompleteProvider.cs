@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
+using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Autocomplete;
@@ -23,7 +24,7 @@ namespace Rdmp.Core.Autocomplete;
 /// <summary>
 /// Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo"/>)
 /// </summary>
-public class AutoCompleteProvider : IAutoCompleteProvider
+public partial class AutoCompleteProvider : IAutoCompleteProvider
 {
     public HashSet<string> Items { get; set; } = new();
 
@@ -62,10 +63,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     /// <returns></returns>
     public static IEnumerable<string> GetBits(string arg)
     {
-        //     yield return arg;
-
-        foreach (Match m in Regex.Matches(arg, @"\b\w*\b"))
-            yield return m.Value;
+        return Words().Matches(arg).Select(m => m.Value);
     }
 
     public void Add(ITableInfo tableInfo)
@@ -104,10 +102,9 @@ public class AutoCompleteProvider : IAutoCompleteProvider
 
     public void Add(IColumn column)
     {
-        string runtimeName;
         try
         {
-            runtimeName = column.GetRuntimeName();
+            _ = column.GetRuntimeName();
         }
         catch (Exception)
         {
@@ -224,4 +221,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             Add(ei);
     }
+
+    [GeneratedRegex("\\b\\w*\\b")]
+    private static partial Regex Words();
 }

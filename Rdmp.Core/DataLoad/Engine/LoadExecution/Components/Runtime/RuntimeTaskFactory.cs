@@ -18,14 +18,11 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// </summary>
 public class RuntimeTaskFactory
 {
-    private readonly ICatalogueRepository _repository;
-
     public RuntimeTaskFactory(ICatalogueRepository repository)
     {
-        _repository = repository;
     }
 
-    public RuntimeTask Create(IProcessTask task, IStageArgs stageArgs)
+    public static RuntimeTask Create(IProcessTask task, IStageArgs stageArgs)
     {
         //get the user configured Design Time arguments + stage specific arguments
         var args = new RuntimeArgumentCollection(task.GetAllArguments().ToArray(), stageArgs);
@@ -35,9 +32,9 @@ public class RuntimeTaskFactory
         {
             ProcessTaskType.Executable => new ExecutableRuntimeTask(task, args),
             ProcessTaskType.SQLFile => new ExecuteSqlFileRuntimeTask(task, args),
-            ProcessTaskType.Attacher => new AttacherRuntimeTask(task, args, _repository.MEF),
-            ProcessTaskType.DataProvider => new DataProviderRuntimeTask(task, args, _repository.MEF),
-            ProcessTaskType.MutilateDataTable => new MutilateDataTablesRuntimeTask(task, args, _repository.MEF),
+            ProcessTaskType.Attacher => new AttacherRuntimeTask(task, args),
+            ProcessTaskType.DataProvider => new DataProviderRuntimeTask(task, args),
+            ProcessTaskType.MutilateDataTable => new MutilateDataTablesRuntimeTask(task, args),
             _ => throw new Exception($"Cannot create runtime task: Unknown process task type '{task.ProcessTaskType}'")
         };
     }

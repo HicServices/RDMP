@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
@@ -18,7 +17,7 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 internal class DitaExtractorTests : DatabaseTests
 {
-    private Exception _setupException = null;
+    private Exception _setupException;
 
     private TestDirectoryHelper _directoryHelper;
 
@@ -93,7 +92,7 @@ internal class DitaExtractorTests : DatabaseTests
         {
             var extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
 
-            extractor.Extract(new ThrowImmediatelyDataLoadEventListener());
+            extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet);
 
             //make sure the root mapping files exist for navigating around
             Assert.IsTrue(File.Exists(Path.Combine(testDir.FullName, "hic_data_catalogue.ditamap")));
@@ -132,7 +131,7 @@ internal class DitaExtractorTests : DatabaseTests
             try
             {
                 var extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
-                var ex = Assert.Throws<Exception>(() => extractor.Extract(new ThrowImmediatelyDataLoadEventListener()));
+                var ex = Assert.Throws<Exception>(() => extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet));
                 Assert.AreEqual(
                     "Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",
                     ex.Message);

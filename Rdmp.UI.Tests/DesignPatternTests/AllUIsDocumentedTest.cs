@@ -65,23 +65,12 @@ public class AllUIsDocumentedTest : UnitTests
 
     private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
     {
-        SetupMEF();
-        foreach (var type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
-        {
-            if (type.Namespace == null)
-                continue;
-
-            //don't validate classes in testing code
-            if (type.Namespace.Contains(".Tests"))
-                continue;
-
-            //these guys can be wherever they want
-            if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
-                continue;
-
-            if (!legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
-                yield return
-                    $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'";
-        }
+        return Core.Repositories.MEF.GetAllTypes()
+            .Where(InterfaceType.IsAssignableFrom)
+            .Where(type => type.Namespace?.Contains(".Tests") == false &&
+                           !_exemptNamespaces.Any(e => type.Namespace.Contains(e)) &&
+                           !legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
+            .Select(type =>
+                $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'");
     }
 }

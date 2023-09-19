@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 /// </summary>
 public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
-    private int _rowsProcessed = 0;
+    private int _rowsProcessed;
     private string _taskDescription;
     private Stopwatch timer = new();
 

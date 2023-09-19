@@ -62,7 +62,7 @@ public class ShareManager
         var defaults = RepositoryLocator.CatalogueRepository;
 
 
-        if (property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
+        if (property.Name is "LiveLoggingServer_ID" or "TestLoggingServer_ID")
         {
             var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
@@ -154,14 +154,10 @@ public class ShareManager
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public bool IsImported(string sharingUID)
-    {
+    public bool IsImported(string sharingUID) =>
         //empty guids are never imported
-        if (Guid.Empty.ToString().Equals(sharingUID))
-            return false;
-
-        return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
-    }
+        !Guid.Empty.ToString().Equals(sharingUID) &&
+        _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
 
     /// <summary>
     /// Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and
@@ -180,10 +176,9 @@ public class ShareManager
         var existingImport =
             _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
 
-        if (existingImport != null)
-            return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
-
-        return new ObjectExport(_catalogueRepository, o, Guid.NewGuid());
+        return existingImport != null
+            ? new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid)
+            : new ObjectExport(_catalogueRepository, o, Guid.NewGuid());
     }
 
 
@@ -333,7 +328,6 @@ public class ShareManager
                     actual?.DeleteInDatabase();
                 }
 
-                var objectConstructor = new ObjectConstructor();
                 var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??
                                throw new ObjectLacksCompatibleConstructorException(
                                    $"Could not find a ShareManager constructor for '{sd.Type}'");
@@ -366,13 +360,10 @@ public class ShareManager
             throw new Exception(
                 $"Relationship was of Type {relationshipAttribute.Type} expected {RelationshipType.LocalReference}");
 
-        if (LocalReferenceGetter == null)
-            throw new Exception(
-                string.Format("No LocalReferenceGetter has been set, cannot populate Property {0} {1}",
-                    property.Name,
-                    $" on class {property.DeclaringType.Name}"));
-
-        return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
+        return LocalReferenceGetter == null
+            ? throw new Exception(
+                $"No LocalReferenceGetter has been set, cannot populate Property {property.Name}  on class {property.DeclaringType.Name}")
+            : LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
     }
 
     /// <summary>
@@ -455,8 +446,10 @@ public class ShareManager
             //copy all the values out of the share definition / database copy
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
                 //don't update any ID columns or any with relationships on UPDATE
-                if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
+                if (propertiesDictionary.TryGetValue(prop.Name,out var value) && finder.GetAttribute(prop) == null)
+                {
                     SetValue(prop, value, toCreate);
+                }
                 else
                     prop.SetValue(toCreate,
                         prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
@@ -495,7 +488,7 @@ public class ShareManager
                                     break;
                                 }
                                 else
-                                    //otherwise we are missing a required shared object being referenced. That's bad news.
+                                //otherwise we are missing a required shared object being referenced. That's bad news.
                                 {
                                     throw new Exception(
                                         $"Share Definition for object of Type {typeof(T)} is missing an expected RelationshipProperty called {property.Name}");
@@ -529,10 +522,7 @@ public class ShareManager
                     }
 
                     //get the ID of the local import of the parent
-                    if (propertiesDictionary.ContainsKey(property.Name))
-                        propertiesDictionary[property.Name] = newValue;
-                    else
-                        propertiesDictionary.Add(property.Name, newValue);
+                    propertiesDictionary[property.Name] = newValue;
                 }
             }
 

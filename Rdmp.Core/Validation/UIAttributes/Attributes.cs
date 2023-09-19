@@ -9,7 +9,7 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.Validation.UIAttributes;
 
 /// <summary>
-/// Attribute for <see cref="IConstraint"/> properties which should not be visible in user interfaces 
+/// Attribute for <see cref="IConstraint"/> properties which should not be visible in user interfaces
 /// </summary>
 [System.AttributeUsage(System.AttributeTargets.Property)]
 public class HideOnValidationUI : System.Attribute

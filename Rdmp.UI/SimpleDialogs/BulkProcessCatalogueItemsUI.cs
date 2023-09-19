@@ -36,7 +36,7 @@ namespace Rdmp.UI.SimpleDialogs;
 /// 
 /// <para>Make all fields Unextractable (Delete Extraction Information)</para>
 /// 
-/// <para>Delete all underlying ColumnInfos (useful if you are trying to migrate your descriptive metadata to a new underlying table in your database e.g. MyDb.Biochemistry to 
+/// <para>Delete all underlying ColumnInfos (useful if you are trying to migrate your descriptive metadata to a new underlying table in your database e.g. MyDb.Biochemistry to
 /// MyDb.NewBiochemistry without losing CatalogueItem column descriptions and validation rules etc).</para>
 /// 
 /// <para>Guess New Associated Columns from a given TableInfo (stage 2 in the above example), which will try to match up descriptive CatalogueItems by name to a new underlying TableInfo</para>
@@ -142,7 +142,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                         catalogueItem.SetColumnInfo(null);
                     }
 
-                //delete extraction information only, this leaves the underlying relationship between the columnInfo and the CatalogueItem (which must exist in the first place before ExtractionInformation could have been configured) intact 
+                //delete extraction information only, this leaves the underlying relationship between the columnInfo and the CatalogueItem (which must exist in the first place before ExtractionInformation could have been configured) intact
                 if (rbDeleteExtrctionInformation.Checked)
                     if (catalogueItem.ExtractionInformation != null)
                     {
@@ -178,7 +178,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     }
                 }
 
-                //user wants to mark existing associated columns as extractable (will be created with the default SELECT transformation which is verbatim, no changes) 
+                //user wants to mark existing associated columns as extractable (will be created with the default SELECT transformation which is verbatim, no changes)
                 if (rbMarkExtractable.Checked)
                 {
                     //get the associated columns
@@ -226,7 +226,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
         if (countOfColumnInfoAssociationsCreated != 0)
             message +=
-                $"Created  {countOfColumnInfoAssociationsCreated} assocations between CatalogueItems and ColumnInfos{Environment.NewLine}";
+                $"Created  {countOfColumnInfoAssociationsCreated} associations between CatalogueItems and ColumnInfos{Environment.NewLine}";
 
         if (!string.IsNullOrWhiteSpace(message))
             MessageBox.Show(message);

@@ -20,14 +20,6 @@ namespace Rdmp.Core.Tests.Curation.ImportTests;
 
 public class PluginClassTests : UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     [SetUp]
     protected override void SetUp()
     {
@@ -42,8 +34,8 @@ public class PluginClassTests : UnitTests
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Blah.zip"));
         File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
-        var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-        var tripart = new Version(version);
+        var version = FileVersionInfo.GetVersionInfo(typeof(PluginClassTests).Assembly.Location).FileVersion ??
+                      throw new Exception($"No file version in {typeof(PluginClassTests).Assembly.Location}");
 
         var lma1 = WhenIHaveA<LoadModuleAssembly>();
         var lma2 = WhenIHaveA<LoadModuleAssembly>();
@@ -80,7 +72,7 @@ public class PluginClassTests : UnitTests
             $"Blah3.{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-        var p = new Core.Curation.Data.Plugin(Repository, fi, new Version(1, 1, 1), new Version(1, 1, 1, 1));
+        var p = new Plugin(Repository, fi, new Version(1, 1, 1), new Version(1, 1, 1, 1));
         var lma = new LoadModuleAssembly(Repository, fi2, p);
         var lma2 = new LoadModuleAssembly(Repository, fi3, p);
 
@@ -124,7 +116,7 @@ public class PluginClassTests : UnitTests
     [TestCase("Rdmp.Dicom", "Rdmp.Dicom")]
     public void Test_Plugin_ShortName(string fullname, string expected)
     {
-        var p = WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>();
+        var p = WhenIHaveA<Plugin>();
         p.Name = fullname;
         Assert.AreEqual(expected, p.GetShortName());
     }

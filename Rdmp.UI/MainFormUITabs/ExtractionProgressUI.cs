@@ -4,20 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.MainFormUITabs;
 
@@ -67,9 +67,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         }
 
 
-        tbStartDate.Text = databaseObject.StartDate == null
-            ? ""
-            : databaseObject.StartDate.Value.ToString("yyyy-MM-dd") ?? "";
+        tbStartDate.Text = databaseObject.StartDate?.ToString("yyyy-MM-dd") ?? "";
         tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
         tbProgress.Text = databaseObject.ProgressDate == null
             ? ""

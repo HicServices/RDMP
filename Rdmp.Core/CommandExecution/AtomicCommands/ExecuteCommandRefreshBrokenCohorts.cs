@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
-using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -34,19 +34,16 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
             return;
         }
 
-        // if we only want to clear one 
+        // if we only want to clear one
         if (ect != null)
         {
             if (!dx.ForbidListedSources.Contains(ect)) SetImpossible($"'{ect}' is not broken");
         }
         else
         {
-            // we want to clear all of them 
+            // we want to clear all of them
             if (!dx.ForbidListedSources.Any())
-            {
                 SetImpossible("There are no broken ExternalCohortTable to clear status on");
-                return;
-            }
         }
     }
 
@@ -57,7 +54,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         var dx = (DataExportChildProvider)BasicActivator.CoreChildProvider;
         var toPublish = _ect ?? dx.ForbidListedSources.FirstOrDefault();
 
-        // theres nothing to clear now anyway
+        // there's nothing to clear now anyway
         if (toPublish == null)
             return;
 

@@ -14,13 +14,13 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// 
 /// <para>Also handles CASCADEing between databases/servers as above (when a delete is permitted but it means other objects should suddenly also be deleted).</para>
 /// 
-/// <para>IObscureDependencyFinders are global hooks that are installed into an IRepository (usually a TableRepository) which ensure that the user cannot do 
+/// <para>IObscureDependencyFinders are global hooks that are installed into an IRepository (usually a TableRepository) which ensure that the user cannot do
 /// dangerous deletes / leave orphan objects where simple database level logic cannot be implemented to enforce the rule (e.g. foreign key constraints).</para>
 /// </summary>
 public interface IObscureDependencyFinder
 {
     /// <summary>
-    /// Throws if there are relationships that cannot be handled with database constraints that should prevent the deletion of the passed object.  For example a 
+    /// Throws if there are relationships that cannot be handled with database constraints that should prevent the deletion of the passed object.  For example a
     /// CatalogueItem could have deletion prevented by the fact that it is referenced in a Catalogue ValidationXml (this dependency could not be modelled at database
     /// level).  An Exception is thrown if the delete is not allowed
     /// </summary>
@@ -28,7 +28,7 @@ public interface IObscureDependencyFinder
     void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject);
 
     /// <summary>
-    /// Callback for when an <see cref="IMapsDirectlyToDatabaseTable"/> object has just been deleted.  This method automatically cleans up any objects which the 
+    /// Callback for when an <see cref="IMapsDirectlyToDatabaseTable"/> object has just been deleted.  This method automatically cleans up any objects which the
     /// <see cref="IObscureDependencyFinder"/> thinks are dependent in a way similar to a CASCADE foreign key constraint.  This should only ever include cases
     /// where it is not possible to model the behaviour at database level e.g. when the dependency is cross server/databse.
     /// 

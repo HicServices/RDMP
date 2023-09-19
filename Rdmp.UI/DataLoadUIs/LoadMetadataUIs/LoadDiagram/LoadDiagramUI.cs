@@ -134,46 +134,48 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private object olvState_AspectGetter(object rowobject)
     {
-        var stateHaver = rowobject as IHasLoadDiagramState;
-
-        if (rowobject is DiscoveredTable || rowobject is DiscoveredColumn)
-            return LoadDiagramState.New;
-
-        return stateHaver?.State;
+        return rowobject switch
+        {
+            DiscoveredTable or DiscoveredColumn => LoadDiagramState.New,
+            IHasLoadDiagramState stateHaver => stateHaver.State,
+            _ => null
+        };
     }
 
     private object olvDataType_AspectGetter(object rowobject)
     {
-        var discCol = rowobject as DiscoveredColumn;
-
-        if (rowobject is LoadDiagramColumnNode colNode)
-            return colNode.GetDataType();
-
-        return discCol?.DataType.SQLType;
+        return rowobject switch
+        {
+            LoadDiagramColumnNode colNode => colNode.GetDataType(),
+            DiscoveredColumn discCol => discCol.DataType.SQLType,
+            _ => null
+        };
     }
-
     private string CellToolTipGetter(OLVColumn column, object modelObject) =>
-        (modelObject as LoadDiagramServerNode)?.ErrorDescription;
+        modelObject is LoadDiagramServerNode loadDiagramServerNode
+            ? loadDiagramServerNode.ErrorDescription
+            : null;
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (Activator == null)
-            return null;
-
-        return rowObject switch
-        {
-            UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
-                .ImageToBitmap(),
-            DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
-                .ImageToBitmap(),
-            LoadDiagramServerNode node => string.IsNullOrWhiteSpace(node.ErrorDescription)
-                ? Activator.CoreIconProvider.GetImage(node).ImageToBitmap()
-                : Activator.CoreIconProvider.GetImage(node, OverlayKind.Problem).ImageToBitmap(),
-            LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
-            LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
-            LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
-            _ => null
-        };
+        return Activator == null
+            ? null
+            : rowObject switch
+            {
+                UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
+                    .ImageToBitmap(),
+                DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
+                    .ImageToBitmap(),
+                LoadDiagramServerNode loadDiagramServerNode =>
+                    string.IsNullOrWhiteSpace(loadDiagramServerNode.ErrorDescription)
+                        ? Activator.CoreIconProvider.GetImage(loadDiagramServerNode).ImageToBitmap()
+                        : Activator.CoreIconProvider.GetImage(loadDiagramServerNode, OverlayKind.Problem)
+                            .ImageToBitmap(),
+                LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
+                LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
+                LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
+                _ => null
+            };
     }
 
     private IEnumerable ChildrenGetter(object model)
@@ -195,7 +197,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             LoadDiagramServerNode server => server.GetChildren().Any(),
             LoadDiagramDatabaseNode database => database.GetChildren().Any(),
             LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any(),
-            UnplannedTable unplannedTable => true,
+            UnplannedTable => true,
             _ => false
         };
     }
@@ -290,8 +292,8 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void btnFetch_Click(object sender, EventArgs e)
     {
-        //execution is already underway
-        if (taskDiscoverState != null && !taskDiscoverState.IsCompleted)
+        if (taskDiscoverState is { IsCompleted: false })
+        if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
             return;
 
         CommonFunctionality.ResetChecks();

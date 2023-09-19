@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -37,13 +37,8 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
         Weight = -99.99999f;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        if (_o == null)
-            return null;
-
-        return iconProvider.GetImage(_o, OverlayKind.Edit);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
 
     public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.Activate;
 

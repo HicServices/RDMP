@@ -41,14 +41,14 @@ public enum Releaseability
     ExtractionSQLDesynchronisation,
 
     /// <summary>
-    /// Similar to <see cref="ExtractionSQLDesynchronisation"/> except that the change to the configuration is to switch to a different cohort.  This is the worst 
+    /// Similar to <see cref="ExtractionSQLDesynchronisation"/> except that the change to the configuration is to switch to a different cohort.  This is the worst
     /// case scenario for release error where you supply a file to a researcher when the file doesn't even relate to the cohort he is asking for (or has ethics approval
     /// for).
     /// </summary>
     CohortDesynchronisation,
 
     /// <summary>
-    /// Considered only a warning.  You have changed the definition of columns for your extract (overridden the catalogue version of one or more columns - See 
+    /// Considered only a warning.  You have changed the definition of columns for your extract (overridden the catalogue version of one or more columns - See
     /// ConfigureDatasetUI for how to do this).  Alternatively this can occur if someone has edited the master Catalogue implementation of a transform which is part
     /// of your configuration (Configuration is outdated vs the catalogue).  You should evaluate the differences and make sure they are intended before doing a release.
     /// </summary>

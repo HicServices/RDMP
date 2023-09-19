@@ -4,6 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
@@ -11,12 +15,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.Core.QueryCaching.Aggregation;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.QueryCaching.Aggregation;
 
 namespace Rdmp.Core.CohortCreation;
 
@@ -75,20 +75,16 @@ public class CohortIdentificationConfigurationUICommon
     {
         var key = GetKey(rowobject);
 
-        if (key != null)
-            return Configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount();
-
-        return null;
+        return key != null
+            ? Configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount()
+            : (object)null;
     }
 
     public object Count_AspectGetter(object rowobject)
     {
         var key = GetKey(rowobject);
 
-        if (key != null && key.State == CompilationState.Finished)
-            return key.FinalRowCount.ToString("N0");
-
-        return null;
+        return key is { State: CompilationState.Finished } ? key.FinalRowCount.ToString("N0") : (object)null;
     }
 
     public static object Catalogue_AspectGetter(object rowobject) =>
@@ -100,14 +96,11 @@ public class CohortIdentificationConfigurationUICommon
         if (IsExecutingGlobalOperations())
             return null;
 
-        if (rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
+        if (rowObject is AggregateConfiguration or CohortAggregateContainer)
         {
             var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable)rowObject));
 
-            if (plannedOp == Operation.None)
-                return null;
-
-            return plannedOp;
+            return plannedOp == Operation.None ? null : plannedOp;
         }
 
         return null;
@@ -119,10 +112,7 @@ public class CohortIdentificationConfigurationUICommon
         {
             var task = GetTaskIfExists(o);
 
-            if (task == null)
-                return CompilationState.NotScheduled;
-
-            return task.State;
+            return task == null ? CompilationState.NotScheduled : task.State;
         }
     }
 
@@ -266,13 +256,11 @@ public class CohortIdentificationConfigurationUICommon
     {
         var manager = new CachedAggregateConfigurationResultsManager(QueryCachingServer);
 
-        var successes = 0;
         foreach (var t in tasks)
             try
             {
                 t.ClearYourselfFromCache(manager);
                 Compiler.CancelTask(t, true);
-                successes++;
             }
             catch (Exception exception)
             {
@@ -346,18 +334,22 @@ public class CohortIdentificationConfigurationUICommon
     {
         Task.Run(() =>
         {
-            if (o is AggregateConfiguration aggregate)
+            switch (o)
             {
-                var joinable = aggregate.JoinableCohortAggregateConfiguration;
+                case AggregateConfiguration aggregate:
+                    {
+                        var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
-                if (joinable != null)
-                    OrderActivity(GetNextOperation(GetState(joinable)), joinable);
-                else
-                    OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                        if (joinable != null)
+                            OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                        else
+                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                        break;
+                    }
+                case CohortAggregateContainer container:
+                    OrderActivity(GetNextOperation(GetState(container)), container);
+                    break;
             }
-
-            if (o is CohortAggregateContainer container)
-                OrderActivity(GetNextOperation(GetState(container)), container);
         });
     }
 
@@ -380,8 +372,8 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception e)
             {
-                Activator.ShowException("Runer crashed", e);
+                Activator.ShowException("Runner crashed", e);
             }
-        }).ContinueWith((s, e) => { afterDelegate(); }, TaskScheduler.FromCurrentSynchronizationContext());
+        }).ContinueWith((_, _) => { afterDelegate(); }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }

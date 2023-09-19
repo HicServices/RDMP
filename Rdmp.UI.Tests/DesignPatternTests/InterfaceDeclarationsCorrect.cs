@@ -22,18 +22,18 @@ public class InterfaceDeclarationsCorrect
         "IProcessTask" //this is inherited by IRuntimeTask too which isn't an IMapsDirectlyToDatabaseTable
     };
 
-    public static void FindProblems(MEF mef)
+    public static void FindProblems()
     {
         var problems =
-            mef.GetAllTypes()
-                .Where(t => typeof(DatabaseEntity).IsAssignableFrom(t))
-                .Select(dbEntities => typeof(Catalogue).Assembly.GetTypes()
+            MEF.GetAllTypes()
+                .Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t))
+                .Select(static dbEntities => typeof(Catalogue).Assembly.GetTypes()
                     .SingleOrDefault(t => t.Name.Equals($"I{dbEntities.Name}")))
-                .Where(matchingInterface => matchingInterface != null)
-                .Where(matchingInterface => !Exemptions.Contains(matchingInterface.Name))
-                .Where(matchingInterface =>
-                    !typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(matchingInterface))
-                .Select(matchingInterface =>
+                .Where(static matchingInterface => matchingInterface != null &&
+                                                   !Exemptions.Contains(matchingInterface.Name) &&
+                                                   !typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(
+                                                       matchingInterface))
+                .Select(static matchingInterface =>
                     $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable")
                 .ToList();
         Assert.IsEmpty(problems);

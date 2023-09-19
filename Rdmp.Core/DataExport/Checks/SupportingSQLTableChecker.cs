@@ -43,28 +43,22 @@ public class SupportingSQLTableChecker : ICheckable
                 ? new CheckEventArgs($"Server {supportingSQLServer} exists", CheckResult.Success)
                 : new CheckEventArgs($"Server {supportingSQLServer} does not exist", CheckResult.Fail));
 
-            using (var con = _table.GetServer().GetConnection())
-            {
-                con.Open();
+            using var con = _table.GetServer().GetConnection();
+            con.Open();
 
-                notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}",
-                    CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"About to check Extraction SQL:{_table.SQL}",
+                CheckResult.Success));
 
-                using (var cmd = supportingSQLServer.GetCommand(_table.SQL, con))
-                {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                            notifier.OnCheckPerformed(
-                                new CheckEventArgs(
-                                    "SupportingSQLTable table fetched successfully and at least 1 data row was read ",
-                                    CheckResult.Success));
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs(
-                                $"No data was successfully read from SupportingSQLTable {_table}", CheckResult.Fail));
-                    }
-                }
-            }
+            using var cmd = supportingSQLServer.GetCommand(_table.SQL, con);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        "SupportingSQLTable table fetched successfully and at least 1 data row was read ",
+                        CheckResult.Success));
+            else
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"No data was successfully read from SupportingSQLTable {_table}", CheckResult.Fail));
         }
         catch (Exception e)
         {

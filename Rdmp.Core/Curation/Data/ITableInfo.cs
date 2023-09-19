@@ -43,7 +43,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     /// <para>Indicates that this TableInfo should be the first table joined in any query that has multiple other TableInfos</para>
     /// 
     /// <para>When determining how to join a collection of TableInfos the <see cref="QueryBuilder"/> will attempt to find <see cref="JoinInfo"/> pairings between <see cref="ColumnInfo"/> in
-    /// the tables.  If it cannot work out how to resolve the join order (e.g. if there are 3+ tables and joins going in both directions) then it will demand that one of the 
+    /// the tables.  If it cannot work out how to resolve the join order (e.g. if there are 3+ tables and joins going in both directions) then it will demand that one of the
     /// <see cref="TableInfo"/> be picked as the first table from which all other tables should then be joined.</para>
     /// </summary>
     bool IsPrimaryExtractionTable { get; set; }
@@ -75,9 +75,9 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     ColumnInfo[] ColumnInfos { get; }
 
     /// <summary>
-    /// Gets all the <see cref="PreLoadDiscardedColumn"/> declared against this table reference.  These are virtual columns which 
-    /// do not exist in the LIVE table schema (Unless <see cref="DiscardedColumnDestination.Dilute"/>) but which appear in the RAW 
-    /// stage of the data load.  
+    /// Gets all the <see cref="PreLoadDiscardedColumn"/> declared against this table reference.  These are virtual columns which
+    /// do not exist in the LIVE table schema (Unless <see cref="DiscardedColumnDestination.Dilute"/>) but which appear in the RAW
+    /// stage of the data load.
     /// 
     /// <para>See <see cref="PreLoadDiscardedColumn"/> for more information</para>
     /// </summary>
@@ -142,7 +142,7 @@ public interface ITableInfo : IComparable, IHasRuntimeName, IDataAccessPoint, IH
     ICatalogueRepository CatalogueRepository { get; }
 
     /// <summary>
-    /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back 
+    /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back
     /// a whole bunch of catalogues.  If you have multiple extractable catalogues that all present different views of a single TableInfo then they will all be returned.  The normal
     /// behaviour though for a regular data table with one catalogue used for extraction would be for a single Catalogue to get returned.
     /// </summary>

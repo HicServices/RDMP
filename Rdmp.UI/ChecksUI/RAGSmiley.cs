@@ -219,7 +219,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         lock (oTaskLock)
         {
             //if there is already a Task and it has not completed
-            if (_checkTask != null && !_checkTask.IsCompleted)
+            if (_checkTask is { IsCompleted: false })
                 return;
 
             //else start a new Task

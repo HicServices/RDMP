@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using FAnsi.Discovery;
 using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
@@ -26,16 +25,9 @@ public class MigrationColumnSetQueryHelper
 
     public string BuildSelectListForAllColumnsExceptStandard(string tableAlias = "")
     {
-        var sql = "";
-
-        foreach (var col in _migrationColumnSet.FieldsToDiff)
-        {
-            //if it is hic_ or identity specification
-            if (SpecialFieldNames.IsHicPrefixed(col) || col.IsAutoIncrement)
-                continue;
-
-            sql += $"{tableAlias}[{col.GetRuntimeName()}],";
-        }
+        var sql = _migrationColumnSet.FieldsToDiff
+            .Where(col => !SpecialFieldNames.IsHicPrefixed(col) && !col.IsAutoIncrement).Aggregate("", (current, col) =>
+                $"{current}{tableAlias}[{col.GetRuntimeName()}],");
 
         return sql.TrimEnd(',');
     }
@@ -56,11 +48,9 @@ public class MigrationColumnSetQueryHelper
 
     public string BuildJoinClause(string sourceAlias = "source", string destAlias = "dest")
     {
-        if (!_migrationColumnSet.PrimaryKeys.Any())
-            throw new InvalidOperationException(
-                "None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.");
-
-        return
-            $"ON ({string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => string.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName())))})";
+        return !_migrationColumnSet.PrimaryKeys.Any()
+            ? throw new InvalidOperationException(
+                "None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.")
+            : $"ON ({string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => string.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName())))})";
     }
 }

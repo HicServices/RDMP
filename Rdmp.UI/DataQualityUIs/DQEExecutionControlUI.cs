@@ -45,7 +45,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
     }
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity) => new DqeOptions
-        { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
+    { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
@@ -56,7 +56,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue),
             "Validation Rules...");
         CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator)
-            { OverrideCommandName = "View Results..." }.SetTarget(databaseObject));
+        { OverrideCommandName = "View Results..." }.SetTarget(databaseObject));
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)

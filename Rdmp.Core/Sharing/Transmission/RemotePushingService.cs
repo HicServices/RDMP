@@ -81,34 +81,32 @@ public class RemotePushingService
 
                 var sender = new Task(() =>
                 {
-                    using (var client = new HttpClient(handler))
+                    using var client = new HttpClient(handler);
+                    try
                     {
-                        try
-                        {
-                            result = client.PostAsync(new Uri(apiUrl),
-                                new StringContent(json, Encoding.UTF8, "text/plain")).Result;
-                            if (result.IsSuccessStatusCode)
-                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                                    $"Sending {toSend1} to {remote1.Name} completed."));
-                            else
-                                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                                    $"Error sending {toSend1} to {remote1.Name}: {result.ReasonPhrase} - {result.Content.ReadAsStringAsync().Result}"));
-                            lock (done)
-                            {
-                                listener.OnProgress(this,
-                                    new ProgressEventArgs(remote1.Name,
-                                        new ProgressMeasurement(++done[remote1.Name], ProgressType.Records,
-                                            toSendAll.Length), new TimeSpan()));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
+                        result = client.PostAsync(new Uri(apiUrl), new StringContent(json, Encoding.UTF8, "text/plain"))
+                            .Result;
+                        if (result.IsSuccessStatusCode)
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                                $"Sending {toSend1} to {remote1.Name} completed."));
+                        else
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
-                                $"Error sending {toSend1} to {remote1.Name}", ex));
+                                $"Error sending {toSend1} to {remote1.Name}: {result.ReasonPhrase} - {result.Content.ReadAsStringAsync().Result}"));
+                        lock (done)
+                        {
                             listener.OnProgress(this,
-                                new ProgressEventArgs(remote1.Name, new ProgressMeasurement(1, ProgressType.Records, 1),
-                                    new TimeSpan()));
+                                new ProgressEventArgs(remote1.Name,
+                                    new ProgressMeasurement(++done[remote1.Name], ProgressType.Records,
+                                        toSendAll.Length), new TimeSpan()));
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"Error sending {toSend1} to {remote1.Name}", ex));
+                        listener.OnProgress(this,
+                            new ProgressEventArgs(remote1.Name, new ProgressMeasurement(1, ProgressType.Records, 1),
+                                new TimeSpan()));
                     }
                 });
                 sender.Start();

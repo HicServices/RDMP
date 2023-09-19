@@ -64,7 +64,7 @@ internal class ConsoleGuiTextDialog
             Width = Dim.Fill(2),
             Text = _initialValue ?? "",
             AllowsTab = false,
-            AllowsReturn = MaxLength > BasicActivateItems.MultiLineLengthThreshold
+            AllowsReturn = MaxLength is > BasicActivateItems.MultiLineLengthThreshold
         };
 
         win.Add(textField);

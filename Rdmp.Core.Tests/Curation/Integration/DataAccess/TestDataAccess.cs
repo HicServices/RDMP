@@ -121,6 +121,7 @@ public class TestDataAccess : DatabaseTests
             new("frank", "[bob's Database]", "username", "mypas"),
             new("frank", "bob's Database", "username", "mypas")
         };
+
         //call this
         var result =
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
@@ -279,13 +280,8 @@ public class TestDataAccess : DatabaseTests
             Password = password;
         }
 
-        public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-        {
-            if (Username != null)
-                return this;
-
-            return null;
-        }
+        public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+            Username != null ? this : (IDataAccessCredentials)null;
 
 
         public string GetDecryptedPassword() => Password ?? "";

@@ -26,7 +26,7 @@ public interface IPluginUserInterface : IChildProvider, IIconProvider
     IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object treeObject);
 
     /// <summary>
-    /// Implement to provide a custom user interface that should be shown when a given object 
+    /// Implement to provide a custom user interface that should be shown when a given object
     /// <paramref name="o"/> is activated.  Return false if you do not want to respond to the object
     ///  or its Type.
     /// </summary>

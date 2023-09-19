@@ -9,9 +9,9 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.Curation.Data.Cohort;
 
 /// <summary>
-/// The Sql set operation for combining sets (lists of patient identifiers) in a <see cref="CohortAggregateContainer"/>.  This is done by compiling each 
+/// The Sql set operation for combining sets (lists of patient identifiers) in a <see cref="CohortAggregateContainer"/>.  This is done by compiling each
 /// <see cref="AggregateConfiguration"/> and <see cref="CohortAggregateContainer"/> in a given container into queries identifying distinct patients.  A master
-/// query is then built in which each subquery is interspersed by the appropriate <see cref="SetOperation"/>. 
+/// query is then built in which each subquery is interspersed by the appropriate <see cref="SetOperation"/>.
 /// </summary>
 public enum SetOperation
 {

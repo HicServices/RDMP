@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -16,6 +15,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -78,11 +78,11 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
 
         var runner = BasicActivator.GetPipelineRunner(new DialogArgs
-            {
-                WindowTitle = "Create Table from AggregateConfiguration",
-                TaskDescription =
-                    "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
-            }
+        {
+            WindowTitle = "Create Table from AggregateConfiguration",
+            TaskDescription =
+                    "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
+        }
             , useCase, null /*TODO inject Pipeline in CLI constructor*/);
 
         runner.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
@@ -93,7 +93,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     private void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
     {
         if (!_table.Exists())
-            throw new Exception($"Pipeline execute succesfully but the expected table '{_table}' did not exist");
+            throw new Exception($"Pipeline execute successfully but the expected table '{_table}' did not exist");
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
         importer.DoImport(out var ti, out _);

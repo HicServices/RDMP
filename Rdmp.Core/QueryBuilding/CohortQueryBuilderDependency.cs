@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -17,7 +18,6 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
-using System.Collections.Concurrent;
 
 namespace Rdmp.Core.QueryBuilding;
 
@@ -94,7 +94,7 @@ public class CohortQueryBuilderDependency
         var eis = cohortSet?.AggregateDimensions?.Where(d => d.IsExtractionIdentifier).ToArray();
 
         //Multiple IsExtractionIdentifier columns is a big problem but it's handled elsewhere
-        if (eis != null && eis.Length == 1)
+        if (eis is { Length: 1 })
             ExtractionIdentifierColumn = eis[0];
 
         if (PatientIndexTableIfAny != null)
@@ -298,9 +298,6 @@ public class CohortQueryBuilderDependency
         if (SqlPartiallyCached != null)
             return "Partially Cached";
 
-        if (SqlCacheless != null)
-            return "Not Cached";
-
-        return "Not Built";
+        return SqlCacheless != null ? "Not Cached" : "Not Built";
     }
 }

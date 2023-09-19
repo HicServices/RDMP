@@ -61,13 +61,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     /// Returns the string representation of <see cref="ObjectBeingUsed"/> or <see cref="EmptyRepresentation"/> if <see cref="IsEmptyNode"/>
     /// </summary>
     /// <returns></returns>
-    public override string ToString()
-    {
-        if (IsEmptyNode)
-            return EmptyRepresentation;
-
-        return ObjectBeingUsed.ToString();
-    }
+    public override string ToString() => IsEmptyNode ? EmptyRepresentation : ObjectBeingUsed.ToString();
 
     #region Equality
 
@@ -90,14 +84,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return (EqualityComparer<T>.Default.GetHashCode(User) * 397) ^
-                   EqualityComparer<T2>.Default.GetHashCode(ObjectBeingUsed);
-        }
-    }
+    public override int GetHashCode() => System.HashCode.Combine(User, ObjectBeingUsed);
 
     #endregion
 }

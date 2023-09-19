@@ -52,7 +52,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public object GetDataObject()
     {
-        return DatabaseObjects.Single(o => o is ColumnInfo || o is TableInfo);
+        return DatabaseObjects.Single(o => o is ColumnInfo or Curation.Data.TableInfo);
     }
 
     public IFilter GetFilterIfAny()
@@ -86,10 +86,9 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
         var sql = qb.SQL;
 
-        if (ViewType == ViewType.Aggregate)
-            throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos");
-
-        return sql;
+        return ViewType == ViewType.Aggregate
+            ? throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos")
+            : sql;
     }
 
     public string GetTabName() => $"{TableInfo}({ViewType})";

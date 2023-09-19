@@ -21,7 +21,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// </summary>
 public class MemoryRepository : IRepository
 {
-    protected int NextObjectId = 0;
+    protected int NextObjectId;
 
     public bool SupportsCommits => false;
 
@@ -83,7 +83,14 @@ public class MemoryRepository : IRepository
         var type = underlying ?? prop.PropertyType;
 
         if (type.IsEnum)
-            prop.SetValue(toCreate, strVal != null ? Enum.Parse(type, strVal) : Enum.ToObject(type, val));
+        {
+            if ( strVal != null)
+                prop.SetValue(toCreate, Enum.Parse(type, strVal));
+            else
+            {
+                prop.SetValue(toCreate, Enum.ToObject(type, val));
+            }
+        }
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }
@@ -141,17 +148,16 @@ public class MemoryRepository : IRepository
         var prop1 = typeof(T).GetProperty(property1);
         var prop2 = typeof(T).GetProperty(property2);
 
-        switch (operand)
+        return operand switch
         {
-            case ExpressionType.AndAlso:
-                return GetAllObjects<T>()
-                    .Where(o => Equals(prop1.GetValue(o), value1) && Equals(prop2.GetValue(o), value2)).ToArray();
-            case ExpressionType.OrElse:
-                return GetAllObjects<T>()
-                    .Where(o => Equals(prop1.GetValue(o), value1) || Equals(prop2.GetValue(o), value2)).ToArray();
-            default:
-                throw new NotSupportedException("operand");
-        }
+            ExpressionType.AndAlso => GetAllObjects<T>()
+                .Where(o => Equals(prop1.GetValue(o), value1) && Equals(prop2.GetValue(o), value2))
+                .ToArray(),
+            ExpressionType.OrElse => GetAllObjects<T>()
+                .Where(o => Equals(prop1.GetValue(o), value1) || Equals(prop2.GetValue(o), value2))
+                .ToArray(),
+            _ => throw new NotSupportedException("operand")
+        };
     }
 
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
@@ -222,8 +228,8 @@ public class MemoryRepository : IRepository
     public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
     {
         //Mark any cached data as out of date
-        var inject = mapsDirectlyToDatabaseTable as IInjectKnown;
-        inject?.ClearAllInjections();
+        if (mapsDirectlyToDatabaseTable is IInjectKnown inject)
+            inject.ClearAllInjections();
 
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
             return;
@@ -274,10 +280,7 @@ public class MemoryRepository : IRepository
             throw new NotSupportedException(
                 "Why are you comparing two null things against one another with this method?");
 
-        if (obj1.GetType() == obj2.GetType())
-            return ((IMapsDirectlyToDatabaseTable)obj1).ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
-
-        return false;
+        return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
     }
 
     /// <inheritdoc/>

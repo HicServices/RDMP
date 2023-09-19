@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -43,10 +43,10 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-                {
-                    WindowTitle = "Add Aggregate Graph",
-                    TaskDescription = "Select which Catalogue you want to add the graph to."
-                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+            {
+                WindowTitle = "Add Aggregate Graph",
+                TaskDescription = "Select which Catalogue you want to add the graph to."
+            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -55,10 +55,10 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
 
         if (name == null && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "Graph Name",
-                    EntryLabel = "Name"
-                }, 255, null, out name, false))
+            {
+                WindowTitle = "Graph Name",
+                EntryLabel = "Name"
+            }, 255, null, out name, false))
                 // user cancelled typing a name for the graph
                 return;
 

@@ -9,18 +9,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.Core.Providers;
-using Rdmp.Core.QueryCaching.Aggregation;
-using Rdmp.Core.QueryCaching.Aggregation.Arguments;
-using System.Threading.Tasks;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -62,7 +61,7 @@ public class CohortCompiler
     public ICoreChildProvider CoreChildProvider
     {
         get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,
-            null, new IgnoreAllErrorsCheckNotifier(), null);
+            null, IgnoreAllErrorsCheckNotifier.Instance, null);
         set => _coreChildProvider = value;
     }
 
@@ -90,8 +89,7 @@ public class CohortCompiler
 
         try
         {
-            PluginCohortCompilers =
-                new PluginCohortCompilerFactory(CohortIdentificationConfiguration.CatalogueRepository.MEF).CreateAll();
+            PluginCohortCompilers = PluginCohortCompilerFactory.CreateAll();
         }
         catch (Exception ex)
         {
@@ -184,16 +182,19 @@ public class CohortCompiler
         //if it is the root container or we are adding tasks for all containers including subcontainers
         if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
             if (!container.IsDisabled)
-                toReturn.Add(Task.Run(() => { return AddTask(container, globals); }));
+                toReturn.Add(Task.Run(() => AddTask(container, globals)));
 
 
         foreach (var c in container.GetOrderedContents())
-        {
-            if (c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
-                toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
-            if (c is AggregateConfiguration aggregate && !aggregate.IsDisabled)
-                toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
-        }
+            switch (c)
+            {
+                case CohortAggregateContainer { IsDisabled: false } aggregateContainer:
+                    toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
+                    break;
+                case AggregateConfiguration { IsDisabled: false } aggregate:
+                    toReturn.Add(Task.Run(() => AddTask(aggregate, globals)));
+                    break;
+            }
 
         return toReturn;
     }
@@ -267,11 +268,10 @@ public class CohortCompiler
                 };
         }
 
-        ExternalDatabaseServer cacheServer = null;
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
-            cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
+            var cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
             queryBuilder.CacheServer = cacheServer;
 
             if (cumulativeQueryBuilder != null)
@@ -328,7 +328,7 @@ public class CohortCompiler
                                             .RootCohortAggregateContainer_ID;
 
 
-        var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
+        var taskExecution = new CohortIdentificationTaskExecution(newsql, cumulativeSql, source,
             queryBuilder?.Results?.CountOfSubQueries ?? -1,
             queryBuilder?.Results?.CountOfCachedSubQueries ?? -1,
             isResultsForRootContainer,
@@ -407,9 +407,8 @@ public class CohortCompiler
                 var identifiers = configuration.AggregateDimensions.Where(c => c.IsExtractionIdentifier).ToArray();
 
                 if (identifiers.Length != 1)
-                    throw new Exception(string.Format(
-                        "There were {0} columns in the configuration marked IsExtractionIdentifier:{1}",
-                        identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
+                    throw new Exception(
+                        $"There were {identifiers.Length} columns in the configuration marked IsExtractionIdentifier:{string.Join(",", identifiers.Select(i => i.GetRuntimeName()))}");
 
                 var identifierDimension = identifiers[0];
                 var identifierColumnInfo = identifierDimension.ColumnInfo;
@@ -419,15 +418,12 @@ public class CohortCompiler
                 explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
 
                 //make other non transform Types have explicit values
-                foreach (var d in configuration.AggregateDimensions)
-                    if (d != identifierDimension)
-                        //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
-                        if (d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) &&
-                            !d.ExtractionInformation.IsProperTransform())
-                            //then use the origin datatype
-                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),
-                                GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask,
-                                    queryCachingServer)));
+                explicitTypes.AddRange(configuration.AggregateDimensions.Where(d => d != identifierDimension)
+                    .Where(d => d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) &&
+                                !d.ExtractionInformation.IsProperTransform())
+                    .Select(d => new DatabaseColumnRequest(d.GetRuntimeName(),
+                        GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask,
+                            queryCachingServer))));
             }
             catch (Exception e)
             {
@@ -466,10 +462,9 @@ public class CohortCompiler
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
 
         //if we have a change in syntax e.g. read from Oracle write to Sql Server
-        if (sourceSyntax.DatabaseType != destinationSyntax.DatabaseType)
-            return sourceSyntax.TypeTranslater.TranslateSQLDBType(data_type, destinationSyntax.TypeTranslater);
-
-        return data_type;
+        return sourceSyntax.DatabaseType != destinationSyntax.DatabaseType
+            ? sourceSyntax.TypeTranslater.TranslateSQLDBType(data_type, destinationSyntax.TypeTranslater)
+            : data_type;
     }
 
     /// <summary>
@@ -497,18 +492,21 @@ public class CohortCompiler
     {
         lock (Tasks)
         {
-            if (!Tasks.TryGetValue(compileable, out var execution)) return;
-            if (execution is { IsExecuting: true }) execution.Cancel();
-
-            // cancel the source
-            if (
-                compileable.State is CompilationState.Building or CompilationState.Executing)
-                compileable.CancellationTokenSource.Cancel();
-
-            if (alsoClearFromTaskList)
+            if (Tasks.TryGetValue(compileable, out var execution))
             {
-                execution?.Dispose();
-                Tasks.Remove(compileable);
+                if (execution is { IsExecuting: true }) execution.Cancel();
+
+                // cancel the source
+                if (
+                    compileable.State is CompilationState.Building or CompilationState.Executing)
+                    compileable.CancellationTokenSource.Cancel();
+
+
+                if (alsoClearFromTaskList)
+                {
+                    execution?.Dispose();
+                    Tasks.Remove(compileable);
+                }
             }
         }
     }

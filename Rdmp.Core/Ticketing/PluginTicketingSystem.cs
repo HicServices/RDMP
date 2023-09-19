@@ -10,7 +10,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Ticketing;
 
-public abstract class PluginTicketingSystem : ICheckable, ITicketingSystem
+public abstract class PluginTicketingSystem : ITicketingSystem
 {
     protected IDataAccessCredentials Credentials { get; set; }
     protected string Url { get; set; }

@@ -124,7 +124,7 @@ FROM
     [Test]
     public void TestOrdering_AggregateThenContainer()
     {
-        //set the order so that a configuration is in position 1 
+        //set the order so that a configuration is in position 1
         rootcontainer.AddChild(aggregate1, 1);
 
         //then a container in position 2
@@ -191,7 +191,7 @@ FROM
     [Test]
     public void TestOrdering_ContainerThenAggregate()
     {
-        //set the order so that a configuration is in position 1 
+        //set the order so that a configuration is in position 1
         rootcontainer.AddChild(aggregate1, 2);
 
         //then a container in position 2

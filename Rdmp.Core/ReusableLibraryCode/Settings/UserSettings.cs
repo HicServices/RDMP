@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
-using Plugin.Settings.Abstractions;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.ReusableLibraryCode.Settings;
@@ -20,18 +19,12 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// </summary>
 public static class UserSettings
 {
-    private static Lazy<ISettings> implementation =
-        new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    private static readonly Lazy<RDMPApplicationSettings> Implementation =
+        new(static () => new RDMPApplicationSettings(), System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static ISettings AppSettings
-    {
-        get
-        {
-            var ret = implementation.Value ??
-                      throw new NotImplementedException("Isolated Storage does not work in this environment...");
-            return ret;
-        }
-    }
+    private static RDMPApplicationSettings AppSettings => Implementation.Value ??
+                                                          throw new NotImplementedException(
+                                                              "Isolated Storage does not work in this environment...");
 
 
     /// <summary>
@@ -138,7 +131,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Cataologues etc)
+    /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Catalogues etc)
     /// </summary>
     public static int TooltipAppearDelay
     {
@@ -456,13 +449,8 @@ public static class UserSettings
         AppSettings.AddOrUpdateValue($"EC_{errorCode.Code}", value.ToString());
     }
 
-    public static bool GetTutorialDone(Guid tutorialGuid)
-    {
-        if (tutorialGuid == Guid.Empty)
-            return false;
-
-        return AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
-    }
+    public static bool GetTutorialDone(Guid tutorialGuid) =>
+        tutorialGuid != Guid.Empty && AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
 
     public static void SetTutorialDone(Guid tutorialGuid, bool value)
     {
@@ -497,24 +485,14 @@ public static class UserSettings
         AppSettings.AddOrUpdateValue($"ColV_{colIdentifier}", visible);
     }
 
-    public static int GetColumnWidth(Guid columnGuid)
-    {
-        if (columnGuid == Guid.Empty)
-            return 100;
-
-        return GetColumnWidth(columnGuid.ToString("N"));
-    }
+    public static int GetColumnWidth(Guid columnGuid) =>
+        columnGuid == Guid.Empty ? 100 : GetColumnWidth(columnGuid.ToString("N"));
 
     public static int GetColumnWidth(string colIdentifier) =>
         AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
 
-    public static bool GetColumnVisible(Guid columnGuid)
-    {
-        if (columnGuid == Guid.Empty)
-            return true;
-
-        return GetColumnVisible(columnGuid.ToString("N"));
-    }
+    public static bool GetColumnVisible(Guid columnGuid) =>
+        columnGuid == Guid.Empty || GetColumnVisible(columnGuid.ToString("N"));
 
     public static bool GetColumnVisible(string colIdentifier) =>
         AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
@@ -605,8 +583,8 @@ public static class UserSettings
         }
     }
 
-    public static void ClearUserSettings(){
+    public static void ClearUserSettings()
+    {
         AppSettings.Clear();
     }
-    private static ISettings CreateSettings() => new RDMPApplicationSettings();
 }

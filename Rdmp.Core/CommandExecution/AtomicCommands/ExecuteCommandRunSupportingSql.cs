@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
+using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
-using System.IO;
-using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -44,23 +44,15 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
 
     protected override IViewSQLAndResultsCollection GetCollection()
     {
-        var collection = new ViewSupportingSqlCollection(SupportingSQLTable);
-
-        // windows GUI client needs to confirm dangerous queries (don't want missclicks to do bad things)
+        // windows GUI client needs to confirm dangerous queries (don't want misclicks to do bad things)
         if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
-            BasicActivator.IsWinForms)
-        {
-            // does the query look dangerous, if so give them a choice to back out
-            var requireConfirm = RiskySql().IsMatch(SupportingSQLTable.SQL);
-
-            if (requireConfirm)
-                if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
-                    return null;
-        }
-
-        return collection;
+            BasicActivator.IsWinForms &&
+            RiskySqlRegex().IsMatch(SupportingSQLTable.SQL) &&
+            !BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
+            return null;
+        return new ViewSupportingSqlCollection(SupportingSQLTable);
     }
 
     [GeneratedRegex("\\b(update|delete|drop|truncate)\\b", RegexOptions.IgnoreCase, "en-US")]
-    private static partial Regex RiskySql();
+    private static partial Regex RiskySqlRegex();
 }

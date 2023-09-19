@@ -22,8 +22,8 @@ namespace Rdmp.UI.Versioning;
 /// <summary>
 /// Allows you to create a new managed database (e.g. Logging database, Catalogue Manager database etc).
 /// 
-/// <para>Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in a user settings file 
-/// for tier 1 databases (Catalogue Manager / Data Export Manager) or as encrypted strings in the catalogue database for Tier 2-3 databases (See 
+/// <para>Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in a user settings file
+/// for tier 1 databases (Catalogue Manager / Data Export Manager) or as encrypted strings in the catalogue database for Tier 2-3 databases (See
 /// PasswordEncryptionKeyLocationUI).</para>
 /// 
 /// <para>You will be shown the initial creation script for the database so you can see what is being created and make sure it matches your expectations.  The database
@@ -31,13 +31,13 @@ namespace Rdmp.UI.Versioning;
 /// </summary>
 public partial class CreatePlatformDatabase : Form
 {
-    private bool _completed = false;
+    private bool _completed;
 
     private bool _programaticClose;
     private IPatcher _patcher;
 
     private Task _tCreateDatabase;
-    public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; } = null;
+    public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; }
 
     /// <summary>
     /// Calls the main constructor but passing control of what scripts to extract to the Patch class
@@ -72,9 +72,9 @@ public partial class CreatePlatformDatabase : Form
             return;
         }
 
-        if (_tCreateDatabase != null && !_tCreateDatabase.IsCompleted)
+        if (_tCreateDatabase is { IsCompleted: false })
         {
-            MessageBox.Show("Setup already underaway");
+            MessageBox.Show("Setup already underway");
             return;
         }
 
@@ -98,14 +98,11 @@ public partial class CreatePlatformDatabase : Form
 
                         DatabaseCreatedIfAny = db;
 
-                        var worst = memory.GetWorst();
-                        if (worst == CheckResult.Success || worst == CheckResult.Warning)
-                            if (MessageBox.Show("Succesfully created database, close form?", "Success",
-                                    MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            {
-                                _programaticClose = true;
-                                Invoke(new MethodInvoker(Close));
-                            }
+                        if (memory.GetWorst() is not (CheckResult.Success or CheckResult.Warning) ||
+                            MessageBox.Show("Successfully created database, close form?", "Success",
+                                MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+                        _programaticClose = true;
+                        Invoke(new MethodInvoker(Close));
                     }
                     else
                     {

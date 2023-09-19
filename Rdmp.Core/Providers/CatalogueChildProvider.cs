@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using FAnsi;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -188,8 +187,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
     public AllPluginsNode AllPluginsNode { get; private set; }
-    public Curation.Data.Plugin[] AllPlugins { get; private set; }
-    public Curation.Data.Plugin[] AllCompatiblePlugins { get; private set; }
+    public Plugin[] AllPlugins { get; private set; }
+    public Plugin[] AllCompatiblePlugins { get; private set; }
 
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
 
@@ -207,7 +206,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
     protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
-    private int _progress = 0;
+    private int _progress;
 
     /// <summary>
     /// 
@@ -223,7 +222,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         _catalogueRepository = repository;
         _catalogueRepository?.EncryptionManager?.ClearAllInjections();
 
-        _errorsCheckNotifier = errorsCheckNotifier ?? new IgnoreAllErrorsCheckNotifier();
+        _errorsCheckNotifier = errorsCheckNotifier ?? IgnoreAllErrorsCheckNotifier.Instance;
 
         if (UserSettings.DebugPerformance)
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
@@ -433,7 +432,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After Governance");
 
         AllPluginsNode = new AllPluginsNode();
-        AllPlugins = GetAllObjects<Curation.Data.Plugin>(repository);
+        AllPlugins = GetAllObjects<Plugin>(repository);
         AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
 
         AddChildren(AllPluginsNode);
@@ -1304,8 +1303,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
     {
-        //all our children (containers and aggregates)
-
         //get subcontainers
         var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 
@@ -1326,6 +1323,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             OrphanAggregateConfigurations.Remove(configuration);
         }
 
+        //all our children (containers and aggregates)
         //children are all aggregates and containers at the current hierarchy level in order
         var children = subcontainers.Union(configurations.Cast<IOrderable>()).OrderBy(o => o.Order).ToList();
 
@@ -1537,15 +1535,14 @@ public class CatalogueChildProvider : ICoreChildProvider
             var exactMatches = GetAllSearchables().Keys.Where(t => t is not IMasqueradeAs).Where(type.IsInstanceOfType);
 
             //Union the unwrapped masqueraders
-            if (unwrapMasqueraders)
-                return exactMatches.Union(
+            return unwrapMasqueraders
+                ? exactMatches.Union(
                         AllMasqueraders
                             .Select(kvp => kvp.Key)
                             .OfType<IMapsDirectlyToDatabaseTable>()
                             .Where(type.IsInstanceOfType))
-                    .Distinct();
-
-            return exactMatches;
+                    .Distinct()
+                : exactMatches;
         }
     }
 
@@ -1564,10 +1561,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
 
-            if (descendancy != null && descendancy.Parents.Any())
-                return descendancy.Parents[0];
-
-            return objectToEmphasise;
+            return descendancy != null && descendancy.Parents.Any() ? descendancy.Parents[0] : objectToEmphasise;
         }
     }
 
@@ -1620,13 +1614,13 @@ public class CatalogueChildProvider : ICoreChildProvider
             if (providers.Any())
                 foreach (var o in objectsToAskAbout ?? GetAllObjects())
                     //for every plugin loaded (that is not forbidlisted)
-                foreach (var plugin in providers)
-                    //ask about the children
-                    try
-                    {
-                        sw.Restart();
-                        //otherwise ask plugin what its children are
-                        var pluginChildren = plugin.GetChildren(o);
+                    foreach (var plugin in providers)
+                        //ask about the children
+                        try
+                        {
+                            sw.Restart();
+                            //otherwise ask plugin what its children are
+                            var pluginChildren = plugin.GetChildren(o);
 
                         //if the plugin takes too long to respond we need to stop
                         if (sw.ElapsedMilliseconds > 1000)
@@ -1636,43 +1630,45 @@ public class CatalogueChildProvider : ICoreChildProvider
                                 $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
                         }
 
-                        //it has children
-                        if (pluginChildren != null && pluginChildren.Any())
-                        {
-                            //get the descendancy of the parent
-                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
-
-                            var newDescendancy = parentDescendancy == null
-                                ? new DescendancyList(new[] { o })
-                                : //if the parent is a root level object start a new descendancy list from it
-                                parentDescendancy
-                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                            //record that
-                            foreach (var pluginChild in pluginChildren)
+                            //it has children
+                            if (pluginChildren != null && pluginChildren.Any())
                             {
-                                //if the parent didn't have any children before
-                                if (!_childDictionary.ContainsKey(o))
-                                    _childDictionary.AddOrUpdate(o, new HashSet<object>(),
-                                        (o1, set) => set); //it does now
+                                //get the descendancy of the parent
+                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
+                                var newDescendancy = parentDescendancy == null
+                                    ? new DescendancyList(new[] { o })
+                                    : //if the parent is a root level object start a new descendancy list from it
+                                    parentDescendancy
+                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                                newDescendancy =
+                                    parentDescendancy
+                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                                //record that
+                                foreach (var pluginChild in pluginChildren)
+                                {
+                                    //if the parent didn't have any children before
+                                    if (!_childDictionary.ContainsKey(o))
+                                        _childDictionary.AddOrUpdate(o, new HashSet<object>(),
+                                            (o1, set) => set); //it does now
 
 
                                 //add us to the parent objects child collection
                                 _childDictionary[o].Add(pluginChild);
 
-                                //add to the child collection of the parent object kvp.Key
-                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
-                                    (s, e) => newDescendancy);
+                                    //add to the child collection of the parent object kvp.Key
+                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
+                                        (s, e) => newDescendancy);
 
-                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                newObjectsFound.Add(pluginChild);
+                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                    newObjectsFound.Add(pluginChild);
+                                }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
-                    }
+                        catch (Exception e)
+                        {
+                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                        }
 
             if (newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);
@@ -1683,9 +1679,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return AllMasqueraders.TryGetValue(o, out var result)
-                ? (IEnumerable<IMasqueradeAs>)result
-                : Array.Empty<IMasqueradeAs>();
+            return AllMasqueraders.TryGetValue(o, out var result) ? result : Array.Empty<IMasqueradeAs>();
         }
     }
 

@@ -37,7 +37,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
 /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
 /// </summary>
-public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICanBeSummarised
+public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
 {
     /// <summary>
     /// The maximum length for any given line in return value of <see cref="GetSummary"/>
@@ -110,10 +110,9 @@ public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICan
     {
         var uri = r[fieldName];
 
-        if (uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()))
-            return null;
-
-        return new Uri(uri.ToString());
+        return uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString())
+            ? null
+            : new Uri(uri.ToString());
     }
 
     /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
@@ -154,39 +153,24 @@ public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICan
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static DateTime? ObjectToNullableDateTime(object o)
-    {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return (DateTime)o;
-    }
+    protected static DateTime? ObjectToNullableDateTime(object o) =>
+        o == null || o == DBNull.Value ? null : (DateTime)o;
 
     /// <summary>
     /// Converts the supplied object to a <see cref="int"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static int? ObjectToNullableInt(object o)
-    {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return int.Parse(o.ToString());
-    }
+    protected static int? ObjectToNullableInt(object o) =>
+        o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
 
     /// <summary>
     /// Converts the supplied object to a <see cref="bool"/> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static bool? ObjectToNullableBool(object o)
-    {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return Convert.ToBoolean(o);
-    }
+    protected static bool? ObjectToNullableBool(object o) =>
+        o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
 
     /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
     public event PropertyChangedEventHandler PropertyChanged;
@@ -359,10 +343,5 @@ public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICan
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
-    protected static string FormatForSummary(object val)
-    {
-        if (val is bool b) return b ? "Yes" : "No";
-
-        return val.ToString()?.Trim();
-    }
+    protected static string FormatForSummary(object val) => val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
 }

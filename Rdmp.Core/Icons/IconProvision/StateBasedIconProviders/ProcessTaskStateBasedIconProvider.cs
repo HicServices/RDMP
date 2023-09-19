@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.DataLoad;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
@@ -35,16 +35,16 @@ public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         if (o is Type && o.Equals(typeof(ProcessTask))) return _plugin;
 
-        if (o is not ProcessTask pt)
-            return null;
-        return pt.ProcessTaskType switch
-        {
-            ProcessTaskType.Executable => _exe,
-            ProcessTaskType.SQLFile => _sql,
-            ProcessTaskType.Attacher => _attacher,
-            ProcessTaskType.DataProvider => _dataProvider,
-            ProcessTaskType.MutilateDataTable => _mutilateDataTables,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return o is not ProcessTask pt
+            ? null
+            : pt.ProcessTaskType switch
+            {
+                ProcessTaskType.Executable => _exe,
+                ProcessTaskType.SQLFile => _sql,
+                ProcessTaskType.Attacher => _attacher,
+                ProcessTaskType.DataProvider => _dataProvider,
+                ProcessTaskType.MutilateDataTable => _mutilateDataTables,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 }

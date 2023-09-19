@@ -108,7 +108,7 @@ count(*)>1", queryBuilder.SQL);
             Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
             Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
 
-            //should have this version of things 
+            //should have this version of things
             Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
             Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='lobster';"));
 

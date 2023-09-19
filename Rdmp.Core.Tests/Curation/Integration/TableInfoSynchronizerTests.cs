@@ -52,7 +52,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
         Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
 
         var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
-        Assert.AreEqual(true, synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual(true, synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
     }
 
     [Test]
@@ -72,11 +72,11 @@ public class TableInfoSynchronizerTests : DatabaseTests
         {
             //accept changes should result in a synchronized table
             Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(1, tableInfoCreated.ColumnInfos.Length); //should only be 1 remaining 
+            Assert.AreEqual(1, tableInfoCreated.ColumnInfos.Length); //should only be 1 remaining
         }
         else
         {
-            var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
             Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);
         }
     }
@@ -103,7 +103,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
         }
         else
         {
-            var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
             Assert.AreEqual("The following columns are missing from the TableInfo:Birthday", ex.Message);
         }
     }
@@ -145,7 +145,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
             }
             else
             {
-                var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
+                var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
                 Assert.AreEqual("The following columns are missing from the TableInfo:Birthday", ex.Message);
             }
         }
@@ -182,6 +182,6 @@ public class TableInfoSynchronizerTests : DatabaseTests
         Import(tbl, out var ti, out _);
 
         var s = new TableInfoSynchronizer(ti);
-        s.Synchronize(new ThrowImmediatelyCheckNotifier());
+        s.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
     }
 }

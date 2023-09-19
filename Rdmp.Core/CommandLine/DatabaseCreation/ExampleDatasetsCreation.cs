@@ -4,6 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi;
@@ -28,11 +33,6 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
-using System;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
@@ -42,7 +42,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation;
 /// <summary>
 /// Handles the creation of example RDMP datasets and metadata object (catalogues, cohorts , projects etc).
 /// </summary>
-public class ExampleDatasetsCreation
+public partial class ExampleDatasetsCreation
 {
     private IRDMPPlatformRepositoryServiceLocator _repos;
     private IBasicActivateItems _activator;
@@ -78,8 +78,8 @@ public class ExampleDatasetsCreation
         //create a new database for the datasets
         db.Create();
 
-        notifier.OnCheckPerformed(new CheckEventArgs($"Succesfully created {db.GetRuntimeName()}",
-            CheckResult.Success));
+        notifier.OnCheckPerformed(
+            new CheckEventArgs($"Successfully created {db.GetRuntimeName()}", CheckResult.Success));
 
         //fixed seed so everyone gets the same datasets
         var r = new Random(options.Seed);
@@ -215,11 +215,9 @@ public class ExampleDatasetsCreation
         {
             con.Open();
             //delete half the records (so we can simulate cohort refresh)
-            using (var cmd = cohortTable.Database.Server.GetCommand(
-                       $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con))
-            {
-                cmd.ExecuteNonQuery();
-            }
+            using var cmd = cohortTable.Database.Server.GetCommand(
+                $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con);
+            cmd.ExecuteNonQuery();
         }
 
         var ec1 = CreateExtractionConfiguration(project, cohort, "First Extraction (2016 - project 123)", true,
@@ -290,12 +288,12 @@ public class ExampleDatasetsCreation
                 };
 
                 var runnerRelease = new ReleaseRunner(optsRelease);
-                runnerRelease.Run(_repos, new ThrowImmediatelyDataLoadEventListener(), notifier,
+                runnerRelease.Run(_repos, ThrowImmediatelyDataLoadEventListener.Quiet, notifier,
                     new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (nevermind)",
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (never mind)",
                     CheckResult.Warning, ex));
             }
     }
@@ -363,12 +361,12 @@ public class ExampleDatasetsCreation
             var runnerExtract = new ExtractionRunner(_activator, optsExtract);
             try
             {
-                runnerExtract.Run(_repos, new ThrowImmediatelyDataLoadEventListener(), notifier,
+                runnerExtract.Run(_repos, ThrowImmediatelyDataLoadEventListener.Quiet, notifier,
                     new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (nevermind)",
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (never mind)",
                     CheckResult.Warning, ex));
             }
 
@@ -401,7 +399,7 @@ public class ExampleDatasetsCreation
             CohortIdentificationConfiguration = cic
         };
 
-        var engine = request.GetEngine(cohortCreationPipeline, new ThrowImmediatelyDataLoadEventListener());
+        var engine = request.GetEngine(cohortCreationPipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         engine.ExecutePipeline(new GracefulCancellationToken());
 
@@ -469,43 +467,45 @@ public class ExampleDatasetsCreation
 
     private static void CreateAdmissionsViews(DiscoveredDatabase db)
     {
-        using (var con = db.Server.GetConnection())
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using (var cmd = db.Server.GetCommand(
+                   """
+                   create view vConditions as
+
+                   SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
+                   FROM
+                   (
+                     SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainCondition,OtherCondition1,OtherCondition2,OtherCondition3
+                     FROM HospitalAdmissions
+                   ) AS cp
+                   UNPIVOT
+                   (
+                     Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
+                   ) AS up;
+                   """, con))
         {
-            con.Open();
-            using (var cmd = db.Server.GetCommand(
-                       @"create view vConditions as
-
-SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
-FROM
-(
-  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainCondition,OtherCondition1,OtherCondition2,OtherCondition3
-  FROM HospitalAdmissions
-) AS cp
-UNPIVOT 
-(
-  Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
-) AS up;", con))
-            {
-                cmd.ExecuteNonQuery();
-            }
+            cmd.ExecuteNonQuery();
+        }
 
 
-            using (var cmd = db.Server.GetCommand(
-                       @"create view vOperations as
+        using (var cmd = db.Server.GetCommand(
+                   """
+                   create view vOperations as
 
-SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
-FROM
-(
-  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainOperation,OtherOperation1,OtherOperation2,OtherOperation3
-  FROM HospitalAdmissions
-) AS cp
-UNPIVOT 
-(
-  Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
-) AS up;", con))
-            {
-                cmd.ExecuteNonQuery();
-            }
+                   SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
+                   FROM
+                   (
+                     SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainOperation,OtherOperation1,OtherOperation2,OtherOperation3
+                     FROM HospitalAdmissions
+                   ) AS cp
+                   UNPIVOT
+                   (
+                     Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
+                   ) AS up;
+                   """, con))
+        {
+            cmd.ExecuteNonQuery();
         }
     }
 
@@ -616,8 +616,8 @@ UNPIVOT
 
     private static DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
     {
-        if (typeof(T) == typeof(HospitalAdmissions))
-            return new[]
+        return typeof(T) == typeof(HospitalAdmissions)
+            ? new[]
             {
                 new DatabaseColumnRequest("MainOperation", new DatabaseTypeRequest(typeof(string), 4)),
                 new DatabaseColumnRequest("MainOperationB", new DatabaseTypeRequest(typeof(string), 4)),
@@ -627,10 +627,8 @@ UNPIVOT
                 new DatabaseColumnRequest("OtherOperation2B", new DatabaseTypeRequest(typeof(string), 4)),
                 new DatabaseColumnRequest("OtherOperation3", new DatabaseTypeRequest(typeof(string), 4)),
                 new DatabaseColumnRequest("OtherOperation3B", new DatabaseTypeRequest(typeof(string), 4))
-            };
-
-
-        return null;
+            }
+            : null;
     }
 
     private ITableInfo ImportTableInfo(DiscoveredTable tbl)
@@ -684,6 +682,9 @@ UNPIVOT
             return null;
 
         //replace 2+ tabs and spaces with single spaces
-        return Regex.Replace(s, @"[ \t]{2,}", " ").Trim();
+        return SpaceTabs().Replace(s, " ").Trim();
     }
+
+    [GeneratedRegex("[ \\t]{2,}")]
+    private static partial Regex SpaceTabs();
 }

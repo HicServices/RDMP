@@ -28,13 +28,13 @@ internal class ExampleDatasetsCreationTests : DatabaseTests
         Assert.AreEqual(0, CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
 
         //create the pipelines
-        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator,null,null);
-        pipes.CreatePipelines(new PlatformDatabaseCreationOptions {});
+        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
+        pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
 
         //create all the stuff
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
-        creator.Create(db, new ThrowImmediatelyCheckNotifier(),
+        creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
 
         //should be at least 2 views (marked as view)
