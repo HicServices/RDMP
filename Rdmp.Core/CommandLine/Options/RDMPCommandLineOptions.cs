@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Microsoft.Data.SqlClient;
-using CommandLine;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
-using NLog;
-using System.IO;
 using System;
+using System.IO;
+using CommandLine;
+using Microsoft.Data.SqlClient;
+using NLog;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.CommandLine.Options;
 
@@ -85,25 +85,21 @@ public abstract class RDMPCommandLineOptions
     protected const string ExampleDataExportConnectionString =
         "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
 
-    public IRDMPPlatformRepositoryServiceLocator DoStartup(EnvironmentInfo env, ICheckNotifier checkNotifier)
+    public IRDMPPlatformRepositoryServiceLocator DoStartup(ICheckNotifier checkNotifier)
     {
-        var startup = new Startup.Startup(env, GetRepositoryLocator()) { SkipPatching = SkipPatching };
+        var startup = new Startup.Startup(GetRepositoryLocator()) { SkipPatching = SkipPatching };
         startup.DoStartup(checkNotifier);
         return startup.RepositoryLocator;
     }
 
     public virtual IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
     {
-        if (_repositoryLocator == null)
-        {
-            if (!string.IsNullOrWhiteSpace(Dir))
-                return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
+        if (_repositoryLocator != null) return _repositoryLocator;
+        if (!string.IsNullOrWhiteSpace(Dir))
+            return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
 
-            GetConnectionStrings(out var c, out var d);
-            _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
-        }
-
-        return _repositoryLocator;
+        GetConnectionStrings(out var c, out var d);
+        return _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
     }
 
     protected virtual bool ShouldLoadHelp() => false;

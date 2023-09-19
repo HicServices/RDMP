@@ -7,9 +7,9 @@
 using System;
 using System.Data;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -25,7 +25,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
 {
     private ExtractionInformation _extractionInformation;
 
-    private bool _haveSentData = false;
+    private bool _haveSentData;
 
     [DemandsInitialization("How long to wait for the select query to run before giving up in seconds",
         DemandType.Unspecified, 60)]
@@ -54,25 +54,19 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
 
         var colName = _extractionInformation.GetRuntimeName();
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
         dt.BeginLoadData();
         dt.Columns.Add(colName);
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = server.GetCommand(qb.SQL, con))
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd = server.GetCommand(qb.SQL, con);
+        cmd.CommandTimeout = timeout;
 
-            {
-                cmd.CommandTimeout = timeout;
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            dt.Rows.Add(new[] { r[colName] });
 
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                        dt.Rows.Add(new[] { r[colName] });
-                }
-            }
-        }
         dt.EndLoadData();
         return dt;
     }

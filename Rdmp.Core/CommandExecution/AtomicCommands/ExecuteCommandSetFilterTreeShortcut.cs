@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Repositories.Construction;
-using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -64,7 +64,7 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
         if (_setOn.Catalogue.IsApiCall())
             SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
 
-        if (_pointTo != null && _pointTo.RootFilterContainer_ID == null)
+        if (_pointTo is { RootFilterContainer_ID: null })
             SetImpossible($"{_pointTo} does not have a filter container tree to link to");
 
         if (_pointTo == null && setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null)

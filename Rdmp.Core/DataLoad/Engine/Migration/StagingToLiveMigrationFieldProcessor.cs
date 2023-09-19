@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataLoad.Engine.Migration;
 /// <summary>
 /// Checks that LIVE has appropriate fields to support the migration of records from STAGING to LIVE and assigns fields roles such that artifact fields
 /// that are generated as part of the load (i.e. computed columns) denoted by the prefix hic_ are not treated as differences in the dataset.  This means
-/// that records in STAGING with a new hic_dataLoadRunID (all of them because each load gets a unique number) will not be identified as UPDATES to the 
+/// that records in STAGING with a new hic_dataLoadRunID (all of them because each load gets a unique number) will not be identified as UPDATES to the
 /// LIVE data table and will be ignored (assuming that there are no differences in other fields that are Diffed).
 /// </summary>
 public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
@@ -91,11 +91,10 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)
         );
 
-        if (match != null && field.IsPrimaryKey)
-            throw new NotSupportedException(
-                $"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted");
-
-        return match != null;
+        return match != null && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted")
+            : match != null;
     }
 
     private bool Ignore(DiscoveredColumn field)
@@ -106,11 +105,10 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
         //its a global ignore based on regex ignore pattern?
         var match = _ignore.IsMatch(field.GetRuntimeName());
 
-        if (match && field.IsPrimaryKey)
-            throw new NotSupportedException(
-                $"Ignore Pattern {_ignore} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted");
-
-        return match;
+        return match && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"Ignore Pattern {_ignore} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted")
+            : match;
     }
 
     private bool UpdateOnly(DiscoveredColumn field)
@@ -121,10 +119,9 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
         //its a supplemental ignore e.g. MessageGuid
         var match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
 
-        if (match && field.IsPrimaryKey)
-            throw new NotSupportedException(
-                $"UpdateButDoNotDiff Pattern {_updateButDoNotDiffExtended} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted");
-
-        return match;
+        return match && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"UpdateButDoNotDiff Pattern {_updateButDoNotDiffExtended} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted")
+            : match;
     }
 }

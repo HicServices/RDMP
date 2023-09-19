@@ -61,11 +61,14 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
         UnSavedChanges?.Invoke(this, b);
     }
 
-    private IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)
+    private static IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)
     {
-        if (c.Parent == null)
-            return found;
-
-        return GetTopmostRDMPUserControl(c.Parent, c.Parent as RDMPUserControl ?? found);
+        while (true)
+        {
+            if (c.Parent == null) return found;
+            var c1 = c;
+            c = c.Parent;
+            found = c1.Parent as RDMPUserControl ?? found;
+        }
     }
 }

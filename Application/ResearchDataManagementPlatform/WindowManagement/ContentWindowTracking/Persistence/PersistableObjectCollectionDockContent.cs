@@ -30,8 +30,6 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
 
     public const string Prefix = "RDMPObjectCollection";
 
-    private PersistStringHelper persistStringHelper = new();
-
     public IPersistableObjectCollection Collection => _control.GetCollection();
 
     public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control,
@@ -88,10 +86,8 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         var collection = _control.GetCollection();
 
         foreach (var o in collection.DatabaseObjects)
-        {
-            var revertable = o as IRevertable;
-            revertable?.RevertToDatabaseState();
-        }
+            if (o is IRevertable revertable)
+                revertable.RevertToDatabaseState();
 
         _control.SetCollection(activator, collection);
     }

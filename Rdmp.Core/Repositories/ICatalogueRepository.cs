@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Data.Common;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -48,12 +47,6 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
     /// </summary>
     IJoinManager JoinManager { get; }
-
-
-    /// <summary>
-    /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.
-    /// </summary>
-    MEF MEF { get; set; }
 
 
     /// <summary>

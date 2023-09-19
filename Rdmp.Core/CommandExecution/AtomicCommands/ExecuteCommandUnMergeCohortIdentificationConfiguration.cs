@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicCommandExecution
+public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicCommandExecution
 {
     private readonly CohortAggregateContainer _target;
 
@@ -21,14 +21,12 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
         CohortIdentificationConfiguration cic) :
         this(activator, cic?.RootCohortAggregateContainer)
     {
-        Weight = 0.3f;
     }
 
     public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,
         CohortAggregateContainer container) : base(activator)
     {
         _target = container;
-
         Weight = 0.3f;
 
         if (_target == null)
@@ -68,7 +66,7 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
                 (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
         var results = merger.UnMerge(_target);
 
-        if (results != null && results.Any())
+        if (results?.Any() == true)
         {
             BasicActivator.Show(
                 $"Created {results.Length} new configurations:{Environment.NewLine} {string.Join(Environment.NewLine, results.Select(r => r.Name))}");

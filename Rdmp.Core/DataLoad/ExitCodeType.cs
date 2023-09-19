@@ -28,7 +28,7 @@ public enum ExitCodeType
 
 
     /// <summary>
-    /// The load was ended mid way through by a load component which decided the load wasn't required after all (e.g. an FTP 
+    /// The load was ended mid way through by a load component which decided the load wasn't required after all (e.g. an FTP
     /// server was empty).  This is considered to be a clean shutdown and not an error.
     /// </summary>
     OperationNotRequired

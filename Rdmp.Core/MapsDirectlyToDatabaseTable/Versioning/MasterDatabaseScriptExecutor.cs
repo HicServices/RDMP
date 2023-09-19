@@ -15,7 +15,6 @@ using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
-using Version = System.Version;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
@@ -162,7 +161,7 @@ public class MasterDatabaseScriptExecutor
         SetVersion(kvp.Key, kvp.Value.DatabaseVersionNumber.ToString());
     }
 
-    public static string CalculateHash(string input)
+    private string CalculateHash(string input)
     {
         // step 1, calculate SHA512 hash from input
 
@@ -171,10 +170,15 @@ public class MasterDatabaseScriptExecutor
 
         var hash = SHA512.HashData(inputBytes);
 
-        // step 2, convert byte array to hex string
-        return string.Join("", hash.Select(static octet => octet.ToString("X2")));
-    }
 
+        // step 2, convert byte array to hex string
+
+        var sb = new StringBuilder();
+        sb.Append(hash.Select(x => x.ToString("X2")));
+
+        return sb.ToString();
+
+    }
 
     private void SetVersion(string name, string version)
     {
@@ -229,11 +233,8 @@ public class MasterDatabaseScriptExecutor
 
         try
         {
-            var i = 0;
             foreach (var patch in patches)
             {
-                i++;
-
                 var shouldRun = patchPreviewShouldIRunIt(patch.Value);
 
                 if (shouldRun)
@@ -259,11 +260,7 @@ public class MasterDatabaseScriptExecutor
 
             SetVersion("Patching", maxPatchVersion.ToString());
             notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}",
-                CheckResult.Success, null));
-
-            //all went fine
-            notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed",
-                CheckResult.Success, null));
+                CheckResult.Success));
 
             return true;
         }
@@ -415,7 +412,7 @@ public class MasterDatabaseScriptExecutor
     /// Creates a new platform database and patches it
     /// </summary>
     /// <param name="patcher">Determines the SQL schema created</param>
-    /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
+    /// <param name="notifier">audit object, can be a ThrowImmediatelyCheckNotifier.Quiet if you aren't in a position to pass one</param>
     public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
     {
         var initialPatch = patcher.GetInitialCreateScriptContents(Database);

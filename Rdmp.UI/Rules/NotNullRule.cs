@@ -18,11 +18,6 @@ internal class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseT
     {
     }
 
-    protected override string IsValid(object currentValue, Type typeToTest)
-    {
-        if (currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()))
-            return "Value cannot be null";
-
-        return null;
-    }
+    protected override string IsValid(object currentValue, Type typeToTest) =>
+        currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()) ? "Value cannot be null" : null;
 }

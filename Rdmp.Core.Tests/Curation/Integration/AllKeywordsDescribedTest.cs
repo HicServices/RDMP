@@ -33,21 +33,21 @@ public class AllKeywordsDescribedTest : DatabaseTests
         //ensures the DQERepository gets a chance to add its help text
         new DQERepository(CatalogueRepository);
 
-        var problems = new List<string>();
-
         var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t =>
             typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract &&
             !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
 
-        foreach (var type in databaseTypes)
-        {
-            var docs = CatalogueRepository.CommentStore[type.Name] ?? CatalogueRepository.CommentStore[$"I{type.Name}"];
-
-            if (string.IsNullOrWhiteSpace(docs))
-                problems.Add(
-                    $"Type {type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)");
-        }
-
+        var problems = databaseTypes
+            .Select(type => new
+            {
+                type,
+                docs = CatalogueRepository.CommentStore[type.Name] ??
+                       CatalogueRepository.CommentStore[$"I{type.Name}"]
+            })
+            .Where(t => string.IsNullOrWhiteSpace(t.docs))
+            .Select(t =>
+                $"Type {t.type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)")
+            .ToList();
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
@@ -66,10 +66,9 @@ public class AllKeywordsDescribedTest : DatabaseTests
         allKeys.AddRange(GetForeignKeys(DataExportTableRepository.DiscoveredServer));
         allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
 
-        var problems = new List<string>();
-        foreach (var fkName in allKeys)
-            if (!CatalogueRepository.CommentStore.ContainsKey(fkName))
-                problems.Add($"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText");
+        var problems = allKeys.Where(fkName => !CatalogueRepository.CommentStore.ContainsKey(fkName))
+            .Select(fkName => $"{fkName} is a foreign Key (which does not CASCADE) but does not have any HelpText")
+            .ToList();
 
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
@@ -102,31 +101,27 @@ public class AllKeywordsDescribedTest : DatabaseTests
 
     private static IEnumerable<string> GetForeignKeys(DiscoveredServer server)
     {
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con)
-                .ExecuteReader();
+        using var con = server.GetConnection();
+        con.Open();
+        var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con)
+            .ExecuteReader();
 
-            while (r.Read())
-                yield return (string)r["name"];
-        }
+        while (r.Read())
+            yield return (string)r["name"];
     }
 
     private static IEnumerable<string> GetIndexes(DiscoveredServer server)
     {
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var r = server.GetCommand(@"select si.name from sys.indexes si 
+        using var con = server.GetConnection();
+        con.Open();
+        var r = server.GetCommand(@"select si.name from sys.indexes si 
   JOIN sys.objects so ON si.[object_id] = so.[object_id]
   WHERE
   so.type = 'U'  AND is_primary_key = 0
   and si.name is not null
 and so.name <> 'sysdiagrams'", con).ExecuteReader();
 
-            while (r.Read())
-                yield return (string)r["name"];
-        }
+        while (r.Read())
+            yield return (string)r["name"];
     }
 }

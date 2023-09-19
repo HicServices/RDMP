@@ -63,7 +63,7 @@ internal class LinkerTests : DatabaseTests
         lazor.SetColumnInfo(velocityColumn);
         Assert.IsTrue(lazor.ColumnInfo.ID == velocityColumn.ID);
 
-        ////////////////cleanup ---- Delete everything that we created -------- ////////////// 
+        ////////////////cleanup ---- Delete everything that we created -------- //////////////
         velocityColumn
             .DeleteInDatabase(); //delete causes CASCADE: CatalogueItem no longer associated with ColumnInfo because ColumnInfo died
 

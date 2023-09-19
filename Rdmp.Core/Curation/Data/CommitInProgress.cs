@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data;
@@ -21,8 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class CommitInProgress : IDisposable
 {
-    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates =
-        new();
+    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new();
 
     public CommitInProgressSettings Settings { get; }
 
@@ -160,10 +159,10 @@ public class CommitInProgress : IDisposable
                 changes.Count == 1 ? changes.Single().Key.ToString() : $"{changes.Count} object(s)";
 
             if (activator.TypeText(new DialogArgs
-                {
-                    WindowTitle = transaction.ToString(),
-                    TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
-                }, int.MaxValue, description, out var newDescription, false))
+            {
+                WindowTitle = transaction.ToString(),
+                TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
+            }, int.MaxValue, description, out var newDescription, false))
                 description = newDescription;
             else
                 // user cancelled creating Commit
@@ -209,9 +208,9 @@ public class CommitInProgress : IDisposable
 
         // no visible changes... but yaml is different which is odd.
         // Either way abandon this commit.
-        if (!props.Any()) return null;
-
-        return $"Update {kv.Key.GetType().Name} {string.Join(", ", props.Select(p => p.Name).ToArray())}";
+        return !props.Any()
+            ? null
+            : $"Update {kv.Key.GetType().Name} {string.Join(", ", props.Select(p => p.Name).ToArray())}";
     }
 
     public void Dispose()

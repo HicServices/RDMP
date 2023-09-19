@@ -56,7 +56,7 @@ public class CohortQueryBuilderResult
     public CacheUsage CacheUsageDecision { get; private set; }
 
     private List<CohortQueryBuilderDependency> _dependencies = new();
-    private bool _alreadyBuilt = false;
+    private bool _alreadyBuilt;
 
     public IReadOnlyCollection<CohortQueryBuilderDependency> Dependencies => _dependencies;
 
@@ -106,8 +106,7 @@ public class CohortQueryBuilderResult
 
             try
             {
-                PluginCohortCompilers =
-                    new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
+                PluginCohortCompilers = PluginCohortCompilerFactory.CreateAll();
             }
             catch (Exception ex)
             {
@@ -284,8 +283,10 @@ public class CohortQueryBuilderResult
     /// <returns></returns>
     public static bool IsEnabled(IOrderable arg, ICoreChildProvider childProvider)
     {
-        var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents
-            .Any(p => p is IDisableable d && d.IsDisabled);
+        var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable
+        {
+            IsDisabled: true
+        });
 
         //if a parent is disabled
         if (parentDisabled.HasValue && parentDisabled.Value)
@@ -298,7 +299,7 @@ public class CohortQueryBuilderResult
                 return false;
 
         //or you yourself are disabled
-        return arg is not IDisableable dis || !dis.IsDisabled;
+        return arg is not IDisableable { IsDisabled: true };
     }
 
     /// <summary>
@@ -309,24 +310,14 @@ public class CohortQueryBuilderResult
     /// <returns></returns>
     protected virtual string GetSetOperationSql(SetOperation currentContainerOperation, DatabaseType dbType)
     {
-        if (dbType == DatabaseType.MySql)
-            throw new NotSupportedException("INTERSECT / UNION / EXCEPT are not supported by MySql caches");
-
-        switch (currentContainerOperation)
+        return currentContainerOperation switch
         {
-            case SetOperation.UNION:
-                return "UNION";
-            case SetOperation.INTERSECT:
-                return "INTERSECT";
-            case SetOperation.EXCEPT:
-                if (dbType == DatabaseType.Oracle)
-                    return "MINUS";
-
-                return "EXCEPT";
-            default:
-                throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation,
-                    null);
-        }
+            SetOperation.UNION => "UNION",
+            SetOperation.INTERSECT => "INTERSECT",
+            SetOperation.EXCEPT => dbType == DatabaseType.Oracle ? "MINUS" : "EXCEPT",
+            _ => throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation,
+                null)
+        };
     }
 
     private string BuildSql(CohortQueryBuilderDependency dependency, ParameterManager parameterManager)
@@ -355,7 +346,7 @@ public class CohortQueryBuilderResult
 
                 //It's not fully cached so we have to run it entirely uncached
                 SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
-                    "cache and data are on seperate servers / access credentials and not all datasets are in the cache");
+                    "cache and data are on separate servers / access credentials and not all datasets are in the cache");
                 return dependency.SqlCacheless.Use(parameterManager);
             default:
                 throw new ArgumentOutOfRangeException();

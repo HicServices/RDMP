@@ -92,7 +92,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP. 
+    ///  User specified free text field.  Not used for anything by RDMP.
     /// <para> Use <see cref="Collation"/> instead</para>
     /// </summary>
     public string Format
@@ -347,19 +347,15 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is ColumnInfo) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
+        if (obj is ColumnInfo)
+            return -string.Compare(obj.ToString(), ToString(),
+                StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
     ///<inheritdoc/>
-    public string GetRuntimeName()
-    {
-        if (Name == null)
-            return null;
-
-        return GetQuerySyntaxHelper().GetRuntimeName(Name);
-    }
+    public string GetRuntimeName() => Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
 
     ///<inheritdoc/>
     public string GetFullyQualifiedName() => Name;
@@ -370,9 +366,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        _cachedQuerySyntaxHelper ??= TableInfo.GetQuerySyntaxHelper();
-
-        return _cachedQuerySyntaxHelper;
+        return _cachedQuerySyntaxHelper ??= TableInfo.GetQuerySyntaxHelper();
     }
 
     ///<inheritdoc/>
@@ -404,7 +398,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             if (ANOTable_ID != null)
                 return
                     ANOTable.GetRuntimeDataType(
-                        loadStage); //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet 
+                        loadStage); //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
 
             //it doesn't have an ANOtransform but it might be the subject of dilution
             var discard = TableInfo.PreLoadDiscardedColumns.SingleOrDefault(c =>
@@ -413,10 +407,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             //The column exists both in the live database and in the identifier dump.  This is because it goes through horrendous bitcrushing operations e.g. Load RAW with full
             //postcode varchar(8) and ship postcode off to identifier dump but also let it go through to live but only as the first 4 letters varchar(4).  so the datatype of the column
             //in RAW is varchar(8) but in Live is varchar(4)
-            if (discard != null)
-                return discard.Data_type;
-
-            return Data_type;
+            return discard != null ? discard.Data_type : Data_type;
         }
 
         //The user is asking about a stage other than RAW so tell them about the final column type state
@@ -473,7 +464,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Checks the ANO status of the column is valid (and matching on datatypes etc).  
+    /// Checks the ANO status of the column is valid (and matching on datatypes etc).
     /// <para>Does not check for synchronization against the underlying database.</para>
     /// </summary>
     /// <param name="notifier"></param>
@@ -510,10 +501,9 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         if (type == LookupType.AnyKey)
             return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID, ExpressionType.OrElse, "PrimaryKey_ID",
                 ID);
-        if (type == LookupType.ForeignKey)
-            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID);
-
-        throw new NotImplementedException($"Unrecognised LookupType {type}");
+        return type == LookupType.ForeignKey
+            ? Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID)
+            : throw new NotImplementedException($"Unrecognised LookupType {type}");
     }
 
     ///<inheritdoc/>
@@ -530,7 +520,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
     /// <summary>
     /// Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
-    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything 
+    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything
     /// else goes wrong resolving the Type.
     /// </summary>
     /// <returns></returns>

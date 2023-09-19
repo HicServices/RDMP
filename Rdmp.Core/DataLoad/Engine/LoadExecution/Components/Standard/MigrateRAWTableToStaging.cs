@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 
 /// <summary>
-/// Streams records from a single table in the RAW database and writes it to the corresponding table in the STAGING database during data load.  RAW is an 
+/// Streams records from a single table in the RAW database and writes it to the corresponding table in the STAGING database during data load.  RAW is an
 /// unconstrained identifiable version of the LIVE table created at the start of an RMDP data load (the RAW=>STAGING=>LIVE model).  STAGING is a constrained
 /// (has primary keys / not nulls etc) version of the LIVE table.  This class uses a DataFlowPipelineEngine to stream the records and this includes (optionally)
 /// any anonymisation operations (dropping columns, substituting identifiers etc) configured on the TableInfo (See BasicAnonymisationEngine).
@@ -132,34 +132,28 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         {
             var cols = dbInfo.ExpectTable(sourceTableName).DiscoverColumns();
 
-            using (var con = dbInfo.Server.GetConnection())
-            {
-                con.Open();
-                using (var cmd = dbInfo.Server.GetCommand(
-                           //Magical code that nukes blank/null rows - where all rows are blank/null
-                           string.Format(@"delete from {0} WHERE {1}",
-                               sourceTableName,
-                               string.Join(" AND ",
-                                   cols.Select(c => $"({c} IS NULL OR {c}='')"))), con))
-                {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                        $"About to delete fully null records using SQL:{cmd.CommandText}"));
+            using var con = dbInfo.Server.GetConnection();
+            con.Open();
+            using var cmd = dbInfo.Server.GetCommand(
+                //Magical code that nukes blank/null rows - where all rows are blank/null
+                $@"delete from {sourceTableName} WHERE {string.Join(" AND ",
+                    cols.Select(c => $"({c} IS NULL OR {c}='')"))}", con);
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                $"About to delete fully null records using SQL:{cmd.CommandText}"));
 
-                    cmd.CommandTimeout = 500000;
+            cmd.CommandTimeout = 500000;
 
-                    var affectedRows = cmd.ExecuteNonQuery();
+            var affectedRows = cmd.ExecuteNonQuery();
 
-                    if (affectedRows != 0)
-                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                            $"Deleted {affectedRows} fully blank/null rows from RAW database"));
-                }
-            }
+            if (affectedRows != 0)
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Deleted {affectedRows} fully blank/null rows from RAW database"));
         }
         catch (Exception e)
         {
             job.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Warning,
-                    "Could not delete fully null records, this will not prevent the data load ocurring", e));
+                    "Could not delete fully null records, this will not prevent the data load occurring", e));
         }
     }
 

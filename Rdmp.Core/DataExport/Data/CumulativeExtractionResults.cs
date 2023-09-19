@@ -148,7 +148,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <summary>
-    /// Creates a new audit record in the data export database for describing an extraction attempt of the given <paramref name="dataset"/> in the 
+    /// Creates a new audit record in the data export database for describing an extraction attempt of the given <paramref name="dataset"/> in the
     /// extraction <paramref name="configuration"/>.
     /// </summary>
     /// <param name="repository"></param>
@@ -202,8 +202,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <inheritdoc/>
-    public Type GetDestinationType() =>
-        ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(_destinationType);
+    public Type GetDestinationType() => MEF.GetType(_destinationType);
 
     /// <inheritdoc/>
     public bool IsReferenceTo(Type t) => t == typeof(ExtractableDataSet);

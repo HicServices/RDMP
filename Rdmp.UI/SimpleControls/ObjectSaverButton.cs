@@ -39,8 +39,8 @@ public partial class ObjectSaverButton
 
     public ObjectSaverButton()
     {
-        btnSave.Click += new EventHandler(btnSave_Click);
-        btnUndoRedo.Click += new EventHandler(btnUndoRedo_Click);
+        btnSave.Click += btnSave_Click;
+        btnUndoRedo.Click += btnUndoRedo_Click;
 
         _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
         _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
@@ -93,6 +93,7 @@ public partial class ObjectSaverButton
         //the first time it is set up it could still be out of date!
         CheckForOutOfDateObjectAndOfferToFix();
     }
+
 
     private void ParentForm_Enter(object sender, EventArgs e)
     {
@@ -157,7 +158,7 @@ public partial class ObjectSaverButton
 
     public void Redo()
     {
-        if (_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+        if (_undoneChanges is { Evaluation: ChangeDescription.DatabaseCopyDifferent })
         {
             foreach (var difference in _undoneChanges.Differences)
                 difference.Property.SetValue(_o, difference.LocalValue);

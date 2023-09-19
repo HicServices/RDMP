@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Managers;
@@ -88,14 +89,12 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         var children = GetAllFiltersIncludingInSubContainersRecursively();
 
         //then delete any children it has itself
-        foreach (var subContainer in GetAllSubContainersRecursively())
-            if (subContainer.Exists())
-                subContainer.DeleteInDatabase();
+        foreach (var subContainer in GetAllSubContainersRecursively().Where(subContainer => subContainer.Exists()))
+            subContainer.DeleteInDatabase();
 
         //clean up the orphans that will be created by killing ourselves
-        foreach (var filter in children)
-            if (filter.Exists())
-                filter.DeleteInDatabase();
+        foreach (var filter in children.Where(filter => filter.Exists()))
+            filter.DeleteInDatabase();
 
         // then delete the actual component
         base.DeleteInDatabase();
@@ -107,20 +106,21 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     /// <inheritdoc/>
     public IContainer GetRootContainerOrSelf() => GetRootContainerOrSelf(this);
 
-    private IContainer GetRootContainerOrSelf(IContainer container)
+    private static IContainer GetRootContainerOrSelf(IContainer container)
     {
-        var parent = container.GetParentContainerIfAny();
-        if (parent != null)
-            return GetRootContainerOrSelf(parent);
-
-        return container;
+        while (true)
+        {
+            var parent = container.GetParentContainerIfAny();
+            if (parent == null) return container;
+            container = parent;
+        }
     }
 
     /// <inheritdoc/>
     public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively() =>
         GetAllFiltersIncludingInSubContainersRecursively(this);
 
-    private List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
+    private static List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
     {
         var toReturn = new List<IFilter>();
 

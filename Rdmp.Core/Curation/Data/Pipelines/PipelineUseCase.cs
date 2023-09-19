@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
 /// Abstract base IPipelineUseCase. Provides basic implementations for filtering compatible pipelines and translating
-/// a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set ExplicitSource / 
+/// a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set ExplicitSource /
 /// ExplicitDestination / PreInitialize objects etc as needed for your use case.
 /// </summary>
 public abstract class PipelineUseCase : IPipelineUseCase
@@ -24,17 +24,12 @@ public abstract class PipelineUseCase : IPipelineUseCase
     public HashSet<object> GetInitializationObjects() => InitializationObjects;
 
     /// <inheritdoc/>
-    public IDataFlowPipelineContext GetContext()
-    {
-        if (_context == null)
-            throw new Exception(
-                $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
-
-        return _context;
-    }
+    public IDataFlowPipelineContext GetContext() =>
+        _context ?? throw new Exception(
+            $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
 
     /// <summary>
-    /// Call this in your constructor 
+    /// Call this in your constructor
     /// </summary>
     protected void GenerateContext()
     {
@@ -42,7 +37,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Implement this to generate the compatiblity definition for pipelines that will be used by you.  
+    /// Implement this to generate the compatiblity definition for pipelines that will be used by you.
     /// 
     /// <para>IMPORTANT: Make sure you call <see cref="GenerateContext"/> in every constructor you have</para>
     /// </summary>
@@ -56,7 +51,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     public object ExplicitDestination { get; protected set; }
 
     /// <summary>
-    /// True if there there are no objects available for hydrating (e.g. no files to load, no picked cohorts etc).  This is often 
+    /// True if there there are no objects available for hydrating (e.g. no files to load, no picked cohorts etc).  This is often
     /// the case when the user is editing a <see cref="Pipeline"/> at some arbitrary time.
     /// 
     /// <para>If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects for the task</para>

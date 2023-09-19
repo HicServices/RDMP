@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
 using System;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -83,7 +83,7 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
                 var acceptedOne = false;
 
                 for (var i = 0; i < guesses.Length; i++)
-                    //ask confirmation 
+                    //ask confirmation
                     if (!BasicActivator.IsInteractive || BasicActivator.YesNo(
                             $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",
                             "Multiple matched guesses"))

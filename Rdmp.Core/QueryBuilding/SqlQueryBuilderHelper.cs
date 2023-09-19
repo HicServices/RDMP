@@ -54,7 +54,7 @@ public class SqlQueryBuilderHelper
     /// <inheritdoc cref="QueryTimeColumn.SetLookupStatus"/>
     public static void FindLookups(ISqlQueryBuilder qb)
     {
-        //if there is only one table then user us selecting stuff from the lookup table only 
+        //if there is only one table then user us selecting stuff from the lookup table only
         if (qb.TablesUsedInQuery.Count == 1)
             return;
 
@@ -63,8 +63,8 @@ public class SqlQueryBuilderHelper
 
 
     /// <summary>
-    /// Must be called only after the ISqlQueryBuilder.TablesUsedInQuery has been set (see GetTablesUsedInQuery).  This method will resolve how 
-    /// the various tables can be linked together.  Throws QueryBuildingException if it is not possible to join the tables with any known 
+    /// Must be called only after the ISqlQueryBuilder.TablesUsedInQuery has been set (see GetTablesUsedInQuery).  This method will resolve how
+    /// the various tables can be linked together.  Throws QueryBuildingException if it is not possible to join the tables with any known
     /// JoinInfos / Lookup knowledge
     /// </summary>
     /// <param name="qb"></param>
@@ -94,54 +94,54 @@ public class SqlQueryBuilderHelper
         }
 
         foreach (TableInfo table1 in qb.TablesUsedInQuery)
-        foreach (TableInfo table2 in qb.TablesUsedInQuery)
-            if (table1.ID != table2.ID) //each table must join with a single other table
-            {
-                //figure out which of the users columns is from table 1 to join using
-                var availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
-                    table1.ColumnInfos.ToArray(),
-                    table2.ColumnInfos.ToArray());
+            foreach (TableInfo table2 in qb.TablesUsedInQuery)
+                if (table1.ID != table2.ID) //each table must join with a single other table
+                {
+                    //figure out which of the users columns is from table 1 to join using
+                    var availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
+                        table1.ColumnInfos.ToArray(),
+                        table2.ColumnInfos.ToArray());
 
                 if (availableJoins.Length == 0)
                     continue; //try another table
 
                 var comboJoinResolved = false;
 
-                //if there are more than 1 join info between the two tables then we need to either do a combo join or complain to user
-                if (availableJoins.Length > 1)
-                {
-                    var additionalErrorMessageWhyWeCantDoComboJoin = "";
-                    //if there are multiple joins but they all join between the same 2 tables in the same direction
-                    if (availableJoins.Select(j => j.PrimaryKey.TableInfo_ID).Distinct().Count() == 1
-                        &&
-                        availableJoins.Select(j => j.ForeignKey.TableInfo_ID).Distinct().Count() == 1)
-                        if (availableJoins.Select(j => j.ExtractionJoinType).Distinct().Count() == 1)
-                        {
-                            //add as combo join
-                            for (var i = 1; i < availableJoins.Length; i++)
-                                availableJoins[0].AddQueryBuildingTimeComboJoinDiscovery(availableJoins[i]);
-                            comboJoinResolved = true;
-                        }
+                    //if there are more than 1 join info between the two tables then we need to either do a combo join or complain to user
+                    if (availableJoins.Length > 1)
+                    {
+                        var additionalErrorMessageWhyWeCantDoComboJoin = "";
+                        //if there are multiple joins but they all join between the same 2 tables in the same direction
+                        if (availableJoins.Select(j => j.PrimaryKey.TableInfo_ID).Distinct().Count() == 1
+                            &&
+                            availableJoins.Select(j => j.ForeignKey.TableInfo_ID).Distinct().Count() == 1)
+                            if (availableJoins.Select(j => j.ExtractionJoinType).Distinct().Count() == 1)
+                            {
+                                //add as combo join
+                                for (var i = 1; i < availableJoins.Length; i++)
+                                    availableJoins[0].AddQueryBuildingTimeComboJoinDiscovery(availableJoins[i]);
+                                comboJoinResolved = true;
+                            }
+                            else
+                            {
+                                additionalErrorMessageWhyWeCantDoComboJoin =
+                                    " Although joins are all between the same tables in the same direction, the ExtractionJoinTypes are different (e.g. LEFT and RIGHT) which prevents forming a Combo AND based join using both relationships";
+                            }
                         else
-                        {
                             additionalErrorMessageWhyWeCantDoComboJoin =
-                                " Although joins are all between the same tables in the same direction, the ExtractionJoinTypes are different (e.g. LEFT and RIGHT) which prevents forming a Combo AND based join using both relationships";
-                        }
-                    else
-                        additionalErrorMessageWhyWeCantDoComboJoin =
-                            " The Joins do not go in the same direction e.g. Table1.FK=>Table=2.PK and then a reverse relationship Table2.FK=>Table1.PK, in this case the system cannot do a Combo AND based join";
+                                " The Joins do not go in the same direction e.g. Table1.FK=>Table=2.PK and then a reverse relationship Table2.FK=>Table1.PK, in this case the system cannot do a Combo AND based join";
 
-                    var possibleJoinsWere = availableJoins.Select(s => $"JoinInfo[{s}]")
-                        .Aggregate((a, b) => a + Environment.NewLine + b);
+                        var possibleJoinsWere = availableJoins.Select(s => $"JoinInfo[{s}]")
+                            .Aggregate((a, b) => a + Environment.NewLine + b);
 
-                    if (!comboJoinResolved)
-                        throw new QueryBuildingException(
-                            $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
+                        if (!comboJoinResolved)
+                            throw new QueryBuildingException(
+                                $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
+                    }
+
+                    if (!Joins.Contains(availableJoins[0]))
+                        Joins.Add(availableJoins[0]);
                 }
-
-                if (!Joins.Contains(availableJoins[0]))
-                    Joins.Add(availableJoins[0]);
-            }
 
         if (qb.TablesUsedInQuery.Count - GetDistinctRequiredLookups(qb).Count() - Joins.Count > 1)
             throw new QueryBuildingException(
@@ -162,12 +162,10 @@ public class SqlQueryBuilderHelper
             }
         }
 
-        if (qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false)
-            throw new QueryBuildingException(
-                "Specified PrimaryExtractionTable was not found amongst the chosen extraction columns");
-
-
-        return Joins;
+        return qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false
+            ? throw new QueryBuildingException(
+                "Specified PrimaryExtractionTable was not found amongst the chosen extraction columns")
+            : Joins;
     }
 
     /// <summary>
@@ -289,7 +287,7 @@ public class SqlQueryBuilderHelper
         if (tables.Length == 1)
             return tables[0]; // go with that
 
-        // what tables have IsExtractionIdentifier column(s)? 
+        // what tables have IsExtractionIdentifier column(s)?
         var extractionIdentifierTables = qb.SelectColumns
             .Where(c => c.IColumn?.IsExtractionIdentifier ?? false)
             .Select(t => t.UnderlyingColumn?.TableInfo_ID)
@@ -320,14 +318,14 @@ public class SqlQueryBuilderHelper
                 table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
 
             foreach (var newAvailableJoin in available)
-            foreach (var availableTable in new TableInfo[]
-                         { newAvailableJoin.PrimaryKey.TableInfo, newAvailableJoin.ForeignKey.TableInfo })
-                //if it's a never before seen table
-                if (!toReturn.Contains(availableTable))
-                    //are there any filters which reference the available TableInfo
-                    if (filters.Any(f => f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
-                            $"{availableTable.Name.ToLower()}.")))
-                        toReturn.Add(availableTable);
+                foreach (var availableTable in new TableInfo[]
+                             { newAvailableJoin.PrimaryKey.TableInfo, newAvailableJoin.ForeignKey.TableInfo })
+                    //if it's a never before seen table
+                    if (!toReturn.Contains(availableTable))
+                        //are there any filters which reference the available TableInfo
+                        if (filters.Any(f => f.WhereSQL != null && f.WhereSQL.ToLower().Contains(
+                                $"{availableTable.Name.ToLower()}.")))
+                            toReturn.Add(availableTable);
         }
 
 
@@ -335,8 +333,8 @@ public class SqlQueryBuilderHelper
     }
 
     /// <summary>
-    /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for 
-    /// this process to work 
+    /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for
+    /// this process to work
     /// </summary>
     /// <param name="qb"></param>
     /// <returns></returns>
@@ -398,7 +396,7 @@ public class SqlQueryBuilderHelper
         }
         else if (qb.PrimaryExtractionTable != null)
         {
-            //user has specified which table to start from 
+            //user has specified which table to start from
             toReturn += qb.PrimaryExtractionTable.Name;
 
             //now find any joins which involve the primary extraction table
@@ -439,8 +437,8 @@ public class SqlQueryBuilderHelper
                     var fkTableID = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
 
 
-                    //if we have already seen foreign key table before 
-                    //if we already have 
+                    //if we have already seen foreign key table before
+                    //if we already have
                     if (tablesAddedSoFar.Contains(fkTableID) && tablesAddedSoFar.Contains(pkTableID))
                     {
                         unneededJoins.Add(qb.JoinsUsedInQuery[i]);
@@ -452,7 +450,7 @@ public class SqlQueryBuilderHelper
                         tablesAddedSoFar.Add(pkTableID);
                     }
                     else
-                        //else if we have already seen primary key table before
+                    //else if we have already seen primary key table before
                     if (tablesAddedSoFar.Contains(pkTableID))
                     {
                         toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) +
@@ -498,7 +496,7 @@ public class SqlQueryBuilderHelper
     private static bool TableIsLookupTable(ITableInfo tableInfo, ISqlQueryBuilder qb)
     {
         return
-            //tables where there is any columns which 
+            //tables where there is any columns which
             qb.SelectColumns.Any(
                 //are lookup descriptions and belong to this table
                 c => c.IsLookupDescription && c.UnderlyingColumn.TableInfo_ID == tableInfo.ID);
@@ -604,7 +602,7 @@ public class SqlQueryBuilderHelper
         for (var i = 0; i < filtersInContainer.Length; i++)
         {
             if (qb.CheckSyntax)
-                filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
+                filtersInContainer[i].Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             toReturn += $@"{tabs}/*{filtersInContainer[i].Name}*/{Environment.NewLine}";
 
@@ -632,7 +630,7 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IContainer container) =>
         //skip disabled containers
-        container is not IDisableable dis || !dis.IsDisabled;
+        container is not IDisableable { IsDisabled: true };
 
     /// <summary>
     /// Filters are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
@@ -641,11 +639,11 @@ public class SqlQueryBuilderHelper
     /// <returns></returns>
     private static bool IsEnabled(IFilter filter) =>
         //skip disabled filters
-        filter is not IDisableable dis || !dis.IsDisabled;
+        filter is not IDisableable { IsDisabled: true };
 
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
-    /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para> 
+    /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para>
     /// </summary>
     /// <param name="tablesUsedInQuery"></param>
     /// <returns></returns>
@@ -657,11 +655,10 @@ public class SqlQueryBuilderHelper
 
 
         var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
-        if (databaseTypes.Length > 1)
-            throw new QueryBuildingException(
-                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}");
-
-        return DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
+        return databaseTypes.Length > 1
+            ? throw new QueryBuildingException(
+                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}")
+            : DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
     }
 
     /// <summary>

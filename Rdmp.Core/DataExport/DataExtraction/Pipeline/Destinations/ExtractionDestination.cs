@@ -4,24 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Logging;
-using Rdmp.Core.Repositories;
-using System;
-using System.Data;
-using System.IO;
-using System.Diagnostics;
-using Rdmp.Core.DataExport.DataExtraction.UserPicks;
-using Rdmp.Core.Curation;
-using Microsoft.Data.SqlClient;
-using FAnsi.Discovery;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -65,8 +65,8 @@ e.g. /$i/$a")]
     protected IProject _project;
 
     //state variables
-    protected bool haveOpened = false;
-    private bool haveWrittenBundleContents = false;
+    protected bool haveOpened;
+    private bool haveWrittenBundleContents;
     private Stopwatch stopwatch = new();
 
     public TableLoadInfo TableLoadInfo { get; private set; }
@@ -147,15 +147,15 @@ e.g. /$i/$a")]
     {
         _request.ElevateState(ExtractCommandState.WritingToFile);
 
-        if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
+        if (!haveWrittenBundleContents && _request is ExtractDatasetCommand extractDatasetCommand)
         {
-            WriteBundleContents(((ExtractDatasetCommand)_request).DatasetBundle, job, cancellationToken);
+            WriteBundleContents(extractDatasetCommand.DatasetBundle, job, cancellationToken);
             haveWrittenBundleContents = true;
         }
 
-        if (_request is ExtractGlobalsCommand)
+        if (_request is ExtractGlobalsCommand extractGlobalsCommand)
         {
-            ExtractGlobals((ExtractGlobalsCommand)_request, job, _dataLoadInfo);
+            ExtractGlobals(extractGlobalsCommand, job, _dataLoadInfo);
             return null;
         }
 

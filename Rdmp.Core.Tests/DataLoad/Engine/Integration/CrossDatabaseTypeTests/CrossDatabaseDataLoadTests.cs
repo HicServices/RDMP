@@ -139,7 +139,7 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
             }
             case TestCase.AllPrimaryKeys:
                 dt.PrimaryKey = dt.Columns.Cast<DataColumn>().ToArray();
-                tbl = db.CreateTable("MyTable", dt, new[] { nameCol }); //upload the column as is 
+                tbl = db.CreateTable("MyTable", dt, new[] { nameCol }); //upload the column as is
                 Assert.IsTrue(tbl.DiscoverColumns().All(c => c.IsPrimaryKey));
                 break;
             default:
@@ -180,8 +180,8 @@ MrMurder,2001-01-01,Yella");
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd),
-            new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
+        var checker =
+            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         //create a reader
@@ -219,11 +219,11 @@ MrMurder,2001-01-01,Yella");
 
         try
         {
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+            var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
             var exitCode = exe.Run(
                 new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                    new ThrowImmediatelyDataLoadEventListener(), dbConfig),
+                    ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -394,8 +394,8 @@ MrMurder,2001-01-01,Yella");
 
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-        var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd),
-            new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
+        var checker =
+            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         var config = new HICDatabaseConfiguration(lmd);
@@ -409,11 +409,11 @@ MrMurder,2001-01-01,Yella");
         );
         try
         {
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
+            var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
 
             var exitCode = exe.Run(
                 new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
-                    new ThrowImmediatelyDataLoadEventListener(), config),
+                    ThrowImmediatelyDataLoadEventListener.Quiet, config),
                 new GracefulCancellationToken());
 
             Assert.AreEqual(ExitCodeType.Success, exitCode);
@@ -472,12 +472,7 @@ internal class CustomINameDatabasesAndTablesDuringLoads : INameDatabasesAndTable
         };
     }
 
-    public string GetName(string tableName, LoadBubble convention)
-    {
+    public string GetName(string tableName, LoadBubble convention) =>
         //all tables get called CC
-        if (convention < LoadBubble.Live)
-            return "CC";
-
-        return tableName;
-    }
+        convention < LoadBubble.Live ? "CC" : tableName;
 }

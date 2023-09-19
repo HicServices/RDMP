@@ -237,7 +237,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is TableInfo) return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
+        if (obj is TableInfo)
+            return -string.Compare(obj.ToString(), ToString(),
+                StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -258,7 +260,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public string GetDatabaseRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads namer = null)
     {
         var baseName = GetDatabaseRuntimeName();
-
+            
         namer ??= new FixedStagingDatabaseNamer(baseName);
 
         return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
@@ -280,13 +282,10 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
 
     /// <inheritdoc/>
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
-        if (context == DataAccessContext.Any)
-            throw new Exception("You cannot ask for any credentials, you must supply a usage context.");
-
-        return _knownCredentials[context].Value;
-    }
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+        context == DataAccessContext.Any
+            ? throw new Exception("You cannot ask for any credentials, you must supply a usage context.")
+            : _knownCredentials[context].Value;
 
     /// <summary>
     /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this
@@ -449,10 +448,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     {
         var db = DataAccessPortal.ExpectDatabase(this, context);
 
-        if (IsTableValuedFunction)
-            return db.ExpectTableValuedFunction(GetRuntimeName(), Schema);
-
-        return db.ExpectTable(GetRuntimeName(), Schema, IsView ? TableType.View : TableType.Table);
+        return IsTableValuedFunction
+            ? db.ExpectTableValuedFunction(GetRuntimeName(), Schema)
+            : db.ExpectTable(GetRuntimeName(), Schema, IsView ? TableType.View : TableType.Table);
     }
 
     /// <inheritdoc/>

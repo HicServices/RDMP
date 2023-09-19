@@ -15,8 +15,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
 /// TECHNICAL: Base class for all Forms in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.
-/// IMPORTANT: You MUST set RepositoryLocator = X after calling the constructor on any RDMPForm before showing it (see RDMPFormInitializationTests) this will ensure that OnLoad is 
-/// able to propagate the locator to all child controls (RDMPUserControl).  
+/// IMPORTANT: You MUST set RepositoryLocator = X after calling the constructor on any RDMPForm before showing it (see RDMPFormInitializationTests) this will ensure that OnLoad is
+/// able to propagate the locator to all child controls (RDMPUserControl).
 /// </summary>
 [TechnicalUI]
 public class RDMPForm : Form, IRDMPControl
@@ -63,11 +63,8 @@ public class RDMPForm : Form, IRDMPControl
             Close();
 
         if (e.KeyCode == Keys.S && e.Control)
-        {
-            var saveable = this as ISaveableUI;
-
-            saveable?.GetObjectSaverButton().Save();
-        }
+            if (this is ISaveableUI saveable)
+                saveable.GetObjectSaverButton().Save();
     }
 
     /// <summary>

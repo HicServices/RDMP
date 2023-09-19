@@ -78,11 +78,10 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
                 "This CacheProgress does not have a caching pipeline, please configure one.");
 
         var factory = new CachingPipelineUseCase(cacheProgress);
-        ICacheFileSystemDestination destination;
 
         try
         {
-            destination = factory.CreateDestinationOnly(new ThrowImmediatelyDataLoadEventListener());
+            return factory.CreateDestinationOnly(ThrowImmediatelyDataLoadEventListener.Quiet);
         }
         catch (Exception e)
         {
@@ -90,8 +89,6 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
                 $"We identified that your cache uses pipeline {cacheProgress.Pipeline} but we could not instantiate the Pipeline's Destination instance, make sure the pipeline is intact in PipelineDiagramUI.  See inner exception for details",
                 e);
         }
-
-        return destination;
     }
 
     public static DateTime CalculateLastLoadDate(CacheFileGranularity cacheFileGranularity, DateTime nextDateToBeCached)

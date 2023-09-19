@@ -17,7 +17,7 @@ namespace Rdmp.UI.AggregationUIs;
 
 /// <summary>
 /// One Dimension (Group By Column) can be set to be a 'Continuous Date Axis'.  This must be a DateTime or Date field or a transform that yields a Date/DateTime.  Normally with SQL
-/// when you include a Date in a GroupBy it will group it by unique value (just like any other field), most SQL users will get around this by using a function such as Year(MyDateCol) 
+/// when you include a Date in a GroupBy it will group it by unique value (just like any other field), most SQL users will get around this by using a function such as Year(MyDateCol)
 /// to produce Aggregate of records per year.  However this approach will not fill in years where no date exists.
 /// 
 /// <para>Setting an AggregateContinuousDateAxis will generate a continuous record set for the date field specified even when there are no records.  For example you can set up an axis that
@@ -52,7 +52,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
         }
     }
 
-    private bool updating = false;
+    private bool updating;
 
     private void UpdateFormStateToMatchAxisState()
     {
@@ -119,7 +119,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
             _errorProvider.Clear();
         }
 
-        //if user enters a date then put 
+        //if user enters a date then put
         if (DateTime.TryParse(s.Text, out var dt))
         {
             updating = true;

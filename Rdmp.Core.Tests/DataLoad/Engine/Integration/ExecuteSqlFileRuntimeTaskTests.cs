@@ -54,7 +54,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         var task = new ExecuteSqlFileRuntimeTask(pt,
             new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
-        task.Check(new ThrowImmediatelyCheckNotifier());
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var job = Substitute.For<IDataLoadJob>();
 
@@ -93,7 +93,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         var task = new ExecuteSqlFileRuntimeTask(pt,
             new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
-        task.Check(new ThrowImmediatelyCheckNotifier());
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
         var configuration = new HICDatabaseConfiguration(db.Server);
 
         var job = Substitute.For<IDataLoadJob>();
@@ -105,7 +105,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
             task.Run(job, new GracefulCancellationToken()));
         StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.Message);
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -144,9 +144,9 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         pt.Path.Returns(typeof(ExecuteSqlMutilation).FullName);
         pt.GetAllArguments().Returns(sqlArg);
 
-        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args, CatalogueRepository.MEF);
+        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args);
 
-        task.Check(new ThrowImmediatelyCheckNotifier());
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
         var configuration = new HICDatabaseConfiguration(db.Server);
 
         var job = new ThrowImmediatelyDataLoadJob
@@ -161,7 +161,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         StringAssert.Contains("Mutilate failed", ex.Message);
         StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.InnerException.Message);
 
-        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -197,7 +197,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         var task = new ExecuteSqlFileRuntimeTask(pt,
             new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
-        task.Check(new ThrowImmediatelyCheckNotifier());
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
 
         //create a namer that tells the user

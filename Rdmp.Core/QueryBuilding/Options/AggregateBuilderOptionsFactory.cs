@@ -23,9 +23,8 @@ public class AggregateBuilderOptionsFactory
     {
         var cohortIdentificationConfiguration = config.GetCohortIdentificationConfigurationIfAny();
 
-        if (cohortIdentificationConfiguration != null)
-            return new AggregateBuilderCohortOptions(cohortIdentificationConfiguration.GetAllParameters());
-
-        return new AggregateBuilderBasicOptions();
+        return cohortIdentificationConfiguration != null
+            ? new AggregateBuilderCohortOptions(cohortIdentificationConfiguration.GetAllParameters())
+            : new AggregateBuilderBasicOptions();
     }
 }

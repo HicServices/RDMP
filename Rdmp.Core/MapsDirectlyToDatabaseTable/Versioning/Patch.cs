@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -41,17 +40,16 @@ public class Patch : IComparable
         if (string.IsNullOrWhiteSpace(Description))
             return $"Patch {DatabaseVersionNumber}";
 
-        if (Description.Length > 100)
-            return $"Patch {DatabaseVersionNumber}({Description[..100]}...)";
-
-        return $"Patch {DatabaseVersionNumber}({Description})";
+        return Description.Length > 100
+            ? $"Patch {DatabaseVersionNumber}({Description[..100]}...)"
+            : $"Patch {DatabaseVersionNumber}({Description})";
     }
 
     private void ExtractDescriptionAndVersionFromScriptContents()
     {
         var lines = EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-        var idx = lines[0].IndexOf(VersionKey);
+        var idx = lines[0].IndexOf(VersionKey, StringComparison.Ordinal);
 
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
@@ -71,7 +69,7 @@ public class Patch : IComparable
 
         if (lines.Length >= 2)
         {
-            idx = lines[1].IndexOf(DescriptionKey);
+            idx = lines[1].IndexOf(DescriptionKey, StringComparison.Ordinal);
 
             if (idx == -1)
                 throw new InvalidPatchException(locationInAssembly,
@@ -107,11 +105,11 @@ public class Patch : IComparable
         if (!equal)
             return false;
 
-        if (x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber))
-            return true;
-        throw new InvalidPatchException(x.locationInAssembly,
-            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers",
-            null);
+        return x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber)
+            ? true
+            : throw new InvalidPatchException(x.locationInAssembly,
+                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers",
+                null);
     }
 
     public int CompareTo(object obj)

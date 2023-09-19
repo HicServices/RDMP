@@ -18,12 +18,8 @@ namespace Rdmp.UI.Collections.Providers;
 /// </summary>
 public class HistoryEntry : IMasqueradeAs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; private set; }
-    public DateTime Date { get; private set; }
-
-    private HistoryEntry()
-    {
-    }
+    public IMapsDirectlyToDatabaseTable Object { get; }
+    public DateTime Date { get; }
 
     public HistoryEntry(IMapsDirectlyToDatabaseTable o, DateTime date)
     {
@@ -31,32 +27,22 @@ public class HistoryEntry : IMasqueradeAs
         Date = date;
     }
 
-    public string Serialize()
-    {
-        var helper = new PersistStringHelper();
-        return PersistStringHelper.GetObjectCollectionPersistString(Object) + PersistStringHelper.ExtraText + Date;
-    }
+    public string Serialize() =>
+        $"{PersistStringHelper.GetObjectCollectionPersistString(Object)}{PersistStringHelper.ExtraText}{Date}";
 
     public static HistoryEntry Deserialize(string s, IRDMPPlatformRepositoryServiceLocator locator)
     {
-        var e = new HistoryEntry();
-
         try
         {
-            var helper = new PersistStringHelper();
-            e.Date = DateTime.Parse(PersistStringHelper.GetExtraText(s));
-
-            var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
-
-
-            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString, locator).Single();
+            var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText, StringComparison.Ordinal)];
+            return new HistoryEntry(
+                PersistStringHelper.GetObjectCollectionFromPersistString(objectString, locator).Single(),
+                DateTime.Parse(PersistStringHelper.GetExtraText(s)));
         }
         catch (PersistenceException)
         {
             return null;
         }
-
-        return e;
     }
 
 
@@ -70,7 +56,7 @@ public class HistoryEntry : IMasqueradeAs
         return Equals((HistoryEntry)obj);
     }
 
-    public override int GetHashCode() => Object != null ? Object.GetHashCode() : 0;
+    public override int GetHashCode() => Object?.GetHashCode() ?? 0;
 
     public object MasqueradingAs() => Object;
 }

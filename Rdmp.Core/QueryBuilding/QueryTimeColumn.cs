@@ -75,13 +75,7 @@ public class QueryTimeColumn : IComparable
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        if (IColumn == null)
-            return -1;
-
-        return IColumn.ID;
-    }
+    public override int GetHashCode() => IColumn == null ? -1 : IColumn.ID;
 
     /// <inheritdoc/>
     public override bool Equals(object obj)
@@ -95,14 +89,11 @@ public class QueryTimeColumn : IComparable
     }
 
     /// <inheritdoc/>
-    public int CompareTo(object obj)
-    {
-        if (obj is QueryTimeColumn column)
-            return IColumn.Order -
-                   column.IColumn.Order;
-
-        return 0;
-    }
+    public int CompareTo(object obj) =>
+        obj is QueryTimeColumn
+            ? IColumn.Order -
+              (obj as QueryTimeColumn).IColumn.Order
+            : 0;
 
     /// <summary>
     /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the
@@ -121,7 +112,7 @@ public class QueryTimeColumn : IComparable
 
         if (firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
-
+                
         for (var i = 0; i < ColumnsInOrder.Length; i++)
         {
             //it is a custom column
@@ -171,7 +162,7 @@ public class QueryTimeColumn : IComparable
                         lookupDescriptionIsIsolated = true;
                     }
                     else
-                        //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
+                    //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
                     {
                         throw new QueryBuildingException(
                             $"Found lookup description before encountering any lookup foreign keys (Description column was {ColumnsInOrder[i].UnderlyingColumn}) - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");
@@ -292,7 +283,7 @@ public class QueryTimeColumn : IComparable
         //make sure to only throw SyntaxErrorException errors in here
         try
         {
-            IColumn.Check(new ThrowImmediatelyCheckNotifier());
+            IColumn.Check(ThrowImmediatelyCheckNotifier.Quiet);
             var runtimeName = IColumn.GetRuntimeName();
 
             if (string.IsNullOrWhiteSpace(runtimeName))

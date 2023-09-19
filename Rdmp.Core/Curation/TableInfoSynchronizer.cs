@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -32,7 +32,7 @@ public class TableInfoSynchronizer
 
     /// <summary>
     /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
-    /// collation types etc match the reality.  Pass in an alternative 
+    /// collation types etc match the reality.  Pass in an alternative
     /// </summary>
     /// <param name="tableToSync"></param>
     public TableInfoSynchronizer(ITableInfo tableToSync)

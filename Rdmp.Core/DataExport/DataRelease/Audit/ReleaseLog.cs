@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Audit;
 /// destination directory etc.
 /// 
 /// <para>This is done by linking the CumulativeExtractionResult with a record in the ReleaseLog.  Each SelectedDataSet in an ExtractionConfiguration
-/// can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See CumulativeExtractionResult) and there can be 
+/// can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See CumulativeExtractionResult) and there can be
 /// only 1 ReleaseLog entry per CumulativeExtractionResult.  This means that once a dataset has been released it cannot be extracted/released again (this
 /// is intended behaviour).  If you want to re run a released ExtractionConfiguration then you should clone it.</para>
 /// </summary>
@@ -105,12 +105,7 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
 
 
         return
-            string.Format(
-                "ReleaseLogEntry(CumulativeExtractionResults_ID={0},DatasetName={1},DateOfRelease={2},Username={3})",
-                CumulativeExtractionResults_ID,
-                _datasetName,
-                DateOfRelease,
-                Username);
+            $"ReleaseLogEntry(CumulativeExtractionResults_ID={CumulativeExtractionResults_ID},DatasetName={_datasetName},DateOfRelease={DateOfRelease},Username={Username})";
     }
 
     public ReleaseLog()

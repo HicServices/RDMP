@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-/// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+) 
+/// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+)
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]

@@ -62,7 +62,7 @@ public class CommandInvoker
             p => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
         AddDelegate(typeof(FileInfo), false, p => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
-        // Is the Global Check Notifier the best here? 
+        // Is the Global Check Notifier the best here?
         AddDelegate(typeof(ICheckNotifier), true, p => _basicActivator.GlobalErrorCheckNotifier);
 
         AddDelegate(typeof(Uri), false, p => new Uri(SelectText(p)));
@@ -145,7 +145,7 @@ public class CommandInvoker
                     .ToArray()), true);
 
         // if we aren't asking for any of the above explicit interfaces (e.g. get user to pick an IDeletable)
-        // then we might be something like IProject so let them pick any 
+        // then we might be something like IProject so let them pick any
         AddDelegate(typeof(IMapsDirectlyToDatabaseTable), false,
             p => _basicActivator.SelectOne(GetPromptFor(p),
                 _basicActivator.GetAll<IMapsDirectlyToDatabaseTable>()
@@ -205,8 +205,7 @@ public class CommandInvoker
 
     public IEnumerable<Type> GetSupportedCommands()
     {
-        return _basicActivator.RepositoryLocator.CatalogueRepository?.MEF?.GetAllTypes()
-                   ?.Where(t => WhyCommandNotSupported(t) is null) ??
+        return MEF.GetAllTypes()?.Where(t => WhyCommandNotSupported(t) is null) ??
                throw new Exception("MEF property has not been initialized on the activator");
     }
 
@@ -236,12 +235,12 @@ public class CommandInvoker
             var argDelegate = GetDelegate(required);
 
             //if it is an easy one to automatically fill e.g. IBasicActivateItems
-            if (argDelegate != null && argDelegate.IsAuto)
+            if (argDelegate is { IsAuto: true })
             {
                 parameterValues.Add(argDelegate.Run(required));
             }
             else
-                //if the constructor argument is a picker, use the one passed in
+            //if the constructor argument is a picker, use the one passed in
             if (parameterInfo.ParameterType == typeof(CommandLineObjectPicker))
             {
                 if (picker == null)
@@ -255,7 +254,7 @@ public class CommandInvoker
                 continue;
             }
             else
-                //if we have argument values specified
+            //if we have argument values specified
             if (picker != null)
             {
                 //and the specified value matches the expected parameter type
@@ -388,10 +387,7 @@ public class CommandInvoker
         {
             var constructor = GetConstructor(t, new CommandLineObjectPicker(Array.Empty<string>(), _basicActivator));
 
-            if (constructor == null)
-                return "No constructor";
-
-            return WhyCommandNotSupported(constructor);
+            return constructor == null ? "No constructor" : WhyCommandNotSupported(constructor);
         }
         catch (Exception e)
         {
@@ -412,9 +408,9 @@ public class CommandInvoker
     /// <param name="type">The type of command you want to fetch the constructor from</param>
     /// <param name="picker">The command line arguments that you want to use to hydrate the <paramref name="type"/> constructor</param>
     /// <returns></returns>
-    public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker)
+    public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker = null)
     {
-        var constructors = type.GetConstructors();
+        var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
         if (constructors.Length == 0)
             return null;
@@ -431,10 +427,7 @@ public class CommandInvoker
             importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute)))
                 .ToArray();
 
-        if (importDecorated.Any())
-            return importDecorated[0];
-
-        return constructors[0];
+        return importDecorated.Any() ? importDecorated[0] : constructors[0];
     }
 
     private IMapsDirectlyToDatabaseTable[] GetAllObjectsOfType(Type type)
@@ -444,9 +437,8 @@ public class CommandInvoker
 
         if (_repositoryLocator.CatalogueRepository.SupportsObjectType(type))
             return _repositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();
-        if (_repositoryLocator.DataExportRepository.SupportsObjectType(type))
-            return _repositoryLocator.DataExportRepository.GetAllObjects(type).ToArray();
-
-        return null;
+        return _repositoryLocator.DataExportRepository.SupportsObjectType(type)
+            ? _repositoryLocator.DataExportRepository.GetAllObjects(type).ToArray()
+            : null;
     }
 }

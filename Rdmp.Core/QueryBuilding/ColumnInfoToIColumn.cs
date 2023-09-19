@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Allows you to convert a ColumnInfo into an IColumn (the column concept in query building).  IColumn has Alias and Order which do not exist in ColumnInfo 
+/// Allows you to convert a ColumnInfo into an IColumn (the column concept in query building).  IColumn has Alias and Order which do not exist in ColumnInfo
 /// (which is a reference to an existing column on your database only).  The alias will be null and the Order will be -1 meaning that ColumnInfoToIColumn will
 /// by default appear above other IColumns in order.
 /// </summary>

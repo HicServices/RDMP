@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
@@ -28,13 +29,14 @@ public class BoundDouble : Bound
 
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        //nulls are fine
-        if (value == null)
-            return null;
-
-        //nulls are also fine if we are passed blanks
-        if (value is string s && string.IsNullOrWhiteSpace(s))
-            return null;
+        switch (value)
+        {
+            //nulls are fine
+            case null:
+            //nulls are also fine if we are passed blanks
+            case string s when string.IsNullOrWhiteSpace(s):
+                return null;
+        }
 
         double v;
 
@@ -55,8 +57,8 @@ public class BoundDouble : Bound
         if (value != null && !IsWithinRange(v, otherColumns, otherColumnNames))
             return new ValidationFailure(CreateViolationReportUsingFieldNames(v), this);
 
-//            if (v < Lower || v > Upper)
-//                throw new ValidationException("Value [" + v + "] out of range. Expected a value between " + Lower + " and " + Upper + ".");
+        //            if (v < Lower || v > Upper)
+        //                throw new ValidationException("Value [" + v + "] out of range. Expected a value between " + Lower + " and " + Upper + ".");
 
         return null;
     }
@@ -65,18 +67,18 @@ public class BoundDouble : Bound
     {
         if (Inclusive)
         {
-            if (Lower.HasValue && v < Lower)
+            if (v < Lower)
                 return false;
 
-            if (Upper.HasValue && v > Upper)
+            if (v > Upper)
                 return false;
         }
         else
         {
-            if (Lower.HasValue && v <= Lower)
+            if (v <= Lower)
                 return false;
 
-            if (Upper.HasValue && v >= Upper)
+            if (v >= Upper)
                 return false;
         }
 
@@ -119,10 +121,9 @@ public class BoundDouble : Bound
         if (Lower.HasValue)
             return GreaterThanMessage(d, Lower.ToString());
 
-        if (Upper.HasValue)
-            return LessThanMessage(d, Upper.ToString());
-
-        throw new InvalidOperationException("Illegal state.");
+        return Upper.HasValue
+            ? LessThanMessage(d, Upper.ToString())
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(double d)
@@ -133,20 +134,19 @@ public class BoundDouble : Bound
         if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!string.IsNullOrWhiteSpace(UpperFieldName))
-            return LessThanMessage(d, UpperFieldName);
-
-        throw new InvalidOperationException("Illegal state.");
+        return !string.IsNullOrWhiteSpace(UpperFieldName)
+            ? LessThanMessage(d, UpperFieldName)
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string BetweenMessage(double d, string l, string u) =>
-        $"Value {Wrap(d.ToString())} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
+        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
 
     private static string GreaterThanMessage(double d, string s) =>
-        $"Value {Wrap(d.ToString())} out of range. Expected a value greater than {Wrap(s)}.";
+        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
 
     private static string LessThanMessage(double d, string s) =>
-        $"Value {Wrap(d.ToString())} out of range. Expected a value less than {Wrap(s)}.";
+        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
 
     private static string Wrap(string s) => $"[{s}]";
 

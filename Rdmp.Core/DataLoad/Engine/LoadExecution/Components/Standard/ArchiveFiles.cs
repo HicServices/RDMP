@@ -38,7 +38,7 @@ public class ArchiveFiles : DataLoadComponent
         var datasetID = job.DataLoadInfo.ID;
         var destFile = Path.Combine(job.LoadDirectory.ForArchiving.FullName, $"{datasetID}.zip");
 
-        // If there is nothing in the forLoadingDirectory then 
+        // If there is nothing in the forLoadingDirectory then
         // There may be a HiddenFromArchiver directory with data that may be processed by another component, but this component should *always* archive *something* even if it is just some metadata about the load (if, for example, imaging data is being loaded which is too large to archive)
         if (!FoundFilesOrDirsToArchive(job))
         {

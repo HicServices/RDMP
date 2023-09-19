@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+/// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the user's configuration (ProcessTask and ProcessTaskArguments) See
 /// RuntimeArgumentCollection
 /// </summary>
 public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
@@ -26,7 +26,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public IAttacher Attacher { get; private set; }
     public ICheckable MEFPluginClassInstance => Attacher;
 
-    public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
+    public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
         : base(task, args)
     {
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
@@ -38,7 +38,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IAttacher)}");
 
-        Attacher = mef.CreateA<IAttacher>(ProcessTask.Path);
+        Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, Attacher);
         Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
     }

@@ -4,6 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
@@ -12,10 +16,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -24,7 +24,6 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation;
 internal class NightmareDatasets : DataGenerator
 {
     private IRDMPPlatformRepositoryServiceLocator _repos;
-    private DiscoveredDatabase _db;
     private string _serverName;
     private string _databaseNameWrapped;
     private string _databaseNameRuntime;
@@ -38,19 +37,20 @@ internal class NightmareDatasets : DataGenerator
     public NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db) : base(new Random(123))
     {
         _repos = repos;
-        _db = db;
-        _serverName = _db.Server.Name;
-        _databaseNameWrapped = _db.GetWrappedName();
-        _databaseNameRuntime = _db.GetRuntimeName();
+        var db1 = db;
+        _serverName = db1.Server.Name;
+        _databaseNameWrapped = db1.GetWrappedName();
+        _databaseNameRuntime = db1.GetRuntimeName();
     }
 
-    private BucketList<Catalogue> Catalogues = new();
-    private BucketList<ExtractableDataSet> ExtractableDatasets = new();
-    private BucketList<Project> Projects = new();
-    private BucketList<TableInfo> Tables = new();
-    private int TablesCount = 0;
+    private BucketList<Catalogue> Catalogues = new ();
+    private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
+    private BucketList<Project> Projects = new ();
+    private BucketList<TableInfo> Tables = new ();
+    private int TablesCount;
+
     private BucketList<ColumnInfo> Columns = new();
-    private int ColumnsCount = 0;
+    private int ColumnsCount;
 
     /// <summary>
     /// <para>Generates a lot of metadata in the RDMP platform databases.  This is for testing
@@ -215,11 +215,8 @@ internal class NightmareDatasets : DataGenerator
 
             // 25% of cics are associated with a specific project
             if (r.Next(4) == 0)
-            {
-                var projSpecific =
-                    new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository,
-                        Projects.GetRandom(r), cic);
-            }
+                _ = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository,
+                    Projects.GetRandom(r), cic);
         }
     }
 

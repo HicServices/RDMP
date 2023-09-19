@@ -34,9 +34,9 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
     public string ToShortString()
     {
         var s = ToString();
-        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}...";
-        return s;
+        return s.Length > ArchivalDataLoadInfo.MaxDescriptionLength
+            ? $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}..."
+            : s;
     }
 
     public override string ToString() =>
@@ -45,10 +45,7 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
     public int CompareTo(object obj)
     {
         if (obj is ArchivalFatalError other)
-            if (Date == other.Date)
-                return 0;
-            else
-                return Date > other.Date ? 1 : -1;
+            return Date == other.Date ? 0 : Date > other.Date ? 1 : -1;
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }

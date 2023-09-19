@@ -54,13 +54,13 @@ public class BulkTestsData
     public ColumnInfo[] columnInfos;
 
     /// <summary>
-    /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>).  <see cref="Catalogue"/> is the descriptive element while <see cref="tableInfo"/> is the 
+    /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>).  <see cref="Catalogue"/> is the descriptive element while <see cref="tableInfo"/> is the
     /// pointer to the underlying table.
     /// </summary>
     public ICatalogue catalogue;
 
     /// <summary>
-    /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>).  <see cref="CatalogueItem"/> is the descriptive element while <see cref="columnInfos"/> is the 
+    /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>).  <see cref="CatalogueItem"/> is the descriptive element while <see cref="columnInfos"/> is the
     /// pointer to the underlying table columns.
     /// </summary>
     public CatalogueItem[] catalogueItems;

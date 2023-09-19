@@ -255,13 +255,8 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     public static PipelineUseCase DesignTime() => new CohortCreationRequest();
 
-    public override string ToString()
-    {
-        if (NewCohortDefinition == null)
-            return base.ToString();
-
-        return NewCohortDefinition.Description;
-    }
+    public override string ToString() =>
+        NewCohortDefinition == null ? base.ToString() : NewCohortDefinition.Description;
 
     public string GetSummary(bool includeName, bool includeId) =>
         $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";

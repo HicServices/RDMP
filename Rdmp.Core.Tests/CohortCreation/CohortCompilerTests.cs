@@ -167,7 +167,7 @@ public class CohortCompilerTests : CohortIdentificationTests
                     Assert.AreEqual(joinable,
                         tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
                     Assert.AreEqual(includeSubcontainers ? 7 : 6,
-                        tasks.Count); //all joinables, aggregates and root container 
+                        tasks.Count); //all joinables, aggregates and root container
 
                     break;
                 case TestCompilerAddAllTasksTestCase.RootContainer:

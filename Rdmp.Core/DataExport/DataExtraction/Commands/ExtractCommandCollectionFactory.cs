@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -39,7 +38,7 @@ public class ExtractCommandCollectionFactory
         var sqls = catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals);
 
         //Now find all the lookups and include them into the bundle
-        catalogue.GetTableInfos(out var normalTablesFound, out var lookupsFound);
+        catalogue.GetTableInfos(out _, out var lookupsFound);
 
         //bundle consists of:
         var bundle = new ExtractableDatasetBundle(

@@ -18,7 +18,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.CohortUI.CohortSourceManagement;
 
 /// <summary>
-/// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of 
+/// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of
 /// private/release identifiers in the database
 /// </summary>
 public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design, ISaveableUI
@@ -56,7 +56,7 @@ public partial class ExternalCohortTableUI : ExternalCohortTableUI_Design, ISave
 
         serverDatabaseTableSelector1.DatabaseType = _externalCohortTable.DatabaseType;
 
-        string password = null;
+        string password;
         try
         {
             password = _externalCohortTable.GetDecryptedPassword();

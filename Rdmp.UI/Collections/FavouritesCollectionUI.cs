@@ -18,7 +18,7 @@ using Rdmp.UI.Refreshing;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Collection that shows all of a users favourited objects.  Only root objects will be displayed (this means that if you favourite a Catalogue and 3 
+/// Collection that shows all of a users favourited objects.  Only root objects will be displayed (this means that if you favourite a Catalogue and 3
 /// CatalogueItems within that Catalogue only the root Catalogue will be a top level node in the collection UI)
 /// </summary>
 public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscriber

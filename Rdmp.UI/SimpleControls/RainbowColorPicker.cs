@@ -46,32 +46,29 @@ public class RainbowColorPicker
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
-    private static List<Color> interpolateColors(List<Color> stopColors, int count)
+    private List<Color> interpolateColors(List<Color> stopColors, int count)
     {
         var gradient = new SortedDictionary<float, Color>();
         for (var i = 0; i < stopColors.Count; i++)
             gradient.Add(1f * i / (stopColors.Count - 1), stopColors[i]);
         var ColorList = new List<Color>();
 
-        using (var bmp = new Bitmap(count, 1))
-        using (var G = Graphics.FromImage(bmp))
+        using var bmp = new Bitmap(count, 1);
+        using var G = Graphics.FromImage(bmp);
+        var bmpCRect = new Rectangle(Point.Empty, bmp.Size);
+        var br = new LinearGradientBrush
+            (bmpCRect, Color.Empty, Color.Empty, 0, false);
+        var cb = new ColorBlend
         {
-            var bmpCRect = new Rectangle(Point.Empty, bmp.Size);
-            var br = new LinearGradientBrush
-                (bmpCRect, Color.Empty, Color.Empty, 0, false);
-            var cb = new ColorBlend
-            {
-                Positions = new float[gradient.Count]
-            };
-            for (var i = 0; i < gradient.Count; i++)
-                cb.Positions[i] = gradient.ElementAt(i).Key;
-            cb.Colors = gradient.Values.ToArray();
-            br.InterpolationColors = cb;
-            G.FillRectangle(br, bmpCRect);
-            for (var i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
-            br.Dispose();
-        }
-
+            Positions = new float[gradient.Count]
+        };
+        for (var i = 0; i < gradient.Count; i++)
+            cb.Positions[i] = gradient.ElementAt(i).Key;
+        cb.Colors = gradient.Values.ToArray();
+        br.InterpolationColors = cb;
+        G.FillRectangle(br, bmpCRect);
+        for (var i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
+        br.Dispose();
         return ColorList;
     }
 }

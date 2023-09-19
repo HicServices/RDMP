@@ -69,17 +69,16 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         //they sent us something like "bob" for a table/column name, let's fully qualify it with the Database etc
         var syntax = GetQuerySyntaxHelper();
 
-        if (col == null)
-            return syntax.EnsureFullyQualified(
+        return col == null
+            ? syntax.EnsureFullyQualified(
                 syntax.GetRuntimeName(db ?? string.Empty),
                 null /*no schema*/,
-                syntax.GetRuntimeName(tbl ?? string.Empty));
-
-        return syntax.EnsureFullyQualified(
-            syntax.GetRuntimeName(db ?? string.Empty),
-            null /*no schema*/,
-            syntax.GetRuntimeName(tbl ?? string.Empty),
-            syntax.GetRuntimeName(col));
+                syntax.GetRuntimeName(tbl ?? string.Empty))
+            : syntax.EnsureFullyQualified(
+                syntax.GetRuntimeName(db ?? string.Empty),
+                null /*no schema*/,
+                syntax.GetRuntimeName(tbl ?? string.Empty),
+                syntax.GetRuntimeName(col));
     }
 
     /// <inheritdoc/>
@@ -239,25 +238,21 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         var server = DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport);
 
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+
+        var sql = $@"select count(*) from {DefinitionTableName} where id = {originID}";
+
+        using var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con);
+        try
         {
-            con.Open();
-
-            var sql = $@"select count(*) from {DefinitionTableName} where id = {originID}";
-
-            using (var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con))
-            {
-                try
-                {
-                    return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(
-                        $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})",
-                        e);
-                }
-            }
+            return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(
+                $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})",
+                e);
         }
     }
 

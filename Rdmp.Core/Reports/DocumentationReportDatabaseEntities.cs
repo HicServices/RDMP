@@ -26,14 +26,12 @@ namespace Rdmp.Core.Reports;
 /// </summary>
 public class DocumentationReportDatabaseEntities : DocXHelper
 {
-    private MEF _mef;
     private CommentStore _commentStore;
     private Dictionary<Type, string> Summaries = new();
 
-    public void GenerateReport(CommentStore commentStore, ICheckNotifier notifier, IIconProvider iconProvider, MEF mef,
+    public void GenerateReport(CommentStore commentStore, ICheckNotifier notifier, IIconProvider iconProvider,
         bool showFile)
     {
-        _mef = mef;
         _commentStore = commentStore;
         try
         {
@@ -77,7 +75,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
 
     private void Check(ICheckNotifier notifier)
     {
-        foreach (var t in _mef.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+        foreach (var t in MEF.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
             {
                 if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous") ||

@@ -31,7 +31,7 @@ public partial class KeyDropLocationUI : UserControl
             {
                 JoinKeyType.PrimaryKey => "(Primary Key)",
                 JoinKeyType.ForeignKey => "(Foreign Key)",
-                _ => throw new ArgumentOutOfRangeException(nameof(value))
+                _ => throw new ArgumentOutOfRangeException()
             };
         }
     }
@@ -62,8 +62,7 @@ public partial class KeyDropLocationUI : UserControl
         if (IsValidGetter != null && !IsValidGetter(col))
             return;
 
-        if (col != null)
-            e.Effect = DragDropEffects.Copy;
+        e.Effect = DragDropEffects.Copy;
     }
 
     private void tbPk1_DragDrop(object sender, DragEventArgs e)
@@ -83,10 +82,7 @@ public partial class KeyDropLocationUI : UserControl
         if (data.ModelObjects.Count != 1)
             return null;
 
-        if (data.ModelObjects[0] is ExtractionInformation ei)
-            return ei.ColumnInfo;
-
-        return data.ModelObjects[0] as ColumnInfo;
+        return data.ModelObjects[0] is ExtractionInformation ei ? ei.ColumnInfo : data.ModelObjects[0] as ColumnInfo;
     }
 
     private void btnClear_Click(object sender, EventArgs e)

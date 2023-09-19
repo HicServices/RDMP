@@ -149,7 +149,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
     {
-        if (t != null && t.IsTableValuedFunction)
+        if (t is { IsTableValuedFunction: true })
         {
             WideMessageBox.Show("Lookup table not valid",
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
@@ -448,10 +448,7 @@ Only define secondary columns if you really need them! if any of the key fields 
                         $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                         "Create Extractable Column?");
 
-                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>
-                {
-                    Tuple.Create(f1, p1)
-                };
+                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
 
                 if (p2 != null)
                     keyPairs.Add(Tuple.Create(f2, p2));

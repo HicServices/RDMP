@@ -12,7 +12,7 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Shared interface for both the RDMP query builders (QueryBuilder and AggregateBuilder).  Query Building in RDMP consists of defining mono atomic comonents 
+/// Shared interface for both the RDMP query builders (QueryBuilder and AggregateBuilder).  Query Building in RDMP consists of defining mono atomic comonents
 /// ('I want this column',  'I want LimitationSQL: DISTINCT' etc) then the ISqlQueryBuilder turns it into SQL.
 /// 
 /// <para>The main purpose of this interface is to move common logic such as finding which TableInfos to join and resolving Parameter overriding into SqlQueryBuilderHelper </para>
@@ -35,8 +35,8 @@ public interface ISqlQueryBuilder
     string LimitationSQL { get; }
 
     /// <summary>
-    /// Wrapper class for the columns you added to the query with <see cref="AddColumn(Rdmp.Core.QueryBuilding.IColumn)"/>).  After fetching the query (See <see cref="SQL"/>) this will be populated with 
-    /// facts about the <see cref="IColumn"/> including its status in lookup joins etc 
+    /// Wrapper class for the columns you added to the query with <see cref="AddColumn(Rdmp.Core.QueryBuilding.IColumn)"/>).  After fetching the query (See <see cref="SQL"/>) this will be populated with
+    /// facts about the <see cref="IColumn"/> including its status in lookup joins etc
     /// </summary>
     List<QueryTimeColumn> SelectColumns { get; }
 
@@ -119,7 +119,7 @@ public interface ISqlQueryBuilder
     List<CustomLine> CustomLines { get; }
 
     /// <summary>
-    /// Add the provided text at the specified position in the query.  This will result in the query being rebuilt when you call <see cref="SQL"/>. 
+    /// Add the provided text at the specified position in the query.  This will result in the query being rebuilt when you call <see cref="SQL"/>.
     ///  
     /// </summary>
     /// <param name="text">The SQL to inject</param>

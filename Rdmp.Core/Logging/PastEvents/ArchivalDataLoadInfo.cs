@@ -34,9 +34,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public string ToShortString()
     {
         var s = ToString();
-        if (s.Length > MaxDescriptionLength)
-            return $"{s[..MaxDescriptionLength]}...";
-        return s;
+        return s.Length > MaxDescriptionLength ? $"{s[..MaxDescriptionLength]}..." : s;
     }
 
     public override string ToString()
@@ -106,10 +104,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public int CompareTo(object obj)
     {
         if (obj is ArchivalDataLoadInfo other)
-            if (StartTime == other.StartTime)
-                return 0;
-            else
-                return StartTime > other.StartTime ? 1 : -1;
+            return StartTime == other.StartTime ? 0 : StartTime > other.StartTime ? 1 : -1;
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
@@ -118,24 +113,19 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var toReturn = new List<ArchivalTableLoadInfo>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
+
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
         {
-            con.Open();
+            var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}",
-                       con))
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                {
-                    var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
+            if ((audit.Inserts ?? 0) <= 0 && (audit.Updates ?? 0) <= 0 && (audit.Deletes ?? 0) <= 0 &&
+                UserSettings.HideEmptyTableLoadRunAudits) continue;
 
-                    if ((audit.Inserts ?? 0) <= 0 && (audit.Updates ?? 0) <= 0 && (audit.Deletes ?? 0) <= 0 &&
-                        UserSettings.HideEmptyTableLoadRunAudits) continue;
-
-                    toReturn.Add(audit);
-                }
-            }
+            toReturn.Add(audit);
         }
 
         return toReturn;
@@ -145,18 +135,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var toReturn = new List<ArchivalProgressLog>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}",
-                       con))
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                    toReturn.Add(new ArchivalProgressLog(r));
-            }
-        }
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalProgressLog(r));
 
         return toReturn;
     }
@@ -165,18 +150,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var toReturn = new List<ArchivalFatalError>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}",
-                       con))
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                    toReturn.Add(new ArchivalFatalError(r));
-            }
-        }
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalFatalError(r));
 
         return toReturn;
     }

@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -31,17 +32,18 @@ public class EndToEndCacheTest : DatabaseTests
     private LoadProgress _lp;
     private CacheProgress _cp;
 
+    private const int NumDaysToCache = 5;
+
     private TestDataPipelineAssembler _testPipeline;
     private LoadDirectory _LoadDirectory;
-    private const int NumDaysToCache = 5;
 
     [SetUp]
     protected override void SetUp()
     {
         base.SetUp();
 
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
         _LoadDirectory =
@@ -78,15 +80,15 @@ public class EndToEndCacheTest : DatabaseTests
     [Test]
     public void FireItUpManually()
     {
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         var cachingHost = new CachingHost(CatalogueRepository)
         {
             CacheProgress = _cp
         };
 
-        cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        cachingHost.Start(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // should be numDaysToCache days in cache
         Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Length);
@@ -108,9 +110,9 @@ public class EndToEndCacheTest : DatabaseTests
             Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
             var auto = new CacheRunner(new CacheOptions
-                { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
-            auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-                new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+            { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
+            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
         });
 
         Assert.True(t.Wait(60000));

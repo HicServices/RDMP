@@ -11,7 +11,6 @@ using System.Threading;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -27,7 +26,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 /// </summary>
 public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractionSource
 {
-    private bool _haveCopiedCohortAndAdjustedSql = false;
+    private bool _haveCopiedCohortAndAdjustedSql;
 
     [DemandsInitialization("Database to upload the cohort to prior to linking", defaultValue: "tempdb",
         mandatory: true)]
@@ -70,7 +69,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     /// </summary>
     private bool _doNotMigrate;
 
-    private string _tablename = null;
+    private string _tablename;
     private object _tableName = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
@@ -213,7 +212,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
     private void CopyCohortToDataServer(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        DataTable cohortDataTable = null;
+        DataTable cohortDataTable;
         SetServer();
 
         listener.OnNotify(this,
@@ -232,7 +231,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         catch (Exception e)
         {
             throw new Exception(
-                "An error occurred while trying to download the cohort from the Cohort server (in preparation for transfering it to the data server for linkage and extraction)",
+                "An error occurred while trying to download the cohort from the Cohort server (in preparation for transferring it to the data server for linkage and extraction)",
                 e);
         }
 

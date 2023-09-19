@@ -77,19 +77,17 @@ internal class ConsoleGuiActivator : BasicActivateItems
         btn.Clicked += () => Application.RequestStop();
 
 
-        using (var dlg = new Dialog(title, w, h, btn) { Modal = true })
+        using var dlg = new Dialog(title, w, h, btn) { Modal = true };
+        dlg.Add(new TextView
         {
-            dlg.Add(new TextView
-            {
-                Width = Dim.Fill(),
-                Height = Dim.Fill(1),
-                Text = message.Replace("\r\n", "\n"),
-                ReadOnly = true,
-                AllowsTab = false,
-                WordWrap = true
-            });
-            Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
-        }
+            Width = Dim.Fill(),
+            Height = Dim.Fill(1),
+            Text = message.Replace("\r\n", "\n"),
+            ReadOnly = true,
+            AllowsTab = false,
+            WordWrap = true
+        });
+        Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
     }
 
     public override bool YesNo(DialogArgs args, out bool chosen)
@@ -139,19 +137,13 @@ internal class ConsoleGuiActivator : BasicActivateItems
     public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
     {
         var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok", false);
-        if (dlg.ShowDialog())
-            return dlg.GetDiscoveredDatabase();
-
-        return null;
+        return dlg.ShowDialog() ? dlg.GetDiscoveredDatabase() : null;
     }
 
     public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
     {
         var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok", true);
-        if (dlg.ShowDialog())
-            return dlg.GetDiscoveredTable();
-
-        return null;
+        return dlg.ShowDialog() ? dlg.GetDiscoveredTable() : null;
     }
 
     public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
@@ -172,10 +164,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             return availableObjects[0];
 
         var dlg = new ConsoleGuiSelectOne(this, availableObjects);
-        if (dlg.ShowDialog())
-            return dlg.Selected;
-
-        return null;
+        return dlg.ShowDialog() ? dlg.Selected : null;
     }
 
 
@@ -232,9 +221,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
-
-        return selected == null ? null : new FileInfo(selected);
+        return openDir.FilePaths.Count == 1 ? new FileInfo(openDir.FilePaths[0]) : null;
     }
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
@@ -249,11 +236,13 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
 
-        // entering "null" in a file dialog may return something like "D:\Blah\null"
-        if (string.Equals(Path.GetFileName(selected), "null", StringComparison.CurrentCultureIgnoreCase))
-            return null;
 
-        return selected == null ? null : new FileInfo(selected);
+        // entering "null" in a file dialog may return something like "D:\Blah\null"
+        return string.Equals(Path.GetFileName(selected), "null", StringComparison.CurrentCultureIgnoreCase)
+            ? null
+            : selected == null
+                ? null
+                : new FileInfo(selected);
     }
 
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)

@@ -4,17 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
@@ -25,15 +24,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
 {
     private CohortIdentificationConfiguration _cic;
-    private readonly CohortIdentificationConfiguration[] _allConfigurations;
 
     public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator,
         ExternalCohortTable externalCohortTable) :
         this(activator, null, externalCohortTable, null, null, null)
     {
-        _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+        var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
-        if (!_allConfigurations.Any())
+        if (!allConfigurations.Any())
             SetImpossible(
                 "You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 
@@ -87,15 +85,14 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         request.CohortIdentificationConfiguration = cic;
 
-        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commmit results", cic);
+        var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results", cic);
 
-        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(s, u, cic);
+        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(cic);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    private void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u,
-        CohortIdentificationConfiguration cic)
+    private void OnImportCompletedSuccessfully(CohortIdentificationConfiguration cic)
     {
         //see if we can associate the cic with the project
         var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator)
@@ -113,8 +110,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.SetTarget(target);
 
-        if (target is CohortIdentificationConfiguration configuration)
-            _cic = configuration;
+        if (target is CohortIdentificationConfiguration cohortIdentificationConfiguration)
+            _cic = cohortIdentificationConfiguration;
 
         return this;
     }

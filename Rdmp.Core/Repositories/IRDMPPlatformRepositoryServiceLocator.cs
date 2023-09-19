@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.DataQualityEngine.Data;
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// A class which can find the location (connection strings) of the of Catalogue and Data Export databases.  This might come from a user settings file or from a 
+/// A class which can find the location (connection strings) of the of Catalogue and Data Export databases.  This might come from a user settings file or from a
 /// config file or whatever (depending on how you implement this interface).
 /// </summary>
 public interface IRDMPPlatformRepositoryServiceLocator : ICatalogueRepositoryServiceLocator,

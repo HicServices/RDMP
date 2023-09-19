@@ -53,8 +53,6 @@ public class YamlRepository : MemoryDataExportRepository
         if (File.Exists(GetEncryptionKeyPathFile()))
             EncryptionKeyPath = File.ReadAllText(GetEncryptionKeyPathFile());
 
-        MEF = new MEF();
-
         // Don't create new objects with the ID of existing objects
         NextObjectId = Objects.IsEmpty ? 0 : Objects.Max(o => o.Key.ID);
     }
@@ -72,9 +70,8 @@ public class YamlRepository : MemoryDataExportRepository
         {
             var respect = TableRepository.GetPropertyInfos(type);
 
-            foreach (var prop in type.GetProperties())
-                if (!respect.Contains(prop))
-                    builder = builder.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute());
+            builder = type.GetProperties().Where(prop => !respect.Contains(prop)).Aggregate(builder,
+                (current, prop) => current.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute()));
         }
 
         return builder.Build();
@@ -137,13 +134,10 @@ public class YamlRepository : MemoryDataExportRepository
     private int ObjectDependencyOrder(Type arg)
     {
         // Load Plugin objects before dependent children
-        if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
+        if (arg == typeof(Plugin))
             return 1;
 
-        if (arg == typeof(LoadModuleAssembly))
-            return 2;
-
-        return 3;
+        return arg == typeof(LoadModuleAssembly) ? 2 : 3;
     }
 
 
@@ -202,7 +196,7 @@ public class YamlRepository : MemoryDataExportRepository
         var path = Path.GetDirectoryName(GetPath(lma));
 
         //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
-        return Path.Combine(path, GetObjectByID<Rdmp.Core.Curation.Data.Plugin>(lma.Plugin_ID).Name);
+        return Path.Combine(path, GetObjectByID<Plugin>(lma.Plugin_ID).Name);
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -363,8 +357,6 @@ public class YamlRepository : MemoryDataExportRepository
         File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
     }
 
-    public override string GetValue(DataExportProperty property) => base.GetValue(property);
-
     public override void SetValue(DataExportProperty property, string value)
     {
         base.SetValue(property, value);
@@ -445,7 +437,7 @@ public class YamlRepository : MemoryDataExportRepository
                 {
                     var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
-                    // In case credentials were deleted on the sly
+                    // Credentials can be deleted on the sly
                     if (credential != null) valDictionary.Add(usage, credential);
                 }
 
@@ -601,10 +593,9 @@ public class YamlRepository : MemoryDataExportRepository
             if (Type.Equals(nameof(AggregateConfiguration)))
                 return new CohortContainerContent(repository.GetObjectByID<AggregateConfiguration>(ID), Order);
 
-            if (Type.Equals(nameof(CohortAggregateContainer)))
-                return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
-
-            throw new Exception($"Unexpected IOrderable Type name '{Type}'");
+            return Type.Equals(nameof(CohortAggregateContainer))
+                ? new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order)
+                : throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 

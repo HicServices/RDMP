@@ -25,9 +25,9 @@ namespace Rdmp.UI.CohortUI.ImportCustomData;
 
 /// <summary>
 /// Once you have created a cohort database, this dialog lets you upload a new cohort into it.  You will already have selected a file which contains the private patient identifiers of
-/// those you wish to be in the cohort.  Next you must create or choose an existing Project for which the cohort belongs.  
+/// those you wish to be in the cohort.  Next you must create or choose an existing Project for which the cohort belongs.
 /// 
-/// <para>Once you have chosen the project you can choose to either create a new cohort for use with the project (use this if you have multiple cohorts in the project e.g. 'Cases' and 
+/// <para>Once you have chosen the project you can choose to either create a new cohort for use with the project (use this if you have multiple cohorts in the project e.g. 'Cases' and
 /// 'Controls').  Or 'Revised version of existing cohort' for if you made a mistake with your first version of a cohort or if you are doing a refresh of the cohort (e.g. after 5 years
 /// it is likely there will be different patients that match the research study criteria so a new version of the cohort is appropriate).</para>
 /// </summary>
@@ -82,7 +82,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         if (Project.ProjectNumber == null)
         {
             MessageBox.Show(
-                $"Project {Project} does not have a project number yet, you must asign it one before it can be involved in cohort creation");
+                $"Project {Project} does not have a project number yet, you must assign it one before it can be involved in cohort creation");
             return;
         }
 
@@ -309,8 +309,8 @@ public partial class CohortCreationRequestUI : RDMPForm
         btnClear.Visible = Project != null;
 
         //if a project is selected and the project has no project number
-        lblErrorNoProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
-        tbSetProjectNumber.Visible = Project != null && Project.ProjectNumber == null;
+        lblErrorNoProjectNumber.Visible = Project is { ProjectNumber: null };
+        tbSetProjectNumber.Visible = Project is { ProjectNumber: null };
     }
 
     private void tbName_TextChanged(object sender, EventArgs e)
@@ -320,10 +320,10 @@ public partial class CohortCreationRequestUI : RDMPForm
     private void btnExisting_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
-            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
+        }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
             SetProject(proj);
     }
 

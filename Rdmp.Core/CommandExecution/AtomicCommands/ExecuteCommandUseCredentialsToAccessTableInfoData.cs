@@ -10,7 +10,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
+public sealed class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
 {
     private readonly DataAccessCredentials _credentials;
     private readonly TableInfo _tableInfo;
@@ -21,7 +21,6 @@ public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExe
         DataAccessCredentials credentials, TableInfo targetTableInfo) : base(activator)
     {
         _credentials = credentials;
-
         _tableInfo = targetTableInfo;
 
         if (_credentials == null)

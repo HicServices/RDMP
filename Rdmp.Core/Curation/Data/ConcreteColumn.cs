@@ -50,7 +50,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         get => _selectSql;
         set
         {
-            //never allow annoying whitespace on this field
+            //never allow annoying white space on this field
             value = value?.Trim();
 
             SetField(ref _selectSql, value);
@@ -112,10 +112,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         if (!string.IsNullOrWhiteSpace(Alias))
             return helper.GetRuntimeName(Alias); //.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 
-        if (!string.IsNullOrWhiteSpace(SelectSQL))
-            return helper.GetRuntimeName(SelectSQL);
-
-        return ColumnInfo.GetRuntimeName();
+        return !string.IsNullOrWhiteSpace(SelectSQL) ? helper.GetRuntimeName(SelectSQL) : ColumnInfo.GetRuntimeName();
     }
 
     /// <inheritdoc cref="ColumnSyntaxChecker"/>
@@ -129,11 +126,5 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public int CompareTo(object obj)
-    {
-        if (obj is IColumn column)
-            return Order - column.Order;
-
-        return 0;
-    }
+    public int CompareTo(object obj) => obj is IColumn ? Order - (obj as IColumn).Order : 0;
 }

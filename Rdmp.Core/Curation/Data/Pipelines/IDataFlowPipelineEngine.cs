@@ -13,7 +13,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 /// <summary>
 /// Interface for the Generic IDataFlowPipelineEngine T.  An IDataFlowPipelineEngine is a collection of IDataFlowComponents starting with an IDataFlowSource and
 /// ending with an IDataFlowDestination with any number of IDataFlowComponents in the middle.  Each component must operate on the class that flows through which is
-/// of type T (see the Generic implementation).  
+/// of type T (see the Generic implementation).
 /// 
 /// <para>Before running the IDataFlowPipelineEngine you should call Initialize with the objects that are available for IPipelineRequirement on components.</para>
 /// 

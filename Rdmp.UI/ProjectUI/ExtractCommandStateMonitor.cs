@@ -32,12 +32,7 @@ internal class ExtractCommandStateMonitor
 
         var toUpdateSubstates = CommandSubStates[cmd];
 
-        foreach (var substate in cmd.DatasetBundle.States.ToArray())
-        {
-            toUpdateSubstates.TryAdd(substate.Key, substate.Value);
-
-            toUpdateSubstates[substate.Key] = substate.Value;
-        }
+        foreach (var (key, value) in cmd.DatasetBundle.States.ToArray()) toUpdateSubstates[key] = value;
     }
 
     public IEnumerable<object> GetAllChangedObjects(IExtractDatasetCommand cmd)
@@ -45,34 +40,29 @@ internal class ExtractCommandStateMonitor
         if (CommandStates[cmd] != cmd.State)
             yield return cmd;
 
-        foreach (var substate in cmd.DatasetBundle.States.ToArray())
-            if (CommandSubStates[cmd][substate.Key] != substate.Value)
-                yield return substate.Key;
+        foreach (var (key, value) in cmd.DatasetBundle.States.ToArray())
+            if (CommandSubStates[cmd][key] != value)
+                yield return key;
     }
 
     public void SaveState(GlobalsBundle globals)
     {
-        foreach (var gkvp in globals.States)
-        {
-            GlobalsStates.TryAdd(gkvp.Key, gkvp.Value);
-
-            GlobalsStates[gkvp.Key] = gkvp.Value;
-        }
+        foreach (var (key, value) in globals.States) GlobalsStates[key] = value;
     }
 
     public IEnumerable<object> GetAllChangedObjects(GlobalsBundle globals)
     {
-        foreach (var gkvp in globals.States)
-            if (!GlobalsStates.ContainsKey(gkvp.Key))
+        foreach (var (key, value) in globals.States)
+            if (!GlobalsStates.ContainsKey(key))
             {
-                GlobalsStates.Add(gkvp.Key, gkvp.Value);
-                yield return gkvp.Key; //new objects also are returned as changed
+                GlobalsStates.Add(key, value);
+                yield return key; //new objects also are returned as changed
             }
             else
-                //State has changed since last save
-            if (GlobalsStates[gkvp.Key] != gkvp.Value)
+            //State has changed since last save
+            if (GlobalsStates[key] != value)
             {
-                yield return gkvp.Key;
+                yield return key;
             }
     }
 }

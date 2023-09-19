@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -40,8 +39,8 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         "If ticked, will Freeze the CohortIdentificationConfiguration if the import pipeline terminates successfully")]
     public bool FreezeAfterSuccessfulImport { get; set; }
 
-    private bool haveSentData = false;
-    private CancellationTokenSource _cancelGlobalOperations = new();
+    private bool haveSentData;
+    private readonly CancellationTokenSource _cancelGlobalOperations = new();
 
     /// <summary>
     /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
@@ -61,14 +60,12 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        //if it didn't crash
-        if (pipelineFailureExceptionIfAny == null)
-            if (FreezeAfterSuccessfulImport)
-            {
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
-                _cohortIdentificationConfiguration.Freeze();
-            }
+        // Freeze if requested, if it didn't crash
+        if (pipelineFailureExceptionIfAny != null || !FreezeAfterSuccessfulImport) return;
+
+        listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
+        _cohortIdentificationConfiguration.Freeze();
     }
 
 
@@ -77,11 +74,11 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         _cancelGlobalOperations.Cancel();
     }
 
-    public DataTable TryGetPreview() => GetDataTable(new ThrowImmediatelyDataLoadEventListener());
+    public DataTable TryGetPreview() => GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
-        listener ??= new ThrowImmediatelyDataLoadEventListener();
+        listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));
@@ -125,12 +122,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             throw new Exception(
                 "CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
 
-        DataTable dt = execution.Identifiers;
-        dt.BeginLoadData();
+        var dt = execution.Identifiers;
         foreach (DataColumn column in dt.Columns)
             column.ReadOnly = false;
 
-        dt.EndLoadData();
         return dt;
     }
 
@@ -149,13 +144,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         while (
             //hasn't timed out
             countDown > 0 &&
-            (
-                //state isn't a final state
-                task.State == CompilationState.Executing || task.State == CompilationState.NotScheduled ||
-                task.State == CompilationState.Scheduled)
+            task.State is CompilationState.Executing or CompilationState.NotScheduled or CompilationState.Scheduled
         )
         {
-            Task.Delay(100).Wait();
+            Thread.Sleep(100);
             countDown -= 100;
         }
 

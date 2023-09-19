@@ -38,7 +38,7 @@ internal class ProposeExecutionWhenTargetIsFilterContainer : RDMPCommandExecutio
             if (sourceFilterCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
                 return new ExecuteCommandMoveFilterIntoContainer(ItemActivator, sourceFilterCommand, targetContainer);
 
-            //otherwise it's an import    
+            //otherwise it's an import
 
             //so instead let's let them create a new copy (possibly including changing the type e.g. importing a master
             //filter into a data export AND/OR container
@@ -53,12 +53,10 @@ internal class ProposeExecutionWhenTargetIsFilterContainer : RDMPCommandExecutio
                 return null;
 
             //is it a movement within the current container tree
-            if (sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                return new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand,
-                    targetContainer);
-
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator, targetContainer,
-                sourceContainerCommand.Container);
+            return sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer)
+                ? new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer)
+                : new ExecuteCommandImportFilterContainerTree(ItemActivator, targetContainer,
+                    sourceContainerCommand.Container);
         }
 
         return null;

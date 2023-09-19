@@ -130,7 +130,7 @@ public class AggregateFilterPublishingTests : CohortIdentificationTests
         //before it is a shortcut it has no filters
         Assert.IsFalse(shortcutAggregate.GetQueryBuilder().SQL.Contains("WHERE"));
 
-        //make it a shortcut 
+        //make it a shortcut
         shortcutAggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = aggregate1.ID;
         shortcutAggregate.SaveToDatabase();
 

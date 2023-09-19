@@ -116,18 +116,18 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (rowObject is not ProgressUIEntry o) return null;
-
-        return o.ProgressEventType switch
-        {
-            // TODO: draw a couple of new icons if required
-            ProgressEventType.Debug => _information,
-            ProgressEventType.Trace => _information,
-            ProgressEventType.Information => _information,
-            ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
-            ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
-            _ => throw new ArgumentOutOfRangeException(nameof(rowObject))
-        };
+        return rowObject is ProgressUIEntry o
+            ? o.ProgressEventType switch
+            {
+                // TODO: draw a couple of new icons if required
+                ProgressEventType.Debug => _information,
+                ProgressEventType.Trace => _information,
+                ProgressEventType.Information => _information,
+                ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
+                ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
+                _ => throw new ArgumentOutOfRangeException()
+            }
+            : null;
     }
 
     private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -243,7 +243,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
                 _progressQueue.Remove(message.Key);
 
-                AutoReizeColumns();
+                AutoResizeColumns();
             }
         }
 
@@ -254,21 +254,19 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 olvProgressEvents.AddObjects(_notificationQueue);
                 _notificationQueue.Clear();
 
-                AutoReizeColumns();
+                AutoResizeColumns();
             }
         }
 
         olvProgressEvents.Sort();
     }
 
-    private void AutoReizeColumns()
+    private void AutoResizeColumns()
     {
-        if (UserSettings.AutoResizeColumns)
-        {
-            olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.Width += 15; //add room for icon
-        }
+        if (!UserSettings.AutoResizeColumns) return;
+        olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+        olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+        olvMessage.Width += 15; //add room for icon
     }
 
     private bool HandleFloodOfMessagesFromJob(object sender, string job, int progressAmount, string label)

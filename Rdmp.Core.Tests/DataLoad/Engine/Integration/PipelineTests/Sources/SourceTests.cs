@@ -30,7 +30,7 @@ public class SourceTests : DatabaseTests
         var source = new DbDataCommandDataFlowSource("Select top 3 * from master.sys.tables", "Query Sys tables",
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder, 30);
         Assert.AreEqual(3,
-            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()).Rows.Count);
+            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()).Rows.Count);
     }
 
 
@@ -42,7 +42,7 @@ public class SourceTests : DatabaseTests
 
         var component = new TestObject_RequiresTableInfo();
         var ti = new TableInfo(CatalogueRepository, "TestTableInfo");
-        context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti);
+        context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ti);
 
         Assert.AreEqual(component.PreInitToThis, ti);
         ti.DeleteInDatabase();
@@ -55,7 +55,7 @@ public class SourceTests : DatabaseTests
         var context = contextFactory.Create(PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
         var ti = new TableInfo(mockRepo, "Foo");
         var component = new TestObjectNoRequirements();
-        Assert.DoesNotThrow(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
+        Assert.DoesNotThrow(() => context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ti));
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class SourceTests : DatabaseTests
         };
 
         var ex = Assert.Throws<Exception>(() =>
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci));
+            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ci));
         StringAssert.Contains("The following expected types were not passed to PreInitialize:TableInfo", ex.Message);
     }
 
@@ -85,7 +85,7 @@ public class SourceTests : DatabaseTests
         var component = new TestObject_RequiresTableInfo();
         var ti = new TableInfo(new MemoryCatalogueRepository(), "Foo");
         var ex = Assert.Throws<Exception>(() =>
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
+            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ti));
         StringAssert.Contains(
             "Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ",
             ex.Message);
@@ -106,7 +106,7 @@ public class SourceTests : DatabaseTests
         };
 
         var ex = Assert.Throws<Exception>(() =>
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo));
+            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, testTableInfo));
         StringAssert.Contains(
             $"The following expected types were not passed to PreInitialize:LoadModuleAssembly{Environment.NewLine}The object types passed were:{Environment.NewLine}Rdmp.Core.Curation.Data.TableInfo:Test Table Info",
             ex.Message);
@@ -161,7 +161,7 @@ public class SourceTests : DatabaseTests
         var context = contextFactory.Create(PipelineUsage.FixedDestination);
 
         var suspiciousComponent = new TestObject_Suspicious();
-        var ex = Assert.Throws<MultipleMatchingImplmentationException>(() =>
+        var ex = Assert.Throws<MultipleMatchingImplementationException>(() =>
             context.PreInitialize(new ThrowImmediatelyDataLoadJob(), suspiciousComponent, 5, "fish"));
 
         Console.WriteLine($"Exception was:{ex.Message}");

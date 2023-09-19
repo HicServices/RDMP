@@ -77,9 +77,7 @@ internal class ConsoleGuiBigListBox<T>
     public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,
         Func<T, string> displayMember, bool addNull) : this(prompt, okText, addSearch, displayMember)
     {
-        ArgumentNullException.ThrowIfNull(collection);
-
-        _publicCollection = collection;
+        _publicCollection = collection ?? throw new ArgumentNullException(nameof(collection));
         _addNull = addNull;
     }
 
@@ -98,13 +96,7 @@ internal class ConsoleGuiBigListBox<T>
 
         public override int GetHashCode() => Object.GetHashCode();
 
-        public override bool Equals(object obj)
-        {
-            if (obj is ListViewObject<T2> other)
-                return Object.Equals(other.Object);
-
-            return false;
-        }
+        public override bool Equals(object obj) => obj is ListViewObject<T2> other && Object.Equals(other.Object);
     }
 
     /// <summary>
@@ -275,7 +267,7 @@ internal class ConsoleGuiBigListBox<T>
                 _collection = result;
                 _changes = true;
             }
-        });
+        }, cts.Token);
     }
 
     private IList<ListViewObject<T>> BuildList(IList<T> listOfT)
@@ -304,12 +296,7 @@ internal class ConsoleGuiBigListBox<T>
         ).ToList();
     }
 
-    protected virtual IList<T> GetInitialSource()
-    {
-        if (_publicCollection == null)
-            throw new InvalidOperationException(
-                "When using the protected constructor derived classes must override this method ");
-
-        return _publicCollection;
-    }
+    protected virtual IList<T> GetInitialSource() => _publicCollection ??
+                                                     throw new InvalidOperationException(
+                                                         "When using the protected constructor derived classes must override this method ");
 }

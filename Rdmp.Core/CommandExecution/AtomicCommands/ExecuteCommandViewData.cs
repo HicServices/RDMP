@@ -4,17 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.IO;
+using System.Linq;
 using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
-using Rdmp.Core.Repositories.Construction;
-using System;
-using System.IO;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -54,42 +54,36 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         _obj = obj;
         _useCache = useCache;
 
-        if (obj is TableInfo ti)
+        switch (obj)
         {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
-        }
-        else if (obj is ColumnInfo col)
-        {
-            _collection = CreateCollection(col);
-        }
-        else if (obj is ExtractionInformation ei)
-        {
-            _collection = CreateCollection(ei);
-        }
-        else if (obj is Catalogue cata)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(cata);
-        }
-        else if (obj is CohortIdentificationConfiguration cic)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(cic);
-        }
-        else if (obj is ExtractableCohort ec)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(ec);
-        }
-        else if (obj is AggregateConfiguration ac)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(ac);
-        }
-        else
-        {
-            throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
+            case TableInfo ti:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
+                break;
+            case ColumnInfo col:
+                _collection = CreateCollection(col);
+                break;
+            case ExtractionInformation ei:
+                _collection = CreateCollection(ei);
+                break;
+            case Catalogue cata:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(cata);
+                break;
+            case CohortIdentificationConfiguration cic:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(cic);
+                break;
+            case ExtractableCohort ec:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(ec);
+                break;
+            case AggregateConfiguration ac:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(ac);
+                break;
+            default:
+                throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
         }
     }
 
@@ -100,7 +94,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         var collection = new ViewAggregateExtractUICollection(ac);
 
         //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
-        if (cic != null && cic.QueryCachingServer_ID != null && ac.PatientIndexJoinablesUsed.Any())
+        if (cic is { QueryCachingServer_ID: not null } && ac.PatientIndexJoinablesUsed.Any())
             collection.UseQueryCache = _useCache;
 
         collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
@@ -199,10 +193,9 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
             return OverrideCommandName;
 
-        if (_obj is CohortIdentificationConfiguration)
-            return _useCache ? "Query Builder SQL/Results" : "Query Builder SQL/Results (No Cache)";
-
-        return $"View {_viewType.ToString().Replace("_", " ")}";
+        return _obj is CohortIdentificationConfiguration
+            ? _useCache ? "Query Builder SQL/Results" : "Query Builder SQL/Results (No Cache)"
+            : $"View {_viewType.ToString().Replace("_", " ")}";
     }
 
     protected override IViewSQLAndResultsCollection GetCollection() => _collection;

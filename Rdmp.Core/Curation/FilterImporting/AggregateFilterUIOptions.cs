@@ -7,8 +7,8 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryBuilding.Options;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 

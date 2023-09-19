@@ -4,26 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
+internal sealed class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
     private readonly CatalogueStateBasedIconProvider _catalogueIconProvider;
-    private readonly Image<Rgba32> _disabled;
+    private static readonly Image<Rgba32> _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
 
-    public ExtractableDataSetStateBasedIconProvider(IconOverlayProvider overlayProvider,
-        CatalogueStateBasedIconProvider catalogueIconProvider)
+    public ExtractableDataSetStateBasedIconProvider(CatalogueStateBasedIconProvider catalogueIconProvider)
     {
         _catalogueIconProvider = catalogueIconProvider;
-        _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
-        _overlayProvider = overlayProvider;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -36,7 +32,7 @@ public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconPro
         if (cataOne == null)
             return null;
 
-        var withE = _overlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
+        var withE = IconOverlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
 
         return ds.IsCatalogueDeprecated || ds.DisableExtraction ? _disabled : withE;
     }

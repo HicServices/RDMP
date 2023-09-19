@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding.Parameters;
@@ -27,7 +26,7 @@ public class CohortQueryBuilderDependencySql
     /// </summary>
     public ParameterManager ParametersUsed { get; }
 
-    private bool _hasBeenUsed = false;
+    private bool _hasBeenUsed;
 
     public CohortQueryBuilderDependencySql(string sql, ParameterManager parameterManager)
     {

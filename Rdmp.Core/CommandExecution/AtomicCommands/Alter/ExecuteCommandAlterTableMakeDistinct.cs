@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
@@ -50,10 +50,10 @@ public class ExecuteCommandAlterTableMakeDistinct : AlterTableCommandExecution
                     $"Make distinct '{Table}'"))
                 return;
 
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
 
         var task = Task.Run(() =>
-            Table.MakeDistinct(Timeout));
+            Table.MakeDistinct(Timeout), cts.Token);
 
         Wait("Making Distinct...", task, cts);
 

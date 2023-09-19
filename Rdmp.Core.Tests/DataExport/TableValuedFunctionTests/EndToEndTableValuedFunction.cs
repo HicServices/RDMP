@@ -80,7 +80,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
 
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
-            , new ThrowImmediatelyCheckNotifier());
+            , ThrowImmediatelyCheckNotifier.Quiet);
 
         //create a table valued function
         CreateTvfCatalogue(cohortDatabaseNameWillBe);
@@ -141,7 +141,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
 
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
         var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,
-            (s, e) => { throw new Exception("Did not expect there to be more than 1!"); });
+            (s, e) => throw new Exception("Did not expect there to be more than 1!"));
 
         var root = _cic.RootCohortAggregateContainer;
         root.AddChild(newAggregate, 0);
@@ -177,7 +177,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
         {
             CohortIdentificationConfiguration = _cic
         };
-        var engine = request.GetEngine(_pipe, new ThrowImmediatelyDataLoadEventListener());
+        var engine = request.GetEngine(_pipe, ThrowImmediatelyDataLoadEventListener.Quiet);
         engine.ExecutePipeline(new GracefulCancellationToken());
     }
 
@@ -284,22 +284,20 @@ end
         var sql = qb.SQL;
 
         var db = DataAccessPortal.ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
-        using (var con = db.Server.GetConnection())
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var r = db.Server.GetCommand(sql, con).ExecuteReader();
+
+        var rowsReturned = 0;
+
+        while (r.Read())
         {
-            con.Open();
-            var r = db.Server.GetCommand(sql, con).ExecuteReader();
-
-            var rowsReturned = 0;
-
-            while (r.Read())
-            {
-                rowsReturned++;
-                Assert.NotNull(r["chi"]);
-                Assert.NotNull(r["definitionID"]);
-            }
-
-            Assert.AreEqual(rowsReturned, 5);
+            rowsReturned++;
+            Assert.NotNull(r["chi"]);
+            Assert.NotNull(r["definitionID"]);
         }
+
+        Assert.AreEqual(rowsReturned, 5);
     }
 
     private void TestUsingTvfForAggregates()
@@ -382,7 +380,7 @@ end
         root.SaveToDatabase();
 
         //declare a global parameter of 1 on the aggregate
-        _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => { return null; });
+        _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => null);
 
         //it should have imported the global parameter as part of the import right?
         Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
@@ -401,17 +399,15 @@ end
         var sql = qb.SQL;
 
         var db = DataAccessPortal.ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            var r = db.Server.GetCommand(sql, con).ExecuteReader();
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            //2 chi numbers should be returned
-            Assert.IsTrue(r.Read());
-            Assert.IsTrue(r.Read());
+        //2 chi numbers should be returned
+        Assert.IsTrue(r.Read());
+        Assert.IsTrue(r.Read());
 
-            Assert.IsFalse(r.Read());
-        }
+        Assert.IsFalse(r.Read());
     }
 
     private void TestDataExportOfTvf()
@@ -445,9 +441,9 @@ end
 
         var source = new ExecuteDatasetExtractionSource();
 
-        source.PreInitialize(extractionCommand, new ThrowImmediatelyDataLoadEventListener());
+        source.PreInitialize(extractionCommand, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.AreEqual(1, dt.Rows.Count);
 

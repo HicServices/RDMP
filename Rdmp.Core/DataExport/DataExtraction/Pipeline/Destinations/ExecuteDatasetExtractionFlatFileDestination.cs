@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -15,9 +16,8 @@ using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Repositories;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -155,7 +155,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         CloseFile(listener, true);
     }
 
-    private bool _fileAlreadyClosed = false;
+    private bool _fileAlreadyClosed;
 
     /// <summary>
     /// If performing a batch resume then this file will be a copy of the flat file
@@ -204,7 +204,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         ISelectedDataSets selectedDataSet) => new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new FlatFileReleaseSource<ReleaseAudit>();
+        new FlatFileReleaseSource();
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,

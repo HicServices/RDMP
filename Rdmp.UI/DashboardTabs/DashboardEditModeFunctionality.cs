@@ -5,10 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.Curation.Data.Dashboarding;
 
 
 namespace Rdmp.UI.DashboardTabs;
@@ -45,7 +43,7 @@ public class DashboardEditModeFunctionality
     }
 
     private EditModeAction _plannedAction = EditModeAction.None;
-    private UserControl _plannedControl = null;
+    private UserControl _plannedControl;
 
     private EditModeAction _actionUnderway;
     private UserControl _actionUnderwayOnControl;

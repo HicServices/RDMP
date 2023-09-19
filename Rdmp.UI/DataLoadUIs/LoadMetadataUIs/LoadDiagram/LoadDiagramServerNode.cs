@@ -23,9 +23,7 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
 {
     private readonly LoadBubble _bubble;
     private readonly DiscoveredDatabase _database;
-    private readonly TableInfo[] _loadTables;
-    private readonly HICDatabaseConfiguration _config;
-    private string _description;
+    private readonly string _description;
 
     public string ErrorDescription { get; private set; }
 
@@ -39,8 +37,7 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     {
         _bubble = bubble;
         _database = database;
-        _loadTables = loadTables;
-        _config = config;
+        var config1 = config;
         var serverName = database.Server.Name;
 
         _description = bubble switch
@@ -62,13 +59,13 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
                     $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            var databases = _loadTables.Select(static t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            var databases = loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
             foreach (var dbname in databases)
                 _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),
-                    _loadTables.Where(t =>
+                    loadTables.Where(t =>
                             t.GetDatabaseRuntimeName().Equals(dbname, StringComparison.CurrentCultureIgnoreCase))
                         .ToArray());
         }
@@ -76,9 +73,9 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
         //if it is live yield all the lookups
         if (_bubble == LoadBubble.Live)
             foreach (var kvp in _liveDatabaseDictionary)
-                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, _config));
+                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, config1));
         else
-            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, _loadTables, _config));
+            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, loadTables, config1));
     }
 
     public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;

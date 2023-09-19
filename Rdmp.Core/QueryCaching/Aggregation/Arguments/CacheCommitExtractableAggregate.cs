@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
 /// <summary>
-/// Request to cache an AggregateConfiguration that results in a DataTable suitable for producing a useful graph (e.g. 'number of records per year in 
+/// Request to cache an AggregateConfiguration that results in a DataTable suitable for producing a useful graph (e.g. 'number of records per year in
 /// Biochemistry by healthboard').  Should not contain patient identifiers.
 /// 
 /// <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>

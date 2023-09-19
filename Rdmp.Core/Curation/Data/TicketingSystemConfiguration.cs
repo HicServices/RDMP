@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation.Data;
 /// not be released (e.g. do not release project X until it has been paid for / signed off by the governancer).  The exact implementation of this is mostly left to the
 /// ticketing class you write.</para>
 /// 
-/// <para>The Type field refers to a class that implements PluginTicketingSystem (see LoadModuleAssembly for how to write your own handler or use one of the compatible existing ones).  
+/// <para>The Type field refers to a class that implements PluginTicketingSystem (see LoadModuleAssembly for how to write your own handler or use one of the compatible existing ones).
 /// this class will handle all communication with the ticketing system/server.</para>
 ///
 /// <para>There is also a reference to DataAccessCredentials record which stores optional username and encrypted password to use in the plugin for communicating with the ticketing system.</para>
@@ -42,7 +42,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
 
     /// <summary>
     /// True if the ticketing system should be used/consulted.  Set to false if you want to temporarily disable the ticketing system link to RDMP
-    /// without actually deleting the object. 
+    /// without actually deleting the object.
     /// 
     /// <para>See:</para><see cref="CatalogueRepository.GetTicketingSystem"/>
     /// </summary>

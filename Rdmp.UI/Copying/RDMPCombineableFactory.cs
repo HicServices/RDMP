@@ -34,23 +34,22 @@ public class RDMPCombineableFactory : ICombineableFactory
 
     public ICombineToMakeCommand Create(OLVDataObject o)
     {
-        if (o == null || o.ModelObjects == null)
+        if (o?.ModelObjects == null)
             return null;
 
         //does the data object already contain a command?
         if (o.ModelObjects.OfType<ICombineToMakeCommand>().Count() == 1)
             return o.ModelObjects.OfType<ICombineToMakeCommand>().Single(); //yes
 
-        //otherwise is it something that can be turned into a command?
-        if (o.ModelObjects.Count == 0)
-            return null;
-
-        //try to create command from the single data object
-        if (o.ModelObjects.Count == 1)
-            return Create(o.ModelObjects[0]);
-
-        //try to create command from all the data objects as an array
-        return Create(o.ModelObjects.Cast<object>().ToArray());
+        return o.ModelObjects.Count switch
+        {
+            //otherwise is it something that can be turned into a command?
+            0 => null,
+            //try to create command from the single data object
+            1 => Create(o.ModelObjects[0]),
+            //try to create command from all the data objects as an array
+            _ => Create(o.ModelObjects.Cast<object>().ToArray())
+        };
     }
 
     public ICombineToMakeCommand Create(FileInfo[] files) => new FileCollectionCombineable(files);
@@ -101,10 +100,9 @@ public class RDMPCombineableFactory : ICombineableFactory
         var catalogues = IsArrayOf<Catalogue>(modelObject);
 
         if (catalogues != null)
-            if (catalogues.Length == 1)
-                return new CatalogueCombineable(catalogues[0]);
-            else
-                return new ManyCataloguesCombineable(catalogues);
+            return catalogues.Length == 1
+                ? new CatalogueCombineable(catalogues[0])
+                : new ManyCataloguesCombineable(catalogues);
 
         //filters
         if (modelObject is IFilter filter)
@@ -148,10 +146,7 @@ public class RDMPCombineableFactory : ICombineableFactory
             return new CohortIdentificationConfigurationCommand(cic ??
                                                                 cicAssociation.CohortIdentificationConfiguration);
 
-        if (modelObject is ICombineableSource commandSource)
-            return commandSource.GetCombineable();
-
-        return null;
+        return modelObject is ICombineableSource commandSource ? commandSource.GetCombineable() : null;
     }
 
     private static T[] IsArrayOf<T>(object modelObject)

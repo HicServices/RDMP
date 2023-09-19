@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -17,24 +16,24 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command 
-/// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your 
-/// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
+/// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command
+/// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your
+/// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure
 /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
 /// 
 /// <para>Override GetCommandHelp and GetCommandName to change the presentation layer of the command (if applicable).</para>
 /// </summary>
-public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
+public abstract class BasicCommandExecution : IAtomicCommand
 {
     /// <summary>
     /// The last command executed by RDMP (will be null at start)
@@ -87,10 +86,7 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
 
     protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
     {
-        if (m == null)
-            return;
-
-        if (m.ShouldBeReadOnly(out var reason))
+        if (m?.ShouldBeReadOnly(out var reason) == true)
             SetImpossible(
                 $"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
     }
@@ -230,7 +226,7 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
     }
 
     /// <summary>
-    /// Displays the given message to the user, calling String.Format 
+    /// Displays the given message to the user, calling String.Format
     /// </summary>
     /// <param name="message"></param>
     /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
@@ -415,14 +411,12 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
     /// <param name="constructorSelector">Selects which constructor on <paramref name="toConstruct"/> you want to invoke</param>
     /// <param name="pickerArgsIfAny"></param>
     /// <returns></returns>
-    protected object Construct(Type toConstruct, Func<ObjectConstructor, ConstructorInfo> constructorSelector,
+    protected object Construct(Type toConstruct, Func<ConstructorInfo> constructorSelector,
         IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
     {
-        var objectConstructor = new ObjectConstructor();
-
         var invoker = new CommandInvoker(BasicActivator);
 
-        var constructor = constructorSelector(objectConstructor);
+        var constructor = constructorSelector();
 
         var constructorValues = new List<object>();
 
@@ -477,7 +471,7 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
     {
         try
         {
-            checkable.Check(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
+            checkable.Check(ThrowImmediatelyCheckNotifier.Quiet);
         }
         catch (Exception e)
         {
@@ -513,7 +507,7 @@ public abstract class BasicCommandExecution : ICommandExecution, IAtomicCommand
     /// <summary>
     /// <para>
     /// Performs the <paramref name="toRun"/> action within a <see cref="Commit"/> (if
-    /// commits are supported by platform).  Returns true if no commit was used or commit 
+    /// commits are supported by platform).  Returns true if no commit was used or commit
     /// was completed successfully.  Returns false if commit was abandonned (e.g. by user cancelling).
     /// </para>
     /// <remarks> If commit is abandoned then <paramref name="trackObjects"/> will all be reverted

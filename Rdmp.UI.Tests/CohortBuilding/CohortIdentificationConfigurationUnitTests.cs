@@ -88,7 +88,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         var subcontainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
         cic.RootCohortAggregateContainer.AddChild(subcontainer);
 
-        //add the second ac to the subcontainer 
+        //add the second ac to the subcontainer
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
             new CatalogueCombineable(cata), subcontainer);
         cmd2.Execute();
@@ -117,7 +117,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
 
         all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
 
-        //should now look like this 
+        //should now look like this
         //Root
         //  Ac2
         //  INTERSECT (empty)

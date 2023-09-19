@@ -22,7 +22,7 @@ public enum RelationshipType
 
     /// <summary>
     /// The decorated property reflects a system boundary between shared objects and local objects.  The decorated property should not
-    /// be a reference to a shared object.  Instead it should be skipped entirely.  For example when sharing a Catalogue, the associated 
+    /// be a reference to a shared object.  Instead it should be skipped entirely.  For example when sharing a Catalogue, the associated
     /// LoadMetadata is irrelevant and should not be shared (it should be left as null in the imported destination).
     /// </summary>
     IgnoreableLocalReference,

@@ -95,10 +95,10 @@ public class CSVOutputFormat : FileOutputFormat
     public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat,
         int? roundFloatsTo)
     {
-        if (o is DateTime dt)
+        if (o is DateTime dateTime)
         {
             separatorsStrippedOut = 0;
-            return dt.ToString(dateFormat);
+            return dateTime.ToString(dateFormat);
         }
 
         if (roundFloatsTo.HasValue)
@@ -123,10 +123,9 @@ public class CSVOutputFormat : FileOutputFormat
             separatorsStrippedOut++;
         }
 
-        if (o is string)
-            foreach (var cToStripOut in ThingsToStripOut)
-                o = o.ToString().Replace(cToStripOut, _illegalCharactersReplacement);
-
-        return o.ToString().Trim();
+        return o is string s
+            ? ThingsToStripOut.Aggregate(s,
+                (current, cToStripOut) => current.Replace(cToStripOut, _illegalCharactersReplacement)).Trim()
+            : o.ToString().Trim();
     }
 }

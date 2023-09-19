@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core;
@@ -23,7 +23,7 @@ public abstract class PluginUserInterface : IPluginUserInterface
     /// <summary>
     /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
     /// </summary>
-    /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to 
+    /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to
     /// determine if the currently running UI layer is one you support in your plugin.</param>
     protected PluginUserInterface(IBasicActivateItems itemActivator)
     {

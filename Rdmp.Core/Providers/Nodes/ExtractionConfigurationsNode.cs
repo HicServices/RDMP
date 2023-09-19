@@ -14,7 +14,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ExtractionConfigurationsNode : Node, IOrderable
 {
-    public Project Project { get; set; }
+    public Project Project { get; }
 
     public ExtractionConfigurationsNode(Project project)
     {
@@ -33,7 +33,7 @@ public class ExtractionConfigurationsNode : Node, IOrderable
         return Equals((ExtractionConfigurationsNode)obj);
     }
 
-    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
     public int Order
     {

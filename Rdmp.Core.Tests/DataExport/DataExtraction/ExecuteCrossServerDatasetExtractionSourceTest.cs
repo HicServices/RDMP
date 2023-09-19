@@ -24,7 +24,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
     [Test]
     public void CrossServerExtraction()
     {
-        Execute(out var execute, out var result);
+        Execute(out _, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
@@ -118,9 +118,9 @@ WHERE
             {
                 TemporaryDatabaseName = "tempdb"
             };
-            s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
+            s.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
             var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL,
-                new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true });
+                ThrowImmediatelyDataLoadEventListener.QuietPicky);
 
             Assert.AreEqual(expectedOutput.Trim(), hacked.Trim());
         }

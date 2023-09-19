@@ -122,7 +122,7 @@ public class LoadProgressSummaryReport : ICheckable
 
         //Now extend the X axis up to the cache fill location
         var cacheProgress = _loadProgress.CacheProgress;
-        if (cacheProgress != null && cacheProgress.CacheFillProgress != null)
+        if (cacheProgress is { CacheFillProgress: not null })
             ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
     }
 
@@ -237,7 +237,7 @@ public class LoadProgressSummaryReport : ICheckable
                         new FromCheckNotifierToDataLoadEventListener(notifier));
 
                 var layout = cacheFileSystem.CreateCacheLayout();
-                availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
+                availableFiles = layout.GetSortedDateQueue(ThrowImmediatelyDataLoadEventListener.Quiet).ToArray();
                 ResolvedCachePath =
                     layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));
             }
@@ -307,7 +307,7 @@ public class LoadProgressSummaryReport : ICheckable
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not nessesarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
+                    $"There is no Cache configured for LoadProgress '{_loadProgress}' (Not necessarily a problem e.g. if you have a RemoteTableAttacher or some other load module that uses LoadProgress directly, short cutting the need for a cache)",
                     CheckResult.Warning));
         }
     }

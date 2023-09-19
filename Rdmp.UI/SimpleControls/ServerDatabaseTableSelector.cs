@@ -120,19 +120,16 @@ public partial class ServerDatabaseTableSelector : UserControl
         var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
         try
         {
-            using (var con = discoveredDatabase.Server.GetConnection())
-            {
-                var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
-                openTask.Wait(_workerRefreshTablesToken.Token);
+            using var con = discoveredDatabase.Server.GetConnection();
+            var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
+            openTask.Wait(_workerRefreshTablesToken.Token);
 
-                var result = new List<DiscoveredTable>();
+            var result = new List<DiscoveredTable>();
 
-                result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
-                result.AddRange(
-                    databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
+            result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
+            result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
 
-                _listTablesAsyncResult = result;
-            }
+            _listTablesAsyncResult = result;
         }
         catch (OperationCanceledException) //user cancels
         {
@@ -296,7 +293,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         UpdateTableList();
     }
 
-    private bool _clearingTable = false;
+    private bool _clearingTable;
 
     private void cbxTable_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -399,7 +396,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     public event IntegratedSecurityUseChangedHandler IntegratedSecurityUseChanged;
 
-    private string oldUsername = null;
+    private string oldUsername;
     private IBasicActivateItems _activator;
     private Exception _exception;
 
@@ -428,10 +425,9 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (string.IsNullOrWhiteSpace(cbxServer.Text))
             return null;
 
-        if (string.IsNullOrWhiteSpace(cbxDatabase.Text))
-            return null;
-
-        return new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
+        return string.IsNullOrWhiteSpace(cbxDatabase.Text)
+            ? null
+            : new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
     }
 
     public DiscoveredTable GetDiscoveredTable()
@@ -450,7 +446,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (db == null)
             return null;
 
-        //They made up a table that may or may not exist 
+        //They made up a table that may or may not exist
         if (!string.IsNullOrWhiteSpace(Table))
             return db.ExpectTable(Table);
 

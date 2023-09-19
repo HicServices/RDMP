@@ -4,18 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data.Referencing;
-using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
-/// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
+/// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/>
 /// the memento would point to an old <see cref="ExtractionInformation"/> which may be subsequently deleted
 /// </summary>
 public class Memento : ReferenceOtherObjectDatabaseEntity

@@ -18,60 +18,57 @@ namespace Rdmp.UI.ChecksUI;
 /// <inheritdoc cref="IRAGSmiley" />
 public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 {
-    private readonly Control _host;
     private CheckResult _worst;
     private Exception _exception;
-    private YesNoYesToAllDialog dialog;
+    private YesNoYesToAllDialog _dialog;
 
-    public RAGSmileyToolStrip(Control host)
+    public RAGSmileyToolStrip()
     {
-        _host = host;
         _worst = CheckResult.Success;
 
         //until first check is run
         Enabled = false;
         Text = "Checks";
-        Image = _green;
+        Image = Green;
 
-        timer = new Timer
+        _timer = new Timer
         {
             Interval = 500
         };
-        timer.Tick += T_Tick;
-        timer.Start();
+        _timer.Tick += T_Tick;
+        _timer.Start();
     }
 
     private void T_Tick(object sender, EventArgs e)
     {
         if (IsDisposed)
         {
-            timer.Stop();
-            timer.Dispose();
+            _timer.Stop();
+            _timer.Dispose();
+            return;
         }
-        else
+
+        switch (_worst)
         {
-            switch (_worst)
-            {
-                case CheckResult.Success:
+            case CheckResult.Success:
 
-                    Image = _green;
-                    Tag = null;
-                    break;
+                Image = Green;
+                Tag = null;
+                break;
 
-                case CheckResult.Warning:
+            case CheckResult.Warning:
 
-                    Image = _yellow;
-                    Tag = _exception;
-                    Enabled = true;
-                    break;
+                Image = Yellow;
+                Tag = _exception;
+                Enabled = true;
+                break;
 
-                case CheckResult.Fail:
+            case CheckResult.Fail:
 
-                    Image = _red;
-                    Tag = _exception;
-                    Enabled = true;
-                    break;
-            }
+                Image = Red;
+                Tag = _exception;
+                Enabled = true;
+                break;
         }
     }
 
@@ -81,14 +78,14 @@ public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 
     public bool IsFatal() => _worst == CheckResult.Fail;
 
-    private Bitmap _green = Images.TinyGreen.ImageToBitmap();
-    private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
-    private Bitmap _red = Images.TinyRed.ImageToBitmap();
+    private static readonly Bitmap Green = Images.TinyGreen.ImageToBitmap();
+    private static readonly Bitmap Yellow = Images.TinyYellow.ImageToBitmap();
+    private static readonly Bitmap Red = Images.TinyRed.ImageToBitmap();
 
     private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private object oTaskLock = new();
-    private Timer timer;
+    private readonly object _oTaskLock = new();
+    private readonly Timer _timer;
 
     protected override void OnClick(EventArgs e)
     {
@@ -133,16 +130,14 @@ public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
         memoryCheckNotifier.OnCheckPerformed(args);
 
 
-        if (dialog != null)
-            if (!string.IsNullOrWhiteSpace(args.ProposedFix))
-                if (dialog.ShowDialog($"Problem:{args.Message}\r\n\r\nFix:{args.ProposedFix}", "Apply Fix?") ==
-                    DialogResult.Yes)
-                {
-                    ElevateState(CheckResult.Warning);
-                    memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",
-                        CheckResult.Warning));
-                    return true;
-                }
+        if (!string.IsNullOrWhiteSpace(args.ProposedFix) && _dialog?.ShowDialog($"Problem:{args.Message}\r\n\r\nFix:{args.ProposedFix}", "Apply Fix?") ==
+            DialogResult.Yes)
+        {
+            ElevateState(CheckResult.Warning);
+            memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",
+                CheckResult.Warning));
+            return true;
+        }
 
         ElevateState(args.Result);
 
@@ -165,36 +160,34 @@ public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
                 Fatal(null);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(result));
         }
     }
 
     private bool PopupMessagesIfAny(Exception tag)
     {
-        if (memoryCheckNotifier.Messages.Any())
-        {
-            var popup = new PopupChecksUI("Record of events", false);
-            new ReplayCheckable(memoryCheckNotifier).Check(popup);
+        if (!memoryCheckNotifier.Messages.Any()) return false;
 
-            //if we have a tagged Exception that isn't included in the ToMemoryCheckNotifier we should show the user that one too
-            if (tag != null && memoryCheckNotifier.Messages.All(m => m.Ex != tag))
-                popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
+        var popup = new PopupChecksUI("Record of events", false);
+        new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
-            return true;
-        }
+        //if we have a tagged Exception that isn't included in the ToMemoryCheckNotifier we should show the user that one too
+        if (tag != null && memoryCheckNotifier.Messages.All(m => m.Ex != tag))
+            popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
 
-        return false;
+        return true;
+
     }
 
     public void StartChecking(ICheckable checkable)
     {
-        lock (oTaskLock)
+        lock (_oTaskLock)
         {
             //if there is already a Task and it has not completed
-            if (_checkTask != null && !_checkTask.IsCompleted)
+            if (_checkTask is { IsCompleted: false })
                 return;
 
-            dialog = new YesNoYesToAllDialog();
+            _dialog = new YesNoYesToAllDialog();
 
             //else start a new Task
             Reset();

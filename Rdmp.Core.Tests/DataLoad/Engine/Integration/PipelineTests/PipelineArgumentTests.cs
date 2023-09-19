@@ -26,7 +26,7 @@ public class PipelineArgumentTests : DatabaseTests
     [TestCase(typeof(DateTime?), "now")] //sadly can't pass DateTime.Now
     public void TestIArgumentsForNullableTypes(Type nullableType, object value)
     {
-        if (string.Equals(value as string, "now")) //sadly can't pass DateTime.Now 
+        if (string.Equals(value as string, "now")) //sadly can't pass DateTime.Now
             value = new DateTime(2001, 01, 01, 3, 20,
                 11); //hey btw when you put in milliseconds into DateTime IArgument it drops them... due to DateTime.Parse? or DateTime.ToString()?
 

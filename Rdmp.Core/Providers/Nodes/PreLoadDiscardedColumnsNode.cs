@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class PreLoadDiscardedColumnsNode : Node
 {
-    public TableInfo TableInfo { get; private set; }
+    public TableInfo TableInfo { get; }
 
     public PreLoadDiscardedColumnsNode(TableInfo tableInfo)
     {

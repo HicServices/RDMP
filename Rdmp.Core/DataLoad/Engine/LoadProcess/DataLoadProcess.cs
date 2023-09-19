@@ -83,7 +83,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
         {
             DataLoadEventListener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
-            var thrower = new ThrowImmediatelyCheckNotifier { WriteToConsole = false };
+            var thrower = ThrowImmediatelyCheckNotifier.Quiet;
             _preExecutionChecker.Check(thrower);
         }
         catch (Exception e)

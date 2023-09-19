@@ -14,7 +14,7 @@ namespace ResearchDataManagementPlatform.Theme;
 
 internal class ThemeExtender
 {
-    private XDocument _xml;
+    private readonly XDocument _xml;
     private const string Env = "Environment";
 
     public Color TextBoxBackground { get; set; }
@@ -45,10 +45,7 @@ internal class ThemeExtender
         if (colourElement != null)
             color = colourElement.Element(foreground ? "Foreground" : "Background").Attribute("Source").Value;
 
-        if (color == null)
-            return Color.Transparent;
-
-        return ColorTranslator.FromHtml($"#{color}");
+        return color == null ? Color.Transparent : ColorTranslator.FromHtml($"#{color}");
     }
 
     public void ApplyTo(ToolStrip item)

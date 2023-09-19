@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -12,6 +11,7 @@ using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -40,14 +40,19 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
 
         var t = _table ?? SelectTable(false, "Select table to import");
 
-        if (t == null)
-            return;
-
-        //if it isn't a table valued function
-        if (t is DiscoveredTableValuedFunction function)
-            importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, function);
-        else
-            importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
+        switch (t)
+        {
+            case null:
+                return;
+            //if it isn't a table valued function
+            case DiscoveredTableValuedFunction function:
+                importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository,
+                    function);
+                break;
+            default:
+                importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
+                break;
+        }
 
         importer.DoImport(out var ti, out var cis);
 

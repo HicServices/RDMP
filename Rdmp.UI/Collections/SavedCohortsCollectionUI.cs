@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
@@ -11,7 +12,6 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using System;
 
 namespace Rdmp.UI.Collections;
 
@@ -30,19 +30,11 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         olvProjectNumber.IsEditable = false;
     }
 
-    private object AspectGetter_Version(object rowObject)
-    {
-        var c = rowObject as ExtractableCohort;
+    private object AspectGetter_Version(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalVersion : null;
 
-        return c?.ExternalVersion;
-    }
-
-    private object AspectGetter_ProjectNumber(object rowObject)
-    {
-        var c = rowObject as ExtractableCohort;
-
-        return c?.ExternalProjectNumber;
-    }
+    private object AspectGetter_ProjectNumber(object rowObject) =>
+        rowObject is ExtractableCohort c ? c.ExternalProjectNumber : null;
 
     public override void SetItemActivator(IActivateItems activator)
     {

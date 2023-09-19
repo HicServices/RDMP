@@ -79,8 +79,7 @@ public class CohortQueryBuilder
     private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
-        globals ??= Array.Empty<ISqlParameter>();
-        _globals = globals.ToArray();
+        _globals = globals?.ToArray() ?? Array.Empty<ISqlParameter>();
         TopX = -1;
 
         SQLOutOfDate = true;

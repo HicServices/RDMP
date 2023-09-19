@@ -11,7 +11,7 @@ namespace Rdmp.UI;
 /// <summary>
 /// Used to indicate when a property does not map to an underlying data table
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class TechnicalUI : Attribute
 {
 }

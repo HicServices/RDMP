@@ -11,7 +11,6 @@ using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
@@ -24,78 +23,78 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// </summary>
 public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
 {
-    protected DelimitedFlatFileDataFlowSource _source;
+    protected readonly DelimitedFlatFileDataFlowSource Source;
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
     public string ForceHeaders
     {
-        get => _source.ForceHeaders;
-        set => _source.ForceHeaders = value;
+        get => Source.ForceHeaders;
+        set => Source.ForceHeaders = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
     public bool IgnoreQuotes
     {
-        get => _source.IgnoreQuotes;
-        set => _source.IgnoreQuotes = value;
+        get => Source.IgnoreQuotes;
+        set => Source.IgnoreQuotes = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBlankLines_DemandDescription)]
     public bool IgnoreBlankLines
     {
-        get => _source.IgnoreBlankLines;
-        set => _source.IgnoreBlankLines = value;
+        get => Source.IgnoreBlankLines;
+        set => Source.IgnoreBlankLines = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeadersReplacesFirstLineInFile_Description)]
     public bool ForceHeadersReplacesFirstLineInFile
     {
-        get => _source.ForceHeadersReplacesFirstLineInFile;
-        set => _source.ForceHeadersReplacesFirstLineInFile = value;
+        get => Source.ForceHeadersReplacesFirstLineInFile;
+        set => Source.ForceHeadersReplacesFirstLineInFile = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
     public string IgnoreColumns
     {
-        get => _source.IgnoreColumns;
-        set => _source.IgnoreColumns = value;
+        get => Source.IgnoreColumns;
+        set => Source.IgnoreColumns = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,
         DefaultValue = BadDataHandlingStrategy.ThrowException)]
     public BadDataHandlingStrategy BadDataHandlingStrategy
     {
-        get => _source.BadDataHandlingStrategy;
-        set => _source.BadDataHandlingStrategy = value;
+        get => Source.BadDataHandlingStrategy;
+        set => Source.BadDataHandlingStrategy = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBadReads_DemandDescription)]
     public bool IgnoreBadReads
     {
-        get => _source.IgnoreBadReads;
-        set => _source.IgnoreBadReads = value;
+        get => Source.IgnoreBadReads;
+        set => Source.IgnoreBadReads = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription, DefaultValue = true)]
     public bool ThrowOnEmptyFiles
     {
-        get => _source.ThrowOnEmptyFiles;
-        set => _source.ThrowOnEmptyFiles = value;
+        get => Source.ThrowOnEmptyFiles;
+        set => Source.ThrowOnEmptyFiles = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription,
         DefaultValue = false)]
     public bool AttemptToResolveNewLinesInRecords
     {
-        get => _source.AttemptToResolveNewLinesInRecords;
-        set => _source.AttemptToResolveNewLinesInRecords = value;
+        get => Source.AttemptToResolveNewLinesInRecords;
+        set => Source.AttemptToResolveNewLinesInRecords = value;
     }
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
     public int MaximumErrorsToReport
     {
-        get => _source.MaximumErrorsToReport;
-        set => _source.MaximumErrorsToReport = value;
+        get => Source.MaximumErrorsToReport;
+        set => Source.MaximumErrorsToReport = value;
     }
 
     [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
@@ -104,26 +103,21 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     [DemandsInitialization(Culture_DemandDescription)]
     public override CultureInfo Culture
     {
-        get => _source.Culture;
-        set => _source.Culture = value;
+        get => Source.Culture;
+        set => Source.Culture = value;
     }
 
     [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
     public override string ExplicitDateTimeFormat
     {
-        get => _source.ExplicitDateTimeFormat;
-        set => _source.ExplicitDateTimeFormat = value;
+        get => Source.ExplicitDateTimeFormat;
+        set => Source.ExplicitDateTimeFormat = value;
     }
 
 
     protected DelimitedFlatFileAttacher(char separator)
     {
-        SetupSource(separator);
-    }
-
-    private void SetupSource(char separator)
-    {
-        _source = new DelimitedFlatFileDataFlowSource
+        Source = new DelimitedFlatFileDataFlowSource
         {
             Separator = separator.ToString(),
             StronglyTypeInput = false,
@@ -137,9 +131,9 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
         GracefulCancellationToken cancellationToken)
     {
-        _source.MaxBatchSize = maxBatchSize;
-        _source.SetDataTable(dt);
-        _source.GetChunk(_listener, cancellationToken);
+        Source.MaxBatchSize = maxBatchSize;
+        Source.SetDataTable(dt);
+        Source.GetChunk(_listener, cancellationToken);
 
         //if we are adding a column to the data read which contains the file path
         if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
@@ -159,10 +153,10 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
     {
-        _source.StronglyTypeInput = false;
-        _source.StronglyTypeInputBatchSize = 0;
+        Source.StronglyTypeInput = false;
+        Source.StronglyTypeInputBatchSize = 0;
         _listener = listener;
-        _source.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
+        Source.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
         _currentFile = fileToLoad;
     }
 
@@ -173,6 +167,6 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
 
     protected override void CloseFile()
     {
-        _source.Dispose(_listener, null);
+        Source.Dispose(_listener, null);
     }
 }

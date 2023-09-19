@@ -33,7 +33,7 @@ public class RuntimeTaskFactoryTests : DatabaseTests
 
         try
         {
-            var ex = Assert.Throws<Exception>(() => f.Create(task,
+            var ex = Assert.Throws<Exception>(() => RuntimeTaskFactory.Create(task,
                 new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),
                     Substitute.For<ILoadDirectory>())));
             Assert.IsTrue(ex.InnerException.Message.Contains(

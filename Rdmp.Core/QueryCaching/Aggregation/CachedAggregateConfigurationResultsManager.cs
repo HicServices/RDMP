@@ -22,11 +22,11 @@ namespace Rdmp.Core.QueryCaching.Aggregation;
 
 /// <summary>
 /// Handles the caching and versioning of AggregateConfigurations in a QueryCaching database (QueryCaching.Database.csproj).  Query caching is the process
-/// of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built by an AggregateBuilder).  
+/// of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built by an AggregateBuilder).
 /// 
-/// <para>Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index 
-/// Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible time frame (i.e. minutes instead of days) 
-/// is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key indexes.  The 
+/// <para>Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index
+/// Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible time frame (i.e. minutes instead of days)
+/// is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key indexes.  The
 /// CohortIdentificationConfiguration can then be built into a query that uses the cached results (See CohortQueryBuilder).</para>
 /// 
 /// <para>In order to ensure the cache is never stale the exact SQL query is stored in a table (CachedAggregateConfigurationResults) so that if the user changes
@@ -35,7 +35,7 @@ namespace Rdmp.Core.QueryCaching.Aggregation;
 /// <para> CachedAggregateConfigurationResultsManager can cache any CacheCommitArguments (includes not just patient identifier lists but also aggregate graphs and
 /// patient index tables).</para>
 /// </summary>
-public class CachedAggregateConfigurationResultsManager
+public partial class CachedAggregateConfigurationResultsManager
 {
     private readonly DiscoveredServer _server;
     private DiscoveredDatabase _database;
@@ -67,22 +67,18 @@ public class CachedAggregateConfigurationResultsManager
         using (var con = _server.GetConnection())
         {
             con.Open();
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $@"Select 
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                $@"Select 
 {syntax.EnsureWrapped("TableName")},
 {syntax.EnsureWrapped("SqlExecuted")} from {mgrTable.GetFullyQualifiedName()}
 WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
-AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
+AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con);
+            using var r = cmd.ExecuteReader();
+            if (r.Read())
             {
-                using (var r = cmd.ExecuteReader())
-                {
-                    if (r.Read())
-                    {
-                        var tableName = r["TableName"].ToString();
-                        sql = r["SqlExecuted"] as string;
-                        return _database.ExpectTable(tableName);
-                    }
-                }
+                var tableName = r["TableName"].ToString();
+                sql = r["SqlExecuted"] as string;
+                return _database.ExpectTable(tableName);
             }
         }
 
@@ -105,33 +101,27 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
         var syntax = _database.Server.GetQuerySyntaxHelper();
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
+        using var con = _server.GetConnection();
+        con.Open();
 
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $@"Select 
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            $@"Select 
 {syntax.EnsureWrapped("TableName")},
 {syntax.EnsureWrapped("SqlExecuted")} 
 from {mgrTable.GetFullyQualifiedName()} 
 WHERE 
 {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID} AND
-{syntax.EnsureWrapped("Operation")} = '{operation}'", con))
+{syntax.EnsureWrapped("Operation")} = '{operation}'", con);
+        using var r = cmd.ExecuteReader();
+        if (r.Read())
+        {
+            if (IsMatchOnSqlExecuted(r, currentSql))
             {
-                using (var r = cmd.ExecuteReader())
-                {
-                    if (r.Read())
-                    {
-                        if (IsMatchOnSqlExecuted(r, currentSql))
-                        {
-                            var tableName = r["TableName"].ToString();
-                            return _database.ExpectTable(tableName);
-                        }
-
-                        return null; //this means that there was outdated SQL, we could show this to user at some point
-                    }
-                }
+                var tableName = r["TableName"].ToString();
+                return _database.ExpectTable(tableName);
             }
+
+            return null; //this means that there was outdated SQL, we could show this to user at some point
         }
 
         return null;
@@ -139,22 +129,20 @@ WHERE
 
     private bool IsMatchOnSqlExecuted(DbDataReader r, string currentSql)
     {
-        //replace all whitespace with single whitespace 
-        var standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
-        var standardisedUsersSql = Regex.Replace(currentSql, @"\s+", " ");
+        //replace all white space with single space
+        var standardisedDatabaseSql = Spaces().Replace(r["SqlExecuted"].ToString(), " ");
+        var standardisedUsersSql = Spaces().Replace(currentSql, " ");
 
         var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
 
-        if (!match)
-        {
-            _logger.Info("Cache Miss:");
-            _logger.Info("Current Sql:");
-            _logger.Info(standardisedUsersSql);
-            _logger.Info("Cached Sql:");
-            _logger.Info(standardisedDatabaseSql);
-        }
+        if (match) return true;
 
-        return match;
+        _logger.Info("Cache Miss:");
+        _logger.Info("Current Sql:");
+        _logger.Info(standardisedUsersSql);
+        _logger.Info("Cached Sql:");
+        _logger.Info(standardisedDatabaseSql);
+        return false;
     }
 
     public void CommitResults(CacheCommitArguments arguments)
@@ -167,38 +155,36 @@ WHERE
         //Do not change Types of source columns unless there is an explicit override
         arguments.Results.SetDoNotReType(true);
 
-        using (var con = _server.GetConnection())
+        using var con = _server.GetConnection();
+        con.Open();
+
+        var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
+
+        //either it has no name or it already has name we want so its ok
+        arguments.Results.TableName = nameWeWillGiveTableInCache;
+
+        //add explicit types
+        var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
+        if (tbl.Exists())
+            tbl.Drop();
+
+        tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
+
+        if (!tbl.Exists())
+            throw new Exception("Cache table did not exist even after CreateTable completed without error!");
+
+        var mgrTable = _database.ExpectTable(ResultsManagerTable);
+
+        mgrTable.Insert(new Dictionary<string, object>
         {
-            con.Open();
+            { "Committer", Environment.UserName },
+            { "AggregateConfiguration_ID", configuration.ID },
+            { "SqlExecuted", arguments.SQL.Trim() },
+            { "Operation", operation.ToString() },
+            { "TableName", tbl.GetRuntimeName() }
+        });
 
-            var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
-
-            //either it has no name or it already has name we want so its ok
-            arguments.Results.TableName = nameWeWillGiveTableInCache;
-
-            //add explicit types
-            var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
-            if (tbl.Exists())
-                tbl.Drop();
-
-            tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
-
-            if (!tbl.Exists())
-                throw new Exception("Cache table did not exist even after CreateTable completed without error!");
-
-            var mgrTable = _database.ExpectTable(ResultsManagerTable);
-
-            mgrTable.Insert(new Dictionary<string, object>
-            {
-                { "Committer", Environment.UserName },
-                { "AggregateConfiguration_ID", configuration.ID },
-                { "SqlExecuted", arguments.SQL.Trim() },
-                { "Operation", operation.ToString() },
-                { "TableName", tbl.GetRuntimeName() }
-            });
-
-            arguments.CommitTableDataCompleted(tbl);
-        }
+        arguments.CommitTableDataCompleted(tbl);
     }
 
     /// <summary>
@@ -214,27 +200,27 @@ WHERE
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
         if (table != null)
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
+        {
+            using var con = _server.GetConnection();
+            con.Open();
 
-                //drop the data
-                _database.ExpectTable(table.GetRuntimeName()).Drop();
+            //drop the data
+            _database.ExpectTable(table.GetRuntimeName()).Drop();
 
-                //delete the record!
-                using (var cmd = DatabaseCommandHelper.GetCommand(
-                           $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'",
-                           con))
-                {
-                    var deletedRows = cmd.ExecuteNonQuery();
-                    if (deletedRows != 1)
-                        throw new Exception(
-                            $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records");
-                }
-
-                return true;
-            }
+            //delete the record!
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'",
+                con);
+            var deletedRows = cmd.ExecuteNonQuery();
+            return deletedRows != 1
+                ? throw new Exception(
+                    $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records")
+                : true;
+        }
 
         return false;
     }
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex Spaces();
 }

@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -54,12 +54,12 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
         {
             // get user to type the name of the parameter
             if (BasicActivator.TypeText(new DialogArgs
-                {
-                    EntryLabel = "Name",
-                    TaskDescription =
-                        "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
-                    WindowTitle = "Add Paramater"
-                }, 99, "@myVariable", out var name, false))
+            {
+                EntryLabel = "Name",
+                TaskDescription =
+                        "A name is required for the parameter.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
+                WindowTitle = "Add Parameter"
+            }, 99, "@myVariable", out var name, false))
                 // user did type a name
                 n = name;
             else
@@ -72,11 +72,11 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
         {
             // get user to type the name of the parameter
             if (BasicActivator.TypeText(new DialogArgs
-                {
-                    EntryLabel = "DataType",
-                    TaskDescription = "What data type are you storing in the parameter (e.g. datetime2)",
-                    WindowTitle = "Parameter Data Type"
-                }, 99, "varchar(10)", out var datatype, false))
+            {
+                EntryLabel = "DataType",
+                TaskDescription = "What data type are you storing in the parameter (e.g. datetime2)",
+                WindowTitle = "Parameter Data Type"
+            }, 99, "varchar(10)", out var datatype, false))
                 // user did type
                 d = datatype;
             else
@@ -88,12 +88,12 @@ public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
         {
             // get user to type the name of the parameter
             if (BasicActivator.TypeText(new DialogArgs
-                {
-                    EntryLabel = "Value",
-                    TaskDescription =
+            {
+                EntryLabel = "Value",
+                TaskDescription =
                         "What value should the parameter have.  Ensure if you are using text that it is appropriately quoted",
-                    WindowTitle = "Parameter Value"
-                }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out var value, false))
+                WindowTitle = "Parameter Value"
+            }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out var value, false))
                 // user did type
                 v = value;
             else

@@ -6,11 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -58,22 +58,22 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
         var obs = objectsToPickFrom.ToArray();
 
-        //no objects!
-        if (obs.Length == 0)
+        switch (obs.Length)
         {
-            SetImpossible("No objects found");
-        }
-        else if (obs.Length == 1)
-        {
-            //one object only
-            _objectToShow = objectsToPickFrom.Single();
-            _objectType = _objectToShow.GetType();
-        }
-        else
-        {
-            //many objects, let's assume they are of the same type for display purposes
-            _objectType = objectsToPickFrom.First().GetType();
-            _objectsToPickFrom = obs;
+            //no objects!
+            case 0:
+                SetImpossible("No objects found");
+                break;
+            case 1:
+                //one object only
+                _objectToShow = obs.Single();
+                _objectType = _objectToShow.GetType();
+                break;
+            default:
+                //many objects, let's assume they are of the same type for display purposes
+                _objectType = obs.First().GetType();
+                _objectsToPickFrom = obs;
+                break;
         }
 
         _expansionDepth = expansionDepth;
@@ -111,13 +111,12 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
         Weight = 50.3f;
     }
 
-    public override string GetCommandName()
-    {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-            return base.GetCommandName();
-
-        return UseIconAndTypeName && _objectType != null ? $"Show {_objectType.Name}(s)" : base.GetCommandName();
-    }
+    public override string GetCommandName() =>
+        !string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? base.GetCommandName()
+            : UseIconAndTypeName && _objectType != null
+                ? $"Show {_objectType.Name}(s)"
+                : base.GetCommandName();
 
     public override void Execute()
     {
@@ -166,19 +165,16 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
     public override string GetCommandHelp() => "Opens the containing toolbox collection and shows the object";
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        if (OverrideIcon != null)
-            return base.GetImage(iconProvider);
-
-        return UseIconAndTypeName &&
-               // if there is something to show
-               (_objectType != null || _objectToShow != null)
-            ?
-            // return its icon
-            iconProvider.GetImage((object)_objectToShow ?? _objectType)
-            : null;
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        OverrideIcon != null
+            ? base.GetImage(iconProvider)
+            : UseIconAndTypeName &&
+              // if there is something to show
+              (_objectType != null || _objectToShow != null)
+                ?
+                // return its icon
+                iconProvider.GetImage((object)_objectToShow ?? _objectType)
+                : null;
 
     /// <summary>
     /// Resolves any lamdas and returns what object(s) would be shown (if any)
@@ -188,6 +184,6 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
     {
         FetchDestinationObjects();
-        return new[] { _objectToShow } ?? _objectsToPickFrom ?? Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
+        return new[] { _objectToShow };
     }
 }

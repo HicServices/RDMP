@@ -35,7 +35,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 /// <summary>
 /// Allows you to pick which columns are used to build an AggregateConfiguration.  This includes all AggregateDimensions (and the count column) as well as all available columns which could
 /// be included.  This UI handles column selection / editing for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
-/// objects anyway). 
+/// objects anyway).
 /// 
 /// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change its
 /// SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column and modify it then untick it you will loose the changes.</para>
@@ -47,13 +47,13 @@ public partial class SelectColumnUI : RDMPUserControl
     private IAggregateBuilderOptions _options;
     private AggregateConfiguration _aggregate;
 
-    private List<IColumn> _availableColumns;
-    private List<IColumn> _includedColumns;
+    private readonly List<IColumn> _availableColumns;
+    private readonly List<IColumn> _includedColumns;
 
     internal IReadOnlyCollection<IColumn> AvailableColumns => new ReadOnlyCollection<IColumn>(_availableColumns);
     internal IReadOnlyCollection<IColumn> IncludedColumns => new ReadOnlyCollection<IColumn>(_includedColumns);
 
-    public QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
+    private readonly QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
     private readonly Bitmap _add;
     private readonly Bitmap _delete;
@@ -129,7 +129,7 @@ public partial class SelectColumnUI : RDMPUserControl
             }
             else
             {
-                //it is a removal 
+                //it is a removal
 
                 //user is trying to remove count column
                 if (countColumn != null)
@@ -188,10 +188,9 @@ public partial class SelectColumnUI : RDMPUserControl
             return _add;
 
         //if we are getting an icon for the count(*) column and it cannot be removed then don't show the icon for removal
-        if (_countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn)
-            return null;
-
-        return _delete;
+        return _countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn
+            ? null
+            : _delete;
     }
 
     private void CellEditFinished(object sender, CellEditEventArgs cellEditEventArgs)
@@ -276,8 +275,8 @@ public partial class SelectColumnUI : RDMPUserControl
             return;
         }
 
-        var saveable = col as ISaveable;
-        saveable?.SaveToDatabase();
+        if (col is ISaveable saveable)
+            saveable.SaveToDatabase();
 
         _aggregate.SaveToDatabase();
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));

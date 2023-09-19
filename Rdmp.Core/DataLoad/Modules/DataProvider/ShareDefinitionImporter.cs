@@ -51,13 +51,13 @@ public class ShareDefinitionImporter : IPluginDataProvider
 
                 imported++;
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Imported '{shareDefinitionFile.Name}' Succesfully"));
+                    $"Imported '{shareDefinitionFile.Name}' Successfully"));
             }
         }
         catch (SharingException ex)
         {
             job.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning, "Error occured importing ShareDefinitions", ex));
+                new NotifyEventArgs(ProgressEventType.Warning, "Error occurred importing ShareDefinitions", ex));
         }
 
         job.OnNotify(this, new NotifyEventArgs(

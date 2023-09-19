@@ -46,7 +46,7 @@ public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDepend
     string DefinitionTableName { get; set; }
 
     /// <summary>
-    /// The column in the cohort table which contains private identifiers (e.g. 'chi').  This column must contain identifiers in the same format 
+    /// The column in the cohort table which contains private identifiers (e.g. 'chi').  This column must contain identifiers in the same format
     /// as the datasets you want to link with when performing project extractions.
     /// </summary>
     string PrivateIdentifierField { get; set; }

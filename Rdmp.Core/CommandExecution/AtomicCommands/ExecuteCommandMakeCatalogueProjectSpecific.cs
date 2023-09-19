@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -75,11 +75,15 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Catalogue catalogue)
-            SetCatalogue(catalogue);
-
-        if (target is Project project)
-            _project = project;
+        switch (target)
+        {
+            case Catalogue catalogue:
+                SetCatalogue(catalogue);
+                break;
+            case Project project:
+                _project = project;
+                break;
+        }
 
         return this;
     }

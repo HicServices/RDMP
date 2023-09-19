@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataExport.Data;
@@ -13,6 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports.ExtractionTime;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 
@@ -35,7 +35,7 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
         else
             try
             {
-                // try to fetch the cohort (give it 2 seconds maximum). 
+                // try to fetch the cohort (give it 2 seconds maximum).
                 // we don't want to freeze waiting for context menu to pop up on this
                 var eds = _extractionConfiguration.Cohort.GetExternalData(2);
 

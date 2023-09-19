@@ -10,16 +10,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Terminal.Gui;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using Terminal.Gui;
 
 // The .Designer.cs file was built with https://github.com/tznind/TerminalGuiDesigner
 // Use that tool for editing it
@@ -35,6 +35,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
     private GracefulCancellationTokenSource cancellation;
     private int? exitCode;
+
     private HashSet<IDataLoadEventListener> additionals = new();
     private PipelineRunner runner;
     private PipelineEngineEventArgs successArgs;

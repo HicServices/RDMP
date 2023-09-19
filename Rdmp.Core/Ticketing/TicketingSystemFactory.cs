@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Ticketing;
 
 /// <summary>
-/// RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance based on the 
+/// RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance based on the
 /// TicketingSystemConfiguration the uer has set up
 /// </summary>
 public class TicketingSystemFactory
@@ -25,17 +25,13 @@ public class TicketingSystemFactory
         _repository = repository;
     }
 
-    public Type[] GetAllKnownTicketingSystems() => _repository.MEF.GetTypes<ITicketingSystem>().ToArray();
+    public static Type[] GetAllKnownTicketingSystems() => MEF.GetTypes<ITicketingSystem>().ToArray();
 
     //public ITicketingSystem Create(string )
-    public ITicketingSystem Create(string typeName, string url, IDataAccessCredentials credentials)
-    {
-        if (string.IsNullOrWhiteSpace(typeName))
-            throw new NullReferenceException("Type name was blank, cannot create ITicketingSystem");
-
-        return _repository.MEF.CreateA<ITicketingSystem>(typeName,
-            new TicketingSystemConstructorParameters(url, credentials));
-    }
+    public static ITicketingSystem Create(string typeName, string url, IDataAccessCredentials credentials) =>
+        string.IsNullOrWhiteSpace(typeName)
+            ? throw new NullReferenceException("Type name was blank, cannot create ITicketingSystem")
+            : MEF.CreateA<ITicketingSystem>(typeName, new TicketingSystemConstructorParameters(url, credentials));
 
     public ITicketingSystem CreateIfExists(TicketingSystemConfiguration ticketingSystemConfiguration)
     {

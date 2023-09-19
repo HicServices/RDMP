@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and 
+/// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and
 /// UPDATE (based on primary key).  Both tables must be on the same server.  A MERGE sql statement will be created using LiveMigrationQueryHelper and executed
 /// within a transaction.
 /// </summary>
@@ -63,9 +63,8 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         var syntax = server.GetQuerySyntaxHelper();
 
 
-        sbInsert.AppendLine(string.Format("INSERT INTO {0} ({1}",
-            columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
-            string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))));
+        sbInsert.AppendLine(
+            $"INSERT INTO {columnsToMigrate.DestinationTable.GetFullyQualifiedName()} ({string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))}");
 
         //if we are not ignoring the trigger then we should record the data load run ID
         if (!job.LoadMetadata.IgnoreTrigger)
@@ -98,9 +97,8 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
                             columnsToMigrate.DestinationTable.GetFullyQualifiedName()))));
 
         sbInsert.AppendLine("WHERE");
-        sbInsert.AppendLine(string.Format("{0}.{1} IS NULL",
-            columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
-            syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())));
+        sbInsert.AppendLine(
+            $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
 
         //right at the end of the SELECT
         if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)
@@ -145,11 +143,11 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
             //t1.Name = t2.Name, t1.Age=T2.Age etc
             sqlLines.Add(new CustomLine(string.Join(",", toSet), QueryComponent.SET));
 
-            //also update the hic_dataLoadRunID field                
+            //also update the hic_dataLoadRunID field
             if (!job.LoadMetadata.IgnoreTrigger)
-                sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}",
-                    syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)
-                    , dataLoadInfoID), QueryComponent.SET));
+                sqlLines.Add(new CustomLine(
+                    $"t1.{syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)}={dataLoadInfoID}",
+                    QueryComponent.SET));
 
             //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
             sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c => GetORLine(c, syntax))),

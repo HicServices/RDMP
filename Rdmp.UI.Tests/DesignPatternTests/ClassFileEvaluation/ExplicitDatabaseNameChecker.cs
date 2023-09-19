@@ -55,12 +55,11 @@ public class ExplicitDatabaseNameChecker
 
             var contents = File.ReadAllText(file);
 
-            foreach (var prohibited in prohibitedStrings)
-                if (contents.Contains(prohibited))
-                {
-                    problemFiles.Add(file, prohibited);
-                    break;
-                }
+            foreach (var prohibited in prohibitedStrings.Where(contents.Contains))
+            {
+                problemFiles.Add(file, prohibited);
+                break;
+            }
         }
 
         foreach (var kvp in problemFiles)

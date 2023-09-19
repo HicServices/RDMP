@@ -13,109 +13,109 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 public class AxisAndPivotCLITests : CommandCliTests
 {
-    [Test]
-    public void SetPivot_DimensionNonExistant()
-    {
-        var ac = WhenIHaveA<AggregateConfiguration>();
+        [Test]
+        public void SetPivot_DimensionNonExistant()
+        {
+                var ac = WhenIHaveA<AggregateConfiguration>();
 
-        var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "fff");
-        var ex = Assert.Throws<Exception>(() => cmd.Execute());
+                var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "fff");
+                var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-        Assert.AreEqual(
-            "Could not find AggregateDimension fff in Aggregate My graph so could not set it as a pivot dimension.  Try adding the column to the aggregate first",
-            ex.Message);
-    }
+                Assert.AreEqual(
+                    "Could not find AggregateDimension fff in Aggregate My graph so could not set it as a pivot dimension.  Try adding the column to the aggregate first",
+                    ex.Message);
+        }
 
-    [Test]
-    public void SetPivot_Exists()
-    {
-        var ac = WhenIHaveA<AggregateConfiguration>();
-        var dim = WhenIHaveA<AggregateDimension>();
-
-
-        dim.AggregateConfiguration_ID = ac.ID;
-        dim.Alias = "frogmarch";
-
-        var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
-        cmd.Execute();
-
-        Assert.AreEqual(dim.ID, ac.PivotOnDimensionID);
-
-        cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, null);
-        cmd.Execute();
-
-        Assert.IsNull(ac.PivotOnDimensionID);
-    }
-
-    [Test]
-    public void SetPivot_ExistsButIsADate()
-    {
-        var ac = WhenIHaveA<AggregateConfiguration>();
-        var dim = WhenIHaveA<AggregateDimension>();
+        [Test]
+        public void SetPivot_Exists()
+        {
+                var ac = WhenIHaveA<AggregateConfiguration>();
+                var dim = WhenIHaveA<AggregateDimension>();
 
 
-        dim.AggregateConfiguration_ID = ac.ID;
-        dim.Alias = "frogmarch";
-        dim.ColumnInfo.Data_type = "datetime";
+                dim.AggregateConfiguration_ID = ac.ID;
+                dim.Alias = "frogmarch";
 
-        var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
-        var ex = Assert.Throws<Exception>(() => cmd.Execute());
+                var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
+                cmd.Execute();
 
-        Assert.AreEqual("AggregateDimension frogmarch is a Date so cannot set it as a Pivot for Aggregate My graph",
-            ex.Message);
-    }
+                Assert.AreEqual(dim.ID, ac.PivotOnDimensionID);
 
-    [Test]
-    public void SetAxis_DimensionNonExistant()
-    {
-        var ac = WhenIHaveA<AggregateConfiguration>();
+                cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, null);
+                cmd.Execute();
 
-        var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "fff");
-        var ex = Assert.Throws<Exception>(() => cmd.Execute());
+                Assert.IsNull(ac.PivotOnDimensionID);
+        }
 
-        Assert.AreEqual(
-            "Could not find AggregateDimension fff in Aggregate My graph so could not set it as an axis dimension.  Try adding the column to the aggregate first",
-            ex.Message);
-    }
-
-    [Test]
-    public void SetAxis_Exists()
-    {
-        var ac = WhenIHaveA<AggregateConfiguration>();
-        var dim = WhenIHaveA<AggregateDimension>();
+        [Test]
+        public void SetPivot_ExistsButIsADate()
+        {
+                var ac = WhenIHaveA<AggregateConfiguration>();
+                var dim = WhenIHaveA<AggregateDimension>();
 
 
-        dim.AggregateConfiguration_ID = ac.ID;
-        dim.Alias = "frogmarch";
-        dim.ColumnInfo.Data_type = "datetime";
+                dim.AggregateConfiguration_ID = ac.ID;
+                dim.Alias = "frogmarch";
+                dim.ColumnInfo.Data_type = "datetime";
 
-        Assert.IsNull(ac.GetAxisIfAny());
+                var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
+                var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-        var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
-        cmd.Execute();
+                Assert.AreEqual("AggregateDimension frogmarch is a Date so cannot set it as a Pivot for Aggregate My graph",
+                    ex.Message);
+        }
 
-        Assert.IsNotNull(ac.GetAxisIfAny());
+        [Test]
+        public void SetAxis_DimensionNonExistant()
+        {
+                var ac = WhenIHaveA<AggregateConfiguration>();
 
-        cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, null);
-        cmd.Execute();
+                var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "fff");
+                var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-        Assert.IsNull(ac.GetAxisIfAny());
-    }
+                Assert.AreEqual(
+                    "Could not find AggregateDimension fff in Aggregate My graph so could not set it as an axis dimension.  Try adding the column to the aggregate first",
+                    ex.Message);
+        }
 
-    [Test]
-    public void SetAxis_ExistsButIsNotADate()
-    {
-        var ac = WhenIHaveA<AggregateConfiguration>();
-        var dim = WhenIHaveA<AggregateDimension>();
+        [Test]
+        public void SetAxis_Exists()
+        {
+                var ac = WhenIHaveA<AggregateConfiguration>();
+                var dim = WhenIHaveA<AggregateDimension>();
 
 
-        dim.AggregateConfiguration_ID = ac.ID;
-        dim.Alias = "frogmarch";
+                dim.AggregateConfiguration_ID = ac.ID;
+                dim.Alias = "frogmarch";
+                dim.ColumnInfo.Data_type = "datetime";
 
-        var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
-        var ex = Assert.Throws<Exception>(() => cmd.Execute());
+                Assert.IsNull(ac.GetAxisIfAny());
 
-        Assert.AreEqual("AggregateDimension frogmarch is not a Date so cannot set it as an axis for Aggregate My graph",
-            ex.Message);
-    }
+                var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
+                cmd.Execute();
+
+                Assert.IsNotNull(ac.GetAxisIfAny());
+
+                cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, null);
+                cmd.Execute();
+
+                Assert.IsNull(ac.GetAxisIfAny());
+        }
+
+        [Test]
+        public void SetAxis_ExistsButIsNotADate()
+        {
+                var ac = WhenIHaveA<AggregateConfiguration>();
+                var dim = WhenIHaveA<AggregateDimension>();
+
+
+                dim.AggregateConfiguration_ID = ac.ID;
+                dim.Alias = "frogmarch";
+
+                var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
+                var ex = Assert.Throws<Exception>(() => cmd.Execute());
+
+                Assert.AreEqual("AggregateDimension frogmarch is not a Date so cannot set it as an axis for Aggregate My graph",
+                    ex.Message);
+        }
 }

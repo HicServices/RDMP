@@ -26,12 +26,8 @@ internal class
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardPipelineUseCaseNode target,
-        InsertOption insertOption = InsertOption.Default)
-    {
-        if (cmd is PipelineCombineable sourcePipelineCommand)
-            return new ExecuteCommandEditPipelineWithUseCase(ItemActivator, sourcePipelineCommand.Pipeline,
-                target.UseCase);
-
-        return null;
-    }
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is PipelineCombineable sourcePipelineCommand
+            ? new ExecuteCommandEditPipelineWithUseCase(ItemActivator, sourcePipelineCommand.Pipeline, target.UseCase)
+            : (ICommandExecution)null;
 }

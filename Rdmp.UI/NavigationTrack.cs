@@ -17,8 +17,9 @@ public class NavigationTrack<T>
 {
     private Stack<T> _navigationStack = new();
     private Stack<T> _forward = new();
+
     private const int MaxHistory = 10;
-    private bool _suspended = false;
+    private bool _suspended;
 
     /// <summary>
     /// Called when changes are detected, includes Clear, Append etc. Does not include <see cref="Prune"/> which is often called as part of internal operations.

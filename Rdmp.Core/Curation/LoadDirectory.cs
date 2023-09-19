@@ -76,7 +76,7 @@ public class LoadDirectory : ILoadDirectory
     private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName) =>
         path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
 
-    private static DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
+    private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
         var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault() ??
                 throw new DirectoryNotFoundException(

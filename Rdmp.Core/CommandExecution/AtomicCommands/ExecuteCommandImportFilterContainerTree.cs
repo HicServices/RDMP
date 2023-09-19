@@ -4,6 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -14,11 +17,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Collections.Generic;
-using SixLabors.ImageSharp;
-using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -142,7 +142,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 
             var ecById = childProvider.ExtractionConfigurations.ToDictionary(k => k.ID);
 
-            // The root object that makes most sense to the user e.g. they select an extraction 
+            // The root object that makes most sense to the user e.g. they select an extraction
             var fromConfiguration
                 =
                 childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
@@ -227,11 +227,10 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <returns></returns>
     private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
     {
-        if (arg.RootCohortAggregateContainer_ID == null)
-            return Array.Empty<AggregateConfiguration>();
-
-        return arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-            .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
+        return arg.RootCohortAggregateContainer_ID == null
+            ? Array.Empty<AggregateConfiguration>()
+            : arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
+                .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
     }
 
     /// <summary>

@@ -17,22 +17,20 @@ namespace Rdmp.UI.TransparentHelpSystem;
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public class TransparentHelpForm : Form
+public partial class TransparentHelpForm : Form
 {
     private readonly Control _host;
     private Control _highlight;
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("dwmapi.dll", PreserveSig = false)]
-    public static extern bool DwmIsCompositionEnabled();
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     private const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
+
     private Timer timer = new();
-    private Color _transparencyColor;
     private SolidBrush _highlightBrush;
 
     public TransparentHelpForm(Control host)
@@ -46,20 +44,12 @@ public class TransparentHelpForm : Form
         ShowInTaskbar = false;
         TopMost = true;
 
-        if (Environment.OSVersion.Version.Major >= 6 && DwmIsCompositionEnabled())
-        {
-            _transparencyColor = Color.Magenta;
-            Opacity = 0.5f;
-        }
-        else
-        {
-            _transparencyColor = Color.White;
-            Opacity = 0.25f;
-        }
+        var transparencyColor = Color.Magenta;
+        Opacity = 0.5f;
 
-        _highlightBrush = new SolidBrush(_transparencyColor);
-        BackColor = _transparencyColor;
-        TransparencyKey = _transparencyColor;
+        _highlightBrush = new SolidBrush(transparencyColor);
+        BackColor = transparencyColor;
+        TransparencyKey = transparencyColor;
 
         timer.Interval = 100;
         timer.Tick += (s, e) => UpdateLocation();
@@ -147,7 +137,7 @@ public class TransparentHelpForm : Form
             base.WndProc(ref m);
     }
 
-    private HelpBox _currentHelpBox = null;
+    private HelpBox _currentHelpBox;
 
     public HelpBox ShowStage(HelpWorkflow workflow, HelpStage stage)
     {
@@ -218,17 +208,13 @@ public class TransparentHelpForm : Form
         }
 
         if (currentHelpBox.Height < availableSpaceAboveHighlight)
-        {
             //No space below so go above it
-
-
-            if (_currentHelpBox.Width < availableSpaceHorizontally)
-                return highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height };
-
-            //consider moving X back because message box is so wide (See diagram above)
-            return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width),
-                highlightTopLeft.Y - currentHelpBox.Height);
-        }
+            return _currentHelpBox.Width < availableSpaceHorizontally
+                ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height }
+                :
+                //consider moving X back because message box is so wide (See diagram above)
+                new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width),
+                    highlightTopLeft.Y - currentHelpBox.Height);
 
         var screenCoordinatesTopRight = _highlight.PointToScreen(new Point(_highlight.ClientRectangle.Width, 0));
         var highlightTopRight = _host.PointToClient(screenCoordinatesTopRight);
@@ -241,9 +227,8 @@ public class TransparentHelpForm : Form
             return new Point(0, _host.ClientRectangle.Height - _currentHelpBox.Height);
 
         //there is space to the right or left so put it in whichever is greater
-        if (spaceToRight > spaceToLeft)
-            return highlightTopRight;
-
-        return new Point(highlightTopLeft.X - _currentHelpBox.Width, 0);
+        return spaceToRight > spaceToLeft
+            ? highlightTopRight
+            : new Point(highlightTopLeft.X - _currentHelpBox.Width, 0);
     }
 }

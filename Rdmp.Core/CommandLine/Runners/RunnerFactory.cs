@@ -17,33 +17,19 @@ public class RunnerFactory
 {
     public static IRunner CreateRunner(IBasicActivateItems activator, RDMPCommandLineOptions command)
     {
-        if (command.Command == CommandLineActivity.none)
-            throw new Exception($"No command has been set on '{command.GetType().Name}'");
-
-        if (command is DleOptions dleOpts)
-            return new DleRunner(dleOpts);
-
-        if (command is DqeOptions dqeOpts)
-            return new DqeRunner(dqeOpts);
-
-        if (command is CacheOptions cacheOpts)
-            return new CacheRunner(cacheOpts);
-
-        if (command is ExtractionOptions extractionOpts)
-            return new ExtractionRunner(activator, extractionOpts);
-
-        if (command is ReleaseOptions releaseOpts)
-            return new ReleaseRunner(releaseOpts);
-
-        if (command is CohortCreationOptions cohortOpts)
-            return new CohortCreationRunner(cohortOpts);
-
-        if (command is PackOptions packOpts)
-            return new PackPluginRunner(packOpts);
-
-        if (command is ExecuteCommandOptions executeOpts)
-            return new ExecuteCommandRunner(executeOpts);
-
-        throw new Exception($"RDMPCommandLineOptions Type '{command.GetType()}'");
+        return command.Command == CommandLineActivity.none
+            ? throw new Exception($"No command has been set on '{command.GetType().Name}'")
+            : command switch
+            {
+                DleOptions dleOpts => new DleRunner(dleOpts),
+                DqeOptions dqeOpts => new DqeRunner(dqeOpts),
+                CacheOptions cacheOpts => new CacheRunner(cacheOpts),
+                ExtractionOptions extractionOpts => new ExtractionRunner(activator, extractionOpts),
+                ReleaseOptions releaseOpts => new ReleaseRunner(releaseOpts),
+                CohortCreationOptions cohortOpts => new CohortCreationRunner(cohortOpts),
+                PackOptions packOpts => new PackPluginRunner(packOpts),
+                ExecuteCommandOptions executeOpts => new ExecuteCommandRunner(executeOpts),
+                _ => throw new Exception($"RDMPCommandLineOptions Type '{command.GetType()}'")
+            };
     }
 }

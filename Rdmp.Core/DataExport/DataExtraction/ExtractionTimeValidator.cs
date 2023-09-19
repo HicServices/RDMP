@@ -11,7 +11,6 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Validation;
-using Rdmp.Core.Validation.Constraints;
 
 namespace Rdmp.Core.DataExport.DataExtraction;
 
@@ -26,10 +25,9 @@ namespace Rdmp.Core.DataExport.DataExtraction;
 /// </summary>
 public class ExtractionTimeValidator
 {
-    private readonly ICatalogue _catalogue;
     private readonly List<IColumn> _columnsToExtract;
 
-    private bool _initialized = false;
+    private bool _initialized;
 
     public Validator Validator { get; set; }
     public VerboseValidationResults Results { get; set; }
@@ -38,12 +36,11 @@ public class ExtractionTimeValidator
 
     public ExtractionTimeValidator(ICatalogue catalogue, List<IColumn> columnsToExtract)
     {
-        _catalogue = catalogue;
         _columnsToExtract = columnsToExtract;
 
-        Validator = Validator.LoadFromXml(_catalogue.ValidatorXML);
+        Validator = Validator.LoadFromXml(catalogue.ValidatorXML);
 
-        if (string.IsNullOrWhiteSpace(_catalogue.ValidatorXML))
+        if (string.IsNullOrWhiteSpace(catalogue.ValidatorXML))
             throw new ArgumentException($"No validations are configured for catalogue {catalogue.Name}");
 
         IgnoredBecauseColumnHashed = new List<ItemValidator>();

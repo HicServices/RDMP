@@ -4,30 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly Image<Rgba32> _basic;
-    private readonly Image<Rgba32> _projectSpecific;
+    private static readonly Image<Rgba32> _basic = Image.Load<Rgba32>(CatalogueIcons.Catalogue);
+    private static readonly Image<Rgba32> _projectSpecific = Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
     private readonly IDataExportRepository _dataExportRepository;
-    private readonly IconOverlayProvider _overlayProvider;
 
 
-    public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository,
-        IconOverlayProvider overlayProvider)
+    public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository)
     {
-        _basic = Image.Load<Rgba32>(CatalogueIcons.Catalogue);
-        _projectSpecific = Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
         _dataExportRepository = dataExportRepository;
-        _overlayProvider = overlayProvider;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
@@ -40,16 +35,16 @@ public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
         var img = status is { IsExtractable: true, IsProjectSpecific: true } ? _projectSpecific : _basic;
 
         if (c.IsApiCall())
-            img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Cloud);
 
         if (c.IsDeprecated)
-            img = _overlayProvider.GetOverlay(img, OverlayKind.Deprecated);
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Deprecated);
 
         if (c.IsInternalDataset)
-            img = _overlayProvider.GetOverlay(img, OverlayKind.Internal);
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Internal);
 
-        if (status != null && status.IsExtractable)
-            img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
+        if (status is { IsExtractable: true })
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
         return img;
     }

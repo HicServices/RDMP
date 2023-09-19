@@ -48,7 +48,7 @@ public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecut
 
         if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
         {
-            _triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
+            _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
             Show(GlobalStrings.CreateArchiveTableSuccess, $"{TableInfo.GetRuntimeName()}_Archive ");
         }
 

@@ -7,14 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.FilterImporting.Construction;
-using Rdmp.Core.QueryBuilding.Options;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.QueryBuilding.Options;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
@@ -67,21 +67,18 @@ public class FilterImportWizard
         if (cancel)
             return null;
 
-        FilterImporter importer = null;
-
-        if (containerToImportOneInto is AggregateFilterContainer)
-            importer = new FilterImporter(
+        var importer = containerToImportOneInto switch
+        {
+            AggregateFilterContainer => new FilterImporter(
                 new AggregateFilterFactory((ICatalogueRepository)containerToImportOneInto.Repository),
-                globalParameters);
-        else if (containerToImportOneInto is FilterContainer)
-            importer =
-                new FilterImporter(
-                    new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository),
-                    globalParameters);
-        else
-            throw new ArgumentException(
+                globalParameters),
+            FilterContainer => new FilterImporter(
+                new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository),
+                globalParameters),
+            _ => throw new ArgumentException(
                 $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}",
-                nameof(containerToImportOneInto));
+                nameof(containerToImportOneInto))
+        };
 
         //if there is a parameter value set then tell the importer to use these parameter values instead of the IFilter's default ones
         if (chosenParameterValues != null)
@@ -170,9 +167,7 @@ public class FilterImportWizard
             var chosen = _activator.SelectOne(new DialogArgs
             {
                 WindowTitle = "Choose Parameter Set",
-                TaskDescription = @$"Filter '{filter}' has parameters ({
-                    string.Join(',', filter.GetAllParameters().Select(p => p.ParameterName))
-                }).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
+                TaskDescription = @$"Filter '{filter}' has parameters ({string.Join(',', filter.GetAllParameters().Select(p => p.ParameterName))}).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
             }, parameterSets);
 
             if (chosen != null)
@@ -186,39 +181,39 @@ public class FilterImportWizard
     private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals,
         out IFilter[] otherFilters)
     {
-        if (containerToImportOneInto is AggregateFilterContainer aggregatecontainer)
+        switch (containerToImportOneInto)
         {
-            var aggregate = aggregatecontainer.GetAggregate();
-            var factory = new AggregateBuilderOptionsFactory();
-            var options = AggregateBuilderOptionsFactory.Create(aggregate);
+            case AggregateFilterContainer aggregatecontainer:
+                {
+                    var aggregate = aggregatecontainer.GetAggregate();
+                    var options = AggregateBuilderOptionsFactory.Create(aggregate);
 
-            globals = options.GetAllParameters(aggregate);
-            var root = aggregate.RootFilterContainer;
-            otherFilters = root == null
-                ? Array.Empty<IFilter>()
-                : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
-            return;
+                    globals = options.GetAllParameters(aggregate);
+                    var root = aggregate.RootFilterContainer;
+                    otherFilters = root == null
+                        ? Array.Empty<IFilter>()
+                        : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+                    return;
+                }
+            case FilterContainer filtercontainer:
+                {
+                    var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ??
+                                          throw new Exception(
+                                              $"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
+                    var config = selectedDataSet.ExtractionConfiguration;
+                    var root = selectedDataSet.RootFilterContainer;
+
+                    globals = config.GlobalExtractionFilterParameters;
+                    otherFilters = root == null
+                        ? Array.Empty<IFilter>()
+                        : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+
+                    return;
+                }
+            default:
+                throw new Exception(
+                    $"Container {containerToImportOneInto} was an unexpected Type:{containerToImportOneInto.GetType().Name}");
         }
-
-        if (containerToImportOneInto is FilterContainer filtercontainer)
-        {
-            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ??
-                                  throw new Exception(
-                                      $"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
-            var config = selectedDataSet.ExtractionConfiguration;
-            var root = selectedDataSet.RootFilterContainer;
-
-            globals = config.GlobalExtractionFilterParameters;
-            otherFilters = root == null
-                ? Array.Empty<IFilter>()
-                : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
-
-            return;
-        }
-
-
-        throw new Exception(
-            $"Container {containerToImportOneInto} was an unexpected Type:{containerToImportOneInto.GetType().Name}");
     }
 
     private List<IFilter> GetAllFiltersRecursively(IContainer currentContainer, List<IFilter> foundSoFar)

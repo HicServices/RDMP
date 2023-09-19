@@ -69,9 +69,6 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
         where T : IObscureDependencyFinder
     {
         if (OtherDependencyFinders.All(f => f.GetType() != typeof(T)))
-        {
-            var constructor = new ObjectConstructor();
             OtherDependencyFinders.Add((T)ObjectConstructor.Construct(typeof(T), repositoryLocator));
-        }
     }
 }

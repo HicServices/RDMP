@@ -43,7 +43,7 @@ public class TestImportingAnObject : DatabaseTests
         var n = new SharedPluginImporter(p);
 
         //reject the reuse of an existing one
-        var p2 = n.Import(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
+        var p2 = n.Import(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(p.LoadModuleAssemblies.Count(),p2.LoadModuleAssemblies.Count());
         Assert.AreEqual(p.LoadModuleAssemblies.First().Dll,p2.LoadModuleAssemblies.First().Dll);

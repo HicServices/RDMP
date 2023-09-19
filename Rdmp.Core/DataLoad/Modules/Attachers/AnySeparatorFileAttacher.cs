@@ -21,8 +21,8 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
     [DemandsInitialization(@"The file separator e.g. , for CSV.  For tabs type \t", Mandatory = true)]
     public string Separator
     {
-        get => _source.Separator;
-        set => _source.Separator = value;
+        get => Source.Separator;
+        set => Source.Separator = value;
     }
 
     public AnySeparatorFileAttacher() : base('A')
@@ -37,7 +37,7 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
         if (Separator == null)
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    "Separator has not been set yet, this is the character or sequence which seperates cells in your flat file.  For example in the case of a CSV (comma seperated values) file the Separator argument should be set to ','",
+                    "Separator has not been set yet, this is the character or sequence which separates cells in your flat file.  For example in the case of a CSV (comma separated values) file the Separator argument should be set to ','",
                     CheckResult.Fail));
     }
 }

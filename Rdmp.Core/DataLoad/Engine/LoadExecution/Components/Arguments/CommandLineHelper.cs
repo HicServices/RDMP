@@ -21,9 +21,6 @@ public class CommandLineHelper
 {
     public static string CreateArgString(string name, object value)
     {
-        if (value is LoadDirectory directory)
-            value = directory.RootPath.FullName;
-
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("The argument 'name' parameter is empty");
 
@@ -31,23 +28,18 @@ public class CommandLineHelper
             throw new ArgumentException(
                 $"The name argument should be in Pascal case, the first character in {name} should be uppercase");
 
-        if (value == null)
-            throw new ArgumentException("The argument value is null");
+        if (value is LoadDirectory loadDirectory)
+            value = loadDirectory.RootPath.FullName;
 
-        if (value is bool)
-            if (Convert.ToBoolean(value))
-                return $"-{ConvertArgNameToString(name)}";
-            else
-                return "";
-
-        if (value is LoadStage)
-            return CreateArgString(name, value.ToString());
-
-        if (value is DiscoveredDatabase dbInfo)
-            return
-                $"{CreateArgString("DatabaseName", dbInfo.GetRuntimeName())} {CreateArgString("DatabaseServer", dbInfo.Server.Name)}";
-
-        return $"-{ConvertArgNameToString(name)}={GetValueString(value)}";
+        return value switch
+        {
+            null => throw new ArgumentException("The argument value is null"),
+            bool => Convert.ToBoolean(value) ? $"-{ConvertArgNameToString(name)}" : "",
+            LoadStage => CreateArgString(name, value.ToString()),
+            DiscoveredDatabase dbInfo =>
+                $"{CreateArgString("DatabaseName", dbInfo.GetRuntimeName())} {CreateArgString("DatabaseServer", dbInfo.Server.Name)}",
+            _ => $"-{ConvertArgNameToString(name)}={GetValueString(value)}"
+        };
     }
 
     public static string ConvertArgNameToString(string name) =>
@@ -57,18 +49,17 @@ public class CommandLineHelper
 
     public static string GetValueString(object value)
     {
-        if (value is string s)
-            if (s.ToString().Contains(' '))
-                return $@"""{value}"""; //<- looks like a snake (or a golf club? GM)
-            else
-                return s;
-
-        if (value is DateTime dt)
-            return
-                $"\"{(dt.TimeOfDay.TotalSeconds.Equals(0) ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss"))}\"";
-
-        if (value is FileInfo fi) return $"\"{fi.FullName}\"";
-
-        throw new ArgumentException($"Cannot create a value string from an object of type {value.GetType().FullName}");
+        return value switch
+        {
+            string s => s.Contains(' ')
+                ? $@"""{value}"""
+                : //<- looks like a snake (or a golf club? GM)
+                s,
+            DateTime dt =>
+                $"\"{(dt.TimeOfDay.TotalSeconds.Equals(0) ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss"))}\"",
+            FileInfo fi => $"\"{fi.FullName}\"",
+            _ => throw new ArgumentException(
+                $"Cannot create a value string from an object of type {value.GetType().FullName}")
+        };
     }
 }

@@ -220,24 +220,24 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             //let's check for any SQL that indicates user is trying to modify a STAGING table in a RAW script (for example)
             foreach (var tableInfo in LoadMetadata.GetDistinctTableInfoList(false))
                 //for each stage get all the object names that are in that stage
-            foreach (var stage in new[] { LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad })
-            {
-                //process task belongs in that stage anyway so nothing is prohibited
-                if (stage == (LoadStage == LoadStage.Mounting ? LoadStage.AdjustRaw : LoadStage))
-                    continue;
+                foreach (var stage in new[] { LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad })
+                {
+                    //process task belongs in that stage anyway so nothing is prohibited
+                    if (stage == (LoadStage == LoadStage.Mounting ? LoadStage.AdjustRaw : LoadStage))
+                        continue;
 
-                //figure out what is prohibited
-                var prohibitedSql = tableInfo.GetQuerySyntaxHelper()
-                    .EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage), null,
-                        tableInfo.GetRuntimeName(stage));
+                    //figure out what is prohibited
+                    var prohibitedSql = tableInfo.GetQuerySyntaxHelper()
+                        .EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage), null,
+                            tableInfo.GetRuntimeName(stage));
 
-                //if we reference it, complain
-                if (sql.Contains(prohibitedSql))
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}",
-                            CheckResult.Warning));
-            }
+                    //if we reference it, complain
+                    if (sql.Contains(prohibitedSql))
+                        notifier.OnCheckPerformed(
+                            new CheckEventArgs(
+                                $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}",
+                                CheckResult.Warning));
+                }
         }
         catch (Exception e)
         {
@@ -345,10 +345,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
     /// <inheritdoc/>
-    public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
-    {
-        var argFactory = new ArgumentFactory();
-        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
+    public IArgument[] CreateArgumentsForClassIfNotExists(Type t) =>
+        ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
                 t,
 
                 //tell it how to create new instances of us related to parent
@@ -359,8 +357,6 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
             //convert the result back from generic to specific (us)
             .ToArray();
-    }
-
 
     /// <inheritdoc/>
     public IArgument[] CreateArgumentsForClassIfNotExists<T>() => CreateArgumentsForClassIfNotExists(typeof(T));

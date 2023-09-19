@@ -47,7 +47,7 @@ public partial class LicenseUI : Form
         }
     }
 
-    private bool allowClose = false;
+    private bool allowClose;
 
     private License _main;
     private License _thirdParth;

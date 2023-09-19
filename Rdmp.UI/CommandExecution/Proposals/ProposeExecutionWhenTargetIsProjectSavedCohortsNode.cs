@@ -29,25 +29,23 @@ internal class
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target,
         InsertOption insertOption = InsertOption.Default)
     {
-        //drop a cic on a Saved Cohorts Node to commit it to that project
-        if (cmd is CohortIdentificationConfigurationCommand cicCommand)
-            return
+        return cmd switch
+        {
+            //drop a cic on a Saved Cohorts Node to commit it to that project
+            CohortIdentificationConfigurationCommand cicCommand =>
                 new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator, null)
-                    .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
-
-        //drop a file on the SavedCohorts node to commit it
-        if (cmd is FileCollectionCombineable fileCommand && fileCommand.Files.Length == 1)
-            return new ExecuteCommandCreateNewCohortFromFile(ItemActivator, fileCommand.Files[0], null).SetTarget(
-                target.Project);
-
-        //drop a Project Specific Catalogue onto it
-        if (cmd is CatalogueCombineable catalogueCombineable)
-            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue)
-                .SetTarget(target.Project);
-
-        if (cmd is ColumnCombineable columnCommand && columnCommand.Column is ExtractionInformation column)
-            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, column);
-
-        return null;
+                    .SetTarget(cicCommand.CohortIdentificationConfiguration)
+                    .SetTarget(target.Project),
+            //drop a file on the SavedCohorts node to commit it
+            FileCollectionCombineable fileCommand when fileCommand.Files.Length == 1 =>
+                new ExecuteCommandCreateNewCohortFromFile(ItemActivator, fileCommand.Files[0], null).SetTarget(
+                    target.Project),
+            //drop a Project Specific Catalogue onto it
+            CatalogueCombineable catalogueCombineable => new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,
+                catalogueCombineable.Catalogue).SetTarget(target.Project),
+            ColumnCombineable { Column: ExtractionInformation } columnCommand => new
+                ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, (ExtractionInformation)columnCommand.Column),
+            _ => null
+        };
     }
 }

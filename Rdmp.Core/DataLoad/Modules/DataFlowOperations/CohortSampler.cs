@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -33,7 +33,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
     public int SampleSize { get; set; } = 100;
 
     [DemandsInitialization(
-        "Determines components behaviour if not enough unique identifiers are being comitted.  True to crash.  False to pass on however many records there are.",
+        "Determines components behaviour if not enough unique identifiers are being committed.  True to crash.  False to pass on however many records there are.",
         DefaultValue = true)]
     public bool FailIfNotEnoughIdentifiers { get; set; } = true;
 
@@ -107,7 +107,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
             throw new Exception(
                 $"Cohort only contains {chosen.Count} unique identifiers.  This is less than the requested sample size of {SampleSize} and {nameof(FailIfNotEnoughIdentifiers)} is true");
 
-        DataTable dtToReturn = new DataTable();
+        var dtToReturn = new DataTable();
         dtToReturn.BeginLoadData();
         dtToReturn.Columns.Add(expectedFieldName);
 

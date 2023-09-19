@@ -11,7 +11,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
 /// Makes <see cref="LoadMetadata"/> objects draggable.  Cache any relevant slow to fetch
-/// info here so that it is available for rapid query as user waves it around over 
+/// info here so that it is available for rapid query as user waves it around over
 /// potential drop targets
 /// </summary>
 public class LoadMetadataCombineable : ICombineToMakeCommand, IHasFolderCombineable

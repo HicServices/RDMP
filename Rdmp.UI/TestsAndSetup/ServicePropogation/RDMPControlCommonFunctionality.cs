@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -19,10 +18,11 @@ using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ScintillaNET;
-using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
-using Point = System.Drawing.Point;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Color = System.Drawing.Color;
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using Point = System.Drawing.Point;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
@@ -88,7 +88,7 @@ public class RDMPControlCommonFunctionality
         };
         ToolStrip.Items.Add(_menuDropDown);
 
-        _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
+        _ragSmileyToolStrip = new RAGSmileyToolStrip();
         ToolStrip.Items.Add(_ragSmileyToolStrip);
 
         _runChecksToolStripButton.Click += (s, e) => StartChecking();
@@ -292,7 +292,7 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    /// Adds a <see cref="HelpIcon"/> on the right of the control with the pvorided help text
+    /// Adds a <see cref="HelpIcon"/> on the right of the control with the provided help text
     /// </summary>
     /// <param name="c">The control you want the help to appear beside</param>
     /// <param name="title">The textual header you want shown</param>
@@ -324,7 +324,7 @@ public class RDMPControlCommonFunctionality
             help.Anchor = anchor;
         }
 
-        c.Parent.Controls.Add(help);
+        c.Parent?.Controls.Add(help);
     }
 
     public void ClearToolStrip()

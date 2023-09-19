@@ -177,10 +177,7 @@ public class CommandLineObjectPickerArgumentValue
         if (basicType.IsValueType && !typeof(Enum).IsAssignableFrom(basicType))
             return UsefulStuff.ChangeType(RawValue, basicType);
 
-        if (basicType.IsEnum)
-            return Enum.Parse(basicType, RawValue, true);
-
-        return null;
+        return basicType.IsEnum ? Enum.Parse(basicType, RawValue, true) : null;
     }
 
     private object GetOneDatabaseEntity<T>()
@@ -224,7 +221,7 @@ public class CommandLineObjectPickerArgumentValue
                 return true;
             var val = GetValueForParameterOfType(paramType);
 
-            return val != null && paramType.IsAssignableFrom(val.GetType());
+            return val != null && paramType.IsInstanceOfType(val);
         }
         catch (Exception e)
         {
@@ -256,7 +253,7 @@ public class CommandLineObjectPickerArgumentValue
                 if (DatabaseEntities == null || !DatabaseEntities.Any()) //no
                     DatabaseEntities = other.DatabaseEntities; //use theirs
                 else if (other.DatabaseEntities.Any())
-                    throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntitites");
+                    throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntities");
         }
 
         return this;

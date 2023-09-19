@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -110,7 +110,8 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
 
                     var savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
                     var dt = source.GetAllData(sheet, job);
-                    using var saveStream = new StreamWriter(savePath);
+                    dt.EndLoadData();
+                    using var saveStream = new StreamWriter(savePath, false, Encoding.UTF8, 1 << 20);
                     dt.SaveAsCsv(saveStream);
 
                     job.OnNotify(this,

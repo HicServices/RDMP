@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
@@ -25,14 +26,11 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
     {
         _columns = columns;
 
-        foreach (var column in _columns)
+        foreach (var ui in _columns.Select(column => new DatabaseColumnRequestUI(column)
         {
-            var ui = new DatabaseColumnRequestUI(column)
-            {
-                Dock = DockStyle.Top
-            };
+            Dock = DockStyle.Top
+        }))
             flowLayoutPanel1.Controls.Add(ui);
-        }
 
 
         ShowDialog();

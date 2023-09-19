@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataExport.Data;
 public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated, IHasDependencies
 {
     /// <summary>
-    /// Runs a (non distinct) count on the number of rows in the private/release identifier mapping table 
+    /// Runs a (non distinct) count on the number of rows in the private/release identifier mapping table
     /// stored in the <see cref="ExternalCohortTable"/> which match this cohorts <see cref="OriginID"/>
     /// </summary>
     int Count { get; }

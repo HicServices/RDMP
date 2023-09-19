@@ -32,13 +32,9 @@ public class SupportingDocumentsFetcher
         _singleDocument = true;
     }
 
-    public string ExtractToDirectory(DirectoryInfo directory)
-    {
-        if (_document != null)
-            return ExtractToDirectory(directory, _document);
-
-        throw new Exception("SupportingDocument was not specified!");
-    }
+    public string ExtractToDirectory(DirectoryInfo directory) => _document != null
+        ? ExtractToDirectory(directory, _document)
+        : throw new Exception("SupportingDocument was not specified!");
 
     private static string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
     {
@@ -83,7 +79,7 @@ public class SupportingDocumentsFetcher
         {
             var toCopy = document.GetFileName();
 
-            if (toCopy != null && toCopy.Exists)
+            if (toCopy is { Exists: true })
                 notifier.OnCheckPerformed(
                     new CheckEventArgs($"Found SupportingDocument {toCopy.Name} and it exists",
                         CheckResult.Success));

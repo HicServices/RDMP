@@ -51,7 +51,7 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         chart1.Series.Clear();
     }
 
-    private string _pivotCategoryValue = null;
+    private string _pivotCategoryValue;
 
     /// <inheritdoc/>
     public void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue)
@@ -165,8 +165,8 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
     }
 
 
-    private double pointStartX = 0;
-    private double pointStartY = 0;
+    private double pointStartX;
+    private double pointStartY;
 
     private void chart1_MouseDown(object sender, MouseEventArgs e)
     {
@@ -192,12 +192,12 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         if (double.IsNaN(pointEndX) || double.IsNaN(pointEndY)) return;
 
         if (Activator.TypeText(new DialogArgs
-            {
-                WindowTitle = "Add Annotation",
-                TaskDescription =
+        {
+            WindowTitle = "Add Annotation",
+            TaskDescription =
                     "Type some annotation text(will be saved to the database for other data analysts to see)",
-                EntryLabel = "Annotation:"
-            }, 500, null, out var result, false))
+            EntryLabel = "Annotation:"
+        }, 500, null, out var result, false))
         {
             //create new annotation in the database
             new DQEGraphAnnotation(_currentEvaluation.DQERepository, pointStartX, pointStartY, pointEndX, pointEndY,
@@ -208,7 +208,7 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         }
     }
 
-    private bool annotating = false;
+    private bool annotating;
     private Evaluation _currentEvaluation;
 
     private void btnAnnotator_Click(object sender, EventArgs e)

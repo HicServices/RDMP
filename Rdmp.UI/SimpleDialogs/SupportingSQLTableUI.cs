@@ -56,7 +56,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
 
         QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
         QueryPreview.ReadOnly = false;
-        QueryPreview.TextChanged += new EventHandler(QueryPreview_TextChanged);
+        QueryPreview.TextChanged += QueryPreview_TextChanged;
 
         pSQL.Controls.Add(QueryPreview);
 
@@ -121,6 +121,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     }
 
     private bool _bLoading;
+
 
     private void QueryPreview_TextChanged(object sender, EventArgs e)
     {

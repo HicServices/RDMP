@@ -41,8 +41,9 @@ public partial class ChecksUI : UserControl, ICheckNotifier
     private Bitmap _warningEx;
     private Bitmap _fail;
     private Bitmap _failEx;
+
     private ConcurrentBag<CheckEventArgs> _results = new();
-    private bool outOfDate = false;
+    private bool outOfDate;
 
     public ChecksUI()
     {
@@ -111,14 +112,15 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (rowObject is not CheckEventArgs e) return null;
-        return e.Result switch
-        {
-            CheckResult.Success => _tick,
-            CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
-            CheckResult.Fail => e.Ex == null ? _fail : _failEx,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        return rowObject is not CheckEventArgs e
+            ? null
+            : e.Result switch
+            {
+                CheckResult.Success => _tick,
+                CheckResult.Warning => e.Ex == null ? _warning : _warningEx,
+                CheckResult.Fail => e.Ex == null ? _fail : _failEx,
+                _ => throw new ArgumentOutOfRangeException()
+            };
     }
 
     public bool CheckingInProgress { get; private set; }
@@ -203,7 +205,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
         if (InvokeRequired)
             lock (olockYesNoToAll)
             {
-                return Invoke(new Func<bool>(() => DoesUserWantToApplyFix(args)));
+                return Invoke(() => DoesUserWantToApplyFix(args));
             }
 
         //if there is a fix and a request handler for whether or not to apply the fix
@@ -246,7 +248,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
     public void TerminateWithExtremePrejudice()
     {
-        if (_checkingThread != null && _checkingThread.IsAlive)
+        if (_checkingThread is { IsAlive: true })
 #pragma warning disable SYSLIB0006 // Type or member is obsolete
             _checkingThread.Abort();
 #pragma warning restore SYSLIB0006 // Type or member is obsolete

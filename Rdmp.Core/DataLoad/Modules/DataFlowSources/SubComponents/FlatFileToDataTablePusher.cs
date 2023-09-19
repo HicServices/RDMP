@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using FAnsi.Extensions;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
@@ -50,7 +49,7 @@ public class FlatFileToDataTablePusher
     /// <summary>
     /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
     /// </summary>
-    private long _bufferOverrunsWhereColumnValueWasBlank = 0;
+    private long _bufferOverrunsWhereColumnValueWasBlank;
 
     /// <summary>
     /// We only complain once about headers not matching the number of cell values
@@ -87,7 +86,7 @@ public class FlatFileToDataTablePusher
             if (!_haveComplainedAboutColumnMismatch)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message apperas only once per file"));
+                    $"Flat file '{_fileToLoad.File.Name}' line number '{reader.Context.Parser.RawRow}' had  {headerCount} columns while the destination DataTable had {dt.Columns.Count} columns.  This message appears only once per file"));
                 _haveComplainedAboutColumnMismatch = true;
             }
 
@@ -116,12 +115,8 @@ public class FlatFileToDataTablePusher
                 }
                 else
                 {
-                    var errorMessage = string.Format(
-                        "Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
-                        reader.Context.Parser.RawRow,
-                        dt.TableName,
-                        _headers.Length,
-                        lineToPush.Cells.Length);
+                    var errorMessage =
+                        $"Column mismatch on line {reader.Context.Parser.RawRow} of file '{dt.TableName}', it has too many columns (expected {_headers.Length} columns but line had  {lineToPush.Cells.Length})";
 
                     if (_bufferOverrunsWhereColumnValueWasBlank > 0)
                         errorMessage +=
@@ -136,7 +131,7 @@ public class FlatFileToDataTablePusher
             if (_headers.IgnoreColumnsList.Contains(_headers[i]))
                 continue;
 
-            //its an empty header, don't bother populating it
+            //it's an empty header, don't bother populating it
             if (_headers[i].IsBasicallyNull())
                 if (!lineToPush[i].IsBasicallyNull())
                     throw new FileLoadException(
@@ -311,7 +306,7 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v, idx) =>
                     deciders.TryGetValue(idx, out var decider) && v is string s ? decider.Parse(s) : v).ToArray());
-            dtCloned.EndLoadData();
+
             return dtCloned;
         }
 

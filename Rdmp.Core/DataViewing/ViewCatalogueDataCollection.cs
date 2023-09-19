@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -67,13 +67,8 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         builder.AddColumnRange(cols);
 
-        var filters = new List<ExtractionFilter>();
-
-        foreach (ExtractionFilter f in Filters)
-            filters.Add(f);
-
         builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
-            filters.ToArray(), FilterContainerOperation.AND);
+            Filters, FilterContainerOperation.AND);
         builder.RegenerateSQL();
     }
 

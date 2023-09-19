@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -39,22 +38,14 @@ internal class Patch68FixNamespacesTest : UnitTests
             substitutions.Add(match.Groups[1].Value, match.Groups[2].Value);
         }
 
-        SetupMEF();
-
-        MEF.SafeDirectoryCatalog.AddType(typeof(FAnsi.DatabaseType));
-
         foreach (var oldClass in ExpectedClasses)
         {
-            var newClass = oldClass;
+            var newClass = substitutions.Aggregate(oldClass, (current, kvp) => current.Replace(kvp.Key, kvp.Value));
 
-            foreach (var kvp in substitutions)
-                newClass = newClass.Replace(kvp.Key, kvp.Value);
+            var foundNow = Core.Repositories.MEF.GetType(newClass);
 
-            var foundNow = MEF.GetType(newClass);
-
-            Assert.IsNotNull(foundNow,
-                "Patch did not work correctly for Type '" + oldClass + "' which after renaming became '" + newClass +
-                "'");
+            Assert.IsNotNull(foundNow, "Patch did not work correctly for Type '{0}' which after renaming became '{1}'",
+                oldClass, newClass);
         }
     }
 

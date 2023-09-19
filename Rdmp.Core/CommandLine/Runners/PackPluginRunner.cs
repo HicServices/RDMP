@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -29,7 +28,8 @@ public class PackPluginRunner : IRunner
     private readonly PackOptions _packOpts;
     public const string PluginPackageSuffix = ".nupkg";
     public const string PluginPackageManifest = ".nuspec";
-    private Regex versionSuffix = new("-.*$");
+
+    private static readonly Regex VersionSuffix = new("-.*$");
 
     public PackPluginRunner(PackOptions packOpts)
     {
@@ -66,25 +66,23 @@ public class PackPluginRunner : IRunner
 
             if (manifests.Length != 1)
                 throw new Exception(
-                    $"Found {manifests.Length} files in plguin with the extension {PluginPackageManifest}");
+                    $"Found {manifests.Length} files in plugin with the extension {PluginPackageManifest}");
 
-            using (var s = manifests[0].Open())
-            {
-                var doc = XDocument.Load(s);
+            using var s = manifests[0].Open();
+            var doc = XDocument.Load(s);
 
-                var ns = doc.Root
-                    .GetDefaultNamespace(); // XNamespace.Get("http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd");
-                var versionNode = doc.Root.Element(ns + "metadata").Element(ns + "version") ??
-                                  throw new Exception("Could not find version tag");
-                pluginVersion = new Version(versionSuffix.Replace(versionNode.Value, ""));
+            var ns = doc.Root
+                .GetDefaultNamespace(); // XNamespace.Get("http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd");
+            var versionNode = doc.Root.Element(ns + "metadata").Element(ns + "version") ??
+                              throw new Exception("Could not find version tag");
+            pluginVersion = new Version(VersionSuffix.Replace(versionNode.Value, ""));
 
-                var rdmpDependencyNode =
-                    doc.Descendants(ns + "dependency")
-                        .FirstOrDefault(e => e.Attribute("id").Value == "HIC.RDMP.Plugin") ?? throw new Exception(
-                        "Expected a single <dependency> tag with id = HIC.RDMP.Plugin (in order to determine plugin compatibility).  Ensure your nuspec file includes a dependency on this package.");
-                rdmpDependencyVersion =
-                    new Version(versionSuffix.Replace(rdmpDependencyNode.Attribute("version").Value, ""));
-            }
+            var rdmpDependencyNode =
+                doc.Descendants(ns + "dependency")
+                    .FirstOrDefault(e => e?.Attribute("id")?.Value == "HIC.RDMP.Plugin") ?? throw new Exception(
+                    "Expected a single <dependency> tag with id = HIC.RDMP.Plugin (in order to determine plugin compatibility).  Ensure your nuspec file includes a dependency on this package.");
+            rdmpDependencyVersion =
+                new Version(VersionSuffix.Replace(rdmpDependencyNode?.Attribute("version")?.Value ?? "", ""));
         }
 
         var runningSoftwareVersion = typeof(PackPluginRunner).Assembly.GetName().Version;
@@ -100,23 +98,13 @@ public class PackPluginRunner : IRunner
     private static void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
     {
-        // delete EXACT old versions of the Plugin
-        var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>()
-            .SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
-
-        if (oldVersion != null)
-            throw new Exception($"There is already a plugin called {oldVersion.Name}");
-
         try
         {
-            var plugin = new Curation.Data.Plugin(repositoryLocator.CatalogueRepository, toCommit, pluginVersion,
-                rdmpDependencyVersion);
-            //add the new binary
-            new LoadModuleAssembly(repositoryLocator.CatalogueRepository, toCommit, plugin);
+            toCommit.CopyTo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, toCommit.Name), true);
         }
         catch (Exception e)
         {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed processing plugin {toCommit.Name}",
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed copying plugin {toCommit.Name}",
                 CheckResult.Fail, e));
             throw;
         }

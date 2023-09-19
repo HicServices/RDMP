@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// Change which column is used to perform linkage against a cohort.  This command supports both changing the global setting on a <see cref="Catalogue"/>
 /// or changing it only for a specific <see cref="ExtractionConfiguration"/>
 /// </summary>
-public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase, IAtomicCommand
+public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase, IAtomicCommand
 {
     /// <summary>
     /// Change which column is the linkage identifier in a <see cref="Catalogue"/> either at a global level or for a specific <paramref name="inConfiguration"/>
@@ -33,7 +33,7 @@ public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSett
                 "Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
             IExtractionConfiguration inConfiguration,
             [DemandsInitialization(
-                "Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma seperate multiple entries if needed")]
+                "Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma separate multiple entries if needed")]
             string column)
         // base class args
         : base(activator, catalogue, inConfiguration, column,
@@ -48,19 +48,12 @@ public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSett
     public override string GetCommandHelp() =>
         "Change which column(s) contain the patient id / linkage column e.g. CHI";
 
-    protected override bool IsValidSelection(ConcreteColumn[] selected)
-    {
-        if (selected == null)
-            return true;
-
-        // if multiple selected warn user
-        if (selected.Length > 1)
-            return YesNo(
-                "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
-                "Multiple IsExtractionIdentifier columns?");
-
-        return true;
-    }
+    protected override bool IsValidSelection(ConcreteColumn[] selected) =>
+        selected is not { Length: > 1 } // if multiple selected warn user
+        ||
+        YesNo(
+            "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
+            "Multiple IsExtractionIdentifier columns?");
 
     protected override bool Getter(ConcreteColumn c) => c.IsExtractionIdentifier;
 

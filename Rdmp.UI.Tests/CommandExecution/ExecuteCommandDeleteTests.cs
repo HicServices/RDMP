@@ -18,7 +18,6 @@ internal class ExecuteCommandDeleteTests : UITests
     [Test]
     public void Delete_IsSupportedCommand()
     {
-        SetupMEF();
         var invoker = new CommandInvoker(ItemActivator);
         Assert.IsNull(invoker.WhyCommandNotSupported(typeof(ExecuteCommandDelete)));
     }

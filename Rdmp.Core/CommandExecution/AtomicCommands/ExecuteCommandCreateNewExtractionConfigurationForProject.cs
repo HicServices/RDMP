@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -14,6 +13,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -60,10 +60,9 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         // we have a cohort so can only create an ExtractionConfiguration for Projects that share
         // the cohorts project number
 
-        if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
-            return dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber);
-
-        return Enumerable.Empty<Project>();
+        return BasicActivator.CoreChildProvider is DataExportChildProvider dx
+            ? dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber)
+            : Enumerable.Empty<Project>();
     }
 
     [UseWithObjectConstructor]
@@ -97,10 +96,10 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
 
         if (p == null)
             if (!SelectOne(new DialogArgs
-                {
-                    WindowTitle = "Select Project",
-                    TaskDescription = GetTaskDescription()
-                }, GetProjects(CohortIfAny).ToList(), out p))
+            {
+                WindowTitle = "Select Project",
+                TaskDescription = GetTaskDescription()
+            }, GetProjects(CohortIfAny).ToList(), out p))
                 return;
         if (p == null)
             return;
@@ -110,11 +109,11 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         // if we don't have a name and we are running in interactive mode
         if (string.IsNullOrWhiteSpace(name) && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "New Extraction Configuration",
-                    TaskDescription = "Enter a name for the new Extraction Configuration",
-                    EntryLabel = "Name"
-                }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
+            {
+                WindowTitle = "New Extraction Configuration",
+                TaskDescription = "Enter a name for the new Extraction Configuration",
+                EntryLabel = "Name"
+            }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
                 return;
 
         // create the new config
@@ -135,7 +134,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         if (newConfig.Cohort_ID != null)
         {
             var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig)
-                { NoPublish = true };
+            { NoPublish = true };
 
             if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
                 chooseDatasetsCommand.Execute();
@@ -147,12 +146,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         Emphasise(newConfig);
     }
 
-    private string GetTaskDescription()
-    {
-        if (CohortIfAny == null)
-            return "Select which Project to create the ExtractionConfiguration under";
-
-        return
-            $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
-    }
+    private string GetTaskDescription() =>
+        CohortIfAny == null
+            ? "Select which Project to create the ExtractionConfiguration under"
+            : $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
 }

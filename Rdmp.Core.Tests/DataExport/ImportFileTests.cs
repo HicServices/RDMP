@@ -49,8 +49,8 @@ public class ImportFileTests : DatabaseTests
             };
 
             source.PreInitialize(new FlatFileToLoad(new FileInfo(file)),
-                new ThrowImmediatelyDataLoadEventListener()); //this is the file we want to load
-            source.Check(new ThrowImmediatelyCheckNotifier());
+                ThrowImmediatelyDataLoadEventListener.Quiet); //this is the file we want to load
+            source.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
             var database = server.ExpectDatabase(databaseName);
@@ -60,12 +60,12 @@ public class ImportFileTests : DatabaseTests
 
             server.ChangeDatabase(databaseName);
 
-            var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
             var tbl = database.CreateTable(dt.TableName, dt);
             var tableName = tbl.GetRuntimeName();
 
-            source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
             var tablesInDatabase = server.ExpectDatabase(databaseName).DiscoverTables(false);
 

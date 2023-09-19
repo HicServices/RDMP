@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
-using System;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -16,17 +16,18 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
+public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
 {
-    private IRootFilterContainerHost _host;
-    private IContainer _container;
-    public const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
-    private const float DEFAULT_WEIGHT = 1.1f;
+    private readonly IRootFilterContainerHost _host;
+    private readonly IContainer _container;
+    internal const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
+    private const float DefaultWeight = 1.1f;
 
     public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host) :
         base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
+        Weight = DefaultWeight;
+        _host = host;
 
         if (host.RootFilterContainer_ID != null)
             SetImpossible("There is already a root filter container on this object");
@@ -41,21 +42,13 @@ public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
         }
 
         SetImpossibleIfReadonly(host);
-
-        _host = host;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        Weight = DEFAULT_WEIGHT;
-
-        return iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
 
     public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container) : base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
-
         _container = container;
 
         SetImpossibleIfReadonly(container);

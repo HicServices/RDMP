@@ -17,8 +17,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class JoinableCollectionNode : Node, IOrderable
 {
-    public CohortIdentificationConfiguration Configuration { get; set; }
-    public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
+    public CohortIdentificationConfiguration Configuration { get; }
+    public JoinableCohortAggregateConfiguration[] Joinables { get; }
 
     public JoinableCollectionNode(CohortIdentificationConfiguration configuration,
         JoinableCohortAggregateConfiguration[] joinables)
@@ -63,8 +63,7 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
         return Equals((JoinableCollectionNode)obj);
     }
 
-    public override int GetHashCode() =>
-        (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
+    public override int GetHashCode() => System.HashCode.Combine(Configuration, GetType());
 
     int IOrderable.Order
     {

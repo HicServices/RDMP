@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -19,16 +19,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandSetArgument : BasicCommandExecution
 {
-    private IArgumentHost _host;
-    private IArgument _arg;
-    private object _value;
+    private readonly IArgument _arg;
+    private readonly object _value;
 
-    private bool _promptUser = false;
+    private readonly bool _promptUser;
 
-    public ExecuteCommandSetArgument(IBasicActivateItems activator, IArgumentHost host, IArgument arg, object value) :
+    public ExecuteCommandSetArgument(IBasicActivateItems activator, IArgumentHost _, IArgument arg, object value) :
         base(activator)
     {
-        _host = host;
         _arg = arg;
         _value = value;
     }
@@ -74,22 +72,21 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             return;
         }
 
-        _host = picker[0].GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable)) as IArgumentHost;
 
-        if (_host == null)
+        if (picker[0].GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable)) is not IArgumentHost host)
         {
             SetImpossible("First parameter must be an IArgumentHost");
             return;
         }
 
-        var args = _host.GetAllArguments();
+        var args = host.GetAllArguments();
 
         _arg = args.FirstOrDefault(a => a.Name.Equals(picker[1].RawValue));
 
         if (_arg == null)
         {
             SetImpossible(
-                $"Could not find argument called '{picker[1].RawValue}' on '{_host}'.  Arguments found were {string.Join(",", args.Select(a => a.Name))}");
+                $"Could not find argument called '{picker[1].RawValue}' on '{host}'.  Arguments found were {string.Join(",", args.Select(a => a.Name))}");
             return;
         }
 

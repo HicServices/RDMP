@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Pipelines;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
@@ -29,9 +29,6 @@ public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProv
 
         if (pc.Class != null && pc.Class.EndsWith("Source"))
             return _source;
-        if (pc.Class != null && pc.Class.EndsWith("Destination"))
-            return _destination;
-
-        return _component;
+        return pc.Class != null && pc.Class.EndsWith("Destination") ? _destination : _component;
     }
 }

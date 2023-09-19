@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
@@ -51,26 +52,21 @@ public class DitaCatalogueExtractor : ICheckable
     /// <param name="listener"></param>
     public void Extract(IDataLoadEventListener listener)
     {
-        var xml = "";
-        xml += $@"<?xml version=""1.0"" encoding=""UTF-8""?>
+        var xml = new StringBuilder();
+        xml.Append($@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE map PUBLIC ""-//OASIS//DTD DITA Map//EN""
-""map.dtd"">{Environment.NewLine}";
-        xml += $"<map>{Environment.NewLine}";
-        xml += $"<title>HIC Data Catalogue</title>{Environment.NewLine}";
-
-        xml += $@"<topicmeta product=""hicdc"" rev=""1"">{Environment.NewLine}";
-        xml += $"<author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>{Environment.NewLine}";
-        xml += $"<publisher>Health Informatics Centre (HIC), University of Dundee</publisher>{Environment.NewLine}";
-        xml += $"</topicmeta>{Environment.NewLine}";
-
-
-        xml += $@"<topicref href=""introduction.dita""/>{Environment.NewLine}";
+""map.dtd"">
+<map>
+<title>HIC Data Catalogue</title>
+<topicmeta product=""hicdc"" rev=""1"">
+<author>Wilfred Bonney; Thomas Nind; Mikhail Ghattas</author>
+<publisher>Health Informatics Centre (HIC), University of Dundee</publisher
+</topicmeta>
+<topicref href=""introduction.dita""/>
+<topicref href=""dataset.dita"">
+");
         GenerateIntroductionFile("introduction.dita");
-
-        xml += $@"<topicref href=""dataset.dita"">{Environment.NewLine}";
         GenerateDataSetFile("dataset.dita");
-
-        xml += Environment.NewLine;
 
         //get all the catalogues then sort them alphabetically
         var catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>()
@@ -86,17 +82,17 @@ public class DitaCatalogueExtractor : ICheckable
                 new ProgressEventArgs("Extracting",
                     new ProgressMeasurement(cataloguesCompleted++, ProgressType.Records, catas.Count), sw.Elapsed));
 
-            //ensure that it has an acryonym
+            //ensure that it has an acronym
             if (string.IsNullOrWhiteSpace(c.Acronym))
                 throw new Exception(
                     $"Dita Extraction requires that each catalogue have a unique Acronym, the catalogue {c.Name} is missing an Acronym");
 
             if (c.Name.Contains('\\') || c.Name.Contains('/'))
                 throw new Exception(
-                    "Dita Extractor does not support catalogues with backslashes or forward slashs in their name");
+                    "Dita Extractor does not support catalogues with backslashes or forward slashes in their name");
 
             //catalogue main file
-            xml += $"<topicref href=\"{GetFileNameForCatalogue(c)}\">{Environment.NewLine}";
+            xml.AppendLine($"<topicref href=\"{GetFileNameForCatalogue(c)}\">");
             CreateCatalogueFile(c);
 
             //catalogue items
@@ -105,23 +101,20 @@ public class DitaCatalogueExtractor : ICheckable
 
             foreach (var ci in cataItems)
             {
-                xml += $"<topicref href=\"{GetFileNameForCatalogueItem(c, ci)}\"/>{Environment.NewLine}";
+                xml.AppendLine($"<topicref href=\"{GetFileNameForCatalogueItem(c, ci)}\"/>");
                 CreateCatalogueItemFile(c, ci);
             }
 
-            xml += $"</topicref>{Environment.NewLine}";
-
-            //completed - mostly for end of loop tbh
-            listener.OnProgress(this,
-                new ProgressEventArgs("Extracting",
-                    new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
+            xml.AppendLine($"</topicref>");
         }
 
-        xml += Environment.NewLine;
-        xml += $@"</topicref>{Environment.NewLine}";
-        xml += "</map>";
+        listener.OnProgress(this,
+            new ProgressEventArgs("Extracting",
+                new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
 
-        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, "hic_data_catalogue.ditamap"), xml);
+        xml.AppendLine($"{Environment.NewLine}</topicref>{Environment.NewLine}</map>");
+
+        File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, "hic_data_catalogue.ditamap"), xml.ToString());
     }
 
 
@@ -136,8 +129,8 @@ public class DitaCatalogueExtractor : ICheckable
 
     private static string FixName(string name)
     {
-        foreach (var invalidCharacter in Path.GetInvalidFileNameChars())
-            name = name.Replace(invalidCharacter, '_');
+        name = Path.GetInvalidFileNameChars()
+            .Aggregate(name, (current, invalidCharacter) => current.Replace(invalidCharacter, '_'));
 
         name = name.Replace("(", "");
         name = name.Replace(")", "");
@@ -155,28 +148,17 @@ public class DitaCatalogueExtractor : ICheckable
             throw new Exception(
                 $"Attempted to create Catalogue named {saveLocation} but it already existed (possibly you have two Catalogues with the same name");
 
-        var xml = "";
-
-        xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
+        var xml = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE concept PUBLIC ""-//OASIS//DTD DITA Concept//EN""
-""concept.dtd"">";
-        xml += $"<concept id=\"{FixName(c.Acronym)}\">{Environment.NewLine}";
-
-        xml += $"<title>{FixName(c.Name)}</title>{Environment.NewLine}";
-
-        xml += $"<conbody>{Environment.NewLine}";
-
-        xml += $@"<simpletable keycol=""1"">{Environment.NewLine}";
-
-        xml += GenerateObjectPropertiesAsRowUsingReflection(c);
-
-
-        xml += $@"</simpletable>{Environment.NewLine}";
-
-        xml += $"</conbody>{Environment.NewLine}";
-
-        xml += $"</concept>{Environment.NewLine}";
-
+""concept.dtd"">
+<concept id=""{FixName(c.Acronym)}"">
+<title>{FixName(c.Name)}</title>
+<conbody>
+<simpletable keycol=""1"">
+{GenerateObjectPropertiesAsRowUsingReflection(c)}
+</simpletable>            
+</conbody>
+</concept>";
         File.WriteAllText(saveLocation, xml);
     }
 
@@ -188,36 +170,24 @@ public class DitaCatalogueExtractor : ICheckable
             throw new Exception(
                 $"Attempted to create CatalogueItem named {saveLocation} but it already existed (possibly you have two CatalogueItems with the same name");
 
-        var xml = "";
-
-        xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
+        var xml = $@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE concept PUBLIC ""-//OASIS//DTD DITA Concept//EN""
-""concept.dtd"">";
-
-        xml += $"<concept id=\"{FixName(c.Name)}_{FixName(ci.Name)}\">{Environment.NewLine}";
-
-        xml += $"<title>{FixName(ci.Name)}</title>{Environment.NewLine}";
-
-        xml += $"<conbody>{Environment.NewLine}";
-
-        xml += $@"<simpletable keycol=""1"">{Environment.NewLine}";
-
-        xml += GenerateObjectPropertiesAsRowUsingReflection(ci);
-
-
-        xml += $@"</simpletable>{Environment.NewLine}";
-
-        xml += $"</conbody>{Environment.NewLine}";
-
-        xml += $"</concept>{Environment.NewLine}";
-
+""concept.dtd"">
+<concept id=""{FixName(c.Name)}_{FixName(ci.Name)}"">
+<title>{FixName(ci.Name)}</title>
+<conbody>
+<simpletable keycol=""1"">
+{GenerateObjectPropertiesAsRowUsingReflection(ci)}
+</simpletable>
+</conbody>
+</concept>";
 
         File.WriteAllText(saveLocation, xml);
     }
 
     private static string GenerateObjectPropertiesAsRowUsingReflection(object o)
     {
-        var toReturnXml = "";
+        var toReturnXml = new StringBuilder();
 
         var propertyInfo =
             o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -232,22 +202,16 @@ public class DitaCatalogueExtractor : ICheckable
                 continue;
 
             //Check whether property can be written to
-            if (property.CanRead)
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
-                    property.PropertyType.Equals(typeof(string)))
-                {
-                    toReturnXml += $"<strow>{Environment.NewLine}";
-                    toReturnXml += $"<stentry>{GetHtmlEncodedHeader(property.Name)}</stentry>{Environment.NewLine}";
-                    toReturnXml +=
-                        $"<stentry>{GetHtmlEncodedValue(property.GetValue(o, null))}</stentry>{Environment.NewLine}";
-                    toReturnXml += $"</strow>{Environment.NewLine}";
-                }
+            if (property.CanRead && (property.PropertyType is not { IsValueType: false, IsEnum: false } ||
+                                     property.PropertyType == typeof(string)))
+                toReturnXml.AppendLine(
+                    $"<strow>\r\n<stentry>{GetHtmlEncodedHeader(property.Name)}</stentry>\r\n<stentry>{GetHtmlEncodedValue(property.GetValue(o, null))}</stentry>\r\n</strow>");
             //else
             //throw new Exception("Didn't know how to treat property called " + property.Name);
         }
 
 
-        return toReturnXml;
+        return toReturnXml.ToString();
     }
 
     private static string GetHtmlEncodedHeader(object header)
@@ -330,14 +294,13 @@ public class DitaCatalogueExtractor : ICheckable
             for (var j = i + 1; j < catas.Length; j++)
                 if (catas[j].Acronym.Equals(acronym))
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        string.Format(
-                            "Duplication in acronym between Catalogues {0} and {1}, duplicate acronym value is {2}",
-                            catas[i], catas[j], acronym), CheckResult.Fail, null));
+                        $"Duplication in acronym between Catalogues {catas[i]} and {catas[j]}, duplicate acronym value is {acronym}",
+                        CheckResult.Fail, null));
         }
     }
 
     /// <summary>
-    /// Suggests an appropriate short acryonymn based on the supplied full <paramref name="name"/> e.g. BIO for Biochemistry
+    /// Suggests an appropriate short acronym based on the supplied full <paramref name="name"/> e.g. BIO for Biochemistry
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
@@ -347,26 +310,23 @@ public class DitaCatalogueExtractor : ICheckable
         var capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);
 
         //if the capitals and digits go together to make something that is less than 10 long then suggest that
-        if (capsConcat.Length > 1 && capsConcat.Length < 10)
+        if (capsConcat.Length is > 1 and < 10)
             return capsConcat;
 
         //else try to split up stuff and make suggestions based on that
         var words = Regex.Split(name, "\\s_").Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
 
-        if (words.Length == 0)
-            throw new Exception(
-                $"Could not generate acronym suggestion for name '{name}' because split resulted in 0 words");
-
-        //if there is only 1 word in the Catalogue name
-        if (words.Length == 1)
-            if (words[0].Length < 10)
-                return words
-                    [0]; //if the only word is less than 10 long it can be used as acronym anyway (will be the same as catalogue name)
-            else
-                return words[0]
-                    [..5]; //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
-
-        //return the first letter from every word and also add in all numbers that appear after the first letter in the word
-        return words.Aggregate("", (s, n) => s + n[..1] + n.Skip(1).Where(char.IsDigit));
+        return words.Length switch
+        {
+            0 => throw new Exception(
+                $"Could not generate acronym suggestion for name '{name}' because split resulted in 0 words"),
+            //if there is only 1 word in the Catalogue name
+            1 => words[0].Length < 10
+                ? words[0]
+                : //if the only word is less than 10 long it can be used as acronym anyway (will be the same as catalogue name)
+                words[0][..5],
+            //return the first letter from every word and also add in all numbers that appear after the first letter in the word
+            _ => words.Aggregate("", (s, n) => s + n[..1] + n.Skip(1).Where(char.IsDigit))
+        };
     }
 }

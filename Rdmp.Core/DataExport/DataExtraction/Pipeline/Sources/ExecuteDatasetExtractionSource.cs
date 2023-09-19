@@ -42,7 +42,8 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     private readonly List<string> _extractionIdentifiersidx = new();
 
-    private bool _cancel = false;
+    private bool _cancel;
+
     private ICatalogue _catalogue;
 
     protected const string ValidationColumnName = "RowValidationResult";
@@ -143,11 +144,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     public bool WasCancelled => _cancel;
 
     private Stopwatch _timeSpentValidating;
-    private int _rowsValidated = 0;
+    private int _rowsValidated;
 
     private Stopwatch _timeSpentCalculatingDISTINCT;
     private Stopwatch _timeSpentBuckettingDates;
-    private int _rowsBucketted = 0;
+    private int _rowsBucketted;
 
     private bool firstChunk = true;
     private bool firstGlobalChunk = true;
@@ -214,7 +215,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             {
                 var releaseIdentifierColumn = Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
 
-                if (chunk != null && chunk.Rows.Count > 0)
+                if (chunk is { Rows.Count: > 0 })
                 {
                     //last release id in the current chunk
                     var lastReleaseId = chunk.Rows[^1][releaseIdentifierColumn];
@@ -325,8 +326,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                         else
                             continue; //there are multiple extraction identifiers thats fine if one or two are null
 
-                    if (!UniqueReleaseIdentifiersEncountered.Contains(r[idx]))
-                        UniqueReleaseIdentifiersEncountered.Add(r[idx]);
+                    UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
 
                 listener.OnProgress(this,
@@ -546,21 +546,20 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             return new DataTable();
 
         var toReturn = new DataTable();
+        toReturn.BeginLoadData();
         var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
 
-            var da = server.GetDataAdapter(Request.QueryBuilder.SQL, con);
+        var da = server.GetDataAdapter(Request.QueryBuilder.SQL, con);
 
-            //get up to 1000 records
-            toReturn.BeginLoadData();
-            da.Fill(0, 1000, toReturn);
+        //get up to 1000 records
+        da.Fill(0, 1000, toReturn);
             toReturn.EndLoadData();
 
-            con.Close();
-        }
+        con.Close();
+        toReturn.EndLoadData();
 
         return toReturn;
     }

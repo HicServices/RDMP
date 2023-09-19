@@ -529,7 +529,7 @@ public class CatalogueTests : UnitTests
 
 
     /// <summary>
-    /// Tests when you have 
+    /// Tests when you have
     /// \
     /// \ somefolder
     ///   +cata1

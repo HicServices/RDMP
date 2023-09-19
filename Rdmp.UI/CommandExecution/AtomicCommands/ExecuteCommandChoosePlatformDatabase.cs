@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
@@ -13,6 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.Startup;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LocationsMenu;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
@@ -36,7 +36,7 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution, IAtom
     {
         _repositoryLocator = locator;
         if (_repositoryLocator is not UserSettingsRepositoryFinder)
-            SetImpossible("Platform databases location is read-only (probably passed as commandline parameter?).");
+            SetImpossible("Platform databases location is read-only (probably passed as command line parameter?).");
     }
 
     public override string GetCommandHelp() => "Change which RDMP platform metadata databases you are connected to";

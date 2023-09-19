@@ -138,7 +138,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
 
     /// <summary>
     /// Creates (in the database) and returns a new <see cref="Pipeline"/> which is an identical copy of the current.  This includes creating new copies
-    /// of all child objects (i.e. <see cref="PipelineComponent"/> and <see cref="PipelineComponentArgument"/>) 
+    /// of all child objects (i.e. <see cref="PipelineComponent"/> and <see cref="PipelineComponentArgument"/>)
     /// </summary>
     /// <returns></returns>
     public Pipeline Clone()

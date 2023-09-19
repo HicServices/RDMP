@@ -10,8 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using CsvHelper;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -67,44 +65,47 @@ public class WebFileDownloader : IPluginDataProvider
             credentials = null;
         }
 
-        using var response = CreateNewRequest(UriToFile.AbsoluteUri, credentials);
-        using var writer = File.Create(destinationFile.FullName);
-        //download the file 
-        response.CopyTo(writer, 1 << 20);
+        FetchRequest(File.Create(destinationFile.FullName), UriToFile.AbsoluteUri, credentials);
     }
 
-    private static Stream CreateNewRequest(string url, ICredentials credentials = null, bool useCredentials = false)
+    private static void FetchRequest(Stream output, string url, ICredentials credentials = null,
+        bool useCredentials = false)
     {
         using var httpClientHandler = new HttpClientHandler();
         if (useCredentials && credentials is not null)
             httpClientHandler.Credentials = credentials;
         using var httpClient = new HttpClient(httpClientHandler, false)
         {
-            Timeout = TimeSpan.FromSeconds(5)
+            Timeout = TimeSpan.FromSeconds(60)
         };
         httpClient.DefaultRequestHeaders.Add("User-Agent",
             "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36");
         using var response = httpClient.GetAsync(url).Result;
         if (response.IsSuccessStatusCode)
-            return response.Content.ReadAsStreamAsync().Result;
-        if (!useCredentials && response.Headers.WwwAuthenticate.Any(h =>
+        {
+            response.Content.ReadAsStreamAsync().Result.CopyTo(output);
+            return;
+        }
+
+        // Failed - retry with credentials?
+        if (!useCredentials && response.Headers.WwwAuthenticate.Any(static h =>
                 h.Scheme.Equals("basic", StringComparison.OrdinalIgnoreCase) &&
                 h.Parameter?.Equals("realm=\"Websense\"", StringComparison.OrdinalIgnoreCase) == true))
-            return CreateNewRequest(response.Headers.Location?.AbsoluteUri, credentials, true);
-        throw new Exception($"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
+            FetchRequest(output, response.Headers.Location?.AbsoluteUri, credentials, true);
+        else
+            throw new Exception(
+                $"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
     }
 
     public string GetDescription() => throw new NotImplementedException();
 
     public IDataProvider Clone() => throw new NotImplementedException();
 
-    public bool Validate(ILoadDirectory _)
-    {
-        if (string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery))
-            throw new MissingFieldException(
-                "PathToFile is null or white space - should be populated externally as a parameter");
-        return true;
-    }
+    public bool Validate(ILoadDirectory _) =>
+        string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery)
+            ? throw new MissingFieldException(
+                "PathToFile is null or white space - should be populated externally as a parameter")
+            : true;
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)

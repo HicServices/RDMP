@@ -60,13 +60,11 @@ public class ArchiveFilesTests : DatabaseTests
             Assert.True(File.Exists(zipFilename));
 
             // there should be two entries
-            using (var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read))
-            {
-                Assert.AreEqual(2, archive.Entries.Count,
-                    "There should be two entries in this archive: one from the root and one from the subdirectory");
-                Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"subdir/subdir.txt")));
-                Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"test.txt")));
-            }
+            using var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read);
+            Assert.AreEqual(2, archive.Entries.Count,
+                "There should be two entries in this archive: one from the root and one from the subdirectory");
+            Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"subdir/subdir.txt")));
+            Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"test.txt")));
         }
         finally
         {

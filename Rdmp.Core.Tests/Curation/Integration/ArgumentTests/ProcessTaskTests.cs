@@ -60,7 +60,7 @@ public class ProcessTaskTests : DatabaseTests
         var parent1 = new LoadMetadata(CatalogueRepository);
         var parent2 = new LoadMetadata(CatalogueRepository);
 
-        //make sure we didn't magically create the same ID somehow 
+        //make sure we didn't magically create the same ID somehow
         Assert.AreNotEqual(parent1.ID, parent2.ID);
 
         //setup things to clone in parent1

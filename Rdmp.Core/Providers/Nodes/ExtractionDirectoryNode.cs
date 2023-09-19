@@ -18,20 +18,15 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    public Project Project { get; private set; }
+    public Project Project { get; }
 
     public ExtractionDirectoryNode(Project project)
     {
         Project = project;
     }
 
-    public override string ToString()
-    {
-        if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-            return "???";
-
-        return Project.ExtractionDirectory;
-    }
+    public override string ToString() =>
+        string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
 
     protected bool Equals(ExtractionDirectoryNode other) => Equals(Project, other.Project);
 
@@ -43,15 +38,11 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         return Equals((ExtractionDirectoryNode)obj);
     }
 
-    public override int GetHashCode() => Project != null ? Project.GetHashCode() : 0;
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
-    public DirectoryInfo GetDirectoryInfoIfAny()
-    {
-        if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-            return null;
-
-        return new DirectoryInfo(Project.ExtractionDirectory);
-    }
+    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(Project.ExtractionDirectory)
+        ? null
+        : new DirectoryInfo(Project.ExtractionDirectory);
 
     public int Order
     {

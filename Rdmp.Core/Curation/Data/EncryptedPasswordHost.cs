@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Repositories;
 using System;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data;
@@ -70,24 +70,18 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// <inheritdoc/>
     public string Password
     {
-        get
-        {
-            if (_encryptedString is FakeEncryptedString)
-                throw new Exception(
-                    $"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
-
-            return _encryptedString.Value;
-        }
+        get =>
+            _encryptedString is FakeEncryptedString
+                ? throw new Exception(
+                    $"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}")
+                : _encryptedString.Value;
         set => _encryptedString.Value = value;
     }
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword()
-    {
-        if (_encryptedString == null)
-            throw new Exception(
-                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-        return _encryptedString.GetDecryptedValue() ?? "";
-    }
+    public string GetDecryptedPassword() =>
+        _encryptedString == null
+            ? throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+            : _encryptedString.GetDecryptedValue() ?? "";
 }

@@ -54,7 +54,7 @@ public partial class TypeTextOrCancelDialog : Form
         var header = args.WindowTitle;
 
 
-        if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
+        if (header is { Length: > WideMessageBox.MAX_LENGTH_TITLE })
             header = header[..WideMessageBox.MAX_LENGTH_TITLE];
 
         taskDescriptionLabel1.SetupFor(args);
@@ -135,7 +135,7 @@ public partial class TypeTextOrCancelDialog : Form
 
         //if there's some text typed and we want typed text to be sane
         if (RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
-            //if the sane name doesn't match the 
+            //if the sane name doesn't match the
             if (!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),
                     StringComparison.CurrentCultureIgnoreCase))
             {

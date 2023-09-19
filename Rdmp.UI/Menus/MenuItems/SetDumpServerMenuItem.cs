@@ -24,7 +24,7 @@ namespace Rdmp.UI.Menus.MenuItems;
 internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 {
     private readonly ITableInfo _tableInfo;
-    private ExternalDatabaseServer[] _availableServers;
+    private readonly ExternalDatabaseServer[] _availableServers;
 
     public SetDumpServerMenuItem(IActivateItems activator, ITableInfo tableInfo) : base(activator, "Add Dump Server")
     {
@@ -36,30 +36,29 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
             .ImageToBitmap();
 
         var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
-        var overlay = new IconOverlayProvider();
 
         var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
         var miUseExisting = new ToolStripMenuItem("Use Existing...",
-            overlay.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+            IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
         {
             Enabled = _availableServers.Any()
         };
 
         DropDownItems.Add(miUseExisting);
-        DropDownItems.Add("Create New...", overlay.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
+        DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(),
             CreateNewIdentifierDumpServer);
     }
 
     private void UseExisting(object sender, EventArgs e)
     {
         if (_activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "In which server should the table dump unloaded identifiable data during data loads.  This server must be already configured correctly to support identifier dumping (i.e. be an IdentifierDump)."
-            }, _availableServers, out var selected))
+        }, _availableServers, out var selected))
         {
             _tableInfo.IdentifierDumpServer_ID = selected.ID;
             _tableInfo.SaveToDatabase();

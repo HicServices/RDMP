@@ -23,7 +23,7 @@ namespace Rdmp.UI.DashboardTabs.Construction;
 /// 
 /// <para>When the user makes important changes on your control you can use the DashboardControl.SaveCollectionState method to persist the list of objects/persistence string on your collection</para>
 /// 
-/// <para> You should build your IPersistableObjectCollection to make use of the Helper for serialization.  
+/// <para> You should build your IPersistableObjectCollection to make use of the Helper for serialization.
 /// You should build your IPersistableObjectCollection to handle missing/empty argument dictionaries (serialization has a null/empty persistence string)</para>
 ///
 /// <para>Since you need a blank constructor anyway this shouldn't be too hard</para>

@@ -36,7 +36,7 @@ internal class CatalogueLoadChecks : ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        Catalogue[] catalogueMetadatas = null;
+        Catalogue[] catalogueMetadatas;
 
         try
         {
@@ -103,8 +103,7 @@ internal class CatalogueLoadChecks : ICheckable
 
         CheckTableInfoSynchronization(tableInfo, notifier);
 
-        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out var columnInfos,
-            out var columnInfosWhichArePrimaryKeys, notifier);
+        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out _, out _, notifier);
 
         //check for trying to ignore primary keys
         foreach (var col in tableInfo.ColumnInfos)
@@ -157,7 +156,7 @@ internal class CatalogueLoadChecks : ICheckable
 
     private static void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
     {
-        //live is the current data load's (possilby overridden server/database)
+        //live is the current data load's (possibly overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
 
         var problemList = "";
@@ -173,7 +172,7 @@ internal class CatalogueLoadChecks : ICheckable
             var launchSyncFixer = notifier.OnCheckPerformed(new CheckEventArgs(
                 $"TableInfo {tableInfo} failed Synchronization check with following problems:{problemList}",
                 CheckResult.Fail,
-                null, "Launch Synchronization Fixing")); //failed syncronization
+                null, "Launch Synchronization Fixing")); //failed synchronization
 
             if (launchSyncFixer)
             {
@@ -276,7 +275,7 @@ internal class CatalogueLoadChecks : ICheckable
                 passedColumnOrderCheck = false;
             }
             else
-                //check they are in the same order
+            //check they are in the same order
             {
                 for (var i = 0; i < stagingCols.Length; i++)
                     if (!stagingCols[i].Equals(liveCols[i]))

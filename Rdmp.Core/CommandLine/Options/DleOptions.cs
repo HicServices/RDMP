@@ -56,14 +56,17 @@ public class DleOptions : RDMPCommandLineOptions
             yield return new Example("Override for RDMP platform databases (specified in .config)",
                 new DleOptions
                 {
-                    Command = CommandLineActivity.run, LoadMetadata = "LoadMetadata:Loading*Biochem*",
-                    ServerName = @"localhost\sqlexpress", CatalogueDatabaseName = "RDMP_Catalogue",
+                    Command = CommandLineActivity.run,
+                    LoadMetadata = "LoadMetadata:Loading*Biochem*",
+                    ServerName = @"localhost\sqlexpress",
+                    CatalogueDatabaseName = "RDMP_Catalogue",
                     DataExportDatabaseName = "RDMP_DataExport"
                 });
             yield return new Example("Use explicit connection strings to RDMP databases",
                 new DleOptions
                 {
-                    Command = CommandLineActivity.run, LoadMetadata = "30",
+                    Command = CommandLineActivity.run,
+                    LoadMetadata = "30",
                     CatalogueConnectionString = ExampleCatalogueConnectionString,
                     DataExportConnectionString = ExampleDataExportConnectionString
                 });

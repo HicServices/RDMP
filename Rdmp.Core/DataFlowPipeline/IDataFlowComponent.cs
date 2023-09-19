@@ -19,7 +19,7 @@ namespace Rdmp.Core.DataFlowPipeline;
 public interface IDataFlowComponent<T>
 {
     /// <summary>
-    /// Contains the code that will be executed to modify the T object passing through the component.  E.g. ColumnRenamer component would take each DataTable (T is a 
+    /// Contains the code that will be executed to modify the T object passing through the component.  E.g. ColumnRenamer component would take each DataTable (T is a
     /// DataTable for this example) and rename the column it is configured for (at Design Time).  This method will be called once for each T served by the IDataFlowSource.
     /// 
     /// <para>Do not keep references to toProcess since it will interfere with garbage collection.</para>

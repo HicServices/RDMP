@@ -17,7 +17,7 @@ public interface IObjectUsedByOtherObjectNode<out T> : IObjectUsedByOtherObjectN
     T User { get; }
 }
 
-public interface IObjectUsedByOtherObjectNode<T, out T2> : IObjectUsedByOtherObjectNode<T>
+public interface IObjectUsedByOtherObjectNode<out T, out T2> : IObjectUsedByOtherObjectNode<T>
 {
     T2 ObjectBeingUsed { get; }
 }

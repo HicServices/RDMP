@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
 /// Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which values for a single DataTable are stored
-///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that 
+///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that
 /// the DataLoadEngine handles all this - as a user you don't need to worry about this).
 /// </summary>
 public abstract class FlatFileAttacher : Attacher, IPluginAttacher
@@ -73,33 +73,30 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
 
         if (string.IsNullOrWhiteSpace(TableName))
-            throw new ArgumentNullException("TableName has not been set, set it in the DataCatalogue");
+            throw new ArgumentNullException(nameof(TableName),
+                "TableName has not been set, set it in the DataCatalogue");
 
         var table = _dbInfo.ExpectTable(TableName);
 
         //table didn't exist!
         if (!table.Exists())
-            if (!_dbInfo.DiscoverTables(false).Any()) //maybe no tables existed
-                throw new FlatFileLoadException("Raw database had 0 tables we could load");
-            else //no there are tables just not the one we were looking for
-                throw new FlatFileLoadException($"RAW database did not have a table called:{TableName}");
+            throw new FlatFileLoadException(_dbInfo.DiscoverTables(false).Any()
+                ? $"RAW database did not have a table called:{TableName}"
+                : "Raw database had 0 tables we could load");
 
 
         //load the flat file
-        var filepattern = FilePattern ?? "*";
+        var filePattern = FilePattern ?? "*";
 
-        var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filepattern)
+        var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filePattern)
             .OrderBy(a => a.Name, StringComparer.InvariantCultureIgnoreCase).ToList();
 
         if (!filesToLoad.Any())
         {
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                $"Did not find any files matching pattern {filepattern} in forLoading directory"));
+                $"Did not find any files matching pattern {filePattern} in forLoading directory"));
 
-            if (SendLoadNotRequiredIfFileNotFound)
-                return ExitCodeType.OperationNotRequired;
-
-            return ExitCodeType.Success;
+            return SendLoadNotRequiredIfFileNotFound ? ExitCodeType.OperationNotRequired : ExitCodeType.Success;
         }
 
         foreach (var fileToLoad in filesToLoad)
@@ -123,67 +120,63 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     private void LoadFile(DiscoveredTable tableToLoad, FileInfo fileToLoad, DiscoveredDatabase dbInfo, Stopwatch timer,
         IDataLoadJob job, GracefulCancellationToken token)
     {
-        using (var con = dbInfo.Server.GetConnection())
+        using var con = dbInfo.Server.GetConnection();
+        var dt = tableToLoad.GetDataTable(0);
+
+        using var insert = tableToLoad.BeginBulkInsert(Culture);
+        // setup bulk insert it into destination
+        insert.Timeout = 500000;
+
+        //if user wants to use a specific explicit format for datetimes
+        if (ExplicitDateTimeFormat != null)
+            insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[] { ExplicitDateTimeFormat };
+
+        //bulk insert ito destination
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to open file {fileToLoad.FullName}"));
+        OpenFile(fileToLoad, job, token);
+
+        //confirm the validity of the headers
+        ConfirmFlatFileHeadersAgainstDataTable(dt, job);
+
+        con.Open();
+
+        //now we will read data out of the file in batches
+        var batchNumber = 1;
+        var maxBatchSize = 10000;
+        var recordsCreatedSoFar = 0;
+
+        try
         {
-            var dt = tableToLoad.GetDataTable(0);
-
-            using (var insert = tableToLoad.BeginBulkInsert(Culture))
+            //while there is data to be loaded into table
+            while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize, token) != 0)
             {
-                // setup bulk insert it into destination
-                insert.Timeout = 500000;
-
-                //if user wants to use a specific explicit format for datetimes
-                if (ExplicitDateTimeFormat != null)
-                    insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[] { ExplicitDateTimeFormat };
-
-                //bulk insert ito destination
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"About to open file {fileToLoad.FullName}"));
-                OpenFile(fileToLoad, job, token);
-
-                //confirm the validity of the headers
-                ConfirmFlatFileHeadersAgainstDataTable(dt, job);
-
-                con.Open();
-
-                //now we will read data out of the file in batches
-                var batchNumber = 1;
-                var maxBatchSize = 10000;
-                var recordsCreatedSoFar = 0;
-
+                DropEmptyColumns(dt);
+                ConfirmFitToDestination(dt, tableToLoad, job);
                 try
                 {
-                    //while there is data to be loaded into table 
-                    while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize, token) != 0)
-                    {
-                        DropEmptyColumns(dt);
-                        ConfirmFitToDestination(dt, tableToLoad, job);
-                        try
-                        {
-                            recordsCreatedSoFar += insert.Upload(dt);
+                    recordsCreatedSoFar += insert.Upload(dt);
 
-                            dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
+                    dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
-                            job.OnProgress(this,
-                                new ProgressEventArgs(tableToLoad.GetFullyQualifiedName(),
-                                    new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
-                        }
-                        catch (Exception e)
-                        {
-                            throw new Exception(
-                                $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})", e);
-                        }
-                    }
+                    job.OnProgress(this,
+                        new ProgressEventArgs(tableToLoad.GetFullyQualifiedName(),
+                            new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
                 }
                 catch (Exception e)
                 {
-                    throw new FlatFileLoadException($"Error processing file {fileToLoad}", e);
-                }
-                finally
-                {
-                    CloseFile();
+                    throw new Exception(
+                        $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})", e);
                 }
             }
+        }
+        catch (Exception e)
+        {
+            throw new FlatFileLoadException($"Error processing file {fileToLoad}", e);
+        }
+        finally
+        {
+            CloseFile();
         }
     }
 

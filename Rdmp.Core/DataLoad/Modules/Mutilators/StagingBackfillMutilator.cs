@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
@@ -68,7 +68,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
                     "Executing within test context but no TableNamingScheme has been provided");
         }
         else
-            // If we are not operating inside a Test, hardwire the TableNamingScheme
+        // If we are not operating inside a Test, hardwire the TableNamingScheme
         {
             TableNamingScheme = new FixedStagingDatabaseNamer(liveDatabaseInfo.GetRuntimeName());
         }
@@ -198,12 +198,10 @@ SET {queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable")}
 FROM 
 LiveDataForUpdating LEFT JOIN {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} AS CurrentTable {mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable")}";
 
-        using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
-        {
-            connection.Open();
-            var cmd = new SqlCommand(update, connection);
-            cmd.ExecuteNonQuery();
-        }
+        using var connection = (SqlConnection)_dbInfo.Server.GetConnection();
+        connection.Open();
+        var cmd = new SqlCommand(update, connection);
+        cmd.ExecuteNonQuery();
     }
 
     private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable,
@@ -245,12 +243,10 @@ DELETE CurrentTable
 FROM {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} CurrentTable
 RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable")}";
 
-        using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
-        {
-            connection.Open();
-            var cmd = new SqlCommand(deleteSql, connection);
-            cmd.ExecuteNonQuery();
-        }
+        using var connection = (SqlConnection)_dbInfo.Server.GetConnection();
+        connection.Open();
+        var cmd = new SqlCommand(deleteSql, connection);
+        cmd.ExecuteNonQuery();
     }
 
     /// <summary>

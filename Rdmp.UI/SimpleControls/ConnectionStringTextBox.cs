@@ -22,7 +22,7 @@ public class ConnectionStringTextBox : TextBox
 {
     private DatabaseType _databaseType;
     private List<string> supportedKeywords = new();
-    private bool suppressAutocomplete = false;
+    private bool suppressAutocomplete;
 
     public DatabaseType DatabaseType
     {
@@ -108,7 +108,7 @@ public class ConnectionStringTextBox : TextBox
             }
 
             //get last thing user is typing
-            var lastBitBeingTyped = Text[(Text.LastIndexOf(";") + 1)..];
+            var lastBitBeingTyped = Text[(Text.LastIndexOf(";", StringComparison.Ordinal) + 1)..];
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||
@@ -159,6 +159,6 @@ public class ConnectionStringTextBox : TextBox
             suppressAutocomplete = false;
         else
             suppressAutocomplete =
-                true; //user is pressing some arrow keys or delete keys or something, don't suggest anything until 
+                true; //user is pressing some arrow keys or delete keys or something, don't suggest anything until
     }
 }

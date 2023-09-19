@@ -21,8 +21,8 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 /// <summary>
 /// Allows you to visualise how much data has been loaded for a given LoadProgress based DLE job (LoadMetadata).  The top graph shows row counts over time
 /// according to the last DQE run on the dataset (a stack graph with a seperate track for each Catalogue in the load - for when you load multiple datasets
-/// from the same cached data source).  The bottom graph shows counts of cache fetch failures (periods of dataset time where no data could be fetched from 
-/// the origin because of data corruption or the data simply not being available for that period) and cache directory file counts (number of files sat in 
+/// from the same cached data source).  The bottom graph shows counts of cache fetch failures (periods of dataset time where no data could be fetched from
+/// the origin because of data corruption or the data simply not being available for that period) and cache directory file counts (number of files sat in
 /// Cache by date awaiting loading by DLE).
 /// </summary>
 public partial class LoadProgressDiagramUI : RDMPUserControl
@@ -56,10 +56,9 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
     {
         var c = (Catalogue)rowObject;
 
-        if (!_report.CataloguesWithDQERuns.ContainsKey(c))
-            return "Never";
-
-        return _report.CataloguesWithDQERuns[c].DateOfEvaluation;
+        return !_report.CataloguesWithDQERuns.ContainsKey(c)
+            ? "Never"
+            : _report.CataloguesWithDQERuns[c].DateOfEvaluation;
     }
 
     public void SetLoadProgress(LoadProgress lp, IActivateItems activator)

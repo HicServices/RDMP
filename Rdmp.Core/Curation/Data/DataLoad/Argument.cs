@@ -130,18 +130,10 @@ public abstract class Argument : DatabaseEntity, IArgument
     {
         //bool
         if (type.Equals(typeof(bool).ToString()))
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            return Convert.ToBoolean(value);
-        }
+            return string.IsNullOrWhiteSpace(value) ? false : (object)Convert.ToBoolean(value);
 
         if (type.Equals(typeof(Type).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return CatalogueRepository.MEF.GetType(value);
+            return string.IsNullOrWhiteSpace(value) ? null : (object)MEF.GetType(value);
 
         if (type.Equals(typeof(CatalogueRepository).ToString()) || type.Equals(typeof(ICatalogueRepository).ToString()))
             return Repository;
@@ -149,38 +141,23 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         //float?
         if (type.Equals(typeof(float?).ToString()) || type.Equals(typeof(float).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return float.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : float.Parse(value);
 
         //double?
         if (type.Equals(typeof(double?).ToString()) || type.Equals(typeof(double).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return double.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : double.Parse(value);
 
         //int?
         if (type.Equals(typeof(int?).ToString()) || type.Equals(typeof(int).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return int.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : int.Parse(value);
 
         //char?
         if (type.Equals(typeof(char?).ToString()) || type.Equals(typeof(char).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return char.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : char.Parse(value);
 
         //DateTime?
         if (type.Equals(typeof(DateTime?).ToString()) || type.Equals(typeof(DateTime).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return DateTime.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : DateTime.Parse(value);
 
         //null
         if (string.IsNullOrWhiteSpace(value))
@@ -244,10 +221,9 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (type.Equals(typeof(EncryptedString).ToString()))
             return new EncryptedString(CatalogueRepository) { Value = value };
 
-        if (type.Equals(typeof(CultureInfo).ToString()))
-            return new CultureInfo(value);
-
-        throw new NotSupportedException($"Custom arguments cannot be of type {type}");
+        return type.Equals(typeof(CultureInfo).ToString())
+            ? (object)new CultureInfo(value)
+            : throw new NotSupportedException($"Custom arguments cannot be of type {type}");
     }
 
     private bool HandleIfICustomUIDrivenClass(string value, Type concreteType, out object answer)
@@ -262,9 +238,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             try
             {
-                var t = CatalogueRepository.MEF.GetType(concreteType.FullName);
-
-                var constructor = new ObjectConstructor();
+                var t = MEF.GetType(concreteType.FullName);
 
                 result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository)Repository);
             }
@@ -313,7 +287,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             var elementTypeAsString = arrayMatch.Groups[1].Value;
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString) ?? throw new Exception(
+            var elementType = MEF.GetType(elementTypeAsString) ?? throw new Exception(
                 $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
             return Array.CreateInstance(elementType, 0).GetType();
         }
@@ -326,7 +300,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         }
 
         //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-        var anyType = CatalogueRepository.MEF.GetType(type) ??
+        var anyType = MEF.GetType(type) ??
                       throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
         return anyType;
     }
@@ -342,7 +316,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //if it is interface e.g. ITableInfo fetch instead the TableInfo object
         if (type.IsInterface && type.Name.StartsWith("I"))
         {
-            var candidate = CatalogueRepository.MEF.GetType(type.Name[1..]); // chop the 'I' off
+            var candidate = MEF.GetType(type.Name[1..]); // chop the 'I' off
 
             if (!candidate.IsAbstract)
                 return candidate;
@@ -369,47 +343,41 @@ public abstract class Argument : DatabaseEntity, IArgument
 
     private string Serialize(object o, string asType)
     {
-        //anything implementing this interface is permitted
-        if (o is ICustomUIDrivenClass @class)
-            return @class.SaveStateToString();
-
-        if (o == null)
-            return null;
-
-        //We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name
-        if (o is Type)
-            return o.ToString();
+        switch (o)
+        {
+            //anything implementing this interface is permitted
+            case ICustomUIDrivenClass @class:
+                return @class.SaveStateToString();
+            case null:
+                return null;
+            //We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name
+            case Type _:
+                return o.ToString();
+        }
 
         //get the system type
         var type = GetSystemType(asType);
 
         if (o is string)
-        {
-            if (typeof(IEncryptedString).IsAssignableFrom(type))
-            {
-                var encryptor = new EncryptedString(CatalogueRepository)
+            return typeof(IEncryptedString).IsAssignableFrom(type)
+                ? new EncryptedString(CatalogueRepository)
                 {
                     Value = o.ToString()
-                };
-                return encryptor.Value;
-            }
-
-            return o.ToString();
-        }
+                }.Value
+                : o.ToString();
 
         //if it's a nullable type find the underlying Type
-        if (type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        if (type is { IsGenericType: true } && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             type = Nullable.GetUnderlyingType(type);
 
         //if it's an array
         if (type != null && typeof(Array).IsAssignableFrom(type))
         {
             var arr = (Array)o;
-            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
-                return string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
-
-            throw new NotSupportedException(
-                $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
+            return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType())
+                ? string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID))
+                : throw new NotSupportedException(
+                    $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
         }
 
         if (type != null && typeof(IDictionary).IsAssignableFrom(type))
@@ -423,10 +391,10 @@ public abstract class Argument : DatabaseEntity, IArgument
                 //if we have been given an illegal typed object
                 if (!PermissableTypes.Contains(o.GetType()))
                     throw new NotSupportedException(
-                        $"Type {o.GetType()} is not one of the permissable types for ProcessTaskArgument, argument must be one of:{PermissableTypes.Aggregate("", (s, n) => $"{s}{n},").TrimEnd(',')}");
+                        $"Type {o.GetType()} is not one of the permissible types for ProcessTaskArgument, argument must be one of: {string.Join(',', PermissableTypes.Select(t => t.ToString()))}");
 
                 //if we are passed something o of differing type to the known requested type then someone is lying to someone!
-                if (type != null && !type.IsInstanceOfType(o))
+                if (type?.IsInstanceOfType(o) == false)
                     try
                     {
                         return Convert.ChangeType(o, type).ToString();
@@ -438,10 +406,7 @@ public abstract class Argument : DatabaseEntity, IArgument
                     }
             }
 
-        if (o is IMapsDirectlyToDatabaseTable table)
-            return table.ID.ToString();
-
-        return o.ToString();
+        return o is IMapsDirectlyToDatabaseTable mapped ? mapped.ID.ToString() : o.ToString();
     }
 
     #region Dictionary Handling
@@ -450,26 +415,24 @@ public abstract class Argument : DatabaseEntity, IArgument
     {
         var instance = (IDictionary)Activator.CreateInstance(type);
 
-        using (var sr = new StringReader(value))
+        using var sr = new StringReader(value);
+        var doc = XDocument.Load(sr);
+        var dict = doc.Element("dictionary");
+        foreach (var xElement in dict.Elements("entry"))
         {
-            var doc = XDocument.Load(sr);
-            var dict = doc.Element("dictionary");
-            foreach (var xElement in dict.Elements("entry"))
-            {
-                var kElement = xElement.Element("key");
-                var kType = kElement.Attribute("type").Value;
-                var kValue = kElement.Attribute("o").Value;
+            var kElement = xElement.Element("key");
+            var kType = kElement.Attribute("type").Value;
+            var kValue = kElement.Attribute("o").Value;
 
-                var keyInstance = Deserialize(kValue, kType);
+            var keyInstance = Deserialize(kValue, kType);
 
-                var vElement = xElement.Element("value");
-                var vType = vElement.Attribute("type").Value;
-                var vValue = vElement.Attribute("o").Value;
+            var vElement = xElement.Element("value");
+            var vType = vElement.Attribute("type").Value;
+            var vValue = vElement.Attribute("o").Value;
 
-                var valueInstance = Deserialize(vValue, vType);
+            var valueInstance = Deserialize(vValue, vType);
 
-                instance.Add(keyInstance, valueInstance);
-            }
+            instance.Add(keyInstance, valueInstance);
         }
 
         return instance;
@@ -477,64 +440,60 @@ public abstract class Argument : DatabaseEntity, IArgument
 
     private string SerializeDictionary(IDictionary dictionary)
     {
-        using (var sw = new StringWriter())
+        using var sw = new StringWriter();
+        using (var xmlWriter = XmlWriter.Create(sw))
         {
-            using (var xmlWriter = XmlWriter.Create(sw))
+            // Build Xml with xw.
+
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("dictionary");
+
+            foreach (DictionaryEntry entry in dictionary)
             {
-                // Build Xml with xw.
+                var keyObject = entry.Key;
+                var keyObjectType = keyObject.GetType().ToString();
 
-                xmlWriter.WriteStartDocument();
-                xmlWriter.WriteStartElement("dictionary");
+                var valueObject = entry.Value;
+                var valueObjectType =
+                    valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
 
-                foreach (DictionaryEntry entry in dictionary)
-                {
-                    var keyObject = entry.Key;
-                    var keyObjectType = keyObject.GetType().ToString();
+                xmlWriter.WriteStartElement("entry");
 
-                    var valueObject = entry.Value;
-                    var valueObjectType =
-                        valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
+                xmlWriter.WriteStartElement("key");
+                xmlWriter.WriteAttributeString("type", keyObjectType);
+                xmlWriter.WriteAttributeString("o", Serialize(keyObject, keyObjectType));
+                xmlWriter.WriteEndElement();
 
-                    xmlWriter.WriteStartElement("entry");
+                xmlWriter.WriteStartElement("value");
+                xmlWriter.WriteAttributeString("type", valueObjectType);
+                xmlWriter.WriteAttributeString("o", Serialize(valueObject, valueObjectType));
+                xmlWriter.WriteEndElement();
 
-                    xmlWriter.WriteStartElement("key");
-                    xmlWriter.WriteAttributeString("type", keyObjectType);
-                    xmlWriter.WriteAttributeString("o", Serialize(keyObject, keyObjectType));
-                    xmlWriter.WriteEndElement();
-
-                    xmlWriter.WriteStartElement("value");
-                    xmlWriter.WriteAttributeString("type", valueObjectType);
-                    xmlWriter.WriteAttributeString("o", Serialize(valueObject, valueObjectType));
-                    xmlWriter.WriteEndElement();
-
-                    xmlWriter.WriteEndElement();
-                }
-
-                xmlWriter.WriteEndDocument();
-                xmlWriter.Close();
+                xmlWriter.WriteEndElement();
             }
 
-            return sw.ToString();
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
         }
+
+        return sw.ToString();
     }
+
+    //regex to match the two types referenced in the Dictionary
+    private static readonly Regex DictionaryType = new(
+        @"System\.Collections\.Generic\.Dictionary`2\[(.*),(.*)]"
+    );
 
     private bool IsDictionary(string type, out Type kType, out Type vType)
     {
         kType = null;
         vType = null;
 
-        //regex to match the two types referenced in the Dictionary
-        var r = new Regex(
-            string.Format("{0}{1},{1}{2}",
-                Regex.Escape("System.Collections.Generic.Dictionary`2["),
-                "(.*)",
-                Regex.Escape("]"))
-        );
 
         if (type == null)
             return false;
 
-        var match = r.Match(type);
+        var match = DictionaryType.Match(type);
 
         if (!match.Success)
             return false;

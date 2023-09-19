@@ -108,10 +108,10 @@ public class HelpWorkflow
             return false;
 
         if (HostControl.InvokeRequired)
-            return (bool)HostControl.Invoke(new Func<bool>(ShowNextStageOrClose));
+            return (bool)HostControl.Invoke(ShowNextStageOrClose);
 
         //if there is a next stage and help hasn't been closed
-        if (CurrentStage != null && CurrentStage.Next != null && !_helpClosed)
+        if (CurrentStage is { Next: not null } && !_helpClosed)
         {
             ShowStage(CurrentStage.Next);
             return true;

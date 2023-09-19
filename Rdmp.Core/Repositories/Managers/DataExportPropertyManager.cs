@@ -6,14 +6,13 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.Common;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release 
+/// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release
 /// Document that is provided to researchers (and anything else we might want to configure globally for extraction in future).
 /// 
 /// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
@@ -48,10 +47,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         if (!_allowCaching || _cacheOutOfDate)
             RefreshCache();
 
-        if (_cacheDictionary.TryGetValue(property, out var value))
-            return value;
-
-        return null;
+        return _cacheDictionary.TryGetValue(property, out var value) ? value : null;
     }
 
     /// <inheritdoc cref="GetValue(string)"/>
@@ -126,21 +122,17 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         var repo = (TableRepository)_repository;
         using (var con = repo.GetConnection())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
-                       con.Connection, con.Transaction))
-            {
-                using (var reader = cmd.ExecuteReader())
-                {
-                    _cacheDictionary.Clear();
+            using var cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
+                con.Connection, con.Transaction);
+            using var reader = cmd.ExecuteReader();
+            _cacheDictionary.Clear();
 
-                    //get cache of all answers
-                    while (reader.Read())
-                    {
-                        var val = reader["Value"] as string;
-                        _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
-                            val, (k, o) => val);
-                    }
-                }
+            //get cache of all answers
+            while (reader.Read())
+            {
+                var val = reader["Value"] as string;
+                _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
+                    val, (k, o) => val);
             }
         }
 

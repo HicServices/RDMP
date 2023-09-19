@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
-using SixLabors.ImageSharp;
-using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -54,11 +54,11 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
 
         if (import == null)
             if (!BasicActivator.SelectObjects(new DialogArgs
-                    {
-                        WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
-                        TaskDescription =
+            {
+                WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
+                TaskDescription =
                             $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported."
-                    },
+            },
                     BasicActivator.RepositoryLocator.CatalogueRepository
                         .GetAllObjects<CohortIdentificationConfiguration>(),
                     out import))

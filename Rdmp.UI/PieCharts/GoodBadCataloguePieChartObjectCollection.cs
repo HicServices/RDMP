@@ -80,15 +80,14 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     {
         var ei = ci.ExtractionInformation;
 
-        if (ei == null)
-            return IncludeNonExtractableCatalogueItems;
-
-        return ei.ExtractionCategory switch
-        {
-            ExtractionCategory.Internal => IncludeInternalCatalogueItems,
-            ExtractionCategory.Deprecated => IncludeDeprecatedCatalogueItems,
-            _ => true
-        };
+        return ei == null
+            ? IncludeNonExtractableCatalogueItems
+            : ei.ExtractionCategory switch
+            {
+                ExtractionCategory.Internal => IncludeInternalCatalogueItems,
+                ExtractionCategory.Deprecated => IncludeDeprecatedCatalogueItems,
+                _ => true
+            };
     }
 
     public Catalogue GetSingleCatalogueModeCatalogue() => (Catalogue)DatabaseObjects.SingleOrDefault();

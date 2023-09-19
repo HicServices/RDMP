@@ -95,10 +95,9 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
         var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
 
-        if (cols == null || cols.Length == 0)
-            return _commandName;
-
-        return $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
+        return cols == null || cols.Length == 0
+            ? _commandName
+            : $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
     }
 
     public override void Execute()
@@ -125,7 +124,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     {
         ConcreteColumn[] selected = null;
 
-        if (toPick != null && toPick.Length > 0)
+        if (toPick is { Length: > 0 })
         {
             selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
 
@@ -136,13 +135,13 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         else
         {
             if (SelectMany(new DialogArgs
-                {
-                    InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
-                    AllowSelectingNull = true,
-                    WindowTitle = $"Set {_commandProperty}",
-                    TaskDescription =
+            {
+                InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
+                AllowSelectingNull = true,
+                WindowTitle = $"Set {_commandProperty}",
+                TaskDescription =
                         $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
-                }, allColumns, out selected))
+            }, allColumns, out selected))
             {
                 if (selected == null || selected.Length == 0)
                     if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))

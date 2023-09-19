@@ -122,22 +122,13 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     #endregion
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
-    public CacheLagPeriod GetCacheLagPeriod()
-    {
-        if (string.IsNullOrWhiteSpace(CacheLagPeriod))
-            return null;
-
-        return new CacheLagPeriod(CacheLagPeriod);
-    }
+    public CacheLagPeriod GetCacheLagPeriod() =>
+        string.IsNullOrWhiteSpace(CacheLagPeriod) ? null : new CacheLagPeriod(CacheLagPeriod);
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
-    public CacheLagPeriod GetCacheLagPeriodLoadDelay()
-    {
-        if (string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay))
-            return Cache.CacheLagPeriod.Zero;
-
-        return new CacheLagPeriod(CacheLagPeriodLoadDelay);
-    }
+    public CacheLagPeriod GetCacheLagPeriodLoadDelay() => string.IsNullOrWhiteSpace(CacheLagPeriodLoadDelay)
+        ? Cache.CacheLagPeriod.Zero
+        : new CacheLagPeriod(CacheLagPeriodLoadDelay);
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
     public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
@@ -190,21 +181,17 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
         using (var conn = ((CatalogueRepository)Repository).GetConnection())
         {
-            using (var cmd =
-                   DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
+            using var cmd =
+                DatabaseCommandHelper.GetCommand($@"SELECT ID FROM CacheFetchFailure 
 WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
 ORDER BY FetchRequestStart
 OFFSET {start} ROWS
-FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction))
-            {
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID", cmd, ID);
+FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
+            DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID", cmd, ID);
 
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                        toReturnIds.Add(Convert.ToInt32(reader["ID"]));
-                }
-            }
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+                toReturnIds.Add(Convert.ToInt32(reader["ID"]));
         }
 
         return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds);
@@ -244,11 +231,10 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction))
     /// <returns></returns>
     public Catalogue[] GetAllCataloguesMaximisingOnPermissionWindow()
     {
-        if (PermissionWindow_ID == null)
-            return LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray();
-
-        return PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues())
-            .Cast<Catalogue>().Distinct().ToArray();
+        return PermissionWindow_ID == null
+            ? LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray()
+            : PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues())
+                .Cast<Catalogue>().Distinct().ToArray();
     }
 
     /// <summary>

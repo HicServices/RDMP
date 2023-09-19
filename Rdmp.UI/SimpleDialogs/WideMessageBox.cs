@@ -117,7 +117,7 @@ public partial class WideMessageBox : Form
             title = null;
         }
 
-        //Replace single newlines with double new lines 
+        //Replace single newlines with double new lines
         if (Args.FormatAsParagraphs && CommentStore != null)
             message = CommentStore.FormatAsParagraphs(message);
 
@@ -185,10 +185,7 @@ public partial class WideMessageBox : Form
                 sb.AppendLine($"{c.Name}:{stringval}");
             }
 
-        if (sb.Length >= MAX_LENGTH_BODY)
-            return sb.ToString(0, MAX_LENGTH_BODY);
-
-        return sb.ToString();
+        return sb.Length >= MAX_LENGTH_BODY ? sb.ToString(0, MAX_LENGTH_BODY) : sb.ToString();
     }
 
     public static void Show(string title, string message, string environmentDotStackTrace = null,
@@ -275,7 +272,7 @@ public partial class WideMessageBox : Form
         _navigationStack.Push(Args);
 
         Setup(new WideMessageBoxArgs(keyword, CommentStore[keyword], null, keyword, WideMessageBoxTheme.Help)
-            { FormatAsParagraphs = true });
+        { FormatAsParagraphs = true });
     }
 
     private void SetMessage(string message, string keywordNotToAdd = null)
@@ -304,7 +301,7 @@ public partial class WideMessageBox : Form
             if (keyword != null)
                 richTextBox1.InsertLink(word, keyword);
             else
-                //avoids bong sound
+            //avoids bong sound
             if (word != "")
                 richTextBox1.SelectedText = word; //this appends the text to the text box (confusing I know)
         }
@@ -331,10 +328,7 @@ public partial class WideMessageBox : Form
 
         var keyword = CommentStore.GetDocumentationKeywordIfExists(word.Trim(), true);
 
-        if (keyword == keywordNotToAdd)
-            return null;
-
-        return keyword;
+        return keyword == keywordNotToAdd ? null : keyword;
     }
 
     private static void ShowHelpSection(HelpSection hs)

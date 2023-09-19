@@ -111,12 +111,12 @@ public class SearchablesMatchScorer
     /// </summary>
     /// <param name="searchables">All available objects that can be searched (see <see cref="ICoreChildProvider.GetAllSearchables"/>)</param>
     /// <param name="searchText">Tokens to use separated by space e.g. "chi biochemistry CatalogueItem"</param>
-    /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
     /// <param name="showOnlyTypes">Optional (can be null) list of types to return results from.  Not respected if <paramref name="searchText"/> includes type names</param>
+    /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
     /// <returns></returns>
     public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText,
-        CancellationToken cancellationToken, List<Type> showOnlyTypes)
+        List<Type> showOnlyTypes, CancellationToken cancellationToken)
     {
         SetupRespectUserSettings();
 
@@ -137,8 +137,7 @@ public class SearchablesMatchScorer
         if (!string.IsNullOrWhiteSpace(searchText))
             foreach (var s in searchText.Split(' ').ToArray())
                 if (AlsoIncludes.TryGetValue(s, out var include))
-                    foreach (var v in include)
-                        searchText += $" {v.Name}";
+                    searchText = include.Aggregate(searchText, (current, v) => $"{current} {v.Name}");
 
         //if we have nothing to search for return no results
         if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
@@ -156,21 +155,20 @@ public class SearchablesMatchScorer
             explicitTypesRequested = TypeNames.Intersect(tokens, StringComparer.CurrentCultureIgnoreCase).ToArray();
 
             //else it's a regex
-            foreach (var token in tokens.Except(TypeNames, StringComparer.CurrentCultureIgnoreCase))
-                regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
+            regexes.AddRange(tokens.Except(TypeNames, StringComparer.CurrentCultureIgnoreCase)
+                .Select(token => new Regex(Regex.Escape(token), RegexOptions.IgnoreCase)));
         }
         else
         {
             explicitTypesRequested = Array.Empty<string>();
         }
 
-        if (cancellationToken.IsCancellationRequested)
-            return null;
-
-        return searchables.ToDictionary(
-            s => s,
-            score => ScoreMatches(score, regexes, explicitTypesRequested, cancellationToken)
-        );
+        return cancellationToken.IsCancellationRequested
+            ? null
+            : searchables.ToDictionary(
+                s => s,
+                score => _ScoreMatches(score, regexes, explicitTypesRequested, cancellationToken)
+            );
     }
 
     private void SetupRespectUserSettings()
@@ -182,7 +180,7 @@ public class SearchablesMatchScorer
         _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
-    private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes,
+    private int _ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes,
         string[] explicitTypeNames, CancellationToken cancellationToken)
     {
         var score = 0;
@@ -249,12 +247,11 @@ public class SearchablesMatchScorer
 
                 var parent = parents[^i];
 
-                if (parent != null)
-                    if (parent is not IContainer)
-                    {
-                        score += Weights[i] * CountMatchToString(regexes, parent);
-                        score += Weights[i] * CountMatchType(regexes, parent);
-                    }
+                if (parent is not null and not IContainer)
+                {
+                    score += Weights[i] * CountMatchToString(regexes, parent);
+                    score += Weights[i] * CountMatchType(regexes, parent);
+                }
             }
         }
 
@@ -264,7 +261,7 @@ public class SearchablesMatchScorer
 
         var catalogueIfAny = GetCatalogueIfAnyInDescendancy(kvp);
 
-        if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
+        if (catalogueIfAny is { IsDeprecated: true })
             return score / 10;
 
         //if we are bumping up matches
@@ -286,10 +283,9 @@ public class SearchablesMatchScorer
     private static Catalogue GetCatalogueIfAnyInDescendancy(
         KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
-        if (kvp.Key is Catalogue key)
-            return key;
-
-        return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
+        return kvp.Key is Catalogue catalogue
+            ? catalogue
+            : (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
     private static int CountMatchType(List<Regex> regexes, object key) => MatchCount(regexes, key.GetType().Name);
@@ -368,7 +364,7 @@ public class SearchablesMatchScorer
     }
 
     /// <summary>
-    /// Shortlists the output of <see cref="ScoreMatches(Dictionary{IMapsDirectlyToDatabaseTable, DescendancyList}, string, CancellationToken, List{Type})"/>
+    /// Shortlists the output of <see cref="ScoreMatches"/>
     /// producing a list of results up to the supplied length (<paramref name="take"/>).
     /// </summary>
     /// <param name="scores"></param>

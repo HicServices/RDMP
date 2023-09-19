@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Globalization;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
@@ -20,36 +19,21 @@ public class ChiSexPredictor : PredictionRule
         if (oChi == null || oGender == null) // Null is valid
             return null;
 
-        char sex;
+        var sex = oGender switch
+        {
+            string s => char.ToUpperInvariant(s[0]),
+            char gender => char.ToUpperInvariant(gender),
+            _ => throw new ArgumentException($"Gender must be a string or char, gender value is a {oGender.GetType()}")
+        };
 
-        if (oGender is string s)
-            sex = s.ToCharArray()[0];
-        else if (oGender is char gender)
-            sex = gender;
-        else
-            throw new ArgumentException($"Gender must be a string or char, gender value is a {oGender.GetType()}");
-
-        if (oChi is not string sChi)
-            throw new ArgumentException($"Chi was not a string (or null) object.  It was of Type {oChi.GetType()}");
-
+        var sChi = oChi as string ??
+                   throw new ArgumentException(
+                       $"Chi was not a string (or null) object.  It was of Type {oChi.GetType()}");
         if (sChi.Length == 10)
         {
             var sexDigit = (int)char.GetNumericValue(sChi, 8);
 
-            var isvalid = true;
-
-            if (sex.ToString(CultureInfo.InvariantCulture).ToUpper() != "M" &&
-                sex.ToString(CultureInfo.InvariantCulture).ToUpper() !=
-                "F") // Pass as valid if sex is not strictly specified
-                return null;
-
-            if (sexDigit % 2 == 0 && sex == 'M')
-                isvalid = false;
-
-            if (sexDigit % 2 == 1 && sex == 'F')
-                isvalid = false;
-
-            if (!isvalid)
+            if ((sex == 'M' && (sexDigit & 1) == 0) || (sex == 'F' && (sexDigit & 1) == 1))
                 return new ValidationFailure(
                     $"CHI sex indicator ({sexDigit})  did not match associated sex field ({sex})", parent);
         }

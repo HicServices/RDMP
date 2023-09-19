@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes;
 public class TableInfoServerNode : Node
 {
     public readonly DatabaseType DatabaseType;
-    public string ServerName { get; private set; }
+    public string ServerName { get; }
     public TableInfo[] Tables { get; }
 
     public const string NullServerNode = "Null Server";
@@ -41,14 +41,7 @@ public class TableInfoServerNode : Node
         return Equals((TableInfoServerNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return ((int)DatabaseType * 397) ^
-                   (ServerName != null ? StringComparer.CurrentCultureIgnoreCase.GetHashCode(ServerName) : 0);
-        }
-    }
+    public override int GetHashCode() => HashCode.Combine(DatabaseType, ServerName);
 
     public bool IsSameServer(TableInfo tableInfo) =>
         ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)

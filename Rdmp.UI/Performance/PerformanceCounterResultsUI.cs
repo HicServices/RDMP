@@ -21,7 +21,7 @@ namespace Rdmp.UI.Performance;
 /// <summary>
 /// Displays detailed breakdown of database queries sent by the RDMP during Performance Logging (See PerformanceCounterUI).  The colour of the row indicates the number of times a database
 /// query was sent from that point in the call stack.  Note that this is the number of calls not the time taken to execute the call so you could see poor performance in UI interaction and
-/// see lots of red calls but the actual slow query might only be called once. 
+/// see lots of red calls but the actual slow query might only be called once.
 /// 
 /// </summary>
 public partial class PerformanceCounterResultsUI : UserControl
@@ -61,23 +61,20 @@ public partial class PerformanceCounterResultsUI : UserControl
     {
         var treeNode = (StackFramesTree)model;
 
-        if (!treeNode.Children.Any())
-            return null;
-
-        return treeNode.Children.Values.Where(c => !c.IsInDatabaseAccessAssembly);
+        return !treeNode.Children.Any()
+            ? null
+            : (IEnumerable)treeNode.Children.Values.Where(c => !c.IsInDatabaseAccessAssembly);
     }
 
     private bool CanExpandGetter(object model)
     {
         var treeNode = (StackFramesTree)model;
 
-        if (!treeNode.Children.Any())
-            return false;
-
-        return treeNode.Children.Values.Any(c => !c.IsInDatabaseAccessAssembly);
+        return treeNode.Children.Any() && treeNode.Children.Values.Any(c => !c.IsInDatabaseAccessAssembly);
     }
 
     private List<StackFramesTree> Roots;
+
     private bool collapseToMethod = false;
     private ComprehensiveQueryPerformanceCounter _performanceCounter;
 
@@ -180,13 +177,11 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     private void tlvLocations_ItemActivate(object sender, EventArgs e)
     {
-        if (tlvLocations.SelectedObject is StackFramesTree model)
-            if (model.HasSourceCode)
-            {
-                var dialog =
-                    new SimpleDialogs.ViewSourceCodeDialog(model.Filename, model.LineNumber, Color.GreenYellow);
-                dialog.Show();
-            }
+        if (tlvLocations.SelectedObject is StackFramesTree { HasSourceCode: true } model)
+        {
+            var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename, model.LineNumber, Color.GreenYellow);
+            dialog.Show();
+        }
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)

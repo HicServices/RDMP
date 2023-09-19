@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using NUnit.Framework;
@@ -18,6 +17,7 @@ using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -87,7 +87,7 @@ public class MDFAttacherTests : DatabaseTests
             //should be a warning since overwriting is default behaviour
             var ex = Assert.Throws<Exception>(() =>
                 attacher.Attach(
-                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true })
+                    new ThrowImmediatelyDataLoadJob(ThrowImmediatelyDataLoadEventListener.QuietPicky)
                     , new GracefulCancellationToken())
             );
 
@@ -196,7 +196,7 @@ public class MDFAttacherTests : DatabaseTests
         mdf.Initialize(hicProjDir, db);
         try
         {
-            var memory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
+            var memory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
             mdf.Check(memory);
             Assert.IsTrue(memory.Messages.Any(m =>
                 m.Message.Contains("Found server DATA folder") && m.Result == CheckResult.Success));
@@ -208,7 +208,7 @@ public class MDFAttacherTests : DatabaseTests
                 throw;
         }
 
-        var memory2 = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
+        var memory2 = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
         mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
         mdf.Check(memory2);
         Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,
@@ -303,7 +303,11 @@ public class MDFAttacherTests : DatabaseTests
         var constructorInfo = type.GetConstructor(Array.Empty<Type>()) ??
                               throw new TypeLoadException($"Type {type} does not have a blank constructor");
 
-        //call the blank constructor and return the reuslts
+        //call the blank constructor and return the results
+        _ = (IAttacher)constructorInfo.Invoke(Array.Empty<object>());
+
+
+        //call the blank constructor and return the results
         var bob = (IAttacher)constructorInfo.Invoke(Array.Empty<Type>());
     }
 
@@ -314,9 +318,9 @@ public class MDFAttacherTests : DatabaseTests
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 
+        var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
         try
         {
-            var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
             Assert.IsNotNull(attacher);

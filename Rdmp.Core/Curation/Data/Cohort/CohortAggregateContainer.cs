@@ -95,7 +95,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Creates a new container (which starts out as an oprhan) with the given <see cref="SetOperation"/>.  You should either set a
+    /// Creates a new container (which starts out as an orphan) with the given <see cref="SetOperation"/>.  You should either set a
     ///  <see cref="CohortIdentificationConfiguration.RootCohortAggregateContainer_ID"/> to this.<see cref="IMapsDirectlyToDatabaseTable.ID"/> to make this container the root container
     /// or use <see cref="AddChild(CohortAggregateContainer)"/>  on another container to make this a subcontainer of it.
     /// </summary>
@@ -128,7 +128,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         CatalogueRepository.CohortContainerManager.GetParent(this);
 
     /// <summary>
-    /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in 
+    /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in
     /// order defined by <see cref="IOrderable.Order"/> and can be interspersed with subcontainers (<see cref="GetSubContainers"/>).
     /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
     /// </summary>
@@ -340,7 +340,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
                     cloneJoinUse.SaveToDatabase();
 
                     //Now! (brace yourself).  Some the filters in the AggregateConfiguration we just cloned might reference a table called ix2934 or whetever, this
-                    //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any 
+                    //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any
                     //patient index columns anyway)
                     if (configClone.RootFilterContainer_ID != null)
                         foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(
@@ -453,10 +453,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     public bool IsRootContainer()
     {
         var cic = GetCohortIdentificationConfiguration();
-        if (cic != null)
-            return cic.RootCohortAggregateContainer_ID == ID;
-
-        return false;
+        return cic?.RootCohortAggregateContainer_ID == ID;
     }
 
     /// <summary>

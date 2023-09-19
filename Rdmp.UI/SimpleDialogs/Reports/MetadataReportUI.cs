@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
@@ -36,7 +35,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 /// 
 /// <para>- Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)</para>
 /// 
-/// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an 
+/// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an
 /// Aggregate run faster) or just increase the Query Timeout (default is 30s).</para>
 /// </summary>
 public partial class MetadataReportUI : RDMPForm
@@ -208,13 +207,13 @@ public partial class MetadataReportUI : RDMPForm
     private void btnPick_Click(object sender, EventArgs e)
     {
         if (Activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
-            }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
+        {
+            TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
+        }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
             SetCatalogueSelection(selected);
     }
 
-    private bool bLoading = false;
+    private bool bLoading;
 
     private void SetCatalogueSelection(ICatalogue[] array)
     {
@@ -262,10 +261,10 @@ public partial class MetadataReportUI : RDMPForm
             .ToArray();
 
         if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
+        {
+            TaskDescription =
                     "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
-            }, folders, out var selected))
+        }, folders, out var selected))
             SetCatalogueSelection(
                 Activator.CoreChildProvider
                     .AllCatalogues

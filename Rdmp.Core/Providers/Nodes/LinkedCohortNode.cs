@@ -15,8 +15,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
 {
-    public IExtractionConfiguration Configuration { get; set; }
-    public IExtractableCohort Cohort { get; set; }
+    public IExtractionConfiguration Configuration { get; }
+    public IExtractableCohort Cohort { get; }
 
     public LinkedCohortNode(IExtractionConfiguration configuration, IExtractableCohort cohort)
     {
@@ -39,14 +39,7 @@ public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
         return Equals((LinkedCohortNode)obj);
     }
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return ((Configuration != null ? Configuration.GetHashCode() : 0) * 397) ^
-                   (Cohort != null ? Cohort.GetHashCode() : 0);
-        }
-    }
+    public override int GetHashCode() => System.HashCode.Combine(Configuration, Cohort);
 
     public void DeleteInDatabase()
     {

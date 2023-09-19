@@ -26,7 +26,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 /// </summary>
 public class Transposer : IPluginDataFlowComponent<DataTable>
 {
-    private bool _haveServedResult = false;
+    private bool _haveServedResult;
 
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
         DemandType.Unspecified, true)]
@@ -65,7 +65,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
     private DataTable GenerateTransposedTable(DataTable inputTable)
     {
-        DataTable outputTable = new DataTable();
+        var outputTable = new DataTable();
         outputTable.BeginLoadData();
         // Add columns by looping rows
 

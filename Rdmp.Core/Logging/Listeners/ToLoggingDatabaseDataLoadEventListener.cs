@@ -28,7 +28,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     /// <summary>
     /// true if we were passed an IDataLoadInfo that was created by someone else (in which case we shouldn't just arbitrarily close it at any point).
     /// </summary>
-    private bool _wasAlreadyOpen = false;
+    private bool _wasAlreadyOpen;
 
     /// <summary>
     /// The root logging object under which all events will be stored, will be null if logging has not started yet (first call to OnNotify/StartLogging).
@@ -64,7 +64,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 
     static ToLoggingDatabaseDataLoadEventListener()
     {
-        StrStringLengthLimit = int.TryParse(Environment.GetEnvironmentVariable(RDMPLoggingStringLengthLimit),out var limit) ? limit : int.MaxValue;
+        StrStringLengthLimit = int.TryParse(Environment.GetEnvironmentVariable(RDMPLoggingStringLengthLimit), out var limit) ? limit : int.MaxValue;
     }
 
     private static string EnsureMessageAValidLength(string message)
@@ -116,7 +116,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 
         if (e.Progress.UnitOfMeasurement != ProgressType.Records) return;
 
-        if (!TableLoads.TryGetValue(e.TaskDescription,out var t))
+        if (!TableLoads.TryGetValue(e.TaskDescription, out var t))
         {
             t = DataLoadInfo.CreateTableLoadInfo("", e.TaskDescription,
                 new[] { new DataSource(sender.ToString()) }, e.Progress.KnownTargetValue);

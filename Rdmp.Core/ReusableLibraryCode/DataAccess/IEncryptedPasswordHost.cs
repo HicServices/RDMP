@@ -13,7 +13,7 @@ namespace Rdmp.Core.ReusableLibraryCode.DataAccess;
 public interface IEncryptedPasswordHost
 {
     /// <summary>
-    /// The encrypted password stored in memory (and possibly in the database).  This property should never return a clear text password.  Use <see cref="GetDecryptedPassword"/> 
+    /// The encrypted password stored in memory (and possibly in the database).  This property should never return a clear text password.  Use <see cref="GetDecryptedPassword"/>
     /// to get the decrypted string.
     /// </summary>
     string Password { get; set; }

@@ -47,8 +47,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected virtual void OnCacheFileNotFound(string message, Exception ex)
     {
-        var handler = CacheFileNotFound;
-        handler?.Invoke(this, message, ex);
+        CacheFileNotFound?.Invoke(this, message, ex);
     }
 
     #endregion
@@ -69,9 +68,9 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected static ScheduledDataLoadJob ConvertToScheduledJob(IDataLoadJob dataLoadJob)
     {
-        if (dataLoadJob is not ScheduledDataLoadJob scheduledJob)
-            throw new Exception("CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
-
+        var scheduledJob = dataLoadJob as ScheduledDataLoadJob ??
+                           throw new Exception(
+                               "CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
         return scheduledJob;
     }
 
@@ -196,10 +195,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             throw new NullReferenceException(
                 $"Destination {destination.RootPath.FullName} does not have a 'Cache' folder");
 
-        if (!destination.Cache.Exists)
-            throw new DirectoryNotFoundException(destination.Cache.FullName);
-
-        return true;
+        return !destination.Cache.Exists ? throw new DirectoryNotFoundException(destination.Cache.FullName) : true;
     }
 
 

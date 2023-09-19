@@ -79,38 +79,22 @@ public class LogViewerFilter
         if (Table != null)
             sb.Append($"TableLoadRun={Table}");
 
-        if (sb.Length == 0)
-            return "No filter";
-
-        return sb.ToString();
+        return sb.Length == 0 ? "No filter" : sb.ToString();
     }
 
     public string GetWhereSql()
     {
-        switch (LoggingTable)
+        return LoggingTable switch
         {
-            case LoggingTables.None:
-                return "";
-            case LoggingTables.DataLoadTask:
-                return Task.HasValue ? $"WHERE ID ={Task.Value}" : "";
-            case LoggingTables.DataLoadRun:
-                if (Run.HasValue)
-                    return $"WHERE ID ={Run.Value}";
-                if (Task.HasValue)
-                    return $"WHERE dataLoadTaskID = {Task.Value}";
-                return "";
-            case LoggingTables.ProgressLog:
-            case LoggingTables.FatalError:
-            case LoggingTables.TableLoadRun:
-                if (Run.HasValue)
-                    return $"WHERE dataLoadRunID ={Run.Value}";
-                return "";
-            case LoggingTables.DataSource:
-                if (Table.HasValue)
-                    return $"WHERE tableLoadRunID ={Table.Value}";
-                return "";
-            default:
-                throw new ArgumentOutOfRangeException("table");
-        }
+            LoggingTables.None => "",
+            LoggingTables.DataLoadTask => Task.HasValue ? $"WHERE ID ={Task.Value}" : "",
+            LoggingTables.DataLoadRun => Run.HasValue ? $"WHERE ID ={Run.Value}" :
+                Task.HasValue ? $"WHERE dataLoadTaskID = {Task.Value}" : "",
+            LoggingTables.ProgressLog => Run.HasValue ? $"WHERE dataLoadRunID ={Run.Value}" : "",
+            LoggingTables.FatalError => Run.HasValue ? $"WHERE dataLoadRunID ={Run.Value}" : "",
+            LoggingTables.TableLoadRun => Run.HasValue ? $"WHERE dataLoadRunID ={Run.Value}" : "",
+            LoggingTables.DataSource => Table.HasValue ? $"WHERE tableLoadRunID ={Table.Value}" : "",
+            _ => throw new ArgumentOutOfRangeException(nameof(LoggingTable))
+        };
     }
 }

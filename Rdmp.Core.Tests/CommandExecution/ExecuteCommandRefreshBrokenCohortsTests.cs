@@ -20,7 +20,7 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
     public void TestBrokenCohort()
     {
         var repo = new MemoryDataExportRepository();
-
+            
         var ect = new ExternalCohortTable(repo, "yarg", FAnsi.DatabaseType.MicrosoftSQLServer)
         {
             Server = "IDontExist",
@@ -40,7 +40,7 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
 
         var repoLocator = new RepositoryProvider(repo);
 
-        var activator = new ConsoleInputManager(repoLocator, new ThrowImmediatelyCheckNotifier())
+        var activator = new ConsoleInputManager(repoLocator, ThrowImmediatelyCheckNotifier.Quiet)
         {
             DisallowInput = true
         };

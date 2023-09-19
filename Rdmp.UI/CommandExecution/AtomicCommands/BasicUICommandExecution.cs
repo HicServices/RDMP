@@ -23,16 +23,13 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
         Activator = activator;
     }
 
-    protected static FileInfo SelectSaveFile(string filter)
+    protected FileInfo SelectSaveFile(string filter)
     {
         var sfd = new SaveFileDialog
         {
             Filter = filter
         };
-        if (sfd.ShowDialog() == DialogResult.OK)
-            return new FileInfo(sfd.FileName);
-
-        return null;
+        return sfd.ShowDialog() == DialogResult.OK ? new FileInfo(sfd.FileName) : null;
     }
 
     protected static FileInfo SelectOpenFile(string filter)
@@ -41,10 +38,7 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
         {
             Filter = filter
         };
-        if (ofd.ShowDialog() == DialogResult.OK)
-            return new FileInfo(ofd.FileName);
-
-        return null;
+        return ofd.ShowDialog() == DialogResult.OK ? new FileInfo(ofd.FileName) : null;
     }
 
     internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault,

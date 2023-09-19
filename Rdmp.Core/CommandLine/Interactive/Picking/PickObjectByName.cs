@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 /// <summary>
 /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on name (e.g. "Catalogue:my*cata")
 /// </summary>
-public class PickObjectByName : PickObjectBase
+public partial class PickObjectByName : PickObjectBase
 {
     public override string Format => "{Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]";
 
@@ -34,7 +34,7 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
 
     public PickObjectByName(IBasicActivateItems activator) :
         base(activator,
-            new Regex(@"^([A-Za-z]+):([^:]+)$", RegexOptions.IgnoreCase))
+            HasId())
     {
     }
 
@@ -70,4 +70,7 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
     {
         return GetAllObjects(dbObjectType).Where(o => FilterByPattern(o, str));
     }
+
+    [GeneratedRegex("^([A-Za-z]+):([^:]+)$", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex HasId();
 }

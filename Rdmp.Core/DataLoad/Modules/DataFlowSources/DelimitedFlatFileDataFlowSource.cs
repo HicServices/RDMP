@@ -254,7 +254,7 @@ This will not help you avoid bad data as the full file structure must still be r
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
                 }
                 else
-                    //user does not want to strongly type or is strongly typing with regular batch size
+                //user does not want to strongly type or is strongly typing with regular batch size
                 {
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
                 }
@@ -329,7 +329,7 @@ This will not help you avoid bad data as the full file structure must still be r
         if (Headers == null)
         {
             //get a chunk
-            var toReturn = GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            var toReturn = GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
             //clear these to close the file and reset state to 'I need to open the file again state'
             CloseReader();
@@ -384,7 +384,7 @@ This will not help you avoid bad data as the full file structure must still be r
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"File {_fileToLoad.File.Name} has a prohibitted file extension {_fileToLoad.File.Extension} (this class is designed to handle .csv, .tsv, .txt etc - basically anything that is delimitted by characters and not some freaky binary/fixed width file type",
+                    $"File {_fileToLoad.File.Name} has a prohibited file extension {_fileToLoad.File.Extension} (this class is designed to handle .csv, .tsv, .txt etc - basically anything that is delimited by characters and not some freaky binary/fixed width file type",
                     CheckResult.Fail));
             return;
         }

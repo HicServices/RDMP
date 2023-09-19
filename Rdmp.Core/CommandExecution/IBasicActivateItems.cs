@@ -47,7 +47,7 @@ public interface IBasicActivateItems
     List<IPluginUserInterface> PluginUserInterfaces { get; }
 
     /// <summary>
-    /// Component for fetching xmldoc comments from the codebase 
+    /// Component for fetching xmldoc comments from the codebase
     /// </summary>
     public CommentStore CommentStore { get; }
 
@@ -321,7 +321,7 @@ public interface IBasicActivateItems
 
 
     /// <summary>
-    /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if 
+    /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if
     /// environment is not interactive or an external setting auto confirms e.g. a command line argument etc
     /// </summary>
     /// <param name="text">The question to pose</param>

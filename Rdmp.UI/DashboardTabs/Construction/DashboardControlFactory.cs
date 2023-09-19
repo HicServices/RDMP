@@ -26,8 +26,7 @@ public class DashboardControlFactory
         _startLocationForNewControls = startLocationForNewControls;
     }
 
-    public Type[] GetAvailableControlTypes() => _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
-        .Where(IsCompatibleType).ToArray();
+    public Type[] GetAvailableControlTypes() => Core.Repositories.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
 
     private bool IsCompatibleType(Type arg) =>
         typeof(IDashboardableControl).IsAssignableFrom(arg)
@@ -42,7 +41,7 @@ public class DashboardControlFactory
     /// <returns></returns>
     public DashboardableControlHostPanel Create(DashboardControl toCreate)
     {
-        var controlType = _activator.RepositoryLocator.CatalogueRepository.MEF.GetType(toCreate.ControlType);
+        var controlType = Core.Repositories.MEF.GetType(toCreate.ControlType);
 
         var instance = CreateControl(controlType);
 
@@ -111,7 +110,6 @@ public class DashboardControlFactory
         if (!IsCompatibleType(t))
             throw new ArgumentException($"Type '{t}' is not a compatible Type", nameof(t));
 
-        var constructor = new ObjectConstructor();
         var instance = (UserControl)ObjectConstructor.Construct(t);
 
         instance.Dock = DockStyle.None;

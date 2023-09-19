@@ -29,7 +29,7 @@ public class MySqlQueryBuilderTests : DatabaseTests
         var cata = new Catalogue(CatalogueRepository, "cata");
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
         var extractionInfo = new ExtractionInformation(CatalogueRepository, catalogueItem, col, col.Name);
-
+            
         var qb = new QueryBuilder(null, null);
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(CollapseWhitespace(

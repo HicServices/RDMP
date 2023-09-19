@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataExport.DataExtraction.Commands;
-using Rdmp.Core.DataFlowPipeline;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -63,12 +63,12 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     {
         base.Check(notifier);
 
-        if (PerPatient && Pattern.IndexOf("$p") == -1)
+        if (PerPatient && !Pattern.Contains("$p"))
             notifier.OnCheckPerformed(
                 new CheckEventArgs($"PerPatient is true but Pattern {Pattern} did not contain token $p",
                     CheckResult.Fail));
 
-        if (!PerPatient && Pattern.IndexOf("$p") != -1)
+        if (!PerPatient && Pattern.IndexOf("$p", StringComparison.Ordinal) != -1)
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",
                 CheckResult.Fail));

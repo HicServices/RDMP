@@ -22,8 +22,6 @@ internal class ExtractionFilterUITests : UITests
         Assert.IsTrue(filter.Exists());
         Assert.IsTrue(set.Exists());
 
-        SetupMEF();
-
         var activator = new TestActivateItems(this, Repository)
         {
             InteractiveDeletes = true,
