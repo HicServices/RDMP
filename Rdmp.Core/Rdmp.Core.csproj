@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>HIC.RDMP.Plugin</PackageId>
     <version>$(version)</version>
@@ -392,7 +392,7 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="SSH.NET" Version="2020.0.2" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="Terminal.Gui" Version="1.13.5" />
+    <PackageReference Include="Terminal.Gui" Version="1.14.0" />
     <PackageReference Include="YamlDotNet" Version="13.1.1" />
   </ItemGroup>
   <ItemGroup>
